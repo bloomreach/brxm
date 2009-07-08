@@ -66,8 +66,8 @@ public class TemplateEditorActions implements EditmodelWorkflow, InternalWorkflo
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
         Node draft = null;
-        if (subject.hasNode(HippoNodeType.HIPPO_NODETYPE)) {
-            NodeIterator iter = subject.getNode(HippoNodeType.HIPPO_NODETYPE).getNodes(HippoNodeType.HIPPO_NODETYPE);
+        if (subject.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
+            NodeIterator iter = subject.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
             while (iter.hasNext()) {
                 Node versionNode = iter.nextNode();
                 if (!versionNode.isNodeType(HippoNodeType.NT_REMODEL)) {
@@ -112,14 +112,14 @@ public class TemplateEditorActions implements EditmodelWorkflow, InternalWorkflo
         checkoutType(target);
 
         // clean up
-        if (target.hasNode(HippoNodeType.HIPPO_NODETYPE)) {
-            NodeIterator nodes = target.getNode(HippoNodeType.HIPPO_NODETYPE).getNodes(HippoNodeType.HIPPO_NODETYPE);
+        if (target.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
+            NodeIterator nodes = target.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
             while (nodes.hasNext()) {
                 Node child = nodes.nextNode();
                 if (child.isNodeType(HippoNodeType.NT_REMODEL)) {
                     child.remove();
-                } else if (child.hasProperty(HippoNodeType.HIPPO_TYPE)) {
-                    child.setProperty(HippoNodeType.HIPPO_TYPE, name);
+                } else if (child.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
+                    child.setProperty(HippoNodeType.HIPPOSYSEDIT_TYPE, name);
                 }
             }
         }
@@ -155,8 +155,8 @@ public class TemplateEditorActions implements EditmodelWorkflow, InternalWorkflo
     }
 
     static Node getDraftType(Node subject) throws RepositoryException {
-        if (subject.hasNode(HippoNodeType.HIPPO_NODETYPE)) {
-            NodeIterator iter = subject.getNode(HippoNodeType.HIPPO_NODETYPE).getNodes(HippoNodeType.HIPPO_NODETYPE);
+        if (subject.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
+            NodeIterator iter = subject.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
             while (iter.hasNext()) {
                 Node versionNode = iter.nextNode();
                 if (!versionNode.isNodeType(HippoNodeType.NT_REMODEL)) {
@@ -185,11 +185,11 @@ public class TemplateEditorActions implements EditmodelWorkflow, InternalWorkflo
 
         Node draft = null;
         Node current = null;
-        if (subject.hasNode(HippoNodeType.HIPPO_NODETYPE)) {
+        if (subject.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
             String[] version = null;
 
-            Node template = subject.getNode(HippoNodeType.HIPPO_NODETYPE);
-            NodeIterator iter = template.getNodes(HippoNodeType.HIPPO_NODETYPE);
+            Node template = subject.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+            NodeIterator iter = template.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
             while (iter.hasNext()) {
                 Node versionNode = iter.nextNode();
 
@@ -208,11 +208,11 @@ public class TemplateEditorActions implements EditmodelWorkflow, InternalWorkflo
         }
         if (draft == null) {
             if (current == null) {
-                throw new ItemNotFoundException("Remodel node " + HippoNodeType.HIPPO_NODETYPE
+                throw new ItemNotFoundException("Remodel node " + HippoNodeType.HIPPOSYSEDIT_NODETYPE
                         + ", current version was not found for type " + subject.getPath());
             }
             draft = ((HippoSession) current.getSession()).copy(current, current.getParent().getPath() + "/"
-                    + HippoNodeType.HIPPO_NODETYPE);
+                    + HippoNodeType.HIPPOSYSEDIT_NODETYPE);
             draft.removeMixin(HippoNodeType.NT_REMODEL);
         }
 

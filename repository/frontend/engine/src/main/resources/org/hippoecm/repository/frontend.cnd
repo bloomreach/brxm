@@ -18,7 +18,8 @@
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
-<hippo='http://www.hippoecm.org/nt/1.3'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/1.0'>
+<hipposys='http://www.onehippo.org/jcr/hipposys/nt/1.0'>
 <frontend='http://www.hippoecm.org/frontend/nt/1.4'>
 
 [frontend:pluginconfig] > nt:base orderable
@@ -47,12 +48,12 @@
 + * (frontend:clusterfolder) multiple
 + * (nt:unstructured) multiple //FIXME, needed for cms-reports.xml
 
-[frontend:workflow] > hippo:workflow
+[frontend:workflow] > hipposys:workflow
 + frontend:renderer (nt:base)
 - frontend:renderer (string)
 - * (string)
 
-[frontend:user] > hippo:user
+[frontend:user] > hipposys:user
 - frontend:firstname (string)
 - frontend:lastname (string)
 - frontend:email (string)
@@ -63,11 +64,3 @@
 - frontend:deep (boolean) = false
 - frontend:uuids (string) multiple
 - frontend:nodetypes (string) multiple
-
-// FIXME: move into frontend namespace
-
-[hippo:namespace]
-+ * (hippo:templatetype) = hippo:templatetype
-
-[hippo:namespacefolder]
-+ * (hippo:namespace) = hippo:namespace

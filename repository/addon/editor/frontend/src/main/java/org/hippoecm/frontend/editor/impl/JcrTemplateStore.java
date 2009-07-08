@@ -190,7 +190,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
         Node node;
         if (!typeNode.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
             if (create) {
-                node = typeNode.addNode(HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.NT_HANDLE);
+                node = typeNode.addNode(HippoNodeType.HIPPO_TEMPLATE, "hipposysedit:handle");
             } else {
                 return null;
             }

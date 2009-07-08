@@ -69,13 +69,13 @@ public class RepositoryLoginTest extends TestCase {
         Node testuser;
         users = serverSession.getRootNode().getNode(USERS_PATH);
         testuser = users.addNode(TESTUSER_ID_PLAIN, HippoNodeType.NT_USER);
-        testuser.setProperty("hippo:password", TESTUSER_PASS);
+        testuser.setProperty("hipposys:password", TESTUSER_PASS);
         testuser = users.addNode(TESTUSER_ID_MD5, HippoNodeType.NT_USER);
-        testuser.setProperty("hippo:password", TESTUSER_HASH_MD5);
+        testuser.setProperty("hipposys:password", TESTUSER_HASH_MD5);
         testuser = users.addNode(TESTUSER_ID_SHA1, HippoNodeType.NT_USER);
-        testuser.setProperty("hippo:password", TESTUSER_HASH_SHA1);
+        testuser.setProperty("hipposys:password", TESTUSER_HASH_SHA1);
         testuser = users.addNode(TESTUSER_ID_SHA256, HippoNodeType.NT_USER);
-        testuser.setProperty("hippo:password", TESTUSER_HASH_SHA256);
+        testuser.setProperty("hipposys:password", TESTUSER_HASH_SHA256);
         serverSession.save();
     }
 

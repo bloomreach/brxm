@@ -69,15 +69,15 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
 
         JcrNodeModel rootModel = (JcrNodeModel) getModel();
         try {
-            if (rootModel.getNode().hasProperty("hippo:members")) {
-                Property property = rootModel.getNode().getProperty("hippo:members");
+            if (rootModel.getNode().hasProperty("hipposys:members")) {
+                Property property = rootModel.getNode().getProperty("hipposys:members");
                 Value[] values = property.getValues();
                 for (Value value : values) {
                     list.add(new JcrNodeModel(usersPath + value.getString()));
                 }
             }
         } catch (RepositoryException e) {
-            log.error("Error while getting hippo:members property from group[" + rootModel.getItemModel().getPath()
+            log.error("Error while getting hipposys:members property from group[" + rootModel.getItemModel().getPath()
                     + "]", e);
         }
         return list;
@@ -98,7 +98,7 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
                 String userPath = droppedModel.getItemModel().getPath();
                 try {
                     String username = droppedModel.getNode().getName();
-                    GroupsListPlugin.addMultiValueProperty(groupModel.getNode(), "hippo:members", username);
+                    GroupsListPlugin.addMultiValueProperty(groupModel.getNode(), "hipposys:members", username);
                     javax.jcr.Session session = groupModel.getNode().getSession();
                     if (session.hasPendingChanges()) {
                         session.save();

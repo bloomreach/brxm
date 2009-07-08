@@ -85,7 +85,7 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
                     }
 
                     String type = node.getPrimaryNodeType().getName();
-                    if (type.equals("hippo:templatetype")) {
+                    if (type.equals("hipposysedit:templatetype")) {
                         return "document-16";
                     }
                     return "folder-16";

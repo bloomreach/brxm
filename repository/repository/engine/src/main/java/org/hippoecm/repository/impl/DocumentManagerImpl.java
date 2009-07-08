@@ -55,7 +55,7 @@ public class DocumentManagerImpl implements DocumentManager {
     private final Logger log = LoggerFactory.getLogger(DocumentManagerImpl.class);
 
     Session session;
-    String configuration;
+    Node configuration;
     PersistenceManagerFactory pmf;
     StoreManagerImpl sm;
     PersistenceManager pm;
@@ -66,7 +66,7 @@ public class DocumentManagerImpl implements DocumentManager {
         loader = new PluginClassLoader(session);
         try {
             configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" +
-                                                          HippoNodeType.DOCUMENTS_PATH).getUUID();
+                                                          HippoNodeType.DOCUMENTS_PATH);
         } catch(RepositoryException ex) {
             log.error("document manager configuration failed: "+ex.getMessage());
         }
@@ -173,7 +173,7 @@ public class DocumentManagerImpl implements DocumentManager {
 
     public Document getDocument(String category, String identifier) throws MappingException, RepositoryException {
         try {
-            Node queryNode = session.getNodeByUUID(configuration).getNode(category);
+            Node queryNode = configuration.getNode(category);
             HippoQuery query = (HippoQuery) session.getWorkspace().getQueryManager().getQuery(queryNode);
             QueryResult result;
             if(query.getArgumentCount() > 0) {

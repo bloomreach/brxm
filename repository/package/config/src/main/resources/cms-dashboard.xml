@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2007-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -14,91 +14,89 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="cms-dashboard" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-  xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
-  xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.3"
-  xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4">
-  
+<sv:node xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4"
+         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         sv:name="cms-dashboard">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugincluster</sv:value>
   </sv:property>
-  
   <sv:node sv:name="dashboardPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
+    <sv:property sv:name="extension.currentActivity" sv:type="String">
+      <sv:value>service.dashboard.current</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.shortcuts" sv:type="String">
+      <sv:value>service.dashboard.shortcuts</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.todo" sv:type="String">
+      <sv:value>service.dashboard.todo</sv:value>
+    </sv:property>
+    <sv:property sv:name="perspective.title" sv:type="String">
+      <sv:value>perspective-title</sv:value>
+    </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.DashboardPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tab</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.tabs</sv:value>
       <sv:value>service.behavior.dashboard</sv:value>
-    </sv:property>
-    <sv:property sv:name="perspective.title" sv:type="String">
-      <sv:value>perspective-title</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.shortcuts</sv:value>
       <sv:value>extension.currentActivity</sv:value>
       <sv:value>extension.todo</sv:value>
     </sv:property>
-    <sv:property sv:name="extension.shortcuts" sv:type="String">
-      <sv:value>service.dashboard.shortcuts</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.currentActivity" sv:type="String">
-      <sv:value>service.dashboard.current</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.todo" sv:type="String">
-      <sv:value>service.dashboard.todo</sv:value>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.tab</sv:value>
     </sv:property>
   </sv:node>
-  
   <sv:node sv:name="dashboardLayout">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
-    </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>service.behavior.dashboard</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
     </sv:property>
     <sv:node sv:name="yui.config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
-      <sv:property sv:name="root.id" sv:type="String">
-        <sv:value>dashboard-perspective-wrapper</sv:value>
+      <sv:property sv:name="center" sv:type="String">
+        <sv:value>id=center,scroll=true,width=33%,body=center-body,gutter=1px 1px 1px 0px</sv:value>
+      </sv:property>
+      <sv:property sv:name="client.class.name" sv:type="String">
+        <sv:value>YAHOO.hippo.RelativeWireframe</sv:value>
+      </sv:property>
+      <sv:property sv:name="left" sv:type="String">
+        <sv:value>id=left,width=33%,body=left-body,resize=true,gutter=1px 1px 1px 1px</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
-      <sv:property sv:name="client.class.name" sv:type="String">
-        <sv:value>YAHOO.hippo.RelativeWireframe</sv:value>
+      <sv:property sv:name="right" sv:type="String">
+        <sv:value>id=right,width=33%,body=right-body,resize=true,scroll=true,gutter=1px 1px 1px 0px</sv:value>
+      </sv:property>
+      <sv:property sv:name="root.id" sv:type="String">
+        <sv:value>dashboard-perspective-wrapper</sv:value>
       </sv:property>
       <sv:property sv:name="units" sv:type="String">
         <sv:value>left</sv:value>
         <sv:value>center</sv:value>
         <sv:value>right</sv:value>
       </sv:property>
-      <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=left,width=33%,body=left-body,resize=true,gutter=1px 1px 1px 1px</sv:value>
-      </sv:property>
-      <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=center,scroll=true,width=33%,body=center-body,gutter=1px 1px 1px 0px</sv:value>
-      </sv:property>
-      <sv:property sv:name="right" sv:type="String">
-        <sv:value>id=right,width=33%,body=right-body,resize=true,scroll=true,gutter=1px 1px 1px 0px</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="shortcutsListPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="item" sv:type="String">
+      <sv:value>service.dashboard.shortcuts.shortcut</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
@@ -106,11 +104,7 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.dashboard.shortcuts</sv:value>
     </sv:property>
-    <sv:property sv:name="item" sv:type="String">
-      <sv:value>service.dashboard.shortcuts.shortcut</sv:value>
-    </sv:property>
   </sv:node>
-
   <sv:node sv:name="shortcutsPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -118,17 +112,16 @@
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugin.workflow.ShortcutsPlugin</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.dashboard.shortcuts.shortcut</sv:value>
-    </sv:property>
     <sv:property sv:name="shortcuts.id" sv:type="String">
       <sv:value>shortcuts.id</sv:value>
     </sv:property>
     <sv:property sv:name="shortcuts.query" sv:type="String">
       <sv:value>/jcr:root/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts/*/@workaround order by @workaround</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.dashboard.shortcuts.shortcut</sv:value>
+    </sv:property>
   </sv:node>
-  
   <sv:node sv:name="currentActivityPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -157,5 +150,5 @@
       <sv:value>model.report.todo</sv:value>
     </sv:property>
   </sv:node>
-  
 </sv:node>
+

@@ -188,7 +188,7 @@ public class StoreManagerImpl extends StoreManager {
             if(!node.isCheckedOut()) {
                 node.checkout();
             }
-            node = node.addNode(nodeName, nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
+            node = node.addNode(nodeName, nodetypeNode.getProperty(HippoNodeType.HIPPOSYS_NODETYPE).getString());
             if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 node.addMixin(HippoNodeType.NT_HARDDOCUMENT);
             } else if(node.isNodeType(HippoNodeType.NT_REQUEST)) {

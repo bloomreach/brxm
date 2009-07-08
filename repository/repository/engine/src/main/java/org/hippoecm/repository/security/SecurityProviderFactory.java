@@ -44,7 +44,7 @@ public class SecurityProviderFactory {
 
     /**
      * Create and initialize a new security provider base on the providerNode.
-     * The providerNode has a property hippo:classname which defines the class
+     * The providerNode has a property hipposys:classname which defines the class
      * to be instantiated.
      * @param providerNode the provider jcr node with the configuration
      * @return SecurityProvider

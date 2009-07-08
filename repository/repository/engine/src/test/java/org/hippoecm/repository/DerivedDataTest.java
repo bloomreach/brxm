@@ -46,14 +46,14 @@ public class DerivedDataTest extends TestCase {
         super.setUp();
         Node configuration = session.getRootNode().getNode("hippo:configuration/hippo:derivatives");
         configuration = configuration.addNode("org.hippoecm.repository.DerivedDataTest");
-        configuration.setProperty("hippo:nodetype", "hippo:testderived");
-        configuration.setProperty("hippo:classname", "org.hippoecm.repository.DerivedDataTest$Function");
-        configuration.getNode("hippo:accessed").addNode("aa","hippo:relativepropertyreference").
-            setProperty("hippo:relPath","hippo:a");
-        configuration.getNode("hippo:accessed").addNode("bb","hippo:relativepropertyreference").
-            setProperty("hippo:relPath","hippo:b");
-        configuration.getNode("hippo:derived").addNode("cc","hippo:relativepropertyreference").
-            setProperty("hippo:relPath","hippo:c");
+        configuration.setProperty("hipposys:nodetype", "hippo:testderived");
+        configuration.setProperty("hipposys:classname", "org.hippoecm.repository.DerivedDataTest$Function");
+        configuration.getNode("hipposys:accessed").addNode("aa","hipposys:relativepropertyreference").
+            setProperty("hipposys:relPath","hippo:a");
+        configuration.getNode("hipposys:accessed").addNode("bb","hipposys:relativepropertyreference").
+            setProperty("hipposys:relPath","hippo:b");
+        configuration.getNode("hipposys:derived").addNode("cc","hipposys:relativepropertyreference").
+            setProperty("hipposys:relPath","hippo:c");
         session.save();
         root = session.getRootNode().addNode("test","nt:unstructured");
     }

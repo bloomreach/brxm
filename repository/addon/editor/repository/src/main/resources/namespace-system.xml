@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2007-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -14,20 +14,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal" xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.3" xmlns:fn="http://www.w3.org/2005/xpath-functions" sv:name="system">
+<sv:node xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
+         xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4"
+         xmlns:hipposysedit="http://www.onehippo.org/jcr/hipposysedit/nt/1.0"
+         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         sv:name="system">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippo:namespace</sv:value>
+    <sv:value>hipposysedit:namespace</sv:value>
   </sv:property>
-
   <!-- "String" type -->
   <sv:node sv:name="String">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
+      <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
     </sv:property>
-    
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:translation</sv:value>
@@ -50,55 +52,59 @@
         <sv:value>String</sv:value>
       </sv:property>
     </sv:node>
-
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+      <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+          <sv:value>hipposysedit:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
+          <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>internal</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hipposysedit:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-
-      <sv:node sv:name="hippo:template">
+      <sv:node sv:name="hipposysedit:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>wicket.model</sv:value>
-          <sv:value>engine</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
           <sv:value>size</sv:value>
         </sv:property>
-
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
+          <sv:value>engine</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>${engine}</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
+          </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.ValueTemplatePlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="size" sv:type="String">
+            <sv:value>${size}</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${wicket.id}</sv:value>
@@ -106,32 +112,19 @@
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
-          <sv:property sv:name="size" sv:type="String">
-            <sv:value>${size}</sv:value>
-          </sv:property>
         </sv:node>
-
       </sv:node>
     </sv:node>
-
   </sv:node>
   <!-- end "String" type -->
-
   <!-- "Text" type -->
   <sv:node sv:name="Text">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
+      <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
     </sv:property>
-    
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:translation</sv:value>
@@ -154,59 +147,63 @@
         <sv:value>Text</sv:value>
       </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+      <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+          <sv:value>hipposysedit:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
+          <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>internal</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>String</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hipposysedit:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-
-      <sv:node sv:name="hippo:template">
+      <sv:node sv:name="hipposysedit:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>wicket.model</sv:value>
-          <sv:value>engine</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
           <sv:value>cols</sv:value>
           <sv:value>rows</sv:value>
         </sv:property>
-
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
+          <sv:value>engine</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
+          <sv:property sv:name="cols" sv:type="String">
+            <sv:value>${cols}</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>${engine}</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
+          </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.TextTemplatePlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="rows" sv:type="String">
+            <sv:value>${rows}</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${wicket.id}</sv:value>
@@ -214,35 +211,19 @@
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
-          <sv:property sv:name="rows" sv:type="String">
-            <sv:value>${rows}</sv:value>
-          </sv:property>
-          <sv:property sv:name="cols" sv:type="String">
-            <sv:value>${cols}</sv:value>
-          </sv:property>
         </sv:node>
-
       </sv:node>
     </sv:node>
-
   </sv:node>
   <!-- end "Text" type -->
-
   <!-- "Boolean" type -->
   <sv:node sv:name="Boolean">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
+      <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
     </sv:property>
-    
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:translation</sv:value>
@@ -265,50 +246,48 @@
         <sv:value>Boolean</sv:value>
       </sv:property>
     </sv:node>
-
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+      <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+          <sv:value>hipposysedit:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
+          <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>internal</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hipposysedit:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-
-      <sv:node sv:name="hippo:template">
+      <sv:node sv:name="hipposysedit:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>wicket.model</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
         </sv:property>
-
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.BooleanValueTemplatePlugin</sv:value>
@@ -316,30 +295,22 @@
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${wicket.id}</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
         </sv:node>
-
       </sv:node>
-
     </sv:node>
-
   </sv:node>
   <!-- end "Boolean" type -->
-
   <!-- "Date" type -->
   <sv:node sv:name="Date">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
+      <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
     </sv:property>
-    
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:translation</sv:value>
@@ -362,50 +333,48 @@
         <sv:value>Date</sv:value>
       </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+      <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+          <sv:value>hipposysedit:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
+          <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>internal</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hipposysedit:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-
-      <sv:node sv:name="hippo:template">
+      <sv:node sv:name="hipposysedit:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>wicket.model</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
         </sv:property>
-
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.DatePickerPlugin</sv:value>
@@ -416,25 +385,19 @@
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
         </sv:node>
       </sv:node>
-
     </sv:node>
   </sv:node>
   <!-- end "Date" type -->
-
   <!-- "Long" type -->
   <sv:node sv:name="Long">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
+      <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
     </sv:property>
-    
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:translation</sv:value>
@@ -457,50 +420,48 @@
         <sv:value>Long</sv:value>
       </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+      <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+          <sv:value>hipposysedit:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
+          <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>internal</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hipposysedit:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-
-      <sv:node sv:name="hippo:template">
+      <sv:node sv:name="hipposysedit:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>wicket.model</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
         </sv:property>
-
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.ValueTemplatePlugin</sv:value>
@@ -511,27 +472,19 @@
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
         </sv:node>
-
       </sv:node>
-
     </sv:node>
-
   </sv:node>
   <!-- end "Long" type -->
-
   <!-- "Double" type -->
   <sv:node sv:name="Double">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
+      <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
     </sv:property>
-    
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:translation</sv:value>
@@ -554,50 +507,48 @@
         <sv:value>Double</sv:value>
       </sv:property>
     </sv:node>
-    
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+      <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+          <sv:value>hipposysedit:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
+          <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>internal</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-    
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hipposysedit:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      
-      <sv:node sv:name="hippo:template">
+      <sv:node sv:name="hipposysedit:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>wicket.model</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
         </sv:property>
-        
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.ValueTemplatePlugin</sv:value>
@@ -608,100 +559,87 @@
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
         </sv:node>
-        
       </sv:node>
-      
     </sv:node>
-    
   </sv:node>
   <!-- end "Double" type -->
-  
   <!-- "Binary" type -->
   <sv:node sv:name="Binary">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
+      <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
-
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+      <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+          <sv:value>hipposysedit:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
+          <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>internal</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-
   </sv:node>
   <!-- end "Binary" type -->
-
-
-  <!--  Docbase type -->
+  <!-- Docbase type -->
   <sv:node sv:name="Docbase">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
+      <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
-
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+      <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+          <sv:value>hipposysedit:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
+          <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>internal</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>String</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hipposysedit:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-
-      <sv:node sv:name="hippo:template">
+      <sv:node sv:name="hipposysedit:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>wicket.model</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
         </sv:property>
-
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="cluster.name" sv:type="String">
+            <sv:value>cms-pickers/documents</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerPlugin</sv:value>
@@ -712,78 +650,68 @@
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="cluster.name" sv:type="String">
-            <sv:value>cms-pickers/documents</sv:value>
-          </sv:property>
         </sv:node>
-
       </sv:node>
-
     </sv:node>
-
   </sv:node>
   <!-- end Docbase type -->
-
-  <!--  Link type -->
+  <!-- Link type -->
   <sv:node sv:name="Link">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
+      <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
-
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+      <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+          <sv:value>hipposysedit:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
+          <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>internal</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>String</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hipposysedit:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-
-      <sv:node sv:name="hippo:template">
+      <sv:node sv:name="hipposysedit:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>wicket.model</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
           <sv:value>nodetypes</sv:value>
         </sv:property>
-
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
         <sv:property sv:name="nodetypes" sv:type="String">
           <sv:value>hippo:document</sv:value>
         </sv:property>
-
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="cluster.name" sv:type="String">
+            <sv:value>cms-pickers/documents</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
+          </sv:property>
+          <sv:property sv:name="nodetypes" sv:type="String">
+            <sv:value>${nodetypes}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerPlugin</sv:value>
@@ -791,154 +719,126 @@
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${wicket.id}</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
-          <sv:property sv:name="nodetypes" sv:type="String">
-            <sv:value>${nodetypes}</sv:value>
-          </sv:property>
-          <sv:property sv:name="cluster.name" sv:type="String">
-            <sv:value>cms-pickers/documents</sv:value>
-          </sv:property>
         </sv:node>
       </sv:node>
-
     </sv:node>
-
   </sv:node>
   <!-- end Link type -->
-
-  <!--  CssSize type -->
+  <!-- CssSize type -->
   <sv:node sv:name="CssSize">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
+      <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
-
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+      <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+          <sv:value>hipposysedit:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
+          <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>internal</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>String</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hipposysedit:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-
-      <sv:node sv:name="hippo:template">
+      <sv:node sv:name="hipposysedit:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>wicket.model</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
         </sv:property>
-
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.ValueTemplatePlugin</sv:value>
           </sv:property>
+          <sv:property sv:name="size" sv:type="String">
+            <sv:value>10</sv:value>
+          </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${wicket.id}</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
-          <sv:property sv:name="size" sv:type="String">
-            <sv:value>10</sv:value>
-          </sv:property>
         </sv:node>
       </sv:node>
-
     </sv:node>
-
   </sv:node>
   <!-- end CssSize type -->
-
-  <!--  Password type -->
+  <!-- Password type -->
   <sv:node sv:name="Password">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
+      <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
-
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+      <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+          <sv:value>hipposysedit:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
+          <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>internal</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>String</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hipposysedit:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
-
-      <sv:node sv:name="hippo:template">
+      <sv:node sv:name="hipposysedit:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>wicket.model</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
         </sv:property>
-
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.PasswordValueTemplatePlugin</sv:value>
@@ -946,18 +846,13 @@
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${wicket.id}</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
-
     </sv:node>
-
   </sv:node>
   <!-- end Password type -->
-
 </sv:node>
+

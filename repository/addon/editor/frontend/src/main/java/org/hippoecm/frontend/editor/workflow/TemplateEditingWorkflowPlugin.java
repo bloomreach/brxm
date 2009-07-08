@@ -151,8 +151,8 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
         try {
             Node node = ((WorkflowDescriptorModel) getModel()).getNode();
             if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                NodeIterator ntNodes = node.getNode(HippoNodeType.HIPPO_NODETYPE)
-                        .getNodes(HippoNodeType.HIPPO_NODETYPE);
+                NodeIterator ntNodes = node.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)
+                        .getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
                 Node ntNode = null;
                 while (ntNodes.hasNext()) {
                     Node child = ntNodes.nextNode();

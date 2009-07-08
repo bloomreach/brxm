@@ -1,42 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2007 Hippo
+  Copyright 2007-2009 Hippo
 
-    Licensed under the Apache License, Version 2.0 (the  "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS"
-    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         xmlns:hippo="http://www.hippoecm.org/nt/1.3"
-         xmlns:rep="internal"
+<sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+         xmlns:hipposys="http://www.onehippo.org/jcr/hipposys/nt/1.0"
+         xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4"
+         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="embedded">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippo:workflowcategory</sv:value>
+    <sv:value>hipposys:workflowcategory</sv:value>
   </sv:property>
   <sv:node sv:name="template-editor-namespace">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippo:namespace</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:privileges" sv:type="String">
-      <sv:value>hippo:admin</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
+    <sv:property sv:name="hipposys:classname" sv:type="String">
       <sv:value>org.hippoecm.editor.repository.impl.NamespaceWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:display" sv:type="String">
+    <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Template engine workflow to create a type</sv:value>
     </sv:property>
+    <sv:property sv:name="hipposys:nodetype" sv:type="String">
+      <sv:value>hipposysedit:namespace</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:privileges" sv:type="String">
+      <sv:value>hippo:admin</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposys:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:types</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -45,25 +51,25 @@
         <sv:value>org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="hippo:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:types</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="template-editor-namespaces">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippo:namespacefolder</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
+    <sv:property sv:name="hipposys:classname" sv:type="String">
       <sv:value>org.hippoecm.editor.repository.impl.TemplateEditorWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:display" sv:type="String">
+    <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Template engine workflow to create a namespace</sv:value>
     </sv:property>
+    <sv:property sv:name="hipposys:nodetype" sv:type="String">
+      <sv:value>hipposysedit:namespacefolder</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposys:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:types</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -72,28 +78,28 @@
         <sv:value>org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="hippo:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:types</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="gallery">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippostd:gallery</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:privleges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
+    <sv:property sv:name="hipposys:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:display" sv:type="String">
+    <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Workflow on documents in galleries</sv:value>
     </sv:property>
+    <sv:property sv:name="hipposys:nodetype" sv:type="String">
+      <sv:value>hippostd:gallery</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:privileges" sv:type="String">
+      <sv:value>hippo:author</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposys:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:types</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -102,17 +108,12 @@
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="hippo:config">
+    <sv:node sv:name="hipposys:config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>nt:unstructured</sv:value>
       </sv:property>
       <sv:property sv:name="attic" sv:type="Path">
         <sv:value>/content/attic</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:types</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -120,18 +121,23 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippostd:folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
+    <sv:property sv:name="hipposys:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:display" sv:type="String">
+    <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Workflow on documents in folders</sv:value>
     </sv:property>
+    <sv:property sv:name="hipposys:nodetype" sv:type="String">
+      <sv:value>hippostd:folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:privileges" sv:type="String">
+      <sv:value>hippo:author</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposys:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:types</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -140,17 +146,12 @@
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="hippo:config">
+    <sv:node sv:name="hipposys:config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>nt:unstructured</sv:value>
       </sv:property>
       <sv:property sv:name="attic" sv:type="Path">
         <sv:value>/content/attic</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:types</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -158,18 +159,23 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippostd:directory</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
+    <sv:property sv:name="hipposys:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:display" sv:type="String">
+    <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Workflow on documents in directories</sv:value>
     </sv:property>
+    <sv:property sv:name="hipposys:nodetype" sv:type="String">
+      <sv:value>hippostd:directory</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:privileges" sv:type="String">
+      <sv:value>hippo:author</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposys:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:types</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -178,7 +184,7 @@
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="hippo:config">
+    <sv:node sv:name="hipposys:config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>nt:unstructured</sv:value>
       </sv:property>
@@ -186,28 +192,28 @@
         <sv:value>/content/attic</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="hippo:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:types</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>rep:root</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:privileges" sv:type="String">
-      <sv:value>hippo:admin</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
+    <sv:property sv:name="hipposys:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:display" sv:type="String">
+    <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Workflow on documents in folders</sv:value>
     </sv:property>
+    <sv:property sv:name="hipposys:nodetype" sv:type="String">
+      <sv:value>rep:root</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:privileges" sv:type="String">
+      <sv:value>hippo:admin</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposys:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:types</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -216,10 +222,6 @@
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderEmbeddedWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="hippo:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:types</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
 </sv:node>
+

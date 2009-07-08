@@ -79,7 +79,7 @@ public class JcrPrototypeStore implements IDetachable {
             }
             String parentPath = path.substring(0, path.lastIndexOf('/'));
             Node parent = session.getRootNode().getNode(parentPath.substring(1));
-            Node handle = parent.addNode(HippoNodeType.HIPPO_PROTOTYPE, HippoNodeType.NT_HANDLE);
+            Node handle = parent.addNode(HippoNodeType.HIPPO_PROTOTYPE, "hipposysedit:handle");
             handle.addMixin(HippoNodeType.NT_HARDHANDLE);
 
             Node node;

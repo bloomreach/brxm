@@ -153,7 +153,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                             Node typeNode = iter.nextNode();
                             if (typeNode.getName().equals("hippo:prototype")) {
                                 String documentType = typeNode.getPrimaryNodeType().getName();
-                                if (!documentType.startsWith("hippo:") && !documentType.startsWith("reporting:")
+                                if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
                                         && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:")) {
                                     prototypes.add(documentType);
                                 }
@@ -193,7 +193,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Map<String, String[]> renames = new TreeMap<String, String[]>();
         for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
             Node prototypeNode = iter.nextNode();
-            if (prototypeNode.getName().equals("hippo:prototype")) {
+            if (prototypeNode.getName().equals("hipposysedit:prototype")) {
                 String documentType = prototypeNode.getPrimaryNodeType().getName();
                 if (documentType.equals(template)) {
                     // create handle ourselves, if not already exists

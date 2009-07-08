@@ -59,7 +59,6 @@ public class SingledViewFacetSelectTest extends TestCase {
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds",      "hippo:testdocument",
         "language","english",
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds/handle-below-document", "hippo:handle",
-        "language","english",
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds/handle-below-document/handle-below-document", "hippo:testdocument",
         "language","english",
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds/handle-below-document/handle-below-document", "hippo:testdocument",

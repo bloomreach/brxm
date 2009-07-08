@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2007-2009 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -18,66 +18,15 @@
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
-<hippo='http://www.hippoecm.org/nt/1.3'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<hipposys='http://www.onehippo.org/jcr/hipposys/nt/1.0'>
+<hipposysedit='http://www.onehippo.org/jcr/hipposysedit/nt/1.0'>
 
-// define the jarFile nodetype; it is required for the
-// repository class loader.  JR usually loads it lazily
-// but since we always need it, it's easier done here.
 [rep:jarFile] mixin
 - rep:jarExpanded (date) mandatory copy
 + rep:jarContents (nt:base) = nt:folder mandatory copy
 
-[hippo:query] > nt:query
-
-[hippo:implementation] mixin
-- hippo:classname (string) mandatory
-- hippo:serialver (long)
-
-[hippo:mirror]
-- hippo:docbase (string) mandatory
-+ * multiple ignore
-
-[hippo:facetresult]
-- hippo:count (long)
-+ * multiple ignore
-
-[hippo:facetsubsearch]
-- hippo:queryname (string) mandatory
-- hippo:docbase (string) mandatory
-- hippo:facets (string) mandatory multiple
-- hippo:search (string) multiple
-- hippo:count (long)
-+ hippo:resultset (hippo:facetresult) = hippo:facetresult
-+ * (hippo:facetsubsearch) = hippo:facetsubsearch multiple ignore
-
-[hippo:facetsearch]
-- hippo:queryname (string) mandatory
-- hippo:docbase (string) mandatory
-- hippo:facets (string) mandatory multiple
-- hippo:count (long)
-+ hippo:resultset (hippo:facetresult) = hippo:facetresult
-+ * (hippo:facetsubsearch) = hippo:facetsubsearch multiple ignore
-
-[hippo:request] > nt:unstructured, mix:versionable
-
-[hippo:facetselect] > nt:base
-- hippo:docbase (string) mandatory
-- hippo:facets (string) mandatory multiple
-- hippo:values (string) mandatory multiple
-- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single', 'prefer', 'prefer-single'
-+ * multiple ignore
-
-[hippo:document] > nt:base
-
-[hippo:handle] > nt:unstructured
-- hippo:discriminator (string) multiple
-+ * (hippo:document) = hippo:document multiple version
-+ hippo:request (hippo:request) = hippo:request multiple ignore
-
-[hippo:hardhandle] > mix:versionable mixin
-
-[hippo:facetlink] 
-- hippo:docbase (string) mandatory
+// DATA TYPES: RESOURCES AND MARKERS
 
 [hippo:resource]
 - jcr:encoding (string)
@@ -85,192 +34,7 @@
 - jcr:data (binary) primary mandatory
 - jcr:lastModified (date) mandatory ignore
 
-[hippo:type] > nt:base
-- hippo:nodetype (string) mandatory
-- hippo:display (string) mandatory
-- hippo:classname (string) mandatory
-
-[hippo:types] > nt:base
-+ * (hippo:type) = hippo:type
-
-[hippo:workflow] > hippo:type
-- hippo:workflow (string)
-- hippo:privileges (string) multiple
-+ hippo:types (hippo:types) = hippo:types mandatory autocreated
-+ hippo:config (nt:unstructured) = nt:unstructured
-
-[hippo:workflowcategory] > nt:base orderable
-+ * (hippo:workflow) = hippo:workflow
-
-[hippo:workflowfolder] > nt:base, mix:referenceable
-+ * (hippo:workflowcategory) = hippo:workflowcategory
-
-[hippo:ocmquery] > hippo:query
-- hippo:classname (string) mandatory
-+ hippo:types (hippo:types) = hippo:types mandatory autocreated
-
-[hippo:ocmqueryfolder] > nt:base, mix:referenceable
-+ * (nt:query) = hippo:ocmquery
-
-[hippo:initializeitem] > nt:base
-- hippo:extensionsource (string)
-- hippo:sequence (double)
-- hippo:namespace (string)
-- hippo:nodetypesresource (string)
-- hippo:nodetypes (binary)
-- hippo:contentresource (string)
-- hippo:content (string)
-- hippo:contentroot (string)
-- hippo:contentdelete (string)
-
-[hippo:initializefolder] > nt:base orderable
-- hippo:version (string) multiple
-+ * (hippo:initializeitem) = hippo:initializeitem
-
-[hippo:temporaryfolder] > nt:unstructured
-
-[hippo:applicationfolder] > nt:unstructured orderable
-
-[hippo:accessmanager] > nt:base
-- hippo:permissioncachesize (long) = '20000' mandatory autocreated 
-
-[hippo:user] > nt:base
-- hippo:securityprovider (string) = 'internal' mandatory autocreated
-- hippo:active (boolean) = true mandatory autocreated
-- hippo:password (string)
-- hippo:passkey (string)
-- hippo:lastlogin (date)
-
-[hippo:externaluser] > hippo:user
-- hippo:lastsync (date)
-- * (string)
-
-[hippo:group] > nt:base
-- hippo:securityprovider (string) = 'internal' mandatory autocreated
-- hippo:members (string) multiple
-- hippo:groups (string) multiple
-- hippo:description (string)
-
-[hippo:externalgroup] > hippo:group
-- hippo:syncdate (date)
-- * (string)
-
-[hippo:role] > nt:base
-- hippo:privileges (string) multiple
-- hippo:roles (string) multiple
-- hippo:jcrread (boolean)
-- hippo:jcrwrite (boolean)
-- hippo:jcrremove (boolean)
-
-[hippo:externalrole] > hippo:role
-- hippo:securityprovider (string) = 'internal' mandatory autocreated
-
-[hippo:authrole] > nt:base
-- hippo:users (string) multiple
-- hippo:groups (string) multiple
-- hippo:role (string) mandatory
-- hippo:description (string)
-
-[hippo:facetrule] > nt:base
-- hippo:facet (string) mandatory 
-- hippo:value (string) mandatory 
-- hippo:type (string) = 'String' mandatory < 'String', 'Name', 'Reference'
-- hippo:equals (boolean) = 'true' mandatory autocreated
-- hippo:filter (boolean) = 'false' mandatory autocreated
-- hippo:description (string)
-
-[hippo:domainrule] > nt:base
-+ * (hippo:facetrule) = hippo:facetrule multiple
-- hippo:description (string)
-
-[hippo:domain] > nt:base
-+ * (hippo:domainrule) = hippo:domainrule multiple 
-+ * (hippo:authrole) = hippo:authrole multiple
-- hippo:description (string)
-
-[hippo:userprovider] >  nt:base
-- hippo:dirlevels (long) = '0' autocreated
-
-[hippo:groupprovider] >  nt:base
-- hippo:dirlevels (long) = '0' autocreated
-
-[hippo:roleprovider] >  nt:base
-
-[hippo:securityprovider] > nt:base orderable
-- hippo:classname (string) mandatory
-+ hippo:userprovider (hippo:userprovider) = hippo:userprovider
-+ hippo:groupprovider (hippo:groupprovider) = hippo:groupprovider
-+ hippo:roleprovider (hippo:roleprovider) = hippo:roleprovider
-
-[hippo:userfolder] > nt:base
-+ * (hippo:user) = hippo:user
-+ * (hippo:userfolder) = hippo:userfolder
-
-[hippo:groupfolder] > nt:base
-+ * (hippo:group) = hippo:group
-+ * (hippo:groupfolder) = hippo:groupfolder
-
-[hippo:rolefolder] > nt:base
-+ * (hippo:role) = hippo:role
-
-[hippo:domainfolder] > nt:base
-+ * (hippo:domain) = hippo:domain
-
-[hippo:securityfolder] > nt:base
-- hippo:userspath (string) mandatory
-- hippo:groupspath (string) mandatory
-- hippo:rolespath (string) mandatory
-- hippo:domainspath (string) mandatory
-+ hippo:accessmanager (hippo:accessmanager) = hippo:accessmanager
-+ * (hippo:securityprovider) = hippo:securityprovider
-
-[hippo:remodel] mixin
-- hippo:uri (string) mandatory
- 
-[hippo:field] > nt:base
-- hippo:name (string)
-- hippo:path (string)
-- hippo:type (string)
-- hippo:multiple (boolean)
-- hippo:mandatory (boolean)
-- hippo:ordered (boolean)
-- hippo:primary (boolean)
-
-[hippo:nodetype] > hippo:document orderable
-- hippo:type (string)
-- hippo:supertype (string) multiple
-- hippo:node (boolean)
-- hippo:mixin (boolean)
-+ hippo:field (hippo:field) multiple
-
-[hippo:templatetype] orderable
-+ hippo:nodetype (hippo:handle) mandatory
-+ hippo:template (hippo:handle)
-+ hippo:prototype (nt:base)
-
-[hippo:propertyreference] > nt:base
-
-[hippo:relativepropertyreference] > hippo:propertyreference
-- hippo:relPath (string) mandatory
-
-[hippo:resolvepropertyreference] > hippo:propertyreference
-- hippo:relPath (string) mandatory
-
-[hippo:builtinpropertyreference] > hippo:propertyreference
-- hippo:method (string) mandatory < 'ancestors'
-
-[hippo:propertyreferences] orderable
-+ * (hippo:propertyreference)
-
-[hippo:deriveddefinition] > nt:base
-- hippo:nodetype (string) mandatory
-- hippo:classname (string) mandatory
-- hippo:serialver (long)
-+ hippo:accessed (hippo:propertyreferences) = hippo:propertyreferences autocreated
-+ hippo:derived (hippo:propertyreferences) = hippo:propertyreferences autocreated
-
-[hippo:derivativesfolder] > nt:base orderable
-+ * (hippo:deriveddefinition) = hippo:deriveddefinition multiple
+[hippo:query] > nt:query
 
 [hippo:derived] mixin
 - hippo:compute (Reference)
@@ -281,40 +45,310 @@
   // A multivalue property that links to all the nodes that where used to
   // compute derived proper
 
-// translation
+// DATA TYPES: DOCUMENTS
+
+[hippo:request] > nt:base
+
+[hippo:document] > nt:base
+
+[hippo:handle] > nt:base
+- hippo:discriminator (string) multiple
++ * (hippo:document) = hippo:document multiple version
++ hippo:request (hippo:request) multiple ignore
+
+[hippo:hardhandle] > mix:versionable mixin
+
+[hippo:harddocument] > hippo:derived, mix:referenceable, mix:versionable mixin
+- hippo:paths (string) multiple mandatory
+
+// DATA TYPES: VIRTUAL LAYER
+
+[hippo:facetresult]
+- hippo:count (long)
++ * multiple ignore
+
+[hippo:facetbasesearch]
+- hippo:queryname (string) mandatory
+- hippo:count (long)
++ * (hippo:facetbasesearch) multiple ignore
+
+[hippo:facetsearch] > hippo:facetbasesearch
+- hippo:docbase (string) mandatory
+- hippo:facets (string) mandatory multiple
++ hippo:resultset (hippo:facetresult) = hippo:facetresult
+
+[hippo:facetselect] > nt:base
+- hippo:docbase (string) mandatory
+- hippo:facets (string) mandatory multiple
+- hippo:values (string) mandatory multiple
+- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single', 'prefer', 'prefer-single'
++ * multiple ignore
+
+[hippo:mirror]
+- hippo:docbase (string) mandatory
++ * multiple ignore
+
+// DATA TYPES: TRANSLATION
+
 [hippo:translation]
 - hippo:language (string) mandatory
 - hippo:message (string) mandatory
 - hippo:property (string)
 - hippo:value (string)
-- hippo:workflow (string)
+- hippo:class (string)
 
 [hippo:translated] mixin
 + hippo:translation (hippo:translation) multiple
 
-[hippo:harddocument] > hippo:derived, mix:referenceable, mix:versionable mixin
-- hippo:paths (string) multiple mandatory
+// BOOTSTRAP
 
-[hippo:softdocument] mixin
+[hippo:initializeitem] > nt:base
+- hippo:sequence (double)
+- hippo:namespace (string)
+- hippo:nodetypesresource (string)
+- hippo:nodetypes (binary)
+- hippo:contentresource (string)
+- hippo:content (string)
+- hippo:contentroot (string)
+- hippo:contentdelete (string)
+
+[hipposys:initializeitem] > hippo:initializeitem
+- hipposys:extensionsource (string)
+
+[hippo:initializefolder] > nt:base orderable
+- hippo:version (string) multiple // never specify this item at this time
+- hippo:sequence (double) // not yet supported
++ * (hippo:initializeitem) = hippo:initializeitem
+
+// UPDATE ALL CONTENT
+
+[hipposysedit:remodel] mixin
+- hipposysedit:uri (string) mandatory
+ 
+[hipposysedit:field] > nt:base
+- hipposysedit:name (string)
+- hipposysedit:path (string)
+- hipposysedit:type (string)
+- hipposysedit:multiple (boolean)
+- hipposysedit:mandatory (boolean)
+- hipposysedit:ordered (boolean)
+- hipposysedit:primary (boolean)
+
+[hipposysedit:nodetype] > hippo:document orderable
+- hipposysedit:type (string)
+- hipposysedit:supertype (string) multiple
+- hipposysedit:node (boolean)
+- hipposysedit:mixin (boolean)
++ hipposysedit:field (hipposysedit:field) multiple
+
+[hipposysedit:handle] > hippo:handle
++ * (nt:base) = nt:unstructured multiple
+
+[hipposysedit:templatetype] orderable
++ hipposysedit:nodetype (hippo:handle) mandatory
++ hipposysedit:template (hippo:handle)
++ hipposysedit:prototype (nt:base)
+
+[hipposysedit:namespace]
++ * (hipposysedit:templatetype) = hipposysedit:templatetype
+
+[hipposysedit:namespacefolder]
++ * (hipposysedit:namespace) = hipposysedit:namespace
+
+// REPOSITORY: DOCUMENT DATA TYPES AND MARKERS
+
+[hipposys:softdocument] mixin
 - hippo:uuid (string) mandatory
 - hippo:paths (string) multiple mandatory
 
-[hippo:basequeryfolder] > nt:unstructured // FIXME
+[hipposys:request] > hippo:request, mix:versionable
+- *
+- * multiple
++ * (nt:base) = nt:unstructured
+
+[hipposys:implementation] mixin
+- hipposys:classname (string) mandatory
+- hipposys:serialver (long)
+
+[hipposys:facetsubsearch] > hippo:facetbasesearch
+- hippo:docbase (string) mandatory
+- hippo:facets (string) mandatory multiple
+- hipposys:search (string) multiple
++ hippo:resultset (hippo:facetresult) = hippo:facetresult
+
+// REPOSITORY WORKFLOW, OCM AND QUERY
+
+[hipposys:type] > nt:base
+- hipposys:nodetype (string) mandatory
+- hipposys:display (string) mandatory
+- hipposys:classname (string) mandatory //FIXME
+
+[hipposys:types] > nt:base
++ * (hipposys:type) = hipposys:type
+
+[hipposys:workflow] > hipposys:type
+- hipposys:privileges (string) multiple
++ hipposys:types (hipposys:types) = hipposys:types mandatory autocreated
++ hipposys:config (nt:unstructured) = nt:unstructured
+
+[hipposys:workflowcategory] > nt:base orderable
++ * (hipposys:workflow) = hipposys:workflow
+
+[hipposys:workflowfolder] > nt:base, mix:referenceable
++ * (hipposys:workflowcategory) = hipposys:workflowcategory
+
+[hipposys:ocmquery] > hippo:query
+- hipposys:classname (string) mandatory
++ hipposys:types (hipposys:types) = hipposys:types mandatory autocreated
+
+[hipposys:ocmqueryfolder] > nt:base
++ * (nt:query) = hipposys:ocmquery
+
+[hipposys:basequeryfolder] > nt:unstructured // FIXME
 + * (nt:query) = hippo:query
 
-[hippo:queryfolder] > hippo:basequeryfolder
-+ * (nt:query, hippo:basequeryfolder)
+[hipposys:queryfolder] > hipposys:basequeryfolder
++ * (nt:query, hipposys:basequeryfolder)
 
-[hippo:configuration] > nt:base
-+ hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
-+ hippo:documents (hippo:ocmqueryfolder) = hippo:ocmqueryfolder mandatory
+// REPOSITORY: DERIVED DATA
+
+[hipposys:propertyreference] > nt:base
+
+[hipposys:relativepropertyreference] > hipposys:propertyreference
+- hipposys:relPath (string) mandatory
+
+[hipposys:resolvepropertyreference] > hipposys:propertyreference
+- hipposys:relPath (string) mandatory
+
+[hipposys:builtinpropertyreference] > hipposys:propertyreference
+- hipposys:method (string) mandatory < 'ancestors'
+
+[hipposys:propertyreferences] orderable
++ * (hipposys:propertyreference)
+
+[hipposys:deriveddefinition] > nt:base
+- hipposys:nodetype (string) mandatory
+- hipposys:classname (string) mandatory
+- hipposys:serialver (long)
++ hipposys:accessed (hipposys:propertyreferences) = hipposys:propertyreferences autocreated
++ hipposys:derived (hipposys:propertyreferences) = hipposys:propertyreferences autocreated
+
+[hipposys:derivativesfolder] > nt:base orderable
++ * (hipposys:deriveddefinition) = hipposys:deriveddefinition multiple
+
+// REPOSITORY: MISCELLANEOUS
+
+[hipposys:temporaryfolder] > nt:unstructured
+
+[hipposys:applicationfolder] > nt:unstructured orderable
+
+// REPOSITORY: SECURITY
+
+[hipposys:accessmanager] > nt:base
+- hipposys:permissioncachesize (long) = '20000' mandatory autocreated 
+
+[hipposys:user] > nt:base
+- hipposys:securityprovider (string) = 'internal' mandatory autocreated
+- hipposys:active (boolean) = true mandatory autocreated
+- hipposys:password (string)
+- hipposys:passkey (string)
+- hipposys:lastlogin (date)
+
+[hipposys:externaluser] > hipposys:user
+- hipposys:lastsync (date)
+- * (string)
+
+[hipposys:group] > nt:base
+- hipposys:securityprovider (string) = 'internal' mandatory autocreated
+- hipposys:members (string) multiple
+- hipposys:groups (string) multiple
+- hipposys:description (string)
+
+[hipposys:externalgroup] > hipposys:group
+- hipposys:syncdate (date)
+- * (string)
+
+[hipposys:role] > nt:base
+- hipposys:privileges (string) multiple
+- hipposys:roles (string) multiple
+- hipposys:jcrread (boolean)
+- hipposys:jcrwrite (boolean)
+- hipposys:jcrremove (boolean)
+
+[hipposys:externalrole] > hipposys:role
+- hipposys:securityprovider (string) = 'internal' mandatory autocreated
+
+[hipposys:authrole] > nt:base
+- hipposys:users (string) multiple
+- hipposys:groups (string) multiple
+- hipposys:role (string) mandatory
+- hipposys:description (string)
+
+[hipposys:facetrule] > nt:base
+- hipposys:facet (string) mandatory 
+- hipposys:value (string) mandatory 
+- hipposys:type (string) = 'String' mandatory < 'String', 'Name', 'Reference'
+- hipposys:equals (boolean) = 'true' mandatory autocreated
+- hipposys:filter (boolean) = 'false' mandatory autocreated
+- hipposys:description (string)
+
+[hipposys:domainrule] > nt:base
++ * (hipposys:facetrule) = hipposys:facetrule multiple
+- hipposys:description (string)
+
+[hipposys:domain] > nt:base
++ * (hipposys:domainrule) = hipposys:domainrule multiple 
++ * (hipposys:authrole) = hipposys:authrole multiple
+- hipposys:description (string)
+
+[hipposys:userprovider] >  nt:base
+- hipposys:dirlevels (long) = '0' autocreated
+
+[hipposys:groupprovider] >  nt:base
+- hipposys:dirlevels (long) = '0' autocreated
+
+[hipposys:roleprovider] >  nt:base
+
+[hipposys:securityprovider] > nt:base orderable
+- hipposys:classname (string) mandatory
++ hipposys:userprovider (hipposys:userprovider) = hipposys:userprovider
++ hipposys:groupprovider (hipposys:groupprovider) = hipposys:groupprovider
++ hipposys:roleprovider (hipposys:roleprovider) = hipposys:roleprovider
+
+[hipposys:userfolder] > nt:base
++ * (hipposys:user) = hipposys:user
++ * (hipposys:userfolder) = hipposys:userfolder
+
+[hipposys:groupfolder] > nt:base
++ * (hipposys:group) = hipposys:group
++ * (hipposys:groupfolder) = hipposys:groupfolder
+
+[hipposys:rolefolder] > nt:base
++ * (hipposys:role) = hipposys:role
+
+[hipposys:domainfolder] > nt:base
++ * (hipposys:domain) = hipposys:domain
+
+[hipposys:securityfolder] > nt:base
+- hipposys:userspath (string) mandatory
+- hipposys:groupspath (string) mandatory
+- hipposys:rolespath (string) mandatory
+- hipposys:domainspath (string) mandatory
++ hipposys:accessmanager (hipposys:accessmanager) = hipposys:accessmanager
++ * (hipposys:securityprovider) = hipposys:securityprovider
+
+// REPOSITORY: CONFIGURATION ROOT
+
+[hipposys:configuration] > nt:base
++ hippo:workflows (hipposys:workflowfolder) = hipposys:workflowfolder mandatory
++ hippo:documents (hipposys:ocmqueryfolder) = hipposys:ocmqueryfolder mandatory
 + hippo:initialize (hippo:initializefolder) = hippo:initializefolder
-+ hippo:temporary (hippo:temporaryfolder) = hippo:temporaryfolder autocreated
-+ hippo:users (hippo:userfolder) = hippo:userfolder
-+ hippo:roles (hippo:rolefolder) = hippo:rolefolder
-+ hippo:groups (hippo:groupfolder) = hippo:groupfolder
-+ hippo:domains (hippo:domainfolder) = hippo:domainfolder
-+ hippo:derivatives (hippo:derivativesfolder) = hippo:derivativesfolder autocreated mandatory
-+ hippo:frontend (hippo:applicationfolder) = hippo:applicationfolder
-+ hippo:queries (hippo:basequeryfolder) = hippo:queryfolder mandatory autocreated
-+ hippo:security (hippo:securityfolder) = hippo:securityfolder
++ hippo:temporary (hipposys:temporaryfolder) = hipposys:temporaryfolder autocreated
++ hippo:users (hipposys:userfolder) = hipposys:userfolder
++ hippo:roles (hipposys:rolefolder) = hipposys:rolefolder
++ hippo:groups (hipposys:groupfolder) = hipposys:groupfolder
++ hippo:domains (hipposys:domainfolder) = hipposys:domainfolder
++ hippo:derivatives (hipposys:derivativesfolder) = hipposys:derivativesfolder autocreated mandatory
++ hippo:frontend (hipposys:applicationfolder) = hipposys:applicationfolder
++ hippo:queries (hipposys:basequeryfolder) = hipposys:queryfolder mandatory autocreated
++ hippo:security (hipposys:securityfolder) = hipposys:securityfolder

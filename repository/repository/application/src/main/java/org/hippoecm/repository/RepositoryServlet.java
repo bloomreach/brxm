@@ -189,8 +189,10 @@ public class RepositoryServlet extends HttpServlet {
     public void destroy() {
         // close repository
         log.warn("Closing repository.");
-        repository.close();
-        repository = null;
+        if (repository != null) {
+            repository.close();
+            repository = null;
+	}
 
         // done
         log.warn("Repository closed.");

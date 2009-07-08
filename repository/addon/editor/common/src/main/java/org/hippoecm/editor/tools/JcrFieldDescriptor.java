@@ -65,11 +65,11 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     }
 
     public String getType() {
-        return getString(HippoNodeType.HIPPO_TYPE);
+        return getString(HippoNodeType.HIPPOSYSEDIT_TYPE);
     }
 
     public void setType(String type) {
-        setString(HippoNodeType.HIPPO_TYPE, type);
+        setString(HippoNodeType.HIPPOSYSEDIT_TYPE, type);
     }
 
     public boolean isMandatory() {

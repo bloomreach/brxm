@@ -86,7 +86,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     private final static String SVN_ID = "$Id$";
 
     /** Hippo Namespace */
-    public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.3";
+    public final static String NAMESPACE_URI = "http://www.onehippo.org/jcr/hippo/nt/2.0";
 
     /** Hippo Namespace prefix */
     public final static String NAMESPACE_PREFIX = "hippo";
@@ -108,9 +108,10 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
     /** Query for finding initialization items
      * TODO: move this query into the repository as query node
+     * FIXME: this assumes all initailizeitem are also system, but they aren't necessarily
      * */
     public final static String GET_INITIALIZE_ITEMS =
-        "SELECT * FROM hippo:initializeitem " +
+        "SELECT * FROM hipposys:initializeitem " +
         "WHERE (" + HippoNodeType.HIPPO_NAMESPACE + " IS NOT NULL " +
         "OR " + HippoNodeType.HIPPO_NODETYPESRESOURCE + " IS NOT NULL " +
         "OR " + HippoNodeType.HIPPO_NODETYPES + " IS NOT NULL " +
@@ -284,6 +285,10 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             try {
                 log.info("Initializing hippo namespace");
                 initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), NAMESPACE_PREFIX, NAMESPACE_URI);
+                log.info("Initializing hipposys namespace");
+                initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), "hipposys", "http://www.onehippo.org/jcr/hipposys/nt/1.0");
+                log.info("Initializing hipposysedit namespace");
+                initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), "hipposysedit", "http://www.onehippo.org/jcr/hipposysedit/nt/1.0");
             } catch (UnsupportedRepositoryOperationException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
             } catch (AccessDeniedException ex) {
@@ -363,14 +368,22 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             getNode("hippo:configuration/hippo:temporary/hippo:initialize");
                         for(NodeIterator mergeIter = mergeInitializationNode.getNodes(); mergeIter.hasNext(); ) {
                             Node n = mergeIter.nextNode();
-                            if("hippoecm-extension.xml".equals(configurationURL.getFile().contains("/")
-                                           ? configurationURL.getFile().substring(configurationURL.getFile().lastIndexOf("/")+1)
-                                           : configurationURL.getFile())) {
-                                n.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
-                            }
-                            if(!rootSession.getRootNode().hasNode("hippo:configuration/hippo:initialize/" +
-                                                                  n.getName())) {
-                                rootSession.move(n.getPath(), "/hippo:configuration/hippo:initialize/" + n.getName());
+                            if(!rootSession.getRootNode().hasNode("hippo:configuration/hippo:initialize/" + n.getName())) {
+                                Node moved = rootSession.getRootNode().getNode("hippo:configuration/hippo:initialize").addNode(n.getName(), HippoNodeType.NT_INITIALIZEITEM);
+                                if("hippoecm-extension.xml".equals(configurationURL.getFile().contains("/")
+                                               ? configurationURL.getFile().substring(configurationURL.getFile().lastIndexOf("/")+1)
+                                               : configurationURL.getFile())) {
+                                    moved.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
+                                }
+                                for (String propertyName : new String[] { HippoNodeType.HIPPO_SEQUENCE, HippoNodeType.HIPPO_NAMESPACE, HippoNodeType.HIPPO_NODETYPESRESOURCE, HippoNodeType.HIPPO_NODETYPES, HippoNodeType.HIPPO_CONTENTRESOURCE, HippoNodeType.HIPPO_CONTENT, HippoNodeType.HIPPO_CONTENTROOT, HippoNodeType.HIPPO_CONTENTDELETE }) {
+                                    if(n.hasProperty(propertyName)) {
+                                        if(n.getProperty(propertyName).getDefinition().isMultiple()) {
+                                            moved.setProperty(propertyName, n.getProperty(propertyName).getValues());
+                                        } else {
+                                            moved.setProperty(propertyName, n.getProperty(propertyName).getValue());
+                                        }
+                                    }
+                                }
                             } else {
                                 log.info("Node " + n.getName() + " already exists in initialize folder (source: " + configurationURL.toString() + ")");
                             }
@@ -430,9 +443,6 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
-    /**
-     * TODO: Needs refactoring! Move to separate class
-     */
     private synchronized void refresh() {
         try {
             if (jackrabbitRepository == null || rootSession == null || !rootSession.isLive()) {
@@ -443,7 +453,6 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             Workspace workspace = rootSession.getWorkspace();
             NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
 
-            // possibly create a query per type here. That would remove the need for all the if statements
             Query getInitializeItems = rootSession.getWorkspace().getQueryManager().createQuery(GET_INITIALIZE_ITEMS, Query.SQL);
             NodeIterator initializeItems = getInitializeItems.execute().getNodes();
             Node configurationNode = rootSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);

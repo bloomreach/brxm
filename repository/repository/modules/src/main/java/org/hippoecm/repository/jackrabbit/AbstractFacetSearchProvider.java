@@ -108,11 +108,11 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
         searchName = resolveName(HippoNodeType.HIPPO_SEARCH);
         countName = resolveName(HippoNodeType.HIPPO_COUNT);
 
-        querynamePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), querynameName);
-        docbasePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), docbaseName);
-        facetsPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), facetsName);
+        querynamePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETBASESEARCH), querynameName);
+        docbasePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSEARCH), docbaseName);
+        facetsPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSEARCH), facetsName);
         searchPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), searchName);
-        countPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), countName);
+        countPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETBASESEARCH), countName);
     }
 
     @Override

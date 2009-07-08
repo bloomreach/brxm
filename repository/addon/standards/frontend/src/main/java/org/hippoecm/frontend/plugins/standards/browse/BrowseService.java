@@ -204,8 +204,7 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
             try {
                 Node node = nodeModel.getNode();
                 if (node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory")
-                        || node.isNodeType("hippo:namespace") || node.isNodeType(HippoNodeType.NT_FACETSEARCH)
-                        || node.isNodeType(HippoNodeType.NT_FACETSUBSEARCH)) {
+                        || node.isNodeType("hipposysedit:namespace") || node.isNodeType(HippoNodeType.NT_FACETBASESEARCH)) {
                     return true;
                 }
             } catch (RepositoryException ex) {

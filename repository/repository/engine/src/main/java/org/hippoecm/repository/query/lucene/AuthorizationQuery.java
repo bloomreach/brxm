@@ -233,7 +233,7 @@ public class AuthorizationQuery {
                 } else if ("jcr:mixinTypes".equals(nodeNameString)) {
                     return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule);
                 } else {
-                    log.error("Ignoring facetrule with facet '" + nodeNameString + "'. hippo:facet must be either 'nodetype', 'jcr:primaryType' " + "or 'jcr:mixinTypes' when hippo:type = Name.");
+                    log.error("Ignoring facetrule with facet '" + nodeNameString + "'. hippo:facet must be either 'nodetype', 'jcr:primaryType' " + "or 'jcr:mixinTypes' when hipposys:type = Name.");
                 }
                 break;
         }

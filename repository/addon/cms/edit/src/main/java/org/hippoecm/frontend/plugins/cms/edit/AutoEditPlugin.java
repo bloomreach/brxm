@@ -57,7 +57,7 @@ public class AutoEditPlugin implements IPlugin {
                         if (node == null) {
                             continue;
                         }
-                        if (!node.getName().equals("hippo:prototype")) {
+                        if (!node.getName().equals("hipposysedit:prototype")) {
                             JcrNodeModel model = new JcrNodeModel(node);
                             try {
                                 IEditor editor = editService.getEditor(model);

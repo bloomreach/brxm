@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007 Hippo
+  Copyright 2007-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -14,23 +14,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-  xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
-  xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-  xmlns:hippo="http://www.hippoecm.org/nt/1.3" xmlns:fn="http://www.w3.org/2005/xpath-functions"
-  sv:name="hippo:initialize">
+<sv:node xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
+         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         sv:name="hippo:initialize">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
-
   <!-- defaultcontent namespace -->
   <sv:node sv:name="defaultcontent">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3000</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
       <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.4</sv:value>
@@ -38,15 +31,14 @@
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>defaultcontent.cnd</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3000.0</sv:value>
+    </sv:property>
   </sv:node>
-
   <!-- defaultcontent Types -->
   <sv:node sv:name="defaultcontent-types">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3001</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>defaultcontent-namespace.xml</sv:value>
@@ -54,8 +46,10 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3001.0</sv:value>
+    </sv:property>
   </sv:node>
-
   <!-- document type -->
   <sv:node sv:name="defaultcontent-type-document">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -157,24 +151,20 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3004</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>defaultcontent-data.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3004.0</sv:value>
+    </sv:property>
   </sv:node>
-
   <!-- defaultcontent live -->
   <sv:node sv:name="live">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3005</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>defaultcontent-node-live.xml</sv:value>
@@ -182,16 +172,14 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
     </sv:property>
-
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3005.0</sv:value>
+    </sv:property>
   </sv:node>
-
   <!-- defaultcontent preview -->
   <sv:node sv:name="preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3006</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>defaultcontent-node-preview.xml</sv:value>
@@ -199,15 +187,14 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3006.0</sv:value>
+    </sv:property>
   </sv:node>
-  
   <!-- defaultcontent image example -->
   <sv:node sv:name="image_example">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3007</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>defaultcontent-image-example.xml</sv:value>
@@ -215,15 +202,14 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/content/gallery</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3007.0</sv:value>
+    </sv:property>
   </sv:node>
-  
   <!-- defaultcontent asset example -->
   <sv:node sv:name="asset_example">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3008</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>defaultcontent-asset-example.xml</sv:value>
@@ -231,6 +217,9 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/content/assets</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3008.0</sv:value>
+    </sv:property>
   </sv:node>
-
 </sv:node>
+

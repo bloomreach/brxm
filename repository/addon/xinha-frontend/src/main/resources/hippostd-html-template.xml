@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007 Hippo
+  Copyright 2007-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -14,9 +14,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="html">
+<sv:node xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.3"
+         xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
+         xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4"
+         xmlns:hipposysedit="http://www.onehippo.org/jcr/hipposysedit/nt/1.0"
+         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         sv:name="html">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippo:templatetype</sv:value>
+    <sv:value>hipposysedit:templatetype</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
     <sv:value>hippo:translated</sv:value>
@@ -43,116 +48,88 @@
       <sv:value>Uitgebreide Editor</sv:value>
     </sv:property>
   </sv:node>
-
-  <sv:node sv:name="hippo:nodetype">
+  <sv:node sv:name="hipposysedit:nodetype">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
+      <sv:value>hipposysedit:handle</sv:value>
     </sv:property>
-    <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:nodetype</sv:value>
+        <sv:value>hipposysedit:nodetype</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:remodel</sv:value>
+        <sv:value>hipposysedit:remodel</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:uri" sv:type="String">
+      <sv:property sv:name="hipposysedit:uri" sv:type="String">
         <sv:value>http://www.hippoecm.org/hippostd/nt/1.3</sv:value>
       </sv:property>
-      <sv:node sv:name="hippo:field">
+      <sv:node sv:name="hipposysedit:field">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:field</sv:value>
+          <sv:value>hipposysedit:field</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+          <sv:value>true</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:name" sv:type="String">
           <sv:value>content</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>String</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:property sv:name="hipposysedit:path" sv:type="String">
           <sv:value>hippostd:content</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
+        <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:primary" sv:type="Boolean">
-          <sv:value>true</sv:value>
+        <sv:property sv:name="hipposysedit:type" sv:type="String">
+          <sv:value>String</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="hippo:field">
+      <sv:node sv:name="hipposysedit:field">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:field</sv:value>
+          <sv:value>hipposysedit:field</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:name" sv:type="String">
+        <sv:property sv:name="hipposysedit:name" sv:type="String">
           <sv:value>links</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>hippo:facetselect</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:path" sv:type="String">
+        <sv:property sv:name="hipposysedit:path" sv:type="String">
           <sv:value>*</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:type" sv:type="String">
+          <sv:value>hippo:facetselect</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>
-
-  <sv:node sv:name="hippo:prototype">
+  <sv:node sv:name="hipposysedit:template">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
+      <sv:value>hipposysedit:handle</sv:value>
     </sv:property>
-    <sv:node sv:name="hippo:prototype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:html</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:content" sv:type="String">
-        <sv:value/>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="hippo:template">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippo:template">
+    <sv:node sv:name="hipposysedit:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugincluster</sv:value>
-      </sv:property>
-      <sv:property sv:name="frontend:services" sv:type="String">
-        <sv:value>wicket.id</sv:value>
-      </sv:property>
-      <sv:property sv:name="frontend:references" sv:type="String">
-        <sv:value>wicket.model</sv:value>
-        <sv:value>engine</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:properties" sv:type="String">
         <sv:value>mode</sv:value>
         <sv:value>width</sv:value>
         <sv:value>height</sv:value>
       </sv:property>
+      <sv:property sv:name="frontend:references" sv:type="String">
+        <sv:value>wicket.model</sv:value>
+        <sv:value>engine</sv:value>
+      </sv:property>
+      <sv:property sv:name="frontend:services" sv:type="String">
+        <sv:value>wicket.id</sv:value>
+      </sv:property>
       <sv:node sv:name="root">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.xinha.XinhaNodePlugin</sv:value>
+        <sv:property sv:name="AutoResize" sv:type="String">
+          <sv:value>minHeight=250</sv:value>
         </sv:property>
-        <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${wicket.id}</sv:value>
+        <sv:property sv:name="AutoSave" sv:type="String">
+          <sv:value>timeoutLength=1500</sv:value>
         </sv:property>
-        <sv:property sv:name="wicket.model" sv:type="String">
-          <sv:value>${wicket.model}</sv:value>
-        </sv:property>
-        <sv:property sv:name="mode" sv:type="String">
-          <sv:value>${mode}</sv:value>
-        </sv:property>
-        <sv:property sv:name="engine" sv:type="String">
-          <sv:value>${engine}</sv:value>
-        </sv:property>
-        <sv:property sv:name="width" sv:type="String">
-          <sv:value>${width}</sv:value>
-        </sv:property>
-        <sv:property sv:name="height" sv:type="String">
-          <sv:value>${height}</sv:value>
+        <sv:property sv:name="Xinha.config.css" sv:type="String">
+          <sv:value>../../skin/xinhaInternal.css</sv:value>
         </sv:property>
         <sv:property sv:name="Xinha.config.toolbar" sv:type="String">
           <sv:value>fullscreen</sv:value>
@@ -167,12 +144,6 @@
           <sv:value>insertimage</sv:value>
           <sv:value>inserttable</sv:value>
         </sv:property>
-        <sv:property sv:name="Xinha.skin" sv:type="String">
-          <sv:value>hippo-lite</sv:value>
-        </sv:property>
-        <sv:property sv:name="Xinha.config.css" sv:type="String">
-          <sv:value>../../skin/xinhaInternal.css</sv:value>
-        </sv:property>
         <sv:property sv:name="Xinha.plugins" sv:type="String">
           <sv:value>AutoResize</sv:value>
           <sv:value>AutoSave</sv:value>
@@ -181,11 +152,29 @@
           <sv:value>InsertImage</sv:value>
           <sv:value>FullscreenCompatible</sv:value>
         </sv:property>
-        <sv:property sv:name="AutoSave" sv:type="String">
-          <sv:value>timeoutLength=1500</sv:value>
+        <sv:property sv:name="Xinha.skin" sv:type="String">
+          <sv:value>hippo-lite</sv:value>
         </sv:property>
-        <sv:property sv:name="AutoResize" sv:type="String">
-          <sv:value>minHeight=250</sv:value>
+        <sv:property sv:name="engine" sv:type="String">
+          <sv:value>${engine}</sv:value>
+        </sv:property>
+        <sv:property sv:name="height" sv:type="String">
+          <sv:value>${height}</sv:value>
+        </sv:property>
+        <sv:property sv:name="mode" sv:type="String">
+          <sv:value>${mode}</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.xinha.XinhaNodePlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${wicket.id}</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>${wicket.model}</sv:value>
+        </sv:property>
+        <sv:property sv:name="width" sv:type="String">
+          <sv:value>${width}</sv:value>
         </sv:property>
         <sv:node sv:name="Xinha.plugins.InsertImage">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -214,5 +203,18 @@
       </sv:node>
     </sv:node>
   </sv:node>
-
+  <sv:node sv:name="hipposysedit:prototype">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposysedit:handle</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposysedit:prototype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:html</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:content" sv:type="String">
+        <sv:value></sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
 </sv:node>
+

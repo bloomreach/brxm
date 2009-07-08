@@ -1,44 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007 Hippo
-  
+  Copyright 2007-2009 Hippo
+
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS"
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="cms-tree-views" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4"
+         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         sv:name="cms-tree-views">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:clusterfolder</sv:value>
   </sv:property>
-
   <sv:node sv:name="documents">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
-    </sv:property>
-
-    <sv:property sv:name="frontend:services" sv:type="String">
-      <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:references" sv:type="String">
       <sv:value>wicket.model</sv:value>
       <sv:value>browser.id</sv:value>
       <sv:value>editor.id</sv:value>
     </sv:property>
-
+    <sv:property sv:name="frontend:services" sv:type="String">
+      <sv:value>wicket.id</sv:value>
+    </sv:property>
     <sv:node sv:name="documentsBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
+      <sv:property sv:name="extension.addfolder" sv:type="String">
+        <sv:value>${cluster.id}.addfolder</sv:value>
+      </sv:property>
+      <sv:property sv:name="nodename.max.length" sv:type="Long">
+        <sv:value>23</sv:value>
+      </sv:property>
+      <sv:property sv:name="path" sv:type="String">
+        <sv:value>/content/documents</sv:value>
+      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="rootless" sv:type="String">
+        <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${wicket.id}</sv:value>
@@ -46,27 +57,9 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${wicket.model}</sv:value>
       </sv:property>
-      <sv:property sv:name="path" sv:type="String">
-        <sv:value>/content/documents</sv:value>
-      </sv:property>
-      <sv:property sv:name="rootless" sv:type="String">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="nodename.max.length" sv:type="Long">
-        <sv:value>23</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.addfolder" sv:type="String">
-        <sv:value>${cluster.id}.addfolder</sv:value>
-      </sv:property>
       <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="workflow.categories" sv:type="String">
-          <sv:value>threepane</sv:value>
         </sv:property>
         <sv:property sv:name="browser.id" sv:type="String">
           <sv:value>${browser.id}</sv:value>
@@ -74,12 +67,19 @@
         <sv:property sv:name="editor.id" sv:type="String">
           <sv:value>${editor.id}</sv:value>
         </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="workflow.categories" sv:type="String">
+          <sv:value>threepane</sv:value>
+        </sv:property>
       </sv:node>
       <sv:node sv:name="filters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
-        <!-- Normally in the quickstart the attic resides in /content/attic,
+
+<!-- Normally in the quickstart the attic resides in /content/attic,
              which isn't accessible from the CMS.  In case you want to start your
              documents browser from /content, you need this.  In addition, you
              need this entry if you want to move locate the attic in
@@ -96,6 +96,7 @@
           </sv:property>
         </sv:node>
         -->
+
         <sv:node sv:name="showFolderType">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
@@ -142,10 +143,18 @@
         </sv:node>
       </sv:node>
     </sv:node>
-
     <sv:node sv:name="addfolderPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="browser.id" sv:type="String">
+        <sv:value>${browser.id}</sv:value>
+      </sv:property>
+      <sv:property sv:name="editor.id" sv:type="String">
+        <sv:value>${editor.id}</sv:value>
+      </sv:property>
+      <sv:property sv:name="option.location" sv:type="String">
+        <sv:value>/content/documents</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin</sv:value>
@@ -159,39 +168,38 @@
       <sv:property sv:name="workflow.categories" sv:type="String">
         <sv:value>threepane</sv:value>
       </sv:property>
-      <sv:property sv:name="option.location" sv:type="String">
-        <sv:value>/content/documents</sv:value>
-      </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
     </sv:node>
-
   </sv:node>
-
   <sv:node sv:name="images">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
-    </sv:property>
-    
-    <sv:property sv:name="frontend:services" sv:type="String">
-      <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:references" sv:type="String">
       <sv:value>wicket.model</sv:value>
       <sv:value>browser.id</sv:value>
       <sv:value>editor.id</sv:value>
     </sv:property>
-
+    <sv:property sv:name="frontend:services" sv:type="String">
+      <sv:value>wicket.id</sv:value>
+    </sv:property>
     <sv:node sv:name="imagesBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
+      <sv:property sv:name="extension.addfolder" sv:type="String">
+        <sv:value>${cluster.id}.addfolder</sv:value>
+      </sv:property>
+      <sv:property sv:name="nodename.max.length" sv:type="Long">
+        <sv:value>23</sv:value>
+      </sv:property>
+      <sv:property sv:name="path" sv:type="String">
+        <sv:value>/content/gallery</sv:value>
+      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="rootless" sv:type="String">
+        <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${wicket.id}</sv:value>
@@ -199,27 +207,9 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${wicket.model}</sv:value>
       </sv:property>
-      <sv:property sv:name="path" sv:type="String">
-        <sv:value>/content/gallery</sv:value>
-      </sv:property>
-      <sv:property sv:name="rootless" sv:type="String">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="nodename.max.length" sv:type="Long">
-        <sv:value>23</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.addfolder" sv:type="String">
-        <sv:value>${cluster.id}.addfolder</sv:value>
-      </sv:property>
       <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="workflow.categories" sv:type="String">
-          <sv:value>threepane</sv:value>
         </sv:property>
         <sv:property sv:name="browser.id" sv:type="String">
           <sv:value>${browser.id}</sv:value>
@@ -227,6 +217,12 @@
         <sv:property sv:name="editor.id" sv:type="String">
           <sv:value>${editor.id}</sv:value>
         </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="workflow.categories" sv:type="String">
+          <sv:value>threepane</sv:value>
+        </sv:property>
       </sv:node>
       <sv:node sv:name="filters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -300,10 +296,18 @@
         </sv:node>
       </sv:node>
     </sv:node>
-
     <sv:node sv:name="addfolderPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="browser.id" sv:type="String">
+        <sv:value>${browser.id}</sv:value>
+      </sv:property>
+      <sv:property sv:name="editor.id" sv:type="String">
+        <sv:value>${editor.id}</sv:value>
+      </sv:property>
+      <sv:property sv:name="option.location" sv:type="String">
+        <sv:value>/content/gallery</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin</sv:value>
@@ -317,57 +321,44 @@
       <sv:property sv:name="workflow.categories" sv:type="String">
         <sv:value>threepane</sv:value>
       </sv:property>
-      <sv:property sv:name="option.location" sv:type="String">
-        <sv:value>/content/gallery</sv:value>
-      </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
     </sv:node>
-
   </sv:node>
-
   <sv:node sv:name="assets">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
-    </sv:property>
-    
-    <sv:property sv:name="frontend:services" sv:type="String">
-      <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:references" sv:type="String">
       <sv:value>wicket.model</sv:value>
       <sv:value>browser.id</sv:value>
       <sv:value>editor.id</sv:value>
     </sv:property>
-    
+    <sv:property sv:name="frontend:services" sv:type="String">
+      <sv:value>wicket.id</sv:value>
+    </sv:property>
     <sv:node sv:name="filesBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
+      <sv:property sv:name="extension.addfolder" sv:type="String">
+        <sv:value>${cluster.id}.addfolder</sv:value>
+      </sv:property>
+      <sv:property sv:name="nodename.max.length" sv:type="Long">
+        <sv:value>23</sv:value>
+      </sv:property>
+      <sv:property sv:name="path" sv:type="String">
+        <sv:value>/content/assets</sv:value>
+      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="rootless" sv:type="String">
+        <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${wicket.model}</sv:value>
-      </sv:property>
-      <sv:property sv:name="path" sv:type="String">
-        <sv:value>/content/assets</sv:value>
-      </sv:property>
-      <sv:property sv:name="rootless" sv:type="String">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="nodename.max.length" sv:type="Long">
-        <sv:value>23</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.addfolder" sv:type="String">
-        <sv:value>${cluster.id}.addfolder</sv:value>
       </sv:property>
       <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -452,10 +443,18 @@
         </sv:node>
       </sv:node>
     </sv:node>
-
     <sv:node sv:name="addfolderPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="browser.id" sv:type="String">
+        <sv:value>${browser.id}</sv:value>
+      </sv:property>
+      <sv:property sv:name="editor.id" sv:type="String">
+        <sv:value>${editor.id}</sv:value>
+      </sv:property>
+      <sv:property sv:name="option.location" sv:type="String">
+        <sv:value>/content/assets</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin</sv:value>
@@ -469,39 +468,38 @@
       <sv:property sv:name="workflow.categories" sv:type="String">
         <sv:value>threepane</sv:value>
       </sv:property>
-      <sv:property sv:name="option.location" sv:type="String">
-        <sv:value>/content/assets</sv:value>
-      </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
     </sv:node>
-
   </sv:node>
-
   <sv:node sv:name="configuration">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
-    </sv:property>
-    
-    <sv:property sv:name="frontend:services" sv:type="String">
-      <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:references" sv:type="String">
       <sv:value>wicket.model</sv:value>
       <sv:value>browser.id</sv:value>
       <sv:value>editor.id</sv:value>
     </sv:property>
-
+    <sv:property sv:name="frontend:services" sv:type="String">
+      <sv:value>wicket.id</sv:value>
+    </sv:property>
     <sv:node sv:name="configurationBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
+      <sv:property sv:name="extension.addfolder" sv:type="String">
+        <sv:value>${cluster.id}.addfolder</sv:value>
+      </sv:property>
+      <sv:property sv:name="nodename.max.length" sv:type="Long">
+        <sv:value>23</sv:value>
+      </sv:property>
+      <sv:property sv:name="path" sv:type="String">
+        <sv:value>/hippo:namespaces</sv:value>
+      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="rootless" sv:type="String">
+        <sv:value>false</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${wicket.id}</sv:value>
@@ -509,33 +507,21 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${wicket.model}</sv:value>
       </sv:property>
-      <sv:property sv:name="path" sv:type="String">
-        <sv:value>/hippo:namespaces</sv:value>
-      </sv:property>
-      <sv:property sv:name="rootless" sv:type="String">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="nodename.max.length" sv:type="Long">
-        <sv:value>23</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.addfolder" sv:type="String">
-        <sv:value>${cluster.id}.addfolder</sv:value>
-      </sv:property>
       <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="browser.id" sv:type="String">
+          <sv:value>${browser.id}</sv:value>
+        </sv:property>
+        <sv:property sv:name="editor.id" sv:type="String">
+          <sv:value>${editor.id}</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="workflow.categories" sv:type="String">
           <sv:value>editor</sv:value>
-        </sv:property>
-        <sv:property sv:name="browser.id" sv:type="String">
-          <sv:value>${browser.id}</sv:value>
-        </sv:property>
-        <sv:property sv:name="editor.id" sv:type="String">
-          <sv:value>${editor.id}</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filters">
@@ -546,80 +532,80 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces</sv:value>
-          </sv:property>
           <sv:property sv:name="display" sv:type="Boolean">
             <sv:value>true</sv:value>
           </sv:property>
           <sv:property sv:name="name" sv:type="String">
             <sv:value>document types</sv:value>
           </sv:property>
+          <sv:property sv:name="path" sv:type="String">
+            <sv:value>/hippo:namespaces</sv:value>
+          </sv:property>
         </sv:node>
         <sv:node sv:name="hideChildrenOfNamespace">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-          <sv:property sv:name="parent" sv:type="String">
-            <sv:value>hippo:namespace</sv:value>
-          </sv:property>
           <sv:property sv:name="display" sv:type="Boolean">
             <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="parent" sv:type="String">
+            <sv:value>hipposysedit:namespace</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hideHippoNamespace">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/hippo</sv:value>
-          </sv:property>
           <sv:property sv:name="display" sv:type="Boolean">
             <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="path" sv:type="String">
+            <sv:value>/hippo:namespaces/hippo</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hideGalleryNamespace">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/hippogallery</sv:value>
-          </sv:property>
           <sv:property sv:name="display" sv:type="Boolean">
             <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="path" sv:type="String">
+            <sv:value>/hippo:namespaces/hippogallery</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hideHippostdNamespace">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/hippostd</sv:value>
-          </sv:property>
           <sv:property sv:name="display" sv:type="Boolean">
             <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="path" sv:type="String">
+            <sv:value>/hippo:namespaces/hippostd</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hideSystemNamespace">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/system</sv:value>
-          </sv:property>
           <sv:property sv:name="display" sv:type="Boolean">
             <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="path" sv:type="String">
+            <sv:value>/hippo:namespaces/system</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hideFrontendNamespace">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/frontend</sv:value>
-          </sv:property>
           <sv:property sv:name="display" sv:type="Boolean">
             <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="path" sv:type="String">
+            <sv:value>/hippo:namespaces/frontend</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="showOtherNamespaces">
@@ -627,7 +613,7 @@
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
           <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:namespace</sv:value>
+            <sv:value>hipposysedit:namespace</sv:value>
           </sv:property>
           <sv:property sv:name="display" sv:type="Boolean">
             <sv:value>true</sv:value>
@@ -657,8 +643,6 @@
         </sv:node>
       </sv:node>
     </sv:node>
-
-
   </sv:node>
-
 </sv:node>
+

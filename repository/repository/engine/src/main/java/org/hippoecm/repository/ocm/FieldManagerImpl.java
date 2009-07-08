@@ -1004,7 +1004,7 @@ class FieldManagerImpl extends AbstractFieldManager {
                 Object id;
                 String classname = value.getClass().getName();
                 Node nodetypeNode = types.getNode(classname);
-                String nodetype = nodetypeNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
+                String nodetype = nodetypeNode.getProperty(HippoNodeType.HIPPOSYS_NODETYPE).getString();
                 if (value instanceof Document && ((Document) value).isCloned() != null) {
                     HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                     child = (Node) ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getItem(node, field, false, last);

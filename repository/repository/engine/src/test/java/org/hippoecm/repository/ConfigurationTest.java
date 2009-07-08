@@ -47,12 +47,16 @@ public class ConfigurationTest extends TestCase {
     @Test
     public void testConfiguration() throws Exception {
         Node root = session.getRootNode();
-        Node node = root.addNode("hippo:configuration/hippo:initialize/testnode", "hippo:initializeitem");
+        if (!root.hasNode("test")) {
+            root.addNode("test");
+            session.save();
+        }
+        Node node = root.addNode("hippo:configuration/hippo:initialize/testnode", "hipposys:initializeitem");
         node.setProperty("hippo:content", "<sv:node xmlns:sv=\"http://www.jcp.org/jcr/sv/1.0\" xmlns:nt=\"http://www.jcp.org/jcr/nt/1.0\" xmlns:jcr=\"http://www.jcp.org/jcr/1.0\" sv:name=\"testnode\"><sv:property sv:name=\"jcr:primaryType\" sv:type=\"Name\"><sv:value>nt:unstructured</sv:value></sv:property></sv:node>");
         node.setProperty("hippo:contentroot", "/test");
         session.save();
 
-        Thread.sleep(3000);
+        Thread.sleep(10000);
         session.refresh(false);
 
         assertTrue(root.getNode("test").hasNode("testnode"));

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007 Hippo
+  Copyright 2007-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -14,11 +14,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal" xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.3" xmlns:fn="http://www.w3.org/2005/xpath-functions" sv:name="hippo:templates">
+<sv:node xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.3"
+         xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
+         xmlns:hipposys="http://www.onehippo.org/jcr/hipposys/nt/1.0"
+         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         sv:name="hippo:templates">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippo:queryfolder</sv:value>
+    <sv:value>hipposys:queryfolder</sv:value>
   </sv:property>
-
   <sv:node sv:name="new-document">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
@@ -27,14 +30,14 @@
       <sv:value>hippo:translated</sv:value>
       <sv:value>hippostd:translated</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>//element(*,hippo:namespacefolder)/element(*,mix:referenceable)/element(*,hippo:templatetype)/hippo:prototype/element(hippo:prototype,hippo:document)</sv:value>
+    <sv:property sv:name="hippostd:icon" sv:type="String">
+      <sv:value>adddocument_ico</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
     </sv:property>
-    <sv:property sv:name="hippostd:icon" sv:type="String">
-      <sv:value>adddocument_ico</sv:value>
+    <sv:property sv:name="jcr:statement" sv:type="String">
+      <sv:value>//element(*,hipposysedit:namespacefolder)/element(*,mix:referenceable)/element(*,hipposysedit:templatetype)/hippo:prototype/element(hippo:prototype,hippo:document)</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -46,7 +49,7 @@
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>new document</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:workflow" sv:type="String">
+      <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
       </sv:property>
     </sv:node>
@@ -60,28 +63,24 @@
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>nieuw document</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:workflow" sv:type="String">
+      <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="simple">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:implementation</sv:value>
       <sv:value>hippo:translated</sv:value>
+      <sv:value>hipposys:implementation</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/node()</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:language" sv:type="String">
-      <sv:value>xpath</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
+    <sv:property sv:name="hipposys:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.impl.query.DirectPath</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:icon" sv:type="String">
+      <sv:value>adddocument_ico</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:modify" sv:type="String">
       <sv:value>./_name</sv:value>
@@ -89,8 +88,11 @@
       <sv:value>./_node/_name</sv:value>
       <sv:value>$name</sv:value>
     </sv:property>
-    <sv:property sv:name="hippostd:icon" sv:type="String">
-      <sv:value>adddocument_ico</sv:value>
+    <sv:property sv:name="jcr:language" sv:type="String">
+      <sv:value>xpath</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:statement" sv:type="String">
+      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/node()</sv:value>
     </sv:property>
     <sv:node sv:name="hippostd:templates">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -103,7 +105,9 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:hardhandle</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"> </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>5787e06d-345a-4879-878b-84fa3ac830c1</sv:value>
+        </sv:property>
         <sv:node sv:name="new-document">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippostd:document</sv:value>
@@ -111,18 +115,25 @@
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:paths" sv:type="String"> </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>c5fcf887-e0f2-4d07-813f-30606b3415e8</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+            <sv:value>hippo:templates/simple/hippostd:templates/new-document</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:content" sv:type="String">
+            <sv:value>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:language" sv:type="String">
+            <sv:value>en</sv:value>
+          </sv:property>
           <sv:property sv:name="hippostd:state" sv:type="String">
             <sv:value>unpublished</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:stateSummary" sv:type="String">
             <sv:value>new</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:language" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -137,7 +148,7 @@
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>simple</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:workflow" sv:type="String">
+      <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
       </sv:property>
     </sv:node>
@@ -151,36 +162,35 @@
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>simpel</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:workflow" sv:type="String">
+      <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="new-folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:implementation</sv:value>
       <sv:value>hippo:translated</sv:value>
+      <sv:value>hipposys:implementation</sv:value>
       <sv:value>hippostd:translated</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-folder/hippostd:templates/node()</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:language" sv:type="String">
-      <sv:value>xpath</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
+    <sv:property sv:name="hipposys:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.impl.query.DirectPath</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:icon" sv:type="String">
+      <sv:value>addfolder_ico</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:modify" sv:type="String">
       <sv:value>./_name</sv:value>
       <sv:value>$name</sv:value>
     </sv:property>
-    <sv:property sv:name="hippostd:icon" sv:type="String">
-      <sv:value>addfolder_ico</sv:value>
+    <sv:property sv:name="jcr:language" sv:type="String">
+      <sv:value>xpath</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:statement" sv:type="String">
+      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-folder/hippostd:templates/node()</sv:value>
     </sv:property>
     <sv:node sv:name="hippostd:templates">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -193,7 +203,13 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"> </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>36414d02-4f0f-475b-8443-dd6f450a6475</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+        </sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
           <sv:value>new-folder</sv:value>
           <sv:value>new-document</sv:value>
@@ -206,7 +222,13 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"> </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>c0591b7c-72cd-45ef-930a-abc70390a7cd</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+        </sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
           <sv:value>new-folder</sv:value>
           <sv:value>new-document</sv:value>
@@ -223,7 +245,7 @@
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>new folder</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:workflow" sv:type="String">
+      <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
       </sv:property>
     </sv:node>
@@ -237,7 +259,7 @@
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>nieuwe map</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:workflow" sv:type="String">
+      <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
       </sv:property>
     </sv:node>
@@ -316,3 +338,4 @@
 -->
 
 </sv:node>
+

@@ -35,6 +35,8 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
 
+// FIXME: this class has prior knowledge of the hippolog namespace
+
 public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -81,26 +83,26 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
 
                 Node logNode = logFolder.addNode(String.valueOf(timestamp), "hippolog:item");
 
-                logNode.setProperty("hippo:timestamp", timestamp);
-                logNode.setProperty("hippo:eventUser", who == null ? "null" : who);
-                logNode.setProperty("hippo:eventClass", className == null ? "null" : className);
-                logNode.setProperty("hippo:eventMethod", methodName == null ? "null" : methodName);
+                logNode.setProperty("hippolog:timestamp", timestamp);
+                logNode.setProperty("hippolog:eventUser", who == null ? "null" : who);
+                logNode.setProperty("hippolog:eventClass", className == null ? "null" : className);
+                logNode.setProperty("hippolog:eventMethod", methodName == null ? "null" : methodName);
 
                 if (args != null) {
                     String[] arguments = new String[args.length];
                     for (int i = 0; i < args.length; i++) {
                         arguments[i] = args[i].toString();
                     }
-                    logNode.setProperty("hippo:eventArguments", arguments);
+                    logNode.setProperty("hippolog:eventArguments", arguments);
                 }
 
                 if (returnObject != null) {
-                    logNode.setProperty("hippo:eventReturnType", returnObject.getClass().getName());
-                    logNode.setProperty("hippo:eventReturnValue", returnObject.toString());
+                    logNode.setProperty("hippolog:eventReturnType", returnObject.getClass().getName());
+                    logNode.setProperty("hippolog:eventReturnValue", returnObject.toString());
                 }
 
                 if (documentPath != null) {
-                    logNode.setProperty("hippo:eventDocument", documentPath);
+                    logNode.setProperty("hippolog:eventDocument", documentPath);
                 }
 
                 logFolder.save();
@@ -126,10 +128,10 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
 
                 Node logNode = logFolder.addNode(String.valueOf(timestamp), "hippolog:item");
 
-                logNode.setProperty("hippo:timestamp", timestamp);
-                logNode.setProperty("hippo:eventUser", who == null ? "null" : who);
-                logNode.setProperty("hippo:eventClass", className == null ? "null" : className);
-                logNode.setProperty("hippo:eventMethod", methodName == null ? "null" : methodName);
+                logNode.setProperty("hippolog:timestamp", timestamp);
+                logNode.setProperty("hippolog:eventUser", who == null ? "null" : who);
+                logNode.setProperty("hippolog:eventClass", className == null ? "null" : className);
+                logNode.setProperty("hippolog:eventMethod", methodName == null ? "null" : methodName);
 
                 logFolder.save();
 

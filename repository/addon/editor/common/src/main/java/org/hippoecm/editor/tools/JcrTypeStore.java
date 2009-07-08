@@ -175,8 +175,8 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         if (!session.itemExists(path) || !session.getItem(path).isNode()) {
             return null;
         }
-        NodeIterator iter = ((Node) session.getItem(path)).getNode(HippoNodeType.HIPPO_NODETYPE).getNodes(
-                HippoNodeType.HIPPO_NODETYPE);
+        NodeIterator iter = ((Node) session.getItem(path)).getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(
+                HippoNodeType.HIPPOSYSEDIT_NODETYPE);
 
         Node current = null;
         while (iter.hasNext()) {
@@ -228,8 +228,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
                 Node typeNode = iter.nextNode();
 
                 Node draft = null, current = null;
-                NodeIterator versions = typeNode.getNodes(HippoNodeType.HIPPO_NODETYPE + "/"
-                        + HippoNodeType.HIPPO_NODETYPE);
+                NodeIterator versions = typeNode.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE);
                 while (versions.hasNext()) {
                     Node node = versions.nextNode();
                     if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {

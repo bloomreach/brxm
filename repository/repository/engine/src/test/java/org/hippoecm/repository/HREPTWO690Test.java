@@ -73,6 +73,6 @@ public class HREPTWO690Test extends TestCase {
         assertNotNull(result);
         assertTrue(result.isNodeType("hippo:testmixin"));
         assertFalse(result.isNodeType("hippo:harddocument"));
-        assertTrue(result.isNodeType("hippo:softdocument"));
+        assertTrue(result.isNodeType("hipposys:softdocument"));
     }
 }

@@ -43,11 +43,11 @@ public class Group implements Comparable<Group>, IClusterable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(Group.class);
 
-    private final static String PROP_DESCRIPTION = "hippo:description";
-    private final static String QUERY_ALL_LOCAL = "select * from hippo:group where hippo:securityprovider='internal'";
-    private final static String QUERY_ALL = "select * from hippo:group";
-    private final static String QUERY_ALL_ROLES = "select * from hippo:role";
-    private final static String QUERY_GROUP_EXISTS = "SELECT * FROM hippo:group WHERE fn:name()='{}'";
+    private final static String PROP_DESCRIPTION = "hipposys:description";
+    private final static String QUERY_ALL_LOCAL = "select * from hipposys:group where hipposys:securityprovider='internal'";
+    private final static String QUERY_ALL = "select * from hipposys:group";
+    private final static String QUERY_ALL_ROLES = "select * from hipposys:role";
+    private final static String QUERY_GROUP_EXISTS = "SELECT * FROM hipposys:group WHERE fn:name()='{}'";
 
         
     private String path;
@@ -260,7 +260,7 @@ public class Group implements Comparable<Group>, IClusterable {
             setOrRemoveStringProperty(node, PROP_DESCRIPTION, getDescription());
             node.getSession().save();
         } else {
-            throw new RepositoryException("Only hippo:group's can be edited.");
+            throw new RepositoryException("Only hipposys:group's can be edited.");
         }
     }
 

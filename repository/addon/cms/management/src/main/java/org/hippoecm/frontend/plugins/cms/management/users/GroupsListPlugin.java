@@ -70,7 +70,7 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
 
     @Override
     protected List<IModel> getRows() {
-        String queryString = "//element(*, hippo:group)[jcr:contains(@hippo:members, '" + getUsername() + "')]";
+        String queryString = "//element(*, hipposys:group)[jcr:contains(@hipposys:members, '" + getUsername() + "')]";
         String queryType = "xpath";
         final List<IModel> list = new ArrayList<IModel>();
         try {
@@ -145,7 +145,7 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
                 if (myUsername != null) {
                     Node groupNode = droppedGroup.getNode();
                     try {
-                        addMultiValueProperty(groupNode, "hippo:members", myUsername);
+                        addMultiValueProperty(groupNode, "hipposys:members", myUsername);
                         javax.jcr.Session session = groupNode.getSession();
                         if (session.hasPendingChanges()) {
                             session.save();
@@ -153,7 +153,7 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
                         }
                     } catch (RepositoryException e) {
                         log.error("An error occuirred while trying to add user[" + myUsername
-                                + "] to hippo:members property", e);
+                                + "] to hipposys:members property", e);
                     }
                 }
             }
