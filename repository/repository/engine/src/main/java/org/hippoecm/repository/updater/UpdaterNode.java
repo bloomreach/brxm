@@ -64,7 +64,7 @@ import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 
-final class UpdaterNode extends UpdaterItem implements Node {
+final public class UpdaterNode extends UpdaterItem implements Node {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -168,7 +168,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
 
         if (origin != null) {
             if(origin instanceof HippoNode) {
-                if(origin.isSame(((HippoNode)origin).getCanonicalNode())) {
+                if(!origin.isSame(((HippoNode)origin).getCanonicalNode())) {
                     return;
                 }
             }
@@ -210,13 +210,25 @@ final class UpdaterNode extends UpdaterItem implements Node {
                     origin = ((Node)parent.origin).getNode(getName());
                 } else {
                     if(UpdaterEngine.log.isDebugEnabled()) {
-                        UpdaterEngine.log.debug("commit create "+getPath()+" in "+((Node)parent.origin).getPath()+" type "+getInternalProperty("jcr:primaryType")[0]);
+                        UpdaterEngine.log.debug("commit create "+getPath()+" in "+((Node)parent.origin).getPath()+" (primary type "+((Node)parent.origin).getProperty("jcr:primaryType").getString()+") type "+getInternalProperty("jcr:primaryType")[0]);
                     }
                     origin = ((Node)parent.origin).addNode(getName(), getInternalProperty("jcr:primaryType")[0]);
                     nodeRelinked = true;
                 }
             }
+        } else if(nodeLocationChanged) {
+            String name = getName();
+            UpdaterEngine.log.debug("move unchanged node "+origin.getPath()+" to "+parent.origin.getPath()+"/"+name+" ("+((Node)parent.origin).getProperty("jcr:primaryType").getString()+")");
+            origin.getSession().move(origin.getPath(), parent.origin.getPath()+"/"+name);
+            origin = null;
+            for(NodeIterator findMoved = ((Node)parent.origin).getNodes(name); findMoved.hasNext(); ) {
+                origin = findMoved.nextNode();
+            }
+            if(origin == null) {
+                UpdaterEngine.log.error("could not find moved node in "+parent.origin.getPath()+" named "+name);
+            }
         }
+
         if (!hollow) {
             Set<String> curMixins = new TreeSet();
             Set<String> newMixins = new TreeSet();

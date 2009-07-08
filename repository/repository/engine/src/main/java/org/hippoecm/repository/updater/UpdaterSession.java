@@ -60,7 +60,7 @@ import javax.jcr.ValueFormatException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-final class UpdaterSession implements Session {
+final public class UpdaterSession implements Session {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -76,7 +76,7 @@ final class UpdaterSession implements Session {
         this.root = new UpdaterNode(this, upstream.getRootNode(), null);
     }
 
-    NodeType getNewType(String type) throws RepositoryException {
+    public NodeType getNewType(String type) throws RepositoryException {
         return upstream.getWorkspace().getNodeTypeManager().getNodeType(type);
     }
 
