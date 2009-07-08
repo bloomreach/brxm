@@ -54,7 +54,7 @@ class EditableTypes extends AbstractList implements Serializable, IObservable {
         javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
         try {
             QueryManager qMgr = session.getWorkspace().getQueryManager();
-            Query query = qMgr.createQuery("//element(*, hippo:templatetype)/hippo:template/hippo:template",
+            Query query = qMgr.createQuery("//element(*, hipposysedit:templatetype)/hipposysedit:template/hipposysedit:template",
                     Query.XPATH);
             NodeIterator iter = query.execute().getNodes();
             Set<String> types = new TreeSet<String>();
@@ -64,7 +64,7 @@ class EditableTypes extends AbstractList implements Serializable, IObservable {
 
                 Node ttNode = templateNode.getParent().getParent();
                 Node nsNode = ttNode.getParent();
-                if (!nsNode.isNodeType("hippo:namespace")) {
+                if (!nsNode.isNodeType("hipposysedit:namespace")) {
                     continue;
                 }
 

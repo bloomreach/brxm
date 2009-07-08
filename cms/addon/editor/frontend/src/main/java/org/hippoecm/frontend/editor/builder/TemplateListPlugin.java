@@ -90,7 +90,7 @@ public class TemplateListPlugin extends RenderPlugin {
                             if (descriptor.isType("hippo:document")) {
                                 continue;
                             }
-                            if (descriptor.isType("hippo:templatetype")) {
+                            if (descriptor.isType("hipposysedit:templatetype")) {
                                 continue;
                             }
                             list.add(descriptor);
