@@ -31,11 +31,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
     
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-        // TODO Auto-generated method stub
-        super.doBeforeRender(request, response);
-
-        doSearch(request, response, null, null, null, DEFAULT_PAGE_SIZE, getSiteContentBaseBean(request));
-        
+       super.doBeforeRender(request, response);
     }
 
 
@@ -65,7 +61,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             }
             
             if (sortBy != null) {
-                hstQuery.addOrderByDescending(sortBy);
+            //    hstQuery.addOrderByDescending(sortBy);
             }
             
             if (query != null) {
