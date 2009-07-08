@@ -213,8 +213,8 @@ public class CndSerializer implements IClusterable {
 
             ITypeDescriptor oldType = null, newType = null;
 
-            Node ntNode = templateTypeNode.getNode(HippoNodeType.HIPPO_NODETYPE);
-            NodeIterator versions = ntNode.getNodes(HippoNodeType.HIPPO_NODETYPE);
+            Node ntNode = templateTypeNode.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+            NodeIterator versions = ntNode.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
             while (versions.hasNext()) {
                 Node version = versions.nextNode();
                 if (version.isNodeType(HippoNodeType.NT_REMODEL)) {

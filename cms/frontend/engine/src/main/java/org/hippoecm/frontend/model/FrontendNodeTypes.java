@@ -26,8 +26,8 @@ public interface FrontendNodeTypes {
     String NT_FRONTEND_APPLICATION = "frontend:application";
     String NT_FRONTEND_WORKFLOW = "frontend:workflow";
     String NT_FRONTEND_USER = "frontend:user";
-    String NT_FRONTEND_NAMESPACE = "hippo:namespace";
-    String NT_FRONTEND_NAMESPACEFOLDER = "hippo:namespacefolder";
+    String NT_FRONTEND_NAMESPACE = "hipposysedit:namespace";
+    String NT_FRONTEND_NAMESPACEFOLDER = "hipposysedit:namespacefolder";
 
     // Paths
     String WORKFLOW_RENDERER = "frontend:renderer";

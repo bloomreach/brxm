@@ -62,13 +62,13 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
             attributes = new HashMap<String,String>();
             for (PropertyIterator attributeIter = node.getProperties(); attributeIter.hasNext(); ) {
                 Property p = attributeIter.nextProperty();
-                if (!p.getName().startsWith("hippo:")) {
+                if (!p.getName().startsWith("hippo:") && !p.getName().startsWith("hipposys:")) {
                     attributes.put(p.getName(), p.getString());
                 }
             }
             for (NodeIterator  attributeIter = node.getNodes(); attributeIter.hasNext(); ) {
                 Node n = attributeIter.nextNode();
-                if (!n.getName().startsWith("hippo:")) {
+                if (!n.getName().startsWith("hippo:") && !n.getName().startsWith("hipposys:")) {
                     attributes.put(n.getName(), n.getPath());
                 }
             }

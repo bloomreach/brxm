@@ -151,8 +151,8 @@ public class CurrentActivityPlugin extends RenderPlugin {
                 // The path to the document variant that was used as input for a Workflow step.
                 String sourceVariant = null;
                 boolean sourceVariantExists = false;
-                if (node.hasProperty("hippo:eventDocument")) {
-                    sourceVariant = node.getProperty("hippo:eventDocument").getValue().getString();
+                if (node.hasProperty("hippolog:eventDocument")) {
+                    sourceVariant = node.getProperty("hippolog:eventDocument").getValue().getString();
                     sourceVariantExists = ((UserSession) getSession()).getJcrSession().itemExists(sourceVariant);
                 }
 
@@ -161,8 +161,8 @@ public class CurrentActivityPlugin extends RenderPlugin {
                 //value is stored as 'Document[uuid=...]'
                 String targetVariant = null;
                 boolean targetVariantExists = false;
-                if (node.hasProperty("hippo:eventReturnValue")) {
-                    targetVariant = node.getProperty("hippo:eventReturnValue").getValue().getString();
+                if (node.hasProperty("hippolog:eventReturnValue")) {
+                    targetVariant = node.getProperty("hippolog:eventReturnValue").getValue().getString();
                     String uuid = StringUtils.substringBetween(targetVariant, "[uuid=", "]");
                     if (uuid != null && !uuid.equals("")) {
                         //The Workflow step has returned a Document instance, look up the
@@ -194,8 +194,8 @@ public class CurrentActivityPlugin extends RenderPlugin {
                 if (path != null) {
                     // We have a path to a document variant, so we can link to it!
                     String label = new StringResourceModel(timestamp, this, null, "").getString()
-                            + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null,
-                                    new Object[] { node.getProperty("hippo:eventUser").getString(),
+                            + new StringResourceModel(node.getProperty("hippolog:eventMethod").getString(), this, null,
+                                    new Object[] { node.getProperty("hippolog:eventUser").getString(),
                                             new NodeTranslator(new JcrNodeModel(path)).getNodeName().getObject() })
                                     .getString();
                     BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", path, label);
@@ -208,9 +208,9 @@ public class CurrentActivityPlugin extends RenderPlugin {
                         if (session.itemExists(handle)) {
 
                             String label = new StringResourceModel(timestamp, this, null, "").getString()
-                                    + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this,
+                                    + new StringResourceModel(node.getProperty("hippolog:eventMethod").getString(), this,
                                             null, new Object[] {
-                                                    node.getProperty("hippo:eventUser").getString(),
+                                                    node.getProperty("hippolog:eventUser").getString(),
                                                     new NodeTranslator(new JcrNodeModel(handle)).getNodeName()
                                                             .getObject() }).getString();
                             BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", handle,
@@ -221,8 +221,8 @@ public class CurrentActivityPlugin extends RenderPlugin {
                             String name = StringUtils.substringAfterLast(sourceVariant, "/");
                             // No path, so we're just rendering a label without a link
                             String label = new StringResourceModel(timestamp, this, null, "").getString()
-                                    + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this,
-                                            null, new Object[] { node.getProperty("hippo:eventUser").getString(),
+                                    + new StringResourceModel(node.getProperty("hippolog:eventMethod").getString(), this,
+                                            null, new Object[] { node.getProperty("hippolog:eventUser").getString(),
                                             (name == null ? "" : name) }).getString();
                             Label entryLabel = new Label("entry", label);
                             entryLabel.setEscapeModelStrings(false);
@@ -235,8 +235,8 @@ public class CurrentActivityPlugin extends RenderPlugin {
                 //Apparently the log item wasn't created by a Workflow step
                 //on a document.
                 String label = new StringResourceModel(timestamp, this, null, "").getString()
-                        + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null,
-                                new Object[] { node.getProperty("hippo:eventUser").getString() }).getString();
+                        + new StringResourceModel(node.getProperty("hippolog:eventMethod").getString(), this, null,
+                                new Object[] { node.getProperty("hippolog:eventUser").getString() }).getString();
                 Label entryLabel = new Label("entry", label);
                 entryLabel.setEscapeModelStrings(false);
                 item.add(entryLabel);

@@ -42,7 +42,7 @@ public class FacetSubSearchProvider extends AbstractFacetSearchProvider
         super.initialize();
         subSearchProvider = this;
         subNodesProvider  = (FacetResultSetProvider) lookup("org.hippoecm.repository.jackrabbit.FacetResultSetProvider");
-        primaryTypePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETSUBSEARCH), countName);
+        primaryTypePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETBASESEARCH), countName);
         virtualNodeName = resolveName(HippoNodeType.NT_FACETSUBSEARCH);
         register(null, virtualNodeName);
     }

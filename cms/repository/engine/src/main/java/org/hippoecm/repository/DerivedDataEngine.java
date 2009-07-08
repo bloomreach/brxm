@@ -173,7 +173,7 @@ public class DerivedDataEngine {
                         continue;
                     }
                     try {
-                        String nodetypeName = function.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
+                        String nodetypeName = function.getProperty(HippoNodeType.HIPPOSYS_NODETYPE).getString();
                         if(modified.isNodeType(nodetypeName)) {
                             if(logger.isDebugEnabled()) {
                                 logger.debug("Derived node " + modified.getPath() + " is of derived type as defined in " +
@@ -192,15 +192,15 @@ public class DerivedDataEngine {
                             /* Now populate the parameters map to be fed to the
                              * compute function.
                              */
-                            for(NodeIterator propDefIter = function.getNode("hippo:accessed").getNodes(); propDefIter.hasNext(); ) {
+                            for(NodeIterator propDefIter = function.getNode("hipposys:accessed").getNodes(); propDefIter.hasNext(); ) {
                                 Node propDef = propDefIter.nextNode();
                                 if(propDef == null) {
                                     logger.error("unable to access derived data accessed property definition");
                                     continue;
                                 }
                                 String propName = propDef.getName();
-                                if(propDef.isNodeType("hippo:builtinpropertyreference")) {
-                                    String builtinFunction = propDef.getProperty("hippo:method").getString();
+                                if(propDef.isNodeType("hipposys:builtinpropertyreference")) {
+                                    String builtinFunction = propDef.getProperty("hipposys:method").getString();
                                     if(builtinFunction.equals("ancestors")) {
                                         Vector<Value> ancestors = new Vector<Value>();
                                         Node ancestor = modified;
@@ -223,9 +223,9 @@ public class DerivedDataEngine {
                                     } else {
                                         logger.warn("Derived data definition contains unrecognized builtin reference, skipped");
                                     }
-                                } else if(propDef.isNodeType("hippo:relativepropertyreference")) {
-                                    if(modified.hasProperty(propDef.getProperty("hippo:relPath").getString())) {
-                                        Property property = modified.getProperty(propDef.getProperty("hippo:relPath").getString());
+                                } else if(propDef.isNodeType("hipposys:relativepropertyreference")) {
+                                    if(modified.hasProperty(propDef.getProperty("hipposys:relPath").getString())) {
+                                        Property property = modified.getProperty(propDef.getProperty("hipposys:relPath").getString());
                                         if(property.getParent().isNodeType("mix:referenceable")) {
                                             dependencies.add(property.getParent().getUUID());
                                         }
@@ -236,13 +236,13 @@ public class DerivedDataEngine {
                                         } else
                                             parameters.put(propName, property.getValues());
                                     }
-                                } else if(propDef.isNodeType("hippo:resolvepropertyreference")) {
+                                } else if(propDef.isNodeType("hipposys:resolvepropertyreference")) {
                                     /* FIXME: should read:
-                                     * Property property = ((HippoWorkspace)(modified.getSession().getWorkspace())).getHierarchyResolver().getProperty(modified, propDef.getProperty("hippo:relPath").getString());
+                                     * Property property = ((HippoWorkspace)(modified.getSession().getWorkspace())).getHierarchyResolver().getProperty(modified, propDef.getProperty("hipposys:relPath").getString());
                                      * however this is broken because of a cast exception as the session is not wrapped
                                      */
                                     HierarchyResolver.Entry lastNode = new HierarchyResolver.Entry();
-                                    Property property = new HierarchyResolverImpl().getProperty(modified, propDef.getProperty("hippo:relPath").getString(), lastNode);
+                                    Property property = new HierarchyResolverImpl().getProperty(modified, propDef.getProperty("hipposys:relPath").getString(), lastNode);
                                     if(property != null) {
                                         if(property.getParent().isNodeType("mix:referenceable")) {
                                             dependencies.add(property.getParent().getUUID());
@@ -269,15 +269,15 @@ public class DerivedDataEngine {
                             /* Use the definition of the derived properties to set the
                              * properties computed by the function.
                              */
-                            for(NodeIterator propDefIter = function.getNode(HippoNodeType.NT_DERIVED).getNodes(); propDefIter.hasNext(); ) {
+                            for(NodeIterator propDefIter = function.getNode(HippoNodeType.HIPPO_DERIVED).getNodes(); propDefIter.hasNext(); ) {
                                 Node propDef = propDefIter.nextNode();
                                 if(propDef == null) {
                                     logger.error("unable to access derived data derived property definition");
                                     continue;
                                 }
                                 String propName = propDef.getName();
-                                if(propDef.isNodeType("hippo:relativepropertyreference")) {
-                                    String propertyPath = propDef.getProperty("hippo:relPath").getString();
+                                if(propDef.isNodeType("hipposys:relativepropertyreference")) {
+                                    String propertyPath = propDef.getProperty("hipposys:relPath").getString();
                                     StringBuffer sb = null;
                                     if(logger.isDebugEnabled()) {
                                         sb = new StringBuffer();

@@ -18,18 +18,18 @@
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
-<hippo='http://www.hippoecm.org/nt/1.3'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hippolog='http://www.hippoecm.org/hippolog/nt/1.3'>
 
 [hippolog:item] > nt:base
-- hippo:timestamp (long) mandatory
-- hippo:eventUser (string) mandatory
-- hippo:eventClass (string) mandatory
-- hippo:eventMethod (string) mandatory
-- hippo:eventArguments (string) multiple
-- hippo:eventReturnType (string)
-- hippo:eventReturnValue (string)
-- hippo:eventDocument (string)
+- hippolog:timestamp (long) mandatory
+- hippolog:eventUser (string) mandatory
+- hippolog:eventClass (string) mandatory
+- hippolog:eventMethod (string) mandatory
+- hippolog:eventArguments (string) multiple
+- hippolog:eventReturnType (string)
+- hippolog:eventReturnValue (string)
+- hippolog:eventDocument (string)
 
 [hippolog:folder] > nt:base orderable
 - hippolog:enabled (boolean) = 'true' mandatory autocreated

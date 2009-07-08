@@ -47,20 +47,19 @@ public class WorkflowChainingTest extends TestCase {
         node = root.getNode("hippo:configuration/hippo:workflows");
 
         if (!node.hasNode("test"))
-            node = node.addNode("test", "hippo:workflowcategory");
+            node = node.addNode("test", "hipposys:workflowcategory");
         else
             node = node.getNode("test");
         if (!node.hasNode("chaining")) {
-            node = node.addNode("chaining", "hippo:workflow");
-            node.setProperty("hippo:nodetype", "hippo:document");
-            node.setProperty("hippo:display", "Test workflow chaining");
-            node.setProperty("hippo:classname", "org.hippoecm.repository.api.Document");
-            node.setProperty("hippo:workflow", "org.hippoecm.repository.test.ChainingImpl");
-            Node types = node.getNode("hippo:types");
-            node = types.addNode("org.hippoecm.repository.api.Document", "hippo:type");
-            node.setProperty("hippo:nodetype", "hippo:document");
-            node.setProperty("hippo:display", "Document");
-            node.setProperty("hippo:classname", "org.hippoecm.repository.api.Document");
+            node = node.addNode("chaining", "hipposys:workflow");
+            node.setProperty("hipposys:nodetype", "hippo:document");
+            node.setProperty("hipposys:display", "Test workflow chaining");
+            node.setProperty("hipposys:classname", "org.hippoecm.repository.test.ChainingImpl");
+            Node types = node.getNode("hipposys:types");
+            node = types.addNode("org.hippoecm.repository.api.Document", "hipposys:type");
+            node.setProperty("hipposys:nodetype", "hippo:document");
+            node.setProperty("hipposys:display", "Document");
+            node.setProperty("hipposys:classname", "org.hippoecm.repository.api.Document");
         }
 
         if (!root.hasNode("test")) {

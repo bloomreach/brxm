@@ -89,8 +89,8 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             name = prefix + ":" + templateTypeNode.getName();
         }
 
-        if (typeNode.hasProperty(HippoNodeType.HIPPO_TYPE)) {
-            type = typeNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
+        if (typeNode.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
+            type = typeNode.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
         } else {
             type = name;
         }
@@ -165,11 +165,11 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     }
 
     public boolean isMixin() {
-        return getBoolean("hippo:mixin");
+        return getBoolean("hipposysedit:mixin");
     }
 
     public void setIsMixin(boolean isMixin) {
-        setBoolean("hippo:mixin", isMixin);
+        setBoolean("hipposysedit:mixin", isMixin);
     }
 
     public Value createValue() {

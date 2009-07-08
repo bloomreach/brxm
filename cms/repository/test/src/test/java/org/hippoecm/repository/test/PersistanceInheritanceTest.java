@@ -47,19 +47,19 @@ public class PersistanceInheritanceTest extends TestCase
         String language = node.getProperty("jcr:language").getString();
         node.remove();
         node = root.getNode("hippo:configuration/hippo:documents");
-        node = node.addNode("test", "hippo:ocmquery");
+        node = node.addNode("test", "hipposys:ocmquery");
         node.setProperty("jcr:statement",statement);
         node.setProperty("jcr:language",language);
-        node.setProperty("hippo:classname","org.hippoecm.repository.test.SubClass");
-        Node types = node.getNode("hippo:types");
-        node = types.addNode("org.hippoecm.repository.test.SubClass","hippo:type");
-        node.setProperty("hippo:nodetype","nt:unstructured");
-        node.setProperty("hippo:display","Sub");
-        node.setProperty("hippo:classname","org.hippoecm.repository.test.SubClass");
-        node = types.addNode("org.hippoecm.repository.test.SuperClass","hippo:type");
-        node.setProperty("hippo:nodetype","nt:unstructured");
-        node.setProperty("hippo:display","Super");
-        node.setProperty("hippo:classname","org.hippoecm.repository.test.SuperClass");
+        node.setProperty("hipposys:classname","org.hippoecm.repository.test.SubClass");
+        Node types = node.getNode("hipposys:types");
+        node = types.addNode("org.hippoecm.repository.test.SubClass","hipposys:type");
+        node.setProperty("hipposys:nodetype","nt:unstructured");
+        node.setProperty("hipposys:display","Sub");
+        node.setProperty("hipposys:classname","org.hippoecm.repository.test.SubClass");
+        node = types.addNode("org.hippoecm.repository.test.SuperClass","hipposys:type");
+        node.setProperty("hipposys:nodetype","nt:unstructured");
+        node.setProperty("hipposys:display","Super");
+        node.setProperty("hipposys:classname","org.hippoecm.repository.test.SuperClass");
 
         session.save();
 

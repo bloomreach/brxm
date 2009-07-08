@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007 Hippo
+  Copyright 2007-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -14,7 +14,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="htmlCleanerService">
+<sv:node xmlns:hippohtmlcleaner="http://www.hippoecm.org/htmlcleaner/nt/1.2"
+         xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4"
+         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         sv:name="htmlCleanerService">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugin</sv:value>
   </sv:property>

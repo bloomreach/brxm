@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007 Hippo
+  Copyright 2007-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -14,15 +14,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-         xmlns:jcr="http://www.jcp.org/jcr/1.0"
-         xmlns:rep="internal"
-         xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-         xmlns:xs="http://www.w3.org/2001/XMLSchema"
-         xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-         xmlns:hippo="http://www.hippoecm.org/nt/1.3"
-         xmlns:fn="http://www.w3.org/2005/xpath-functions"
+<sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+         xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
+         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="navigation">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
@@ -34,9 +28,6 @@
     <sv:property sv:name="hippo:docbase" sv:type="String">
       <sv:value>/files</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:queryname" sv:type="String">
-      <sv:value>bySectionSource</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:facets" sv:type="String">
       <sv:value>section</sv:value>
       <sv:value>source</sv:value>
@@ -44,6 +35,9 @@
       <sv:value>month</sv:value>
       <sv:value>author</sv:value>
       <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>bySectionSource</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:resultset">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -58,9 +52,6 @@
     <sv:property sv:name="hippo:docbase" sv:type="String">
       <sv:value>/files</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:queryname" sv:type="String">
-      <sv:value>bySectionDate</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:facets" sv:type="String">
       <sv:value>section</sv:value>
       <sv:value>year</sv:value>
@@ -68,6 +59,9 @@
       <sv:value>source</sv:value>
       <sv:value>author</sv:value>
       <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>bySectionDate</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:resultset">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -82,9 +76,6 @@
     <sv:property sv:name="hippo:docbase" sv:type="String">
       <sv:value>/files</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:queryname" sv:type="String">
-      <sv:value>bySourceSection</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:facets" sv:type="String">
       <sv:value>source</sv:value>
       <sv:value>section</sv:value>
@@ -92,6 +83,9 @@
       <sv:value>month</sv:value>
       <sv:value>author</sv:value>
       <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>bySourceSection</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:resultset">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -106,9 +100,6 @@
     <sv:property sv:name="hippo:docbase" sv:type="String">
       <sv:value>/files</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:queryname" sv:type="String">
-      <sv:value>bySourceDate</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:facets" sv:type="String">
       <sv:value>source</sv:value>
       <sv:value>year</sv:value>
@@ -116,6 +107,9 @@
       <sv:value>section</sv:value>
       <sv:value>author</sv:value>
       <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>bySourceDate</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:resultset">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -130,9 +124,6 @@
     <sv:property sv:name="hippo:docbase" sv:type="String">
       <sv:value>/files</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:queryname" sv:type="String">
-      <sv:value>byAuthorDate</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:facets" sv:type="String">
       <sv:value>author</sv:value>
       <sv:value>year</sv:value>
@@ -140,6 +131,9 @@
       <sv:value>section</sv:value>
       <sv:value>source</sv:value>
       <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>byAuthorDate</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:resultset">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -154,9 +148,6 @@
     <sv:property sv:name="hippo:docbase" sv:type="String">
       <sv:value>/files</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:queryname" sv:type="String">
-      <sv:value>byAuthorSource</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:facets" sv:type="String">
       <sv:value>author</sv:value>
       <sv:value>section</sv:value>
@@ -164,6 +155,9 @@
       <sv:value>year</sv:value>
       <sv:value>month</sv:value>
       <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>byAuthorSource</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:resultset">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -178,9 +172,6 @@
     <sv:property sv:name="hippo:docbase" sv:type="String">
       <sv:value>/files</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:queryname" sv:type="String">
-      <sv:value>byDateAuthor</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:facets" sv:type="String">
       <sv:value>year</sv:value>
       <sv:value>month</sv:value>
@@ -189,6 +180,9 @@
       <sv:value>section</sv:value>
       <sv:value>source</sv:value>
       <sv:value>type</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>byDateAuthor</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:resultset">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -203,9 +197,6 @@
     <sv:property sv:name="hippo:docbase" sv:type="String">
       <sv:value>/files</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:queryname" sv:type="String">
-      <sv:value>byDateSection</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:facets" sv:type="String">
       <sv:value>year</sv:value>
       <sv:value>month</sv:value>
@@ -215,6 +206,9 @@
       <sv:value>author</sv:value>
       <sv:value>type</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>byDateSection</sv:value>
+    </sv:property>
     <sv:node sv:name="hippo:resultset">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:facetresult</sv:value>
@@ -222,3 +216,4 @@
     </sv:node>
   </sv:node>
 </sv:node>
+

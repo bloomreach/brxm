@@ -52,37 +52,37 @@ public abstract class ReviewedActionsWorkflowAbstractTest {
         node = root.getNode("hippo:configuration");
         if (node.hasNode("hippo:workflows"))
             node.getNode("hippo:workflows").remove();
-        node = node.addNode("hippo:workflows", "hippo:workflowfolder");
+        node = node.addNode("hippo:workflows", "hipposys:workflowfolder");
         node.addMixin("mix:referenceable");
-        Node wfs = node.addNode("default", "hippo:workflowcategory");
+        Node wfs = node.addNode("default", "hipposys:workflowcategory");
 
-        node = wfs.addNode("reviewedactions", "hippo:workflow");
-        node.setProperty("hippo:nodetype", "hippostd:publishable");
-        node.setProperty("hippo:display", "Reviewed actions workflow");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl");
-        Node types = node.getNode("hippo:types");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hippo:type");
-        node.setProperty("hippo:nodetype", "hippostd:publishable");
-        node.setProperty("hippo:display", "PublishableDocument");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.PublishableDocument");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest", "hippo:type");
-        node.setProperty("hippo:nodetype", "hippo:request");
-        node.setProperty("hippo:display", "PublicationRequest");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.PublicationRequest");
+        node = wfs.addNode("reviewedactions", "hipposys:workflow");
+        node.setProperty("hipposys:nodetype", "hippostd:publishable");
+        node.setProperty("hipposys:display", "Reviewed actions workflow");
+        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl");
+        Node types = node.getNode("hipposys:types");
+        node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hipposys:type");
+        node.setProperty("hipposys:nodetype", "hippostd:publishable");
+        node.setProperty("hipposys:display", "PublishableDocument");
+        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.PublishableDocument");
+        node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest", "hipposys:type");
+        node.setProperty("hipposys:nodetype", "hipposys:request");
+        node.setProperty("hipposys:display", "PublicationRequest");
+        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.PublicationRequest");
 
-        node = wfs.addNode("reviewedrequests", "hippo:workflow");
-        node.setProperty("hippo:nodetype", "hippo:request");
-        node.setProperty("hippo:display", "Reviewed requests workflow");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.FullRequestWorkflowImpl");
-        types = node.getNode("hippo:types");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hippo:type");
-        node.setProperty("hippo:nodetype", "hippo:publishable");
-        node.setProperty("hippo:display", "PublishableDocument");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.PublishableDocument");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest", "hippo:type");
-        node.setProperty("hippo:nodetype", "hippo:request");
-        node.setProperty("hippo:display", "PublicationRequest");
-        node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.PublicationRequest");
+        node = wfs.addNode("reviewedrequests", "hipposys:workflow");
+        node.setProperty("hipposys:nodetype", "hipposys:request");
+        node.setProperty("hipposys:display", "Reviewed requests workflow");
+        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.FullRequestWorkflowImpl");
+        types = node.getNode("hipposys:types");
+        node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hipposys:type");
+        node.setProperty("hipposys:nodetype", "hippo:publishable");
+        node.setProperty("hipposys:display", "PublishableDocument");
+        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.PublishableDocument");
+        node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest", "hipposys:type");
+        node.setProperty("hipposys:nodetype", "hipposys:request");
+        node.setProperty("hipposys:display", "PublicationRequest");
+        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.PublicationRequest");
 
         session.save();
     }

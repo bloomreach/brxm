@@ -44,21 +44,21 @@ abstract class SampleWorkflowSetup
         // set up the workflow specification as a node "/hippo:configuration/hippo:workflows/mycategory/myworkflow"
         Node node = root.getNode("hippo:configuration");
         node = node.getNode("hippo:workflows");
-        node = node.addNode("mycategory","hippo:workflowcategory");
+        node = node.addNode("mycategory","hipposys:workflowcategory");
         node = node.addNode("myworkflow", "frontend:workflow");
-        node.setProperty("hippo:nodetype","sample:newsArticle");
-        node.setProperty("hippo:display","Sample Workflow");
+        node.setProperty("hipposys:nodetype","sample:newsArticle");
+        node.setProperty("hipposys:display","Sample Workflow");
         node.setProperty("frontend:renderer", "org.hippoecm.repository.sample.SampleWorkflowRenderer");
-        node.setProperty("hippo:classname","org.hippoecm.repository.sample.SampleWorkflowImpl");
-        Node types = node.getNode("hippo:types");
-        node = types.addNode("org.hippoecm.repository.sample.AuthorDocument","hippo:type");
-        node.setProperty("hippo:nodetype","sample:author");
-        node.setProperty("hippo:display","AuthorDocument");
-        node.setProperty("hippo:classname","org.hippoecm.repository.sample.AuthorDocument");
-        node = types.addNode("org.hippoecm.repository.sample.ArticleDocument","hippo:type");
-        node.setProperty("hippo:nodetype","sample:newsArticle");
-        node.setProperty("hippo:display","ArticleDocument");
-        node.setProperty("hippo:classname","org.hippoecm.repository.sample.ArticleDocument");
+        node.setProperty("hipposys:classname","org.hippoecm.repository.sample.SampleWorkflowImpl");
+        Node types = node.getNode("hipposys:types");
+        node = types.addNode("org.hippoecm.repository.sample.AuthorDocument","hipposys:type");
+        node.setProperty("hipposys:nodetype","sample:author");
+        node.setProperty("hipposys:display","AuthorDocument");
+        node.setProperty("hipposys:classname","org.hippoecm.repository.sample.AuthorDocument");
+        node = types.addNode("org.hippoecm.repository.sample.ArticleDocument","hipposys:type");
+        node.setProperty("hipposys:nodetype","sample:newsArticle");
+        node.setProperty("hipposys:display","ArticleDocument");
+        node.setProperty("hipposys:classname","org.hippoecm.repository.sample.ArticleDocument");
 
         // set up the queryable document specification as a node "/configuration/hippo:documents/authors"
         QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -68,15 +68,15 @@ abstract class SampleWorkflowSetup
         String language = node.getProperty("jcr:language").getString();
         node.remove();
         node = root.getNode("hippo:configuration/hippo:documents");
-        node = node.addNode("authors","hippo:ocmquery");
+        node = node.addNode("authors","hipposys:ocmquery");
         node.setProperty("jcr:statement",statement);
         node.setProperty("jcr:language",language);
-        node.setProperty("hippo:classname","org.hippoecm.repository.sample.AuthorDocument");
-        node = node.getNode("hippo:types");
-        node = node.addNode("org.hippoecm.repository.sample.AuthorDocument","hippo:type");
-        node.setProperty("hippo:nodetype","sample:author");
-        node.setProperty("hippo:display","AuthorDocument");
-        node.setProperty("hippo:classname","org.hippoecm.repository.sample.AuthorDocument");
+        node.setProperty("hipposys:classname","org.hippoecm.repository.sample.AuthorDocument");
+        node = node.getNode("hipposys:types");
+        node = node.addNode("org.hippoecm.repository.sample.AuthorDocument","hipposys:type");
+        node.setProperty("hipposys:nodetype","sample:author");
+        node.setProperty("hipposys:display","AuthorDocument");
+        node.setProperty("hipposys:classname","org.hippoecm.repository.sample.AuthorDocument");
 
         root.addNode("files");
 
@@ -102,10 +102,10 @@ abstract class SampleWorkflowSetup
         root.getNode("files").remove();
 
         root.getNode("hippo:configuration/hippo:workflows").remove();
-        root.addNode("hippo:configuration/hippo:workflows", "hippo:workflowfolder");
+        root.addNode("hippo:configuration/hippo:workflows", "hipposys:workflowfolder");
 
         root.getNode("hippo:configuration/hippo:documents").remove();
-        root.addNode("hippo:configuration/hippo:documents", "hippo:ocmqueryfolder");
+        root.addNode("hippo:configuration/hippo:documents", "hipposys:ocmqueryfolder");
         session.save();
         session.logout();
     }

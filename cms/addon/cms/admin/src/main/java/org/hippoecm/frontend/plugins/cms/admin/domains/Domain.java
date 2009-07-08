@@ -36,7 +36,7 @@ public class Domain implements Comparable<Domain>, IClusterable {
 
     private static final long serialVersionUID = 1L;
 
-    private final static String PROP_DESCRIPTION = "hippo:description";
+    private final static String PROP_DESCRIPTION = "hipposys:description";
 
     private final String path;
     private final String name;

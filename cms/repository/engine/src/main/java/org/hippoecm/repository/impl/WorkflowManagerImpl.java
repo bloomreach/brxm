@@ -146,9 +146,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             sb.append(nodeTypes[i].getName());
                         }
                         log.debug("matching item of types "+new String(sb)+" against " +
-                                  workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
+                                  workflowNode.getProperty(HippoNodeType.HIPPOSYS_NODETYPE).getString());
                     }
-                    if (item.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
+                    if (item.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPOSYS_NODETYPE).getString())) {
                         boolean hasPermission = true;
                         if(workflowNode.hasProperty(HippoNodeType.HIPPO_PRIVILEGES)) {
                             Value[] privileges = workflowNode.getProperty(HippoNodeType.HIPPO_PRIVILEGES).getValues();
@@ -218,7 +218,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     try {
                         Class documentClass = Class.forName(workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
                         Node documentNode = (document.getIdentity()!=null ? session.getNodeByUUID(document.getIdentity()) : null);
-                        if ((documentNode != null && documentNode.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) || documentClass.isAssignableFrom(document.getClass())) {
+                        if ((documentNode != null && documentNode.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPOSYS_NODETYPE).getString())) || documentClass.isAssignableFrom(document.getClass())) {
                             boolean hasPermission = true;
                             if(workflowNode.hasProperty(HippoNodeType.HIPPO_PRIVILEGES)) {
                                 Value[] privileges = workflowNode.getProperty(HippoNodeType.HIPPO_PRIVILEGES).getValues();
@@ -292,11 +292,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         Node workflowNode = getWorkflowNode(category, item, session);
         if (workflowNode!=null) {
             try {
-                String classname;
-                if (workflowNode.hasProperty(HippoNodeType.HIPPO_WORKFLOW))
-                    classname = workflowNode.getProperty(HippoNodeType.HIPPO_WORKFLOW).getString();
-                else
-                    classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
+                String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
 
                 String uuid = null;
@@ -435,11 +431,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             synchronized (SessionDecorator.unwrap(rootSession)) {
                 Workflow workflow = null;
 
-                String workflowClassName;
-                if (workflowNode.hasProperty(HippoNodeType.HIPPO_WORKFLOW))
-                    workflowClassName = workflowNode.getProperty(HippoNodeType.HIPPO_WORKFLOW).getString();
-                else
-                    workflowClassName = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
+                String workflowClassName = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 try {
                     Class workflowClass = Class.forName(workflowClassName);
                     Class[] interfaces = workflowClass.getInterfaces();
@@ -758,11 +750,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         Object invoke(WorkflowManagerImpl manager) throws RepositoryException, WorkflowException {
             try {
                 Workflow workflow = null; // compiler does not detect properly there is no path where this not set
-                String classname;
-                if (workflowNode.hasProperty(HippoNodeType.HIPPO_WORKFLOW))
-                    classname = workflowNode.getProperty(HippoNodeType.HIPPO_WORKFLOW).getString();
-                else
-                    classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
+                String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
                 String uuid = null;
 

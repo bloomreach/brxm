@@ -106,10 +106,10 @@ public class FacetRule implements Serializable {
         // get mandatory properties
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
         equals = node.getProperty(HippoNodeType.HIPPO_EQUALS).getBoolean();
-        filter = node.getProperty("hippo:filter").getBoolean();
+        filter = node.getProperty("hipposys:filter").getBoolean();
 
-        int tmpType = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPO_TYPE).getString());
-        String tmpValue = node.getProperty(HippoNodeType.HIPPO_VALUE).getString();
+        int tmpType = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString());
+        String tmpValue = node.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
 
         //NameResolver nRes = new ParsingNameResolver(NameFactoryImpl.getInstance(), new SessionNamespaceResolver(node.getSession()));
         // if it's a name property set valueName
@@ -141,7 +141,7 @@ public class FacetRule implements Serializable {
      */
     private String parseReferenceTypeValue(Node facetNode) throws RepositoryException {
         String uuid = null;
-        String pathValue = facetNode.getProperty(HippoNodeType.HIPPO_VALUE).getString();
+        String pathValue = facetNode.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
         String path = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
         if ("".equals(path)) {
             uuid = facetNode.getSession().getRootNode().getUUID().toString();
@@ -153,7 +153,7 @@ public class FacetRule implements Serializable {
                 msg.append("Path not found for facetRule ");
                 msg.append("'").append(facetNode.getPath()).append("' : ");
                 msg.append("FacetRule");
-                msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPO_TYPE).getString()).append(")");
+                msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString()).append(")");
                 msg.append("[");
                 msg.append(facet);
                 if (equals) {
@@ -168,7 +168,7 @@ public class FacetRule implements Serializable {
                 msg.append("Path not found for facetRule ");
                 msg.append("'").append(facetNode.getPath()).append("' : ");
                 msg.append("FacetRule");
-                msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPO_TYPE).getString()).append(")");
+                msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString()).append(")");
                 msg.append("[");
                 msg.append(facet);
                 if (equals) {

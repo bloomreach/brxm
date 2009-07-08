@@ -53,17 +53,16 @@ public class VersioningWorkflowTest extends TestCase {
 
         node = root.getNode("hippo:configuration/hippo:workflows");
         if (!node.hasNode("versioning")) {
-            node = node.addNode("versioning", "hippo:workflowcategory");
-            node = node.addNode("version", "hippo:workflow");
-            node.setProperty("hippo:nodetype", "hippo:document");
-            node.setProperty("hippo:display", "Versioning workflow");
-            node.setProperty("hippo:classname", "org.hippoecm.repository.api.Document");
-            node.setProperty("hippo:workflow", "org.hippoecm.repository.standardworkflow.VersionWorkflowImpl");
-            Node types = node.getNode("hippo:types");
-            node = types.addNode("org.hippoecm.repository.api.Document", "hippo:type");
-            node.setProperty("hippo:nodetype", "hippo:document");
-            node.setProperty("hippo:display", "Document");
-            node.setProperty("hippo:classname", "org.hippoecm.repository.api.Document");
+            node = node.addNode("versioning", "hipposys:workflowcategory");
+            node = node.addNode("version", "hipposys:workflow");
+            node.setProperty("hipposys:nodetype", "hippo:document");
+            node.setProperty("hipposys:display", "Versioning workflow");
+            node.setProperty("hipposys:classname", "org.hippoecm.repository.standardworkflow.VersionWorkflowImpl");
+            Node types = node.getNode("hipposys:types");
+            node = types.addNode("org.hippoecm.repository.api.Document", "hipposys:type");
+            node.setProperty("hipposys:nodetype", "hippo:document");
+            node.setProperty("hipposys:display", "Document");
+            node.setProperty("hipposys:classname", "org.hippoecm.repository.api.Document");
         }
 
         if (!root.hasNode("test")) {

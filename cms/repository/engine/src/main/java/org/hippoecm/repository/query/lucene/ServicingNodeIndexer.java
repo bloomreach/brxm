@@ -179,7 +179,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         String hippo_ns_prefix = null;
         try {
             // TODO avoid hard-coded namespace
-            hippo_ns_prefix = this.mappings.getPrefix("http://www.hippoecm.org/nt/1.3");
+            hippo_ns_prefix = this.mappings.getPrefix("http://www.onehippo.org/jcr/hippo/nt/2.0");
         } catch (NamespaceException e) {
             log.warn("Cannot get 'hippo' lucene prefix. ", e.getMessage());
             return;

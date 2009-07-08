@@ -85,7 +85,7 @@ public class RedefineNodetypeTest extends TestCase {
         }
 
         node = session.getRootNode().getNode("hippo:configuration").getNode("hippo:initialize");
-        node = node.addNode("hippotest1");
+        node = node.addNode("hippotest1", "hipposys:initializeitem");
         node.setProperty(HippoNodeType.HIPPO_NAMESPACE, "http://www.hippoecm.org/test/1.0");
         node.setProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE, "RedefineNodetypeTest-1.cnd");
         session.save();
@@ -100,7 +100,7 @@ public class RedefineNodetypeTest extends TestCase {
         node = session.getRootNode().getNode("hippo:configuration").getNode("hippo:initialize");
         node.getNode("hippotest1").remove();
         session.save();
-        node = node.addNode("hippotest1");
+        node = node.addNode("hippotest1", "hipposys:initializeitem");
         node.setProperty(HippoNodeType.HIPPO_NAMESPACE, "http://www.hippoecm.org/test/1.1");
         node.setProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE, "RedefineNodetypeTest-2.cnd");
         session.save();
@@ -144,7 +144,7 @@ public class RedefineNodetypeTest extends TestCase {
             "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
             "<nt='http://www.jcp.org/jcr/nt/1.0'>\n" +
             "<mix='http://www.jcp.org/jcr/mix/1.0'>\n" +
-            "<hippo='http://www.hippoecm.org/nt/1.3'>\n" +
+            "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>\n" +
             "<hippotest2='http://www.hippoecm.org/test2/1.0'>\n" +
             "\n" +
             "[hippotest2:test] > hippo:document\n" +
@@ -155,7 +155,7 @@ public class RedefineNodetypeTest extends TestCase {
             "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
             "<nt='http://www.jcp.org/jcr/nt/1.0'>\n" +
             "<mix='http://www.jcp.org/jcr/mix/1.0'>\n" +
-            "<hippo='http://www.hippoecm.org/nt/1.3'>\n" +
+            "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>\n" +
             "<hippotest2='http://www.hippoecm.org/test2/1.1'>\n" +
             "\n" +
             "[hippotest2:test] > hippo:document\n" +
@@ -165,7 +165,7 @@ public class RedefineNodetypeTest extends TestCase {
         session.getRootNode().addNode("test");
 
         Node node, base = session.getRootNode().getNode("hippo:configuration").getNode("hippo:initialize");
-        node = base.addNode("hippotest2");
+        node = base.addNode("hippotest2", "hipposys:initializeitem");
         node.setProperty(HippoNodeType.HIPPO_NAMESPACE, "http://www.hippoecm.org/test2/1.0");
         node.setProperty(HippoNodeType.HIPPO_NODETYPES, cnd1);
         session.save();
