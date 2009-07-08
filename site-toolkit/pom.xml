@@ -291,7 +291,6 @@
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-api</artifactId>
         <version>${hippoecm.version}</version>
-        <scope>provided</scope>
       </dependency>
 
       <!-- Java Mail dependencies for site example -->

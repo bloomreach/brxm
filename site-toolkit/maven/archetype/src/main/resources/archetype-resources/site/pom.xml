@@ -294,6 +294,28 @@
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-shared-libs</id>
+                <phase>install</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.apache.geronimo.specs</groupId>
+                      <artifactId>geronimo-jta_1.1_spec</artifactId>
+                      <outputDirectory>${dollar}{tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
             <version>1.2</version>
             <executions>
@@ -302,9 +324,6 @@
                 <phase>install</phase>
                 <configuration>
                   <tasks>
-
-                    <echo>Replacing Shared Libraries.</echo>
-                    <copy file="${dollar}{settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${dollar}{tomcat.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" overwrite="true" />
                     
                     <echo>Replacing cms web application into tomcat.</echo>
                     <delete dir="${dollar}{tomcat.hst.cms.webapp}" />
@@ -314,7 +333,7 @@
                     <echo>Replacing site web application into tomcat.</echo>
                     <delete dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}.war" />
                     <delete dir="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}" />
-                    <copy file="${dollar}{project.build.directory}/${dollar}{project.build.finalName}.war" tofile="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}" overwrite="true" />
+                    <copy file="${dollar}{project.build.directory}/${dollar}{project.build.finalName}.war" tofile="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}.war" overwrite="true" />
                     
                   </tasks>
                 </configuration>
@@ -366,12 +385,6 @@
           <version>${dollar}{hst.version}</version>
           <scope>provided</scope>
         </dependency>
-        <dependency>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-          <version>[1.1.1,)</version>
-          <scope>test</scope>        
-        </dependency>
       </dependencies>
       
       <build>
@@ -405,6 +418,43 @@
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-shared-libs</id>
+                <phase>install</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.apache.geronimo.specs</groupId>
+                      <artifactId>geronimo-jta_1.1_spec</artifactId>
+                      <outputDirectory>${dollar}{jetspeed.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>javax.jcr</groupId>
+                      <artifactId>jcr</artifactId>
+                      <outputDirectory>${dollar}{jetspeed.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst</groupId>
+                      <artifactId>hst-api</artifactId>
+                      <outputDirectory>${dollar}{jetspeed.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst</groupId>
+                      <artifactId>hst-commons</artifactId>
+                      <outputDirectory>${dollar}{jetspeed.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
             <version>1.2</version>
             <executions>
@@ -413,12 +463,6 @@
                 <phase>install</phase>
                 <configuration>
                   <tasks>
-
-                    <echo>Replacing HST Shared Libraries.</echo>
-                    <copy file="${dollar}{settings.localRepository}/javax/jcr/jcr/1.0/jcr-1.0.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/jcr-1.0.jar" overwrite="true" />
-                    <copy file="${dollar}{settings.localRepository}/org/apache/geronimo/specs/geronimo-jta_1.1_spec/1.1/geronimo-jta_1.1_spec-1.1.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/geronimo-jta_1.1_spec-1.1.jar" overwrite="true" />
-                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-api/${dollar}{hst.version}/hst-api-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-api-${dollar}{hst.version}.jar" overwrite="true" />
-                    <copy file="${dollar}{settings.localRepository}/org/onehippo/ecm/hst/hst-commons/${dollar}{hst.version}/hst-commons-${dollar}{hst.version}.jar" tofile="${dollar}{jetspeed.hst.shared.lib}/hst-commons-${dollar}{hst.version}.jar" overwrite="true" />
 
                     <echo>Replacing cms web application into Jetspeed.</echo>
                     <delete dir="${dollar}{jetspeed.hst.cms.webapp}" />
@@ -504,19 +548,6 @@ And, click `HST-2 Demo' menu!
                 </goals>
               </execution>
             </executions>
-            <dependencies>
-              <dependency>
-                <groupId>javax.jcr</groupId>
-                <artifactId>jcr</artifactId>
-                <version>${dollar}{javax.jcr.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jta_1.1_spec</artifactId>
-                <version>${dollar}{jta.version}</version>
-                <scope>runtime</scope>
-              </dependency>
-            </dependencies>
           </plugin>
         </plugins>
       </build>
