@@ -16,8 +16,6 @@
 
 package org.hippoecm.hst.plugins.frontend;
 
-import javax.swing.tree.TreeNode;
-
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin;
@@ -35,17 +33,5 @@ public class HstFolderTreePlugin extends FolderTreePlugin {
         super(context, config);
 
         hstContext = context.getService(HstContext.class.getName(), HstContext.class);
-    }
-
-    @Override
-    protected TreeNodeTranslator newTreeNodeTranslator(IPluginConfig config) {
-        return new FolderTreePlugin.TreeNodeTranslator(config) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public String getName(TreeNode treeNode) {
-                return hstContext.sitemap.decodeMatcher(super.getName(treeNode));
-            }
-        };
     }
 }
