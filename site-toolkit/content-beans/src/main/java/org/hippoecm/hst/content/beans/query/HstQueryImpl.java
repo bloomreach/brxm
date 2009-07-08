@@ -152,6 +152,9 @@ public class HstQueryImpl implements HstQuery {
                 query.append(orderBy);
                 first = false;
             }
+        } else {
+            // default order is by score descending
+            query.append(" order by @jcr:score descending ");
         }
         log.debug("Query to execute is '{}'", query.toString());
         return query.toString();
