@@ -31,7 +31,7 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
-final class UpdaterProperty extends UpdaterItem implements Property {
+final public class UpdaterProperty extends UpdaterItem implements Property {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
