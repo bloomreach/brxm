@@ -16,8 +16,10 @@
 package org.hippoecm.repository.jackrabbit.xml;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -26,8 +28,11 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
@@ -184,9 +189,33 @@ abstract class AbstractSAXEventGenerator {
     protected void startNamespaceDeclarations()
             throws RepositoryException, SAXException {
         // start namespace declarations
-        String[] prefixes = session.getNamespacePrefixes();
-        for (int i = 0; i < prefixes.length; i++) {
-            String prefix = prefixes[i];
+        final Set<String> prefixes = new HashSet();
+        startNode.accept(new TraversingItemVisitor.Default(true) {
+            @Override
+            protected void entering(Node node, int level) throws RepositoryException {
+                String name = node.getName();
+                if(name.contains(":")) {
+                    prefixes.add(name.substring(0, name.indexOf(":")));
+                }
+            }
+            @Override
+            protected void entering(Property property, int level) throws RepositoryException {
+                if (property.getType() == PropertyType.NAME) {
+                    if (property.getDefinition().isMultiple()) {
+                        for (Value value : property.getValues()) {
+                            String name = value.getString();
+                            if (name.contains(":")) {
+                                prefixes.add(name.substring(0, name.indexOf(":")));
+                            }
+                        }
+                    } else {
+                        String name = property.getString();
+                        prefixes.add(name.substring(0, name.indexOf(":")));
+                    }
+                }
+            }
+        });
+        for (String prefix : prefixes) {
             if (Name.NS_XML_PREFIX.equals(prefix)) {
                 // skip 'xml' prefix as this would be an illegal namespace declaration
                 continue;
@@ -225,16 +254,38 @@ abstract class AbstractSAXEventGenerator {
      * @param attributes attributes of the current XML element
      * @throws RepositoryException on a repository error
      */
-    protected void addNamespacePrefixes(int level, AttributesImpl attributes)
+    protected void addNamespacePrefixes(Node node, AttributesImpl attributes)
             throws RepositoryException {
-        String[] prefixes = session.getNamespacePrefixes();
+        final Set<String> prefixes = new HashSet();
+        node.accept(new TraversingItemVisitor.Default(true) {
+            @Override
+            protected void entering(Node node, int level) throws RepositoryException {
+                String name = node.getName();
+                if(name.contains(":")) {
+                    prefixes.add(name.substring(0, name.indexOf(":")));
+                }
+            }
+            @Override
+            protected void entering(Property property, int level) throws RepositoryException {
+                if (property.getType() == PropertyType.NAME) {
+                    if (property.getDefinition().isMultiple()) {
+                        for (Value value : property.getValues()) {
+                            String name = value.getString();
+                            if (name.contains(":")) {
+                                prefixes.add(name.substring(0, name.indexOf(":")));
+                            }
+                        }
+                    } else {
+                        String name = property.getString();
+                        prefixes.add(name.substring(0, name.indexOf(":")));
+                    }
+                }
+            }
+        });
+
         NamespaceStack newNamespaces = null;
-
-        for (int i = 0; i < prefixes.length; i++) {
-            String prefix = prefixes[i];
-
-            if (prefix.length() > 0
-                    && !Name.NS_XML_PREFIX.equals(prefix)) {
+        for (String prefix : prefixes) {
+            if (prefix.length() > 0 && !Name.NS_XML_PREFIX.equals(prefix)) {
                 String uri = session.getNamespaceURI(prefix);
 
                 // get the matching namespace from previous declarations
