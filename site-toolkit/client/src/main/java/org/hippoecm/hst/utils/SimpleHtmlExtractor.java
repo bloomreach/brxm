@@ -74,7 +74,12 @@ public class SimpleHtmlExtractor {
         }
     }
     
-    
+    /**
+     * Extracts inner text of the tag which is first found by the <CODE>tagName</CODE>.
+     * @param html
+     * @param tagName
+     * @return
+     */
     public static String getInnerText(String html, String tagName) {
         String innerText = "";
         
