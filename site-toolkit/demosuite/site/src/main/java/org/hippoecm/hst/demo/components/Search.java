@@ -35,6 +35,9 @@ public class Search extends AbstractSearchComponent {
             query = request.getParameter("query");
         }
 
+        if(query == null) {
+            return;
+        }
         doSearch(request, response, query, null, null, DEFAULT_PAGE_SIZE, getSiteContentBaseBean(request));
 
     }
