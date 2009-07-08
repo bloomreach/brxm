@@ -33,7 +33,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     org.hippoecm.repository.TrivialServerTest.class,
     org.hippoecm.repository.CanonicalPathTest.class,
-    org.hippoecm.repository.ConfigurationTest.class,
     org.hippoecm.repository.CopyNodeTest.class,
     org.hippoecm.repository.DerivedDataTest.class,
     org.hippoecm.repository.DescriptorsTest.class,
