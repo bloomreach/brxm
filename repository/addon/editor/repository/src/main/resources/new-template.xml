@@ -29,7 +29,7 @@
     <sv:property sv:name="hippo:message" sv:type="String">
       <sv:value>New Template</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:workflow" sv:type="String">
+    <sv:property sv:name="hippo:class" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
     </sv:property>
   </sv:node>
@@ -43,7 +43,7 @@
     <sv:property sv:name="hippo:message" sv:type="String">
       <sv:value>Nieuw Template</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:workflow" sv:type="String">
+    <sv:property sv:name="hippo:class" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
     </sv:property>
   </sv:node>
@@ -53,7 +53,7 @@
     </sv:property>
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hipposysedit:handle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>mix:referenceable</sv:value>

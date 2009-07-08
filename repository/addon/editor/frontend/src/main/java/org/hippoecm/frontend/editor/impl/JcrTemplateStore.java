@@ -76,12 +76,12 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
                     continue;
                 }
                 node = node.getParent();
-                if (!node.isNodeType("hippo:templatetype")) {
+                if (!node.isNodeType("hipposysedit:templatetype")) {
                     log.debug("invalid ancestor");
                     continue;
                 }
 
-                if (!node.hasNode("hippo:template")) {
+                if (!node.hasNode("hipposysedit:template")) {
                     log.debug("no template present");
                     continue;
                 }
