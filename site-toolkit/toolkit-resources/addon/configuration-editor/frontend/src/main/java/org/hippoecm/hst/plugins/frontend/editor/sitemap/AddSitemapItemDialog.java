@@ -19,7 +19,7 @@ import org.hippoecm.hst.plugins.frontend.editor.validators.UniqueSitemapItemVali
 public class AddSitemapItemDialog extends AddNodeDialog<SitemapItem> {
     private static final long serialVersionUID = 1L;
 
-    final List<Matcher> matchers = Arrays.asList(new Matcher[] { Matcher.CUSTOM, Matcher.WILDCARD, Matcher.INFINITE });
+    final List<Matcher> matchers = Arrays.asList(new Matcher[] { Matcher.WILDCARD, Matcher.INFINITE, Matcher.CUSTOM });
 
     private Matcher selection = Matcher.CUSTOM;
 

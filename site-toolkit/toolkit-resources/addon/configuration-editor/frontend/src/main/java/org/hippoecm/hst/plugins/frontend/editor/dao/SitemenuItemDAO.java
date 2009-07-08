@@ -20,19 +20,17 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.context.HstContext;
 import org.hippoecm.hst.plugins.frontend.editor.domain.SitemenuItem;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * DAO of the SitemenuItem
  */
 public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
-    
+
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -53,8 +51,8 @@ public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
      * @param context the context
      * @param config the config
      */
-    public SitemenuItemDAO(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+    public SitemenuItemDAO(IPluginContext context, String namespace) {
+        super(context, namespace);
     }
 
     /* (non-Javadoc)
@@ -94,11 +92,11 @@ public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
         //Set matcher value as nodeName if it's not already the same
         String newName = k.getName();
         try {
-            if(!k.getName().equals(model.getNode().getName())){
-                k.setModel(JcrUtilities.rename(model, newName));    
-            }            
+            if (!k.getName().equals(model.getNode().getName())) {
+                k.setModel(JcrUtilities.rename(model, newName));
+            }
         } catch (RepositoryException e) {
-            log.warn("Exception occured while trying to get name from model: ",e.getMessage());
+            log.warn("Exception occured while trying to get name from model: ", e.getMessage());
         }
 
         //save sitemapReference

@@ -14,24 +14,7 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-    <table class="hippo-window-form">
-      <tr>
-        <!-- <td>
-          <label><wicket:message key="matcher.choices" /></label>
-        </td> -->
-        <td>
-          <div wicket:id="choices">[ Radio Choices ]</div>
-        </td>
-      </tr>
-      <tr>
-        <!-- <td>
-          <label><wicket:message key="matcher" /></label>
-        </td> -->
-        <td>
-          <input type="text" wicket:id="matcher"></input>
-        </td>
-      </tr>
-    </table>
-  </wicket:extend>
+  <wicket:panel>
+    <div wicket:id="desc">[ Description ]</div>  
+  </wicket:panel>
 </html>

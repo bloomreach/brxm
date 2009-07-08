@@ -16,6 +16,9 @@
 
 package org.hippoecm.hst.plugins.frontend.editor.dialogs;
 
+import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
@@ -23,6 +26,8 @@ import org.hippoecm.hst.plugins.frontend.editor.domain.EditorBean;
 
 public abstract class AddNodeDialog<K extends EditorBean> extends EditorDialog<K> {
     private static final long serialVersionUID = 1L;
+
+    private static final ResourceReference STYLE = new ResourceReference(AddNodeDialog.class, "style.css");
 
     private RenderPlugin plugin;
 
@@ -36,4 +41,14 @@ public abstract class AddNodeDialog<K extends EditorBean> extends EditorDialog<K
         plugin.setModel(bean.getModel());
     }
 
+    @Override
+    public IValueMap getProperties() {
+        return SMALL;
+    }
+
+    @Override
+    public void renderHead(HtmlHeaderContainer container) {
+        super.renderHead(container);
+        container.getHeaderResponse().renderCSSReference(STYLE);
+    }
 }

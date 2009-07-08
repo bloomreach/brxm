@@ -44,7 +44,7 @@ public abstract class BasicEditorPlugin<K extends EditorBean> extends EditorPlug
 
     private final FeedbackPanel feedback;
     protected final Form form;
-    protected K bean;
+    private K bean;
 
     public BasicEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);

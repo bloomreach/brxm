@@ -62,20 +62,21 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
     static final Logger log = LoggerFactory.getLogger(ComponentEditorPlugin.class);
 
     private Fragment selected;
+    private DescriptionPanel dp;
 
     public ComponentEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        AjaxCheckBox box = new AjaxCheckBox("reference") {
+        form.add(dp = new DescriptionPanel("componentDescription", form.getInnermostModel(), context, config));
+
+        form.add(new AjaxCheckBox("reference") {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 redraw();
             }
-
-        };
-        form.add(box);
+        });
 
         //Containers widget
         ListView containers = new ListView("parameters") {
@@ -97,7 +98,7 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
 
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form form) {
-                        bean.removeParameter(item.getIndex());//TEST
+                        getBean().removeParameter(item.getIndex());//TEST
                         redraw();
                     }
                 };
@@ -114,7 +115,7 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                bean.addParameter();
+                getBean().addParameter();
                 redraw();
             }
 
@@ -150,7 +151,7 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
     }
 
     private void setComponentForm() {
-        Fragment f = bean.isReference() ? new RefComponentFragment() : new ComponentFragment();
+        Fragment f = getBean().isReference() ? new RefComponentFragment() : new ComponentFragment();
         if (selected == null) {
             form.add(selected = f);
         } else if (!selected.equals(f)) {
@@ -182,14 +183,14 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
                 private static final long serialVersionUID = 1L;
 
                 public AbstractDialog createDialog() {
-                    Model model = new Model(hstContext.component.absolutePath(bean.getReferenceName()));
+                    Model model = new Model(hstContext.component.absolutePath(getBean().getReferenceName()));
                     return new HstComponentPickerDialog(getPluginContext(), getPluginConfig(), model, nodetypes) {
                         private static final long serialVersionUID = 1L;
 
                         @Override
                         protected void saveNode(Node node) {
                             try {
-                                bean.setReferenceName(hstContext.component.relativePath(node.getPath()));
+                                getBean().setReferenceName(hstContext.component.relativePath(node.getPath()));
                                 redraw();
                             } catch (RepositoryException e) {
                                 log.error(e.getMessage());
@@ -242,7 +243,7 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
             //Choose template widget
             List<String> templates = hstContext.template.getTemplatesAsList();
 
-            final String originalTemplate = bean.getTemplate();
+            final String originalTemplate = getBean().getTemplate();
             final DropDownChoice dc = new DropDownChoice("template", templates);
             dc.setNullValid(false);
             dc.setRequired(true);
@@ -252,7 +253,7 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-                    if (!bean.getTemplate().equals(originalTemplate)) {
+                    if (!getBean().getTemplate().equals(originalTemplate)) {
                         info("Your template has changed, saving this session will create new child components as specified by the templates containers. Existing child components will be removed if they don't match the container names.");
                     }
                 }
@@ -264,7 +265,7 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
 
     @Override
     protected EditorDAO<Component> newDAO() {
-        return new ComponentDAO(getPluginContext(), getPluginConfig());
+        return new ComponentDAO(getPluginContext(), hstContext.component.getNamespace());
     }
 
     @Override

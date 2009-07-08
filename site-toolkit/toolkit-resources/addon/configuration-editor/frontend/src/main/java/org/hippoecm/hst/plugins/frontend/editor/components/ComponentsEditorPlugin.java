@@ -34,7 +34,7 @@ public class ComponentsEditorPlugin extends EditorPlugin<Component> {
 
     @Override
     protected EditorDAO<Component> newDAO() {
-        return new ComponentDAO(getPluginContext(), getPluginConfig());
+        return new ComponentDAO(getPluginContext(), hstContext.component.getNamespace());
     }
 
     @Override

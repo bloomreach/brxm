@@ -43,7 +43,7 @@ public class SitemapEditorPlugin extends EditorPlugin<SitemapItem> {
 
     @Override
     protected EditorDAO<SitemapItem> newDAO() {
-        return new SitemapItemDAO(getPluginContext(), getPluginConfig());
+        return new SitemapItemDAO(getPluginContext(), hstContext.sitemap.getNamespace());
     }
 
     @Override

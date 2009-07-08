@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.context.HstContext;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Sitemenu;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
@@ -35,8 +34,8 @@ public class SitemenuDAO extends EditorDAO<Sitemenu> {
 
     static final Logger log = LoggerFactory.getLogger(SitemenuDAO.class);
 
-    public SitemenuDAO(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+    public SitemenuDAO(IPluginContext context, String namespace) {
+        super(context, namespace);
     }
 
     @Override
@@ -47,8 +46,8 @@ public class SitemenuDAO extends EditorDAO<Sitemenu> {
         //Set name value
         try {
             String nodeName = model.getNode().getName();
-            if(menu!=null){
-               menu.setName(ctx.sitemenu.decodeReferenceName(nodeName));
+            if (menu != null) {
+                menu.setName(ctx.sitemenu.decodeReferenceName(nodeName));
             }
         } catch (RepositoryException e) {
             log.error("Error setting matcher value", e);

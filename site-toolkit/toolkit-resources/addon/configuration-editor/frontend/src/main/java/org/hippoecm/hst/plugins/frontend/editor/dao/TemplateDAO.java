@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Template;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
 import org.slf4j.Logger;
@@ -37,8 +36,8 @@ public class TemplateDAO extends EditorDAO<Template> {
     public static final String HST_CONTAINERS = "hst:containers";
     public static final String HST_RENDERPATH = "hst:renderpath";
 
-    public TemplateDAO(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+    public TemplateDAO(IPluginContext context, String namespace) {
+        super(context, namespace);
     }
 
     @Override

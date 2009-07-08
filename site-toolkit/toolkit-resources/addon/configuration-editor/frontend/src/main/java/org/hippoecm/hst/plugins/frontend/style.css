@@ -93,3 +93,12 @@ div.hst-editor-form a {
   float:none;
   display:inline;
 }
+
+div.hst-editor-form fieldset input.wizard-button {
+  width: auto;
+}
+
+div.hst-editor-form fieldset div.wizard-button-bar {
+ width: 100%;
+ padding-top: 25px;
+}

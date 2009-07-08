@@ -19,9 +19,10 @@ package org.hippoecm.hst.plugins.frontend.editor.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.Resource;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
-public class Component extends EditorBean {
+public class Component extends EditorBean implements Descriptive {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -57,9 +58,12 @@ public class Component extends EditorBean {
     String serverResourcePath;
     List<Parameter> parameters;
 
+    Description description;
+
     public Component(JcrNodeModel model) {
         super(model);
         parameters = new ArrayList<Parameter>();
+        description = new Description(model);
     }
 
     public boolean isReference() {
@@ -120,6 +124,7 @@ public class Component extends EditorBean {
         p.setValue(value);
         parameters.add(p);
     }
+
     public void removeParameter(int index) {
         parameters.remove(index);
     }
@@ -132,4 +137,19 @@ public class Component extends EditorBean {
         this.parameters = parameters;
     }
 
+    public String getDescription() {
+        return description.getDescription();
+    }
+
+    public void setDescription(String description) {
+        this.description.setDescription(description);
+    }
+
+    public Resource getIconResource() {
+        return description.getIconResource();
+    }
+
+    public void setIconResource(Resource resource) {
+        description.setIconResource(resource);
+    }
 }

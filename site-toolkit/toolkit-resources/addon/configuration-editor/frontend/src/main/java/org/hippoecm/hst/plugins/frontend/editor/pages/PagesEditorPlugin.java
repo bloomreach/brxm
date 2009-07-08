@@ -37,7 +37,7 @@ public class PagesEditorPlugin extends ComponentEditorPlugin {
 
     @Override
     protected PageDAO newDAO() {
-        return new PageDAO(getPluginContext(), getPluginConfig());
+        return new PageDAO(getPluginContext(), hstContext.page.getNamespace());
     }
 
 }

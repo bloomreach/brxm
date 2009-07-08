@@ -46,7 +46,7 @@ public abstract class EditorDialog<K extends EditorBean> extends AbstractDialog 
 
     @Override
     protected void onCancel() {
-        JcrNodeModel parent = bean.getModel().getParentModel();
+        JcrNodeModel parent = new JcrNodeModel(bean.getModel().getParentModel().getItemModel().getPath());
         if (dao.delete(bean)) {
             update(dao.load(parent));
         }
@@ -57,6 +57,7 @@ public abstract class EditorDialog<K extends EditorBean> extends AbstractDialog 
         super.render(target);
         if (focus != null) {
             target.focusComponent(focus);
+            focus = null;
         }
     }
 

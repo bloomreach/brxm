@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.context.HstContext;
 import org.hippoecm.hst.plugins.frontend.editor.domain.SitemapItem;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
@@ -39,8 +38,8 @@ public class SitemapItemDAO extends EditorDAO<SitemapItem> {
 
     private static final String CONTENT_PATH_PROPERTY = "hst:relativecontentpath";
 
-    public SitemapItemDAO(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+    public SitemapItemDAO(IPluginContext context, String namespace) {
+        super(context, namespace);
     }
 
     @Override

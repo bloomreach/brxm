@@ -34,7 +34,7 @@ public class TemplatesEditorPlugin extends EditorPlugin<Template> {
 
     @Override
     protected EditorDAO<Template> newDAO() {
-        return new TemplateDAO(getPluginContext(), getPluginConfig());
+        return new TemplateDAO(getPluginContext(), hstContext.template.getNamespace());
     }
 
     @Override

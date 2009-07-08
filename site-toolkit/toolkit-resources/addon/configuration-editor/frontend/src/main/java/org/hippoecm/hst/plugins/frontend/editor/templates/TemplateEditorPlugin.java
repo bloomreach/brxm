@@ -66,7 +66,7 @@ public class TemplateEditorPlugin extends BasicEditorPlugin<Template> {
 
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form form) {
-                        bean.removeContainer(item.getIndex());
+                        getBean().removeContainer(item.getIndex());
                         redraw();
                     }
                 };
@@ -83,7 +83,7 @@ public class TemplateEditorPlugin extends BasicEditorPlugin<Template> {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                bean.addContainer();
+                getBean().addContainer();
                 redraw();
             }
         };
@@ -93,7 +93,7 @@ public class TemplateEditorPlugin extends BasicEditorPlugin<Template> {
 
     @Override
     protected EditorDAO<Template> newDAO() {
-        return new TemplateDAO(getPluginContext(), getPluginConfig());
+        return new TemplateDAO(getPluginContext(), hstContext.template.getNamespace());
     }
 
     @Override

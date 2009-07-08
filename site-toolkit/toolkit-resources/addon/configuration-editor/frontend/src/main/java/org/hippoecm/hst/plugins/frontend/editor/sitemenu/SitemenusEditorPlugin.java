@@ -24,9 +24,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.EditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.SitemenuDAO;
-import org.hippoecm.hst.plugins.frontend.editor.dao.SitemenuItemDAO;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Sitemenu;
-import org.hippoecm.hst.plugins.frontend.editor.domain.SitemenuItem;
 
 public class SitemenusEditorPlugin extends EditorPlugin<Sitemenu> {
     private static final long serialVersionUID = 1L;
@@ -45,7 +43,7 @@ public class SitemenusEditorPlugin extends EditorPlugin<Sitemenu> {
 
     @Override
     protected EditorDAO<Sitemenu> newDAO() {
-        return new SitemenuDAO(getPluginContext(), getPluginConfig());
+        return new SitemenuDAO(getPluginContext(), hstContext.sitemenu.getNamespace());
     }
 
     @Override

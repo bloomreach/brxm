@@ -23,7 +23,6 @@ import javax.jcr.Session;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.context.HstContext;
 import org.hippoecm.hst.plugins.frontend.editor.domain.EditorBean;
 import org.hippoecm.repository.api.HippoSession;
@@ -41,9 +40,9 @@ public abstract class EditorDAO<K extends EditorBean> implements IClusterable {
     String prototypePath;
     private IPluginContext context;
 
-    public EditorDAO(IPluginContext context, IPluginConfig config) {
+    public EditorDAO(IPluginContext context, String namespace) {
         this.context = context;
-        prototypePath = config.getString("prototype.path") + "/hippo:prototype/hippo:prototype";
+        this.prototypePath = namespace + "/hippo:prototype/hippo:prototype";
     }
 
     public K create(JcrNodeModel model) {

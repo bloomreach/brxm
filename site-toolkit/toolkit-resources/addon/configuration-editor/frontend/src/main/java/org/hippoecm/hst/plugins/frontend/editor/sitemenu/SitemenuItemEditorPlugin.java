@@ -58,7 +58,7 @@ public class SitemenuItemEditorPlugin extends BasicEditorPlugin<SitemenuItem> {
         TextField itemName = new TextField("name");
         itemName.setOutputMarkupId(true);
         form.add(itemName);
-        
+
         // Linkpicker
         final List<String> nodetypes = new ArrayList<String>();
         if (config.getStringArray("nodetypes") != null) {
@@ -73,7 +73,7 @@ public class SitemenuItemEditorPlugin extends BasicEditorPlugin<SitemenuItem> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                String path = bean.getSitemapReference();
+                String path = getBean().getSitemapReference();
                 Model model = new Model(hstContext.content.absolutePath(path));
                 return new HstContentPickerDialog(context, config, model, nodetypes) {
                     private static final long serialVersionUID = 1L;
@@ -81,7 +81,7 @@ public class SitemenuItemEditorPlugin extends BasicEditorPlugin<SitemenuItem> {
                     @Override
                     protected void saveNode(Node node) {
                         try {
-                            bean.setSitemapReference(hstContext.content.relativePath(node.getPath()));
+                            getBean().setSitemapReference(hstContext.content.relativePath(node.getPath()));
                             redraw();
                         } catch (RepositoryException e) {
                             log.error(e.getMessage());
@@ -105,7 +105,7 @@ public class SitemenuItemEditorPlugin extends BasicEditorPlugin<SitemenuItem> {
         TextField sitemapReference = new TextField("sitemapReference");
         sitemapReference.setOutputMarkupId(true);
         form.add(sitemapReference);
-        
+
         TextField externalLink = new TextField("externalLink");
         externalLink.setOutputMarkupId(true);
         externalLink.add(new UrlValidator());
@@ -120,7 +120,7 @@ public class SitemenuItemEditorPlugin extends BasicEditorPlugin<SitemenuItem> {
 
     @Override
     protected EditorDAO<SitemenuItem> newDAO() {
-        return new SitemenuItemDAO(getPluginContext(), getPluginConfig());
+        return new SitemenuItemDAO(getPluginContext(), hstContext.sitemenu.getNamespace());
     }
 
     @Override

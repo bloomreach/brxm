@@ -16,13 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HstContext implements IDetachable {
-    private static final String HST_SITE = "hst:site";
-
-    private static final String HST_CONFIGURATION = "hst:configuration";
 
     private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(HstContext.class);
+
+    private static final String HST_SITE = "hst:site";
+    private static final String HST_CONFIGURATION = "hst:configuration";
 
     public static final String HST_CONTENT_PREFIX = "hst:content";
 
@@ -38,15 +37,18 @@ public class HstContext implements IDetachable {
     public HstConfigurationContext config;
 
     private List<HstModelContext> models;
+    String namespacesRoot;
 
-    public HstContext(JcrNodeModel baseModel) {
+    public HstContext(JcrNodeModel baseModel, String namespacesRoot) {
         //hier komt binnen /preview
         root = baseModel;
+        this.namespacesRoot = namespacesRoot;
         try {
 
             site = new HstSiteContext(root);
             config = new HstConfigurationContext(site.getModel());
             content = new HstContentContext(site.getModel());
+
             sitemenu = new HstSitemenuContext(config.getModel());
             sitemap = new HstSitemapContext(config.getModel());
             template = new HstTemplateContext(config.getModel());
@@ -158,6 +160,22 @@ public class HstContext implements IDetachable {
         public abstract void init(JcrNodeModel model) throws RepositoryException;
     }
 
+    public abstract class HstNamespaceContext extends HstModelContext {
+        private static final long serialVersionUID = 1L;
+
+        private String namespace;
+
+        public HstNamespaceContext(JcrNodeModel model, String namespace) throws RepositoryException {
+            super(model);
+            this.namespace = namespace;
+        }
+
+        public String getNamespace() {
+            return namespacesRoot + "/" + namespace;
+        }
+
+    }
+
     public class HstSiteContext extends HstModelContext {
         private static final long serialVersionUID = 1L;
 
@@ -177,7 +195,8 @@ public class HstContext implements IDetachable {
         }
     }
 
-    public class HstSitemapContext extends HstModelContext {
+    public class HstSitemapContext extends HstNamespaceContext {
+
         private static final long serialVersionUID = 1L;
 
         public static final String NODENAME = "hst:sitemap";
@@ -186,11 +205,12 @@ public class HstContext implements IDetachable {
         public static final String ANY_MATCHER_ENCODED = "_any_";
         public static final String WILDCARD_MATCHER = "*";
         public static final String WILDCARD_MATCHER_ENCODED = "_default_";
+        public static final String MATCHER_SEPERATOR = ".";
 
         public static final String PAGE_PROPERTY_PREFIX = "hst:pages/";
 
         public HstSitemapContext(JcrNodeModel model) throws RepositoryException {
-            super(model);
+            super(model, "sitemapitem");
         }
 
         @Override
@@ -199,21 +219,37 @@ public class HstContext implements IDetachable {
         }
 
         public String encodeMatcher(String matcher) {
-            if (matcher.equals(ANY_MATCHER)) {
+            int index = matcher.indexOf('.');
+            if (index > -1) {
+                return encode(matcher.substring(0, index)) + MATCHER_SEPERATOR + encode(matcher.substring(index + 1));
+            }
+            return encode(matcher);
+        }
+
+        private String encode(String s) {
+            if (s.equals(ANY_MATCHER)) {
                 return ANY_MATCHER_ENCODED;
-            } else if (matcher.equals(WILDCARD_MATCHER)) {
+            } else if (s.equals(WILDCARD_MATCHER)) {
                 return WILDCARD_MATCHER_ENCODED;
             }
-            return matcher;
+            return s;
         }
 
         public String decodeMatcher(String matcher) {
-            if (matcher.equals(ANY_MATCHER_ENCODED)) {
+            int index = matcher.indexOf('.');
+            if (index > -1) {
+                return decode(matcher.substring(0, index)) + MATCHER_SEPERATOR + decode(matcher.substring(index + 1));
+            }
+            return decode(matcher);
+        }
+
+        private String decode(String s) {
+            if (s.equals(ANY_MATCHER_ENCODED)) {
                 return ANY_MATCHER;
-            } else if (matcher.equals(WILDCARD_MATCHER_ENCODED)) {
+            } else if (s.equals(WILDCARD_MATCHER_ENCODED)) {
                 return WILDCARD_MATCHER;
             }
-            return matcher;
+            return s;
         }
 
         public String decodeContentPath(String contentPath) {
@@ -239,15 +275,14 @@ public class HstContext implements IDetachable {
 
     }
 
-    
-    public class HstSitemenuContext extends HstModelContext {
+    public class HstSitemenuContext extends HstNamespaceContext {
         private static final long serialVersionUID = 1L;
 
-        public HstSitemenuContext(JcrNodeModel model) throws RepositoryException {
-            super(model);
-        }
-
         public static final String HST_SITEMENUS = "hst:sitemenus";
+
+        public HstSitemenuContext(JcrNodeModel model) throws RepositoryException {
+            super(model, "sitemenu");
+        }
 
         @Override
         public void init(JcrNodeModel model) throws RepositoryException {
@@ -264,17 +299,17 @@ public class HstContext implements IDetachable {
         public String encodeReferenceName(String name) {
             return "hst:sitemenus/" + name;
         }
-        
+
     }
 
-    public class HstComponentContext extends HstModelContext {
+    public class HstComponentContext extends HstNamespaceContext {
         private static final long serialVersionUID = 1L;
 
-        public HstComponentContext(JcrNodeModel model) throws RepositoryException {
-            super(model);
-        }
-
         public static final String HST_COMPONENTS = "hst:components";
+
+        public HstComponentContext(JcrNodeModel model) throws RepositoryException {
+            super(model, "component");
+        }
 
         @Override
         public void init(JcrNodeModel model) throws RepositoryException {
@@ -292,15 +327,27 @@ public class HstContext implements IDetachable {
             return "hst:components/" + name;
         }
 
+        public List<String> getComponentsAsList() {
+            List<String> components = new ArrayList<String>();
+            try {
+                for (NodeIterator it = getModel().getNode().getNodes(); it.hasNext();) {
+                    Node child = it.nextNode();
+                    components.add(child.getName());
+                }
+            } catch (RepositoryException e) {
+                log.error("Error loading hst:components", e);
+            }
+            return components;
+        }
     }
 
-    public class HstTemplateContext extends HstModelContext {
+    public class HstTemplateContext extends HstNamespaceContext {
         private static final long serialVersionUID = 1L;
 
         public static final String HST_TEMPLATES = "hst:templates";
 
         public HstTemplateContext(JcrNodeModel model) throws RepositoryException {
-            super(model);
+            super(model, "template");
         }
 
         @Override
@@ -322,13 +369,13 @@ public class HstContext implements IDetachable {
         }
     }
 
-    public class HstPageContext extends HstModelContext {
+    public class HstPageContext extends HstNamespaceContext {
         private static final long serialVersionUID = 1L;
 
         public static final String HST_PAGES = "hst:pages";
 
         public HstPageContext(JcrNodeModel model) throws RepositoryException {
-            super(model);
+            super(model, "page");
         }
 
         @Override
@@ -336,8 +383,8 @@ public class HstContext implements IDetachable {
             this.model = new JcrNodeModel(model.getNode().getNode(HST_PAGES));
         }
 
-        public List<String> getPagesAsList() {
-            List<String> pages = new ArrayList<String>();
+        public ArrayList<String> getPagesAsList() {
+            ArrayList<String> pages = new ArrayList<String>();
             try {
                 for (NodeIterator it = getModel().getNode().getNodes(); it.hasNext();) {
                     Node child = it.nextNode();
@@ -379,11 +426,11 @@ public class HstContext implements IDetachable {
         @Override
         public void init(JcrNodeModel model) throws RepositoryException {
             if (!model.getNode().hasNode(HST_CONFIGURATION)) {
-                throw new IllegalArgumentException("Facet select " + HST_CONFIGURATION + " not fonud");
+                throw new IllegalArgumentException("Facet select " + HST_CONFIGURATION + " not found");
             }
             Node root = model.getNode().getNode(HST_CONFIGURATION);
             if (!root.hasNode(HST_CONFIGURATION)) {
-                throw new IllegalArgumentException("Node " + HST_CONFIGURATION + " not fonud");
+                throw new IllegalArgumentException("Node " + HST_CONFIGURATION + " not found");
             }
             HippoNode hroot = (HippoNode) root.getNode(HST_CONFIGURATION);
             root = hroot.getCanonicalNode();

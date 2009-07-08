@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.plugins.frontend.util;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,6 +122,22 @@ public class JcrUtilities {
                 return; //value the same
             }
             setMultiValueProperty(model, property, value);
+        }
+    }
+
+    public static void updateProperty(JcrNodeModel model, String property, InputStream value) {
+        try {
+            model.getNode().setProperty(property, value);
+        } catch (RepositoryException e) {
+            log.error("Error saving property {0} of type InputStream", new Object[] { property });
+        }
+    }
+
+    public static void updateProperty(JcrNodeModel model, String property, long value) {
+        try {
+            model.getNode().setProperty(property, value);
+        } catch (RepositoryException e) {
+            log.error("Error saving property {0} of type Long", new Object[] { property });
         }
     }
 }

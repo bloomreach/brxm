@@ -23,10 +23,18 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.IRequestTarget;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -55,6 +63,8 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
 
     private static final String BROWSE_LABEL = "[...]";
 
+    DropDownChoice ddc;
+
     public SitemapItemEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -63,10 +73,30 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
         fc.add(new UniqueSitemapItemValidator(this, hstContext.sitemap));
         form.add(fc);
 
-        DropDownChoice ddc = new DropDownChoice("page", hstContext.page.getPagesAsList());
+        //Model m = new Model()
+        ddc = new DropDownChoice("page", new LoadableDetachableModel() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Object load() {
+                return hstContext.page.getPagesAsList();
+            }
+        });
         ddc.setNullValid(false);
         ddc.setRequired(true);
         ddc.setOutputMarkupId(true);
+        ddc.setChoiceRenderer(new IChoiceRenderer() {
+            private static final long serialVersionUID = 1L;
+
+            public Object getDisplayValue(Object object) {
+                return object;
+            }
+
+            public String getIdValue(Object object, int index) {
+                return (String) object;
+            }
+
+        });
         form.add(ddc);
 
         // Linkpicker
@@ -83,7 +113,7 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                String path = hstContext.sitemap.decodeContentPath(bean.getContentPath());
+                String path = hstContext.sitemap.decodeContentPath(getBean().getContentPath());
                 Model model = new Model(hstContext.content.absolutePath(path));
                 return new HstContentPickerDialog(context, config, model, nodetypes) {
                     private static final long serialVersionUID = 1L;
@@ -91,7 +121,7 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
                     @Override
                     protected void saveNode(Node node) {
                         try {
-                            bean.setContentPath(hstContext.content.relativePath(node.getPath()));
+                            getBean().setContentPath(hstContext.content.relativePath(node.getPath()));
                             redraw();
                         } catch (RepositoryException e) {
                             log.error(e.getMessage());
@@ -115,9 +145,49 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
         TextField contentPath = new TextField("contentPath");
         contentPath.setOutputMarkupId(true);
         form.add(contentPath);
+
+        AjaxLink newPage = new AjaxLink("newPage") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                renderNewPageWizard(true, target);
+            }
+
+        };
+        form.add(newPage);
+
+        renderNewPageWizard(false, null);
     }
 
-    //FIXME: This is a nasty hack
+    private void renderNewPageWizard(boolean show, IRequestTarget target) {
+        Component c = show ? new NewPageWizard("wizard", getPluginContext(), getPluginConfig()) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                renderNewPageWizard(false, RequestCycle.get().getRequestTarget());
+            }
+
+            @Override
+            protected void onFinish(org.hippoecm.hst.plugins.frontend.editor.domain.Component page) {
+                IRequestTarget target = RequestCycle.get().getRequestTarget();
+                renderNewPageWizard(false, target);
+
+                ddc.setModelValue(new String[] { page.getName() });
+                if (target != null && target instanceof AjaxRequestTarget) {
+                    ((AjaxRequestTarget) target).addComponent(ddc);
+                }
+            }
+        } : new EmptyPanel("wizard").setOutputMarkupId(true);
+        form.addOrReplace(c);
+
+        if (target != null && target instanceof AjaxRequestTarget) {
+            ((AjaxRequestTarget) target).addComponent(c);
+        }
+    }
+
     @Override
     protected String getAddDialogTitle() {
         return new StringResourceModel("dialog.title", this, null).getString();
@@ -125,7 +195,7 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
 
     @Override
     protected EditorDAO<SitemapItem> newDAO() {
-        return new SitemapItemDAO(getPluginContext(), getPluginConfig());
+        return new SitemapItemDAO(getPluginContext(), hstContext.sitemap.getNamespace());
     }
 
     @Override

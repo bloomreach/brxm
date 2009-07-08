@@ -47,8 +47,6 @@ public abstract class EditorPlugin<K extends EditorBean> extends RenderPlugin {
     public EditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        //        hstContext = new HstContext((JcrNodeModel) getModel());
-        //        context.registerService(hstContext, HstContext.class.getName());
         hstContext = context.getService(HstContext.class.getName(), HstContext.class);
 
         dao = newDAO();

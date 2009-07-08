@@ -17,9 +17,9 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
     <wicket:extend>
-      <p><wicket:message key="intro">Intro</wicket:message></p>  
+      <p><wicket:message key="intro">Intro</wicket:message></p>
       <fieldset>
-        <legend><wicket:message key="fieldset.legend">Legend</wicket:message></legend>
+        <legend><wicket:message key="component.legend.details">Legend</wicket:message></legend>
         <div>
           <label for="reference"><wicket:message key="componentReference.label">Is relative component label</wicket:message></label>
           <input type="checkbox" wicket:id="reference" name="reference"/>
@@ -37,8 +37,9 @@
             </li>
           </ul>  
         </div>
-
       </fieldset>
+      
+      <div wicket:id="componentDescription">[ Component description ]</div>      
       
       <wicket:fragment wicket:id="component">
         <div>

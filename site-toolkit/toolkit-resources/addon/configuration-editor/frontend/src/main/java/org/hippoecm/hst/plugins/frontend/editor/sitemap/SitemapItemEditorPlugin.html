@@ -28,8 +28,15 @@
         </div>  
         <div>
           <label for="page"><wicket:message key="page.label">Page label</wicket:message></label><select name="page" wicket:id="page"></select>
+          <a wicket:id="newPage" style="margin-left: 10px;">
+            <wicket:message key="page.new.label">New page</wicket:message>
+          </a>
         </div>  
       </fieldset>
+      
+      <div wicket:id="wizard">[ Wizard ]</div>
+      
     </wicket:extend>
+    
   </wicket:panel>
 </html>

@@ -16,20 +16,30 @@
 
 package org.hippoecm.hst.plugins.frontend.editor.dao;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
+import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component.Parameter;
+import org.hippoecm.hst.plugins.frontend.util.IOUtil;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
 
 public class ComponentDAO extends EditorDAO<Component> {
@@ -45,8 +55,16 @@ public class ComponentDAO extends EditorDAO<Component> {
     private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
     private static final String HST_TEMPLATE = "hst:template";
 
-    public ComponentDAO(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+    private static final String HST_DESCRIPTION = "hst:description";
+    private static final String HST_ICON = "hst:icon";
+
+    private static final List<String> NON_CONTAINER_NODES = new ArrayList<String>();
+    {
+        NON_CONTAINER_NODES.add(HST_ICON);
+    }
+
+    public ComponentDAO(IPluginContext context, String namespace) {
+        super(context, namespace);
     }
 
     @Override
@@ -91,13 +109,43 @@ public class ComponentDAO extends EditorDAO<Component> {
             }
         }
 
+        if (JcrUtilities.hasProperty(model, HST_DESCRIPTION)) {
+            component.setDescription(JcrUtilities.getProperty(model, HST_DESCRIPTION));
+        }
+
+        if (JcrUtilities.hasProperty(model, HST_ICON)) {
+            InputStream is;
+            try {
+                is = model.getNode().getProperty(HST_ICON).getStream();
+                component.setIconResource(IOUtil.obtainResource(is));
+            } catch (ValueFormatException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (PathNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (RepositoryException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
         return component;
     }
 
     @Override
-    protected void persist(Component component, JcrNodeModel model) {
+    public void persist(Component component, JcrNodeModel model) {
 
         component.setModel(JcrUtilities.rename(model, component.getName()));
+
+        //save reference stuff
+        if (component.isReference()) {
+            JcrUtilities.updateProperty(model, HST_REFERENCECOMPONENT, getHstContext().component
+                    .encodeReferenceName(component.getReferenceName()));
+        }
 
         //save componentClassName
         JcrUtilities.updateProperty(model, HST_COMPONENTCLASSNAME, component.getComponentClassName());
@@ -120,8 +168,34 @@ public class ComponentDAO extends EditorDAO<Component> {
         //Create containers
         updateTemplate(component, model);
 
-        //Save template
+        //Save description
+        try {
+            saveDescription(component, model);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        } catch (ResourceStreamNotFoundException e) {
+            e.printStackTrace();
+        }
 
+    }
+
+    private void saveDescription(Component component, JcrNodeModel model) throws ItemExistsException,
+            PathNotFoundException, VersionException, ConstraintViolationException, LockException, RepositoryException,
+            ResourceStreamNotFoundException {
+
+        JcrUtilities.updateProperty(model, HST_DESCRIPTION, component.getDescription());
+        if (component.getIconResource() != null) {
+            Node node = model.getNode();
+            if (!node.hasNode(HST_ICON)) {
+                node.addNode(HST_ICON, "hippo:resource");
+            }
+            JcrNodeModel resourceModel = new JcrNodeModel(node.getNode(HST_ICON));
+            IResourceStream r = component.getIconResource().getResourceStream();
+
+            JcrUtilities.updateProperty(resourceModel, "jcr:mimeType", r.getContentType());
+            JcrUtilities.updateProperty(resourceModel, "jcr:data", r.getInputStream());
+            JcrUtilities.updateProperty(resourceModel, "jcr:lastModified", r.lastModifiedTime().getMilliseconds());
+        }
     }
 
     private void updateTemplate(Component component, JcrNodeModel model) {
@@ -137,7 +211,10 @@ public class ComponentDAO extends EditorDAO<Component> {
             if (node.hasNodes()) {
                 NodeIterator it = node.getNodes();
                 while (it.hasNext()) {
-                    nodes.add(it.nextNode().getName());
+                    String name = it.nextNode().getName();
+                    if (!NON_CONTAINER_NODES.contains(name)) {
+                        nodes.add(name);
+                    }
                 }
             }
 
@@ -157,5 +234,4 @@ public class ComponentDAO extends EditorDAO<Component> {
             log.error(e.getMessage());
         }
     }
-
 }

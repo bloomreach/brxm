@@ -263,17 +263,16 @@
     <sv:property sv:name="browser.model" sv:type="String">
       <sv:value>${cluster.id}.browser.model</sv:value>
     </sv:property>
-    <!--     
-    <sv:property sv:name="browser.root" sv:type="String">
-      <sv:value>/hst:configuration/hst:configuration</sv:value>
-    </sv:property>
-    -->
     <sv:property sv:name="browser.viewers" sv:type="String">
       <sv:value>hst-editor-views</sv:value>
     </sv:property>
     <sv:property sv:name="editor.root" sv:type="String">
       <sv:value>/preview</sv:value>
     </sv:property>
+    <sv:property sv:name="namespaces.root" sv:type="String">
+      <sv:value>hippo:namespaces/hsteditor</sv:value>
+    </sv:property>
+    
     <sv:property sv:name="cluster.name" sv:type="String">
       <sv:value>hst-editor-navigator</sv:value>
     </sv:property>

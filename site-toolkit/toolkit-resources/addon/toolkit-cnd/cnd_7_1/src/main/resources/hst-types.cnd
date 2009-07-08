@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
+<nt='http://www.jcp.org/jcr/nt/1.0'>
 <hst='http://www.hippoecm.org/hst/nt/1.2'>
 <hippostd='http://www.hippoecm.org/hippostd/nt/1.3'>
 <hippo='http://www.hippoecm.org/nt/1.3'>
+
+[hst:descriptive] mixin
+- hst:description (string)
++ hst:icon (hippo:resource) = hippo:resource
 
 [hst:template]
 - hst:renderpath (string)
@@ -25,7 +30,7 @@
 [hst:templates]
 + * (hst:template)
 
-[hst:component] orderable
+[hst:component] > nt:base, hst:descriptive orderable
 - hst:template (string)
 - hst:componentclassname (string)
 - hst:serveresourcepath(string)
@@ -34,7 +39,6 @@
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 + * (hst:component)
-
 
 [hst:components] orderable
 + * (hst:component)
