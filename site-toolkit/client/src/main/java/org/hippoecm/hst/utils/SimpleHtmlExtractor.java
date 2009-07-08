@@ -74,6 +74,19 @@ public class SimpleHtmlExtractor {
         }
     }
     
+    
+    public static String getInnerText(String html, String tagName) {
+        String innerText = "";
+        
+        TagNode targetNode = getTargetTagNode(html, tagName);
+        
+        if (targetNode != null) {
+            innerText = targetNode.getText().toString();
+        }
+        
+        return innerText;
+    }
+    
     private static String getInnerHtmlSimply(String html, String tagName) {
         String tagInnerHtml = "";
         
@@ -156,19 +169,31 @@ public class SimpleHtmlExtractor {
         String tagInnerHtml = null;
         
         if (html != null) {
-            try {
-                TagNode rootNode = cleaner.clean(html);
-                TagNode [] targetNodes = rootNode.getElementsByName(tagName, true);
-                
-                if (targetNodes.length > 0) {
-                    tagInnerHtml = cleaner.getInnerHtml(targetNodes[0]);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            TagNode targetNode = getTargetTagNode(html, tagName);
+            
+            if (targetNode != null) {
+                tagInnerHtml = cleaner.getInnerHtml(targetNode);
             }
         }
         
         return tagInnerHtml;
+    }
+    
+    private static TagNode getTargetTagNode(String html, String tagName) {
+        TagNode targetNode = null;
+        
+        try {
+            TagNode rootNode = cleaner.clean(html);
+            TagNode [] targetNodes = rootNode.getElementsByName(tagName, true);
+            
+            if (targetNodes.length > 0) {
+                targetNode = targetNodes[0];
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        
+        return targetNode;
     }
     
 }

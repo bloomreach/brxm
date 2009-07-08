@@ -38,22 +38,38 @@ public class TestSimpleHtmlExtractor {
         "</html>";
     
     @Test
-    public void testHtmlExtractor() throws Exception {
+    public void testInnerHtmlExtraction() throws Exception {
         String titleInnerHtml = SimpleHtmlExtractor.getInnerHtml(SIMPLE_HTML, "title", false);
-        System.out.println("title's inner content: " + titleInnerHtml);
+        //System.out.println("title's inner content: " + titleInnerHtml);
         assertEquals("title content is not properly extracted: " + titleInnerHtml.trim(), "Hello", titleInnerHtml.trim());
 
         String bodyInnerHtml = SimpleHtmlExtractor.getInnerHtml(SIMPLE_HTML, "body", false);
-        System.out.println("body's inner content: " + bodyInnerHtml);
+        //System.out.println("body's inner content: " + bodyInnerHtml);
         assertEquals("body content is not properly extracted: " + bodyInnerHtml.trim(), "<h1>Hello, World!</h1>", bodyInnerHtml.trim());
         
         titleInnerHtml = SimpleHtmlExtractor.getInnerHtml(SIMPLE_HTML, "title", true);
-        System.out.println("title's inner content: " + titleInnerHtml);
+        //System.out.println("title's inner content: " + titleInnerHtml);
         assertEquals("title content is not properly extracted: " + titleInnerHtml.trim(), "Hello", titleInnerHtml.trim());
 
         bodyInnerHtml = SimpleHtmlExtractor.getInnerHtml(SIMPLE_HTML, "body", true);
-        System.out.println("body's inner content: " + bodyInnerHtml);
+        //System.out.println("body's inner content: " + bodyInnerHtml);
         assertEquals("body content is not properly extracted: " + bodyInnerHtml.trim(), "<h1>Hello, World!</h1>", bodyInnerHtml.trim());
+    }
+    
+    @Test
+    public void testInnerTextExtraction() throws Exception {
+        String titleInnerText = SimpleHtmlExtractor.getInnerText(SIMPLE_HTML, "title");
+        //System.out.println("title's inner content: " + titleInnerText);
+        assertEquals("title content is not properly extracted: " + titleInnerText.trim(), "Hello", titleInnerText.trim());
+
+        String bodyInnerText = SimpleHtmlExtractor.getInnerText(SIMPLE_HTML, "body");
+        //System.out.println("body's inner content: " + bodyInnerText);
+        assertEquals("body content is not properly extracted: " + bodyInnerText.trim(), "Hello, World!", bodyInnerText.trim());
+        
+        // Test with broken html markups.
+        bodyInnerText = SimpleHtmlExtractor.getInnerText(SIMPLE_HTML.substring(0, SIMPLE_HTML.indexOf("World")), "body");
+        //System.out.println("body's inner content: " + bodyInnerText);
+        assertEquals("body content is not properly extracted: " + bodyInnerText.trim(), "Hello,", bodyInnerText.trim());
     }
     
     @Test
