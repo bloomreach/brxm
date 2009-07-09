@@ -30,6 +30,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.BasicEditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.TemplateDAO;
+import org.hippoecm.hst.plugins.frontend.editor.description.DescriptionPanel;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Template;
 import org.hippoecm.hst.plugins.frontend.editor.validators.NodeUniqueValidator;
 
@@ -38,6 +39,8 @@ public class TemplateEditorPlugin extends BasicEditorPlugin<Template> {
 
     public TemplateEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        
+        form.add(new DescriptionPanel("description", form.getInnermostModel(), context, config));
 
         //Readonly name widget
         FormComponent fc = new RequiredTextField("name");

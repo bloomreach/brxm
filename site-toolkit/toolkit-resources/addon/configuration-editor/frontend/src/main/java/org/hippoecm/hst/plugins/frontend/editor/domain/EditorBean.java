@@ -1,10 +1,9 @@
 package org.hippoecm.hst.plugins.frontend.editor.domain;
 
-import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 //TODO: probably clearer to extend JcrNodeModel
-public class EditorBean implements IDetachable {
+public class EditorBean implements IEditorBean{
     private static final long serialVersionUID = 1L;
 
     private JcrNodeModel model; //KEY

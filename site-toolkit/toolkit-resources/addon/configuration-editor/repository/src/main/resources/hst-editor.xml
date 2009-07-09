@@ -321,7 +321,7 @@
         <sv:value>id=hst-perspective-left,body=hst-perspective-left-body,resize=true,scroll=false,minWidth=200,width=200,gutter=0px 0px 0px 0px</sv:value>
       </sv:property>
       <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=hst-perspective-center,body=hst-perspective-center-body,minWidth=400,scroll=false,gutter=0px 0px 0px 0px</sv:value>
+        <sv:value>id=hst-perspective-center,body=hst-perspective-center-body,minWidth=400,scroll=true,gutter=0px 0px 0px 0px</sv:value>
       </sv:property>
     </sv:node>  
   </sv:node>

@@ -16,11 +16,14 @@
 
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <form wicket:id="form">
-      <label for="upload">
-        <wicket:message key="select-file-label"/>
-      </label>
-      <input class="hippo-select-file" size="62" wicket:id="input" id="upload" type="file"/>
-    </form>
+    <div style="padding:15px;">
+	    <form wicket:id="form">
+	      <label for="upload">
+	        <wicket:message key="select-file-label">Upload an image that describes this component.</wicket:message>
+	      </label>
+	      <br/>
+	      <input class="hippo-select-file" size="30" wicket:id="input" id="upload" type="file"/>
+	    </form>
+	  </div>  
   </wicket:extend>  
 </html>

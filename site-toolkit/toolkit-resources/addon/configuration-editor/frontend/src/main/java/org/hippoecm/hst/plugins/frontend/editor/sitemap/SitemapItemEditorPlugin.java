@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
@@ -36,6 +37,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -45,10 +47,15 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.BasicEditorPlugin;
+import org.hippoecm.hst.plugins.frontend.editor.dao.DescriptionDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.SitemapItemDAO;
+import org.hippoecm.hst.plugins.frontend.editor.description.DescriptionPicker;
+import org.hippoecm.hst.plugins.frontend.editor.description.DescriptionPicker.DescriptionProvider;
 import org.hippoecm.hst.plugins.frontend.editor.dialogs.HstContentPickerDialog;
+import org.hippoecm.hst.plugins.frontend.editor.domain.Descriptive;
 import org.hippoecm.hst.plugins.frontend.editor.domain.SitemapItem;
+import org.hippoecm.hst.plugins.frontend.editor.sitemap.wizard.NewPageWizard;
 import org.hippoecm.hst.plugins.frontend.editor.validators.UniqueSitemapItemValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +71,7 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
     private static final String BROWSE_LABEL = "[...]";
 
     DropDownChoice ddc;
+    DescriptionPicker descPicker;
 
     public SitemapItemEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -97,7 +105,7 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
             }
 
         });
-        form.add(ddc);
+        //form.add(ddc);
 
         // Linkpicker
         final List<String> nodetypes = new ArrayList<String>();
@@ -156,8 +164,39 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
 
         };
         form.add(newPage);
+        
+        
+        DescriptionProvider provider = new DescriptionProvider() {
+
+            public List<Descriptive> load() {
+                DescriptionDAO descDao = new DescriptionDAO(context, hstContext.page.getNamespace());
+                List<Descriptive> descriptives = new ArrayList<Descriptive>();
+                Node pages = hstContext.page.getModel().getNode();
+                try {
+                    if(pages.hasNodes()) {
+                        for(NodeIterator it = pages.getNodes(); it.hasNext();) {
+                            Node page = it.nextNode();
+                            descriptives.add(descDao.load(new JcrNodeModel(page.getPath())));
+                        }
+                    }
+                } catch (RepositoryException e) {
+                    e.printStackTrace();
+                }
+                return descriptives;
+            }
+        };
+        
+        form.add(descPicker = new DescriptionPicker("pagePicker", new PropertyModel(form.getModel(), "page"), provider));
 
         renderNewPageWizard(false, null);
+    }
+    
+    @Override
+    protected void onModelChanged() {
+        super.onModelChanged();
+        if(descPicker != null) {
+            descPicker.refresh();
+        }
     }
 
     private void renderNewPageWizard(boolean show, IRequestTarget target) {
@@ -175,9 +214,14 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
                 IRequestTarget target = RequestCycle.get().getRequestTarget();
                 renderNewPageWizard(false, target);
 
-                ddc.setModelValue(new String[] { page.getName() });
+                getBean().setPage(page.getName());
+                if(descPicker != null) {
+                    descPicker.refresh();
+                }
+
+                //ddc.setModelValue(new String[] { page.getName() });
                 if (target != null && target instanceof AjaxRequestTarget) {
-                    ((AjaxRequestTarget) target).addComponent(ddc);
+                    ((AjaxRequestTarget) target).addComponent(descPicker);
                 }
             }
         } : new EmptyPanel("wizard").setOutputMarkupId(true);

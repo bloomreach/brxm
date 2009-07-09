@@ -1,4 +1,4 @@
-package org.hippoecm.hst.plugins.frontend.editor.components;
+package org.hippoecm.hst.plugins.frontend.editor.description;
 
 import java.io.IOException;
 
@@ -19,6 +19,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValueConversionException;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -95,9 +96,14 @@ public class DescriptionPanel extends Panel {
                 setNonAjaxSubmit();
                 add(new UploadForm());
             }
+            
+            @Override
+            public IValueMap getProperties() {
+                return SMALL;
+            }
 
             public IModel getTitle() {
-                return new Model("Test 123");
+                return new Model(getString("dialog.upload.thumbnail"));
             }
 
         }

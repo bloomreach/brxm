@@ -46,6 +46,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.BasicEditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.ComponentDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
+import org.hippoecm.hst.plugins.frontend.editor.description.DescriptionPanel;
 import org.hippoecm.hst.plugins.frontend.editor.dialogs.HstComponentPickerDialog;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component.Parameter;
@@ -62,12 +63,11 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
     static final Logger log = LoggerFactory.getLogger(ComponentEditorPlugin.class);
 
     private Fragment selected;
-    private DescriptionPanel dp;
 
     public ComponentEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        form.add(dp = new DescriptionPanel("componentDescription", form.getInnermostModel(), context, config));
+        form.add(new DescriptionPanel("componentDescription", form.getInnermostModel(), context, config));
 
         form.add(new AjaxCheckBox("reference") {
             private static final long serialVersionUID = 1L;

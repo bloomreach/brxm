@@ -58,12 +58,16 @@ public class Component extends EditorBean implements Descriptive {
     String serverResourcePath;
     List<Parameter> parameters;
 
-    Description description;
+    Descriptive descriptive;
 
-    public Component(JcrNodeModel model) {
+    public Component(JcrNodeModel model, Descriptive desc) {
         super(model);
         parameters = new ArrayList<Parameter>();
-        description = new Description(model);
+        descriptive = desc;
+    }
+    
+    public Component(JcrNodeModel model) {
+        this(model, new Description(model));
     }
 
     public boolean isReference() {
@@ -138,18 +142,25 @@ public class Component extends EditorBean implements Descriptive {
     }
 
     public String getDescription() {
-        return description.getDescription();
+        return descriptive.getDescription();
     }
 
     public void setDescription(String description) {
-        this.description.setDescription(description);
+        this.descriptive.setDescription(description);
     }
 
     public Resource getIconResource() {
-        return description.getIconResource();
+        return descriptive.getIconResource();
     }
 
     public void setIconResource(Resource resource) {
-        description.setIconResource(resource);
+        descriptive.setIconResource(resource);
     }
+    
+    @Override
+    public void detach() {
+        super.detach();
+        descriptive.detach();
+    }
+
 }

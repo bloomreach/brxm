@@ -1,4 +1,4 @@
-package org.hippoecm.hst.plugins.frontend.editor.sitemap;
+package org.hippoecm.hst.plugins.frontend.editor.sitemap.wizard;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;

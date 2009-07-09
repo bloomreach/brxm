@@ -24,12 +24,12 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.hst.plugins.frontend.editor.context.HstContext;
-import org.hippoecm.hst.plugins.frontend.editor.domain.EditorBean;
+import org.hippoecm.hst.plugins.frontend.editor.domain.IEditorBean;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class EditorDAO<K extends EditorBean> implements IClusterable {
+public abstract class EditorDAO<K extends IEditorBean> implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -86,7 +86,7 @@ public abstract class EditorDAO<K extends EditorBean> implements IClusterable {
 
     public boolean delete(K k) {
         JcrNodeModel model = k.getModel();
-        if (model != null && getHstContext().canDeleteNode(model)) {
+        if (model != null && getHstContext().isDeleteAllowed(model)) {
             Node node = model.getNode();
             try {
                 node.remove();

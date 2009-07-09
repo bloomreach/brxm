@@ -12,7 +12,7 @@ import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Description implements Descriptive {
+public class Description extends EditorBean implements Descriptive {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(Description.class);
@@ -20,10 +20,8 @@ public class Description implements Descriptive {
     private String description;
     private Resource resource;
 
-    JcrNodeModel model;
-
     public Description(final JcrNodeModel model) {
-        this.model = model;
+        super(model);
     }
 
     public String getDescription() {
@@ -35,7 +33,7 @@ public class Description implements Descriptive {
     }
 
     public Resource getIconResource() {
-        final Node node = model.getNode();
+        final Node node = getModel().getNode();
         try {
             if (resource == null && node.hasNode("hst:icon")) {
                 //final IResourceStream resourceStream = new JcrResourceStream(model.getNode().getNode("hst:icon"));
@@ -59,7 +57,7 @@ public class Description implements Descriptive {
                 };
             }
         } catch (RepositoryException e) {
-            log.error("Error retrieving node hst:icon from node {0}", model.getItemModel().getPath());
+            log.error("Error retrieving node hst:icon from node {0}", getModel().getItemModel().getPath());
         }
 
         return resource;

@@ -1,10 +1,14 @@
-package org.hippoecm.hst.plugins.frontend.editor.sitemap;
+package org.hippoecm.hst.plugins.frontend.editor.sitemap.wizard;
+
+import java.util.ArrayList;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -22,13 +26,18 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.hst.plugins.frontend.editor.components.DescriptionPanel;
 import org.hippoecm.hst.plugins.frontend.editor.context.HstContext;
 import org.hippoecm.hst.plugins.frontend.editor.dao.ComponentDAO;
+import org.hippoecm.hst.plugins.frontend.editor.dao.DescriptionDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.PageDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.TemplateDAO;
+import org.hippoecm.hst.plugins.frontend.editor.description.DescriptionPanel;
+import org.hippoecm.hst.plugins.frontend.editor.description.DescriptionPicker;
+import org.hippoecm.hst.plugins.frontend.editor.description.DescriptionPicker.DescriptionProvider;
+import org.hippoecm.hst.plugins.frontend.editor.description.DescriptionPicker.DescriptionProviderImpl;
 import org.hippoecm.hst.plugins.frontend.editor.domain.BeanProvider;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component;
+import org.hippoecm.hst.plugins.frontend.editor.domain.Descriptive;
 import org.hippoecm.hst.plugins.frontend.editor.validators.NodeUniqueValidator;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
 
@@ -85,11 +94,14 @@ public abstract class NewPageWizard extends AjaxWizard {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     if (!newPage.getTemplate().equals(originalTemplate)) {
-                        info("Your template has changed, saving this session will create new child components as specified by the templates containers. Existing child components will be removed if they don't match the container names.");
+                        //info("Your template has changed, saving this session will create new child components as specified by the templates containers. Existing child components will be removed if they don't match the container names.");
                     }
                 }
             });
-            add(dc);
+            //add(dc);
+                
+                DescriptionProvider provider = new DescriptionProviderImpl(new DescriptionDAO(context, hstContext.page.getNamespace()),hstContext.template.getModel()); 
+                add(new DescriptionPicker("templatePicker", new PropertyModel(newPage, "template"), provider));
         }
 
         public boolean isLastStep() {
@@ -112,25 +124,13 @@ public abstract class NewPageWizard extends AjaxWizard {
 
         public ComponentDescriptionStep(DynamicWizardStep previousStep) {
             super(previousStep);
-
+            
+            //setTitleModel(new Model("Ben ik hier?"));
+            
             add(new Label("containerName", new Model(containersModel.getName())));
-
-            List<String> templates = hstContext.component.getComponentsAsList();
-
-            final DropDownChoice dc = new DropDownChoice("components", new PropertyModel(containersModel, "component"),
-                    templates);
-            dc.setNullValid(false);
-            dc.setRequired(true);
-            dc.setOutputMarkupId(true);
-            dc.add(new AjaxFormComponentUpdatingBehavior("onChange") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-
-                }
-            });
-            add(dc);
+            
+            DescriptionProvider provider = new DescriptionProviderImpl(new DescriptionDAO(context, hstContext.page.getNamespace()), hstContext.template.getModel());
+            add(new DescriptionPicker("componentPicker", new PropertyModel(containersModel, "component"), provider));
         }
 
         public boolean isLastStep() {
@@ -210,35 +210,8 @@ public abstract class NewPageWizard extends AjaxWizard {
                 c.setReferenceName(e.getValue());
                 cDao.save(c);
             }
+            onFinish(newPage);
         }
-    }
-
-    public final void onFinish2() {
-        pageDao.persist(newPage, newPage.getModel());
-
-        ComponentDAO cDao = new ComponentDAO(context, hstContext.component.getNamespace());
-        for (Entry<String, String> e : containersModel.values.entrySet()) {
-            JcrNodeModel cModel = new JcrNodeModel(newPage.getModel().getItemModel().getPath() + "/" + e.getKey());
-            Component c = cDao.load(cModel);
-            c.setReference(true);
-            c.setReferenceName(e.getValue());
-            cDao.persist(c, c.getModel());
-        }
-        Session session;
-        try {
-            session = newPage.getModel().getNode().getSession();
-            if (session.hasPendingChanges()) {
-                session.save();
-                onFinish(newPage);
-            }
-        } catch (RepositoryException e1) {
-            e1.printStackTrace();
-            error("Error saving new page.");
-        }
-
-        //        if (pageDao.save(newPage)) {
-        //        } else {
-        //        }
     }
 
     protected abstract void onFinish(Component page);
@@ -274,6 +247,9 @@ public abstract class NewPageWizard extends AjaxWizard {
         }
 
         public String getComponent() {
+            if(values.containsKey(getName())) {
+                return values.get(getName());
+            }
             return null;
         }
     }

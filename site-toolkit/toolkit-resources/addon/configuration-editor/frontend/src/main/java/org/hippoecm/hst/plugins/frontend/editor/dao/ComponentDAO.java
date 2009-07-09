@@ -38,6 +38,7 @@ import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component;
+import org.hippoecm.hst.plugins.frontend.editor.domain.Description;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component.Parameter;
 import org.hippoecm.hst.plugins.frontend.util.IOUtil;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
@@ -55,21 +56,23 @@ public class ComponentDAO extends EditorDAO<Component> {
     private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
     private static final String HST_TEMPLATE = "hst:template";
 
-    private static final String HST_DESCRIPTION = "hst:description";
-    private static final String HST_ICON = "hst:icon";
-
     private static final List<String> NON_CONTAINER_NODES = new ArrayList<String>();
     {
-        NON_CONTAINER_NODES.add(HST_ICON);
+        NON_CONTAINER_NODES.add(DescriptionDAO.HST_ICON);
     }
+
+    private DescriptionDAO descriptionDao;
 
     public ComponentDAO(IPluginContext context, String namespace) {
         super(context, namespace);
+        
+        descriptionDao = new DescriptionDAO(context, namespace);
     }
 
     @Override
     public Component load(JcrNodeModel model) {
-        Component component = new Component(model);
+        Description desc = descriptionDao.load(model);
+        Component component = new Component(model, desc);
 
         //Load name
         try {
@@ -108,31 +111,6 @@ public class ComponentDAO extends EditorDAO<Component> {
                 component.addParameter(names.get(i), values.get(i));
             }
         }
-
-        if (JcrUtilities.hasProperty(model, HST_DESCRIPTION)) {
-            component.setDescription(JcrUtilities.getProperty(model, HST_DESCRIPTION));
-        }
-
-        if (JcrUtilities.hasProperty(model, HST_ICON)) {
-            InputStream is;
-            try {
-                is = model.getNode().getProperty(HST_ICON).getStream();
-                component.setIconResource(IOUtil.obtainResource(is));
-            } catch (ValueFormatException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (PathNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
         return component;
     }
 
@@ -167,35 +145,8 @@ public class ComponentDAO extends EditorDAO<Component> {
 
         //Create containers
         updateTemplate(component, model);
-
-        //Save description
-        try {
-            saveDescription(component, model);
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        } catch (ResourceStreamNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void saveDescription(Component component, JcrNodeModel model) throws ItemExistsException,
-            PathNotFoundException, VersionException, ConstraintViolationException, LockException, RepositoryException,
-            ResourceStreamNotFoundException {
-
-        JcrUtilities.updateProperty(model, HST_DESCRIPTION, component.getDescription());
-        if (component.getIconResource() != null) {
-            Node node = model.getNode();
-            if (!node.hasNode(HST_ICON)) {
-                node.addNode(HST_ICON, "hippo:resource");
-            }
-            JcrNodeModel resourceModel = new JcrNodeModel(node.getNode(HST_ICON));
-            IResourceStream r = component.getIconResource().getResourceStream();
-
-            JcrUtilities.updateProperty(resourceModel, "jcr:mimeType", r.getContentType());
-            JcrUtilities.updateProperty(resourceModel, "jcr:data", r.getInputStream());
-            JcrUtilities.updateProperty(resourceModel, "jcr:lastModified", r.lastModifiedTime().getMilliseconds());
-        }
+        
+        descriptionDao.persist(component, model);
     }
 
     private void updateTemplate(Component component, JcrNodeModel model) {

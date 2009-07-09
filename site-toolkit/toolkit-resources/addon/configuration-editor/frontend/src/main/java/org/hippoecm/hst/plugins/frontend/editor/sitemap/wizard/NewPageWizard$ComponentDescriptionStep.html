@@ -16,7 +16,10 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
     <div>
-      <label for="template"><wicket:message key="template.label">Template label</wicket:message></label><select name="template" wicket:id="template"></select>
+      <wicket:message key="component.label">Please select a component for page container: </wicket:message><span wicket:id="containerName">[ Container name ]</span>
+      <div wicket:id="componentPicker">[ C picker ]</div>
+      <!-- <select name="components" wicket:id="components"></select>-->
+      
     </div>
   </wicket:panel>
 </html>

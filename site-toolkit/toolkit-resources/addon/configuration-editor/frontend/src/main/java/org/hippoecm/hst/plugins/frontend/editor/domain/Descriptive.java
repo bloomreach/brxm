@@ -1,10 +1,8 @@
 package org.hippoecm.hst.plugins.frontend.editor.domain;
 
-import java.io.Serializable;
-
 import org.apache.wicket.Resource;
 
-public interface Descriptive extends Serializable {
+public interface Descriptive extends IEditorBean {
 
     String getDescription();
 

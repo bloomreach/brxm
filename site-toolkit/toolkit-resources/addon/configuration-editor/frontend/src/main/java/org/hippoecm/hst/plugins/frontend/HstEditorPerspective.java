@@ -48,49 +48,51 @@ public class HstEditorPerspective extends Perspective {
     public HstEditorPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        //Do a query for all hst:sites where the content node has a property state:unpublished
-        NodeIterator nodes = null;
-        String query = "//element(*, hst:site)[hst:content/@hippo:values = 'unpublished']";
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-        try {
-            QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
-            HippoQuery hippoQuery = (HippoQuery) queryManager.createQuery(query, "xpath");
-            session.refresh(true);
-            hippoQuery.setLimit(15);
-
-            nodes = hippoQuery.execute().getNodes();
-        } catch (RepositoryException e) {
-            log.error("Error executing query[" + query + "]", e);
-        }
-
-        String rootModelPath = null;
-        if (nodes.hasNext()) {
+        String rootModelPath = config.getString(EDITOR_ROOT, null);
+        
+        if(rootModelPath != null) {
+            javax.jcr.Session jcrSession = ((UserSession) getSession()).getJcrSession();
             try {
-                rootModelPath = nodes.nextNode().getParent().getPath();
+                String relPath = rootModelPath.substring(1); 
+                if (!jcrSession.getRootNode().hasNode(relPath) || !jcrSession.getRootNode().getNode(relPath).isNodeType("hst:sites")) {
+                    rootModelPath = null;
+                }
             } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.warn("Could not find root node at {0}, will try default instead", rootModelPath);
+                rootModelPath = null;
             }
         }
-
-        while (nodes.hasNext()) {
-            Node node = nodes.nextNode();
+        
+        if(rootModelPath == null) {
+            NodeIterator siteIterator = null;
+            //Do a query for all hst:sites where the content node has a property state:unpublished
+            String query = "//element(*, hst:site)[hst:content/@hippo:values = 'unpublished']";
+            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             try {
-                String pp = node.getPath();
-                String hoe = pp;
+                QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
+                HippoQuery hippoQuery = (HippoQuery) queryManager.createQuery(query, "xpath");
+                session.refresh(true);
+                hippoQuery.setLimit(1);
+                siteIterator = hippoQuery.execute().getNodes();
             } catch (RepositoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error("Error executing query[" + query + "]", e);
             }
-        }
 
-        if (!config.containsKey(EDITOR_ROOT)) {
-            throw new IllegalArgumentException("Property " + EDITOR_ROOT + " is mandatory");
+            if(siteIterator.hasNext()) {
+                try {
+                    rootModelPath = siteIterator.nextNode().getParent().getPath();
+                } catch (RepositoryException e) {
+                    log.error("Error retrieving first hst:sites node from query result", e);
+                }
+            } 
+        } 
+        
+        if(rootModelPath == null) {
+            throw new IllegalStateException("HstEditorPerspective has failed to find a valid root node of primary type hst:sites");
         }
-
-        //JcrNodeModel root = new JcrNodeModel(config.getString(EDITOR_ROOT));
+        
         JcrNodeModel root = new JcrNodeModel(rootModelPath);
-
+        
         HstContext hstContext = new HstContext(root, config.getString(NAMESPACES_ROOT));
         context.registerService(hstContext, HstContext.class.getName());
 

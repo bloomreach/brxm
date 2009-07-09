@@ -26,10 +26,10 @@
     </fieldset>
     
     <wicket:fragment wicket:id="noIconSelected">
-      <p>
-        <wicket:message key="icon.selected.non">You haven't selected an icon for this Component</wicket:message>
-      </p>
-      <a wicket:id="iconSelector"><wicket:message key="icon.select">Select icon</wicket:message></a>
+      <div>
+        <label for="icon"><wicket:message key="component.icon">Thumbnail</wicket:message></label>
+        <a wicket:id="iconSelector"><wicket:message key="icon.select">Select thumbnail</wicket:message></a>
+      </div>
     </wicket:fragment>
 
     <wicket:fragment wicket:id="iconSelected">

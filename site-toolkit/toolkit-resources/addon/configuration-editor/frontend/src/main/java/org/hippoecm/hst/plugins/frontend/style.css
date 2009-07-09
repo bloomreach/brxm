@@ -12,7 +12,7 @@ div.hst-editor {
   border-right: 1px solid #afafaf;
   
   width: 400px;
-  height: 1200px; /*hack*/ 
+  height: 725px; /*hack*/ 
 }
 div.hst-editor h2{
   color: #666666; 
@@ -102,3 +102,35 @@ div.hst-editor-form fieldset div.wizard-button-bar {
  width: 100%;
  padding-top: 25px;
 }
+
+div.hst-editor-form fieldset div.description-picker {
+  width: 368px;
+  background-color: #e3e3e3;
+  margin-top: 10px;
+}
+
+div.hst-editor-form fieldset div.description-picker table tr td {
+  padding: 5px;
+}
+
+div.description-picker div.picker-prev, div.description-picker div.picker-data {
+  float: left;
+  clear: none;
+}
+
+div.description-picker div.picker-prev img {
+  margin-left: 5px;
+}
+
+div.description-picker div.picker-data {
+  margin-left: 10px;	
+}
+
+div.description-picker div.picker-next {
+  float: right;
+  clear: none;
+  margin-right: 5px;
+}
+
+
+

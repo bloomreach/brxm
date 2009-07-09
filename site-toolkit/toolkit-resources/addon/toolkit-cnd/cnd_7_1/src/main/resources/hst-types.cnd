@@ -23,7 +23,7 @@
 - hst:description (string)
 + hst:icon (hippo:resource) = hippo:resource
 
-[hst:template]
+[hst:template] > nt:base, hst:descriptive
 - hst:renderpath (string)
 - hst:containers (string) multiple
 

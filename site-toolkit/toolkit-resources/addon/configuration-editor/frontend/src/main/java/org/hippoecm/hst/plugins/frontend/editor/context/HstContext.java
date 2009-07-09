@@ -11,6 +11,7 @@ import javax.jcr.Session;
 
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.hst.plugins.frontend.editor.domain.Descriptive;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,6 @@ public class HstContext implements IDetachable {
     String namespacesRoot;
 
     public HstContext(JcrNodeModel baseModel, String namespacesRoot) {
-        //hier komt binnen /preview
         root = baseModel;
         this.namespacesRoot = namespacesRoot;
         try {
@@ -66,7 +66,13 @@ public class HstContext implements IDetachable {
         return root;
     }
 
-    public boolean canDeleteNode(JcrNodeModel model) {
+    /**
+     * Currently only checks if node isn't the root of any of the context nodes
+     * 
+     * @param model The node model to be checked
+     * @return Returns true when node can be safely removed
+     */
+    public boolean isDeleteAllowed(JcrNodeModel model) {
         for (HstModelContext m : models) {
             if (model.equals(m)) {
                 return false;
@@ -316,15 +322,16 @@ public class HstContext implements IDetachable {
             this.model = new JcrNodeModel(model.getNode().getNode(HST_COMPONENTS));
         }
 
+        //Strip of hst:components/
         public String decodeReferenceName(String name) {
-            if (name.startsWith("hst:components/")) {
-                return name.substring("hst:components/".length() + 1);
+            if (name.startsWith(HST_COMPONENTS + "/")) {
+                return name.substring(HST_COMPONENTS.length() + 1);
             }
             return "";
         }
 
         public String encodeReferenceName(String name) {
-            return "hst:components/" + name;
+            return HST_COMPONENTS +"/" + name;
         }
 
         public List<String> getComponentsAsList() {
@@ -335,7 +342,7 @@ public class HstContext implements IDetachable {
                     components.add(child.getName());
                 }
             } catch (RepositoryException e) {
-                log.error("Error loading hst:components", e);
+                log.error("Error loading list of hst:component", e);
             }
             return components;
         }

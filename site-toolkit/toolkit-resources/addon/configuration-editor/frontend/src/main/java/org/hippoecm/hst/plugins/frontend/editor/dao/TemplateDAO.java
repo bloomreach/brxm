@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.hst.plugins.frontend.editor.domain.Description;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Template;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
 import org.slf4j.Logger;
@@ -35,14 +36,19 @@ public class TemplateDAO extends EditorDAO<Template> {
 
     public static final String HST_CONTAINERS = "hst:containers";
     public static final String HST_RENDERPATH = "hst:renderpath";
+    
+    private DescriptionDAO descriptionDao;
 
     public TemplateDAO(IPluginContext context, String namespace) {
         super(context, namespace);
+        
+        descriptionDao = new DescriptionDAO(context, namespace);
     }
 
     @Override
     public Template load(JcrNodeModel model) {
-        Template template = new Template(model);
+        Description desc = descriptionDao.load(model);
+        Template template = new Template(model, desc);
 
         try {
             template.setName(model.getNode().getName());
@@ -63,10 +69,11 @@ public class TemplateDAO extends EditorDAO<Template> {
 
     @Override
     protected void persist(Template k, JcrNodeModel model) {
-
         k.setModel(JcrUtilities.rename(model, k.getName()));
         JcrUtilities.updateProperty(model, HST_RENDERPATH, k.getRenderPath());
         JcrUtilities.updateMultiValueProperty(model, HST_CONTAINERS, k.getContainers());
+        
+        descriptionDao.persist(k, model);
     }
 
 }

@@ -316,7 +316,7 @@
       <sv:value>${path}/hst:templates</sv:value>
     </sv:property>
     <sv:property sv:name="rootless" sv:type="String">
-      <sv:value>false</sv:value>
+      <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
   

@@ -1,4 +1,4 @@
-package org.hippoecm.hst.plugins.frontend.editor.sitemap;
+package org.hippoecm.hst.plugins.frontend.editor.sitemap.wizard;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.wizard.Wizard;
