@@ -85,7 +85,12 @@ public class UserSession extends WebSession {
     }
 
     public ClassLoader getClassLoader() {
-        return jcrSessionModel.getClassLoader();
+        ClassLoader loader = jcrSessionModel.getClassLoader();
+        if (loader == null) {
+            log.info("Unable to retrieve repository classloader, falling back to default classloader.");
+            loader = getClass().getClassLoader();
+        }
+        return loader;
     }
 
     public WorkflowManager getWorkflowManager() {

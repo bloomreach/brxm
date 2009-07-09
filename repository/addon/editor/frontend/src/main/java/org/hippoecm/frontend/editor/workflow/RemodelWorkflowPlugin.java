@@ -44,12 +44,15 @@ import org.hippoecm.editor.tools.NamespaceUpdater;
 import org.hippoecm.editor.tools.TypeUpdate;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
+import org.hippoecm.frontend.editor.layout.ILayoutProvider;
+import org.hippoecm.frontend.editor.workflow.dialog.CreateCompoundTypeDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.RemodelDialog;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -108,25 +111,8 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        add(new WorkflowAction("new-compound-type", new StringResourceModel("new-compound-type", this, null)) {
-            private static final long serialVersionUID = 1L;
-
-            public String name;
-
-            @Override
-            protected Dialog createRequestDialog() {
-                return new CreateCompoundTypeDialog(this);
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                NamespaceValidator.checkName(name);
-
-                NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
-                workflow.addType("compound", name);
-                return null;
-            }
-        });
+        final ILayoutProvider layouts = context.getService(ILayoutProvider.class.getName(), ILayoutProvider.class);
+        add(new NewCompoundTypeAction(layouts));
 
         add(new WorkflowAction("remodel", new StringResourceModel("update-model", this, null)) {
             private static final long serialVersionUID = 1L;
@@ -196,6 +182,57 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         });
     }
 
+    public class NewCompoundTypeAction extends WorkflowAction {
+
+        private static final long serialVersionUID = 1L;
+
+        private ILayoutProvider layoutProvider;
+
+        public String name;
+        public String layout;
+
+        public NewCompoundTypeAction(ILayoutProvider layouts) {
+            super("new-compound-type", new StringResourceModel("new-compound-type", RemodelWorkflowPlugin.this, null));
+            this.layoutProvider = layouts;
+        }
+
+        @Override
+        protected Dialog createRequestDialog() {
+            return new CreateCompoundTypeDialog(this, layoutProvider);
+        }
+
+        @Override
+        public void execute() {
+            try {
+                super.execute();
+            } catch (Exception e) {
+                error(e.getMessage());
+            }
+        }
+
+        @Override
+        protected String execute(Workflow wf) throws Exception {
+            NamespaceValidator.checkName(name);
+
+            if (layout == null) {
+                throw new Exception("No layout specified");
+            }
+
+            // create type
+            NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
+            workflow.addType("compound", name);
+
+            // create layout
+            // FIXME: should be managed by template engine
+            JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeStore());
+            IClusterConfig template = new TemplateFactory().createTemplate(layoutProvider.getDescriptor(layout));
+            template.put("type", workflow.hints().get("prefix") + ":" + name);
+            templateStore.save(template);
+
+            return null;
+        }
+    }
+
     public abstract class CreateTypeDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
         private static final long serialVersionUID = 1L;
 
@@ -228,7 +265,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             add(cg);
 
             JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeStore());
-            
+
             cg.add(new DataView("mixins", new ListDataProvider(templateStore.getAvailableMixins())) {
                 private static final long serialVersionUID = 1L;
 
@@ -241,14 +278,6 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 }
 
             });
-        }
-    }
-
-    public class CreateCompoundTypeDialog extends CreateTypeDialog {
-        private static final long serialVersionUID = 1L;
-
-        public CreateCompoundTypeDialog(WorkflowAction action) {
-            super(action, "new-compound-type");
         }
     }
 

@@ -44,6 +44,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.widgets.AbstractView;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,10 +88,10 @@ public class TemplateListPlugin extends RenderPlugin {
                     for (String type : editableTypes) {
                         try {
                             ITypeDescriptor descriptor = engine.getType(type);
-                            if (descriptor.isType("hippo:document")) {
+                            if (descriptor.isType(HippoNodeType.NT_DOCUMENT)) {
                                 continue;
                             }
-                            if (descriptor.isType("hipposysedit:templatetype")) {
+                            if (descriptor.isType(HippoNodeType.NT_TEMPLATETYPE)) {
                                 continue;
                             }
                             list.add(descriptor);

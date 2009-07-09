@@ -26,9 +26,6 @@
     <sv:value>hippo:translated</sv:value>
     <sv:value>mix:referenceable</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>962c0ac5-8079-494c-83de-b5e36a854e48</sv:value>
-  </sv:property>
   <sv:node sv:name="hippo:translation">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:translation</sv:value>
@@ -53,7 +50,10 @@
   </sv:node>
   <sv:node sv:name="hipposysedit:nodetype">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:handle</sv:value>
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:hardhandle</sv:value>
     </sv:property>
     <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

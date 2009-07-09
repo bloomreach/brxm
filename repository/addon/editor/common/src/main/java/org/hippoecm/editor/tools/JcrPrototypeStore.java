@@ -134,7 +134,7 @@ public class JcrPrototypeStore implements IDetachable {
             prefix = prefix.substring(0, prefix.length() - nsVersion.length());
         }
 
-        return "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/" + HippoNodeType.HIPPO_PROTOTYPE;
+        return "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/" + HippoNodeType.HIPPO_PROTOTYPES;
     }
 
     private Node lookupConfigNode(String type, boolean draft) throws RepositoryException {

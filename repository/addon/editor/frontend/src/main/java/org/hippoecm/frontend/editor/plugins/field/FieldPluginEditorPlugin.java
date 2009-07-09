@@ -28,6 +28,8 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.builder.FieldEditor;
+import org.hippoecm.frontend.editor.builder.IBuilderListener;
+import org.hippoecm.frontend.editor.builder.IEditorContext;
 import org.hippoecm.frontend.editor.builder.RenderPluginEditorPlugin;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -178,38 +180,26 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
     public FieldPluginEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        edit = config.getBoolean("builder.mode");
+        edit = (getLayoutContext().getMode() == IEditorContext.Mode.EDIT);
 
         try {
             ITypeDescriptor type = getTypeModel();
             IPluginConfig helperConfig = new JavaPluginConfig(config.getName() + ".helper");
             helperConfig.putAll(config);
             helperConfig.put("wicket.id", config.getString("wicket.helper.id"));
-            helper = new PropertyEditor(getPluginContext(), helperConfig, getEditablePluginConfig(), type, edit);
+            helper = new PropertyEditor(getPluginContext(), helperConfig, getLayoutContext().getEditablePluginConfig(),
+                    type, edit);
+            getLayoutContext().addBuilderListener(new IBuilderListener() {
+                private static final long serialVersionUID = 1L;
 
-            final String pluginId = config.getString("plugin.id");
-            final IModelReference helperModelRef = context.getService(config.getString("model.plugin"),
-                    IModelReference.class);
-            if (helperModelRef != null) {
-                context.registerService(new IObserver() {
-                    private static final long serialVersionUID = 1L;
+                public void onFocus() {
+                    helper.show(true);
+                }
 
-                    public IObservable getObservable() {
-                        return helperModelRef;
-                    }
-
-                    public void onEvent(Iterator<? extends IEvent> event) {
-                        helper.show(helperModelRef.getModel() != null
-                                && pluginId.equals(helperModelRef.getModel().getObject()));
-                    }
-
-                }, IObserver.class.getName());
-                helper
-                        .show(helperModelRef.getModel() != null
-                                && pluginId.equals(helperModelRef.getModel().getObject()));
-            } else {
-                log.error("No model.plugin model reference found to select active plugin");
-            }
+                public void onBlur() {
+                    helper.show(false);
+                }
+            });
         } catch (TemplateEngineException ex) {
             log.error("Unable to open property editor", ex);
         }

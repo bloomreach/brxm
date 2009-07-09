@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ public class PersistentModalWindow extends ModalWindow {
 
     private static final Logger log = LoggerFactory.getLogger(PersistentModalWindow.class);
 
+    private transient Method callOnBeforeRenderIfNotVisibleMethod;
     private transient Field showField;
 
     private boolean renderScript = false;
@@ -47,6 +49,7 @@ public class PersistentModalWindow extends ModalWindow {
     public PersistentModalWindow(String id) {
         super(id);
         initShowField();
+        initOnBeforeRenderIfNotVisibleMethod();
     }
 
     /**
@@ -57,9 +60,24 @@ public class PersistentModalWindow extends ModalWindow {
             showField = ModalWindow.class.getDeclaredField("shown");
             showField.setAccessible(true);
         } catch (SecurityException e) {
-            log.error(e.getMessage(), e);
+            throw new RuntimeException("Unable to get at shown field", e);
         } catch (NoSuchFieldException e) {
-            log.error(e.getMessage(), e);
+            throw new RuntimeException("Unable to get at shown field", e);
+        }
+    }
+
+    /**
+    *
+    */
+    private void initOnBeforeRenderIfNotVisibleMethod() {
+        try {
+            callOnBeforeRenderIfNotVisibleMethod = Component.class.getDeclaredMethod("callOnBeforeRenderIfNotVisible",
+                    new Class[0]);
+            callOnBeforeRenderIfNotVisibleMethod.setAccessible(true);
+        } catch (SecurityException e) {
+            throw new RuntimeException("Unable to get callOnBeforeRenderIfNotVisible method", e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Unable to get callOnBeforeRenderIfNotVisible method", e);
         }
     }
 
@@ -73,7 +91,23 @@ public class PersistentModalWindow extends ModalWindow {
         // fix stupid parent behavior for non ajax requests
         if (shown && !isShown()) {
             show();
-            get(getContentId()).setVisible(true);
+            Component content = get(getContentId());
+            content.setVisible(true);
+
+            // invoke before render on content; this has been skipped in parents onBeforeRender()
+            Boolean result;
+            try {
+                result = (Boolean) callOnBeforeRenderIfNotVisibleMethod.invoke(content, new Object[0]);
+                if (!result) {
+                    content.beforeRender();
+                }
+            } catch (IllegalArgumentException e) {
+                log.error(e.getMessage(), e);
+            } catch (IllegalAccessException e) {
+                log.error(e.getMessage(), e);
+            } catch (InvocationTargetException e) {
+                log.error(e.getMessage(), e);
+            }
             renderScript = true;
         }
     }

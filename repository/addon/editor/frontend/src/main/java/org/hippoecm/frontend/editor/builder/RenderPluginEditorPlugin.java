@@ -16,26 +16,25 @@
 package org.hippoecm.frontend.editor.builder;
 
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
-import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.editor.builder.IEditorContext.Mode;
+import org.hippoecm.frontend.editor.layout.ILayoutContext;
+import org.hippoecm.frontend.editor.layout.ILayoutPad;
+import org.hippoecm.frontend.editor.layout.ILayoutTransition;
+import org.hippoecm.frontend.editor.layout.LayoutContext;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -53,43 +52,26 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
 
     private static final Logger log = LoggerFactory.getLogger(RenderPluginEditorPlugin.class);
 
-    private String pluginId;
+    private ILayoutContext layoutContext;
+    
     protected IClusterControl previewControl;
     private IObserver configObserver;
 
     public RenderPluginEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        pluginId = config.getString("plugin.id");
-        boolean editable = config.getBoolean("builder.mode");
+        layoutContext = new LayoutContext(context, config);
+
+        boolean editable = (layoutContext.getMode() == Mode.EDIT);
 
         add(new AjaxLink("up") {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                IClusterConfig clusterConfig = (IClusterConfig) RenderPluginEditorPlugin.this.getModelObject();
-                List<IPluginConfig> plugins = clusterConfig.getPlugins();
-                Map<String, IPluginConfig> last = new TreeMap<String, IPluginConfig>();
-                for (IPluginConfig config : plugins) {
-                    if (config.getName().equals(pluginId)) {
-                        IPluginConfig previous = last.get(config.getString("wicket.id"));
-                        if (previous != null) {
-                            IPluginConfig backup = new JavaPluginConfig(config);
-                            config.clear();
-                            config.putAll(previous);
-
-                            previous.clear();
-                            previous.putAll(backup);
-                        } else {
-                            log.warn("Unable to move the first plugin further up");
-                        }
-                        break;
-                    }
-                    if (config.getString("wicket.id") != null) {
-                        last.put(config.getString("wicket.id"), config);
-                    }
-                }
+                ILayoutPad pad = layoutContext.getLocation();
+                ILayoutTransition transition = pad.getTransition("up");
+                layoutContext.apply(transition);
             }
         }.setVisible(editable));
 
@@ -98,27 +80,9 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                IClusterConfig clusterConfig = (IClusterConfig) RenderPluginEditorPlugin.this.getModelObject();
-                List<IPluginConfig> plugins = clusterConfig.getPlugins();
-                IPluginConfig previous = null;
-                for (IPluginConfig config : plugins) {
-                    if (config.getName().equals(pluginId)) {
-                        previous = config;
-                        if (previous.getString("wicket.id") == null) {
-                            log.warn("No wicket.id present; cannot move plugin");
-                            break;
-                        }
-                    } else if (previous != null
-                            && previous.getString("wicket.id").equals(config.getString("wicket.id"))) {
-                        IPluginConfig backup = new JavaPluginConfig(config);
-                        config.clear();
-                        config.putAll(previous);
-
-                        previous.clear();
-                        previous.putAll(backup);
-                        break;
-                    }
-                }
+                ILayoutPad pad = layoutContext.getLocation();
+                ILayoutTransition transition = pad.getTransition("down");
+                layoutContext.apply(transition);
             }
         }.setVisible(editable));
 
@@ -127,20 +91,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                IClusterConfig clusterConfig = (IClusterConfig) RenderPluginEditorPlugin.this.getModelObject();
-                List<IPluginConfig> plugins = clusterConfig.getPlugins();
-                for (IPluginConfig config : plugins) {
-                    if (config.getName().equals(pluginId)) {
-                        IModelReference pluginRef = context.getService(config.getString("model.plugin"),
-                                IModelReference.class);
-                        if (pluginRef != null && pluginRef.getModel() != null
-                                && pluginId.equals(pluginRef.getModel().getObject())) {
-                            pluginRef.setModel(null);
-                        }
-                        plugins.remove(config);
-                        break;
-                    }
-                }
+                layoutContext.delete();
             }
         }.setVisible(editable));
 
@@ -150,8 +101,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
     
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
-                    IModelReference pluginRef = context.getService(config.getString("model.plugin"), IModelReference.class);
-                    pluginRef.setModel(new Model(pluginId));
+                    layoutContext.focus();
                 }
 
                 @Override
@@ -165,7 +115,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
     }
 
     public void start() {
-        final IPluginConfig editedConfig = getEditablePluginConfig();
+        final IPluginConfig editedConfig = layoutContext.getEditablePluginConfig();
         getPluginContext().registerService(configObserver = new IObserver() {
             private static final long serialVersionUID = 1L;
 
@@ -230,15 +180,8 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
         return getPluginConfig().getPluginConfig("model.effective");
     }
 
-    protected IPluginConfig getEditablePluginConfig() {
-        IClusterConfig clusterConfig = (IClusterConfig) getModelObject();
-        List<IPluginConfig> plugins = clusterConfig.getPlugins();
-        for (IPluginConfig plugin : plugins) {
-            if (plugin.getName().equals(getPluginConfig().getString("plugin.id"))) {
-                return plugin;
-            }
-        }
-        return null;
+    protected ILayoutContext getLayoutContext() {
+        return layoutContext;
     }
 
 }

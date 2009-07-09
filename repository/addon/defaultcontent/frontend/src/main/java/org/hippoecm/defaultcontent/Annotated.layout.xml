@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+  <pad name="main" list="true" />
+  <pad name="select" list="true" />
+  <pad name="mixins" />
+  <transition name="right" source="main" target="select" />
+  <transition name="left" source="select" target="main" />
+</layout>

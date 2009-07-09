@@ -31,12 +31,14 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
+import org.hippoecm.editor.EditorNodeType;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.JcrEventListener;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 
 class EditableTypes extends AbstractList implements Serializable, IObservable {
     private static final long serialVersionUID = 1L;
@@ -54,17 +56,15 @@ class EditableTypes extends AbstractList implements Serializable, IObservable {
         javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
         try {
             QueryManager qMgr = session.getWorkspace().getQueryManager();
-            Query query = qMgr.createQuery("//element(*, hipposysedit:templatetype)/hipposysedit:template/hipposysedit:template",
-                    Query.XPATH);
+            Query query = qMgr.createQuery("//element(*, " + EditorNodeType.NT_EDITABLE + ")", Query.XPATH);
             NodeIterator iter = query.execute().getNodes();
             Set<String> types = new TreeSet<String>();
             while (iter.hasNext()) {
-                Node templateNode = iter.nextNode();
-                TemplateEngine.log.debug("search result: {}", templateNode.getPath());
+                Node ttNode = iter.nextNode();
+                TemplateEngine.log.debug("search result: {}", ttNode.getPath());
 
-                Node ttNode = templateNode.getParent().getParent();
                 Node nsNode = ttNode.getParent();
-                if (!nsNode.isNodeType("hipposysedit:namespace")) {
+                if (!nsNode.isNodeType(HippoNodeType.NT_NAMESPACE)) {
                     continue;
                 }
 
@@ -99,7 +99,7 @@ class EditableTypes extends AbstractList implements Serializable, IObservable {
 
     public void startObservation() {
         listener = new JcrEventListener(obContext, Event.NODE_ADDED | Event.NODE_REMOVED, "/", true, null,
-                new String[] { "hipposysedit:namespace" }) {
+                new String[] { HippoNodeType.NT_NAMESPACE }) {
             @Override
             public void onEvent(EventIterator events) {
                 EventCollection<IEvent> collection = new EventCollection<IEvent>();
