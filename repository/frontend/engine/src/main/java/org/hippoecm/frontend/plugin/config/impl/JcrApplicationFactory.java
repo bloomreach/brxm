@@ -57,7 +57,7 @@ public class JcrApplicationFactory implements IApplicationFactory, IDetachable {
         log.info("Starting application: " + name);
         try {
             Node applicationFolder = nodeModel.getNode();
-            if (applicationFolder.hasNode(name)) {
+            if (applicationFolder != null && applicationFolder.hasNode(name)) {
                 return getApplication(applicationFolder.getNode(name));
             } else {
                 log.info("No application " + name + " found");
