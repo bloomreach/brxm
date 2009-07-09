@@ -42,6 +42,7 @@ public interface HippoNodeType {
     final public static String QUERIES_PATH = "hippo:queries";
     final public static String ACCESSMANAGER_PATH = "hipposys:accessmanager";
     final public static String SECURITY_PATH = "hippo:security";
+    final public static String LOG_PATH = "hippo:log";
 
     //--- Hippo NodeTypes ---//
     final public static String NT_AUTHROLE = "hipposys:authrole";
@@ -79,6 +80,7 @@ public interface HippoNodeType {
     final public static String NT_NAMESPACEFOLDER = "hipposysedit:namespacefolder";
     final public static String NT_NODETYPE = "hipposysedit:nodetype";
     final public static String NT_OCMQUERY = "hipposys:ocmquery";
+    final public static String NT_PROTOTYPESET = "hipposysedit:prototypeset";
     final public static String NT_REMODEL = "hipposysedit:remodel";
     final public static String NT_REQUEST = "hippo:request";
     final public static String NT_ROLE = "hipposys:role";
@@ -88,6 +90,8 @@ public interface HippoNodeType {
     final public static String NT_SECURITYPROVIDER = "hipposys:securityprovider";
     final public static String NT_SOFTDOCUMENT = "hipposys:softdocument";
     final public static String NT_TEMPLATETYPE = "hipposysedit:templatetype";
+    final public static String NT_TRANSLATED = "hippo:translated";
+    final public static String NT_TRANSLATION = "hippo:translation";
     final public static String NT_TYPE = "hipposys:type";
     final public static String NT_TYPES = "hipposys:types";
     final public static String NT_USER = "hipposys:user";
@@ -99,6 +103,7 @@ public interface HippoNodeType {
 
     //--- Hippo Item Names ---//
     final public static String HIPPO_ACTIVE = "hipposys:active";
+    final public static String HIPPO_CLASS = "hippo:class";
     final public static String HIPPO_CLASSNAME = "hipposys:classname";
     final public static String HIPPO_CONTENT = "hippo:content";
     final public static String HIPPO_CONTENTRESOURCE = "hippo:contentresource";
@@ -120,10 +125,14 @@ public interface HippoNodeType {
     final public static String HIPPO_JCRREAD = "hipposys:jcrread";
     final public static String HIPPO_JCRWRITE = "hipposys:jcrwrite";
     final public static String HIPPO_JCRREMOVE = "hipposys:jcrremove";
+    final public static String HIPPO_KEY = "hippo:key";
+    final public static String HIPPO_LANGUAGE = "hippo:language";
     final public static String HIPPO_LASTLOGIN = "hipposys:lastlogin";
     final public static String HIPPO_LASTSYNC = "hipposys:lastsync";
     final public static String HIPPO_MEMBERS = "hipposys:members";
+    final public static String HIPPO_MESSAGE = "hipposys:members";
     final public static String HIPPO_MANDATORY = "hipposysedit:mandatory";
+    final public static String HIPPO_MIXIN = "hipposysedit:mixin";
     final public static String HIPPO_MODES = "hippo:modes";
     final public static String HIPPO_MULTIPLE = "hipposysedit:multiple";
     final public static String HIPPO_NAME = "hipposysedit:name";
@@ -131,6 +140,7 @@ public interface HippoNodeType {
     final public static String HIPPO_NODE = "hipposysedit:node";
     final public static String HIPPOSYS_NODETYPE = "hipposys:nodetype";
     final public static String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype";
+    final public static String HIPPO_NODETYPE = "hippo:nodetype";
     final public static String HIPPO_NODETYPES = "hippo:nodetypes";
     final public static String HIPPO_NODETYPESRESOURCE = "hippo:nodetypesresource";
     final public static String HIPPO_ORDERED = "hipposysedit:ordered";
@@ -142,6 +152,8 @@ public interface HippoNodeType {
     final public static String HIPPO_PRIMARY = "hipposysedit:primary";
     final public static String HIPPO_PRIVILEGES = "hipposys:privileges";
     final public static String HIPPO_PROTOTYPE = "hipposysedit:prototype";
+    final public static String HIPPO_PROTOTYPES = "hipposysedit:prototypes";
+    final public static String HIPPO_PROPERTY = "hippo:property";
     final public static String HIPPO_QUERYNAME = "hippo:queryname";
     final public static String HIPPO_RELATED = "hippo:related";
     final public static String HIPPO_RESULTSET = "hippo:resultset";
@@ -153,6 +165,7 @@ public interface HippoNodeType {
     final public static String HIPPO_SEQUENCE = "hippo:sequence";
     final public static String HIPPO_SUPERTYPE = "hipposysedit:supertype";
     final public static String HIPPO_TEMPLATE = "hipposysedit:template";
+    final public static String HIPPO_TRANSLATION = "hippo:translation";
     final public static String HIPPOSYS_TYPE = "hipposys:type";
     final public static String HIPPOSYSEDIT_TYPE = "hipposysedit:type";
     final public static String HIPPO_TYPES = "hipposys:types";
