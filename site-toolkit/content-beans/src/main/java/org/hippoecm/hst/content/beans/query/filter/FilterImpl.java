@@ -50,20 +50,20 @@ public class FilterImpl implements Filter{
         return this;
     }
     
-    private void addContains(String scope, String fullTextSearch, boolean isNot){
+    private void addContains(String scope, String fullTextSearch, boolean isNot) throws FilterException{
         String jcrExpression;
-        if (scope.equals(".")) {
-            jcrExpression = "jcr:contains(., '" + fullTextSearch + "')";
-        }
-        else {
-            jcrExpression = "jcr:contains(@" + scope + ", '" + fullTextSearch+ "')";
-        }
+        scope = toXPathProperty(scope, false, "addContains" , new String[]{"."});     
+      
+        jcrExpression = "jcr:contains(" + scope + ", '" + fullTextSearch+ "')";     
+       
         if(isNot) {
             addNotExpression(jcrExpression);
         } else {
             addExpression(jcrExpression);
         }
     }
+    
+
     public void addContains(String scope, String fullTextSearch) throws FilterException{
         addContains(scope, fullTextSearch, false);
     }
@@ -73,10 +73,11 @@ public class FilterImpl implements Filter{
     }
    
     private void addBetween(String fieldAttributeName, Object value1, Object value2, boolean isNot) throws FilterException {
-        String jcrExpression = "( @" + fieldAttributeName + " >= "
-        + this.getStringValue(fieldAttributeName, value1)
-        + " and @" + fieldAttributeName + " <= "
-        + this.getStringValue(fieldAttributeName, value2) + ")";
+        fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addBetween");
+        String jcrExpression = "( " + fieldAttributeName + " >= "
+        + this.getStringValue(value1)
+        + " and " + fieldAttributeName + " <= "
+        + this.getStringValue(value2) + ")";
 
         if(isNot) {
             addNotExpression(jcrExpression);
@@ -94,44 +95,51 @@ public class FilterImpl implements Filter{
     }
 
     public void addEqualTo(String fieldAttributeName, Object value) throws FilterException{
-        String jcrExpression = "@" + fieldAttributeName + " = "
-        + this.getStringValue(fieldAttributeName, value);
+        fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addEqualTo");
+        String jcrExpression = fieldAttributeName + " = "
+        + this.getStringValue(value);
         addExpression(jcrExpression);
     }
 
     public void addNotEqualTo(String fieldAttributeName, Object value) throws FilterException{
-        String jcrExpression = "@" + fieldAttributeName + " != "
-        + this.getStringValue(fieldAttributeName, value);
+        fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addNotEqualTo");
+        String jcrExpression = fieldAttributeName + " != "
+        + this.getStringValue(value);
         addExpression(jcrExpression);
     }
     
     public void addGreaterOrEqualThan(String fieldAttributeName, Object value) throws FilterException{
-        String jcrExpression = "@" + fieldAttributeName + " >= "
-        + this.getStringValue(fieldAttributeName, value);
+        fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addGreaterOrEqualThan");
+        String jcrExpression = fieldAttributeName + " >= "
+        + this.getStringValue(value);
         addExpression(jcrExpression);
     }
 
     public void addGreaterThan(String fieldAttributeName, Object value) throws FilterException{
-        String jcrExpression = "@" + fieldAttributeName + " > "
-        + this.getStringValue(fieldAttributeName, value);
+        fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addGreaterThan");
+        String jcrExpression =  fieldAttributeName + " > "
+        + this.getStringValue(value);
         addExpression(jcrExpression);
     }
     
     public void addLessOrEqualThan(String fieldAttributeName, Object value) throws FilterException{
-        String jcrExpression = "@" + fieldAttributeName + " <= "
-        + this.getStringValue(fieldAttributeName, value);
+        fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addLessOrEqualThan");
+        String jcrExpression = fieldAttributeName + " <= "
+        + this.getStringValue(value);
         
         addExpression(jcrExpression);
     }
 
     public void addLessThan(String fieldAttributeName, Object value) throws FilterException{
-        String jcrExpression = "@" + fieldAttributeName + " < "
-        + this.getStringValue(fieldAttributeName, value);
+        fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addLessThan");
+        String jcrExpression = fieldAttributeName + " < "
+        + this.getStringValue(value);
         addExpression(jcrExpression);
     }
 
     private void addLike(String fieldAttributeName, Object value, boolean isNot) throws FilterException{
-        String jcrExpression = "jcr:like(" + "@" + fieldAttributeName + ", '"
+        fieldAttributeName = toXPathProperty(fieldAttributeName, false, "addLike");
+        String jcrExpression = "jcr:like(" + fieldAttributeName + ", '"
             + value + "')";
         if(isNot) {
             addNotExpression(jcrExpression);
@@ -150,12 +158,14 @@ public class FilterImpl implements Filter{
     
 
     public void addNotNull(String fieldAttributeName) throws FilterException{
-        String jcrExpression = "@" + fieldAttributeName;
+        fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addNotNull");
+        String jcrExpression = fieldAttributeName;
         addExpression(jcrExpression);
     }
     
     public void addIsNull(String fieldAttributeName) throws FilterException{
-        String jcrExpression = "not(@" + fieldAttributeName + ")";
+        fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addIsNull");
+        String jcrExpression = "not(" + fieldAttributeName + ")";
         addExpression(jcrExpression);
     }
 
@@ -239,7 +249,7 @@ public class FilterImpl implements Filter{
     
 
 
-    public String getStringValue(String fieldAttributeName, Object value) throws FilterException{
+    public String getStringValue(Object value) throws FilterException{
         if(value instanceof String || value instanceof Boolean) {
             return "'" + value.toString() + "'";
         } else if(value instanceof Long || value instanceof Double) {
@@ -283,6 +293,66 @@ public class FilterImpl implements Filter{
 
         private boolean isAnd() {
             return and;
+        }
+    }
+    
+    String toXPathProperty(String path, boolean childAxisAllowed, String methodName) throws FilterException{
+        return toXPathProperty(path, childAxisAllowed, methodName, null);
+    }
+            
+    String toXPathProperty(String path, boolean childAxisAllowed, String methodName, String[] skips)  throws FilterException{
+        if(path == null) {
+            throw new FilterException("Scope is not allowed to be null for '"+methodName+"'");
+        }
+        if(skips != null) {
+            for(String skip : skips) {
+                if(skip.equals(path)) {
+                    return path;
+                }
+            }
+        }
+        if(childAxisAllowed) {
+            if(path.indexOf("/") > -1) {
+                String[] parts = path.split("/");
+                StringBuilder newPath = new StringBuilder();
+                int i = 0;
+                for(String part : parts) {
+                    i++;
+                    if(i == parts.length) {
+                        if(i > 1) {
+                            newPath.append("/");
+                        }
+                        if(!part.startsWith("@")) {
+                            newPath.append("@"); 
+                        }
+                        newPath.append(part);
+                    } else {
+                        if(part.startsWith("@")) {
+                            throw new FilterException("'@' in path only allowed for a property: invalid path: '"+path+"'");
+                        }
+                        if(i > 1) {
+                            newPath.append("/");
+                        }
+                        newPath.append(part);
+                    }
+                }
+                return newPath.toString();
+            } else {
+                if(path.startsWith("@")) {
+                    return path;
+                } else {
+                    return "@"+path;
+                } 
+            }
+        } else {
+            if(path.indexOf("/") > -1) {
+                throw new FilterException("Not allowed to use a child path for '"+methodName+"'. Invalid: '"+path+"'");
+            } 
+            if(path.startsWith("@")) {
+                return path;
+            } else {
+                return "@"+path;
+            }
         }
     }
 
