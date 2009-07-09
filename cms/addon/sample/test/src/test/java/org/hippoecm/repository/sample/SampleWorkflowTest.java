@@ -15,6 +15,10 @@
  */
 package org.hippoecm.repository.sample;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -27,17 +31,17 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-
-import org.hippoecm.frontend.model.FrontendNodeTypes;
+import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.atomikos.icatch.jta.UserTransactionManager;
 
@@ -127,7 +131,7 @@ public class SampleWorkflowTest {
             Node node = root.getNode("files/myarticle");
             WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
             WorkflowDescriptor descriptor = manager.getWorkflowDescriptor("mycategory", node);
-            Class rendererClass = Class.forName(descriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER));
+            Class rendererClass = Class.forName(descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER));
             Object[] actualArgs = new Object[2];
             actualArgs[0] = manager;
             actualArgs[1] = descriptor;

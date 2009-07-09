@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,11 +55,11 @@ public class ConfigWrapper implements ITranslation<IModel> {
             private static final long serialVersionUID = 1L;
 
             public Object getObject() {
-                return config.getString("hippo:message");
+                return config.getString(HippoNodeType.HIPPO_MESSAGE);
             }
 
             public void setObject(Object object) {
-                config.put("hippo:message", object);
+                config.put(HippoNodeType.HIPPO_MESSAGE, object);
             }
 
             public void detach() {

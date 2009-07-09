@@ -62,6 +62,7 @@ import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,24 +168,24 @@ public class Main extends WebApplication {
                 }
                 if (provider != null) {
                     Map<String, String> keys = new MiniMap(5);
-                    keys.put("hippo:key", key);
+                    keys.put(HippoNodeType.HIPPO_KEY, key);
 
                     Locale locale = component.getLocale();
-                    keys.put("hippo:language", locale.getLanguage());
+                    keys.put(HippoNodeType.HIPPO_LANGUAGE, locale.getLanguage());
 
                     String value = locale.getCountry();
                     if (value != null) {
-                        keys.put("hippo:country", locale.getCountry());
+                        keys.put("country", locale.getCountry());
                     }
 
                     value = locale.getVariant();
                     if (value != null) {
-                        keys.put("hippo:variant", locale.getVariant());
+                        keys.put("variant", locale.getVariant());
                     }
 
                     value = component.getStyle();
                     if (value != null) {
-                        keys.put("hippo:style", value);
+                        keys.put("style", value);
                     }
 
                     String result = provider.getString(keys);

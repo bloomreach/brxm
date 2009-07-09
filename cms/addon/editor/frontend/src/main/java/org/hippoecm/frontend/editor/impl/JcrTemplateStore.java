@@ -31,6 +31,8 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
+import org.hippoecm.editor.EditorNodeType;
+import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
@@ -64,7 +66,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
         try {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             QueryManager qMgr = session.getWorkspace().getQueryManager();
-            Query query = qMgr.createQuery("//element(*, hipposysedit:nodetype)[@hippo:mixin='true']", Query.XPATH);
+            Query query = qMgr.createQuery("//element(*, " + HippoNodeType.NT_NODETYPE + ")[@hippo:mixin='true']", Query.XPATH);
             NodeIterator iter = query.execute().getNodes();
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
@@ -76,18 +78,18 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
                     continue;
                 }
                 node = node.getParent();
-                if (!node.isNodeType("hipposysedit:templatetype")) {
+                if (!node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                     log.debug("invalid ancestor");
                     continue;
                 }
 
-                if (!node.hasNode("hipposysedit:template")) {
+                if (!node.isNodeType(EditorNodeType.NT_EDITABLE)) {
                     log.debug("no template present");
                     continue;
                 }
 
                 Node parent = node.getParent();
-                if (!parent.isNodeType("hipposysedit:namespace")) {
+                if (!parent.isNodeType(HippoNodeType.NT_NAMESPACE)) {
                     log.debug("invalid great ancestor");
                     continue;
                 }
@@ -153,16 +155,16 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
 
                 for (IPluginConfig plugin : cluster.getPlugins()) {
                     String name = UUID.randomUUID().toString();
-                    Node child = node.addNode(name, "frontend:plugin");
+                    Node child = node.addNode(name, FrontendNodeType.NT_PLUGIN);
                     JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child));
                     for (Map.Entry entry : (Set<Map.Entry>) ((Map) plugin).entrySet()) {
                         pluginConfig.put(entry.getKey(), entry.getValue());
                     }
                 }
 
-                node.setProperty("frontend:services", getValues(cluster.getServices()));
-                node.setProperty("frontend:references", getValues(cluster.getReferences()));
-                node.setProperty("frontend:properties", getValues(cluster.getProperties()));
+                node.setProperty(FrontendNodeType.FRONTEND_SERVICES, getValues(cluster.getServices()));
+                node.setProperty(FrontendNodeType.FRONTEND_REFERENCES, getValues(cluster.getReferences()));
+                node.setProperty(FrontendNodeType.FRONTEND_PROPERTIES, getValues(cluster.getProperties()));
 
                 return node.getPath();
             } catch (RepositoryException ex) {
@@ -188,9 +190,10 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
         Node typeNode = (Node) ((UserSession) Session.get()).getJcrSession().getItem(path);
 
         Node node;
-        if (!typeNode.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
+        if (!typeNode.isNodeType(HippoNodeType.HIPPO_TEMPLATE)) {
             if (create) {
-                node = typeNode.addNode(HippoNodeType.HIPPO_TEMPLATE, "hipposysedit:handle");
+                typeNode.addMixin(EditorNodeType.NT_EDITABLE);
+                node = typeNode.addNode(EditorNodeType.EDITOR_TEMPLATES, EditorNodeType.NT_TEMPLATESET);
             } else {
                 return null;
             }
@@ -199,7 +202,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
         }
         if (!node.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
             if (create) {
-                node = node.addNode(HippoNodeType.HIPPO_TEMPLATE, "frontend:plugincluster");
+                node = node.addNode(HippoNodeType.HIPPO_TEMPLATE, FrontendNodeType.NT_PLUGINCLUSTER);
             } else {
                 return null;
             }

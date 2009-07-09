@@ -40,6 +40,7 @@ import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -354,14 +355,14 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
     public Object put(Object key, Object value) {
         if (value instanceof IPluginConfig) {
             HippoMap map = new HippoMap();
-            map.setPrimaryType("frontend:pluginconfig");
+            map.setPrimaryType(FrontendNodeType.NT_PLUGINCONFIG);
             map.putAll((IPluginConfig) value);
             value = map;
         } else if (value instanceof List) {
             List<IHippoMap> list = new ArrayList<IHippoMap>(((List<IPluginConfig>) value).size());
             for (IPluginConfig entry : (List<IPluginConfig>) value) {
                 HippoMap map = new HippoMap();
-                map.setPrimaryType("frontend:pluginconfig");
+                map.setPrimaryType(FrontendNodeType.NT_PLUGINCONFIG);
                 map.putAll((IPluginConfig) entry);
                 list.add(map);
             }

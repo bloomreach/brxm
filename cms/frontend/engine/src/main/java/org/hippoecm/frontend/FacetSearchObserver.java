@@ -60,7 +60,7 @@ public class FacetSearchObserver {
         Session session = sessionRef.get();
         try {
             QueryManager queryMgr = session.getWorkspace().getQueryManager();
-            Query query = queryMgr.createQuery("select * from hippo:facetsearch", Query.SQL);
+            Query query = queryMgr.createQuery("select * from " + HippoNodeType.NT_FACETSEARCH, Query.SQL);
             QueryResult result = query.execute();
             NodeIterator nodes = result.getNodes();
 

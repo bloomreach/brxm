@@ -21,6 +21,8 @@ import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -39,17 +41,17 @@ public class ConfigTraversingPlugin extends AbstractTranslateService implements 
 
     public ConfigTraversingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        this.translations = config.getPluginConfig("hippostd:translations");
+        this.translations = config.getPluginConfig(HippoStdNodeType.HIPPOSTD_TRANSLATIONS);
     }
 
     public IModel getModel(Map<String, String> criteria) {
         if (translations != null) {
-            IPluginConfig keyConfig = translations.getPluginConfig((String) criteria.get("hippo:key"));
+            IPluginConfig keyConfig = translations.getPluginConfig((String) criteria.get(HippoNodeType.HIPPO_KEY));
             if (keyConfig != null) {
                 Set<IPluginConfig> candidates = keyConfig.getPluginConfigSet();
                 Set<ConfigWrapper> list = new HashSet<ConfigWrapper>((int) candidates.size());
                 for (IPluginConfig candidate : candidates) {
-                    if (candidate.getString("hippo:language", "").equals(criteria.get("hippo:language"))) {
+                    if (candidate.getString(HippoNodeType.HIPPO_LANGUAGE, "").equals(criteria.get(HippoNodeType.HIPPO_LANGUAGE))) {
                         list.add(new ConfigWrapper(candidate, criteria));
                     }
                 }

@@ -32,7 +32,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 
-import org.hippoecm.frontend.model.FrontendNodeTypes;
+import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -86,7 +86,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                             try {
                                 final WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, documentNode);
                                 if (descriptor != null) {
-                                    String pluginRenderer = descriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER);
+                                    String pluginRenderer = descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER);
                                     Panel plugin = null;
                                     WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, documentNode);
                                     if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
@@ -109,10 +109,11 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                     }
                                     if (plugin != null) {
                                         plugin.visitChildren(new IVisitor() {
+
                                             public Object component(Component component) {
                                                 try {
                                                     if (component instanceof ActionDescription) {
-                                                        menu.put(new String[] {category, descriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER), ((ActionDescription)component).getId()}, (ActionDescription)component);
+                                                        menu.put(new String[] {category, descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER), ((ActionDescription)component).getId()}, (ActionDescription)component);
                                                     }
                                                 } catch (RepositoryException ex) {
                                                     System.err.println(ex.getClass().getName() + ": " + ex.getMessage());

@@ -19,7 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.hippoecm.frontend.model.FrontendNodeTypes;
+import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.slf4j.Logger;
@@ -44,8 +44,8 @@ public class JcrFrontendListener extends NodeModelWrapper {
     private String[] getMultiString(String name) throws RepositoryException {
         String[] result = null;
         Node node = getNodeModel().getNode();
-        if (node.hasProperty(FrontendNodeTypes.UUIDS)) {
-            Value[] values = node.getProperty(FrontendNodeTypes.UUIDS).getValues();
+        if (node.hasProperty(FrontendNodeType.FRONTEND_UUIDS)) {
+            Value[] values = node.getProperty(FrontendNodeType.FRONTEND_UUIDS).getValues();
             result = new String[values.length];
             int i = 0;
             for (Value value : values) {
@@ -60,13 +60,13 @@ public class JcrFrontendListener extends NodeModelWrapper {
         if (node != null) {
             try {
                 boolean deep = false;
-                if (node.hasProperty(FrontendNodeTypes.DEEP)) {
-                    deep = node.getProperty(FrontendNodeTypes.DEEP).getBoolean();
+                if (node.hasProperty(FrontendNodeType.FRONTEND_DEEP)) {
+                    deep = node.getProperty(FrontendNodeType.FRONTEND_DEEP).getBoolean();
                 }
 
-                listener = new JcrEventListener(obContext, (int) node.getProperty(FrontendNodeTypes.EVENTS).getLong(),
-                        node.getProperty(FrontendNodeTypes.PATH).getString(), deep,
-                        getMultiString(FrontendNodeTypes.UUIDS), getMultiString(FrontendNodeTypes.NODETYPES));
+                listener = new JcrEventListener(obContext, (int) node.getProperty(FrontendNodeType.FRONTEND_EVENTS).getLong(),
+                        node.getProperty(FrontendNodeType.FRONTEND_PATH).getString(), deep,
+                        getMultiString(FrontendNodeType.FRONTEND_UUIDS), getMultiString(FrontendNodeType.FRONTEND_NODETYPES));
 
                 listener.start();
             } catch (RepositoryException ex) {

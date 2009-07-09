@@ -27,6 +27,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,7 @@ public class NodeWrapper implements ITranslation<IModel> {
 
     public IModel getModel() {
         try {
-            Property property = nodeModel.getNode().getProperty("hippo:message");
+            Property property = nodeModel.getNode().getProperty(HippoNodeType.HIPPO_MESSAGE);
             return new JcrPropertyValueModel(new JcrPropertyModel(property));
         } catch(RepositoryException ex) {
             log.error(ex.getMessage());

@@ -30,6 +30,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,11 +138,11 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
                 for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
                     if (child.getName().equals(handleNode.getName())) {
-                        if (child.hasProperty("hippostd:state")) {
-                            String state = child.getProperty("hippostd:state").getString();
-                            if (state.equals("unpublished")) {
+                        if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
+                            String state = child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                            if (state.equals(HippoStdNodeType.UNPUBLISHED)) {
                                 return new JcrNodeModel(child);
-                            } else if (state.equals("published")) {
+                            } else if (state.equals(HippoStdNodeType.PUBLISHED)) {
                                 published = child;
                             }
                         } else {
@@ -169,9 +170,9 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
                 for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
                     if (child.getName().equals(handleNode.getName())) {
-                        if (child.hasProperty("hippostd:state")
-                                && child.getProperty("hippostd:state").getString().equals("draft")
-                                && child.getProperty("hippostd:holder").getString().equals(user)) {
+                        if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)
+                                && child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString().equals(HippoStdNodeType.DRAFT)
+                                && child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
                             return new JcrNodeModel(child);
                         }
                     }

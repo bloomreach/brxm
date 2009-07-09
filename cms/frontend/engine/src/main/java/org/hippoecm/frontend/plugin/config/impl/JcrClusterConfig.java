@@ -31,6 +31,7 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
 import org.apache.wicket.Session;
+import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IObservationContext;
@@ -112,7 +113,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                 NodeIterator nodes = getNode().getNodes();
                 while (nodes.hasNext()) {
                     Node node = nodes.nextNode();
-                    if (node.isNodeType("frontend:plugin")) {
+                    if (node.isNodeType(FrontendNodeType.NT_PLUGIN)) {
                         plugins.add(getPluginName(node));
                     }
                 }
@@ -152,7 +153,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                     if (name.indexOf('[') > 0) {
                         name = name.substring(0, name.indexOf('['));
                     }
-                    Node child = node.addNode(name, "frontend:plugin");
+                    Node child = node.addNode(name, FrontendNodeType.NT_PLUGIN);
                     JcrMap map = new JcrMap(new JcrNodeModel(child));
                     map.putAll(element);
 
@@ -229,7 +230,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
 
                     Node root = getNode();
                     while (!node.isSame(root)) {
-                        if (node.isNodeType("frontend:plugin")) {
+                        if (node.isNodeType(FrontendNodeType.NT_PLUGIN)) {
                             IPluginConfig config = wrapConfig(node);
                             collection.add(new ClusterConfigEvent(JcrClusterConfig.this, config,
                                     ClusterConfigEvent.EventType.PLUGIN_CHANGED));
@@ -283,15 +284,15 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     }
 
     public List<String> getServices() {
-        return getList("frontend:services");
+        return getList(FrontendNodeType.FRONTEND_SERVICES);
     }
 
     public List<String> getReferences() {
-        return getList("frontend:references");
+        return getList(FrontendNodeType.FRONTEND_REFERENCES);
     }
 
     public List<String> getProperties() {
-        return getList("frontend:properties");
+        return getList(FrontendNodeType.FRONTEND_PROPERTIES);
     }
 
     @Override

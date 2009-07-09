@@ -42,6 +42,7 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
@@ -132,7 +133,7 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                 "/test/facetsearch", "hippo:facetsearch",
                     "hippo:docbase", "/test/content",
                     "hippo:queryname", "state",
-                    "hippo:facets", "hippostd:state",
+                    "hippo:facets", HippoStdNodeType.HIPPO_STATE,
                 "/test/plugin", "frontend:pluginconfig",
                     "plugin.class", EditorManagerPlugin.class.getName(),
                     "wicket.model", "model",
@@ -167,8 +168,8 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                 "jcr:mixinTypes", "hippo:hardhandle",
                 "/${name}/${name}", "cmstest:document",
                     "jcr:mixinTypes", "hippo:harddocument",
-                    "hippostd:state", "unpublished",
-                    "hippostd:stateSummary", "new"
+                    HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED,
+                    HippoStdNodeType.HIPPOSTD_STATESUMMARY, HippoStdNodeType.NEW,
     };
 
     protected static String[] instantiate(String[] content, Map<String, String> parameters) {
@@ -251,8 +252,8 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         // simulate workflow step "obtainEditableInstance"
         Node unpublished = session.getRootNode().getNode("test/content/document/document");
         Node draft = ((HippoSession) session).copy(unpublished, unpublished.getPath());
-        draft.setProperty("hippostd:state", "draft");
-        draft.setProperty("hippostd:holder", CREDENTIALS.getString("username"));
+        draft.setProperty(HippoStdNodeType.HIPPO_STATE, "draft");
+        draft.setProperty(HippoStdNodeType.HIPPO_HOLDER, CREDENTIALS.getString("username"));
         session.save();
         home.processEvents();
         assertEquals(1, getEditors().size());
@@ -351,8 +352,8 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
 
     @Test
     public void testTemplateType() throws Exception {
-        Node test = root.getNode("test/content").addNode("template", "hipposysedit:templatetype");
-        test.addNode("hipposysedit:nodetype", "hipposysedit:handle");
+        Node test = root.getNode("test/content").addNode("template", HippoNodeType.NT_TEMPLATETYPE);
+        test.addNode(HippoNodeType.HIPPO_NODETYPE, HippoNodeType.NT_HANDLE);
         session.save();
 
         IPluginContext pluginContext = start(config);
