@@ -53,7 +53,7 @@ public interface HippoStdNodeType {
 
     //--- Hippo Item Values ---//
     String PUBLISHED = "published";
-    String UNPUBLISHED = "published";
+    String UNPUBLISHED = "unpublished";
     String DRAFT = "draft";
     String NEW = "new";
 
