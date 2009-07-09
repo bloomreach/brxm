@@ -83,6 +83,8 @@
           <include>**/*.html</include>
           <include>**/*.css</include>
           <include>**/*.properties</include>
+          <include>**/*.jpg</include>
+          <include>**/*.png</include>
         </includes>
       </resource>
     </resources>
