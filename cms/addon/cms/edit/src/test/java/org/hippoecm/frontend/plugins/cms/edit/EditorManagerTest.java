@@ -42,6 +42,7 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
@@ -133,7 +134,7 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                 "/test/facetsearch", "hippo:facetsearch",
                     "hippo:docbase", "/test/content",
                     "hippo:queryname", "state",
-                    "hippo:facets", HippoStdNodeType.HIPPO_STATE,
+                    "hippo:facets", HippoStdNodeType.HIPPOSTD_STATE,
                 "/test/plugin", "frontend:pluginconfig",
                     "plugin.class", EditorManagerPlugin.class.getName(),
                     "wicket.model", "model",
@@ -252,8 +253,8 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         // simulate workflow step "obtainEditableInstance"
         Node unpublished = session.getRootNode().getNode("test/content/document/document");
         Node draft = ((HippoSession) session).copy(unpublished, unpublished.getPath());
-        draft.setProperty(HippoStdNodeType.HIPPO_STATE, "draft");
-        draft.setProperty(HippoStdNodeType.HIPPO_HOLDER, CREDENTIALS.getString("username"));
+        draft.setProperty(HippoStdNodeType.HIPPOSTD_STATE, "draft");
+        draft.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, CREDENTIALS.getString("username"));
         session.save();
         home.processEvents();
         assertEquals(1, getEditors().size());
