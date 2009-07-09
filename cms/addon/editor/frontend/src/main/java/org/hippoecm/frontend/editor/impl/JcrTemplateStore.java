@@ -64,7 +64,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
         try {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             QueryManager qMgr = session.getWorkspace().getQueryManager();
-            Query query = qMgr.createQuery("//element(*, hippo:nodetype)[@hippo:mixin='true']", Query.XPATH);
+            Query query = qMgr.createQuery("//element(*, hipposysedit:nodetype)[@hippo:mixin='true']", Query.XPATH);
             NodeIterator iter = query.execute().getNodes();
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
@@ -87,7 +87,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
                 }
 
                 Node parent = node.getParent();
-                if (!parent.isNodeType("hippo:namespace")) {
+                if (!parent.isNodeType("hipposysedit:namespace")) {
                     log.debug("invalid great ancestor");
                     continue;
                 }

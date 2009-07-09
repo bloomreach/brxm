@@ -25,7 +25,7 @@
       <sv:value>hipposys:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.api.Document</sv:value>
+      <sv:value>org.hippoecm.repository.standardworkflow.VersionWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Versioning workflow</sv:value>

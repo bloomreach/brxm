@@ -352,7 +352,7 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
     @Test
     public void testTemplateType() throws Exception {
         Node test = root.getNode("test/content").addNode("template", "hipposysedit:templatetype");
-        test.addNode("hippo:nodetype", "hippo:handle");
+        test.addNode("hipposysedit:nodetype", "hipposysedit:handle");
         session.save();
 
         IPluginContext pluginContext = start(config);
