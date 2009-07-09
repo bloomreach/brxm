@@ -66,7 +66,8 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
         try {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             QueryManager qMgr = session.getWorkspace().getQueryManager();
-            Query query = qMgr.createQuery("//element(*, " + HippoNodeType.NT_NODETYPE + ")[@hippo:mixin='true']", Query.XPATH);
+            Query query = qMgr.createQuery("//element(*, " + HippoNodeType.NT_NODETYPE + ")[@"
+                    + HippoNodeType.HIPPO_MIXIN + "='true']", Query.XPATH);
             NodeIterator iter = query.execute().getNodes();
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
