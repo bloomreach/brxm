@@ -130,7 +130,7 @@ public interface HippoNodeType {
     final public static String HIPPO_LASTLOGIN = "hipposys:lastlogin";
     final public static String HIPPO_LASTSYNC = "hipposys:lastsync";
     final public static String HIPPO_MEMBERS = "hipposys:members";
-    final public static String HIPPO_MESSAGE = "hipposys:members";
+    final public static String HIPPO_MESSAGE = "hippo:message";
     final public static String HIPPO_MANDATORY = "hipposysedit:mandatory";
     final public static String HIPPO_MIXIN = "hipposysedit:mixin";
     final public static String HIPPO_MODES = "hippo:modes";
