@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+  <pad name="top" />
+  <pad name="bottom" orientation="vertical" />
+  <transition name="down" source="top" target="bottom" />
+  <transition name="up" source="bottom" target="top" />
+</layout>

@@ -32,6 +32,9 @@ public interface IDialogService extends IClusterable {
 
         void render(PluginRequestTarget target);
 
+        /**
+         * @return a component with wicket id "content"
+         */
         Component getComponent();
 
         IModel getTitle();

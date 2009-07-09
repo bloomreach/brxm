@@ -22,6 +22,9 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:namespace</sv:value>
   </sv:property>
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+    <sv:value>mix:referenceable</sv:value>
+  </sv:property>
   <sv:node sv:name="existing">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposysedit:templatetype</sv:value>
@@ -29,12 +32,12 @@
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>mix:referenceable</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>7bb9eb11-1ae4-44f6-895c-8eccc9d5192c</sv:value>
-    </sv:property>
     <sv:node sv:name="hipposysedit:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:handle</sv:value>
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:hardhandle</sv:value>
       </sv:property>
       <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

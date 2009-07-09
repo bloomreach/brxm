@@ -166,6 +166,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
                 node.setProperty(FrontendNodeType.FRONTEND_REFERENCES, getValues(cluster.getReferences()));
                 node.setProperty(FrontendNodeType.FRONTEND_PROPERTIES, getValues(cluster.getProperties()));
 
+                node.save();
                 return node.getPath();
             } catch (RepositoryException ex) {
                 throw new StoreException(ex);
@@ -189,27 +190,41 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
         }
         Node typeNode = (Node) ((UserSession) Session.get()).getJcrSession().getItem(path);
 
-        Node node;
-        if (!typeNode.isNodeType(HippoNodeType.HIPPO_TEMPLATE)) {
-            if (create) {
-                typeNode.addMixin(EditorNodeType.NT_EDITABLE);
-                node = typeNode.addNode(EditorNodeType.EDITOR_TEMPLATES, EditorNodeType.NT_TEMPLATESET);
+        boolean save = false;
+        try {
+            Node templateSetNode;
+            if (!typeNode.isNodeType(EditorNodeType.NT_EDITABLE)) {
+                if (create) {
+                    typeNode.addMixin(EditorNodeType.NT_EDITABLE);
+                    templateSetNode = typeNode.addNode(EditorNodeType.EDITOR_TEMPLATES, EditorNodeType.NT_TEMPLATESET);
+                    save = true;
+                } else {
+                    return null;
+                }
             } else {
-                return null;
+                templateSetNode = typeNode.getNode(EditorNodeType.EDITOR_TEMPLATES);
             }
-        } else {
-            node = typeNode.getNode(HippoNodeType.HIPPO_TEMPLATE);
-        }
-        if (!node.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
-            if (create) {
-                node = node.addNode(HippoNodeType.HIPPO_TEMPLATE, FrontendNodeType.NT_PLUGINCLUSTER);
-            } else {
-                return null;
+
+            // use the first available template
+            Node templateNode = null;
+            NodeIterator nodes = templateSetNode.getNodes();
+            while (nodes.hasNext()) {
+                Node template = nodes.nextNode();
+                if (template != null && template.isNodeType(FrontendNodeType.NT_PLUGINCLUSTER)) {
+                    templateNode = template;
+                    break;
+                }
             }
-        } else {
-            node = node.getNode(HippoNodeType.HIPPO_TEMPLATE);
+            if (templateNode == null && create) {
+                templateNode = templateSetNode.addNode("_default_", FrontendNodeType.NT_PLUGINCLUSTER);
+                save = true;
+            }
+            return templateNode;
+        } finally {
+            if (save) {
+                typeNode.save();
+            }
         }
-        return node;
     }
 
     protected IClusterConfig getTemplate(ITypeDescriptor type) throws StoreException {

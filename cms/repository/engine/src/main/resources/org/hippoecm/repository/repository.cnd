@@ -122,9 +122,11 @@
 
 // UPDATE ALL CONTENT
 
+// mixin on nodetype and prototype nodes for a particular version
+// of a namespace.
 [hipposysedit:remodel] mixin
 - hipposysedit:uri (string) mandatory
- 
+
 [hipposysedit:field] > nt:base
 - hipposysedit:name (string)
 - hipposysedit:path (string)
@@ -141,13 +143,12 @@
 - hipposysedit:mixin (boolean)
 + hipposysedit:field (hipposysedit:field) multiple
 
-[hipposysedit:handle] > hippo:handle
-+ * (nt:base) = nt:unstructured multiple
+[hipposysedit:prototypeset]
++ hipposysedit:prototype (nt:base)
 
 [hipposysedit:templatetype] orderable
 + hipposysedit:nodetype (hippo:handle) mandatory
-+ hipposysedit:template (hippo:handle)
-+ hipposysedit:prototype (nt:base)
++ hipposysedit:prototypes (hipposysedit:prototypeset)
 
 [hipposysedit:namespace]
 + * (hipposysedit:templatetype) = hipposysedit:templatetype

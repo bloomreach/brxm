@@ -45,6 +45,8 @@ public class DialogWindow extends PersistentModalWindow implements IDialogServic
             if (pending.size() > 0) {
                 Dialog dialog = pending.remove(0);
                 internalShow(dialog);
+            } else {
+                DialogWindow.this.shown = null;
             }
         }
     }
