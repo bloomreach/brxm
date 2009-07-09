@@ -34,6 +34,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.hst.plugins.frontend.LinkHandler;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Descriptive;
 import org.slf4j.Logger;
@@ -46,17 +47,17 @@ public class DescriptionPicker extends Panel {
     private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(DescriptionPicker.class);
-    
+
     public interface DescriptionProvider {
         List<Descriptive> load();
     }
-    
+
     public static final class DescriptionProviderImpl implements DescriptionProvider {
-        
+
         EditorDAO<Descriptive> dao;
         JcrNodeModel root;
-        
-        public DescriptionProviderImpl(EditorDAO<Descriptive> dao,  JcrNodeModel root) {
+
+        public DescriptionProviderImpl(EditorDAO<Descriptive> dao, JcrNodeModel root) {
             this.dao = dao;
             this.root = root;
         }
@@ -65,8 +66,8 @@ public class DescriptionPicker extends Panel {
             List<Descriptive> descriptives = new ArrayList<Descriptive>();
             Node pages = root.getNode();
             try {
-                if(pages.hasNodes()) {
-                    for(NodeIterator it = pages.getNodes(); it.hasNext();) {
+                if (pages.hasNodes()) {
+                    for (NodeIterator it = pages.getNodes(); it.hasNext();) {
                         Node page = it.nextNode();
                         descriptives.add(dao.load(new JcrNodeModel(page.getPath())));
                     }
@@ -82,14 +83,17 @@ public class DescriptionPicker extends Panel {
     private List<Descriptive> descriptives;
     private int current;
 
+    boolean showPreviewLink;
+    LinkHandler previewLinkHandler;
+
     public DescriptionPicker(String id, IModel model, DescriptionProvider provider) {
         super(id, model);
         setOutputMarkupId(true);
 
         this.provider = provider;
-        
+
         init();
-        
+
         AjaxLink prev = new AjaxLink("prev") {
             private static final long serialVersionUID = 1L;
 
@@ -123,14 +127,15 @@ public class DescriptionPicker extends Panel {
         };
         next.add(new Image("nextImg", new ResourceReference(DescriptionPicker.class, "next.png")));
         add(next);
-        
+
         AjaxLink select = new AjaxLink("select") {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 try {
-                    DescriptionPicker.this.setModelObject(DescriptionPicker.this.descriptives.get(current).getModel().getNode().getName());
+                    DescriptionPicker.this.setModelObject(DescriptionPicker.this.descriptives.get(current).getModel()
+                            .getNode().getName());
                 } catch (RepositoryException e) {
                     log.error("Error setting new page name", e);
                 }
@@ -143,7 +148,7 @@ public class DescriptionPicker extends Panel {
                 String currentName;
                 try {
                     currentName = DescriptionPicker.this.descriptives.get(current).getModel().getNode().getName();
-                    if(selectedName != null && selectedName.equals(currentName)) {
+                    if (selectedName != null && selectedName.equals(currentName)) {
                         return false;
                     }
                 } catch (RepositoryException e) {
@@ -153,15 +158,15 @@ public class DescriptionPicker extends Panel {
             }
         };
         select.add(new Label("selectLabel", new AbstractReadOnlyModel() {
-            private static final long serialVersionUID = 1L; 
-            
+            private static final long serialVersionUID = 1L;
+
             @Override
             public Object getObject() {
                 String selectedName = DescriptionPicker.this.getModelObjectAsString();
                 String currentName;
                 try {
                     currentName = DescriptionPicker.this.descriptives.get(current).getModel().getNode().getName();
-                    if(selectedName != null && selectedName.equals(currentName)) {
+                    if (selectedName != null && selectedName.equals(currentName)) {
                         return DescriptionPicker.this.getString("selected");
                     }
                 } catch (RepositoryException e) {
@@ -186,17 +191,17 @@ public class DescriptionPicker extends Panel {
             }
         }));
 
-        add(new NonCachingImage("thumb", new AbstractReadOnlyModel(){
+        add(new NonCachingImage("thumb", new AbstractReadOnlyModel() {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             public Object getObject() {
                 return DescriptionPicker.this.descriptives.get(current).getIconResource();
             }
-            
+
         }) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             protected Resource getImageResource() {
                 return DescriptionPicker.this.descriptives.get(current).getIconResource();
@@ -204,7 +209,7 @@ public class DescriptionPicker extends Panel {
 
             @Override
             protected ResourceReference getImageResourceReference() {
-                if(DescriptionPicker.this.descriptives.get(current).getIconResource() == null) {
+                if (DescriptionPicker.this.descriptives.get(current).getIconResource() == null) {
                     return new ResourceReference(DescriptionPicker.class, "no_thumb.jpg");
                 }
                 setImageResourceReference(null);
@@ -222,17 +227,31 @@ public class DescriptionPicker extends Panel {
             }
         }));
 
+        add(new AjaxLink("preview") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                previewLinkHandler.handle(target);
+            }
+
+            @Override
+            public boolean isVisible() {
+                return showPreviewLink;
+            }
+
+        });
+
     }
-    
+
     private void init() {
         descriptives = provider.load();
         current = 0;
         String selected = getModelObjectAsString();
-        if(selected != null) {
+        if (selected != null) {
             int cnt = 0;
-            for(Descriptive d: descriptives) {
+            for (Descriptive d : descriptives) {
                 try {
-                    if(d.getModel().getNode().getName().equals(selected)) {
+                    if (d.getModel().getNode().getName().equals(selected)) {
                         current = cnt;
                         break;
                     }
@@ -246,5 +265,10 @@ public class DescriptionPicker extends Panel {
 
     public void refresh() {
         init();
+    }
+
+    public void enablePreview(LinkHandler handler) {
+        showPreviewLink = true;
+        this.previewLinkHandler = handler;
     }
 }

@@ -43,7 +43,7 @@ public class SitemenusEditorPlugin extends EditorPlugin<Sitemenu> {
 
     @Override
     protected EditorDAO<Sitemenu> newDAO() {
-        return new SitemenuDAO(getPluginContext(), hstContext.sitemenu.getNamespace());
+        return new SitemenuDAO(getPluginContext(), hstContext.sitemenu.getParentNamespace());
     }
 
     @Override

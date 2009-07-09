@@ -46,6 +46,8 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.hst.plugins.frontend.HstEditorPerspective;
+import org.hippoecm.hst.plugins.frontend.LinkHandler;
 import org.hippoecm.hst.plugins.frontend.editor.BasicEditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.DescriptionDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
@@ -164,8 +166,7 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
 
         };
         form.add(newPage);
-        
-        
+
         DescriptionProvider provider = new DescriptionProvider() {
 
             public List<Descriptive> load() {
@@ -173,8 +174,8 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
                 List<Descriptive> descriptives = new ArrayList<Descriptive>();
                 Node pages = hstContext.page.getModel().getNode();
                 try {
-                    if(pages.hasNodes()) {
-                        for(NodeIterator it = pages.getNodes(); it.hasNext();) {
+                    if (pages.hasNodes()) {
+                        for (NodeIterator it = pages.getNodes(); it.hasNext();) {
                             Node page = it.nextNode();
                             descriptives.add(descDao.load(new JcrNodeModel(page.getPath())));
                         }
@@ -185,16 +186,56 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
                 return descriptives;
             }
         };
-        
-        form.add(descPicker = new DescriptionPicker("pagePicker", new PropertyModel(form.getModel(), "page"), provider));
+
+        form
+                .add(descPicker = new DescriptionPicker("pagePicker", new PropertyModel(form.getModel(), "page"),
+                        provider));
+
+        descPicker.enablePreview(new LinkHandler() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onHandle(AjaxRequestTarget target) {
+                String urlName = "";
+                JcrNodeModel m = getBean().getModel();
+                Node n;
+                try {
+                    n = m.getNode().getParent();
+                    while (n != null && n.isNodeType("hst:sitemapitem")) {
+                        SitemapItem i = dao.load(new JcrNodeModel(n.getPath()));
+                        urlName = i.getMatcher() + "/" + urlName;
+                        n = n.getParent();
+                    }
+                } catch (RepositoryException e) {
+                    e.printStackTrace();
+                }
+
+                urlName = urlName + getBean().getMatcher();
+                showUrl(target, urlName);
+            }
+
+        });
 
         renderNewPageWizard(false, null);
     }
-    
+
+    protected void showUrl(AjaxRequestTarget target, String string) {
+        HstEditorPerspective p = null;
+        Component c = getParent();
+        while (c != null) {
+            if (c instanceof HstEditorPerspective) {
+                p = (HstEditorPerspective) c;
+                p.openPreviewUrl(target, string);
+                break;
+            }
+            c = c.getParent();
+        }
+    }
+
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
-        if(descPicker != null) {
+        if (descPicker != null) {
             descPicker.refresh();
         }
     }
@@ -215,7 +256,7 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
                 renderNewPageWizard(false, target);
 
                 getBean().setPage(page.getName());
-                if(descPicker != null) {
+                if (descPicker != null) {
                     descPicker.refresh();
                 }
 

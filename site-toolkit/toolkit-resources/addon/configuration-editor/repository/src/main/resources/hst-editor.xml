@@ -253,6 +253,7 @@
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.navigator</sv:value>
       <sv:value>extension.editor</sv:value>
+      <!-- <sv:value>extension.preview</sv:value> -->
     </sv:property>
     <sv:property sv:name="extension.navigator" sv:type="String">
       <sv:value>${cluster.id}.navigator</sv:value>
@@ -272,7 +273,13 @@
     <sv:property sv:name="namespaces.root" sv:type="String">
       <sv:value>hippo:namespaces/hsteditor</sv:value>
     </sv:property>
-    
+    <sv:property sv:name="preview.url.root" sv:type="String">
+      <sv:value>http://127.0.0.1:8085/site/preview/</sv:value>
+    </sv:property>
+    <sv:property sv:name="preview.show" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+
     <sv:property sv:name="cluster.name" sv:type="String">
       <sv:value>hst-editor-navigator</sv:value>
     </sv:property>
@@ -316,12 +323,16 @@
       <sv:property sv:name="units" sv:type="String">
         <sv:value>left</sv:value>
         <sv:value>center</sv:value>
+        <sv:value>right</sv:value>
       </sv:property>
       <sv:property sv:name="left" sv:type="String">
         <sv:value>id=hst-perspective-left,body=hst-perspective-left-body,resize=true,scroll=false,minWidth=200,width=200,gutter=0px 0px 0px 0px</sv:value>
       </sv:property>
       <sv:property sv:name="center" sv:type="String">
         <sv:value>id=hst-perspective-center,body=hst-perspective-center-body,minWidth=400,scroll=true,gutter=0px 0px 0px 0px</sv:value>
+      </sv:property>
+      <sv:property sv:name="right" sv:type="String">
+        <sv:value>id=hst-perspective-right,width=600,scroll=true,gutter=0px 0px 0px 0px</sv:value>
       </sv:property>
     </sv:node>  
   </sv:node>

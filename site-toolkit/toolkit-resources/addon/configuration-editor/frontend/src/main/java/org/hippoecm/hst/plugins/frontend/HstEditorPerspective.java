@@ -16,12 +16,14 @@
 
 package org.hippoecm.hst.plugins.frontend;
 
-import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -45,16 +47,28 @@ public class HstEditorPerspective extends Perspective {
     private static final String EDITOR_ROOT = "editor.root";
     private static final String NAMESPACES_ROOT = "namespaces.root";
 
+    private String previewUrlRoot;
+    private String previewUrl = "";
+
+    WebMarkupContainer previewContainer;
+    boolean previewShow;
+
     public HstEditorPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         String rootModelPath = config.getString(EDITOR_ROOT, null);
-        
-        if(rootModelPath != null) {
+
+        previewUrlRoot = config.getString("preview.url.root", "http://127.0.0.1:8085/site/preview/");
+        previewShow = config.getBoolean("preview.show");
+
+        add(previewContainer = new Preview());
+
+        if (rootModelPath != null) {
             javax.jcr.Session jcrSession = ((UserSession) getSession()).getJcrSession();
             try {
-                String relPath = rootModelPath.substring(1); 
-                if (!jcrSession.getRootNode().hasNode(relPath) || !jcrSession.getRootNode().getNode(relPath).isNodeType("hst:sites")) {
+                String relPath = rootModelPath.substring(1);
+                if (!jcrSession.getRootNode().hasNode(relPath)
+                        || !jcrSession.getRootNode().getNode(relPath).isNodeType("hst:sites")) {
                     rootModelPath = null;
                 }
             } catch (RepositoryException e) {
@@ -62,8 +76,8 @@ public class HstEditorPerspective extends Perspective {
                 rootModelPath = null;
             }
         }
-        
-        if(rootModelPath == null) {
+
+        if (rootModelPath == null) {
             NodeIterator siteIterator = null;
             //Do a query for all hst:sites where the content node has a property state:unpublished
             String query = "//element(*, hst:site)[hst:content/@hippo:values = 'unpublished']";
@@ -78,21 +92,22 @@ public class HstEditorPerspective extends Perspective {
                 log.error("Error executing query[" + query + "]", e);
             }
 
-            if(siteIterator.hasNext()) {
+            if (siteIterator.hasNext()) {
                 try {
                     rootModelPath = siteIterator.nextNode().getParent().getPath();
                 } catch (RepositoryException e) {
                     log.error("Error retrieving first hst:sites node from query result", e);
                 }
-            } 
-        } 
-        
-        if(rootModelPath == null) {
-            throw new IllegalStateException("HstEditorPerspective has failed to find a valid root node of primary type hst:sites");
+            }
         }
-        
+
+        if (rootModelPath == null) {
+            throw new IllegalStateException(
+                    "HstEditorPerspective has failed to find a valid root node of primary type hst:sites");
+        }
+
         JcrNodeModel root = new JcrNodeModel(rootModelPath);
-        
+
         HstContext hstContext = new HstContext(root, config.getString(NAMESPACES_ROOT));
         context.registerService(hstContext, HstContext.class.getName());
 
@@ -114,6 +129,28 @@ public class HstEditorPerspective extends Perspective {
         parameters.put("content.path", hstContext.content.getPath());
         parameters.put("sitemap.path", hstContext.sitemap.getPath());
         context.newCluster(cluster, parameters).start();
+    }
+
+    public void openPreviewUrl(AjaxRequestTarget target, String string) {
+        previewUrl = string;
+        target.addComponent(previewContainer);
+    }
+
+    class Preview extends WebMarkupContainer {
+
+        public Preview() {
+            super("previewFrame");
+            setOutputMarkupId(true);
+        }
+
+        @Override
+        protected void onComponentTag(ComponentTag tag) {
+            if (previewShow) {
+                tag.put("src", previewUrlRoot + previewUrl);
+            }
+            super.onComponentTag(tag);
+        }
+
     }
 
 }
