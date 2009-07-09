@@ -65,7 +65,7 @@ public class FolderTreePlugin extends RenderPlugin {
 
         treeModel = new CachedTreeModel(rootNode);
         context.registerService(treeModel, IObserver.class.getName());
-        tree = new CmsJcrTree("tree", treeModel, new TreeNodeTranslator(config)) {
+        tree = new CmsJcrTree("tree", treeModel, newTreeNodeTranslator(config)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -115,6 +115,10 @@ public class FolderTreePlugin extends RenderPlugin {
         add(new ScrollBehavior());
     }
 
+    protected TreeNodeTranslator newTreeNodeTranslator(IPluginConfig config) {
+        return new TreeNodeTranslator(config);
+    }
+
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
@@ -148,7 +152,7 @@ public class FolderTreePlugin extends RenderPlugin {
         }
     }
 
-    class TreeNodeTranslator extends MaxLengthNodeNameFormatter {
+    public class TreeNodeTranslator extends MaxLengthNodeNameFormatter {
         private static final long serialVersionUID = 1L;
 
         public TreeNodeTranslator(IPluginConfig config) {
