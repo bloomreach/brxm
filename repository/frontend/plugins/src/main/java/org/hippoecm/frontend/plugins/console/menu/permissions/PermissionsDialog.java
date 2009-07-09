@@ -34,6 +34,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,7 +148,7 @@ public class PermissionsDialog extends AbstractDialog {
                 Node node = nodeIter.nextNode();
                 // FIXME query should not return the prototype node, or the
                 // prototype node should not exists at all
-                if (node != null && !"hipposysedit:prototype".equals(node.getName())) {
+                if (node != null && !HippoNodeType.HIPPO_PROTOTYPE.equals(node.getName())) {
                     list.add(node.getName());
                 }
             }

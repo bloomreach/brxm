@@ -27,6 +27,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.model.nodetypes.NodeTypeModelWrapper;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,18 +148,18 @@ public class TypeTranslator extends NodeTypeModelWrapper {
                 Node node = nodeModel.getNode();
                 if (node != null) {
                     try {
-                        if (node.isNodeType("hippo:translated")) {
+                        if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
                             Locale locale = Session.get().getLocale();
-                            NodeIterator nodes = node.getNodes("hippo:translation");
+                            NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
                             while (nodes.hasNext()) {
                                 Node child = nodes.nextNode();
-                                if (child.isNodeType("hippo:translation") && child.hasProperty("hippo:property")
-                                        && child.hasProperty("hippo:value")) {
-                                    if (child.getProperty("hippo:property").getString().equals(property)
-                                            && child.getProperty("hippo:value").getString().equals(value.getObject())) {
-                                        String language = child.getProperty("hippo:language").getString();
+                                if (child.isNodeType(HippoNodeType.NT_TRANSLATION) && child.hasProperty(HippoNodeType.HIPPO_PROPERTY)
+                                        && child.hasProperty(HippoNodeType.HIPPO_VALUE)) {
+                                    if (child.getProperty(HippoNodeType.HIPPO_PROPERTY).getString().equals(property)
+                                            && child.getProperty(HippoNodeType.HIPPO_VALUE).getString().equals(value.getObject())) {
+                                        String language = child.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
                                         if (locale.getLanguage().equals(language)) {
-                                            return child.getProperty("hippo:message").getString();
+                                            return child.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
                                         }
                                     }
                                 }

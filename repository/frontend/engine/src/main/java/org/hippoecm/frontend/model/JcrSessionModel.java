@@ -32,6 +32,7 @@ import org.hippoecm.frontend.FacetSearchObserver;
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
@@ -146,8 +147,9 @@ public class JcrSessionModel extends LoadableDetachableModel {
             if (repository != null && username != null && password != null) {
                 result = repository.login(username, password.toCharArray());
                 try {
-                    if(result.getRootNode().hasNode("hippo:log")) {
-                        Workflow workflow = ((HippoWorkspace)result.getWorkspace()).getWorkflowManager().getWorkflow("internal", result.getRootNode().getNode("hippo:log"));
+                    if(result.getRootNode().hasNode(HippoNodeType.LOG_PATH)) {
+                        Workflow workflow = ((HippoWorkspace)result.getWorkspace()).getWorkflowManager().getWorkflow("internal",
+                            result.getRootNode().getNode(HippoNodeType.LOG_PATH));
                         if(workflow instanceof EventLoggerWorkflow) {
                             ((EventLoggerWorkflow)workflow).logEvent(result.getUserID(), "Repository", "login");
                         }

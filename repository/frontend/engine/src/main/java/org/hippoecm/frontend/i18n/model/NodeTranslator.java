@@ -35,6 +35,7 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,12 +102,12 @@ public class NodeTranslator extends NodeModelWrapper {
             if (node != null) {
                 try {
                     name = NodeNameCodec.decode(node.getName());
-                    if (node.isNodeType("hippo:translated")) {
+                    if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
                         Locale locale = Session.get().getLocale();
-                        NodeIterator nodes = node.getNodes("hippo:translation");
+                        NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
                         while (nodes.hasNext()) {
                             Node child = nodes.nextNode();
-                            if (child.isNodeType("hippo:translation") && !child.hasProperty("hippo:property")) {
+                            if (child.isNodeType(HippoNodeType.NT_TRANSLATION) && !child.hasProperty(HippoNodeType.HIPPO_PROPERTY)) {
                                 String language = child.getProperty("hippo:language").getString();
                                 if (locale.getLanguage().equals(language)) {
                                     return child.getProperty("hippo:message").getString();

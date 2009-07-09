@@ -165,11 +165,11 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     }
 
     public boolean isMixin() {
-        return getBoolean("hipposysedit:mixin");
+        return getBoolean(HippoNodeType.HIPPO_MIXIN);
     }
 
     public void setIsMixin(boolean isMixin) {
-        setBoolean("hipposysedit:mixin", isMixin);
+        setBoolean(HippoNodeType.HIPPO_MIXIN, isMixin);
     }
 
     public Value createValue() {

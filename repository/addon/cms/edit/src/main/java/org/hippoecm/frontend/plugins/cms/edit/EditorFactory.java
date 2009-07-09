@@ -23,6 +23,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class EditorFactory implements IClusterable {
@@ -47,7 +48,7 @@ public class EditorFactory implements IClusterable {
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 if (node.hasNode(node.getName())) {
                     Node doc = node.getNode(node.getName());
-                    if (doc.isNodeType("hippostd:publishable")) {
+                    if (doc.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
                         return new HippostdPublishableEditor(manager, context, config, nodeModel);
                     } else {
                         return new DefaultCmsEditor(manager, context, config, nodeModel, mode);

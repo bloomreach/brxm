@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
@@ -64,7 +65,7 @@ public class JcrConfigServiceFactory implements IPluginConfigService {
             NodeIterator iter = node.getNodes();
             while (iter.hasNext()) {
                 Node child = iter.nextNode();
-                if (child.isNodeType("frontend:plugincluster")) {
+                if (child.isNodeType(FrontendNodeType.NT_PLUGINCLUSTER)) {
                     results.add(child.getName());
                 }
             }

@@ -30,6 +30,8 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +50,10 @@ public class AutoEditPlugin implements IPlugin {
                 try {
                     final String user = ((UserSession) Session.get()).getCredentials().getString("username"); // FIXME: no guarantee to have username here
                     QueryManager qMgr = ((UserSession) Session.get()).getJcrSession().getWorkspace().getQueryManager();
-                    Query query = qMgr.createQuery("select * from hippostd:publishable where hippostd:state='draft' " // FIXME wrong knowledge in use here
-                            + "and hippostd:holder='" + user + "'", Query.SQL);
+                    // FIXME wrong knowledge in use here
+                    Query query = qMgr.createQuery("select * from " + HippoStdNodeType.NT_PUBLISHABLE
+                        + " where " + HippoStdNodeType.HIPPOSTD_STATE + "='" + HippoStdNodeType.DRAFT + "' "
+                        + "and " + HippoStdNodeType.HIPPO_HOLDER + "='" + user + "'", Query.SQL);
 
                     NodeIterator iter = query.execute().getNodes();
                     while (iter.hasNext()) {
@@ -57,7 +61,7 @@ public class AutoEditPlugin implements IPlugin {
                         if (node == null) {
                             continue;
                         }
-                        if (!node.getName().equals("hipposysedit:prototype")) {
+                        if (!node.getName().equals(HippoNodeType.HIPPO_PROTOTYPE)) {
                             JcrNodeModel model = new JcrNodeModel(node);
                             try {
                                 IEditor editor = editService.getEditor(model);
