@@ -53,7 +53,7 @@ public class AutoEditPlugin implements IPlugin {
                     // FIXME wrong knowledge in use here
                     Query query = qMgr.createQuery("select * from " + HippoStdNodeType.NT_PUBLISHABLE
                         + " where " + HippoStdNodeType.HIPPOSTD_STATE + "='" + HippoStdNodeType.DRAFT + "' "
-                        + "and " + HippoStdNodeType.HIPPO_HOLDER + "='" + user + "'", Query.SQL);
+                        + "and " + HippoStdNodeType.HIPPOSTD_HOLDER + "='" + user + "'", Query.SQL);
 
                     NodeIterator iter = query.execute().getNodes();
                     while (iter.hasNext()) {
