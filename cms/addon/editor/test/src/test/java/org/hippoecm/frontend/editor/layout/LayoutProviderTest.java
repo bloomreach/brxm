@@ -44,11 +44,7 @@ public class LayoutProviderTest {
             }});
         List<String> layouts = provider.getLayouts();
         assertEquals(1, layouts.size());
-        assertEquals("org.hippoecm.frontend.test.layout.Test", layouts.get(0));
+        assertEquals("org.hippoecm.frontend.editor.layout.Test", layouts.get(0));
     }
 
-    @Test
-    public void testDefaultIcon() {
-        
-    }
 }

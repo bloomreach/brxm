@@ -27,6 +27,7 @@ import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.util.tester.FormTester;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.PluginTest;
+import org.hippoecm.frontend.editor.layout.LayoutProviderPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -41,6 +42,7 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RemodelWorkflowPluginTest extends PluginTest {
@@ -68,11 +70,13 @@ public class RemodelWorkflowPluginTest extends PluginTest {
 
     final static String[] content = {
         "/test", "nt:unstructured",
-            "/test/menu", "frontend:pluginconfig",
+            "/test/menu", "frontend:plugin",
                 "plugin.class", MenuTesterPlugin.class.getName(),
                 "wicket.id", "service.root",
                 "actions", "service.actions",
-            "/test/plugin", "frontend:pluginconfig",
+            "/test/layouts", "frontend:plugin",
+                "plugin.class", LayoutProviderPlugin.class.getName(),
+            "/test/plugin", "frontend:plugin",
                 "plugin.class", RemodelWorkflowPlugin.class.getName(),
                 "wicket.id", "service.actions",
                 "wicket.model", "service.model",
@@ -95,6 +99,7 @@ public class RemodelWorkflowPluginTest extends PluginTest {
         }
         session.save();
 
+        start(new JcrPluginConfig(new JcrNodeModel("/test/layouts")));
         start(new JcrPluginConfig(new JcrNodeModel("/test/menu")));
 
         Node documentNode = session.getRootNode().getNode("hippo:namespaces/testns");
@@ -124,6 +129,7 @@ public class RemodelWorkflowPluginTest extends PluginTest {
 
         // "new document type"
         tester.clickLink("root:menu:1:link");
+//        printComponents(System.out);
 
         // "test-type"
         FormTester formTest = tester.newFormTester("dialog:content:form");
@@ -131,12 +137,12 @@ public class RemodelWorkflowPluginTest extends PluginTest {
         formTest.selectMultiple("checkgroup", new int[] { 0 } );
         formTest.submit();
 
-//        printComponents(System.out);
 
         JcrNodeModel nsNode = new JcrNodeModel("/hippo:namespaces/testns/testtype");
         assertTrue(nsNode.getItemModel().exists());
     }
 
+    @Ignore // TODO: select layout
     @Test
     public void createCompoundTypeTest() {
         start(config);

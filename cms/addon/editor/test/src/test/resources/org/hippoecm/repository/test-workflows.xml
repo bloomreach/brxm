@@ -72,7 +72,7 @@
       <sv:value>Template engine workflow to create a type</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippo:namespace</sv:value>
+      <sv:value>hipposysedit:namespace</sv:value>
     </sv:property>
     <sv:node sv:name="hipposys:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

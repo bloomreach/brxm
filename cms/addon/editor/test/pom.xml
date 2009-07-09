@@ -137,16 +137,25 @@
   <build>
     <defaultGoal>test</defaultGoal>
     <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
-    <resources>
-      <resource>
+    <testResources>
+      <testResource>
         <filtering>false</filtering>
-        <directory>${basedir}/src/main/resources</directory>
+        <directory>${basedir}/src/test/java</directory>
         <includes>
-          <include>**/*.cnd</include>
-          <include>**/*.xml</include>
+          <include>**</include>
         </includes>
-      </resource>
-    </resources>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/test/resources</directory>
+        <includes>
+          <include>**</include>
+        </includes>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -157,7 +166,6 @@
           <workingDirectory>${project.build.directory}</workingDirectory>
           <excludes>
             <exclude>**/RedefineNodetypeTest.java</exclude>
-            <exclude>**/RemodelWorkflowPluginTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
