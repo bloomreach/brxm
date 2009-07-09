@@ -11,7 +11,6 @@ import javax.jcr.Session;
 
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.hst.plugins.frontend.editor.domain.Descriptive;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -287,7 +286,7 @@ public class HstContext implements IDetachable {
         public static final String HST_SITEMENUS = "hst:sitemenus";
 
         public HstSitemenuContext(JcrNodeModel model) throws RepositoryException {
-            super(model, "sitemenu");
+            super(model, "sitemenuitem");
         }
 
         @Override
@@ -304,6 +303,10 @@ public class HstContext implements IDetachable {
 
         public String encodeReferenceName(String name) {
             return "hst:sitemenus/" + name;
+        }
+
+        public String getParentNamespace() {
+            return namespacesRoot + "/sitemenu";
         }
 
     }
@@ -331,7 +334,7 @@ public class HstContext implements IDetachable {
         }
 
         public String encodeReferenceName(String name) {
-            return HST_COMPONENTS +"/" + name;
+            return HST_COMPONENTS + "/" + name;
         }
 
         public List<String> getComponentsAsList() {
