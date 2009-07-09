@@ -58,21 +58,21 @@ public class DerivedDateTest extends TestCase {
 
         session.getWorkspace().copy("/hippo:configuration/hippo:derivatives/date", "/hippo:configuration/hippo:derivatives/test1");
         Node node = session.getRootNode().getNode("hippo:configuration/hippo:derivatives/test1");
-        node.setProperty("hippo:nodetype", "hippo:datedocument2");
-        node.getNode("hippo:accessed/date").setProperty("hippo:relPath", "hippo:d1");
-        for(NodeIterator iter = node.getNode("hippo:derived").getNodes(); iter.hasNext(); ) {
+        node.setProperty("hipposys:nodetype", "hippo:datedocument2");
+        node.getNode("hipposys:accessed/date").setProperty("hipposys:relPath", "hippo:d1");
+        for(NodeIterator iter = node.getNode("hipposys:derived").getNodes(); iter.hasNext(); ) {
             Node derivedDef = iter.nextNode();
-            Property prop = derivedDef.getProperty("hippo:relPath");
+            Property prop = derivedDef.getProperty("hipposys:relPath");
             prop.setValue("hippo:d1fields/"+prop.getString());
         }
 
         session.getWorkspace().copy("/hippo:configuration/hippo:derivatives/date", "/hippo:configuration/hippo:derivatives/test2");
         node = session.getRootNode().getNode("hippo:configuration/hippo:derivatives/test2");
-        node.setProperty("hippo:nodetype", "hippo:datedocument2");
-        node.getNode("hippo:accessed/date").setProperty("hippo:relPath", "hippo:d2");
-        for(NodeIterator iter = node.getNode("hippo:derived").getNodes(); iter.hasNext(); ) {
+        node.setProperty("hipposys:nodetype", "hippo:datedocument2");
+        node.getNode("hipposys:accessed/date").setProperty("hipposys:relPath", "hippo:d2");
+        for(NodeIterator iter = node.getNode("hipposys:derived").getNodes(); iter.hasNext(); ) {
             Node derivedDef = iter.nextNode();
-            Property prop = derivedDef.getProperty("hippo:relPath");
+            Property prop = derivedDef.getProperty("hipposys:relPath");
             prop.setValue("hippo:d2fields/"+prop.getString());
         }
 

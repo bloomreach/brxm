@@ -76,7 +76,7 @@ public class RemodelWorkflowPluginTest extends PluginTest {
                 "plugin.class", RemodelWorkflowPlugin.class.getName(),
                 "wicket.id", "service.actions",
                 "wicket.model", "service.model",
-        "/hippo:namespaces/testns", "hippo:namespace",
+        "/hippo:namespaces/testns", "hipposysedit:namespace",
             "jcr:mixinTypes", "mix:referenceable",
     };
 

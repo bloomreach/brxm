@@ -99,7 +99,7 @@ class EditableTypes extends AbstractList implements Serializable, IObservable {
 
     public void startObservation() {
         listener = new JcrEventListener(obContext, Event.NODE_ADDED | Event.NODE_REMOVED, "/", true, null,
-                new String[] { "hippo:namespace" }) {
+                new String[] { "hipposysedit:namespace" }) {
             @Override
             public void onEvent(EventIterator events) {
                 EventCollection<IEvent> collection = new EventCollection<IEvent>();

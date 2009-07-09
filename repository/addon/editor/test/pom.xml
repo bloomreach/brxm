@@ -157,6 +157,7 @@
           <workingDirectory>${project.build.directory}</workingDirectory>
           <excludes>
             <exclude>**/RedefineNodetypeTest.java</exclude>
+            <exclude>**/RemodelWorkflowPluginTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>

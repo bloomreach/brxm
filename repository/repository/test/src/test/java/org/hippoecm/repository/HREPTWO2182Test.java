@@ -64,7 +64,7 @@ public class HREPTWO2182Test extends TestCase {
         Node typeNode = root.getNode("hippo:namespaces/editmodel/existing");
 
         // check initial conditions
-        NodeIterator nodes = typeNode.getNode("hippo:nodetype").getNodes("hippo:nodetype");
+        NodeIterator nodes = typeNode.getNode("hipposysedit:nodetype").getNodes("hipposysedit:nodetype");
         assertEquals(1, nodes.getSize());
 
         WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
@@ -74,7 +74,7 @@ public class HREPTWO2182Test extends TestCase {
         ((EditmodelWorkflow) workflow).edit();
         session.refresh(false);
 
-        nodes = typeNode.getNode("hippo:nodetype").getNodes("hippo:nodetype");
+        nodes = typeNode.getNode("hipposysedit:nodetype").getNodes("hipposysedit:nodetype");
         assertEquals(2, nodes.getSize());
     }
 }
