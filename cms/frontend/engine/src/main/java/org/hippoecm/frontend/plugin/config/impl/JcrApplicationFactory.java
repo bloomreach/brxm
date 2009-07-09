@@ -42,10 +42,10 @@ public class JcrApplicationFactory implements IApplicationFactory, IDetachable {
     public IPluginConfigService getDefaultApplication() {
         try {
             Node applicationFolder = nodeModel.getNode();
-            if (applicationFolder.getNodes().hasNext()) {
+            if (applicationFolder != null && applicationFolder.getNodes().hasNext()) {
                 return getApplication(applicationFolder.getNodes().nextNode());
             } else {
-                log.debug("No application nodes found");
+                log.warn("No application nodes found");
             }
         } catch (RepositoryException ex) {
             log.error("error retrieving default application");
