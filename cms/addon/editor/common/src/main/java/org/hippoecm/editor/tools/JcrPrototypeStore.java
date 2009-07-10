@@ -74,12 +74,14 @@ public class JcrPrototypeStore implements IDetachable {
         try {
             String path = getLocation(name);
             Session session = getJcrSession();
-            if (session.itemExists(path)) {
-                throw new IllegalArgumentException("handle for prototype already exists");
-            }
+            Node handle;
             String parentPath = path.substring(0, path.lastIndexOf('/'));
             Node parent = session.getRootNode().getNode(parentPath.substring(1));
-            Node handle = parent.addNode(HippoNodeType.HIPPO_PROTOTYPES, HippoNodeType.NT_PROTOTYPESET);
+            if (!session.itemExists(path)) {
+                handle = parent.addNode(HippoNodeType.HIPPO_PROTOTYPES, HippoNodeType.NT_PROTOTYPESET);
+            } else {
+                handle = parent.getNode(HippoNodeType.HIPPO_PROTOTYPES);
+            }
 
             Node node;
             if (draft) {
@@ -134,7 +136,8 @@ public class JcrPrototypeStore implements IDetachable {
             prefix = prefix.substring(0, prefix.length() - nsVersion.length());
         }
 
-        return "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/" + HippoNodeType.HIPPO_PROTOTYPES;
+        return "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/"
+                + HippoNodeType.HIPPO_PROTOTYPES;
     }
 
     private Node lookupConfigNode(String type, boolean draft) throws RepositoryException {
@@ -159,5 +162,4 @@ public class JcrPrototypeStore implements IDetachable {
         }
         return null;
     }
-
 }
