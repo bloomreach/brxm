@@ -106,7 +106,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
          // try to get the one from the parent
             if(parentHost != null) {
                 this.hstMappings = parentHost.hstMappings;
-                this.mappings = parentHost.mappings;
+                this.mappings = createMappings();
             }  
         }
         
