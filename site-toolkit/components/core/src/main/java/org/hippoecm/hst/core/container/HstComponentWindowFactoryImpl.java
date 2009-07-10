@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -79,6 +80,8 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         
         try {
             component = compFactory.getComponentInstance(requestContainerConfig, compConfig);
+        } catch (HstComponentFatalException e) {
+            throw e;
         } catch (Throwable th) {
             componentFactoryException = new HstComponentException(th.getMessage());
         }

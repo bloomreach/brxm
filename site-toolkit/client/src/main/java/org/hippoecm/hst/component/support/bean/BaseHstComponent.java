@@ -49,6 +49,7 @@ import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResource;
 import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -91,7 +92,7 @@ public class BaseHstComponent extends GenericHstComponent {
     public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletConfig, componentConfig);
         if (!this.beansInitialized) {
-            initBeansObjects();
+            initBeansObjects() ;
         }
     }
 
@@ -294,7 +295,7 @@ public class BaseHstComponent extends GenericHstComponent {
         }
     }
     
-    private synchronized void initBeansObjects() {
+    private synchronized void initBeansObjects() throws HstComponentException{
         if (!this.beansInitialized) {
             this.objectConverter = getObjectConverter();
             this.queryManager = new HstQueryManagerImpl(this.objectConverter);
@@ -302,12 +303,12 @@ public class BaseHstComponent extends GenericHstComponent {
         }
     }
 
-    public ObjectConverter getObjectConverter() {
+    public ObjectConverter getObjectConverter() throws HstComponentException {
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
         Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class<? extends HippoBean>>();
         List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClassNames();
         for (Class<? extends HippoBean> c : annotatedClasses) {
-            addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, c, false);
+            addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, c, false) ;
         }
         // below the default present mapped mappings
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class, true);
@@ -335,7 +336,7 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs,
-            Class clazz, boolean builtinType) {
+            Class clazz, boolean builtinType) throws HstComponentException {
         String jcrPrimaryNodeType = null;
 
         if (clazz.isAnnotationPresent(Node.class)) {
@@ -347,7 +348,7 @@ public class BaseHstComponent extends GenericHstComponent {
             if(builtinType) {
                 log.debug("Builtin annotated class for primary type '{}' is overridden. Builtin version is ignored", jcrPrimaryNodeType);
             } else {
-                log.warn("Annotated class for primarytype '{}' is duplicate. Skipping this one.", jcrPrimaryNodeType);
+                throw new HstComponentFatalException("Annotated class for primarytype '"+jcrPrimaryNodeType+"' is duplicate. Correct your beans");
             }
             return;
         }
