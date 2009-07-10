@@ -54,8 +54,24 @@ public class FilterImpl implements Filter{
         String jcrExpression;
         scope = toXPathProperty(scope, false, "addContains" , new String[]{"."});     
       
+        if(fullTextSearch == null) {
+            throw new FilterException("Not allowed to search on 'null'.");
+        }
+        
+        // we rewrite a search for * into a more efficient search
+        if("*".equals(fullTextSearch)) {
+              if(".".equals(scope)) {
+                  // searching on * with scope '.' implies no extra filter: just return
+                  return;
+              } else {
+                  // all we need is to garantuee that the property scope is present, because when it is, '*' will return a hit
+                  this.addNotNull(scope);
+                  return;
+              }
+        } 
+        
         jcrExpression = "jcr:contains(" + scope + ", '" + fullTextSearch+ "')";     
-       
+        
         if(isNot) {
             addNotExpression(jcrExpression);
         } else {
@@ -73,6 +89,9 @@ public class FilterImpl implements Filter{
     }
    
     private void addBetween(String fieldAttributeName, Object value1, Object value2, boolean isNot) throws FilterException {
+        if(value1 == null || value2 == null) {
+            throw new FilterException("Not allowed to search on 'null'.");
+        }
         fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addBetween");
         String jcrExpression = "( " + fieldAttributeName + " >= "
         + this.getStringValue(value1)
@@ -95,6 +114,9 @@ public class FilterImpl implements Filter{
     }
 
     public void addEqualTo(String fieldAttributeName, Object value) throws FilterException{
+        if(value == null ) {
+            throw new FilterException("Not allowed to search on 'null'.");
+        }
         fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addEqualTo");
         String jcrExpression = fieldAttributeName + " = "
         + this.getStringValue(value);
@@ -102,6 +124,9 @@ public class FilterImpl implements Filter{
     }
 
     public void addNotEqualTo(String fieldAttributeName, Object value) throws FilterException{
+        if(value == null ) {
+            throw new FilterException("Not allowed to search on 'null'.");
+        }
         fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addNotEqualTo");
         String jcrExpression = fieldAttributeName + " != "
         + this.getStringValue(value);
@@ -109,6 +134,9 @@ public class FilterImpl implements Filter{
     }
     
     public void addGreaterOrEqualThan(String fieldAttributeName, Object value) throws FilterException{
+        if(value == null ) {
+            throw new FilterException("Not allowed to search on 'null'.");
+        }
         fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addGreaterOrEqualThan");
         String jcrExpression = fieldAttributeName + " >= "
         + this.getStringValue(value);
@@ -116,6 +144,9 @@ public class FilterImpl implements Filter{
     }
 
     public void addGreaterThan(String fieldAttributeName, Object value) throws FilterException{
+        if(value == null ) {
+            throw new FilterException("Not allowed to search on 'null'.");
+        }
         fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addGreaterThan");
         String jcrExpression =  fieldAttributeName + " > "
         + this.getStringValue(value);
@@ -123,6 +154,9 @@ public class FilterImpl implements Filter{
     }
     
     public void addLessOrEqualThan(String fieldAttributeName, Object value) throws FilterException{
+        if(value == null ) {
+            throw new FilterException("Not allowed to search on 'null'.");
+        }
         fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addLessOrEqualThan");
         String jcrExpression = fieldAttributeName + " <= "
         + this.getStringValue(value);
@@ -131,6 +165,9 @@ public class FilterImpl implements Filter{
     }
 
     public void addLessThan(String fieldAttributeName, Object value) throws FilterException{
+        if(value == null ) {
+            throw new FilterException("Not allowed to search on 'null'.");
+        }
         fieldAttributeName = toXPathProperty(fieldAttributeName, true, "addLessThan");
         String jcrExpression = fieldAttributeName + " < "
         + this.getStringValue(value);
@@ -138,6 +175,9 @@ public class FilterImpl implements Filter{
     }
 
     private void addLike(String fieldAttributeName, Object value, boolean isNot) throws FilterException{
+        if(value == null ) {
+            throw new FilterException("Not allowed to search on 'null'.");
+        }
         fieldAttributeName = toXPathProperty(fieldAttributeName, false, "addLike");
         String jcrExpression = "jcr:like(" + fieldAttributeName + ", '"
             + value + "')";
@@ -149,7 +189,8 @@ public class FilterImpl implements Filter{
     }
 
     public void addLike(String fieldAttributeName, Object value) throws FilterException{
-       addLike(fieldAttributeName, value, false);
+       
+        addLike(fieldAttributeName, value, false);
     }
     
     public void addNotLike(String fieldAttributeName, Object value) throws FilterException{
