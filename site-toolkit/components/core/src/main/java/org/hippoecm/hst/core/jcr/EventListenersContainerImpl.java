@@ -46,7 +46,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
 
     protected boolean firstInitializationDone;
     protected EventListenersContainerSessionChecker eventListenersContainerSessionChecker;
-    protected boolean stopped;
+    protected volatile boolean stopped;
 
     public void setRepository(Repository repository) {
         this.repository = repository;
@@ -154,6 +154,14 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         this.stopped = true;
         
         doDeinit();
+        
+        if (this.eventListenersContainerSessionChecker != null) {
+            try {
+                this.eventListenersContainerSessionChecker.interrupt();
+            } catch (Throwable th) {
+            }
+            this.eventListenersContainerSessionChecker = null;
+        }
     }
     
     protected void doDeinit() {
@@ -179,16 +187,8 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         this.observationManager = null;
         this.workspace = null;
         this.session = null;
-        
-        if (this.eventListenersContainerSessionChecker != null) {
-            try {
-                this.eventListenersContainerSessionChecker.interrupt();
-            } catch (Throwable th) {
-            }
-            this.eventListenersContainerSessionChecker = null;
-        }
     }
-
+    
     private class EventListenersContainerSessionChecker extends Thread {
 
         private EventListenersContainerSessionChecker() {
