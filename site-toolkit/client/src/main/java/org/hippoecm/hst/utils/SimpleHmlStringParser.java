@@ -49,7 +49,14 @@ public class SimpleHmlStringParser {
 
     public static String parse(Node node, String html, HttpServletRequest request, HstResponse response) {
         // only create if really needed
-        StringBuffer sb = null;
+        StringBuilder sb = null;
+        
+        // strip off html & body tag
+        String innerHTML = SimpleHtmlExtractor.getInnerHtml(html, "body", false);
+        if(innerHTML != null) {
+            html = innerHTML;
+        }
+        html.trim();
         
         HstRequestContext reqContext = ((HstRequest)request).getRequestContext();
         
@@ -63,7 +70,7 @@ public class SimpleHmlStringParser {
             }
 
             if (sb == null) {
-                sb = new StringBuffer(html.length());
+                sb = new StringBuilder(html.length());
             }
 
             hrefIndexStart += HREF_ATTR_NAME.length();
@@ -115,7 +122,7 @@ public class SimpleHmlStringParser {
             }
 
             if (sb == null) {
-                sb = new StringBuffer(html.length());
+                sb = new StringBuilder(html.length());
             }
             srcIndexStart += SRC_ATTR_NAME.length();
             offset = srcIndexStart;

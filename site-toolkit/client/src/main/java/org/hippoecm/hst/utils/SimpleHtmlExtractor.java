@@ -23,6 +23,8 @@ import java.io.StringWriter;
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple HTML Tag Extractor
@@ -30,6 +32,8 @@ import org.htmlcleaner.TagNode;
  * @version $Id$
  */
 public class SimpleHtmlExtractor {
+
+    private final static Logger log = LoggerFactory.getLogger(SimpleHtmlExtractor.class);
     
     private static final int BUF_SIZE = 512;
     
@@ -64,9 +68,12 @@ public class SimpleHtmlExtractor {
      * @param html
      * @param tagName
      * @param byHtmlCleaner
-     * @return
+     * @return String innerHTML of the tag or <code>null</code> when the tag is not found
      */
     public static String getInnerHtml(String html, String tagName, boolean byHtmlCleaner) {
+        if(html == null) {
+            return null;
+        }
         if (byHtmlCleaner) {
             return getInnerHtmlByCleaner(html, tagName);
         } else {
@@ -81,6 +88,9 @@ public class SimpleHtmlExtractor {
      * @return
      */
     public static String getInnerText(String html, String tagName) {
+        if(html == null) {
+            return null;
+        }
         String innerText = "";
         
         TagNode targetNode = getTargetTagNode(html, tagName);
@@ -93,9 +103,7 @@ public class SimpleHtmlExtractor {
     }
     
     private static String getInnerHtmlSimply(String html, String tagName) {
-        String tagInnerHtml = "";
-        
-        tagName = tagName.toUpperCase();
+      tagName = tagName.toUpperCase();
         String startTag = "<" + tagName;
         int startTagLen = startTag.length();
         String endTag = "</" + tagName + ">";
@@ -152,8 +160,12 @@ public class SimpleHtmlExtractor {
                 line = br.readLine();
             }
             
-            out.flush();
-            tagInnerHtml = sw.toString();
+            
+            if (tagStarted)  {
+                out.flush();
+                return sw.toString();
+            } 
+            
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -162,8 +174,8 @@ public class SimpleHtmlExtractor {
             if (out != null) try { out.close(); } catch (Exception ce) { }
             if (sw != null) try { sw.close(); } catch (Exception ce) { }
         }
-        
-        return tagInnerHtml;
+        log.debug("Tag '{}' not found. Return null", tagName);
+        return null;
     }
     
     private static String getInnerHtmlByCleaner(String html, String tagName) {
@@ -189,8 +201,11 @@ public class SimpleHtmlExtractor {
         
         try {
             TagNode rootNode = cleaner.clean(html);
-            TagNode [] targetNodes = rootNode.getElementsByName(tagName, true);
+            if(rootNode.getName().equalsIgnoreCase(tagName)) {
+                return rootNode;
+            }
             
+            TagNode [] targetNodes = rootNode.getElementsByName(tagName, true);
             if (targetNodes.length > 0) {
                 targetNode = targetNodes[0];
             }
