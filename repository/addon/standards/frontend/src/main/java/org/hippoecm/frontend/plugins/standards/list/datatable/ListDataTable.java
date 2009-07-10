@@ -64,7 +64,7 @@ public class ListDataTable extends DataTable {
 
         this.provider = dataProvider;
         this.selectionListener = selectionListener;
-        
+
         if (tableDefinition.showColumnHeaders()) {
             addTopToolbar(new AjaxFallbackHeadersToolbar(this, dataProvider) {
                 private static final long serialVersionUID = 1L;
@@ -115,8 +115,7 @@ public class ListDataTable extends DataTable {
     }
 
     @Override
-    protected void onBeforeRender() {
-        // check if we're on the correct page
+    protected void onModelChanged() {
         if (!doesPageContainModel(getCurrentPage())) {
             for (int i = 0; i < getPageCount(); i++) {
                 if (doesPageContainModel(i)) {
@@ -125,8 +124,6 @@ public class ListDataTable extends DataTable {
                 }
             }
         }
-
-        super.onBeforeRender();
     }
 
     private boolean doesPageContainModel(int page) {
