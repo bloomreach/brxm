@@ -144,7 +144,7 @@
 + hipposysedit:field (hipposysedit:field) multiple
 
 [hipposysedit:prototypeset]
-+ hipposysedit:prototype (nt:base)
++ hipposysedit:prototype (nt:base) multiple
 
 [hipposysedit:templatetype] orderable
 + hipposysedit:nodetype (hippo:handle) mandatory
