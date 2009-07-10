@@ -740,6 +740,9 @@ font-weight: bold;
 .hippo-preview-document{background: white url("images/hippo-shade.png"); border-bottom: 1px solid #afafaf; padding-top: 4px; padding-bottom: 20px; padding-left: 4px; padding-right: 20px; }
 .hippo-preview-document ol {list-style-type: decimal; list-style-position: inside}
 .hippo-preview-document ul {list-style-type: disc; list-style-position: inside}
+.hippo-preview-document strong {font-weight: bold;}
+.hippo-preview-document em {font-style: italic;}
+
 /* override some editors styling in preview mode */
 .hippo-editor .hippo-preview-document .hippo-editor-field .hippo-editor-field-subfield{border: none; padding: 0px}
 .hippo-editor .hippo-preview-document .hippo-editor-field{font-size: 12px; line-height: 18px; font-family: arial,sans-serif,helvetica; background: white}
