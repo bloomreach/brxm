@@ -151,7 +151,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         QueryResult rs = query.execute();
                         for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
                             Node typeNode = iter.nextNode();
-                            if (typeNode.getName().equals("hippo:prototype")) {
+                            if (typeNode.getName().equals("hipposysedit:prototype")) {
                                 String documentType = typeNode.getPrimaryNodeType().getName();
                                 if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
                                         && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:")) {
