@@ -79,9 +79,9 @@ public class ActionValve extends AbstractValve
                 if (window.hasComponentExceptions() && log.isWarnEnabled()) {
                     for (HstComponentException hce : window.getComponentExceptions()) {
                         if (log.isDebugEnabled()) {
-                            log.warn("Component exception found: {}", hce.getMessage(), hce);
+                            log.warn("Component exception found: {}", hce.toString(), hce);
                         } else if (log.isWarnEnabled()) {
-                            log.warn("Component exception found: {}", hce.getMessage());
+                            log.warn("Component exception found: {}", hce.toString());
                         }
                     }
                     

@@ -177,9 +177,9 @@ public abstract class AbstractValve implements Valve
                 traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
-                    log.warn("Failed to create hstTraceTool component windows: {}", e.getMessage(), e);
+                    log.warn("Failed to create hstTraceTool component windows: {}", e.toString(), e);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Failed to create hstTraceTool component windows: {}", e.getMessage());
+                    log.warn("Failed to create hstTraceTool component windows: {}", e.toString());
                 }
             }
         }

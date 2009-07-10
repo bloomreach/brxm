@@ -171,7 +171,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                     this.observationManager.removeEventListener(item.getEventListener());
                 } catch (Exception e) {
                     if (log.isWarnEnabled()) {
-                        log.warn("Cannot remove event listener. {}", e.getMessage());
+                        log.warn("Cannot remove event listener. {}", e.toString());
                     }
                 }
             }

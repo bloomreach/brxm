@@ -85,7 +85,7 @@ public class HippoFacetSelect extends HippoFolder{
         } catch (RepositoryException e) {
             log.warn("Cannot get a derefenced HippoBean: {}. Return null", e);
         } catch (ObjectBeanManagerException e) {
-            log.warn("Cannot get a derefenced HippoBean: {}. Return null", e.getMessage());
+            log.warn("Cannot get a derefenced HippoBean: {}. Return null", e.toString());
         }
         referencedWrapper = new BeanWrapper<HippoBean>(null);
         return null;
@@ -122,7 +122,7 @@ public class HippoFacetSelect extends HippoFolder{
             derefWrapper = new BeanWrapper<HippoBean>((HippoBean) this.objectConverter.getObject(deref));
             return derefWrapper.getBean();
         } catch (ObjectBeanManagerException e) {
-            log.warn("Cannot get a derefenced HippoBean: {}. Return null", e.getMessage());
+            log.warn("Cannot get a derefenced HippoBean: {}. Return null", e.toString());
         }
         derefWrapper = new BeanWrapper<HippoBean>(null);
         return null;

@@ -185,7 +185,7 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             try {
                 mappingsList.add(new MappingImpl(mapping, this));
             } catch(MappingException e) {
-               log.warn("Ignoring mapping {} : {}", mapping, e.getMessage()); 
+               log.warn("Ignoring mapping {} : {}", mapping, e.toString()); 
             }
         }
         Mapping[] tmpMappings = mappingsList.toArray(new Mapping[mappingsList.size()]);

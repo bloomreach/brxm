@@ -83,9 +83,9 @@ public class HstSitesManagerImpl implements HstSitesManager {
             this.sites = new HstSitesService(siteContentNode);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve site configuration: {} : {}", e.getMessage(), e);
+                log.warn("Failed to retrieve site configuration: {} : {}", e.toString(), e);
             } else if (log.isWarnEnabled()) {
-                log.warn("Failed to retrieve site configuration: {}", e.getMessage());
+                log.warn("Failed to retrieve site configuration: {}", e.toString());
             }
         } finally {
             if (session != null) {

@@ -59,9 +59,9 @@ public class ResourceServingValve extends AbstractValve {
                 if (window.hasComponentExceptions() && log.isWarnEnabled()) {
                     for (HstComponentException hce : window.getComponentExceptions()) {
                         if (log.isDebugEnabled()) {
-                            log.warn("Component exceptions found: {}", hce.getMessage(), hce);
+                            log.warn("Component exceptions found: {}", hce.toString(), hce);
                         } else if (log.isWarnEnabled()) {
-                            log.warn("Component exceptions found: {}", hce.getMessage());
+                            log.warn("Component exceptions found: {}", hce.toString());
                         }
                     }
                     window.clearComponentExceptions();

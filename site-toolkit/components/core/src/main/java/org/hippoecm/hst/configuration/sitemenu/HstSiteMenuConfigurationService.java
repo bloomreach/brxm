@@ -60,7 +60,7 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
                     HstSiteMenuItemConfiguration siteMenuItemConfiguration = new HstSiteMenuItemConfigurationService(siteMenuItem, null, this);
                     siteMenuItems.add(siteMenuItemConfiguration);
                 } catch(ServiceException e) {
-                    log.warn("Skipping siteMenuItemConfiguration for '{}' : '{}'", siteMenuItem.getPath(), e.getMessage());
+                    log.warn("Skipping siteMenuItemConfiguration for '{}' : '{}'", siteMenuItem.getPath(), e.toString());
                 }
             } else {
                 log.error("Skipping siteMenuItem '{}' because not of type '{}'", siteMenuItem.getPath(), Configuration.NODETYPE_HST_SITEMENUITEM);

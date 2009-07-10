@@ -45,9 +45,9 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
                 component.destroy();
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
-                    log.warn("Exception occurred during destroying component: {}", e.getMessage(), e);
+                    log.warn("Exception occurred during destroying component: {}", e.toString(), e);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Exception occurred during destroying component: {}", e.getMessage());
+                    log.warn("Exception occurred during destroying component: {}", e.toString());
                 }
             }
         }

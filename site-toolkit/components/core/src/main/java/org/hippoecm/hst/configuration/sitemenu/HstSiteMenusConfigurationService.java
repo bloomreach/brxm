@@ -68,7 +68,7 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
                        log.error("Duplicate name for HstSiteMenuConfiguration found. The first one is replaced");
                    }
                } catch(ServiceException e) {
-                   log.warn("Skipping HstSiteMenuConfiguration for '{}' because '{}'", siteMenu.getPath(), e.getMessage());
+                   log.warn("Skipping HstSiteMenuConfiguration for '{}' because '{}'", siteMenu.getPath(), e.toString());
                }
            } else {
                log.error("Skipping siteMenu '{}' because not of type '{}'", siteMenu.getPath(), Configuration.NODETYPE_HST_SITEMENU);
