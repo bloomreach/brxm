@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
-import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.editor.layout.ILayoutDescriptor;
@@ -39,17 +39,19 @@ public class TemplateFactory implements IClusterable {
         JavaPluginConfig root = new JavaPluginConfig("root");
         root.put("plugin.class", layout.getPluginClass());
         root.put("wicket.id", "${wicket.id}");
-        List<ILayoutPad> pads = layout.getLayoutPads();
+        Map<String, ILayoutPad> pads = layout.getLayoutPads();
         String[] extensions = new String[pads.size()];
-        for (int i = 0; i < pads.size(); i++) {
-            ILayoutPad pad = pads.get(i);
+        int i = 0;
+        for (Map.Entry<String, ILayoutPad> entry : pads.entrySet()) {
+            ILayoutPad pad = entry.getValue();
             extensions[i] = "extension." + pad.getName();
             root.put(extensions[i], getWicketId(pad));
+            i++;
         }
         root.put("wicket.extensions", extensions);
         clusterConfig.addPlugin(root);
 
-        for (ILayoutPad pad : pads) {
+        for (ILayoutPad pad : pads.values()) {
             if (pad.isList()) {
                 clusterConfig.addPlugin(getListPlugin(pad));
             }

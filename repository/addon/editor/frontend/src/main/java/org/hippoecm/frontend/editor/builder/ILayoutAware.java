@@ -13,15 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.layout;
+package org.hippoecm.frontend.editor.builder;
 
-import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.editor.layout.ILayoutControl;
+import org.hippoecm.frontend.service.IRenderService;
 
-public interface IRenderContext extends IClusterable {
+/**
+ * Interface to declare a render service to be layout aware.
+ * When a render service marked with this interface is registered
+ * in the template builder, it can control its position in the
+ * layout by addressing the {@link ILayoutControl}.
+ */
+public interface ILayoutAware extends IRenderService {
 
-    /**
-     * @return the layout descriptor of the plugin itself
-     */
-    ILayoutDescriptor getLayoutDescriptor();
+    void setLayoutControl(ILayoutControl control);
 
 }

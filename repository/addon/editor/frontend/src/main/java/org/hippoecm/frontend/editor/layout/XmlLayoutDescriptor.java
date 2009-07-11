@@ -18,7 +18,6 @@ package org.hippoecm.frontend.editor.layout;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -57,10 +56,6 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
         public String getName() {
             return name;
         }
-        
-        public ILayoutDescriptor getContainerLayout() {
-            return XmlLayoutDescriptor.this;
-        }
 
         public ILayoutTransition getTransition(String name) {
             for (ILayoutTransition transition : transitions) {
@@ -91,7 +86,7 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
 
     }
 
-    class LayoutTransition implements ILayoutTransition {
+    static class LayoutTransition implements ILayoutTransition {
         private static final long serialVersionUID = 1L;
 
         private String name;
@@ -191,8 +186,8 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
         }
     }
 
-    public List<ILayoutPad> getLayoutPads() {
-        return new ArrayList<ILayoutPad>(pads.values());
+    public Map<String, ILayoutPad> getLayoutPads() {
+        return pads;
     }
 
     public IResourceStream getIcon() {

@@ -31,10 +31,10 @@ public class TemplateFactoryTest {
     @Test
     public void testTwoPane() {
         JavaLayoutDescriptor layout = new JavaLayoutDescriptor("Test");
-        JavaLayoutPad left = new JavaLayoutPad(layout, "left");
+        JavaLayoutPad left = new JavaLayoutPad("left");
         layout.addPad(left);
         
-        JavaLayoutPad right = new JavaLayoutPad(layout, "right");
+        JavaLayoutPad right = new JavaLayoutPad("right");
         layout.addPad(right);
         
         IClusterConfig cluster = new TemplateFactory().createTemplate(layout);
@@ -45,7 +45,7 @@ public class TemplateFactoryTest {
     @Test
     public void testList() {
         JavaLayoutDescriptor layout = new JavaLayoutDescriptor("Test");
-        JavaLayoutPad left = new JavaLayoutPad(layout, "main");
+        JavaLayoutPad left = new JavaLayoutPad("main");
         left.setIsList(true);
         layout.addPad(left);
         

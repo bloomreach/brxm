@@ -25,6 +25,7 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.AbstractClusterDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,8 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
             Class<?> clazz = Class.forName(pluginClass);
             if (FieldPlugin.class.isAssignableFrom(clazz)) {
                 return FieldPluginEditorPlugin.class.getName();
+            } else if (ListViewPlugin.class.isAssignableFrom(clazz)) {
+                return ListViewPluginEditorPlugin.class.getName();
             } else if (RenderPlugin.class.isAssignableFrom(clazz)) {
                 return RenderPluginEditorPlugin.class.getName();
             }
@@ -87,7 +90,7 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
         previewWrapper.put("wicket.model", clusterConfigModel);
         previewWrapper.put("model.plugin", selectedPluginModel);
         previewWrapper.put("plugin.id", config.getName());
-        previewWrapper.put("builder.mode", editable);
+        previewWrapper.put("builder.mode", editable ? "edit" : "view");
 
         if (config.get("wicket.id") != null) {
             previewWrapper.put("wicket.id", config.get("wicket.id"));

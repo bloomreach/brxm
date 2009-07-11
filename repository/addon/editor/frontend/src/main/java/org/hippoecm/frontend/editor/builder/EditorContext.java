@@ -15,25 +15,30 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class EditorContext implements IEditorContext {
+public class EditorContext implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     public static final String MODE = "mode";
     
     private IPluginConfig config;
-    
+
+    public enum Mode {
+        VIEW, EDIT
+    }
+
     public EditorContext(IPluginContext context, IPluginConfig config) {
         this.config = config;
     }
 
     public Mode getMode() {
         if ("view".equals(config.getString(MODE, "view"))) {
-            return IEditorContext.Mode.VIEW;
+            return Mode.VIEW;
         }
-        return IEditorContext.Mode.EDIT;
+        return Mode.EDIT;
     }
     
 }

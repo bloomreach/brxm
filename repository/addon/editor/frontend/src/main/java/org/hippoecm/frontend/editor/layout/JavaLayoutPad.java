@@ -24,31 +24,25 @@ public class JavaLayoutPad implements ILayoutPad {
     private static final long serialVersionUID = 1L;
 
     private String name;
-    private boolean isList;
-    private Orientation orientation;
-    private ILayoutDescriptor container;
+    private boolean isList = false;
+    private Orientation orientation = null;
     private Map<String, ILayoutTransition> transitions;
-    
-    public JavaLayoutPad(ILayoutDescriptor container, String name) {
-        this.container = container;
+
+    public JavaLayoutPad(String name) {
         this.name = name;
         this.transitions = new TreeMap<String, ILayoutTransition>();
     }
-    
+
     public void setOrientation(Orientation orientation) {
         this.orientation = orientation;
     }
-    
+
     public void setIsList(boolean isList) {
         this.isList = isList;
     }
-    
+
     public void addTransition(String name, ILayoutTransition transition) {
         transitions.put(name, transition);
-    }
-    
-    public ILayoutDescriptor getContainerLayout() {
-        return container;
     }
 
     public String getName() {

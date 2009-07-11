@@ -15,17 +15,22 @@
  */
 package org.hippoecm.frontend.editor.layout;
 
-import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.util.resource.IResourceStream;
 
+/**
+ * Descriptor for layout plugins (i.e. html only).  The extension points
+ * of the plugin correspond to pads in the layout.
+ */
 public interface ILayoutDescriptor extends IClusterable {
 
     String getPluginClass();
-    
+
+    // FIXME: abstract away to a Resource
     IResourceStream getIcon();
 
-    List<ILayoutPad> getLayoutPads();
+    Map<String, ILayoutPad> getLayoutPads();
 
 }

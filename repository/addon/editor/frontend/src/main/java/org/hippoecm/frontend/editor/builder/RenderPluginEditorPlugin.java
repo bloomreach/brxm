@@ -15,20 +15,30 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.RefreshingView;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
-import org.hippoecm.frontend.editor.builder.IEditorContext.Mode;
-import org.hippoecm.frontend.editor.layout.ILayoutContext;
+import org.hippoecm.frontend.editor.builder.EditorContext.Mode;
+import org.hippoecm.frontend.editor.layout.ILayoutControl;
 import org.hippoecm.frontend.editor.layout.ILayoutPad;
 import org.hippoecm.frontend.editor.layout.ILayoutTransition;
-import org.hippoecm.frontend.editor.layout.LayoutContext;
+import org.hippoecm.frontend.editor.layout.LayoutControl;
+import org.hippoecm.frontend.editor.layout.RenderContext;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -39,12 +49,13 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator {
+public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator, ILayoutAware {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -52,62 +63,94 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
 
     private static final Logger log = LoggerFactory.getLogger(RenderPluginEditorPlugin.class);
 
-    private ILayoutContext layoutContext;
-    
+    // control of own location in parent
+    private BuilderContext builderContext;
+    private ILayoutControl layoutControl;
+
+    // descriptor of own layout, for rearranging children
+    private RenderContext renderContext;
+
     protected IClusterControl previewControl;
     private IObserver configObserver;
+    private Map<String, ServiceTracker<ILayoutAware>> trackers;
 
     public RenderPluginEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        layoutContext = new LayoutContext(context, config);
+        renderContext = new RenderContext(context, config);
+        builderContext = new BuilderContext(context, config);
+        final boolean editable = (builderContext.getMode() == Mode.EDIT);
 
-        boolean editable = (layoutContext.getMode() == Mode.EDIT);
-
-        add(new AjaxLink("up") {
+        // add transitions from parent container
+        add(new RefreshingView("transitions") {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
-                ILayoutPad pad = layoutContext.getLocation();
-                ILayoutTransition transition = pad.getTransition("up");
-                layoutContext.apply(transition);
-            }
-        }.setVisible(editable));
+            protected Iterator<IModel> getItemModels() {
+                if (layoutControl != null) {
+                    final Iterator<ILayoutTransition> transitionIter = layoutControl.getTransitions().iterator();
+                    return new Iterator<IModel>() {
 
-        add(new AjaxLink("down") {
-            private static final long serialVersionUID = 1L;
+                        public boolean hasNext() {
+                            return transitionIter.hasNext();
+                        }
+
+                        public IModel next() {
+                            return new Model(transitionIter.next());
+                        }
+
+                        public void remove() {
+                            transitionIter.remove();
+                        }
+
+                    };
+                } else {
+                    List<IModel> transitions = Collections.emptyList();
+                    return transitions.iterator();
+                }
+            }
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
-                ILayoutPad pad = layoutContext.getLocation();
-                ILayoutTransition transition = pad.getTransition("down");
-                layoutContext.apply(transition);
+            protected void populateItem(Item item) {
+                final ILayoutTransition transition = (ILayoutTransition) item.getModelObject();
+                AjaxLink link = (AjaxLink) new AjaxLink("link") {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        layoutControl.apply(transition);
+                    }
+
+                }.setVisible(editable);
+                link.add(new AttributeAppender("class", new Model(transition.getName()), " "));
+                item.add(link);
             }
-        }.setVisible(editable));
+
+        });
 
         add(new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                layoutContext.delete();
+                builderContext.delete();
             }
         }.setVisible(editable));
 
         if (editable) {
             add(new AjaxEventBehavior("onclick") {
                 private static final long serialVersionUID = 1L;
-    
+
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
-                    layoutContext.focus();
+                    builderContext.focus();
                 }
 
                 @Override
                 protected IAjaxCallDecorator getAjaxCallDecorator() {
                     return new EventStoppingDecorator(super.getAjaxCallDecorator());
                 }
+
             });
         }
 
@@ -115,7 +158,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
     }
 
     public void start() {
-        final IPluginConfig editedConfig = layoutContext.getEditablePluginConfig();
+        final IPluginConfig editedConfig = builderContext.getEditablePluginConfig();
         getPluginContext().registerService(configObserver = new IObserver() {
             private static final long serialVersionUID = 1L;
 
@@ -126,7 +169,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
             public void onEvent(Iterator<? extends IEvent> events) {
                 updatePreview();
             }
-            
+
         }, IObserver.class.getName());
     }
 
@@ -147,11 +190,17 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
         }
     }
 
+    public void setLayoutControl(ILayoutControl control) {
+        this.layoutControl = control;
+    }
+
     protected void updatePreview() {
         if (previewControl != null) {
             previewControl.stop();
             previewControl = null;
         }
+
+        unregisterChildTrackers();
 
         IPluginContext pluginContext = getPluginContext();
         JavaClusterConfig childClusterConfig = new JavaClusterConfig();
@@ -173,15 +222,86 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
             log.warn("No render service found in plugin preview");
         }
 
+        registerChildTrackers();
+
         redraw();
+    }
+
+    protected void registerChildTrackers() {
+        trackers = new TreeMap<String, ServiceTracker<ILayoutAware>>();
+
+        IPluginConfig bare = builderContext.getEditablePluginConfig();
+        IPluginConfig effective = getEffectivePluginConfig();
+        Map<String, ILayoutPad> pads = renderContext.getLayoutDescriptor().getLayoutPads();
+        for (Map.Entry<String, ILayoutPad> entry : pads.entrySet()) {
+            String extension = "extension." + entry.getKey();
+            if (effective.getString(extension) != null) {
+                ChildTracker tracker = newChildTracker(entry.getValue(), bare.getString(extension));
+
+                String effectiveWicketId = effective.getString(extension);
+                getPluginContext().registerTracker(tracker, effectiveWicketId);
+                trackers.put(effectiveWicketId, tracker);
+            }
+        }
+    }
+
+    protected void unregisterChildTrackers() {
+        if (trackers != null) {
+            for (Map.Entry<String, ServiceTracker<ILayoutAware>> entry : trackers.entrySet()) {
+                getPluginContext().unregisterTracker(entry.getValue(), entry.getKey());
+            }
+            trackers = null;
+        }
+    }
+
+    protected ChildTracker newChildTracker(ILayoutPad pad, String wicketId) {
+        return new ChildTracker(pad, wicketId);
+    }
+    
+    protected BuilderContext getBuilderContext() {
+        return builderContext;
     }
 
     protected IPluginConfig getEffectivePluginConfig() {
         return getPluginConfig().getPluginConfig("model.effective");
     }
 
-    protected ILayoutContext getLayoutContext() {
-        return layoutContext;
+    /**
+     * Service tracker that hands out ILayoutControl instances via the ILayoutAware
+     * interface.  This allows child render services to reposition themselves.
+     */
+    protected class ChildTracker extends ServiceTracker<ILayoutAware> {
+        private static final long serialVersionUID = 1L;
+
+        private ILayoutPad pad;
+        private String wicketId;
+        private ILayoutControl control;
+
+        public ChildTracker(ILayoutPad pad, String wicketId) {
+            super(ILayoutAware.class);
+            this.pad = pad;
+            this.wicketId = wicketId;
+        }
+
+        @Override
+        protected void onServiceAdded(ILayoutAware service, String name) {
+            if (control != null) {
+                throw new RuntimeException("A ILayoutAware service has already registered at " + name);
+            }
+            control = newLayoutControl(service);
+            service.setLayoutControl(control);
+        }
+
+        @Override
+        protected void onRemoveService(ILayoutAware service, String name) {
+            service.setLayoutControl(null);
+            control = null;
+        }
+
+        protected ILayoutControl newLayoutControl(ILayoutAware service) {
+            return new LayoutControl(builderContext, service, pad, wicketId);
+        }
+
     }
 
 }
