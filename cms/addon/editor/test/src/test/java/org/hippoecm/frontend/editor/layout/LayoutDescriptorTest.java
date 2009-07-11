@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.util.resource.IResourceStream;
 import org.junit.Test;
@@ -29,12 +30,13 @@ public class LayoutDescriptorTest {
     public void testDeserialization() {
         ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage().getName() + ".Test");
 
-        List<ILayoutPad> pads = descriptor.getLayoutPads();
+        Map<String, ILayoutPad> pads = descriptor.getLayoutPads();
         assertEquals(2, pads.size());
 
-        List<String> transitions = pads.get(0).getTransitions();
+        ILayoutPad first = pads.values().iterator().next();
+        List<String> transitions = first.getTransitions();
         assertEquals(1, transitions.size());
-        assertEquals("up", pads.get(0).getTransition(transitions.get(0)).getName());
+        assertEquals("up", first.getTransition(transitions.get(0)).getName());
     }
 
     @Test

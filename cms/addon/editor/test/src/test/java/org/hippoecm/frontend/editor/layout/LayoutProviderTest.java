@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.editor.layout;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -43,8 +43,7 @@ public class LayoutProviderTest {
                 
             }});
         List<String> layouts = provider.getLayouts();
-        assertEquals(1, layouts.size());
-        assertEquals("org.hippoecm.frontend.editor.layout.Test", layouts.get(0));
+        assertTrue("Test layout not found", layouts.contains("org.hippoecm.frontend.editor.layout.Test"));
     }
 
 }

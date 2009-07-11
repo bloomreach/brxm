@@ -27,9 +27,9 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
+import org.hippoecm.frontend.editor.builder.EditorContext;
 import org.hippoecm.frontend.editor.builder.FieldEditor;
 import org.hippoecm.frontend.editor.builder.IBuilderListener;
-import org.hippoecm.frontend.editor.builder.IEditorContext;
 import org.hippoecm.frontend.editor.builder.RenderPluginEditorPlugin;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -180,16 +180,17 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
     public FieldPluginEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        edit = (getLayoutContext().getMode() == IEditorContext.Mode.EDIT);
+        edit = (getBuilderContext().getMode() == EditorContext.Mode.EDIT);
 
         try {
             ITypeDescriptor type = getTypeModel();
             IPluginConfig helperConfig = new JavaPluginConfig(config.getName() + ".helper");
             helperConfig.putAll(config);
             helperConfig.put("wicket.id", config.getString("wicket.helper.id"));
-            helper = new PropertyEditor(getPluginContext(), helperConfig, getLayoutContext().getEditablePluginConfig(),
-                    type, edit);
-            getLayoutContext().addBuilderListener(new IBuilderListener() {
+            helper = new PropertyEditor(getPluginContext(), helperConfig,
+                    getBuilderContext().getEditablePluginConfig(), type, edit);
+            helper.show(false);
+            getBuilderContext().addBuilderListener(new IBuilderListener() {
                 private static final long serialVersionUID = 1L;
 
                 public void onFocus() {

@@ -20,9 +20,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.editor.builder.IEditorContext.Mode;
+import org.hippoecm.frontend.editor.builder.EditorContext.Mode;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -31,7 +32,11 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class BuilderContext implements IBuilderContext {
+/**
+ * Helper class for plugin config editor plugins.  It provides a number of utilities 
+ * for the models and services that are used in the template builder.
+ */
+public class BuilderContext implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     public static final String PLUGIN_ID = "plugin.id";
@@ -121,16 +126,16 @@ public class BuilderContext implements IBuilderContext {
 
     public Mode getMode() {
         if ("view".equals(config.getString("builder.mode", "view"))) {
-            return IEditorContext.Mode.VIEW;
+            return EditorContext.Mode.VIEW;
         }
-        return IEditorContext.Mode.EDIT;
+        return EditorContext.Mode.EDIT;
     }
 
-    protected String getPluginId() {
+    public String getPluginId() {
         return pluginId;
     }
 
-    protected IClusterConfig getTemplate() {
+    public IClusterConfig getTemplate() {
         IModel model = context.getService(config.getString(WICKET_MODEL), IModelReference.class).getModel();
         return (IClusterConfig) model.getObject();
     }

@@ -15,14 +15,13 @@
  */
 package org.hippoecm.frontend.editor.layout;
 
-import org.apache.wicket.Session;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.session.SessionClassLoaderModel;
 
-public class RenderContext implements IRenderContext {
+public class RenderContext implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     public static final String VARIANT = "wicket.variant";
@@ -39,24 +38,7 @@ public class RenderContext implements IRenderContext {
         String variant = config.getString(VARIANT);
         String name = className + (variant != null ? "_" + variant : "");
 
-        return new XmlLayoutDescriptor(new IModel() {
-            private static final long serialVersionUID = 1L;
-
-            public Object getObject() {
-                return ((UserSession) Session.get()).getClassLoader();
-            }
-
-            public void setObject(Object object) {
-                // TODO Auto-generated method stub
-                
-            }
-
-            public void detach() {
-                // TODO Auto-generated method stub
-                
-            }
-            
-        }, name);
+        return new XmlLayoutDescriptor(new SessionClassLoaderModel(), name);
     }
 
 }

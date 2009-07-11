@@ -13,16 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.builder;
+package org.hippoecm.frontend.editor.layout;
+
+import java.util.List;
 
 import org.apache.wicket.IClusterable;
 
-public interface IEditorContext extends IClusterable {
+/**
+ * Interface for layout aware services to control their position.
+ */
+public interface ILayoutControl extends IClusterable {
 
-    enum Mode {
-        VIEW, EDIT
-    }
-
-    Mode getMode();
+    List<ILayoutTransition> getTransitions();
+    
+    void apply(ILayoutTransition transition);
 
 }

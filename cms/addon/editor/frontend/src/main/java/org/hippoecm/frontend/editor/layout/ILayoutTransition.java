@@ -21,4 +21,6 @@ public interface ILayoutTransition extends IClusterable {
 
     String getName();
 
+    ILayoutPad getTarget();
+
 }

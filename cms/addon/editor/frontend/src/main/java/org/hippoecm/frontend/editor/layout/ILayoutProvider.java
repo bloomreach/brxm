@@ -24,4 +24,5 @@ public interface ILayoutProvider extends IClusterable {
     List<String> getLayouts();
 
     ILayoutDescriptor getDescriptor(String layout);
+
 }

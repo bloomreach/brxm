@@ -47,11 +47,6 @@ public interface ILayoutPad extends IClusterable {
     Orientation getOrientation();
 
     /**
-     * @return the layout descriptor of the containing layout
-     */
-    ILayoutDescriptor getContainerLayout();
-
-    /**
      * @return the names of transitions that are available at the current location.
      */
     List<String> getTransitions();

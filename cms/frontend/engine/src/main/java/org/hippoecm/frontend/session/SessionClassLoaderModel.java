@@ -13,27 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.layout;
+package org.hippoecm.frontend.session;
 
-import org.hippoecm.frontend.editor.builder.IBuilderContext;
+import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
 
-/**
- * Context for layout editing plugins.  It makes it possible for render services 
- * to relocate themselves.
- */
-public interface ILayoutContext extends IBuilderContext {
-    
-    /**
-     * @return the current location of the render service
-     */
-    ILayoutPad getLocation();
-    
-    /**
-     * Apply the transition.  The render service will move to the target
-     * location of the transition.
-     * 
-     * @param transition
-     */
-    void apply(ILayoutTransition transition);
+public class SessionClassLoaderModel implements IModel {
+    private static final long serialVersionUID = 1L;
+
+    public Object getObject() {
+        return ((UserSession) Session.get()).getClassLoader();
+    }
+
+    public void setObject(Object object) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void detach() {
+    }
 
 }
