@@ -39,6 +39,7 @@
     <module>testutils</module>
     <module>dropbox</module>
     <module>eclipse</module>
+    <module>projectexport</module>
   </modules>
 
   <build>
