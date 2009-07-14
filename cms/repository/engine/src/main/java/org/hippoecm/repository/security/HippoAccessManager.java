@@ -929,30 +929,36 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
      * @param id the item id
      * @return the item state
      * @throws NoSuchItemStateException when the state cannot be found
-     * @throws RepositoryException when something goes wrong while fetching the state
      */
-    private ItemState getItemState(ItemId id) throws NoSuchItemStateException, RepositoryException {
+    private ItemState getItemState(ItemId id) throws NoSuchItemStateException {
         if (id == null) {
-            throw new RepositoryException("ItemId cannot be null");
+            throw new IllegalArgumentException("ItemId cannot be null");
         }
-        try {
-            if (itemMgr.hasItemState(id)) {
+        if (itemMgr.hasItemState(id)) {
+            try {
                 return itemMgr.getItemState(id);
-            } else if (itemMgr.hasTransientItemState(id)) {
-                return itemMgr.getTransientItemState(id);
-            } else if (itemMgr.hasTransientItemStateInAttic(id)) {
-                return itemMgr.getAtticItemState(id);
-            } else {
-                String msg = "Item state not found in normal, transient or attic: " + id;
-                NoSuchItemStateException e = new NoSuchItemStateException(msg);
-                log.error(msg,e);
-                throw e;
+            } catch (ItemStateException e) {
+                log.debug("Error while trying to get item state from the normal ism of id: " + id, e);
             }
-        } catch (ItemStateException e) {
-            String msg = "invalid item id: " + id;
-            log.error(msg, e);
-            throw new RepositoryException(msg, e);
+        } else if (itemMgr.hasTransientItemState(id)) {
+            try {
+                return itemMgr.getTransientItemState(id);
+            } catch (ItemStateException e) {
+                log.debug("Error while trying to get item state from the transient ism of id: " + id, e);
+            }
+        } else if (itemMgr.hasTransientItemStateInAttic(id)) {
+            try {
+                return itemMgr.getAtticItemState(id);
+            } catch (ItemStateException e) {
+                log.debug("Error while trying to get item state from the attic ism of id: " + id, e);
+            }
         }
+        
+        // nothing found...
+        String msg = "Item state not found in normal, transient or attic: " + id;
+        NoSuchItemStateException e = new NoSuchItemStateException(msg);
+        log.debug(msg,e);
+        throw e;
     }
 
     /**
@@ -1203,7 +1209,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             return true;
         }
 
-        // check if the path points to a node
+        // get the id of the node or of the parent node if absPath points to a property
         NodeId id = getNodeId(absPath);
         
         // fast track read check
@@ -1266,7 +1272,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
     public Privilege[] getPrivileges(String absPath) throws PathNotFoundException, RepositoryException {
         checkInitialized();
         
-        // check if the path points to a node
         NodeId id = getNodeId(absPath);
         NodeState nodeState;
         try {

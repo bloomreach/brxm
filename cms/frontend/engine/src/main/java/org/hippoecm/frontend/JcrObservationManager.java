@@ -146,7 +146,14 @@ public class JcrObservationManager implements ObservationManager {
             NodeIterator nodeIter = node.getNodes();
             while (nodeIter.hasNext()) {
                 Node child = nodeIter.nextNode();
-                nodes.add(child.getName() + "[" + child.getIndex() + "]");
+                if (child != null) {
+                    try {
+                        nodes.add(child.getName() + "[" + child.getIndex() + "]");
+                    } catch (RepositoryException e) {
+                        log.warn("Unable to add child node to list: " + e.getMessage());
+                        log.debug("Error while adding child node to list: ", e);
+                    }
+                }
             }
         }
 
