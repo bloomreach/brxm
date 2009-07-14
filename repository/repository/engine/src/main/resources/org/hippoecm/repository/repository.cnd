@@ -206,7 +206,8 @@
 + * (nt:query) = hipposys:ocmquery
 
 [hipposys:queryfolder] > nt:base
-+ * (nt:query, hipposys:queryfolder) = hippo:query
++ * (nt:query) = hippo:query
++ * (hipposys:queryfolder)
 
 // REPOSITORY: DERIVED DATA
 
