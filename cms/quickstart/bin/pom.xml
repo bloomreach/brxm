@@ -113,7 +113,6 @@
   </dependencies>
 
   <build>
-    <finalName>hippo-ecm</finalName>
     <defaultGoal>package</defaultGoal>
   </build>
 

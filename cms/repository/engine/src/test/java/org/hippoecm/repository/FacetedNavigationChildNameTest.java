@@ -45,6 +45,7 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
         docNode.setProperty("x", "success");
         docNode.setProperty("y", encodeMe);
         session.save();
+        session.refresh(false);
 
         Node facetNode = getSearchNode().getNode("success");
         assertNotNull(facetNode);

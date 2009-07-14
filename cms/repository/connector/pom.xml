@@ -123,7 +123,7 @@
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-jcr2spi</artifactId>
-      <version>1.5.0-patch-jcr2016-3</version>
+      <version>1.5.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
@@ -134,7 +134,6 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
     <pluginManagement>
       <plugins>
         <plugin>

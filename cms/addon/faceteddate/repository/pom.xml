@@ -102,7 +102,6 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

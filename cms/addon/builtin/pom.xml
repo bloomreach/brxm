@@ -41,6 +41,5 @@
   </modules>
 
   <build>
-    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
   </build>
 </project>

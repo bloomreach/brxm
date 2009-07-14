@@ -140,7 +140,6 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
     <pluginManagement>
       <plugins>
         <plugin>
@@ -224,7 +223,6 @@
           </systemProperties>
           <excludes>
             <exclude>**/*PerfTestCase.java</exclude>
-            <exclude>**/ConfigurationTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
