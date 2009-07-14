@@ -80,7 +80,7 @@ import org.hippoecm.repository.updater.UpdaterEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class LocalHippoRepository extends HippoRepositoryImpl {
+public class LocalHippoRepository extends HippoRepositoryImpl {
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -112,7 +112,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
      * */
     public final static String GET_INITIALIZE_ITEMS =
         "SELECT * FROM hipposys:initializeitem " +
-        "WHERE (" + HippoNodeType.HIPPO_NAMESPACE + " IS NOT NULL " +
+        "WHERE jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" + HippoNodeType.HIPPO_NAMESPACE + " IS NOT NULL " +
         "OR " + HippoNodeType.HIPPO_NODETYPESRESOURCE + " IS NOT NULL " +
         "OR " + HippoNodeType.HIPPO_NODETYPES + " IS NOT NULL " +
         "OR " + HippoNodeType.HIPPO_CONTENTRESOURCE + " IS NOT NULL " +
@@ -337,7 +337,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 log.info("Initial configuration content already present");
             }
             try {
-                List extensions = new LinkedList();
+                List<URL> extensions = new LinkedList<URL>();
                 for(Enumeration iter = getClass().getClassLoader().getResources("org/hippoecm/repository/extension.xml");
                     iter.hasMoreElements(); ) {
                     URL configurationURL = (URL) iter.nextElement();
@@ -356,7 +356,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                  *         URL configurationURL = (URL) iter.nextElement();
                  *         extensions.addend(configurationURL);
                  *     }
-                 * TODO: Use merge behavior from dereferenced import? [BvdS]
+                 * TODO: Use merge behavior from dereferenced import? [BvdS] [BvH] No not a operation which can be supported by project export
                  */
                 for(Iterator iter = extensions.iterator(); iter.hasNext(); ) {
                     URL configurationURL = (URL) iter.next();
