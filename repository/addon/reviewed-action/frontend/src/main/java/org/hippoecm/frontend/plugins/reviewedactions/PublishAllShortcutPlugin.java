@@ -127,7 +127,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
                     for (NodeIterator documentIter = result.getNodes(); documentIter.hasNext();) {
                         Node document = documentIter.nextNode();
                         if (document != null) {
-                            if (document.isNodeType("mix:referenceable")) {
+                            if (document.isNodeType("mix:referenceable") && document.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                                 documents.add(document.getUUID());
                             }
                         }
@@ -197,6 +197,5 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         public IValueMap getProperties() {
             return SMALL;
         }
-
     }
 }
