@@ -205,11 +205,8 @@
 [hipposys:ocmqueryfolder] > nt:base
 + * (nt:query) = hipposys:ocmquery
 
-[hipposys:basequeryfolder] > nt:unstructured // FIXME
-+ * (nt:query) = hippo:query
-
-[hipposys:queryfolder] > hipposys:basequeryfolder
-+ * (nt:query, hipposys:basequeryfolder)
+[hipposys:queryfolder] > nt:base
++ * (nt:query, hipposys:queryfolder) = hippo:query
 
 // REPOSITORY: DERIVED DATA
 
@@ -351,5 +348,5 @@
 + hippo:domains (hipposys:domainfolder) = hipposys:domainfolder
 + hippo:derivatives (hipposys:derivativesfolder) = hipposys:derivativesfolder autocreated mandatory
 + hippo:frontend (hipposys:applicationfolder) = hipposys:applicationfolder
-+ hippo:queries (hipposys:basequeryfolder) = hipposys:queryfolder mandatory autocreated
++ hippo:queries (hipposys:queryfolder) = hipposys:queryfolder mandatory autocreated
 + hippo:security (hipposys:securityfolder) = hipposys:securityfolder
