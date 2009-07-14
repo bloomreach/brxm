@@ -20,10 +20,11 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.hst.plugins.frontend.editor.components.ComponentEditorPlugin;
+import org.hippoecm.hst.plugins.frontend.editor.EditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.PageDAO;
+import org.hippoecm.hst.plugins.frontend.editor.domain.Component;
 
-public class PagesEditorPlugin extends ComponentEditorPlugin {
+public class PagesEditorPlugin extends EditorPlugin<Component> {
     private static final long serialVersionUID = 1L;
 
     public PagesEditorPlugin(IPluginContext context, IPluginConfig config) {
@@ -39,5 +40,4 @@ public class PagesEditorPlugin extends ComponentEditorPlugin {
     protected PageDAO newDAO() {
         return new PageDAO(getPluginContext(), hstContext.page.getNamespace());
     }
-
 }
