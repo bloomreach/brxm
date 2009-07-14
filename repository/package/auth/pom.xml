@@ -32,8 +32,4 @@
     <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/auth</developerConnection>
     <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/package/auth</url>
   </scm>
-
-  <build>
-    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
-  </build>
 </project>

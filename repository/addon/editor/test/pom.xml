@@ -136,7 +136,6 @@
 
   <build>
     <defaultGoal>test</defaultGoal>
-    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
     <testResources>
       <testResource>
         <filtering>false</filtering>
