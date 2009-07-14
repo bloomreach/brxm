@@ -226,7 +226,7 @@ public class FilterImpl implements Filter{
         if(this.jcrExpressionBuilder == null) {
             this.jcrExpressionBuilder = new StringBuilder(filter.getJcrExpression());
         } else {
-            this.jcrExpressionBuilder.append(" or ").append(filter.getJcrExpression());
+            this.jcrExpressionBuilder.append(" or ").append("(").append(filter.getJcrExpression()).append(")");
         }
     }
 
@@ -253,7 +253,7 @@ public class FilterImpl implements Filter{
         if(this.jcrExpressionBuilder == null) {
             this.jcrExpressionBuilder = new StringBuilder(jcrExpression);
         } else {
-            this.jcrExpressionBuilder.append(" and ").append(jcrExpression);
+            this.jcrExpressionBuilder.append(" and ").append("(").append(jcrExpression).append(")");
         }
     }
 
