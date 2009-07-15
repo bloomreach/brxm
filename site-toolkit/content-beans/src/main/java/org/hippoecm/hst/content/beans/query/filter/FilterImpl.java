@@ -52,7 +52,7 @@ public class FilterImpl implements Filter{
     
     private void addContains(String scope, String fullTextSearch, boolean isNot) throws FilterException{
         String jcrExpression;
-        scope = toXPathProperty(scope, false, "addContains" , new String[]{"."});     
+        scope = toXPathProperty(scope, true, "addContains" , new String[]{"."});     
       
         if(fullTextSearch == null) {
             throw new FilterException("Not allowed to search on 'null'.");
