@@ -17,8 +17,10 @@ package org.hippoecm.frontend.editor.workflow.dialog;
 
 import org.apache.wicket.extensions.wizard.WizardModel;
 import org.apache.wicket.extensions.wizard.WizardStep;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.action.NewCompoundTypeAction;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
@@ -45,6 +47,10 @@ public class CreateCompoundTypeDialog extends CreateTypeDialog {
         wizardModel.add(new TypeDetailStep(action));
         wizardModel.add(new SelectLayoutStep(new PropertyModel(action, "layout"), layouts));
         init(wizardModel);
+    }
+
+    public IModel getTitle() {
+        return new StringResourceModel("new-compound-type", this, null);
     }
 
 }
