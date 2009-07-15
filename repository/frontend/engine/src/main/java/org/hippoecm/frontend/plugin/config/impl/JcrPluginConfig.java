@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.AbstractList;
 import java.util.AbstractMap;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,7 +48,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.JcrEventListener;
-import org.hippoecm.frontend.model.map.HippoMap;
 import org.hippoecm.frontend.model.map.IHippoMap;
 import org.hippoecm.frontend.model.map.JcrMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -95,12 +95,85 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
 
         @Override
         public Object get(int index) {
-            return filter(upstream.get(index));
+            return wrap(upstream.get(index));
         }
 
         @Override
         public int size() {
             return upstream.size();
+        }
+
+    }
+
+    private class ConfigMap extends AbstractMap<String, Object> implements IHippoMap {
+
+        private IPluginConfig upstream;
+
+        ConfigMap(IPluginConfig config) {
+            this.upstream = config;
+        }
+
+        @Override
+        public Set<java.util.Map.Entry<String, Object>> entrySet() {
+            final Set<Map.Entry<String, Object>> base = upstream.entrySet();
+            return new AbstractSet<Map.Entry<String, Object>>() {
+
+                @Override
+                public Iterator<Map.Entry<String, Object>> iterator() {
+                    final Iterator<Map.Entry<String, Object>> iter = base.iterator();
+                    return new Iterator<Map.Entry<String, Object>>() {
+
+                        public boolean hasNext() {
+                            return iter.hasNext();
+                        }
+
+                        public Map.Entry<String, Object> next() {
+                            final Map.Entry<String, Object> entry = iter.next();
+                            return new Map.Entry<String, Object>() {
+
+                                public String getKey() {
+                                    return entry.getKey();
+                                }
+
+                                public Object getValue() {
+                                    return unwrap(entry.getValue());
+                                }
+
+                                public Object setValue(Object value) {
+                                    return upstream.put(entry.getKey(), wrap(value));
+                                }
+
+                            };
+                        }
+
+                        public void remove() {
+                            iter.remove();
+                        }
+
+                    };
+                }
+
+                @Override
+                public int size() {
+                    return base.size();
+                }
+
+            };
+
+        }
+
+        public List<String> getMixinTypes() {
+            return Collections.emptyList();
+        }
+
+        public String getPrimaryType() {
+            return FrontendNodeType.NT_PLUGINCONFIG;
+        }
+
+        public void reset() {
+        }
+
+        public void save() {
         }
 
     }
@@ -343,33 +416,18 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
             Class<?> componentType = obj.getClass().getComponentType();
             result = Array.newInstance(componentType, size);
             for (int i = 0; i < size; i++) {
-                Array.set(result, i, filter(Array.get(obj, i)));
+                Array.set(result, i, wrap(Array.get(obj, i)));
             }
         } else {
-            result = filter(obj);
+            result = wrap(obj);
         }
         return result;
     }
 
     @Override
     public Object put(Object key, Object value) {
-        if (value instanceof IPluginConfig) {
-            HippoMap map = new HippoMap();
-            map.setPrimaryType(FrontendNodeType.NT_PLUGINCONFIG);
-            map.putAll((IPluginConfig) value);
-            value = map;
-        } else if (value instanceof List) {
-            List<IHippoMap> list = new ArrayList<IHippoMap>(((List<IPluginConfig>) value).size());
-            for (IPluginConfig entry : (List<IPluginConfig>) value) {
-                HippoMap map = new HippoMap();
-                map.setPrimaryType(FrontendNodeType.NT_PLUGINCONFIG);
-                map.putAll((IPluginConfig) entry);
-                list.add(map);
-            }
-            value = list;
-        }
         entries = null;
-        return map.put((String) key, value);
+        return map.put((String) key, unwrap(value));
     }
 
     @Override
@@ -415,6 +473,10 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
         return result;
     }
 
+    protected IHippoMap unwrapConfig(IPluginConfig value) {
+        return new ConfigMap(value);
+    }
+
     private Property getProperty(String key) throws RepositoryException {
         Node node = nodeModel.getNode();
         if (node != null) {
@@ -427,12 +489,25 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
         return null;
     }
 
-    private Object filter(Object value) {
+    protected Object wrap(Object value) {
         if (value instanceof JcrMap) {
             JcrMap map = (JcrMap) value;
             return wrapConfig(map.getNode());
         } else if (value instanceof List) {
             return new SerializableList((List) value);
+        }
+        return value;
+    }
+
+    protected Object unwrap(Object value) {
+        if (value instanceof IPluginConfig) {
+            return unwrapConfig((IPluginConfig) value);
+        } else if (value instanceof List) {
+            List<IHippoMap> list = new ArrayList<IHippoMap>(((List<IPluginConfig>) value).size());
+            for (IPluginConfig entry : (List<IPluginConfig>) value) {
+                list.add(unwrapConfig(entry));
+            }
+            return list;
         }
         return value;
     }
@@ -444,7 +519,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
     protected IObservationContext getObservationContext() {
         return obContext;
     }
-    
+
     public void startObservation() {
         IObservationContext obContext = getObservationContext();
         String path = getNodeModel().getItemModel().getPath();

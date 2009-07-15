@@ -150,6 +150,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         try {
                             String id = jcrTemplateStore.save(iter.next());
                             clusterConfig = jcrTemplateStore.load(id);
+                            initPluginCache();
                         } catch (StoreException ex) {
                             throw new BuilderException("Failed to save generated template", ex);
                         }

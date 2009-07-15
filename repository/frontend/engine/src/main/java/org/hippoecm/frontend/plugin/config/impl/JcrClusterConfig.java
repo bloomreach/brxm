@@ -21,6 +21,7 @@ import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -36,6 +37,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.JcrEventListener;
+import org.hippoecm.frontend.model.map.HippoMap;
 import org.hippoecm.frontend.model.map.JcrMap;
 import org.hippoecm.frontend.model.map.JcrValueList;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
@@ -155,7 +157,10 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                     }
                     Node child = node.addNode(name, FrontendNodeType.NT_PLUGIN);
                     JcrMap map = new JcrMap(new JcrNodeModel(child));
-                    map.putAll(element);
+                    for (Map.Entry entry : (Set<Map.Entry>) element.entrySet()) {
+                        Object value = unwrap(entry.getValue());
+                        map.put((String) entry.getKey(), value);
+                    }
 
                     if (node.getPrimaryNodeType().hasOrderableChildNodes() && (index < (size() - 1))) {
                         Node previous = getNode(index);
