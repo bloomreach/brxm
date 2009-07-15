@@ -15,8 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.cnd;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -26,10 +29,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeIterator;
-import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -43,6 +43,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.tools.DownloadLink;
+import org.hippoecm.tools.JcrCompactNodeTypeDefWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,9 +105,7 @@ public class CndExportDialog extends AbstractDialog {
                 try {
                     Node node = nodeModel.getNode();
                     Session session = node.getSession();
-                    LinkedHashSet<NodeType> types = sort(getNodeTypes(session, selectedNs.concat(":")));
-                    Writer out = new JcrCompactNodeTypeDefWriter(session).write(types, true);
-                    export = out.toString();
+                    export = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), selectedNs);
                 } catch (RepositoryException e) {
                     log.error("RepositoryException while exporting NodeType Definitions of namespace : " + selectedNs,
                             e);
@@ -120,7 +120,19 @@ public class CndExportDialog extends AbstractDialog {
         });
 
         // Add download link
-        DownloadExportLink link = new DownloadExportLink("download-link", nodeModel, selectedNsModel);
+        DownloadLink link = new DownloadLink("download-link") {
+            protected String getFilename() {
+                return selectedNs + ".cnd";
+            }
+            protected InputStream getContent() {
+                String export = (String) dump.getModel().getObject();
+                ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+                PrintWriter writer = new PrintWriter(ostream);
+                writer.print(export);
+                writer.flush();
+                return new ByteArrayInputStream(ostream.toByteArray());
+            }
+        };
         link.add(new Label("download-link-text", "Download"));
         add(link);
         setCancelVisible(false);
@@ -142,43 +154,4 @@ public class CndExportDialog extends AbstractDialog {
         Collections.sort(nsPrefixes);
         return nsPrefixes;
     }
-
-    static LinkedHashSet<NodeType> getNodeTypes(Session session, String namespacePrefix) throws RepositoryException {
-        NodeTypeManager ntmgr = session.getWorkspace().getNodeTypeManager();
-        NodeTypeIterator it = ntmgr.getAllNodeTypes();
-        LinkedHashSet<NodeType> types = new LinkedHashSet<NodeType>();
-
-        while (it.hasNext()) {
-            NodeType nt = it.nextNodeType();
-            if (nt.getName().startsWith(namespacePrefix)) {
-                types.add(nt);
-            }
-        }
-        return types;
-    }
-
-    static LinkedHashSet<NodeType> sort(LinkedHashSet<NodeType> ntSet) {
-        set = ntSet;
-        result = new LinkedHashSet<NodeType>();
-        visited = new LinkedHashSet<NodeType>();
-        for (NodeType type : set) {
-            visit(type);
-        }
-        return result;
-    }
-
-    static void visit(NodeType nt) {
-        if (visited.contains(nt) || !set.contains(nt)) {
-            return;
-        }
-        visited.add(nt);
-        for (NodeType superType : nt.getSupertypes()) {
-            visit(superType);
-        }
-        for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
-            visit(nd.getDeclaringNodeType());
-        }
-        result.add(nt);
-    }
-
 }

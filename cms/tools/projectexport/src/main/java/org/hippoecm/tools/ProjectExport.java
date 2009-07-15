@@ -45,7 +45,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import org.hippoecm.repository.LocalHippoRepository;
-import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -56,9 +55,14 @@ import org.hippoecm.tools.Element.NamespaceElement;
 import org.hippoecm.tools.Element.ProjectElement;
 
 public class ProjectExport {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     Set<String> ignorePaths = new HashSet<String>();
  
     Set<Element> elements = new HashSet<Element>();
+
+    Set<String> paths = new HashSet<String>();
 
     /** returns a subset of the input elements set, matching the project requested */
     Set<Element> projectElements(Set<Element> elements, String project) {
@@ -85,8 +89,8 @@ public class ProjectExport {
     static SortedMap<String, ContentElement> contentElements(Set<Element> elements) {
         SortedMap<String, ContentElement> list = new TreeMap<String, ContentElement>(new Comparator<String>() {
             public int compare(String o1, String o2) {
-		if(o1 == null)
-		    return o2 == null ? 0 : -1;
+                if(o1 == null)
+                    return o2 == null ? 0 : -1;
                 return o1.compareTo(o2);
             }
         });
@@ -135,14 +139,14 @@ public class ProjectExport {
             System.err.println("extension "+url.toString());
             InputStream project = url.openStream();
             ((HippoSession)projectsScratch.getSession()).importDereferencedXML(projectsScratch.getPath(), project, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, ImportMergeBehavior.IMPORT_MERGE_THROW);
-	    if(!projectsScratch.hasNode("hippo:initialize") || !projectsScratch.getNode("hippo:initialize").isNodeType("hippo:initializefolder")) {
-		throw new NotExportableException("bad project description");
-	    }
+            if(!projectsScratch.hasNode("hippo:initialize") || !projectsScratch.getNode("hippo:initialize").isNodeType("hippo:initializefolder")) {
+                throw new NotExportableException("bad project description");
+            }
             Matcher match = Pattern.compile("^jar:file:.*/([a-zA-z\\-]*)-[0-9A-Z\\-\\.]*.jar\\!.*$").matcher(url.toString());
             match.matches();
             String name = match.group(1);
-	    projectsScratch.getSession().move(projectsScratch.getPath()+"/hippo:initialize", projectsScratch.getPath()+"/"+name);
-	    projectsScratch.save();
+            projectsScratch.getSession().move(projectsScratch.getPath()+"/hippo:initialize", projectsScratch.getPath()+"/"+name);
+            projectsScratch.save();
         }
         projectsScratch.save();
 
@@ -163,8 +167,8 @@ public class ProjectExport {
                     contentScratch.addNode(relPath);
                 }
                 ProjectElement projectElement = projectElement(elements, node.getParent().getName());
-		if(projectElement != null) {
-		    URL contentURL = new URL(projectElement.url, node.getProperty("hippo:contentresource").getString());
+                if(projectElement != null) {
+                    URL contentURL = new URL(projectElement.url, node.getProperty("hippo:contentresource").getString());
                     ((HippoSession)contentScratch.getSession()).importDereferencedXML(contentScratch.getPath() + absPath, contentURL.openStream(),
                             ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                             ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE,
@@ -172,20 +176,19 @@ public class ProjectExport {
                     Node contentroot = (relPath.length() > 0 ? contentScratch.getNode(relPath) : contentScratch);
                     NodeIterator pendingChangesIter = ((HippoNode)contentroot).pendingChanges("nt:base", true);
                     Node content = pendingChangesIter.nextNode();
-                    System.err.println("BERRY "+contentroot.getPath()+" "+content.getPath());
                     if (pendingChangesIter.hasNext()) {
                         throw new NotExportableException("multiple changes in one xml file");
                     }
                     projectElement.elements.add(new ContentElement(node.getName(), absPath+"/"+content.getName(), node.getProperty("hippo:contentresource").getString(), content));
-		    contentScratch.save();
-		} else {
-		    InputStream stream = getClass().getClassLoader().getResourceAsStream("org/hippoecm/repository/" + node.getProperty("hippo:contentresource").getString());
+                    contentScratch.save();
+                } else {
+                    InputStream stream = getClass().getClassLoader().getResourceAsStream("org/hippoecm/repository/" + node.getProperty("hippo:contentresource").getString());
                     ((HippoSession)contentScratch.getSession()).importDereferencedXML(contentScratch.getPath() + absPath, stream,
                             ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                             ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE,
                             ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
-		    contentScratch.save();
-		}
+                    contentScratch.save();
+                }
             }
         }
         
@@ -212,7 +215,6 @@ public class ProjectExport {
         for (String prefix : prefixes) {
             elements.add(new NamespaceElement(prefix, root.getSession().getNamespaceURI(prefix)));
         }
-        Set<String> paths = new HashSet<String>();
         for (ContentElement content : contentElements(elements).values()) {
             paths.add(content.getPath());
         }
@@ -224,9 +226,9 @@ public class ProjectExport {
                 }
             }
         }
-	for(String path : paths) {
-	    System.err.println("path "+path);
-	}
+        for(String path : paths) {
+            System.err.println("path "+path);
+        }
     }
 
     static void exportPOM(String fullname, OutputStream ostream) {
@@ -271,14 +273,14 @@ public class ProjectExport {
         this.session = session;
         Node root = session.getRootNode();
         Node scratch = root.getNode("hippo:configuration/hippo:temporary"); 
-            while(scratch.hasNode("projects")) {
-                scratch.getNode("projects").remove();
-            }
-            while(scratch.hasNode("content")) {
-                scratch.getNode("content").remove();
-            }
-            scratch.save();
-       try {
+        while (scratch.hasNode("projects")) {
+            scratch.getNode("projects").remove();
+        }
+        while (scratch.hasNode("content")) {
+            scratch.getNode("content").remove();
+        }
+        scratch.save();
+        try {
             ignorePaths.add("/jcr:system");
             ignorePaths.add("/hippo:log");
             ignorePaths.add("/hippo:configuration/hippo:temporary");
@@ -289,7 +291,7 @@ public class ProjectExport {
             base(root, projectsNode, contentNode);
         } finally {
             scratch.refresh(false);
-	    /*
+            /*
             if(scratch.hasNode("projects")) {
                 scratch.getNode("projects").remove();
             }
@@ -297,7 +299,7 @@ public class ProjectExport {
                 scratch.getNode("content").remove();
             }
             scratch.save();
-	    */
+            */
         }
     }
 
@@ -331,7 +333,7 @@ public class ProjectExport {
 
         double sequenceNumber = 0.0;
         for (NamespaceElement element : namespaces) {
-            Node item = extension.addNode(element.getName(), "hippo:initializeitem");
+            Node item = extension.addNode(element.getElementName(), "hippo:initializeitem");
             if (sequence) {
                 item.setProperty("hippo:sequence", sequenceNumber);
                 sequenceNumber += 1.0;
@@ -339,29 +341,32 @@ public class ProjectExport {
             if (element.uri != null) {
                 item.setProperty("hippo:namespace", element.uri);
             }
-            if (element.templates != null) {
-                if(element.templates.size() == 1) {
-                    item.setProperty("hippo:contentresource", element.nodetypes.iterator().next().getName() + ".cnd");
-                }
-            }
             if (element.nodetypes != null) {
                 if(element.nodetypes.size() == 1) {
-                    item.setProperty("hippo:nodetypesresource", element.nodetypes.iterator().next().getName() + ".cnd");
+                    item.setProperty("hippo:nodetypesresource", element.nodetypes.iterator().next().getElementName() + ".cnd");
                 }
                 if (element.nodetypes.size() > 1) {
                     for (NamespaceElement cnd : element.nodetypes) {
-                        item = extension.addNode(cnd.getName(), "hippo:initializeitem");
+                        item = extension.addNode(cnd.getElementName(), "hippo:initializeitem");
                         if (sequence) {
                             item.setProperty("hippo:sequence", sequenceNumber);
                             sequenceNumber += 1.0;
                         }
-                        item.setProperty("hippo:nodetypesresource", cnd.getName() + ".cnd");
+                        item.setProperty("hippo:nodetypesresource", cnd.getElementName() + ".cnd");
                     }
                 }
+            } else {
+                // FIXME
+               item.setProperty("hippo:nodetypesresource", element.getElementName() + ".cnd");
+               try {
+                   element.cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(extension.getSession().getWorkspace(), element.getElementName());
+               }catch(IOException ex) {
+                   // ignore for the moment FIXME
+               }
             }
         }
         for(ContentElement element : contentElements(elements).values()) {
-            Node item = extension.addNode(element.getName(), "hippo:initializeitem");
+            Node item = extension.addNode(element.getElementName(), "hippo:initializeitem");
             if (sequence) {
                 item.setProperty("hippo:sequence", sequenceNumber);
                 sequenceNumber += 1.0;
@@ -371,37 +376,49 @@ public class ProjectExport {
         }
         return new ContentElement(extension, "hippoecm-extension.xml");
     }
+    
+    public List<Element> getElements(Element parent) {
+        if(parent == null) {
+            return new LinkedList<Element>(projectElements(elements));
+        } else if(parent instanceof ProjectElement) {
+            return new LinkedList<Element>(((ProjectElement)parent).elements);
+        } else {
+            return null;
+        }
+    }
 
     public Iterator<String> projectIterator() throws RepositoryException {
-	Set<String> projects = new HashSet<String>();
+        Set<String> projects = new HashSet<String>();
         Node projectsScratch = session.getRootNode().getNode("hippo:configuration/hippo:temporary/projects");
-	for(NodeIterator iter = projectsScratch.getNodes(); iter.hasNext(); )
-	    projects.add(iter.nextNode().getName());
-	return projects.iterator();
+        for(NodeIterator iter = projectsScratch.getNodes(); iter.hasNext(); )
+            projects.add(iter.nextNode().getName());
+        return projects.iterator();
     }
-    String selectedProject;
-    Collection<ContentElement> selectedElements;
+    private String selectedProject;
+    private Collection<ContentElement> selectedContentElements;
+    private Collection<NamespaceElement> selectedNamespaceElements;
     public void selectProject(String name) throws RepositoryException, IOException, NotExportableException {
-	selectedElements = prepare(name);
+        selectedContentElements = prepare(name);
     }
     public void exportProject(OutputStream ostream) throws RepositoryException, IOException, NotExportableException {
-	export(selectedProject, selectedElements, ostream);
+        export(selectedProject, selectedContentElements, selectedNamespaceElements, ostream);
     }
     public void exportProject(File basedir) throws RepositoryException, IOException, NotExportableException {
-	export(selectedProject, selectedElements, basedir);
+        export(selectedProject, selectedContentElements, selectedNamespaceElements, basedir);
     }
 
     Collection<ContentElement> prepare(String project) throws IOException, RepositoryException, NotExportableException {
-	Node scratch = session.getRootNode().getNode("hippo:configuration/hippo:temporary/projects");
-	Set<Element> projectElements = projectElements(elements, project);
-	Set<ContentElement> contents = new HashSet<ContentElement>(contentElements(projectElements).values());
+        Node scratch = session.getRootNode().getNode("hippo:configuration/hippo:temporary/projects");
+        Set<Element> projectElements = projectElements(elements, project);
+        Set<ContentElement> contents = new HashSet<ContentElement>(contentElements(projectElements).values());
         ContentElement extension = buildExtension(projectElements, scratch);
         scratch.save();
-	contents.add(extension);
-	return contents;
+        contents.add(extension);
+        selectedNamespaceElements = namespaceElements(projectElements);
+        return contents;
     }
 
-    void export(String project, Collection<ContentElement> elements, OutputStream ostream) throws RepositoryException, IOException {
+    void export(String project, Collection<ContentElement> elements, Collection<NamespaceElement> nsElements, OutputStream ostream) throws RepositoryException, IOException {
         JarOutputStream output = new JarOutputStream(ostream);
         ZipEntry ze = new ZipEntry("pom.xml");
         output.putNextEntry(ze);
@@ -418,16 +435,27 @@ public class ProjectExport {
         output.putNextEntry(ze);
         output.closeEntry();
 
+        for (NamespaceElement namespace : nsElements) {
+            if(namespace.cnd != null) {
+                ze = new ZipEntry("src/main/resources/" + namespace.prefix + ".cnd");
+                output.putNextEntry(ze);
+                PrintWriter writer = new PrintWriter(output);
+                writer.print(namespace.cnd);
+                writer.flush();
+                output.closeEntry();
+            }
+        }
         for (ContentElement element : elements) {
             ze = new ZipEntry("src/main/resources/"+element.file);
             output.putNextEntry(ze);
-            xmlexport.export(element.getCurrent(), output);
+            xmlexport.export(element.getCurrent(), output, paths);
             output.closeEntry();
         }
 
         output.close();
     }
-    void export(String project, Collection<ContentElement> elements, File basedir) throws IOException, RepositoryException {
+
+    void export(String project, Collection<ContentElement> elements, Collection<NamespaceElement> nsElements, File basedir) throws IOException, RepositoryException {
         File pom = new File(basedir, "pom.xml");
         if (pom.createNewFile()) {
             FileOutputStream ostream = new FileOutputStream(pom);
@@ -438,9 +466,19 @@ public class ProjectExport {
         if (!resources.isDirectory()) {
             resources.mkdirs();
         }
+        for (NamespaceElement namespace : nsElements) {
+            if(namespace.cnd != null) {
+                File file = new File("src/main/resources/" + namespace.prefix + ".cnd");
+                FileOutputStream ostream = new FileOutputStream(file);
+                PrintWriter writer = new PrintWriter(ostream);
+                writer.print(namespace.cnd);
+                writer.flush();
+                ostream.close();
+            }
+        }
         for (ContentElement element : elements) {
             File file = new File(resources, element.file);
-            xmlexport.export(element.getCurrent(), file);
+            xmlexport.export(element.getCurrent(), file, paths);
         }
     }
 

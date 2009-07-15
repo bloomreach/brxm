@@ -68,7 +68,7 @@ public class LoginPlugin extends RenderPlugin {
         super(context, config);
 
         add(createSignInForm("signInForm"));
-        add(new Pinger("pinger"));
+        add(new Label("pinger"));
 
         Label versionLabel, buildLabel, repositoryLabel;
         add(versionLabel = new Label("version"));
