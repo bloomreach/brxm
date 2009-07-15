@@ -15,11 +15,9 @@
  */
 package org.hippoecm.hst.content.beans.manager;
 
-import java.rmi.RemoteException;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -33,9 +31,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
@@ -102,12 +98,10 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
      * The workflow category name to add a new folder.
      */
     protected String folderAdditionWorkflowCategory = "new-folder"; // found in a test case for FolderWorkflow
-    
+
     /**
-     * Flag to request publishing after {@link #update(Object)} or {@link #update(Object, ContentNodeBinder)} is invoked.
+     * Workflow callback handler
      */
-    protected boolean publishAfterUpdate;
-    
     protected WorkflowCallbackHandler workflowCallbackHandler;
     
     /**
@@ -367,11 +361,6 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
         }
     }
     
-    
-    public void fullReviewedUpdate(FullReviewedActionsWorkflow fullReviewedActionsWorkflow) throws MappingException, RemoteException, WorkflowException, RepositoryException {
-      //  fullReviewedActionsWorkflow.publish();
-    }
-
     /**
      * Removes the content node which is mapped to the object.
      * @param content
@@ -453,22 +442,6 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
      */
     public String getFolderNodeTypeName() {
         return folderNodeTypeName;
-    }
-    
-    /**
-     * Sets the flag whether it should request publishing after invoking update.
-     * @param publishAfterUpdate
-     */
-    public void setPublishAfterUpdate(boolean publishAfterUpdate) {
-        this.publishAfterUpdate = publishAfterUpdate;
-    }
-
-    /**
-     * Gets the flag whether it should request publishing after invoking update.
-     * @return
-     */
-    public boolean getPublishAfterUpdate() {
-        return publishAfterUpdate;
     }
     
     /**

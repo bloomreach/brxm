@@ -32,7 +32,9 @@ import org.hippoecm.hst.content.beans.PersistableTextPage;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.persistence.ContentNodeBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
-import org.hippoecm.hst.persistence.ContentPersistenceManager;
+import org.hippoecm.hst.persistence.workflow.WorkflowCallbackHandler;
+import org.hippoecm.hst.persistence.workflow.WorkflowPersistenceManager;
+import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +60,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
     
     protected Object repository;
     protected Credentials defaultCredentials;
-    private ContentPersistenceManager cpm;
+    private WorkflowPersistenceManager cpm;
     private Map<String, ContentNodeBinder> persistBinders;
     
     @Before
@@ -90,7 +92,12 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
             
             cpm = new PersistableObjectBeanManagerImpl(session, objectConverter, persistBinders);
-            ((PersistableObjectBeanManagerImpl) cpm).setPublishAfterUpdate(true);
+            cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                    FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
+                    fraw.requestPublication();
+                }
+            });
             
             // basic object retrieval from the content
             PersistableTextPage page = (PersistableTextPage) cpm.getObject(TEST_EXISTING_DOCUMENT_NODE_PATH);
