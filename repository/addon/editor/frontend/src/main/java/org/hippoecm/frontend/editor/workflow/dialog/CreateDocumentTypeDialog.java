@@ -26,6 +26,7 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
@@ -74,6 +75,10 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
         wizardModel.add(new TypeDetailStep(action));
         wizardModel.add(new SelectLayoutStep(new PropertyModel(action, "layout"), layouts));
         init(wizardModel);
+    }
+
+    public IModel getTitle() {
+        return new StringResourceModel("new-document-type", this, null);
     }
 
 }

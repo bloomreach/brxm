@@ -31,7 +31,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.action.Action;
 
-public class CreateTypeDialog extends Wizard implements IDialogService.Dialog {
+public abstract class CreateTypeDialog extends Wizard implements IDialogService.Dialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -88,10 +88,6 @@ public class CreateTypeDialog extends Wizard implements IDialogService.Dialog {
     public void onFinish() {
         action.execute();
         dialogService.close();
-    }
-
-    public IModel getTitle() {
-        return new StringResourceModel("new-compound-type", this, null);
     }
 
     public IValueMap getProperties() {

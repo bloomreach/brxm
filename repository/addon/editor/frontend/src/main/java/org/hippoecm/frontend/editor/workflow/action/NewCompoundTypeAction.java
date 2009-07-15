@@ -24,7 +24,7 @@ import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.NamespaceValidator;
 import org.hippoecm.frontend.editor.workflow.TemplateFactory;
-import org.hippoecm.frontend.editor.workflow.dialog.CreateTypeDialog;
+import org.hippoecm.frontend.editor.workflow.dialog.CreateCompoundTypeDialog;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.repository.api.Workflow;
 
@@ -44,7 +44,7 @@ public class NewCompoundTypeAction extends Action {
 
     @Override
     protected Dialog createRequestDialog() {
-        return new CreateTypeDialog(this, layoutProvider);
+        return new CreateCompoundTypeDialog(this, layoutProvider);
     }
 
     @Override
