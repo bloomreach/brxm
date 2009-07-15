@@ -69,6 +69,7 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/java</directory>
         <includes>
+          <include>**/*.xml</include>
           <include>**/*.html</include>
           <include>**/*.css</include>
           <include>**/*.png</include>
