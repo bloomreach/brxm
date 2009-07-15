@@ -126,6 +126,10 @@ public class BaseHstComponent extends GenericHstComponent {
         return request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite();
     }
     
+    /**
+     * @param request
+     * @return the jcr path relative to the root (not starting with / thus)
+     */
     public String getSiteContentBasePath(HstRequest request){
         return PathUtils.normalizePath(getHstSite(request).getContentPath());
     }
