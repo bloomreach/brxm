@@ -40,16 +40,18 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
 
     private String clusterConfigModel;
     private String selectedPluginModel;
+    private String selectedExtPtModel;
     private String helperId;
 
     private Boolean editable;
 
     public PreviewClusterConfig(IClusterConfig template, String clusterConfigModel, String selectedPluginModel,
-            String helperId, boolean editable) {
+            String selectedExtPt, String helperId, boolean editable) {
         super(template);
 
         this.clusterConfigModel = clusterConfigModel;
         this.selectedPluginModel = selectedPluginModel;
+        this.selectedExtPtModel = selectedExtPt;
         this.helperId = helperId;
         this.editable = editable;
     }
@@ -89,6 +91,7 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
         previewWrapper.put("wicket.helper.id", helperId);
         previewWrapper.put("wicket.model", clusterConfigModel);
         previewWrapper.put("model.plugin", selectedPluginModel);
+        previewWrapper.put("model.extensionpoint", selectedExtPtModel);
         previewWrapper.put("plugin.id", config.getName());
         previewWrapper.put("builder.mode", editable ? "edit" : "view");
 

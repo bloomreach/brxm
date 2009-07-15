@@ -71,6 +71,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
     private IObserver templateObserver;
     private String clusterModelId;
     private String selectedPluginId;
+    private String selectedExtPtId;
 
     public TemplateTypeEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -85,11 +86,39 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
         ModelReference selectedPluginService = new ModelReference(selectedPluginId, null);
         selectedPluginService.init(getPluginContext());
 
+        selectedExtPtId = context.getReference(this).getServiceId() + ".model.selected_extension_point";
+        final ModelReference selectedExtPtService = new ModelReference(selectedExtPtId, null);
+        selectedExtPtService.init(getPluginContext());
+
         IModel nodeModel = getModel();
         try {
             Node node = (Node) nodeModel.getObject();
             String typeName = node.getParent().getName() + ":" + node.getName();
-            builder = new TemplateBuilder(typeName, !"edit".equals(config.getString("mode")), context);
+            IModel selectedExtensionPointModel = new IModel() {
+
+                public Object getObject() {
+                    IModel upstream = selectedExtPtService.getModel();
+                    if (upstream != null) {
+                        if (upstream.getObject() != null) {
+                            return upstream.getObject();
+                        }
+                    }
+                    return "${cluster.id}.field";
+                }
+
+                public void setObject(Object object) {
+                    // TODO Auto-generated method stub
+
+                }
+
+                public void detach() {
+                    // TODO Auto-generated method stub
+
+                }
+
+            };
+            builder = new TemplateBuilder(typeName, !"edit".equals(config.getString("mode")), context,
+                    selectedExtensionPointModel);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         } catch (BuilderException e) {
@@ -120,10 +149,11 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
             String mode = config.getString("mode");
 
             PreviewClusterConfig template = new PreviewClusterConfig(builder.getTemplate(), clusterModelId,
-                    selectedPluginId, config.getString("wicket.helper.id"), "edit".equals(mode));
+                    selectedPluginId, selectedExtPtId, config.getString("wicket.helper.id"), "edit".equals(mode));
 
             context.getService(clusterModelId, IModelReference.class).setModel(new Model(builder.getTemplate()));
             context.getService(selectedPluginId, IModelReference.class).setModel(selectedPlugin);
+            // selectedExtPt ?
 
             IPluginConfig parameters = new JavaPluginConfig();
             parameters.put(ITemplateEngine.ENGINE, config.getString("engine"));
@@ -137,8 +167,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
             modelService.init(getPluginContext());
 
             String typeModelId = config.getString("model.type");
-            final ModelReference typeService = new ModelReference(typeModelId,
-                    new Model(builder.getTypeDescriptor()));
+            final ModelReference typeService = new ModelReference(typeModelId, new Model(builder.getTypeDescriptor()));
             typeService.init(getPluginContext());
 
             control.start();

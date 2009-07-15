@@ -14,24 +14,11 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-	<table class="hippo-window-form">
-      <tr>
-        <td><label><wicket:message key="name-caption" /></label></td>
-        <td><span wicket:id="name"></span></td>
-      </tr>
-      <tr>
-        <td colspan=2><label><wicket:message key="mixin-caption" /></label></td>
-      </tr>
-      <tr>
-        <td colspan=2>
-          <span wicket:id="checkgroup">
-            <ul>
-              <li wicket:id="mixins"><input type=checkbox wicket:id="check" /><span wicket:id="mixin">[ mixin ]</span></li>
-            </ul>
-          </span>
-        </td>
-      </tr>
-	</table>
-  </wicket:extend>
+<wicket:panel>
+  <table style="width: 100%;" class="create-type-select-layout">
+    <tr>
+      <td wicket:id="layouts"><a wicket:id="link"><img wicket:id="preview" /><br/><span wicket:id="layout">[bladie]</span></a></td>
+    </tr>
+  </table>
+</wicket:panel>
 </html>

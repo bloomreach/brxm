@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout>
   <pad name="main" orientation="vertical" />
-  <pad name="select" orientation="vertical" />
-  <pad name="mixins" />
-  <transition name="right" source="main" target="select" />
-  <transition name="left" source="select" target="main" />
+  <pad name="select" />
+  <pad name="mixins" orientation="vertical" />
+  <transition name="right" source="main" target="mixins" />
+  <transition name="left" source="mixins" target="main" />
 </layout>

@@ -46,6 +46,7 @@ import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
+import org.hippoecm.repository.Utilities;
 import org.junit.Test;
 
 public class PluginConfigTest extends PluginTest {
@@ -180,6 +181,28 @@ public class PluginConfigTest extends PluginTest {
         config.put("x", subConfig);
         subConfig = config.getPluginConfig("x");
         assertEquals("test", subConfig.getString("test"));
+    }
+    
+    @Test
+    public void testCopying() throws Exception {
+        build(session, content);
+
+        IPluginConfig config = getPluginConfig();
+        Set entries = config.entrySet();
+        assertEquals(3, entries.size());
+
+        Node previousNode = root.getNode("test").addNode("alt", "frontend:pluginconfig");
+        JcrPluginConfig previous = new JcrPluginConfig(new JcrNodeModel(previousNode));
+
+        IPluginConfig backup = new JavaPluginConfig(config);
+        config.clear();
+        config.putAll(previous);
+
+        previous.clear();
+        previous.putAll(backup);        
+
+        entries = previous.entrySet();
+        assertEquals(3, entries.size());
     }
 
     private void testTypedConfig(IPluginConfig config) {
@@ -337,5 +360,5 @@ public class PluginConfigTest extends PluginTest {
         assertEquals("f", copy.getString("e"));
         assertEquals("f", original.getString("e"));
     }
-
+    
 }

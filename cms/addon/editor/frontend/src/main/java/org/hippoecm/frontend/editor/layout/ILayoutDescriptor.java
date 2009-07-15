@@ -30,6 +30,8 @@ public interface ILayoutDescriptor extends IClusterable {
 
     String getPluginClass();
 
+    String getVariant();
+
     // FIXME: abstract away to a Resource
     IResourceStream getIcon();
 

@@ -338,8 +338,6 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
 
     @Override
     public void startObservation() {
-        super.startObservation();
-
         IObservationContext obContext = getObservationContext();
         String path = getNodeModel().getItemModel().getPath();
         int events = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED
@@ -369,7 +367,6 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
             listener.stop();
             listener = null;
         }
-        super.stopObservation();
     }
 
 }

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layouts>
-  <layout>org.hippoecm.frontend.editor.layout.Test</layout>
+  <layout>
+    <plugin>org.hippoecm.frontend.editor.layout.Test</plugin>
+  </layout>
 </layouts>

@@ -21,9 +21,8 @@ import java.util.List;
 
 import org.hippoecm.frontend.editor.layout.ILayoutControl;
 import org.hippoecm.frontend.editor.layout.ILayoutPad;
-import org.hippoecm.frontend.editor.layout.ILayoutTransition;
-import org.hippoecm.frontend.editor.layout.JavaLayoutPad;
 import org.hippoecm.frontend.editor.layout.ListItemLayoutControl;
+import org.hippoecm.frontend.editor.layout.ListItemPad;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -38,6 +37,26 @@ public class ListViewPluginEditorPlugin extends RenderPluginEditorPlugin {
 
     public ListViewPluginEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        // disable remove link
+        get("remove").setVisible(false);
+    }
+
+    @Override
+    protected void registerExtensionPointSelector() {
+        getBuilderContext().addBuilderListener(new IBuilderListener() {
+            private static final long serialVersionUID = 1L;
+
+            public void onFocus() {
+                BuilderContext context = getBuilderContext();
+                context.setSelectedExtensionPoint(context.getEditablePluginConfig().getString("item"));
+            }
+
+            public void onBlur() {
+                // nothing, other plugin should set itself
+            }
+
+        });
     }
 
     @Override
@@ -71,10 +90,21 @@ public class ListViewPluginEditorPlugin extends RenderPluginEditorPlugin {
 
         @Override
         protected void onServiceAdded(ILayoutAware service, String name) {
-            ItemPad pad = new ItemPad(controls);
+            ListItemPad pad;
+            ILayoutControl layoutControl = getLayoutControl();
+            if (layoutControl != null) {
+                pad = new ListItemPad(controls, layoutControl.getLayoutPad());
+            } else {
+                String variant = getVariation();
+                if (variant == null || "".equals(variant)) {
+                    pad = new ListItemPad(controls, ILayoutPad.Orientation.VERTICAL);
+                } else {
+                    pad = new ListItemPad(controls, ILayoutPad.Orientation.HORIZONTAL);
+                }
+            }
             ListItemLayoutControl control = new ListItemLayoutControl(getBuilderContext(), service, pad, wicketId,
                     controls);
-            pad.control = control;
+            pad.setLayoutControl(control);
             controls.add(control);
 
             service.setLayoutControl(control);
@@ -94,65 +124,6 @@ public class ListViewPluginEditorPlugin extends RenderPluginEditorPlugin {
             }
         }
 
-    }
-
-    private class ItemPad extends JavaLayoutPad {
-        private static final long serialVersionUID = 1L;
-
-        List<ListItemLayoutControl> controls;
-        ILayoutControl control;
-
-        public ItemPad(List<ListItemLayoutControl> controls) {
-            super("item");
-            this.controls = controls;
-        }
-
-        @Override
-        public List<String> getTransitions() {
-            List<String> transitions = new LinkedList<String>();
-            if (controls.indexOf(control) > 0) {
-                transitions.add("up");
-            }
-            if (controls.indexOf(control) < controls.size() - 1) {
-                transitions.add("down");
-            }
-            return transitions;
-        }
-
-        @Override
-        public ILayoutTransition getTransition(String name) {
-            if ("up".equals(name)) {
-                return new ILayoutTransition() {
-                    private static final long serialVersionUID = 1L;
-
-                    public String getName() {
-                        return "up";
-                    }
-
-                    public ILayoutPad getTarget() {
-                        ListItemLayoutControl previous = controls.get(controls.indexOf(control) - 1);
-                        return previous.getLayoutPad();
-                    }
-
-                };
-            } else if ("down".equals(name)) {
-                return new ILayoutTransition() {
-                    private static final long serialVersionUID = 1L;
-
-                    public String getName() {
-                        return "down";
-                    }
-
-                    public ILayoutPad getTarget() {
-                        ListItemLayoutControl next = controls.get(controls.indexOf(control) + 1);
-                        return next.getLayoutPad();
-                    }
-
-                };
-            } else {
-                throw new RuntimeException("Unknown transition " + name);
-            }
-        }
     }
 
 }

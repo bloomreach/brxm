@@ -117,7 +117,8 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
     }
 
     private IModel clModel;
-    private String name;
+    private String location;
+    private String variant;
     private Map<String, ILayoutPad> pads;
     private List<LayoutTransition> transitions;
 
@@ -125,19 +126,32 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
      * Constructor
      * 
      * @param classLoaderModel read-only IModel that returns a ClassLoader
-     * @param layout
+     * @param plugin
      */
-    public XmlLayoutDescriptor(IModel/*<ClassLoader>*/classLoaderModel, String layout) {
+    public XmlLayoutDescriptor(IModel/*<ClassLoader>*/classLoaderModel, String plugin) {
+        this(classLoaderModel, plugin, null);
+    }
+
+    public XmlLayoutDescriptor(IModel/*<ClassLoader>*/classLoaderModel, String plugin, String variant) {
         this.clModel = classLoaderModel;
-        this.name = layout.replace('.', '/');
+        this.location = plugin.replace('.', '/');
+        this.variant = variant;
 
         pads = new TreeMap<String, ILayoutPad>();
         transitions = new LinkedList<LayoutTransition>();
 
+        // Get layout description.  Use the variant description if it is available.
+        // Otherwise, fall back to the default. 
         ClassLoader cl = (ClassLoader) clModel.getObject();
-        InputStream stream = cl.getResourceAsStream(name + ".layout.xml");
+        InputStream stream = null;
+        if (variant != null) {
+            stream = cl.getResourceAsStream(location + "_" + variant + ".layout.xml");
+        }
         if (stream == null) {
-            log.error("No layout descriptor found for " + name);
+            stream = cl.getResourceAsStream(location + ".layout.xml");
+        }
+        if (stream == null) {
+            log.error("No layout descriptor found for " + location);
             return;
         }
 
@@ -195,7 +209,13 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
 
     public IResourceStream getIcon() {
         ClassLoader cl = (ClassLoader) clModel.getObject();
-        URL url = cl.getResource(name + ".png");
+        URL url = null;
+        if (variant != null) {
+            url = cl.getResource(location + "_" + variant + ".png");
+        }
+        if (url == null) {
+            url = cl.getResource(location + ".png");
+        }
         if (url != null) {
             return new UrlResourceStream(url);
         } else {
@@ -206,7 +226,11 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
     }
 
     public String getPluginClass() {
-        return name.replace('/', '.');
+        return location.replace('/', '.');
     }
 
+    public String getVariant() {
+        return variant;
+    }
+    
 }

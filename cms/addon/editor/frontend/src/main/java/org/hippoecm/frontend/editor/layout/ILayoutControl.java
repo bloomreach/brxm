@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.layout;
 
-import java.util.List;
-
 import org.apache.wicket.IClusterable;
 
 /**
@@ -26,7 +24,7 @@ public interface ILayoutControl extends IClusterable {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
-    List<ILayoutTransition> getTransitions();
+    ILayoutPad getLayoutPad();
     
     void apply(ILayoutTransition transition);
 

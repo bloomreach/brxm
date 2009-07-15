@@ -25,8 +25,11 @@ import java.util.Map;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -37,18 +40,33 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TemplateBuilderTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ";
 
+    private static class ExtPtModel implements IModel {
+
+        public Object getObject() {
+            return "${cluster.id}.field";
+        }
+
+        public void setObject(Object object) {
+        }
+
+        public void detach() {
+        }
+        
+    }
+    
     @Test
     /**
      * verify that a plugin is added to the cluster when a field is added to the type
      */
     public void testAddField() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:test", false, context);
+        TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());
 
         final List<IPluginConfig> added = new LinkedList<IPluginConfig>();
         final List<IPluginConfig> removed = new LinkedList<IPluginConfig>();
@@ -81,7 +99,7 @@ public class TemplateBuilderTest extends PluginTest {
                     }
                 }
             }
-            
+
         }, IObserver.class.getName());
 
         ITypeDescriptor type = builder.getTypeDescriptor();
@@ -97,7 +115,7 @@ public class TemplateBuilderTest extends PluginTest {
      * verify that a field is removed from the type when a plugin is removed from the cluster
      */
     public void testRemovePlugin() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:test", false, context);
+        TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());
 
         // initialize type descriptor and template
         final ITypeDescriptor type = builder.getTypeDescriptor();
@@ -132,7 +150,7 @@ public class TemplateBuilderTest extends PluginTest {
                     }
                 }
             }
-            
+
         }, IObserver.class.getName());
 
         // remove a field plugin
@@ -145,7 +163,7 @@ public class TemplateBuilderTest extends PluginTest {
 
     @Test
     public void testChangePath() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:test", false, context);
+        TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());
 
         // initialize type descriptor and template
         ITypeDescriptor type = builder.getTypeDescriptor();
@@ -159,7 +177,7 @@ public class TemplateBuilderTest extends PluginTest {
         JcrNodeModel prototype = builder.getPrototype();
         Node node = prototype.getNode();
         node.setProperty("test:title", "titel");
-        
+
         titleField.setPath("test:titel_new");
 
         home.processEvents();
