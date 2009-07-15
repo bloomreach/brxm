@@ -91,7 +91,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             
             session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
             
-            cpm = new PersistableObjectBeanManagerImpl(session, objectConverter, persistBinders);
+            cpm = new PersistableObjectBeanManagerWorkflowImpl(session, objectConverter, persistBinders);
             cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
                 public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
                     FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
@@ -120,7 +120,8 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
                 // then the POJO object in the first parameter will be used as a binder. 
                 cpm.update(newPage);
                 
-                cpm.save();
+                // TODO cpm.save() is not needed here. should we keep it?
+                //cpm.save();
                 
                 // retrieves the document created just before
                 newPage = (PersistableTextPage) cpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
@@ -154,7 +155,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             
             session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
             
-            cpm = new PersistableObjectBeanManagerImpl(session, objectConverter, persistBinders);
+            cpm = new PersistableObjectBeanManagerWorkflowImpl(session, objectConverter, persistBinders);
             
             HippoFolderBean newFolder = null;
             
@@ -188,7 +189,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             
             session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
             
-            cpm = new PersistableObjectBeanManagerImpl(session, objectConverter, persistBinders);
+            cpm = new PersistableObjectBeanManagerWorkflowImpl(session, objectConverter, persistBinders);
             
             HippoFolderBean newFolder = null;
             

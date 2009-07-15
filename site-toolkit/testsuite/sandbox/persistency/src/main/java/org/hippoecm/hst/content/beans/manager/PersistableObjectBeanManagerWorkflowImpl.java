@@ -60,7 +60,7 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
  * </P>
  * 
  */
-public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceManager {
+public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersistenceManager {
 
     /**
      * {@link ObjectBeanManager} instance provided by HST content-beans to provide {@link #getObject(String)} facility. 
@@ -112,7 +112,7 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
      * @param session the session for this manager context
      * @param objectConverter the object converter to do mapping from JCR nodes to content POJO objects
      */
-    public PersistableObjectBeanManagerImpl(Session session, ObjectConverter objectConverter) {
+    public PersistableObjectBeanManagerWorkflowImpl(Session session, ObjectConverter objectConverter) {
         this(session, objectConverter, null);
     }
     
@@ -122,7 +122,7 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
      * @param objectConverter the object converter to do mapping from JCR nodes to content POJO objects
      * @param contentNodeBinders the predefined content node binders map which item is node type name key and custom binder object value.
      */
-    public PersistableObjectBeanManagerImpl(Session session, ObjectConverter objectConverter, Map<String, ContentNodeBinder> contentNodeBinders) {
+    public PersistableObjectBeanManagerWorkflowImpl(Session session, ObjectConverter objectConverter, Map<String, ContentNodeBinder> contentNodeBinders) {
         obm = new ObjectBeanManagerImpl(session, objectConverter);
         this.session = session;
         this.contentNodeBinders = contentNodeBinders;

@@ -24,7 +24,7 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
-import org.hippoecm.hst.content.beans.manager.PersistableObjectBeanManagerImpl;
+import org.hippoecm.hst.content.beans.manager.PersistableObjectBeanManagerWorkflowImpl;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -113,7 +113,7 @@ public class BasePersistenceHstComponent extends BaseHstComponent {
      * @return
      */
     protected WorkflowPersistenceManager getWorkflowPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders) {
-        PersistableObjectBeanManagerImpl cpm = new PersistableObjectBeanManagerImpl(session, this.objectConverter, contentNodeBinders);
+        PersistableObjectBeanManagerWorkflowImpl cpm = new PersistableObjectBeanManagerWorkflowImpl(session, this.objectConverter, contentNodeBinders);
         return cpm;
     }
     
