@@ -15,9 +15,11 @@
  */
 package org.hippoecm.hst.content.beans.manager;
 
+import java.rmi.RemoteException;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -32,6 +34,7 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
@@ -186,6 +189,8 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
             }
             
             createNodeByWorkflow((Node) session.getItem(absPath), nodeTypeName, name);
+        } catch (ContentPersistenceException e) {
+            throw e;
         } catch (Exception e) {
             throw new ContentPersistenceException(e);
         }
@@ -223,36 +228,49 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
                     }
                 }
             }
+        } catch (ContentPersistenceException e) {
+            throw e;
         } catch (Exception e) {
             throw new ContentPersistenceException(e);
         }
     }
     
-    protected void createNodeByWorkflow(Node folderNode, String nodeTypeName, String name) throws ContentPersistenceException {
+    protected void createNodeByWorkflow(Node folderNode, String nodeTypeName, String name)
+            throws ContentPersistenceException {
         try {
             if (folderNode instanceof HippoNode) {
                 folderNode = ((HippoNode) folderNode).getCanonicalNode();
             }
-            
+
             WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
             Workflow wf = wfm.getWorkflow(folderNodeWorkflowCategory, folderNode);
-            
+
             if (wf instanceof FolderWorkflow) {
                 FolderWorkflow fwf = (FolderWorkflow) wf;
-                
+
                 String category = documentAdditionWorkflowCategory;
-                
+
                 if (nodeTypeName.equals(folderNodeTypeName)) {
                     category = folderAdditionWorkflowCategory;
                 }
-                
-                fwf.add(category, nodeTypeName, name);
+
+                String added = fwf.add(category, nodeTypeName, name);
+                if (added == null) {
+                    throw new ContentPersistenceException("Failed to add document/folder for type '" + nodeTypeName
+                            + "'. Make sure there is a prototype.");
+                }
             } else {
-                throw new ContentPersistenceException("The workflow is not a FolderWorkflow for " + folderNode.getPath() + ": " + wf);
+                throw new ContentPersistenceException("The workflow is not a FolderWorkflow for "
+                        + folderNode.getPath() + ": " + wf);
             }
-        } catch (Exception e) {
+        } catch (RepositoryException e) {
+            throw new ContentPersistenceException(e);
+        } catch (RemoteException e) {
+            throw new ContentPersistenceException(e);
+        } catch (WorkflowException e) {
             throw new ContentPersistenceException(e);
         }
+
     }
     
     /**
