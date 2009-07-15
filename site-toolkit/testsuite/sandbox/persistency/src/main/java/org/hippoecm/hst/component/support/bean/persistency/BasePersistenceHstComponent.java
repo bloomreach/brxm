@@ -55,7 +55,7 @@ import org.hippoecm.hst.persistence.ContentPersistenceManager;
  * 
  * @version $Id$
  */
-public class BaseHstComponent extends org.hippoecm.hst.component.support.bean.BaseHstComponent {
+public class BasePersistenceHstComponent extends org.hippoecm.hst.component.support.bean.BaseHstComponent {
     
     public static final String DEFAULT_WRITABLE_USERNAME_PROPERTY = "writable.repository.user.name";
     public static final String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";

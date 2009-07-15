@@ -21,7 +21,7 @@ import java.util.List;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.beans.TextPage;
-import org.hippoecm.hst.component.support.bean.persistency.BaseHstComponent;
+import org.hippoecm.hst.component.support.bean.persistency.BasePersistenceHstComponent;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
@@ -35,7 +35,7 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Detail extends BaseHstComponent {
+public class Detail extends BasePersistenceHstComponent {
     
     private static Logger log = LoggerFactory.getLogger(Detail.class);
     
