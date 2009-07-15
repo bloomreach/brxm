@@ -62,7 +62,7 @@ public class TextPage extends GeneralPage implements ContentNodeBinder {
         this.bodyContent = bodyContent;
     }
     
-    public void bind(Object content, javax.jcr.Node node) throws ContentPersistenceBindingException {
+    public boolean bind(Object content, javax.jcr.Node node) throws ContentPersistenceBindingException {
         try {
             TextPage commentPage = (TextPage) content;
             node.setProperty("testproject:title", commentPage.getTitle());
@@ -72,6 +72,9 @@ public class TextPage extends GeneralPage implements ContentNodeBinder {
         } catch (Exception e) {
             throw new ContentPersistenceBindingException(e);
         }
+        
+        // FIXME: return true only if actual changes happen.
+        return true;
     }
     
 }

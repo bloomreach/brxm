@@ -208,7 +208,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
     
     private class PersistableTextPageBinder implements ContentNodeBinder {
         
-        public void bind(Object content, Node node) throws ContentPersistenceBindingException {
+        public boolean bind(Object content, Node node) throws ContentPersistenceBindingException {
             PersistableTextPage page = (PersistableTextPage) content;
             
             try {
@@ -218,6 +218,9 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             } catch (Exception e) {
                 throw new ContentPersistenceBindingException(e);
             }
+            
+            // FIXME: return true only if actual changes happen.
+            return true;
         }
         
     }

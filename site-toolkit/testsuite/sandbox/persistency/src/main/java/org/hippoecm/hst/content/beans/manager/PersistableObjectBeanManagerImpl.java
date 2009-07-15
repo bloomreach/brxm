@@ -340,12 +340,14 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
                         contentNode = session.getNodeByUUID(uuid);
                     }
                 
-                    if (customContentNodeBinder != null) {
-                        customContentNodeBinder.bind(content, contentNode);
-                        contentNode.save();
-                    }
+                    boolean changed = customContentNodeBinder.bind(content, contentNode);
                     
-                    ewf.commitEditableInstance();
+                    if (changed) {
+                        contentNode.save();
+                        ewf.commitEditableInstance();
+                    } else {
+                        ewf.disposeEditableInstance();
+                    }
                 } else {
                     throw new ContentPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
                 }

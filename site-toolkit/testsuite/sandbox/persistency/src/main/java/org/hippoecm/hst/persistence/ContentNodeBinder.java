@@ -31,8 +31,9 @@ public interface ContentNodeBinder {
      * Does custom binding from content POJO object to JCR node.
      * @param content content POJO object, which can be retrieved by an OCM solution 
      * @param node a main target JCR node which can have some properties or child nodes.
+     * @return returns true if the binding makes changes
      * @throws ContentPersistenceBindingException
      */
-    void bind(Object content, Node node) throws ContentPersistenceBindingException;
+    boolean bind(Object content, Node node) throws ContentPersistenceBindingException;
     
 }
