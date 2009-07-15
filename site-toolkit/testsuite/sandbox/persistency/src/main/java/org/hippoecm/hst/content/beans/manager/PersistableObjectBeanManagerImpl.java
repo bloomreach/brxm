@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.persistence.ContentNodeBinder;
@@ -58,7 +59,6 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
  * If this implementation cannot find any <CODE>ContentNodeBinder</CODE>, it will do updating the content without any bindings.
  * </P>
  * 
- * @version $Id$
  */
 public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceManager {
 
@@ -220,6 +220,13 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
 
                     if (curNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                         String docbaseUuid = curNode.getProperty("hippo:docbase").getString();
+                        // check whether docbaseUuid is a valid uuid, otherwise a runtime IllegalArgumentException is thrown
+                        try {
+                            UUID.fromString(docbaseUuid);
+                        } catch (IllegalArgumentException e){
+                            throw new ContentPersistenceException("hippo:docbase in facetselect does not contain a valid uuid", e);
+                        }
+                        
                         curNode = session.getNodeByUUID(docbaseUuid);
                     }
                     
