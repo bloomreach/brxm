@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.editor.layout;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -56,6 +55,10 @@ public class JavaLayoutDescriptor implements ILayoutDescriptor {
 
     public String getPluginClass() {
         return plugin;
+    }
+
+    public String getVariant() {
+        return null;
     }
 
 }

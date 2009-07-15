@@ -32,16 +32,17 @@ public class RenderContext implements IClusterable {
     private IPluginConfig config;
 
     public RenderContext(IPluginContext context, IPluginConfig config) {
-        this.config = config;
+        this.config = config.getPluginConfig("model.effective");
     }
 
     public ILayoutDescriptor getLayoutDescriptor() {
         // locate resource stream
         String className = config.getString(IPlugin.CLASSNAME);
         String variant = config.getString(VARIANT);
-        String name = className + (variant != null ? "_" + variant : "");
-
-        return new XmlLayoutDescriptor(new SessionClassLoaderModel(), name);
+        if (variant == null) {
+            return new XmlLayoutDescriptor(new SessionClassLoaderModel(), className);
+        }
+        return new XmlLayoutDescriptor(new SessionClassLoaderModel(), className, variant);
     }
 
 }

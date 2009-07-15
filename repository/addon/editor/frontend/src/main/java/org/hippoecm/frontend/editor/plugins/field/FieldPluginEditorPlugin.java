@@ -81,7 +81,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                 }
 
                 public void onEvent(Iterator<? extends IEvent> events) {
-                    redraw();
+                    updatePreview();
                 }
 
             }, IObserver.class.getName());

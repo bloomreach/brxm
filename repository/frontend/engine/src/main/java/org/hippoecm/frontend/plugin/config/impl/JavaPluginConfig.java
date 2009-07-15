@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.lang.reflect.Array;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -25,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.time.Duration;
@@ -58,8 +58,9 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
     }
 
     public JavaPluginConfig(IPluginConfig parentConfig) {
-        super(parentConfig == null ? new MiniMap(0) : parentConfig);
+        super();
         if (parentConfig != null) {
+            putAll(parentConfig);
             for (IPluginConfig config : parentConfig.getPluginConfigSet()) {
                 configSet.add(newPluginConfig(config));
             }
@@ -321,8 +322,19 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
         return buffer.toString();
     }
 
-    public Object put(String key, Object value) {
-        Object oldValue = super.put(key, value);
+
+    @Override
+    public Object put(Object key, Object value) {
+        if (value instanceof IPluginConfig) {
+            value = new JavaPluginConfig((IPluginConfig) value);
+        } else if (value instanceof List) {
+            List<IPluginConfig> list = new ArrayList<IPluginConfig>(((List<IPluginConfig>) value).size());
+            for (IPluginConfig entry : (List<IPluginConfig>) value) {
+                list.add(new JavaPluginConfig(entry));
+            }
+            value = list;
+        }
+        Object oldValue = super.put((String) key, value);
         if (obContext != null) {
             EventCollection<PluginConfigEvent> collection = new EventCollection<PluginConfigEvent>();
             collection.add(new PluginConfigEvent(this, PluginConfigEvent.EventType.CONFIG_CHANGED));

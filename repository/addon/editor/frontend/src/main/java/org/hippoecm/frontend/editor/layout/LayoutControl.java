@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.editor.layout;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.hippoecm.frontend.editor.builder.BuilderContext;
 import org.hippoecm.frontend.editor.builder.ILayoutAware;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -36,8 +33,6 @@ public class LayoutControl implements ILayoutControl {
 
     private static final Logger log = LoggerFactory.getLogger(LayoutControl.class);
 
-    public static final String WICKET_ID = "wicket.id";
-
     protected final BuilderContext builder;
     protected final ILayoutPad pad;
     protected final String wicketId; // undecorated wicket.id
@@ -54,22 +49,17 @@ public class LayoutControl implements ILayoutControl {
         return service;
     }
 
-    public List<ILayoutTransition> getTransitions() {
-        List<String> upstream = pad.getTransitions();
-        List<ILayoutTransition> transitions = new ArrayList<ILayoutTransition>(upstream.size());
-        for (String key : upstream) {
-            transitions.add(pad.getTransition(key));
-        }
-        return transitions;
+    public ILayoutPad getLayoutPad() {
+        return pad;
     }
 
     public void apply(ILayoutTransition transition) {
-        reparent(transition.getTarget().getName());
+        reparent(transition.getTarget());
     }
 
-    protected void reparent(String target) {
+    protected void reparent(ILayoutPad target) {
         IPluginConfig config = builder.getEditablePluginConfig();
-        config.put("wicket.id", target);
+        config.put("wicket.id", LayoutHelper.getWicketId(target));
     }
 
 }

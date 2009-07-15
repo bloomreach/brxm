@@ -15,14 +15,23 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="hippo-editor-template-field"> 
-      <div style="height: 20px; margin-left: 5px; margin-right: 5px;">
-        <ul class="hippo-editor-template-field-controls">
-          <li wicket:id="transitions"><a wicket:id="link">&nbsp;</a></li>
-          <li><a class="remove-field-16" wicket:id="remove">&nbsp;</a></li>
-        </ul>
-      </div>
-      <div class="hippo-editor-preview" wicket:id="preview">[ item goes here ]</div>
-    </div>
+	<table class="hippo-window-form">
+      <tr>
+        <td><label><wicket:message key="name-caption" /></label></td>
+        <td><span wicket:id="name"></span></td>
+      </tr>
+      <tr>
+        <td colspan=2><label><wicket:message key="mixin-caption" /></label></td>
+      </tr>
+      <tr>
+        <td colspan=2>
+          <span wicket:id="checkgroup">
+            <ul>
+              <li wicket:id="mixins"><input type=checkbox wicket:id="check" /><span wicket:id="mixin">[ mixin ]</span></li>
+            </ul>
+          </span>
+        </td>
+      </tr>
+	</table>
   </wicket:panel>
 </html>

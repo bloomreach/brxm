@@ -35,22 +35,21 @@ public class ListItemLayoutControl extends LayoutControl {
 
     private List<ListItemLayoutControl> siblings;
 
-    public ListItemLayoutControl(BuilderContext builder, ILayoutAware service, ILayoutPad pad, String wicketId,
+    public ListItemLayoutControl(BuilderContext builder, ILayoutAware service, ListItemPad pad, String wicketId,
             List<ListItemLayoutControl> siblings) {
         super(builder, service, pad, wicketId);
         this.siblings = siblings;
     }
 
-    public ILayoutPad getLayoutPad() {
-        return pad;
-    }
-
     @Override
     public void apply(ILayoutTransition transition) {
-        if ("up".equals(transition.getName())) {
+        ListItemPad lip = (ListItemPad) pad;
+        if (lip.getUpName().equals(transition.getName())) {
             moveUp(getSequenceId());
-        } else if ("down".equals(transition.getName())) {
+        } else if (lip.getDownName().equals(transition.getName())) {
             moveUp(getSequenceId() + 1);
+        } else {
+            super.apply(transition);
         }
     }
 
@@ -82,6 +81,53 @@ public class ListItemLayoutControl extends LayoutControl {
         }
     }
 
+    protected IPluginConfig getEditablePluginConfig() {
+        int id = getSequenceId();
+        IClusterConfig clusterConfig = builder.getTemplate();
+        List<IPluginConfig> plugins = clusterConfig.getPlugins();
+        int siblingCount = 0;
+        for (IPluginConfig config : plugins) {
+            String pluginWicketId = config.getString("wicket.id");
+            if (pluginWicketId != null && pluginWicketId.equals(wicketId)) {
+                if (siblingCount == id) {
+                    return config;
+                }
+                siblingCount++;
+            }
+        }
+        return null;
+    }
+    
+    protected boolean isPadOccupied(ILayoutPad pad) {
+        String wicketId = LayoutHelper.getWicketId(pad);
+        IClusterConfig clusterConfig = builder.getTemplate();
+        List<IPluginConfig> plugins = clusterConfig.getPlugins();
+        for (IPluginConfig config : plugins) {
+            if (wicketId.equals(config.getString("wicket.id"))) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    protected void reparent(ILayoutPad target) {
+        IPluginConfig config = getEditablePluginConfig();
+        if (config != null) {
+            if (target.isList()) {
+                config.put("wicket.id", LayoutHelper.getWicketId(target) + ".item");
+            } else {
+                if (!isPadOccupied(target)) {
+                    config.put("wicket.id", LayoutHelper.getWicketId(target));
+                } else {
+                    log.warn("Target is already occupied");
+                }
+            }
+        } else {
+            log.warn("No plugin config found");
+        }
+    }
+    
     protected int getSequenceId() {
         return siblings.indexOf(this);
     }

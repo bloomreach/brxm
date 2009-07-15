@@ -27,10 +27,16 @@ public interface ILayoutPad extends IClusterable {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
+    /**
+     * Orientation of a list pad
+     */
     enum Orientation {
         HORIZONTAL, VERTICAL
     }
-    
+
+    /**
+     * Name of the pad. 
+     */
     String getName();
 
     /**

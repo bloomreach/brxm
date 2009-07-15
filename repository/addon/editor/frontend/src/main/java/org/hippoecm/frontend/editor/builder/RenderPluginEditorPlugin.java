@@ -38,6 +38,7 @@ import org.hippoecm.frontend.editor.layout.ILayoutControl;
 import org.hippoecm.frontend.editor.layout.ILayoutPad;
 import org.hippoecm.frontend.editor.layout.ILayoutTransition;
 import org.hippoecm.frontend.editor.layout.LayoutControl;
+import org.hippoecm.frontend.editor.layout.LayoutHelper;
 import org.hippoecm.frontend.editor.layout.RenderContext;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -87,27 +88,22 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
 
             @Override
             protected Iterator<IModel> getItemModels() {
-                if (layoutControl != null) {
-                    final Iterator<ILayoutTransition> transitionIter = layoutControl.getTransitions().iterator();
-                    return new Iterator<IModel>() {
+                final Iterator<ILayoutTransition> transitionIter = getTransitionIterator();
+                return new Iterator<IModel>() {
 
-                        public boolean hasNext() {
-                            return transitionIter.hasNext();
-                        }
+                    public boolean hasNext() {
+                        return transitionIter.hasNext();
+                    }
 
-                        public IModel next() {
-                            return new Model(transitionIter.next());
-                        }
+                    public IModel next() {
+                        return new Model(transitionIter.next());
+                    }
 
-                        public void remove() {
-                            transitionIter.remove();
-                        }
+                    public void remove() {
+                        transitionIter.remove();
+                    }
 
-                    };
-                } else {
-                    List<IModel> transitions = Collections.emptyList();
-                    return transitions.iterator();
-                }
+                };
             }
 
             @Override
@@ -119,6 +115,11 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         layoutControl.apply(transition);
+                    }
+
+                    @Override
+                    protected IAjaxCallDecorator getAjaxCallDecorator() {
+                        return new EventStoppingDecorator(super.getAjaxCallDecorator());
                     }
 
                 }.setVisible(editable);
@@ -135,6 +136,12 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
             public void onClick(AjaxRequestTarget target) {
                 builderContext.delete();
             }
+
+            @Override
+            protected IAjaxCallDecorator getAjaxCallDecorator() {
+                return new EventStoppingDecorator(super.getAjaxCallDecorator());
+            }
+
         }.setVisible(editable));
 
         if (editable) {
@@ -153,6 +160,8 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
 
             });
         }
+
+        registerExtensionPointSelector();
 
         updatePreview();
     }
@@ -194,6 +203,35 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
         this.layoutControl = control;
     }
 
+    protected ILayoutControl getLayoutControl() {
+        return layoutControl;
+    }
+
+    protected Iterator<ILayoutTransition> getTransitionIterator() {
+        if (layoutControl != null) {
+            final ILayoutPad pad = layoutControl.getLayoutPad();
+            final Iterator<String> transitionIter = pad.getTransitions().iterator();
+            return new Iterator<ILayoutTransition>() {
+
+                public boolean hasNext() {
+                    return transitionIter.hasNext();
+                }
+
+                public ILayoutTransition next() {
+                    return pad.getTransition(transitionIter.next());
+                }
+
+                public void remove() {
+                    transitionIter.remove();
+                }
+
+            };
+        } else {
+            List<ILayoutTransition> list = Collections.emptyList();
+            return list.iterator();
+        }
+    }
+
     protected void updatePreview() {
         if (previewControl != null) {
             previewControl.stop();
@@ -227,6 +265,47 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
         redraw();
     }
 
+    protected void registerExtensionPointSelector() {
+        Map<String, ILayoutPad> pads = renderContext.getLayoutDescriptor().getLayoutPads();
+        if (pads.size() > 0) {
+            // find default pad to be selected when plugin gets focus
+            String defaultPad = null;
+            for (Map.Entry<String, ILayoutPad> entry : pads.entrySet()) {
+                ILayoutPad pad = entry.getValue();
+                if (pad.isList()) {
+                    defaultPad = LayoutHelper.getWicketId(pad) + ".item";
+                    break;
+                }
+            }
+
+            if (defaultPad != null) {
+                final String value = defaultPad;
+                BuilderContext context = getBuilderContext();
+                context.addBuilderListener(new IBuilderListener() {
+                    private static final long serialVersionUID = 1L;
+
+                    public void onFocus() {
+                        BuilderContext context = getBuilderContext();
+                        context.setSelectedExtensionPoint(value);
+                    }
+
+                    public void onBlur() {
+                        // nothing, other plugin should set itself
+                    }
+
+                });
+
+                // select pad
+                String current = context.getSelectedExtensionPoint();
+                if (current == null) {
+                    context.setSelectedExtensionPoint(value);
+                }
+            } else {
+                log.warn("No default pad found to add new fields to");
+            }
+        }
+    }
+
     protected void registerChildTrackers() {
         trackers = new TreeMap<String, ServiceTracker<ILayoutAware>>();
 
@@ -257,7 +336,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
     protected ChildTracker newChildTracker(ILayoutPad pad, String wicketId) {
         return new ChildTracker(pad, wicketId);
     }
-    
+
     protected BuilderContext getBuilderContext() {
         return builderContext;
     }

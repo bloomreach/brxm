@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.builder;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -67,6 +68,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private String type;
     private boolean readonly;
     private IPluginContext context;
+    private IModel selectedExtPtModel;
 
     private IStore<IClusterConfig> jcrTemplateStore;
     private IStore<IClusterConfig> builtinTemplateStore;
@@ -82,15 +84,18 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private JcrNodeModel prototype;
     private Map<String, String> paths;
     private transient Map<String, IFieldDescriptor> removedFields;
+    private Map<String, IPluginConfig> pluginCache;
 
     private IObservationContext obContext;
     private IObserver typeObserver;
     private IObserver clusterObserver;
 
-    public TemplateBuilder(String type, boolean readonly, IPluginContext context) throws BuilderException {
+    public TemplateBuilder(String type, boolean readonly, IPluginContext context, IModel extPtModel)
+            throws BuilderException {
         this.type = type;
         this.readonly = readonly;
         this.context = context;
+        this.selectedExtPtModel = extPtModel;
 
         this.jcrTypeStore = new JcrTypeStore();
         this.builtinTypeStore = new BuiltinTypeStore();
@@ -137,6 +142,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             Iterator<IClusterConfig> iter = jcrTemplateStore.find(criteria);
             if (iter.hasNext()) {
                 clusterConfig = iter.next();
+                initPluginCache();
             } else {
                 if (!readonly) {
                     iter = builtinTemplateStore.find(criteria);
@@ -175,7 +181,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
     public void dispose() {
         unregisterObservers();
     }
-    
+
     public String getName() {
         return type;
     }
@@ -333,7 +339,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
         } else {
             pluginConfig.put("plugin.class", PropertyFieldPlugin.class.getName());
         }
-        pluginConfig.put("wicket.id", "${cluster.id}.field");
+        pluginConfig.put("wicket.id", getSelectedExtensionPoint());
         pluginConfig.put("wicket.model", "${wicket.model}");
         pluginConfig.put("mode", "${mode}");
         pluginConfig.put("engine", "${engine}");
@@ -342,15 +348,15 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         template.getPlugins().add(pluginConfig);
     }
-    
+
     private void registerObservers() {
         if (typeDescriptor != null) {
             context.registerService(typeObserver = new IObserver() {
-    
+
                 public IObservable getObservable() {
                     return typeDescriptor;
                 }
-    
+
                 public void onEvent(Iterator<? extends IEvent> events) {
                     while (events.hasNext()) {
                         IEvent event = events.next();
@@ -367,7 +373,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         }
                     }
                 }
-                
+
             }, IObserver.class.getName());
         }
 
@@ -382,11 +388,11 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 }
             }
             context.registerService(clusterObserver = new IObserver() {
-    
+
                 public IObservable getObservable() {
                     return clusterConfig;
                 }
-    
+
                 public void onEvent(Iterator<? extends IEvent> events) {
                     while (events.hasNext()) {
                         IEvent event = events.next();
@@ -406,6 +412,10 @@ public class TemplateBuilder implements IDetachable, IObservable {
                                 notifyObservers();
                                 break;
                             case PLUGIN_CHANGED:
+                                // notify observers when the wicket hierarchy has changed
+                                if (updatePluginCache()) {
+                                    notifyObservers();
+                                }
                                 break;
                             case PLUGIN_REMOVED:
                                 if (fields.containsKey(config.getName())) {
@@ -422,7 +432,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         }
                     }
                 }
-                
+
             }, IObserver.class.getName());
         }
 
@@ -439,8 +449,40 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
     }
 
+    private void initPluginCache() {
+        this.pluginCache = new TreeMap<String, IPluginConfig>();
+        List<IPluginConfig> plugins = clusterConfig.getPlugins();
+        for (IPluginConfig plugin : plugins) {
+            JavaPluginConfig cache = new JavaPluginConfig();
+            cache.put("wicket.id", plugin.get("wicket.id"));
+            pluginCache.put(plugin.getName(), cache);
+        }
+    }
+
+    private boolean updatePluginCache() {
+        boolean changed = false;
+        List<IPluginConfig> plugins = clusterConfig.getPlugins();
+        for (IPluginConfig plugin : plugins) {
+            IPluginConfig cache = pluginCache.get(plugin.getName());
+            if (cache == null) {
+                changed = true;
+                break;
+            }
+            if (cache.getString("wicket.id") != null
+                    && !cache.getString("wicket.id").equals(plugin.getString("wicket.id"))) {
+                changed = true;
+                break;
+            }
+        }
+        if (changed) {
+            initPluginCache();
+            return true;
+        }
+        return false;
+    }
+
     // IDetachable
-    
+
     public void detach() {
         prototypeStore.detach();
     }
@@ -469,6 +511,10 @@ public class TemplateBuilder implements IDetachable, IObservable {
             });
             obContext.notifyObservers(collection);
         }
+    }
+
+    private String getSelectedExtensionPoint() {
+        return (String) selectedExtPtModel.getObject();
     }
 
 }

@@ -45,6 +45,7 @@ public class BuilderContext implements IClusterable {
     public static final String PLUGIN_ID = "plugin.id";
     public static final String WICKET_MODEL = "wicket.model";
     public static final String SELECTED_PLUGIN = "model.plugin";
+    public static final String SELECTED_EXTENSION_POINT = "model.extensionpoint";
 
     protected final IPluginContext context;
     protected final IPluginConfig config;
@@ -134,6 +135,23 @@ public class BuilderContext implements IClusterable {
         return EditorContext.Mode.EDIT;
     }
 
+    public String getSelectedExtensionPoint() {
+        IModelReference extPtService = context.getService(config.getString(SELECTED_EXTENSION_POINT), IModelReference.class);
+        IModel model = extPtService.getModel();
+        if (model != null) {
+            return (String) model.getObject();
+        }
+        return null;
+    }
+
+    public void setSelectedExtensionPoint(String value) {
+        if (value == null) {
+            throw new RuntimeException("Invalid value null for selected extension point");
+        }
+        IModelReference extPtService = context.getService(config.getString(SELECTED_EXTENSION_POINT), IModelReference.class);
+        extPtService.setModel(new Model(value));
+    }
+    
     public String getPluginId() {
         return pluginId;
     }

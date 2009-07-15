@@ -20,17 +20,22 @@ import java.util.Map;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.editor.layout.ILayoutDescriptor;
 import org.hippoecm.frontend.editor.layout.ILayoutPad;
+import org.hippoecm.frontend.editor.layout.LayoutHelper;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TemplateFactory implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(TemplateFactory.class);
 
     public IClusterConfig createTemplate(ILayoutDescriptor layout) {
         JavaClusterConfig clusterConfig = new JavaClusterConfig();
@@ -48,10 +53,29 @@ public class TemplateFactory implements IClusterable {
         for (Map.Entry<String, ILayoutPad> entry : pads.entrySet()) {
             ILayoutPad pad = entry.getValue();
             extensions[i] = "extension." + pad.getName();
-            root.put(extensions[i], getWicketId(pad));
+            root.put(extensions[i], LayoutHelper.getWicketId(pad));
             i++;
         }
-        root.put("wicket.extensions", extensions);
+        if (extensions.length > 0) {
+            root.put("wicket.extensions", extensions);
+        }
+
+        // ListViewPlugin special treatment
+        try {
+            String pluginClass = layout.getPluginClass();
+            Class<?> clazz = Class.forName(pluginClass);
+            if (ListViewPlugin.class.isAssignableFrom(clazz)) {
+                root.put("item", "${cluster.id}.field");
+            }
+        } catch (ClassNotFoundException ex) {
+            log.warn("Unable to load layout class");
+        }
+
+        // set variant
+        String variant = layout.getVariant();
+        if (variant != null) {
+            root.put("wicket.variant", variant);
+        }
         clusterConfig.addPlugin(root);
 
         for (ILayoutPad pad : pads.values()) {
@@ -66,16 +90,12 @@ public class TemplateFactory implements IClusterable {
     private IPluginConfig getListPlugin(ILayoutPad pad) {
         JavaPluginConfig config = new JavaPluginConfig(pad.getName());
         config.put("plugin.class", ListViewPlugin.class.getName());
-        config.put("wicket.id", getWicketId(pad));
-        config.put("item", getWicketId(pad) + ".item");
+        config.put("wicket.id", LayoutHelper.getWicketId(pad));
+        config.put("item", LayoutHelper.getWicketId(pad) + ".item");
         if (pad.getOrientation() == ILayoutPad.Orientation.HORIZONTAL) {
             config.put("variant", "row");
         }
         return config;
-    }
-
-    private String getWicketId(ILayoutPad pad) {
-        return "${cluster.id}." + pad.getName();
     }
 
 }

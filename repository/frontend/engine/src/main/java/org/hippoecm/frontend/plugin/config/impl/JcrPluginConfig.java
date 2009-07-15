@@ -33,6 +33,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.string.StringValue;
@@ -43,10 +45,8 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
-import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.JcrEventListener;
 import org.hippoecm.frontend.model.map.HippoMap;
 import org.hippoecm.frontend.model.map.IHippoMap;
 import org.hippoecm.frontend.model.map.JcrMap;
@@ -107,7 +107,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
 
     protected final JcrNodeModel nodeModel;
     private IObservationContext obContext;
-    private IObserver nodeObserver;
+    private JcrEventListener listener;
     private JcrMap map;
     private Map<JcrNodeModel, JcrPluginConfig> childConfigs;
     private transient Set<Map.Entry<String, Object>> entries;
@@ -446,25 +446,31 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
     }
     
     public void startObservation() {
-        obContext.registerObserver(nodeObserver = new IObserver() {
+        IObservationContext obContext = getObservationContext();
+        String path = getNodeModel().getItemModel().getPath();
+        int events = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED
+                | Event.PROPERTY_REMOVED;
+        listener = new JcrEventListener(obContext, events, path, true, null, null) {
             private static final long serialVersionUID = 1L;
 
-            public IObservable getObservable() {
-                return nodeModel;
-            }
-
-            public void onEvent(Iterator<? extends IEvent> event) {
+            @Override
+            public void onEvent(EventIterator events) {
+                IObservationContext obContext = getObservationContext();
                 sync();
                 EventCollection<PluginConfigEvent> coll = new EventCollection<PluginConfigEvent>();
                 coll.add(new PluginConfigEvent(JcrPluginConfig.this, PluginConfigEvent.EventType.CONFIG_CHANGED));
                 obContext.notifyObservers(coll);
             }
+        };
 
-        });
+        listener.start();
     }
 
     public void stopObservation() {
-        obContext.unregisterObserver(nodeObserver);
+        if (listener != null) {
+            listener.stop();
+            listener = null;
+        }
     }
 
 }
