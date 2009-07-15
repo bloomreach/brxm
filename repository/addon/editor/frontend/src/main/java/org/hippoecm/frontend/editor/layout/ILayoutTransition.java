@@ -19,7 +19,7 @@ import org.apache.wicket.IClusterable;
 
 public interface ILayoutTransition extends IClusterable {
     @SuppressWarnings("unused")
-    private final String SVN_ID = "$Id$";
+    final static String SVN_ID = "$Id$";
 
     String getName();
 

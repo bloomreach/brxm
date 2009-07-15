@@ -25,7 +25,7 @@ import org.apache.wicket.IClusterable;
  */
 public interface ILayoutPad extends IClusterable {
     @SuppressWarnings("unused")
-    private final String SVN_ID = "$Id$";
+    final static String SVN_ID = "$Id$";
 
     enum Orientation {
         HORIZONTAL, VERTICAL
