@@ -26,6 +26,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.console.menu.check.CheckInOutDialog;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog;
+import org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog;
+
 import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
@@ -41,6 +43,7 @@ import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
 import org.hippoecm.frontend.plugins.console.menu.sorter.Sorter;
 import org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowDialog;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.tools.ExportProjectDialog;
 
 public class MenuPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -200,6 +203,15 @@ public class MenuPlugin extends RenderPlugin {
             }
         };
         add(new DialogLink("permissions-dialog", new Model("View Permissions"), dialogFactory, dialogService));
+
+        dialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog() {
+                return new ExportProjectDialog();
+            }
+        };
+        add(new DialogLink("project-export-dialog", new Model("Project Export"), dialogFactory, dialogService));
 
     }
 

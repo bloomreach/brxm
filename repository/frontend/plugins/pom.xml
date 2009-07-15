@@ -44,6 +44,11 @@
       <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>2.07.00-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-tools-projectexport</artifactId>
+      <version>2.07.00-SNAPSHOT</version>
+    </dependency>
 
     <dependency>
       <groupId>xerces</groupId>

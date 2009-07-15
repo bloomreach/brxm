@@ -13,22 +13,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.console.menu.cnd;
+package org.hippoecm.tools;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
-
-import javax.jcr.NamespaceException;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.OnParentVersionAction;
 
@@ -39,37 +43,86 @@ public class JcrCompactNodeTypeDefWriter {
     private final static String SVN_ID = "$Id$";
 
     private static final String INDENT = "  ";
-    private Writer out;
-    private Session session;
-    private Writer nsWriter ;
-    private Set<String> usedNamespaces = new HashSet<String>();
+    private StringWriter out;
+    private SortedSet<String> usedNamespaces = new TreeSet<String>();
+    private final NodeTypeManager ntMgr;
+    private final NamespaceRegistry nsReg;
 
-    public JcrCompactNodeTypeDefWriter(Session session) {
-        this.session = session;
+    public JcrCompactNodeTypeDefWriter(NodeTypeManager ntMgr, NamespaceRegistry nsReg) {
+        this.ntMgr = ntMgr;
+        this.nsReg = nsReg;
     }
 
-    public Writer write(LinkedHashSet<NodeType> types, boolean includeNS) throws IOException {
-        this.out = new StringWriter();;
-        if(includeNS) {
-            nsWriter  = new StringWriter();
+    private LinkedHashSet<NodeType> result;
+
+    private Set<String> visited;
+
+    public static String compactNodeTypeDef(Workspace workspace, String prefix) throws RepositoryException, IOException {
+        JcrCompactNodeTypeDefWriter cndwriter = new JcrCompactNodeTypeDefWriter(workspace.getNodeTypeManager(), workspace.getNamespaceRegistry());
+        return cndwriter.write(cndwriter.getNodeTypes(prefix));
+    }
+    
+    synchronized NodeType[] getNodeTypes(String namespacePrefix) throws RepositoryException {
+        NodeTypeIterator it = ntMgr.getAllNodeTypes();
+        List<NodeType> types = new LinkedList<NodeType>();
+        while (it.hasNext()) {
+            NodeType nt = it.nextNodeType();
+            if (nt.getName().startsWith(namespacePrefix)) {
+                types.add(nt);
+            }
         }
+        result = new LinkedHashSet<NodeType>();
+        visited = new HashSet<String>();
+        for (NodeType type : types) {
+            visit(namespacePrefix, type);
+        }
+        NodeType[] returnValue = result.toArray(new NodeType[result.size()]);
+        result = null;
+        visited = null;
+        return returnValue;
+    }
+
+    private void visit(String namespacePrefix, NodeType nt) {
+        if (visited.contains(nt.getName())) {
+            return;
+        }
+        visited.add(nt.getName());
+        for (NodeType superType : nt.getSupertypes()) {
+            visit(namespacePrefix, superType);
+        }
+        for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
+            visit(namespacePrefix, nd.getDeclaringNodeType());
+        }
+        if (nt.getName().startsWith(namespacePrefix+":")) {
+            result.add(nt);
+        }
+    }
+
+    public synchronized String write(NodeType[] types) throws RepositoryException, IOException {
+        out = new StringWriter();
         for (NodeType nt : types) {
             writeName(nt);
             writeSupertypes(nt);
             writeOptions(nt);
             writePropDefs(nt);
             writeNodeDefs(nt);
-            this.out.write("\n\n");
+            out.write("\n\n");
         }
-        if (nsWriter != null) {
-            nsWriter.write("\n");
-            this.out.close();
-            nsWriter.write(((StringWriter) out).getBuffer().toString());
-            this.out = nsWriter;
-            nsWriter = null;
+        out.flush();
+        String cnd = out.toString();
+        if(nsReg != null) {
+            out = new StringWriter();
+            for(String prefix : usedNamespaces) {
+                out.write("<'");
+                out.write(prefix);
+                out.write("'='");
+                out.write(escape(nsReg.getURI(prefix)));
+                out.write("'>\n");
+            }
+            out.flush();
+            cnd = out.toString() + (usedNamespaces.size() > 0 ? "\n" : "") + cnd;
         }
-        this.out.flush();
-        return out;
+        return cnd;
     }
 
     private void writeName(NodeType nt) throws IOException {
@@ -142,9 +195,9 @@ public class JcrCompactNodeTypeDefWriter {
             writeNodeDef(nt, childnodeDef);
         }
     }
+
     private void writeNodeDef(NodeType nt, NodeDefinition nd) throws IOException {
         out.write("\n" + INDENT + "+ ");
-
         String name = nd.getName();
         if (name.equals("*")) {
             out.write('*');
@@ -184,16 +237,13 @@ public class JcrCompactNodeTypeDefWriter {
         }
     }
 
-    /**
-     * write default types
-     * @param defType
-     */
     private void writeDefaultType(NodeType defType) throws IOException {
         if (defType != null && !defType.getName().equals("*")) {
             out.write(" = ");
             out.write(resolve(defType.getName()));
         }
     }
+
     private void writeValueConstraints(String[] vca) throws IOException {
         if (vca != null && vca.length > 0) {
             String vc = vca[0];
@@ -222,23 +272,8 @@ public class JcrCompactNodeTypeDefWriter {
 
             String prefix = name.substring(0, name.indexOf(":"));
             if (!"".equals(prefix)) {
-                // check for writing namespaces
-                if (nsWriter != null) {
-                    if (!usedNamespaces.contains(prefix)) {
-                        usedNamespaces.add(prefix);
-                        nsWriter.write("<'");
-                        nsWriter.write(prefix);
-                        nsWriter.write("'='");
-                        // TODO write namespace
-                        try {
-                            nsWriter.write(escape(session.getNamespaceURI(prefix)));
-                        } catch (NamespaceException e) {
-                            e.printStackTrace();
-                        } catch (RepositoryException e) {
-                            e.printStackTrace();
-                        }
-                        nsWriter.write("'>\n");
-                    }
+                if (!usedNamespaces.contains(prefix)) {
+                    usedNamespaces.add(prefix);
                 }
                 prefix += ":";
             }
