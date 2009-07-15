@@ -327,21 +327,28 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
                     Document document = ewf.obtainEditableInstance();
                     String uuid = document.getIdentity();
                     
-                    if (uuid != null && !"".equals(uuid)) {
-                        contentNode = session.getNodeByUUID(uuid);
-                    }
-                    
-                    if (customContentNodeBinder != null) {
-                        customContentNodeBinder.bind(content, contentNode);
-                    }
-                    
                     if (publishAfterUpdate) {
                         if (wf instanceof BasicReviewedActionsWorkflow) {
                             ((BasicReviewedActionsWorkflow) wf).requestPublication();
                         }
                     }
                     
+                    // TODO: Because the underlying workflow retrieves another session by using impersonate(),
+                    // the binding stuffs could not be merged all the time.
+                    // So, just commit the workflow first, 
+                    // then retrieve the object again and bind the node for now.
+                    
                     ewf.commitEditableInstance();
+                    
+                    if (customContentNodeBinder != null) {
+                        if (uuid != null && !"".equals(uuid)) {
+                            contentNode = session.getNodeByUUID(uuid);
+                        } else {
+                            contentNode = (Node) session.getItem(contentNode.getPath());
+                        }
+                        
+                        customContentNodeBinder.bind(content, contentNode);
+                    }
                 } else {
                     throw new ContentPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
                 }
