@@ -61,7 +61,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             }
             
             if (sortBy != null) {
-            //    hstQuery.addOrderByDescending(sortBy);
+                hstQuery.addOrderByDescending(sortBy);
             }
             
             if (query != null) {
