@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.PersistableObjectBeanManagerImpl;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -56,7 +57,7 @@ import org.hippoecm.hst.persistence.workflow.WorkflowPersistenceManager;
  * 
  * @version $Id$
  */
-public class BasePersistenceHstComponent extends org.hippoecm.hst.component.support.bean.BaseHstComponent {
+public class BasePersistenceHstComponent extends BaseHstComponent {
     
     public static final String DEFAULT_WRITABLE_USERNAME_PROPERTY = "writable.repository.user.name";
     public static final String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";
