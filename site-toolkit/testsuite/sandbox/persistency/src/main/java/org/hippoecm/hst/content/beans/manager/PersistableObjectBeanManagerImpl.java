@@ -226,12 +226,14 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
                         } catch (IllegalArgumentException e){
                             throw new ContentPersistenceException("hippo:docbase in facetselect does not contain a valid uuid", e);
                         }
-                        
+                        // this is always the canonical
                         curNode = session.getNodeByUUID(docbaseUuid);
-                    }
-                    
-                    if (curNode instanceof HippoNode) {
-                        curNode = ((HippoNode) curNode).getCanonicalNode();
+                    } else if (curNode instanceof HippoNode) {
+                        Node canonical = ((HippoNode) curNode).getCanonicalNode();
+                        if(canonical == null) {
+                            throw new ContentPersistenceException("Cannot create folders because there is no canonical node for '"+curNode.getPath()+"'");
+                        }
+                        curNode =  canonical;
                     }
                 }
             }
@@ -246,7 +248,11 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
             throws ContentPersistenceException {
         try {
             if (folderNode instanceof HippoNode) {
-                folderNode = ((HippoNode) folderNode).getCanonicalNode();
+                Node canonical = ((HippoNode) folderNode).getCanonicalNode();
+                if(canonical == null) {
+                    throw new ContentPersistenceException("Cannot createNodeByWorkflow because there is no canonical node for '"+folderNode.getPath()+"'");
+                }
+                folderNode = canonical;
             }
 
             WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
@@ -304,7 +310,11 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
                 
                 try {
                     if (contentNode instanceof HippoNode) {
-                        contentNode = ((HippoNode) contentNode).getCanonicalNode();
+                        Node canonical = ((HippoNode) contentNode).getCanonicalNode();
+                        if(canonical == null) {
+                            throw new ContentPersistenceException("Cannot update HippoBean because there is no canonical node for '"+contentNode.getPath()+"'");
+                        }
+                        contentNode = canonical;
                     }
                     
                     binder = contentNodeBinders.get(contentNode.getPrimaryNodeType().getName());
@@ -344,7 +354,11 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
                 Node contentNode = contentBean.getNode();
                 
                 if (contentNode instanceof HippoNode) {
-                    contentNode = ((HippoNode) contentNode).getCanonicalNode();
+                    Node canonical = ((HippoNode) contentNode).getCanonicalNode();
+                    if(canonical == null) {
+                        throw new ContentPersistenceException("Cannot update HippoBean because there is no canonical node for '"+contentNode.getPath()+"'");
+                    }
+                    contentNode = canonical;
                 }
                 
                 WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
@@ -399,7 +413,11 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
                 Node folderNode = folderBean.getNode();
                 
                 if (folderNode instanceof HippoNode) {
-                    folderNode = ((HippoNode) folderNode).getCanonicalNode();
+                    Node canonical = ((HippoNode) folderNode).getCanonicalNode();
+                    if(canonical == null) {
+                        throw new ContentPersistenceException("Cannot remove HippoBean because there is no canonical node for '"+folderNode.getPath()+"'");
+                    }
+                    folderNode = canonical;
                 }
                 
                 WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
