@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class JavaLayoutPad implements ILayoutPad {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private String name;

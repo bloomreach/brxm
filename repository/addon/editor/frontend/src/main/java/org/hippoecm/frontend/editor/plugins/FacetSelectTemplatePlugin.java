@@ -197,7 +197,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
                 add(new DialogLink("docbase", displayModel, dialogFactory, getDialogService()));
 
                 add(new DataView("arguments", provider) {
-                	public void populateItem(final Item item) {
+                    public void populateItem(final Item item) {
                             Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getModel()).getNode();
                             final int index = ((Integer) item.getModelObject()).intValue();
                             try {
@@ -250,7 +250,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
             } else {
                 add(new Label("docbase", displayModel));
                 add(new DataView("arguments", provider) {
-                	public void populateItem(final Item item) {
+                    public void populateItem(final Item item) {
                             try {
                                 Node node = ((JcrNodeModel)FacetSelectTemplatePlugin.this.getModel()).getNode();
                                 int index = ((Integer)item.getModelObject()).intValue();

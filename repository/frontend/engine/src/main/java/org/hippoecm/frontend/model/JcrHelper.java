@@ -25,6 +25,8 @@ import javax.jcr.nodetype.NodeTypeManager;
  * Helper class for common jcr operations
  */
 public class JcrHelper {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private JcrHelper() {
     }

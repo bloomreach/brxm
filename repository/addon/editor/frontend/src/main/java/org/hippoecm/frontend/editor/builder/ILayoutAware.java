@@ -25,6 +25,8 @@ import org.hippoecm.frontend.service.IRenderService;
  * layout by addressing the {@link ILayoutControl}.
  */
 public interface ILayoutAware extends IRenderService {
+    @SuppressWarnings("unused")
+    private final String SVN_ID = "$Id$";
 
     void setLayoutControl(ILayoutControl control);
 

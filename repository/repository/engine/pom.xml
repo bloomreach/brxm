@@ -223,7 +223,7 @@
           </systemProperties>
           <excludes>
             <exclude>**/*PerfTestCase.java</exclude>
-	    <exclude>**/ConfigurationTest.java</exclude>
+            <exclude>**/ConfigurationTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>

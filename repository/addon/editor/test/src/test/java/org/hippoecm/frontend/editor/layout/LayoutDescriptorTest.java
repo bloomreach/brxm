@@ -25,6 +25,8 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.junit.Test;
 
 public class LayoutDescriptorTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testDeserialization() {

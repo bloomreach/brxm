@@ -19,6 +19,8 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 
 public class TypeDescriptorEvent implements IEvent {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public enum EventType {
         FIELD_ADDED, FIELD_CHANGED, FIELD_REMOVED

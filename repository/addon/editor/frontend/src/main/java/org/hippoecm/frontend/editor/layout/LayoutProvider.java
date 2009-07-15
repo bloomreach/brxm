@@ -37,6 +37,9 @@ import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 public class LayoutProvider implements ILayoutProvider {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(LayoutProvider.class);

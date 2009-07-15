@@ -84,9 +84,9 @@ class SPIHippoRepository extends HippoRepositoryImpl {
             public int getItemCacheSize() {
                 return 10000;
             }
-	    public int getPollTimeout() {
-	        return 1000;
-	    }
+            public int getPollTimeout() {
+                return 1000;
+            }
         });
         repository = new DecoratorFactoryImpl(clientService, adapterFactory, clientRepository).getRepositoryDecorator(repository);
     }

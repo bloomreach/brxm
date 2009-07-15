@@ -16,6 +16,9 @@
 package org.hippoecm.frontend.model.event;
 
 public abstract class Observer implements IObserver {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     IObservable observable;

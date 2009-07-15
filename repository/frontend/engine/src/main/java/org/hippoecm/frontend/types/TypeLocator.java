@@ -26,6 +26,9 @@ import org.hippoecm.frontend.model.ocm.StoreException;
  * It should not be used by store implementations.
  */
 public class TypeLocator implements IClusterable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private IStore<ITypeDescriptor>[] stores;

@@ -52,7 +52,7 @@ public class SchedulerWorkflowModule implements WorkflowModule {
                 handle.checkout();
             }
             Node request = handle.addNode("hippo:request","hipposched:job");
-	    request.addMixin("mix:referenceable");
+            request.addMixin("mix:referenceable");
             String detail = request.getPath();
             JobDetail jobDetail = new JobDetail(detail, null, WorkflowJob.class);
             JobDataMap jobDataMap = new JobDataMap();
