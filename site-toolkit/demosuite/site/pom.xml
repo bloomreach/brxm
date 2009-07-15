@@ -153,6 +153,12 @@
       <artifactId>hst-client</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- temporarily added as long as in sandbox -->
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
+      <artifactId>hst-sandbox-persistency</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

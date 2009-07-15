@@ -26,5 +26,32 @@
     <c:if test="${not empty document.image}">
         <img src="<hst:link hippobean="${document.image.picture}"/>"/>
     </c:if>
+    
+  <hst:actionURL var="addURL">
+    <hst:param name="type" value="add"/>
+  </hst:actionURL>
+  
+  <div>
+    <form method="POST" action="${addURL}">
+      <h4>Enter your comment here:</h4>
+      <table>
+        <tr>
+          <th>Title:</th>
+          <td><input type="text" name="title" value="" /></td>
+        </tr>
+        <tr>
+          <th valign="top">Comment:</th>
+          <td><textarea name="comment" rows="4" cols="40"></textarea></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input type="submit" value="Submit"/>
+            <input type="reset" value="Reset"/>
+          </td>
+         </tr>
+      </table>
+    </form>
+  </div>
+  
 </div>
 

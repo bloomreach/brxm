@@ -12,7 +12,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.demo.beans.GeneralPage;
+import org.hippoecm.hst.demo.beans.BaseBean;
 import org.hippoecm.hst.demo.util.PageableCollection;
 import org.hippoecm.hst.demo.util.SearchResult;
 import org.slf4j.Logger;
@@ -88,8 +88,8 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             while (iterator.hasNext() && count <= DEFAULT_PAGE_SIZE) {
                 HippoBean bean = iterator.nextHippoBean();
                 // note: bean can be null
-                if (bean != null && bean instanceof GeneralPage) {
-                    GeneralPage pageBean = (GeneralPage) bean;
+                if (bean != null && bean instanceof BaseBean) {
+                    BaseBean pageBean = (BaseBean) bean;
                     results.addItem(new SearchResult<HippoBean>(bean, pageBean.getTitle(), pageBean.getSummary(),
                             pageBean.getDate()));
                     count++;

@@ -15,9 +15,10 @@
     limitations under the License.
 -->
 <hst-content-beans>
-    <annotated-class>org.hippoecm.hst.demo.beans.TextPage</annotated-class>
-    <annotated-class>org.hippoecm.hst.demo.beans.NewsPage</annotated-class>
+    <annotated-class>org.hippoecm.hst.demo.beans.TextBean</annotated-class>
+    <annotated-class>org.hippoecm.hst.demo.beans.NewsBean</annotated-class>
+    <annotated-class>org.hippoecm.hst.demo.beans.CommentBean</annotated-class>
+    <annotated-class>org.hippoecm.hst.demo.beans.CommentLinkBean</annotated-class>
     <annotated-class>org.hippoecm.hst.demo.beans.ImageLinkBean</annotated-class>
-    <annotated-class>org.hippoecm.hst.demo.beans.ImageBean</annotated-class>
-    
+    <annotated-class>org.hippoecm.hst.demo.beans.ImageBean</annotated-class>  
 </hst-content-beans>
