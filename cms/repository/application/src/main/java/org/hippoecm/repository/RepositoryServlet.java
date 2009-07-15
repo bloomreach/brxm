@@ -192,7 +192,7 @@ public class RepositoryServlet extends HttpServlet {
         if (repository != null) {
             repository.close();
             repository = null;
-	}
+        }
 
         // done
         log.warn("Repository closed.");

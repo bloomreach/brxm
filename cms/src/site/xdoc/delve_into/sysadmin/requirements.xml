@@ -49,7 +49,7 @@
         </td>
         <td>
           <a href='http://www.microsoft.com'>Internet Explorer 6 and 7</a>
-	  <p>Internet Explorer 7 is a faster browser, and generally renders better than 6. If possible, it's advisable to upgrade.</p>
+          <p>Internet Explorer 7 is a faster browser, and generally renders better than 6. If possible, it's advisable to upgrade.</p>
         </td>
        </tr>
       </table>
@@ -61,12 +61,12 @@
       <span class='OS-48 icon-48'/>
      </td>
      <td>The Hippo development team tests Hippo CMS on Windows XP, Mac OS X and Ubuntu Linux.
-	<p>
-	If you need guaranteed support for a specific client OS (for example, in a virtualized environment), contact <a href="http://www.onehippo.com/en/support">Hippo Support</a> and ask for Certified Stack support, which is part of the Hippo Support License.
-	<ul>
-	<li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
-	</ul>
-	</p>
+        <p>
+        If you need guaranteed support for a specific client OS (for example, in a virtualized environment), contact <a href="http://www.onehippo.com/en/support">Hippo Support</a> and ask for Certified Stack support, which is part of the Hippo Support License.
+        <ul>
+        <li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
+        </ul>
+        </p>
      </td>
     </tr>
     <tr>
@@ -96,9 +96,9 @@
      </td>
      <td>
        Hippo CMS is a <a href="http://java.sun.com">Java</a> based server application. It runs on most operating systems that run Java. We generally test on Windows XP and Ubuntu Linux. If you need guaranteed support for a specific server OS (Red Hat, Suse, IBM, HP, Sun or other operating system), contact <a href="http://www.onehippo.com/en/support">Hippo Support</a> and ask for Certified Stack support, which is part of the Hippo Support License.
-	<ul>
-	<li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
-	</ul>
+        <ul>
+        <li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
+        </ul>
       </td>
      </tr>
      <tr>
@@ -138,12 +138,12 @@
           <a href='http://java.com/en/download/index.jsp'>Sun Microsystems</a>
         </td>
        </tr>
-	</table>
+        </table>
 
           If you need guaranteed support for a specific version of Java (IBM, BEA, etc), contact <a href="http://www.onehippo.com/en/support">Hippo Support</a> and ask for Certified Stack support, which is part of the Hippo Support License.
-	<ul>
-	<li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
-	</ul>
+        <ul>
+        <li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
+        </ul>
 
      </div>
     </td>
@@ -166,7 +166,7 @@
           <td>
            <a href='http://jetty.mortbay.com/jetty/'>Jetty</a> <a href='http://docs.codehaus.org/display/JETTY/Downloading+Jetty'>6.1</a>,
              also included in <a href='../quickstart.html'>Hippo CMS quickstart-bin package</a>. 
-	     <p>Very useful for development and testing, sometimes also the best option for production.</p>
+             <p>Very useful for development and testing, sometimes also the best option for production.</p>
           </td>
          </tr>
          <tr>
@@ -175,27 +175,27 @@
           </td>
           <td>
            <a href='http://tomcat.apache.org/'>Tomcat</a> <a href="http://tomcat.apache.org/download-60.cgi">6.0</a> and 5.5. 
-	   <p>Generally used in production environments.</p>
+           <p>Generally used in production environments.</p>
           </td>
          </tr>
         </table>
-	<p>
-	Get Hippo Certified Stack support if you need to use the following containers:
+        <p>
+        Get Hippo Certified Stack support if you need to use the following containers:
 
-	<ul>
-		<li>IBM Websphere</li>
-		<li>BEA Weblogic</li>
-		<li>JBoss</li>
-		<li>Sun GlassFish</li>
-	</ul>
-	</p>
-	<p>
-	If you're running Hippo CMS in a production environment (either clustered or not), it might be useful to get some Systems Support from <a href="http://www.onehippo.com/en/support">Hippo</a>. These guys know how to tune Hippo CMS to the max like no other :)
-	</p>
+        <ul>
+                <li>IBM Websphere</li>
+                <li>BEA Weblogic</li>
+                <li>JBoss</li>
+                <li>Sun GlassFish</li>
+        </ul>
+        </p>
+        <p>
+        If you're running Hippo CMS in a production environment (either clustered or not), it might be useful to get some Systems Support from <a href="http://www.onehippo.com/en/support">Hippo</a>. These guys know how to tune Hippo CMS to the max like no other :)
+        </p>
 
-	<ul>
-	<li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
-	</ul>
+        <ul>
+        <li><a href="http://www.onehippo.com/en/support">Hippo Certified Stack support</a></li>
+        </ul>
        </div>
     </td>
    </tr>
@@ -216,7 +216,7 @@
           <a href='http://db.apache.org/derby/'>Apache Derby</a> &gt; 10.0
             is embedded and configured as default and runs "out of the box", but not intended for production environments.
           </td>Sun's Java Virtual Machine, JVM 6 (or 5).
-Sun logo 	Sun Microsystems
+Sun logo         Sun Microsystems
          </tr>
          <tr>
           <td>
@@ -225,10 +225,9 @@ Sun logo 	Sun Microsystems
            <a href="http://www.mysql.com">MySQL 5.0</a> and <a href="http://www.mysql.com">5.1</a>, generally used in production.
           </td>
          </tr>
-	</table>
-	</div>
-
-	If you already have a license for one of the following databases, and want to hook them up to Hippo CMS, contact Hippo for <a href="http://www.onehippo.com/en/support">Certified Stack Support</a>:
+        </table>
+        </div>
+        If you already have a license for one of the following databases, and want to hook them up to Hippo CMS, contact Hippo for <a href="http://www.onehippo.com/en/support">Certified Stack Support</a>:
        <div class='nav'>
         <table>
          <tr>

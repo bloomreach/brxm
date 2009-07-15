@@ -19,6 +19,9 @@ import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 
 public class SessionClassLoaderModel implements IModel {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public Object getObject() {

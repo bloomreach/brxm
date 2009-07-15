@@ -18,6 +18,8 @@ package org.hippoecm.frontend.editor.builder;
 import org.apache.wicket.IClusterable;
 
 public interface IBuilderListener extends IClusterable {
+    @SuppressWarnings("unused")
+    private final String SVN_ID = "$Id$";
 
     void onFocus();
 

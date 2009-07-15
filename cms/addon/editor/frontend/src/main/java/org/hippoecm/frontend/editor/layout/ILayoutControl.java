@@ -23,6 +23,8 @@ import org.apache.wicket.IClusterable;
  * Interface for layout aware services to control their position.
  */
 public interface ILayoutControl extends IClusterable {
+    @SuppressWarnings("unused")
+    private final String SVN_ID = "$Id$";
 
     List<ILayoutTransition> getTransitions();
     

@@ -25,6 +25,8 @@ import org.apache.wicket.util.resource.IResourceStream;
  * of the plugin correspond to pads in the layout.
  */
 public interface ILayoutDescriptor extends IClusterable {
+    @SuppressWarnings("unused")
+    private final String SVN_ID = "$Id$";
 
     String getPluginClass();
 

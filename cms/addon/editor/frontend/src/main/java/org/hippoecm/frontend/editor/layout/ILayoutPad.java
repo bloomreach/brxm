@@ -24,6 +24,8 @@ import org.apache.wicket.IClusterable;
  * child render service registers.  It allows the child to reposition itself.
  */
 public interface ILayoutPad extends IClusterable {
+    @SuppressWarnings("unused")
+    private final String SVN_ID = "$Id$";
 
     enum Orientation {
         HORIZONTAL, VERTICAL

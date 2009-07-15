@@ -46,6 +46,9 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class CreateCompoundTypeDialog extends Wizard implements IDialogService.Dialog {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     class TypeDetailStep extends WizardStep {

@@ -18,6 +18,8 @@ package org.hippoecm.frontend.editor.layout;
 import org.apache.wicket.IClusterable;
 
 public interface ILayoutTransition extends IClusterable {
+    @SuppressWarnings("unused")
+    private final String SVN_ID = "$Id$";
 
     String getName();
 
