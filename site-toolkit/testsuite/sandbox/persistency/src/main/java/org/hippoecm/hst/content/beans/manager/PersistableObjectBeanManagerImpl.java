@@ -364,28 +364,46 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
                 WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 Workflow wf = wfm.getWorkflow(documentNodeWorkflowCategory, contentNode);
                 
-                if (wf instanceof EditableWorkflow && customContentNodeBinder != null) {
-                    EditableWorkflow ewf = (EditableWorkflow) wf;
-                    Document document = ewf.obtainEditableInstance();
-                    String uuid = document.getIdentity();
-                    
-                    if (uuid != null && !"".equals(uuid)) {
-                        contentNode = session.getNodeByUUID(uuid);
-                    }
+                String handleUuid = contentNode.getParent().getUUID();
                 
-                    boolean changed = customContentNodeBinder.bind(content, contentNode);
+                boolean nodeReplaced = false;
+                if(customContentNodeBinder != null) {
+                    if (wf instanceof EditableWorkflow) {
+                        EditableWorkflow ewf = (EditableWorkflow) wf;
+                        Document document = ewf.obtainEditableInstance();
+                        String uuid = document.getIdentity();
+                        
+                        if (uuid != null && !"".equals(uuid)) {
+                            contentNode = session.getNodeByUUID(uuid);
+                        }
                     
-                    if (changed) {
-                        contentNode.save();
-                        ewf.commitEditableInstance();
+                        boolean changed = customContentNodeBinder.bind(content, contentNode);
+                        
+                        if (changed) {
+                            contentNode.save();
+                            ewf.commitEditableInstance();
+                            nodeReplaced = true;
+                        } else {
+                            ewf.disposeEditableInstance();
+                        }
                     } else {
-                        ewf.disposeEditableInstance();
+                        throw new ContentPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
                     }
-                } else {
-                    throw new ContentPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
                 }
-
+                
                 if (workflowCallbackHandler != null) {
+                    if(nodeReplaced) {
+                        // we first need to recreate the wf as the original node is replaced by commitEditableInstance
+                        // TODO : can this be done more easily instead of fetching any document below the handle again?
+                        // if we do not do this now, we get an item does not exist anymore exception
+                        Node handle = session.getNodeByUUID(handleUuid);
+                        if(handle.hasNode(handle.getName()))  {
+                            contentNode = handle.getNode(handle.getName());
+                            wf = wfm.getWorkflow(documentNodeWorkflowCategory, contentNode);
+                        } else {
+                            throw new ContentPersistenceException("The handle does not contain documents. Cannot call workflowCallbackHandler");
+                        }
+                    }
                     if (wf instanceof FullReviewedActionsWorkflow) {
                         workflowCallbackHandler.processWorkflow((FullReviewedActionsWorkflow) wf);
                     } else {
