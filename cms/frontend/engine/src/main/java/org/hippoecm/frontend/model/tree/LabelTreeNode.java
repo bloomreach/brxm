@@ -16,13 +16,14 @@
 package org.hippoecm.frontend.model.tree;
 
 import java.util.Enumeration;
+import java.io.Serializable;
 
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public class LabelTreeNode implements TreeNode {
+public class LabelTreeNode implements TreeNode, Serializable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
