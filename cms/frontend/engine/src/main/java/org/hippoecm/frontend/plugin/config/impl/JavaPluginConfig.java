@@ -366,7 +366,7 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
                             }
 
                             public Object getValue() {
-                                return entry.getValue();
+                                return JavaPluginConfig.this.get(entry.getKey());
                             }
 
                             public Object setValue(Object value) {

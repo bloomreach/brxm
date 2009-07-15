@@ -31,12 +31,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PreviewClusterConfig extends AbstractClusterDecorator {
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(PreviewClusterConfig.class);
+
+    private final class PreviewPluginConfig extends JavaPluginConfig {
+        private static final long serialVersionUID = 1L;
+
+        private final IPluginConfig config;
+
+        private PreviewPluginConfig(String name, IPluginConfig config) {
+            super(name);
+            this.config = config;
+        }
+
+        @Override
+        public Object get(Object key) {
+            if ("model.effective".equals(key)) {
+                return config;
+            }
+            return super.get(key);
+        }
+    }
 
     private String clusterConfigModel;
     private String selectedPluginModel;
@@ -83,8 +103,8 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
         return null;
     }
 
-    private IPluginConfig getEditorConfig(String clazz, IPluginConfig config) {
-        IPluginConfig previewWrapper = new JavaPluginConfig(config.getName() + "-preview");
+    private IPluginConfig getEditorConfig(String clazz, final IPluginConfig config) {
+        IPluginConfig previewWrapper = new PreviewPluginConfig(config.getName() + "-preview", config);
         previewWrapper.put("plugin.class", clazz);
         previewWrapper.put("model.effective", config);
 
