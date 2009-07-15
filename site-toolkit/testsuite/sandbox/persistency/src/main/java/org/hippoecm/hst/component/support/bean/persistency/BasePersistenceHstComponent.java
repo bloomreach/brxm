@@ -29,6 +29,7 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.persistence.ContentNodeBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
+import org.hippoecm.hst.persistence.workflow.WorkflowPersistenceManager;
 
 /**
  * A base HstComponent implementation to provide some facility methods for accessing content node POJO objects,
@@ -100,8 +101,8 @@ public class BasePersistenceHstComponent extends org.hippoecm.hst.component.supp
      * @param session
      * @return
      */
-    protected ContentPersistenceManager getContentPersistenceManager(Session session) {
-        return getContentPersistenceManager(session, null);
+    protected WorkflowPersistenceManager getWorkflowPersistenceManager(Session session) {
+        return getWorkflowPersistenceManager(session, null);
     }
     
     /**
@@ -110,32 +111,8 @@ public class BasePersistenceHstComponent extends org.hippoecm.hst.component.supp
      * @param contentNodeBinders
      * @return
      */
-    protected ContentPersistenceManager getContentPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders) {
-        return getContentPersistenceManager(session, contentNodeBinders, false);
-    }
-    
-    /**
-     * Returns a <CODE>ContentPersistenceManager</CODE> instance with request-publishing-option after invoking
-     * any <CODE>update()</CODE> method.
-     * @param session
-     * @param publishAfterUpdate
-     * @return
-     */
-    protected ContentPersistenceManager getContentPersistenceManager(Session session, boolean publishAfterUpdate) {
-        return getContentPersistenceManager(session, null, publishAfterUpdate);
-    }
-    
-    /**
-     * Returns a <CODE>ContentPersistenceManager</CODE> instance with custom binders map and 
-     * request-publishing-option after invoking any <CODE>update()</CODE> method.
-     * @param session
-     * @param contentNodeBinders
-     * @param publishAfterUpdate
-     * @return
-     */
-    protected ContentPersistenceManager getContentPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders, boolean publishAfterUpdate) {
+    protected WorkflowPersistenceManager getWorkflowPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders) {
         PersistableObjectBeanManagerImpl cpm = new PersistableObjectBeanManagerImpl(session, this.objectConverter, contentNodeBinders);
-        cpm.setPublishAfterUpdate(publishAfterUpdate);
         return cpm;
     }
     

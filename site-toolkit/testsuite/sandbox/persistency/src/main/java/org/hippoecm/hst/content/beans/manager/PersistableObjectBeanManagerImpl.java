@@ -15,9 +15,11 @@
  */
 package org.hippoecm.hst.content.beans.manager;
 
+import java.rmi.RemoteException;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -25,13 +27,17 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.persistence.ContentNodeBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
+import org.hippoecm.hst.persistence.workflow.WorkflowCallbackHandler;
+import org.hippoecm.hst.persistence.workflow.WorkflowPersistenceManager;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
+import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
@@ -55,7 +61,7 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
  * 
  * @version $Id$
  */
-public class PersistableObjectBeanManagerImpl implements ContentPersistenceManager {
+public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceManager {
 
     /**
      * {@link ObjectBeanManager} instance provided by HST content-beans to provide {@link #getObject(String)} facility. 
@@ -102,6 +108,8 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
      */
     protected boolean publishAfterUpdate;
     
+    protected WorkflowCallbackHandler workflowCallbackHandler;
+    
     /**
      * Constructor
      * @param session the session for this manager context
@@ -122,7 +130,8 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
         this.session = session;
         this.contentNodeBinders = contentNodeBinders;
     }
-    
+   
+
     /**
      * Get an object from the JCR repository
      * 
@@ -327,27 +336,23 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
                     Document document = ewf.obtainEditableInstance();
                     String uuid = document.getIdentity();
                     
-                    if (publishAfterUpdate) {
-                        if (wf instanceof BasicReviewedActionsWorkflow) {
-                            ((BasicReviewedActionsWorkflow) wf).requestPublication();
-                        }
+                    if (uuid != null && !"".equals(uuid)) {
+                        contentNode = session.getNodeByUUID(uuid);
                     }
-                    
-                    // TODO: Because the underlying workflow retrieves another session by using impersonate(),
-                    // the binding stuffs could not be merged all the time.
-                    // So, just commit the workflow first, 
-                    // then retrieve the object again and bind the node for now.
+                
+                    if (customContentNodeBinder != null) {
+                        customContentNodeBinder.bind(content, contentNode);
+                        contentNode.save();
+                    }
                     
                     ewf.commitEditableInstance();
                     
-                    if (customContentNodeBinder != null) {
-                        if (uuid != null && !"".equals(uuid)) {
-                            contentNode = session.getNodeByUUID(uuid);
+                    if (workflowCallbackHandler != null) {
+                        if (wf instanceof FullReviewedActionsWorkflow) {
+                            workflowCallbackHandler.processWorkflow((FullReviewedActionsWorkflow) wf);
                         } else {
-                            contentNode = (Node) session.getItem(contentNode.getPath());
+                            throw new ContentPersistenceException("Callback cannot be called because the workflow is not applicable: " + wf);
                         }
-                        
-                        customContentNodeBinder.bind(content, contentNode);
                     }
                 } else {
                     throw new ContentPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
@@ -360,6 +365,11 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
         }
     }
     
+    
+    public void fullReviewedUpdate(FullReviewedActionsWorkflow fullReviewedActionsWorkflow) throws MappingException, RemoteException, WorkflowException, RepositoryException {
+      //  fullReviewedActionsWorkflow.publish();
+    }
+
     /**
      * Removes the content node which is mapped to the object.
      * @param content
@@ -521,6 +531,10 @@ public class PersistableObjectBeanManagerImpl implements ContentPersistenceManag
      */
     public void setDocumentAdditionWorkflowCategory(String documentAdditionWorkflowCategory) {
         this.documentAdditionWorkflowCategory = documentAdditionWorkflowCategory;
+    }
+    
+    public void setWorkflowCallbackHandler(WorkflowCallbackHandler<? extends Workflow> workflowCallbackHandler) {
+        this.workflowCallbackHandler = workflowCallbackHandler;
     }
     
 }

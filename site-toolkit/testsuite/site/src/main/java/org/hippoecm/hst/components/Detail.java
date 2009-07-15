@@ -31,7 +31,10 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
+import org.hippoecm.hst.persistence.workflow.WorkflowCallbackHandler;
+import org.hippoecm.hst.persistence.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,15 +86,19 @@ public class Detail extends BasePersistenceHstComponent {
             
             if (title != null && !"".equals(title.trim()) && comment != null) {
                 Session persistableSession = null;
-                ContentPersistenceManager cpm = null;
+                WorkflowPersistenceManager cpm = null;
                 
                 try {
                     // retrieves writable session. NOTE: this session should be logged out manually!
                     persistableSession = getPersistableSession(request);
                     
-                    boolean requestPublishingAfterUpdate = true;
-                    // create ContentPersistenceManager with request-publishing-option
-                    cpm = getContentPersistenceManager(persistableSession, requestPublishingAfterUpdate);
+                    cpm = getWorkflowPersistenceManager(persistableSession);
+                    cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                        public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                            FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
+                            fraw.requestPublication();
+                        }
+                    });
                     
                     // retrieve comments folder path
                     String commentsFolderPath = getCommentsFolderPath(request);
@@ -138,9 +145,8 @@ public class Detail extends BasePersistenceHstComponent {
                 try {
                     // Retrieve writable session. NOTE: this session should be logged out manually!
                     persistableSession = getPersistableSession(request);
-                    boolean requestPublishingAfterUpdate = true;
                     // create ContentPersistenceManager with request-publishing-option
-                    cpm = getContentPersistenceManager(persistableSession, requestPublishingAfterUpdate);
+                    cpm = getWorkflowPersistenceManager(persistableSession);
                     
                     TextPage commentPage = (TextPage) cpm.getObject(commentPath);
                     
