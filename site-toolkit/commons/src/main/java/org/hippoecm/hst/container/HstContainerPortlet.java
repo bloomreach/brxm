@@ -35,8 +35,12 @@ import javax.portlet.ResourceResponse;
 
 import org.hippoecm.hst.core.component.HstPortletResponseState;
 import org.hippoecm.hst.core.component.HstResponseState;
+import org.hippoecm.hst.logging.Logger;
+import org.hippoecm.hst.site.HstServices;
 
 public class HstContainerPortlet extends GenericPortlet {
+    
+    private static final String LOGGER_CATEGORY_NAME = HstContainerPortlet.class.getName();
 
     public static final String HST_SERVLET_PATH_PARAM = "hstServletPath";
     
@@ -44,10 +48,14 @@ public class HstContainerPortlet extends GenericPortlet {
     
     public static final String HST_PATH_PARAM_NAME = "_hp";
     
+    public static final String HST_HEADER_PAGE_PARAM_NAME = "HeaderPage";
+    
     protected PortletContext portletContext;
     
     protected String hstServletPath = "/content";
     protected String defaultHstPathInfo;
+    
+    protected String headerPage;
 
     public void init(PortletConfig config) throws PortletException {
         super.init(config);
@@ -64,6 +72,12 @@ public class HstContainerPortlet extends GenericPortlet {
 
         if (param != null) {
             this.defaultHstPathInfo = param;
+        }
+        
+        param = config.getInitParameter(HST_HEADER_PAGE_PARAM_NAME);
+        
+        if (param != null) {
+            headerPage = param;
         }
     }
 
@@ -85,8 +99,20 @@ public class HstContainerPortlet extends GenericPortlet {
         processRequest(request, response);
     }
 
-    public void doCustom(RenderRequest request, RenderResponse response) throws PortletException, IOException {
-        processRequest(request, response);
+    @Override
+    protected void doHeaders(RenderRequest request, RenderResponse response) {
+        super.doHeaders(request, response);
+        
+        if (headerPage != null) {
+            try {
+                getPortletContext().getRequestDispatcher(headerPage).include(request, response);
+            } catch (Exception e) {
+                Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+                if (logger != null) {
+                    logger.warn("Failed to include header page - {} : {}", headerPage, e);
+                }
+            }
+        }
     }
 
     @Override

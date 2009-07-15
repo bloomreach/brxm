@@ -20,10 +20,10 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
              xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
     
-    <portlet id="SiteHomePortlet">
-        <description>This is the Site Home portlet</description>
-        <portlet-name>SiteHomePortlet</portlet-name>
-        <display-name>SiteHomePortlet</display-name>
+    <portlet id="NewsDemoPortlet">
+        <description>This is the News Demo portlet</description>
+        <portlet-name>NewsDemoPortlet</portlet-name>
+        <display-name>News Demo</display-name>
         <portlet-class>org.hippoecm.hst.container.HstContainerPortlet</portlet-class>
         <init-param>
             <name>hstServletPath</name>
@@ -31,7 +31,11 @@
         </init-param>
         <init-param>
             <name>hstPathInfo</name>
-            <value>/home</value>
+            <value>/news</value>
+        </init-param>
+        <init-param>
+            <name>HeaderPage</name>
+            <value>/WEB-INF/jsp/portlet-common-headers.jsp</value>
         </init-param>
         <expiration-cache>0</expiration-cache>
         <supports>
@@ -40,9 +44,9 @@
         </supports>
         <supported-locale>en</supported-locale>
         <portlet-info>
-            <title>SiteHomePortlet</title>
-            <short-title>SiteHomePortlet</short-title>
-            <keywords>site</keywords>
+            <title>News Demo</title>
+            <short-title>News Demo</short-title>
+            <keywords>news</keywords>
         </portlet-info>
     </portlet>
     
