@@ -331,7 +331,7 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
                 WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 Workflow wf = wfm.getWorkflow(documentNodeWorkflowCategory, contentNode);
                 
-                if (wf instanceof EditableWorkflow) {
+                if (wf instanceof EditableWorkflow && customContentNodeBinder != null) {
                     EditableWorkflow ewf = (EditableWorkflow) wf;
                     Document document = ewf.obtainEditableInstance();
                     String uuid = document.getIdentity();
@@ -346,16 +346,16 @@ public class PersistableObjectBeanManagerImpl implements WorkflowPersistenceMana
                     }
                     
                     ewf.commitEditableInstance();
-                    
-                    if (workflowCallbackHandler != null) {
-                        if (wf instanceof FullReviewedActionsWorkflow) {
-                            workflowCallbackHandler.processWorkflow((FullReviewedActionsWorkflow) wf);
-                        } else {
-                            throw new ContentPersistenceException("Callback cannot be called because the workflow is not applicable: " + wf);
-                        }
-                    }
                 } else {
                     throw new ContentPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
+                }
+
+                if (workflowCallbackHandler != null) {
+                    if (wf instanceof FullReviewedActionsWorkflow) {
+                        workflowCallbackHandler.processWorkflow((FullReviewedActionsWorkflow) wf);
+                    } else {
+                        throw new ContentPersistenceException("Callback cannot be called because the workflow is not applicable: " + wf);
+                    }
                 }
             } catch (Exception e) {
                 throw new ContentPersistenceException(e);
