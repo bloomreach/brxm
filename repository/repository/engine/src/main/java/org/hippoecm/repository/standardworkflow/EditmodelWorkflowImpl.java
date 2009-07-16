@@ -124,8 +124,8 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 }
             }
         }
-        if (target.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
-            NodeIterator nodes = target.getNode(HippoNodeType.HIPPO_PROTOTYPE).getNodes(HippoNodeType.HIPPO_PROTOTYPE);
+        if (target.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {
+            NodeIterator nodes = target.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes(HippoNodeType.HIPPO_PROTOTYPE);
             while (nodes.hasNext()) {
                 Node child = nodes.nextNode();
                 if (!child.isNodeType("nt:unstructured")) {
@@ -169,8 +169,8 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
     }
 
     static Node getDraftPrototype(Node subject) throws RepositoryException {
-        if (subject.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
-            NodeIterator nodes = subject.getNode(HippoNodeType.HIPPO_PROTOTYPE).getNodes();
+        if (subject.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {
+            NodeIterator nodes = subject.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes();
             while (nodes.hasNext()) {
                 Node child = nodes.nextNode();
                 if (child.isNodeType("nt:unstructured")) {
@@ -225,10 +225,10 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
         }
 
         // copy prototype
-        if (subject.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
+        if (subject.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {
             draft = null;
             current = null;
-            NodeIterator nodes = subject.getNode(HippoNodeType.HIPPO_PROTOTYPE).getNodes();
+            NodeIterator nodes = subject.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes();
             while (nodes.hasNext()) {
                 Node child = nodes.nextNode();
                 if (child.isNodeType("nt:unstructured")) {
