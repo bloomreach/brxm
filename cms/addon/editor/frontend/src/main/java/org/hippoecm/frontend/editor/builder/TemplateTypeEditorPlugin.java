@@ -145,7 +145,6 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
         }
 
         try {
-            ITypeDescriptor type = builder.getTypeDescriptor();
             String mode = config.getString("mode");
 
             PreviewClusterConfig template = new PreviewClusterConfig(builder.getTemplate(), clusterModelId,
