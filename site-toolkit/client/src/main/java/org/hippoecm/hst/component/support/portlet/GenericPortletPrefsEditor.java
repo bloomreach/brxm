@@ -60,8 +60,6 @@ public class GenericPortletPrefsEditor extends GenericHstComponent {
             }
             
             prefs.store();
-            
-            ((ActionResponse) portletResponse).setPortletMode(PortletMode.VIEW);
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {
                 logger.warn("Failed to store preferences.", e);
