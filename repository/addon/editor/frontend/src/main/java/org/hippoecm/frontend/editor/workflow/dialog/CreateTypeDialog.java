@@ -91,7 +91,7 @@ public abstract class CreateTypeDialog extends Wizard implements IDialogService.
     }
 
     public IValueMap getProperties() {
-        return new ValueMap("width=380,height=250");
+        return new ValueMap("width=500,height=325");
     }
 
     public Component getComponent() {
