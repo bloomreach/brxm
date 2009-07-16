@@ -571,9 +571,9 @@ public class Remodeling {
         draft.setProperty(HippoNodeType.HIPPO_URI, nsRegistry.getURI(newPrefix));
 
         // visit prototype
-        if (node.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
+        if (node.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {
             draft = EditmodelWorkflowImpl.getDraftPrototype(node);
-            Node handle = node.getNode(HippoNodeType.HIPPO_PROTOTYPE);
+            Node handle = node.getNode(HippoNodeType.HIPPO_PROTOTYPES);
 
             // remove old prototypes
             NodeIterator children = handle.getNodes(HippoNodeType.HIPPO_PROTOTYPE);
