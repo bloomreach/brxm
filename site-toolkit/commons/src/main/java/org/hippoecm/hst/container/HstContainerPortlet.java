@@ -303,7 +303,11 @@ public class HstContainerPortlet extends GenericPortlet {
     
     protected String getHstDispatchUrl(PortletRequest request, PortletResponse response, String hstServletPath, String hstPathInfo) {
         StringBuilder hstDispUrl = new StringBuilder(100);
-        String hstDispPathParam = request.getParameter(HST_PATH_PARAM_NAME);
+        String hstDispPathParam = request.getParameter(HST_PATH_PARAM_NAME + request.getPortletMode().toString());
+        
+        if (hstDispPathParam == null) {
+            hstDispPathParam = request.getParameter(HST_PATH_PARAM_NAME);
+        }
         
         if (hstDispPathParam != null) {
             hstDispUrl.append(hstDispPathParam);
@@ -329,7 +333,7 @@ public class HstContainerPortlet extends GenericPortlet {
 
         if (redirectLocationUrl != null) {
             if (redirectLocationUrl.startsWith(hstServletPath)) {
-                response.setRenderParameter(HST_PATH_PARAM_NAME, redirectLocationUrl);
+                response.setRenderParameter(HST_PATH_PARAM_NAME + request.getPortletMode().toString(), redirectLocationUrl);
             } else {
                 response.sendRedirect(redirectLocationUrl);
             }
