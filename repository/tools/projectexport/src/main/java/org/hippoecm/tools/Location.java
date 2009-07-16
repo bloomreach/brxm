@@ -29,7 +29,6 @@ class Location implements Comparable<Location> {
         this.afterElement = afterElement;
     }
 
-    @Override
     public int compareTo(Location other) {
         int rtvalue = type.compareTo(other.type);
         if (rtvalue == 0) {
