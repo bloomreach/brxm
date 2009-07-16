@@ -22,7 +22,6 @@ import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -35,18 +34,27 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     private Properties resolvedParameters;
     private String relativeContentPath;
     private HstComponentConfiguration hstComponentConfiguration;
+    private HstComponentConfiguration portletHstComponentConfiguration;
     private String pathInfo;
     
     public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo) {
        HstSite hstSite = hstSiteMapItem.getHstSiteMap().getSite();
        this.pathInfo = PathUtils.normalizePath(pathInfo);
        this.hstSiteMapItem = hstSiteMapItem;
+       
        if(hstSiteMapItem.getComponentConfigurationId() == null) {
            log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the sitemap item '{}' does not have a component configuration id.", hstSiteMapItem.getId());
        } else {
            this.hstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
+           
            if(hstComponentConfiguration == null) {
                log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the component configuration id cannot be found.", hstSiteMapItem.getComponentConfigurationId());
+           }
+           
+           String portletComponentConfigurationId = hstSiteMapItem.getPortletComponentConfigurationId();
+           
+           if (portletComponentConfigurationId != null) {
+               this.portletHstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(portletComponentConfigurationId);
            }
        }
        
@@ -84,6 +92,10 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
         return this.hstComponentConfiguration;
     }
 
+    public HstComponentConfiguration getPortletHstComponentConfiguration() {
+        return this.portletHstComponentConfiguration;
+    }
+    
     public String getParameter(String name) {
         return (String)resolvedParameters.get(name);
     }

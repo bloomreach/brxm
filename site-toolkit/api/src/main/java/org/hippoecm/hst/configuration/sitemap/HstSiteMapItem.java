@@ -78,6 +78,14 @@ public interface HstSiteMapItem {
     String getComponentConfigurationId();
     
     /**
+     * If a HstSiteMapItem can be used to resolve a url, it must have a portletComponentConfigurationId referencing 
+     * the portlet component configuration the will handle the request processing. This component configuration can be
+     * the root of a component configuration tree, see {@link HstComponentConfiguration}.
+     * @return the portletComponentConfigurationId for this <code>SiteMapItem</code> or <code>null</code>
+     */
+    String getPortletComponentConfigurationId();
+    
+    /**
      * {@link HstComponent} instances can access <code>HstSiteMapItem</code> but should not be able to modify them, implementations
      * should return an unmodifiable List
      * @return

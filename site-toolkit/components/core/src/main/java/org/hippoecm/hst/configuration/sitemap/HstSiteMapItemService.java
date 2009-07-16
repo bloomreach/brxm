@@ -60,6 +60,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private String componentConfigurationId;
     
+    private String portletComponentConfigurationId;
+    
     private List<String> roles;
 
     private boolean isWildCard;
@@ -160,6 +162,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         
         this.relativeContentPath = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
         this.componentConfigurationId = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
+        this.portletComponentConfigurationId = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
         String[] rolesProp = getValueProvider().getStrings(Configuration.SITEMAPITEM_PROPERTY_ROLES);
         if(rolesProp!=null) {
             this.roles = Arrays.asList(rolesProp);
@@ -214,6 +217,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     public String getComponentConfigurationId() {
         return this.componentConfigurationId;
+    }
+
+    public String getPortletComponentConfigurationId() {
+        return this.portletComponentConfigurationId;
     }
 
     public String getId() {

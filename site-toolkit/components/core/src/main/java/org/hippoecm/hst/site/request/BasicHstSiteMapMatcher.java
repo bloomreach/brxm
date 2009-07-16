@@ -220,6 +220,10 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             return null;
         }
 
+        public HstComponentConfiguration getPortletHstComponentConfiguration() {
+            return null;
+        }
+        
         public HstSiteMapItem getHstSiteMapItem() {
             return null;
         }

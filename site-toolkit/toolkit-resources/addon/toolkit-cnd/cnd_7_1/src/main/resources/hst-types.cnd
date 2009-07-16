@@ -50,6 +50,7 @@
 - hst:value
 - hst:relativecontentpath (string)
 - hst:componentconfigurationid (string)
+- hst:portletcomponentconfigurationid (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:statuscode (long)

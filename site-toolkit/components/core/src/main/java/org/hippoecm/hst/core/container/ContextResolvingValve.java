@@ -99,6 +99,14 @@ public class ContextResolvingValve extends AbstractValve
             
             HstComponentConfiguration rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
             
+            if (baseURL.isViaPortlet()) {
+                HstComponentConfiguration portletRootComponentConfig = resolvedSiteMapItem.getPortletHstComponentConfiguration();
+                
+                if (portletRootComponentConfig != null) {
+                    rootComponentConfig = portletRootComponentConfig;
+                }
+            }
+            
             if(rootComponentConfig == null) {
                 throw new ContainerNotFoundException("Resolved siteMapItem does not contain a ComponentConfiguration that can be resolved." + pathInfo);
             }
