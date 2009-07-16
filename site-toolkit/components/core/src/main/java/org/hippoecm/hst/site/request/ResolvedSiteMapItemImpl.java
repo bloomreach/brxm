@@ -42,19 +42,24 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
        this.pathInfo = PathUtils.normalizePath(pathInfo);
        this.hstSiteMapItem = hstSiteMapItem;
        
-       if(hstSiteMapItem.getComponentConfigurationId() == null) {
+       if (hstSiteMapItem.getComponentConfigurationId() == null && hstSiteMapItem.getPortletComponentConfigurationId() == null) {
            log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the sitemap item '{}' does not have a component configuration id.", hstSiteMapItem.getId());
        } else {
-           this.hstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
+           String componentConfigurationId = hstSiteMapItem.getComponentConfigurationId();
            
-           if(hstComponentConfiguration == null) {
-               log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the component configuration id cannot be found.", hstSiteMapItem.getComponentConfigurationId());
+           if (componentConfigurationId != null) {
+               this.hstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(componentConfigurationId);
            }
            
            String portletComponentConfigurationId = hstSiteMapItem.getPortletComponentConfigurationId();
            
            if (portletComponentConfigurationId != null) {
                this.portletHstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(portletComponentConfigurationId);
+           }
+           
+           if (this.hstComponentConfiguration == null && this.portletHstComponentConfiguration == null) {
+               log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the component configuration id cannot be found. {} or {}", 
+                       componentConfigurationId, portletComponentConfigurationId);
            }
        }
        

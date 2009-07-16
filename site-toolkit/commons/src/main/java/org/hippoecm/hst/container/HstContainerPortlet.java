@@ -64,6 +64,11 @@ public class HstContainerPortlet extends GenericPortlet {
     public static final String HST_PATH_INFO_EDIT_MODE_PARAM = "hstPathInfoEditMode";
     
     /**
+     * Name of portlet preference for the portlet title
+     */
+    public static final String HST_PORTLET_TITLE_PARAM_NAME = "hstPortletTitle";
+
+    /**
      * Name of portlet preference for Header page
      */
     public static final String HST_HEADER_PAGE_PARAM_NAME = "HeaderPage";
@@ -80,9 +85,10 @@ public class HstContainerPortlet extends GenericPortlet {
     
     protected PortletContext portletContext;
     
-    protected String hstServletPath = "/preview";
+    protected String defaultHstServletPath = "/preview";
     protected String defaultHstPathInfo;
     protected String defaultHstPathInfoEditMode;
+    protected String defaultPortletTitle;
     protected String defaultHeaderPage;
     protected String defaultHelpPage;
 
@@ -105,7 +111,7 @@ public class HstContainerPortlet extends GenericPortlet {
         param = config.getInitParameter(HST_SERVLET_PATH_PARAM);
         
         if (param != null) {
-            this.hstServletPath = param;
+            this.defaultHstServletPath = param;
         }
         
         param = config.getInitParameter(HST_PATH_INFO_PARAM);
@@ -118,6 +124,12 @@ public class HstContainerPortlet extends GenericPortlet {
         
         if (param != null) {
             defaultHstPathInfoEditMode = param;
+        }
+        
+        param = config.getInitParameter(HST_PORTLET_TITLE_PARAM_NAME);
+        
+        if (param != null) {
+            defaultPortletTitle = param;
         }
 
         param = config.getInitParameter(HST_HEADER_PAGE_PARAM_NAME);
@@ -215,8 +227,13 @@ public class HstContainerPortlet extends GenericPortlet {
         HstContainerPortletContext.reset(request, response);
         
         try {
-            String hstPathInfo = this.defaultHstPathInfo;
             boolean editMode = PortletMode.EDIT.equals(request.getPortletMode());
+
+            String portletTitle = defaultPortletTitle;
+            
+            String hstServletPath = this.defaultHstServletPath;
+            
+            String hstPathInfo = this.defaultHstPathInfo;
             
             if (editMode && this.defaultHstPathInfoEditMode != null) {
                 hstPathInfo = this.defaultHstPathInfoEditMode;
@@ -226,7 +243,17 @@ public class HstContainerPortlet extends GenericPortlet {
                 PortletPreferences prefs = request.getPreferences();
         
                 if (prefs != null) {
-                    String prefValue = null;
+                    String prefValue = prefs.getValue(HST_PORTLET_TITLE_PARAM_NAME, null);
+                    
+                    if (prefValue != null) {
+                        portletTitle = prefValue;
+                    }
+                    
+                    prefValue = prefs.getValue(HST_SERVLET_PATH_PARAM, null);
+                    
+                    if (prefValue != null) {
+                        hstServletPath = prefValue;
+                    }
                     
                     if (editMode) {
                         prefValue = prefs.getValue(HST_PATH_INFO_EDIT_MODE_PARAM, null);
@@ -244,7 +271,7 @@ public class HstContainerPortlet extends GenericPortlet {
                 }
             }
             
-            String hstDispUrl = getHstDispatchUrl(request, response, hstPathInfo);
+            String hstDispUrl = getHstDispatchUrl(request, response, hstServletPath, hstPathInfo);
             
             HstResponseState portletResponseState = new HstPortletResponseState(request, response);
             request.setAttribute(HstResponseState.class.getName(), portletResponseState);
@@ -256,11 +283,15 @@ public class HstContainerPortlet extends GenericPortlet {
                 if (rd != null) {
                     // delegate to HST Container servlet
                     rd.include(request, response);
-                    processActionResponseState((ActionRequest) request, (ActionResponse) response, hstDispUrl, portletResponseState);
+                    processActionResponseState((ActionRequest) request, (ActionResponse) response, hstServletPath, hstDispUrl, portletResponseState);
                 } else {
                     throw new PortletException("HST URL Dispatcher is not found: " + hstDispUrl);
                 }
             } else if (portletResponseState.isMimeResponse()) {
+                if (portletResponseState.isRenderResponse() && portletTitle != null) {
+                    ((RenderResponse) response).setTitle(portletTitle);
+                }
+                
                 processMimeResponseRequest(request, (MimeResponse) response, hstDispUrl, portletResponseState);
             } else {
                 throw new PortletException("Unsupported Portlet lifecycle: " + request.getAttribute(PortletRequest.LIFECYCLE_PHASE));
@@ -270,14 +301,14 @@ public class HstContainerPortlet extends GenericPortlet {
         }
     }
     
-    protected String getHstDispatchUrl(PortletRequest request, PortletResponse response, String hstPathInfo) {
+    protected String getHstDispatchUrl(PortletRequest request, PortletResponse response, String hstServletPath, String hstPathInfo) {
         StringBuilder hstDispUrl = new StringBuilder(100);
         String hstDispPathParam = request.getParameter(HST_PATH_PARAM_NAME);
         
         if (hstDispPathParam != null) {
             hstDispUrl.append(hstDispPathParam);
         } else {
-            hstDispUrl.append(this.hstServletPath);
+            hstDispUrl.append(hstServletPath);
             hstDispUrl.append(hstPathInfo);
         }
         
@@ -290,14 +321,14 @@ public class HstContainerPortlet extends GenericPortlet {
         portletResponseState.flush();
     }
     
-    private void processActionResponseState(ActionRequest request, ActionResponse response, String hstDispUrl, HstResponseState portletResponseState) throws PortletException, IOException {
+    private void processActionResponseState(ActionRequest request, ActionResponse response, String hstServletPath, String hstDispUrl, HstResponseState portletResponseState) throws PortletException, IOException {
         // write out Cookies to ActionResponse
         portletResponseState.flush();
         
         String redirectLocationUrl = portletResponseState.getRedirectLocation();
 
         if (redirectLocationUrl != null) {
-            if (redirectLocationUrl.startsWith(this.hstServletPath)) {
+            if (redirectLocationUrl.startsWith(hstServletPath)) {
                 response.setRenderParameter(HST_PATH_PARAM_NAME, redirectLocationUrl);
             } else {
                 response.sendRedirect(redirectLocationUrl);

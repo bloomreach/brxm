@@ -97,13 +97,15 @@ public class ContextResolvingValve extends AbstractValve
             
             ((HstRequestContextImpl) requestContext).setResolvedSiteMapItem(resolvedSiteMapItem);
             
-            HstComponentConfiguration rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
+            HstComponentConfiguration rootComponentConfig = null;
             
-            if (baseURL.isViaPortlet()) {
-                HstComponentConfiguration portletRootComponentConfig = resolvedSiteMapItem.getPortletHstComponentConfiguration();
+            if (!baseURL.isViaPortlet()) {
+                rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
+            } else {
+                rootComponentConfig = resolvedSiteMapItem.getPortletHstComponentConfiguration();
                 
-                if (portletRootComponentConfig != null) {
-                    rootComponentConfig = portletRootComponentConfig;
+                if (rootComponentConfig == null) {
+                    rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
                 }
             }
             

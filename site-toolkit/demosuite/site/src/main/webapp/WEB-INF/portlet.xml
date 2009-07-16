@@ -20,11 +20,15 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
              xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
     
-    <portlet id="NewsDemoPortlet">
-        <description>This is the News Demo portlet</description>
-        <portlet-name>NewsDemoPortlet</portlet-name>
-        <display-name>News Demo</display-name>
+    <portlet id="GenericHSTPortlet">
+        <description>This is the Generic HST portlet</description>
+        <portlet-name>GenericHSTPortlet</portlet-name>
+        <display-name>Generic HST Portlet</display-name>
         <portlet-class>org.hippoecm.hst.container.HstContainerPortlet</portlet-class>
+        <init-param>
+            <name>AllowPreferences</name>
+            <value>true</value>
+        </init-param>
         <init-param>
             <name>hstServletPath</name>
             <value>/preview</value>
@@ -32,6 +36,10 @@
         <init-param>
             <name>hstPathInfo</name>
             <value>/news</value>
+        </init-param>
+        <init-param>
+            <name>hstPathInfoEditMode</name>
+            <value>/portletprefseditor</value>
         </init-param>
         <init-param>
             <name>HeaderPage</name>
@@ -45,6 +53,51 @@
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
+            <portlet-mode>EDIT</portlet-mode>
+            <portlet-mode>HELP</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Generic HST</title>
+            <short-title>Generic HST</short-title>
+            <keywords>hst</keywords>
+        </portlet-info>
+    </portlet>
+    
+    <portlet id="NewsDemoPortlet">
+        <description>This is the News Demo portlet</description>
+        <portlet-name>NewsDemoPortlet</portlet-name>
+        <display-name>News Demo</display-name>
+        <portlet-class>org.hippoecm.hst.container.HstContainerPortlet</portlet-class>
+        <init-param>
+            <name>AllowPreferences</name>
+            <value>true</value>
+        </init-param>
+        <init-param>
+            <name>hstServletPath</name>
+            <value>/preview</value>
+        </init-param>
+        <init-param>
+            <name>hstPathInfo</name>
+            <value>/news</value>
+        </init-param>
+        <init-param>
+            <name>hstPathInfoEditMode</name>
+            <value>/portletprefseditor</value>
+        </init-param>
+        <init-param>
+            <name>HeaderPage</name>
+            <value>/WEB-INF/jsp/portlet-common-headers.jsp</value>
+        </init-param>
+        <init-param>
+            <name>HelpPage</name>
+            <value>/WEB-INF/jsp/portlet-common-help.jsp</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+            <portlet-mode>EDIT</portlet-mode>
             <portlet-mode>HELP</portlet-mode>
         </supports>
         <supported-locale>en</supported-locale>
@@ -54,5 +107,22 @@
             <keywords>news</keywords>
         </portlet-info>
     </portlet>
+    
+    <custom-portlet-mode>
+        <description>a Custom About Mode</description>
+        <portlet-mode>about</portlet-mode>
+    </custom-portlet-mode>
+    <custom-portlet-mode>
+        <description>a Custom Config Mode</description>
+        <portlet-mode>config</portlet-mode>
+    </custom-portlet-mode>
+    <custom-portlet-mode>
+        <description>a Custom Edit_defaults Mode</description>
+        <portlet-mode>edit_defaults</portlet-mode>
+    </custom-portlet-mode>
+    <custom-portlet-mode>
+        <description>a Custom Print Mode</description>
+        <portlet-mode>print</portlet-mode>
+    </custom-portlet-mode>
     
 </portlet-app>
