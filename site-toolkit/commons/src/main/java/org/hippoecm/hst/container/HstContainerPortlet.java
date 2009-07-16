@@ -24,6 +24,7 @@ import javax.portlet.MimeResponse;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
+import javax.portlet.PortletMode;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletRequestDispatcher;
@@ -42,27 +43,66 @@ public class HstContainerPortlet extends GenericPortlet {
     
     private static final String LOGGER_CATEGORY_NAME = HstContainerPortlet.class.getName();
 
+    /**
+     * Name of portlet preference to allow the use of preferences to set pages
+     */
+    public static final String PARAM_ALLOW_PREFERENCES   = "AllowPreferences";
+    
+    /**
+     * Name of portlet preference for the servlet path of HST URL
+     */
     public static final String HST_SERVLET_PATH_PARAM = "hstServletPath";
     
+    /**
+     * Name of portlet preference for the path info of HST URL
+     */
     public static final String HST_PATH_INFO_PARAM = "hstPathInfo";
     
-    public static final String HST_PATH_PARAM_NAME = "_hp";
+    /**
+     * Name of portlet preference for the path info for edit mode of HST URL
+     */
+    public static final String HST_PATH_INFO_EDIT_MODE_PARAM = "hstPathInfoEditMode";
     
+    /**
+     * Name of portlet preference for Header page
+     */
     public static final String HST_HEADER_PAGE_PARAM_NAME = "HeaderPage";
+    
+    /**
+     * Name of portlet preference for Edit page
+     */
+    public static final String HST_HELP_PAGE_PARAM_NAME = "HelpPage";
+
+    /*
+     * Name of render parameter for internal portlet render url path
+     */
+    public static final String HST_PATH_PARAM_NAME = "_hp";
     
     protected PortletContext portletContext;
     
-    protected String hstServletPath = "/content";
+    protected String hstServletPath = "/preview";
     protected String defaultHstPathInfo;
-    
-    protected String headerPage;
+    protected String defaultHstPathInfoEditMode;
+    protected String defaultHeaderPage;
+    protected String defaultHelpPage;
+
+    /**
+     * Allow preferences to be set by preferences.
+     */
+    protected boolean allowPreferences;
 
     public void init(PortletConfig config) throws PortletException {
         super.init(config);
 
         this.portletContext = config.getPortletContext();
 
-        String param = config.getInitParameter(HST_SERVLET_PATH_PARAM);
+        String param = config.getInitParameter(PARAM_ALLOW_PREFERENCES);
+        
+        if (param != null) {
+            this.allowPreferences = Boolean.parseBoolean(param);
+        }
+
+        param = config.getInitParameter(HST_SERVLET_PATH_PARAM);
         
         if (param != null) {
             this.hstServletPath = param;
@@ -73,11 +113,23 @@ public class HstContainerPortlet extends GenericPortlet {
         if (param != null) {
             this.defaultHstPathInfo = param;
         }
+
+        param = config.getInitParameter(HST_PATH_INFO_EDIT_MODE_PARAM);
         
+        if (param != null) {
+            defaultHstPathInfoEditMode = param;
+        }
+
         param = config.getInitParameter(HST_HEADER_PAGE_PARAM_NAME);
         
         if (param != null) {
-            headerPage = param;
+            defaultHeaderPage = param;
+        }
+        
+        param = config.getInitParameter(HST_HELP_PAGE_PARAM_NAME);
+        
+        if (param != null) {
+            defaultHelpPage = param;
         }
     }
 
@@ -90,31 +142,44 @@ public class HstContainerPortlet extends GenericPortlet {
     }
 
     @Override
+    public void doHeaders(RenderRequest request, RenderResponse response) {
+        String dispatchPage = getPortletModeDispatchPage(request, HST_HEADER_PAGE_PARAM_NAME, defaultHeaderPage);
+        
+        if (dispatchPage != null) {
+            try {
+                getPortletContext().getRequestDispatcher(dispatchPage).include(request, response);
+            } catch (Exception e) {
+                Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+                if (logger != null) {
+                    logger.warn("Failed to dispatch page - {} : {}", dispatchPage, e);
+                }
+            }
+        }
+    }
+    
+    @Override
     public void doEdit(RenderRequest request, RenderResponse response) throws PortletException, IOException {
         processRequest(request, response);
     }
 
     @Override
     public void doHelp(RenderRequest request, RenderResponse response) throws PortletException, IOException {
-        processRequest(request, response);
-    }
-
-    @Override
-    protected void doHeaders(RenderRequest request, RenderResponse response) {
-        super.doHeaders(request, response);
+        String dispatchPage = getPortletModeDispatchPage(request, HST_HELP_PAGE_PARAM_NAME, defaultHelpPage);
         
-        if (headerPage != null) {
+        if (dispatchPage != null) {
             try {
-                getPortletContext().getRequestDispatcher(headerPage).include(request, response);
+                getPortletContext().getRequestDispatcher(dispatchPage).include(request, response);
             } catch (Exception e) {
                 Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
                 if (logger != null) {
-                    logger.warn("Failed to include header page - {} : {}", headerPage, e);
+                    logger.warn("Failed to dispatch page - {} : {}", dispatchPage, e);
                 }
             }
+        } else {
+            processRequest(request, response);
         }
     }
-
+    
     @Override
     public void processAction(ActionRequest request, ActionResponse response) throws PortletException, IOException {
         processRequest(request, response);
@@ -127,17 +192,56 @@ public class HstContainerPortlet extends GenericPortlet {
             processRequest(request, response);
         }
     }
-
+    
+    protected String getPortletModeDispatchPage(PortletRequest request, String paramName, String defaultPage) {
+        String dispatchPage = (String) request.getAttribute(paramName);
+        
+        if (dispatchPage == null && allowPreferences) {
+            PortletPreferences prefs = request.getPreferences();
+            
+            if (prefs != null) {
+                dispatchPage = prefs.getValue(paramName, defaultPage);
+            }
+        }
+        
+        if (dispatchPage == null) {
+            dispatchPage = defaultPage;
+        }
+        
+        return dispatchPage;
+    }
+    
     protected void processRequest(PortletRequest request, PortletResponse response) throws PortletException, IOException {
         HstContainerPortletContext.reset(request, response);
         
         try {
             String hstPathInfo = this.defaultHstPathInfo;
-    
-            PortletPreferences prefs = request.getPreferences();
-    
-            if (prefs != null) {
-                hstPathInfo = prefs.getValue(HST_PATH_INFO_PARAM, hstPathInfo);
+            boolean editMode = PortletMode.EDIT.equals(request.getPortletMode());
+            
+            if (editMode && this.defaultHstPathInfoEditMode != null) {
+                hstPathInfo = this.defaultHstPathInfoEditMode;
+            }
+            
+            if (allowPreferences) {
+                PortletPreferences prefs = request.getPreferences();
+        
+                if (prefs != null) {
+                    String prefValue = null;
+                    
+                    if (editMode) {
+                        prefValue = prefs.getValue(HST_PATH_INFO_EDIT_MODE_PARAM, null);
+                        
+                        if (prefValue == null && this.defaultHstPathInfoEditMode == null) {
+                            prefValue = prefs.getValue(HST_PATH_INFO_PARAM, null);
+                        }
+                    } else {
+                        prefValue = prefs.getValue(HST_PATH_INFO_PARAM, null);
+                    }
+                    
+                    if (prefValue != null) {
+                        hstPathInfo = prefValue;
+                    }
+                }
             }
             
             String hstDispUrl = getHstDispatchUrl(request, response, hstPathInfo);

@@ -37,10 +37,15 @@
             <name>HeaderPage</name>
             <value>/WEB-INF/jsp/portlet-common-headers.jsp</value>
         </init-param>
+        <init-param>
+            <name>HelpPage</name>
+            <value>/WEB-INF/jsp/portlet-common-help.jsp</value>
+        </init-param>
         <expiration-cache>0</expiration-cache>
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
+            <portlet-mode>HELP</portlet-mode>
         </supports>
         <supported-locale>en</supported-locale>
         <portlet-info>
