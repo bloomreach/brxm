@@ -18,8 +18,6 @@ package org.hippoecm.hst.component.support.portlet;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;

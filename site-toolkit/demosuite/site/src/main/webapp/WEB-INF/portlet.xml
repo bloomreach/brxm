@@ -29,26 +29,6 @@
             <name>AllowPreferences</name>
             <value>true</value>
         </init-param>
-        <init-param>
-            <name>hstServletPath</name>
-            <value>/preview</value>
-        </init-param>
-        <init-param>
-            <name>hstPathInfo</name>
-            <value>/news</value>
-        </init-param>
-        <init-param>
-            <name>hstPathInfoEditMode</name>
-            <value>/portletprefseditor</value>
-        </init-param>
-        <init-param>
-            <name>HeaderPage</name>
-            <value>/WEB-INF/jsp/portlet-common-headers.jsp</value>
-        </init-param>
-        <init-param>
-            <name>HelpPage</name>
-            <value>/WEB-INF/jsp/portlet-common-help.jsp</value>
-        </init-param>
         <expiration-cache>0</expiration-cache>
         <supports>
             <mime-type>text/html</mime-type>
@@ -62,6 +42,28 @@
             <short-title>Generic HST</short-title>
             <keywords>hst</keywords>
         </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>hstServletPath</name>
+                <value>/preview</value>
+            </preference>
+            <preference>
+                <name>hstPathInfo</name>
+                <value>/news</value>
+            </preference>
+            <preference>
+                <name>hstPathInfoEditMode</name>
+                <value>/portletprefseditor</value>
+            </preference>
+            <preference>
+                <name>HeaderPage</name>
+                <value>/WEB-INF/jsp/portlet-common-headers.jsp</value>
+            </preference>
+            <preference>
+                <name>HelpPage</name>
+                <value>/WEB-INF/jsp/portlet-common-help.jsp</value>
+            </preference>
+        </portlet-preferences>
     </portlet>
     
     <portlet id="NewsDemoPortlet">
@@ -72,26 +74,6 @@
         <init-param>
             <name>AllowPreferences</name>
             <value>true</value>
-        </init-param>
-        <init-param>
-            <name>hstServletPath</name>
-            <value>/preview</value>
-        </init-param>
-        <init-param>
-            <name>hstPathInfo</name>
-            <value>/news</value>
-        </init-param>
-        <init-param>
-            <name>hstPathInfoEditMode</name>
-            <value>/portletprefseditor</value>
-        </init-param>
-        <init-param>
-            <name>HeaderPage</name>
-            <value>/WEB-INF/jsp/portlet-common-headers.jsp</value>
-        </init-param>
-        <init-param>
-            <name>HelpPage</name>
-            <value>/WEB-INF/jsp/portlet-common-help.jsp</value>
         </init-param>
         <expiration-cache>0</expiration-cache>
         <supports>
@@ -106,6 +88,28 @@
             <short-title>News Demo</short-title>
             <keywords>news</keywords>
         </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>hstServletPath</name>
+                <value>/preview</value>
+            </preference>
+            <preference>
+                <name>hstPathInfo</name>
+                <value>/news</value>
+            </preference>
+            <preference>
+                <name>hstPathInfoEditMode</name>
+                <value>/portletprefseditor</value>
+            </preference>
+            <preference>
+                <name>HeaderPage</name>
+                <value>/WEB-INF/jsp/portlet-common-headers.jsp</value>
+            </preference>
+            <preference>
+                <name>HelpPage</name>
+                <value>/WEB-INF/jsp/portlet-common-help.jsp</value>
+            </preference>
+        </portlet-preferences>
     </portlet>
     
     <custom-portlet-mode>
