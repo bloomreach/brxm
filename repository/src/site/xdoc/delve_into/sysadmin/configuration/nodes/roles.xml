@@ -45,20 +45,18 @@ hippo:configuration
  </source>
         </section>
         <section name="Nodes">
-            <subsection name="hippo:role">
+            <subsection name="hipposys:role">
 <source>
 &lt;sv:node sv:name="myrole"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-        &lt;sv:value&gt;hippo:role&lt;/sv:value&gt;
+        &lt;sv:value&gt;hipposys:role&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:jcrread" sv:type="Boolean"&gt;
-        &lt;sv:value&gt;true&lt;/sv:value&gt;
+    &lt;sv:property sv:name="hipposys:roles" sv:type="String"&gt;
+        &lt;sv:value&gt;editor&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:jcrwrite" sv:type="Boolean"&gt;
-        &lt;sv:value&gt;false&lt;/sv:value&gt;
-    &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:jcrremove" sv:type="Boolean"&gt;
-        &lt;sv:value&gt;false&lt;/sv:value&gt;
+    &lt;sv:property sv:name="hipposys:privileges" sv:type="String"&gt;
+        &lt;sv:value&gt;hippo:editor&lt;/sv:value&gt;
+        &lt;sv:value&gt;jcr:read&lt;/sv:value&gt;
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
 </source>

@@ -18,16 +18,7 @@
          xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="author">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:user</sv:value>
-  </sv:property>
-  <sv:property sv:name="frontend:email" sv:type="String">
-    <sv:value></sv:value>
-  </sv:property>
-  <sv:property sv:name="frontend:firstname" sv:type="String">
-    <sv:value></sv:value>
-  </sv:property>
-  <sv:property sv:name="frontend:lastname" sv:type="String">
-    <sv:value></sv:value>
+    <sv:value>hipposys:user</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:active" sv:type="Boolean">
     <sv:value>true</sv:value>

@@ -246,6 +246,9 @@
       <sv:property sv:name="hipposys:active" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
+      <sv:property sv:name="hipposys:system" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
       <sv:property sv:name="hipposys:password" sv:type="String">
         <sv:value>$SHA-256$*</sv:value>
       </sv:property>

@@ -41,25 +41,28 @@ hippo:configuration
  </source>
         </section>
         <section name="Nodes">
-            <subsection name="hippo:user">
+            <subsection name="hipposys:user">
 <source>
 &lt;sv:node sv:name="myuser"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-        &lt;sv:value&gt;hippo:user&lt;/sv:value&gt;
+        &lt;sv:value&gt;hipposys:user&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:password" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:password" sv:type="String"&gt;
         &lt;sv:value&gt;supersecret&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:active" sv:type="Boolean"&gt;
+    &lt;sv:property sv:name="hipposys:active" sv:type="Boolean"&gt;
         &lt;sv:value&gt;true&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:firstname" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:system" sv:type="Boolean"&gt;
+        &lt;sv:value&gt;true&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
+    &lt;sv:property sv:name="hipposys:firstname" sv:type="String"&gt;
         &lt;sv:value&gt;John&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:lastname" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:lastname" sv:type="String"&gt;
         &lt;sv:value&gt;Doe&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:email" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:email" sv:type="String"&gt;
         &lt;sv:value&gt;johndoe@hippoecm.org&lt;/sv:value&gt;
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
@@ -67,10 +70,12 @@ hippo:configuration
             <table>
                 <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
                 <tr><td>node name</td><td>String</td><td>yes</td><td>The username</td></tr>
-                <tr><td>hippo:active</td><td>Boolean</td><td>yes</td><td>Can be used to (temporary) disable the user.A user
-                MUST have <code>hippo:active</code> set to true to be able to login.</td></tr>
-                <tr><td>hippo:password</td><td>String</td><td>yes</td><td>
-                The <code>hippo:password</code> can be stored in plain text or with a hash. A hash has the following form:
+                <tr><td>hipposys:active</td><td>Boolean</td><td>yes</td><td>Can be used to (temporary) disable the user.A user
+                MUST have <code>hipposys:active</code> set to true to be able to login.</td></tr>
+                <tr><td>hipposys:system</td><td>Boolean</td><td>no</td><td>Can be used to indicate that the user is a system user 
+                and should be hidden from the Hippo CMS user management.</td></tr>
+                <tr><td>hipposys:password</td><td>String</td><td>yes</td><td>
+                The <code>hipposys:password</code> can be stored in plain text or with a hash. A hash has the following form:
             <pre><code>$&lt;hash alogrith&gt;$&lt;salt&gt;$&lt;hash&gt;</code></pre>
             <p>
                 For example the password "admin" could result in the following hash:
@@ -82,9 +87,9 @@ hippo:configuration
                 PasswordHelper.getHash(String password).
             </p>
             </td></tr>
-                <tr><td>hippo:firstname</td><td>String</td><td>no</td><td>user's first name</td></tr>
-                <tr><td>hippo:lastname</td><td>String</td><td>no</td><td>user's last name</td></tr>
-                <tr><td>hippo:email</td><td>String</td><td>no</td><td>user's email</td></tr>
+                <tr><td>hipposys:firstname</td><td>String</td><td>no</td><td>user's first name</td></tr>
+                <tr><td>hipposys:lastname</td><td>String</td><td>no</td><td>user's last name</td></tr>
+                <tr><td>hipposys:email</td><td>String</td><td>no</td><td>user's email</td></tr>
             </table>
             </subsection>
         </section>
