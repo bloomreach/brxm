@@ -219,7 +219,16 @@ public class HippoItem implements HippoBean{
     }
 
     public boolean isDescendant(HippoBean compare) {
-        return !isAncestor(compare) && !isSelf(compare);
+        if(this.getPath() == null || compare.getPath() == null){
+            log.warn("Cannot compare the HippoBeans as one as a path that is null. Return false.");
+            return false;
+        }
+        if(this.getPath().startsWith(compare.getPath())) {
+            if(!isSelf(compare)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isSelf(HippoBean compare) {
