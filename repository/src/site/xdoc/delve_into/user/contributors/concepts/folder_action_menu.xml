@@ -43,7 +43,7 @@ ________________________________________________________________________________
       the newspaper folder and the newspaper folder will become the
       <a href='current_folder.html'>current folder</a>. Note that the buttons for
       the folder action menus of all the folders are not normally visible. As soon as
-      you hover over a perticular folder name, its button becomes visible.
+      you hover over a particular folder name, its button becomes visible.
      </p>
     </div>
 
@@ -55,7 +55,7 @@ ________________________________________________________________________________
      deleting a subfolder from it, reordering the folder, etc.
     </p>
     <p>
-     The actions that a particular user may do on particular folder can be different for different folders.
+     The actions that a particular user may do on a particular folder can be different for different folders.
     </p>
    </section>
 

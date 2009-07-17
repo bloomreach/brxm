@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -53,6 +53,15 @@ ________________________________________________________________________________
 
    <ol>
     <li>Clicking on the 'edit' button in <a href='../concepts/review_mode.html'>review mode</a>.
+     If you do not see an edit button on an existing document, you probably have no permission
+     to edit the document. In the standard configuration, only the one who created the document
+     may edit it later. Even the
+     <a href='../../cms_admins/index.html'>CMS administrator</a> may not
+     edit a document in the CMS that
+     was created by someone else. However, he always can via the
+     <a href='http://www.onehippo.org/site-toolkit/misc/content+repository/using+web+console.html'>web console</a>.
+     <a href='../../cms_admins/howto/set_permissions_for_group.html'>Permissions can be configured by the
+     CMS administrator</a>.
     </li>
     <li><a href='./create_document.html'>Creating a new document</a>. The new, empty document will
      immediately be presented in <a href='../concepts/edit_mode.html'>edit mode</a>, 

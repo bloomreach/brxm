@@ -16,18 +16,108 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
 ____________________________________________________________________________________________
 
 -->
 <document>
   <properties>
-    <title>Information Architects  Guide</title>
+    <title>Information Architects Guide</title>
   </properties>
 
   <body>
     <section name="Information Architects Guide">
       <span class="shortdesc">Guide for Hippo CMS users to perform the role of Information Architect.</span>
+
+<p>
+  In Hippo CMS, contributors write documents that are of a certain document type.
+  The document type specifies what kind of information the document should provide.
+  Documents that contain the same kind of information are in that respect similar.
+</p>
+
+<p>
+The guaranteed similarity of many different documents allows
+fast development of any application that
+makes use of the documents. For example, similar documents can be rendered in the
+same way on a website, therefor the rendering of all similar documents can be
+defined in a single template. Given a document type, a web developer can create
+this template before the documents even exist.
+No rendering information is required in the
+documents itself, so authors do not need to know about rendering, just about
+what kind of information they are supposed to provide.
+</p>
+
+<p>Other possible advantages of the guaranteed similarity of documents is
+  in performing searches (faceted search) and data mining on the documents.
+</p>
+
+ <p>
+  The guaranteed similarity of documents is possible by the use of document
+  types. Document types have another advantage: they are a kind of
+  business rules that ensure that all contributors know what information they
+  are supposed to supply.
+ </p>
+
+ <p>
+  Document types are composed by information architects.
+  The Hippo CMS provides information
+  architects with a convenient document type editor for defining document types.
+ </p>
+
+   <p>
+       A set of document types that is based on
+       throughout knowledge of what the company needs
+       makes content management particularly advantageous to the company.
+   </p>
+   <p>
+    The CMS can delete obsolete parts from all documents of a particular document type.
+    This only requires deleting the field from the document type and
+    allowing the CMS to update all content. The CMS will then check all content
+    and makes it conform to the new state of the document types.
+    The time this procedure takes increases with the number of document
+    that needs changing, but not much, almost linearly.
+    There is some additional increase with the total number of documents (which have
+    to be checked).
+   </p>
+   <p>
+    If a new field is added to a document type, at updating all content, the
+    CMS will add an empty field to each document of the type.
+   </p>
+   <p>
+       Note that if meaningful documents already exist,
+       a change to a document type may require handwork in each existing
+       document of the type. This is the case if a new, independent
+       kind of information is expected in the documents.
+       Such new, independent information has to be supplied by external
+       sources, generally human contributors.
+   </p>
+
+
+<p>
+In the Hippo CMS,
+the documents consist of fields. Documents of the same type may or must contain
+the same fields. If you know about databases,
+you can perceive a document as a record in a table and the type of the document
+as the table. With more complex documents, the document would be related records
+in several tables and the type of the document as the set of related tables
+(all in a relational database).
+</p>
+
+
+<p>
+CMS document types not only define which fields are allowed or mandatory.
+A CMS document type may also define preset values for fields.
+Furthermore, a CMS document type defines how a document of the type is presented
+to an author: The Hippo CMS provides contributors with a document editor for writing
+information into a document. The layout of the document being edited is
+configurable and so is the behavior of the editor. This configuration is defined
+in the document types.
+</p>
+
+<p>
+The document types can be defined by nesting compound types. This allows reuse
+of types and the easy definition of complex layouts for presenting documents to
+be edited.
+</p>
 
 <table>
   <tr>
@@ -49,7 +139,6 @@ ________________________________________________________________________________
     <td>A collection of concepts a CMS information architect may want to know.</td>
   </tr>
 </table>
-
 
     </section>
   </body>

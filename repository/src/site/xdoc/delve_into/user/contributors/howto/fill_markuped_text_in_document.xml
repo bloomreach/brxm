@@ -75,7 +75,13 @@ ________________________________________________________________________________
    </li>
    <li>If the cursor is on a link in a markuped field and the field is in review mode, the
        address of the link is shown in the lower left corner of the CMS window. In edit mode,
-       link addresses are not shown.
+       link addresses are not shown. For external links the address shown is the URL. For internal
+       links the address shown is a pseudo-URL. It is a abbreviation of the URL with the domain of the
+       CMS in front of it. In your website the full URL for the abbreviation will be used. The abbreviation
+       normally is the name of the document linked to, possibly with an underscore and a number after it.
+       However, this is not required and if the document is renamed, the abbreviation will not change along,
+       but the link will still work. On the other hand, the abbreviation being the correct document name is no
+       guarantee that the link will work.
    </li>
    <li>You can copy/paste structurally markuped text from other applications into a Hippo markup field:
       Structural markup like Boldface, italic, underline, headers and tables will all be preserved.
