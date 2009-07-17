@@ -14,110 +14,130 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" 
-       xmlns:lang="http://www.springframework.org/schema/lang" 
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:lang="http://www.springframework.org/schema/lang"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
-  <bean id="org.hippoecm.hst.core.jcr.EventListenersContainer" 
-        class="org.hippoecm.hst.core.jcr.EventListenersContainerImpl"
-        init-method="start" destroy-method="stop">
-    <property name="repository" ref="javax.jcr.Repository" />
-    <property name="sessionLiveCheck" value="true" />
-    <property name="sessionLiveCheckInterval" value="60000" />
+  <bean id="org.hippoecm.hst.core.jcr.EventListenersContainer"
+    class="org.hippoecm.hst.core.jcr.EventListenersContainerImpl" init-method="start"
+    destroy-method="stop">
+    <property name="repository" ref="javax.jcr.Repository"/>
+    <property name="sessionLiveCheck" value="true"/>
+    <property name="sessionLiveCheckInterval" value="60000"/>
     <property name="eventListenerItems">
       <list>
 
         <!-- Virtual Hosts Configuration Node Path -->
         <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
-          <property name="nodeAddedEnabled" value="true" />
-          <property name="nodeRemovedEnabled" value="true" />
-          <property name="propertyAddedEnabled" value="true" />
-          <property name="propertyChangedEnabled" value="true" />
-          <property name="propertyRemovedEnabled" value="true" />
-          <property name="absolutePath" value="${virtualhosts.repository.path}" />
-          <property name="deep" value="true" />
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" value="${virtualhosts.repository.path}"/>
+          <property name="deep" value="true"/>
           <property name="uuids">
             <null/>
           </property>
           <property name="nodeTypeNames">
             <null/>
           </property>
-          <property name="noLocal" value="false" />
+          <property name="noLocal" value="false"/>
           <property name="eventListener">
             <bean class="org.hippoecm.hst.core.hosting.VirtualHostsConfigurationEventListener">
-              <property name="virtualHostsManager" ref="org.hippoecm.hst.core.hosting.VirtualHostsManager" />
+              <property name="virtualHostsManager"
+                ref="org.hippoecm.hst.core.hosting.VirtualHostsManager"/>
             </bean>
           </property>
         </bean>
-        
+
         <!-- Site Configuration Node Path -->
         <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
-          <property name="nodeAddedEnabled" value="true" />
-          <property name="nodeRemovedEnabled" value="true" />
-          <property name="propertyAddedEnabled" value="true" />
-          <property name="propertyChangedEnabled" value="true" />
-          <property name="propertyRemovedEnabled" value="true" />
-          <property name="absolutePath" value="${observation.sites.config.node.path}" />
-          <property name="deep" value="true" />
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" value="${observation.sites.config.node.path}"/>
+          <property name="deep" value="true"/>
           <property name="uuids">
             <null/>
           </property>
           <property name="nodeTypeNames">
             <null/>
           </property>
-          <property name="noLocal" value="false" />
+          <property name="noLocal" value="false"/>
           <property name="eventListener">
             <bean class="org.hippoecm.hst.configuration.HstSitesConfigurationEventListener">
               <property name="sitesManagers">
                 <list>
-                  <ref bean="org.hippoecm.hst.configuration.HstSitesManager.preview" />
-                  <ref bean="org.hippoecm.hst.configuration.HstSitesManager.live" />
+                  <ref bean="org.hippoecm.hst.configuration.HstSitesManager.preview"/>
+                  <ref bean="org.hippoecm.hst.configuration.HstSitesManager.live"/>
                 </list>
-              </property>  
-              <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
-              <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
+              </property>
+              <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher"/>
+              <property name="componentRegistry"
+                ref="org.hippoecm.hst.core.container.HstComponentRegistry"/>
             </bean>
           </property>
         </bean>
-        
+
         <!-- PoolingRepository's sessions refresh event listener -->
-        <!--
-        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
-          <property name="nodeAddedEnabled" value="true" />
-          <property name="nodeRemovedEnabled" value="true" />
-          <property name="propertyAddedEnabled" value="true" />
-          <property name="propertyChangedEnabled" value="true" />
-          <property name="propertyRemovedEnabled" value="true" />
-          <property name="absolutePath" value="${event.based.repository.path}" />
-          <property name="deep" value="true" />
+
+       <!-- <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" value="${event.based.repository.path}"/>
+          <property name="deep" value="true"/>
           <property name="uuids">
             <null/>
           </property>
           <property name="nodeTypeNames">
             <null/>
           </property>
-          <property name="noLocal" value="false" />
+          <property name="noLocal" value="false"/>
           <property name="eventListener">
-            <bean class="org.hippoecm.hst.org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionsRefreshEventListener">
+            <bean
+              class="org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionsRefreshEventListener">
               <property name="poolingRepositoris">
                 <list>
-                  <ref bean="javax.jcr.Repository.event.based" />
+                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.default"/>
+                      </list>
+                    </property>
+                  </bean>
+                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.writable"/>
+                      </list>
+                    </property>
+                  </bean>
                 </list>
-              </property>  
+              </property>
             </bean>
           </property>
         </bean>
-        -->
-        
+-->
+
+
       </list>
     </property>
   </bean>
 
 </beans>
-
