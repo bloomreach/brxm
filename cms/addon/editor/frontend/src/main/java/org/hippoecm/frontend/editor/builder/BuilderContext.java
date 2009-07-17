@@ -128,6 +128,15 @@ public class BuilderContext implements IClusterable {
         pluginRef.setModel(new Model(getPluginId()));
     }
 
+    public boolean hasFocus() {
+        IModelReference pluginRef = context.getService(config.getString(SELECTED_PLUGIN), IModelReference.class);
+        if (pluginRef.getModel() != null) {
+            return getPluginId().equals(pluginRef.getModel().getObject());
+        } else {
+            return false;
+        }
+    }
+    
     public Mode getMode() {
         if ("view".equals(config.getString("builder.mode", "view"))) {
             return EditorContext.Mode.VIEW;

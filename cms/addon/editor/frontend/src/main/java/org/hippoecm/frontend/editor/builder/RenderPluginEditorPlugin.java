@@ -159,6 +159,36 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
                 }
 
             });
+
+            add(new AttributeAppender("class", new IModel() {
+                private static final long serialVersionUID = 1L;
+
+                public Object getObject() {
+                    if (builderContext.hasFocus()) {
+                        return "active";
+                    }
+                    return "";
+                }
+
+                public void setObject(Object object) {
+                }
+
+                public void detach() {
+                }
+            }, " "));
+
+            builderContext.addBuilderListener(new IBuilderListener() {
+                private static final long serialVersionUID = 1L;
+
+                public void onBlur() {
+                    redraw();
+                }
+
+                public void onFocus() {
+                    redraw();
+                }
+                
+            });
         }
 
         registerExtensionPointSelector();

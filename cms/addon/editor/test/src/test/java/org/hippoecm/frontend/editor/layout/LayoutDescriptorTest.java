@@ -30,7 +30,9 @@ public class LayoutDescriptorTest {
 
     @Test
     public void testDeserialization() {
-        ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage().getName() + ".Test");
+        ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage()
+                .getName()
+                + ".Test");
 
         Map<String, ILayoutPad> pads = descriptor.getLayoutPads();
         assertEquals(2, pads.size());
@@ -43,10 +45,20 @@ public class LayoutDescriptorTest {
 
     @Test
     public void testNoIcon() throws Exception {
-        ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage().getName() + ".NonExistingTest");
-        IResourceStream stream = descriptor.getIcon();
+        ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage()
+                .getName()
+                + ".NonExistingTest");
+        IResourceStream stream = descriptor.getIcon().getResourceStream();
         InputStream input = stream.getInputStream();
         input.close();
     }
-    
+
+    @Test
+    public void testName() throws Exception {
+        ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage()
+                .getName()
+                + ".Test");
+        assertEquals("Test layout", descriptor.getName().getObject());
+    }
+
 }

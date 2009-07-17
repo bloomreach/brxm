@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -27,9 +28,16 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.wicket.Application;
+import org.apache.wicket.Resource;
+import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.WebResource;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.resource.IPropertiesFactory;
+import org.apache.wicket.resource.Properties;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.UrlResourceStream;
+import org.apache.wicket.util.resource.locator.ResourceNameIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -207,22 +215,29 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
         return pads;
     }
 
-    public IResourceStream getIcon() {
-        ClassLoader cl = (ClassLoader) clModel.getObject();
-        URL url = null;
-        if (variant != null) {
-            url = cl.getResource(location + "_" + variant + ".png");
-        }
-        if (url == null) {
-            url = cl.getResource(location + ".png");
-        }
-        if (url != null) {
-            return new UrlResourceStream(url);
-        } else {
-            cl = getClass().getClassLoader();
-            return new UrlResourceStream(cl.getResource(getClass().getPackage().getName().replace('.', '/')
-                    + "/no-layout.png"));
-        }
+    public Resource getIcon() {
+        return new WebResource() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public IResourceStream getResourceStream() {
+                ClassLoader cl = (ClassLoader) clModel.getObject();
+                URL url = null;
+                if (variant != null) {
+                    url = cl.getResource(location + "_" + variant + ".png");
+                }
+                if (url == null) {
+                    url = cl.getResource(location + ".png");
+                }
+                if (url != null) {
+                    return new UrlResourceStream(url);
+                } else {
+                    cl = getClass().getClassLoader();
+                    return new UrlResourceStream(cl.getResource(getClass().getPackage().getName().replace('.', '/')
+                            + "/no-layout.png"));
+                }
+            }
+        };
     }
 
     public String getPluginClass() {
@@ -232,5 +247,56 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
     public String getVariant() {
         return variant;
     }
-    
+
+    /**
+     * Determine the name by use of properties files.  The lookup procedure uses the
+     * variant properties file, if available, falling back to the no-variant 
+     * <code>location + ".properties"</code> file.  The key that is used is the name
+     * of the layout (i.e. the last part of its location path), initially tried with
+     * the variant appended and falling back to the using the name itself as key if
+     * this fails.  Finally, if no properties files are found, the name is returned.
+     */
+    public IModel getName() {
+        return new IModel() {
+            private static final long serialVersionUID = 1L;
+
+            public Object getObject() {
+                // Load the properties associated with the path
+                IPropertiesFactory propertiesFactory = Application.get().getResourceSettings().getPropertiesFactory();
+
+                Locale locale = null;
+                if (Session.get() != null) {
+                    locale = Session.get().getLocale();
+                }
+                String name = location.substring(location.lastIndexOf('/') + 1);
+                ResourceNameIterator iterator = new ResourceNameIterator(location, variant, locale, "properties");
+                while (iterator.hasNext()) {
+                    String path = (String) iterator.next();
+                    final Properties props = propertiesFactory.load(null, path);
+                    if (props != null) {
+                        if (variant != null) {
+                            // Lookup the value
+                            String value = props.getString(name + "_" + variant);
+                            if (value != null) {
+                                return value;
+                            }
+                        }
+                        String value = props.getString(name);
+                        if (value != null) {
+                            return value;
+                        }
+                    }
+                }
+                return name;
+            }
+
+            public void setObject(Object object) {
+            }
+
+            public void detach() {
+            }
+
+        };
+    }
+
 }

@@ -15,12 +15,14 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.hippoecm.frontend.editor.layout.ILayoutControl;
 import org.hippoecm.frontend.editor.layout.ILayoutPad;
+import org.hippoecm.frontend.editor.layout.ILayoutTransition;
 import org.hippoecm.frontend.editor.layout.ListItemLayoutControl;
 import org.hippoecm.frontend.editor.layout.ListItemPad;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -40,6 +42,12 @@ public class ListViewPluginEditorPlugin extends RenderPluginEditorPlugin {
 
         // disable remove link
         get("remove").setVisible(false);
+    }
+
+    @Override
+    protected Iterator<ILayoutTransition> getTransitionIterator() {
+        List<ILayoutTransition> list = Collections.emptyList();
+        return list.iterator();
     }
 
     @Override
