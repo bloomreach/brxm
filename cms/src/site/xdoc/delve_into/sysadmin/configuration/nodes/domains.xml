@@ -37,15 +37,15 @@
 hippo:configuration
 `-- hippo:domains
     `-- mydomain
-        |-- hippo:domainrule
-        |   |-- hippo:facetrule
-        |   `-- hippo:facetrule
-        |-- hippo:domainrule
-        |   |-- hippo:facetrule
-        |   |-- hippo:facetrule
-        |   `-- hippo:facetrule
-        |-- hippo:domainrule
-        |   `-- hippo:facetrule
+        |-- mydomainruleA
+        |   |-- myfacetruleA
+        |   `-- myfacetruleB
+        |-- mydomainruleB
+        |   |-- myfacetruleC
+        |   |-- myfacetruleD
+        |   `-- myfacertuleE
+        |-- mydomainruleC
+        |   `-- myfacetruleF
         |-- hippo:authrole
         `-- hippo:authrole
  </source>
@@ -55,7 +55,7 @@ hippo:configuration
 <source>
 &lt;sv:node sv:name="mydomain"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-        &lt;sv:value&gt;hippo:domain&lt;/sv:value&gt;
+        &lt;sv:value&gt;hipposys:domain&lt;/sv:value&gt;
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
 </source>
@@ -65,14 +65,14 @@ hippo:configuration
             </table>
 
             <p>
-                The <code>hippo:domain</code> can hold multiple <code>hippo:domainrule</code> and <code>hippo:authrole</code> nodes.
+                The <code>hipposys:domain</code> can hold multiple <code>hipposys:domainrule</code> and <code>hipposys:authrole</code> nodes.
             </p>
             </subsection>
-            <subsection name="hippo:domainrule">
+            <subsection name="hipposys:domainrule">
 <source>
-&lt;sv:node sv:name="hippo:domainrule"&gt;
+&lt;sv:node sv:name="mydomainruleA"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-        &lt;sv:value&gt;hippo:domainrule&lt;/sv:value&gt;
+        &lt;sv:value&gt;hipposys:domainrule&lt;/sv:value&gt;
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
 </source>
@@ -82,36 +82,39 @@ hippo:configuration
             </table>
 
             <p>
-                The <code>hippo:domainrule</code> can hold multiple <code>hippo:facetrule</code> nodes.
+                The <code>hipposys:domainrule</code> can hold multiple <code>hipposys:facetrule</code> nodes.
             </p>
             </subsection>
             <subsection name="hippo:facetrule">
 <source>
-&lt;sv:node sv:name="hippo:facetrule"&gt;
+&lt;sv:node sv:name="myfacetruleA"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-        &lt;sv:value&gt;hippo:facetrule&lt;/sv:value&gt;
+        &lt;sv:value&gt;hipposys:facetrule&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:facet" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:facet" sv:type="String"&gt;
         &lt;sv:value&gt;category&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:value" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:value" sv:type="String"&gt;
         &lt;sv:value&gt;news&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:type" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:type" sv:type="String"&gt;
         &lt;sv:value&gt;String&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:equals" sv:type="Boolean"&gt;
+    &lt;sv:property sv:name="hipposys:equals" sv:type="Boolean"&gt;
+        &lt;sv:value&gt;true&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
+    &lt;sv:property sv:name="hipposys:filter" sv:type="Boolean"&gt;
         &lt;sv:value&gt;true&lt;/sv:value&gt;
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
 </source>
             <table>
                 <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-                <tr><td>node name</td><td>String</td><td>yes</td><td>hippo:facetrule</td></tr>
-                <tr><td>hippo:facet</td><td>String</td><td>yes</td><td>The name of the facet to match. A special value of
+                <tr><td>node name</td><td>String</td><td>yes</td><td>hipposys:facetrule</td></tr>
+                <tr><td>hipposys:facet</td><td>String</td><td>yes</td><td>The name of the facet to match. A special value of
                 <code>nodetype</code> can be set to check if a node if of a type, either it's primary type, an inherited type or
                 a mixin type.</td></tr>
-                <tr><td>hippo:value</td><td>String</td><td>yes</td><td>The value of the facet to match. Four special values can be
+                <tr><td>hipposys:value</td><td>String</td><td>yes</td><td>The value of the facet to match. Four special values can be
                 used:
                     <ul>
                         <li>* : match everything</li>
@@ -120,27 +123,31 @@ hippo:configuration
                         <li>__group__ : match any of the user's groups</li>
                     </ul>
                 </td></tr>
-                <tr><td>hippo:type</td><td>String</td><td>yes</td><td>The property type of the facet. Must be either
+                <tr><td>hipposys:type</td><td>String</td><td>yes</td><td>The property type of the facet. Must be either
                 String or Name.</td></tr>
-                <tr><td>hippo:equals</td><td>Boolean</td><td>yes</td><td>Whether the value must match or must <strong>not</strong>
+                <tr><td>hipposys:equals</td><td>Boolean</td><td>yes</td><td>Whether the value must match or must <strong>not</strong>
                 match. If a not match (false) is set the facet must exist on the node.</td></tr>
+                <tr><td>hipposys:filter</td><td>Boolean</td><td>no</td><td>Whether the facet must exists to match. 
+                If set to true the match is only tried if the facet does exists..
+
+</td></tr>
             </table>
             </subsection>
-            <subsection name="hippo:authrole">
+            <subsection name="hipposys:authrole">
             <source>
 &lt;sv:node sv:name="hippo:authrole"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-        &lt;sv:value&gt;hippo:authrole&lt;/sv:value&gt;
+        &lt;sv:value&gt;hippo:sysauthrole&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:role" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:role" sv:type="String"&gt;
         &lt;sv:value&gt;editor&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:users" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:users" sv:type="String"&gt;
         &lt;sv:value&gt;user1&lt;/sv:value&gt;
         &lt;sv:value&gt;editor&lt;/sv:value&gt;
         &lt;sv:value&gt;admin&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:groups" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:groups" sv:type="String"&gt;
         &lt;sv:value&gt;group1&lt;/sv:value&gt;
         &lt;sv:value&gt;mygroup&lt;/sv:value&gt;
     &lt;/sv:property&gt;
@@ -149,9 +156,9 @@ hippo:configuration
             <table>
                 <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
                 <tr><td>node name</td><td>String</td><td>yes</td><td>hippo:authrole</td></tr>
-                <tr><td>hippo:role</td><td>String</td><td>yes</td><td>The role to assign to users or groups to the domain.</td></tr>
-                <tr><td>hippo:users</td><td>String</td><td>no</td><td>The users that have the role on the domain.</td></tr>
-                <tr><td>hippo:groups</td><td>String</td><td>no</td><td>The groups that have the role on the domain.</td></tr>
+                <tr><td>hipposys:role</td><td>String</td><td>yes</td><td>The role to assign to users or groups to the domain.</td></tr>
+                <tr><td>hipposys:users</td><td>String</td><td>no</td><td>The users that have the role on the domain.</td></tr>
+                <tr><td>hipposys:groups</td><td>String</td><td>no</td><td>The groups that have the role on the domain.</td></tr>
             </table>
             </subsection>
 

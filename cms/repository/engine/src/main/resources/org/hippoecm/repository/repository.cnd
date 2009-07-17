@@ -249,9 +249,14 @@
 [hipposys:user] > nt:base
 - hipposys:securityprovider (string) = 'internal' mandatory autocreated
 - hipposys:active (boolean) = true mandatory autocreated
+- hipposys:system (boolean)
 - hipposys:password (string)
 - hipposys:passkey (string)
 - hipposys:lastlogin (date)
+- hipposys:firstname (string)
+- hipposys:lastname (string)
+- hipposys:email (string)
+
 
 [hipposys:externaluser] > hipposys:user
 - hipposys:lastsync (date)
@@ -259,6 +264,7 @@
 
 [hipposys:group] > nt:base
 - hipposys:securityprovider (string) = 'internal' mandatory autocreated
+- hipposys:system (boolean)
 - hipposys:members (string) multiple
 - hipposys:groups (string) multiple
 - hipposys:description (string)

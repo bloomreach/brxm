@@ -24,7 +24,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
@@ -41,7 +40,7 @@ public class DomainDataProvider extends SortableDataProvider {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String QUERY_DOMAIN_LIST = "SELECT * FROM hippo:domain";
+    private static final String QUERY_DOMAIN_LIST = "SELECT * FROM hipposys:domain";
 
     private static transient List<Domain> domainList = new ArrayList<Domain>();
     private static volatile boolean dirty = true;

@@ -24,7 +24,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
@@ -41,7 +40,7 @@ public class GroupDataProvider extends SortableDataProvider {
 
     private static final Logger log = LoggerFactory.getLogger(GroupDataProvider.class);
 
-    private static final String QUERY_GROUP_LIST = "SELECT * FROM hippo:group";
+    private static final String QUERY_GROUP_LIST = "SELECT * FROM hipposys:group where hipposys:system <> 'true' or hipposys:system IS NULL";
 
 
     private static transient List<Group> groupList = new ArrayList<Group>();

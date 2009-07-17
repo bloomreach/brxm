@@ -48,19 +48,19 @@ public class User implements Comparable<User>, IClusterable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(User.class);
 
-    private static final String NT_FRONTEND_USER = "frontend:user";
+    private static final String NT_USER = "hipposys:user";
 
-    public static final String PROP_FIRSTNAME = "frontend:firstname";
-    public static final String PROP_LASTNAME = "frontend:lastname";
-    public static final String PROP_EMAIL = "frontend:email";
+    public static final String PROP_FIRSTNAME = "hipposys:firstname";
+    public static final String PROP_LASTNAME = "hipposys:lastname";
+    public static final String PROP_EMAIL = "hipposys:email";
     public static final String PROP_PASSWORD = HippoNodeType.HIPPO_PASSWORD;
     public static final String PROP_PASSKEY = HippoNodeType.HIPPO_PASSKEY;
     public static final String PROP_PROVIDER = HippoNodeType.HIPPO_SECURITYPROVIDER;
 
-    private final static String QUERY_USER_EXISTS = "SELECT * FROM hippo:user WHERE fn:name()='{}'";
+    private final static String QUERY_USER_EXISTS = "SELECT * FROM hipposys:user WHERE fn:name()='{}'";
 
-    private final static String QUERY_LOCAL_MEMBERSHIPS = "SELECT * FROM hippo:group WHERE jcr:primaryType='hippo:group' AND hippo:members='{}'";
-    private final static String QUERY_EXTERNAL_MEMBERSHIPS = "SELECT * FROM hippo:externalgroup WHERE hippo:members='{}'";
+    private final static String QUERY_LOCAL_MEMBERSHIPS = "SELECT * FROM hipposys:group WHERE jcr:primaryType='hipposys:group' AND hipposys:members='{}'";
+    private final static String QUERY_EXTERNAL_MEMBERSHIPS = "SELECT * FROM hipposys:externalgroup WHERE hipposys:members='{}'";
 
     private boolean external = false;
     private boolean active = true;
@@ -296,7 +296,7 @@ public class User implements Comparable<User>, IClusterable {
         relPath.append("/");
         relPath.append(NodeNameCodec.encode(getUsername(), true));
 
-        node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), NT_FRONTEND_USER);
+        node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), NT_USER);
         setOrRemoveStringProperty(node, PROP_EMAIL, getEmail());
         setOrRemoveStringProperty(node, PROP_FIRSTNAME, getFirstName());
         setOrRemoveStringProperty(node, PROP_LASTNAME, getLastName());
@@ -323,7 +323,7 @@ public class User implements Comparable<User>, IClusterable {
      * @throws RepositoryException
      */
     public void save() throws RepositoryException {
-        if (node.isNodeType(NT_FRONTEND_USER)) {
+        if (node.isNodeType(NT_USER)) {
             setOrRemoveStringProperty(node, PROP_EMAIL, getEmail());
             setOrRemoveStringProperty(node, PROP_FIRSTNAME, getFirstName());
             setOrRemoveStringProperty(node, PROP_LASTNAME, getLastName());

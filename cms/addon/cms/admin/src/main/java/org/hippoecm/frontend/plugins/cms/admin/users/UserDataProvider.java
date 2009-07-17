@@ -47,7 +47,7 @@ public class UserDataProvider extends SortableDataProvider {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DetachableUser.class);
 
-    private static final String QUERY_USER_LIST = "SELECT * FROM hippo:user";
+    private static final String QUERY_USER_LIST = "SELECT * FROM hipposys:user where hipposys:system <> 'true' or hipposys:system IS NULL";
     private static transient List<User> userList = new ArrayList<User>();
     private static volatile boolean dirty = true;
     

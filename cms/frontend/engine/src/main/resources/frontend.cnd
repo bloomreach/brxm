@@ -53,11 +53,6 @@
 - frontend:renderer (string)
 - * (string)
 
-[frontend:user] > hipposys:user
-- frontend:firstname (string)
-- frontend:lastname (string)
-- frontend:email (string)
-
 [frontend:listener] > nt:base
 - frontend:path (string) mandatory
 - frontend:events (long) mandatory

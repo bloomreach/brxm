@@ -26,7 +26,7 @@
             <p>
                 The groups are stored in the repository as childeren of the node
                 <code>/hippo:configuration/hippo:groups</code>. The members of the group are
-                stored in the nulti valued property <code>hippo:members</code>
+                stored in the nulti valued property <code>hipposys:members</code>
                 A groups node has the following configuration:
             </p>
             <p>
@@ -42,17 +42,20 @@ hippo:configuration
  </source>
         </section>
         <section name="Nodes">
-            <subsection name="hippo:group">
+            <subsection name="hipposys:group">
 <source>
 &lt;sv:node sv:name="mygroup"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-        &lt;sv:value&gt;hippo:group&lt;/sv:value&gt;
+        &lt;sv:value&gt;hipposys:group&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:members" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:system" sv:type="Boolean"&gt;
+        &lt;sv:value&gt;true&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
+    &lt;sv:property sv:name="hipposys:members" sv:type="String"&gt;
         &lt;sv:value&gt;demo&lt;/sv:value&gt;
         &lt;sv:value&gt;user1&lt;/sv:value&gt;
     &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:description" sv:type="String"&gt;
+    &lt;sv:property sv:name="hipposys:description" sv:type="String"&gt;
         &lt;sv:value&gt;My Own Group&lt;/sv:value&gt;
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
@@ -60,9 +63,11 @@ hippo:configuration
             <table>
                 <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
                 <tr><td>node name</td><td>String</td><td>yes</td><td>the group name</td></tr>
-                <tr><td>hippo:members</td><td>String</td><td>yes</td><td>the username of the user that is member of
-                the group. Multiple hippo:members can be set with each containing one username.</td></tr>
-                <tr><td>hippo:description</td><td>String</td><td>no</td><td>A description of the group</td></tr>
+                <tr><td>hipposys:system</td><td>Boolean</td><td>no</td><td>Can be used to indicate that the group is a system group
+                and should be hidden from the Hippo CMS group management.</td></tr>
+                <tr><td>hipposys:members</td><td>String</td><td>yes</td><td>the username of the user that is member of
+                the group. Multiple hipposys:members can be set with each containing one username.</td></tr>
+                <tr><td>hipposys:description</td><td>String</td><td>no</td><td>A description of the group</td></tr>
             </table>
             </subsection>
         </section>
