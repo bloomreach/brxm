@@ -823,11 +823,15 @@ div.wicket-modal div.link-picker table {background-color: #e3e3e3;}
 */
 div.wicket-modal div.wicket-tree {border: 0px;}
 
+/* select layout wizard step */
+.create-type-select-layout td {text-align: center;}
+.create-type-select-layout .selected {background-color: #ccc; height: 80px;}
+
 /* field template editing */
-.create-type-select-layout .selected {background-color: #ccc;}
-.hippo-editor .hippo-editor-template-field{width: 100%;}
+.hippo-editor-template-field {width: 100%; border: 1px solid #bbb;}
+.hippo-editor-template-field .active {background-color: #ccc;}
 .hippo-editor-template-field-controls {float: right;}
-.hippo-editor-template-field-controls .delete-16{width: 49px; float: right;}
+.hippo-editor-template-field-controls .delete-16 {width: 49px; float: right;}
 .hippo-editor-template-field-controls li {display: inline; }
 .hippo-editor-template-field-controls li a {float: left; display:block; background-position: center center; width: 16px; height: 16px;}
 .hippo-editor-template-field-controls li a:hover {background-color: white; }

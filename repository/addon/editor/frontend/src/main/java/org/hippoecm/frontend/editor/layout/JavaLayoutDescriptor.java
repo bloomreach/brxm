@@ -19,6 +19,10 @@ import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.wicket.Resource;
+import org.apache.wicket.markup.html.WebResource;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.UrlResourceStream;
 
@@ -28,12 +32,14 @@ public class JavaLayoutDescriptor implements ILayoutDescriptor {
 
     private static final long serialVersionUID = 1L;
 
+    private String name;
     private String plugin;
     private URL icon;
     private Map<String, ILayoutPad> pads;
     
     public JavaLayoutDescriptor(String plugin) {
         this.plugin = plugin;
+        this.name = plugin.substring(plugin.lastIndexOf('.'));
         this.pads = new TreeMap<String, ILayoutPad>();
     }
     
@@ -41,12 +47,24 @@ public class JavaLayoutDescriptor implements ILayoutDescriptor {
         this.icon = url;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public void addPad(ILayoutPad pad) {
         this.pads.put(pad.getName(), pad);
     }
     
-    public IResourceStream getIcon() {
-        return new UrlResourceStream(icon);
+    public Resource getIcon() {
+        return new WebResource() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public IResourceStream getResourceStream() {
+                return new UrlResourceStream(icon);
+            }
+            
+        };
     }
 
     public Map<String, ILayoutPad> getLayoutPads() {
@@ -61,4 +79,8 @@ public class JavaLayoutDescriptor implements ILayoutDescriptor {
         return null;
     }
 
+    public IModel getName() {
+        return new Model(name);
+    }
+    
 }

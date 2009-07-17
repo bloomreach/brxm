@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.editor.workflow.dialog;
 
-import org.apache.wicket.Resource;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.wizard.WizardStep;
@@ -26,7 +25,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.util.resource.IResourceStream;
+import org.hippoecm.frontend.editor.layout.ILayoutDescriptor;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 
@@ -64,17 +63,9 @@ public class SelectLayoutStep extends WizardStep {
                     }
 
                 };
-                link.add(new Image("preview", new Resource() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public IResourceStream getResourceStream() {
-                        return layoutProvider.getDescriptor(layout).getIcon();
-                    }
-
-                }));
-                String name = layout.substring(layout.lastIndexOf('.') + 1);
-                link.add(new Label("layout", name));
+                ILayoutDescriptor descriptor = layoutProvider.getDescriptor(layout);
+                link.add(new Image("preview", descriptor.getIcon()));
+                link.add(new Label("layout", descriptor.getName()));
                 item.add(link);
 
                 item.add(new CssClassAppender(new Model() {

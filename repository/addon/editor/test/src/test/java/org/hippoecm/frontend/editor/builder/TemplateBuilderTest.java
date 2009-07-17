@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.editor.builder;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
@@ -26,10 +27,8 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -40,7 +39,7 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
-import org.junit.Before;
+import org.hippoecm.repository.Utilities;
 import org.junit.Test;
 
 public class TemplateBuilderTest extends PluginTest {
@@ -184,6 +183,14 @@ public class TemplateBuilderTest extends PluginTest {
 
         assertTrue(prototype.getNode().hasProperty("test:titel_new"));
         assertEquals("titel", prototype.getNode().getProperty("test:titel_new").getString());
+        assertFalse(prototype.getNode().hasProperty("test:titel"));
+
+        // remove field
+        type.removeField("title");
+        
+        home.processEvents();
+
+        assertFalse(prototype.getNode().hasProperty("test:titel_new"));
     }
 
 }

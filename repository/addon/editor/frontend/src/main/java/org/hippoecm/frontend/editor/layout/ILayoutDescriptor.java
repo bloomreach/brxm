@@ -18,22 +18,36 @@ package org.hippoecm.frontend.editor.layout;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.Resource;
+import org.apache.wicket.model.IModel;
 
 /**
  * Descriptor for layout plugins (i.e. html only).  The extension points
  * of the plugin correspond to pads in the layout.
  */
 public interface ILayoutDescriptor extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
+    /**
+     * The "class" name of the layout.  When there is a plugin corresponding
+     * to the layout, it's name will be used.
+     * @return the name of the plugin class
+     */
     String getPluginClass();
 
+    /**
+     * The markup variant.
+     * @return the variant
+     */
     String getVariant();
 
-    // FIXME: abstract away to a Resource
-    IResourceStream getIcon();
+    /**
+     * The localized name of the layout.
+     * @return
+     */
+    IModel/*<String>*/ getName();
+    
+    Resource getIcon();
 
     Map<String, ILayoutPad> getLayoutPads();
 
