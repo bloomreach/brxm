@@ -26,28 +26,53 @@ ________________________________________________________________________________
   </properties>
 
   <body>
-    <section name="User Guide">
-      <span class="shortdesc">How to work as a user of Hippo CMS.</span>
+   <section name="User Guide">
+    <span class="shortdesc">How to work as a user of Hippo CMS.</span>
 
-       <p>Hippo CMS is designed to allow people to perform their tasks using skills
-          actually related to that task. Therefore, the user guide is strictly
-          divided into four user roles. Users only require the skills that belong to 
-          the role they will perform.
-       </p>
+    <p>Hippo CMS allows to define which role(s) a user may perform.
+       In day to day usage,
+       contributors
+       write and add content,
+       and editors
+       decide about publishing
+       the content.
+       The contributors write documents that each are of a certain document type.
+       The document type specifies what kind of information the document should provide.
+       The document types are a kind of business rules and are
+       composed by information architects, generally before any meaningful documents
+       are written.
+       All users: contributors, editors and information architects have to
+       get an account from a CMS administrator. Unlike the other users, CMS administrators
+       have no part in the content of the CMS, they only assign permissions.
+    </p>
 
-       <p>
-        Before starting a guide, you may first want to learn how
-        to <a href='./screenshots.html'>manipulate the screenshots,</a> 
-        making them large (double click), or showing only the relevant part (single click).
-       </p>
+<p>
+The use of document types guarantees that different documents are similar and this allows
+fast development of any application that
+makes use of the documents. For example, a web developer need only to know about a few document
+types to make a website for hundreds of thousands of documents. He need not know about
+the documents themselves. Contributors need not know about making websites, just about
+what kind of information they are supposed to provide.
+</p>
+
+
+<!--
+    <p>
+     Before starting a guide, you may first want to learn how
+     to <a href='./screenshots.html'>manipulate the screenshots,</a> 
+     making them large (double click), or showing only the relevant part (single click).
+    </p>
+-->
+
 <table>
   <tr>
     <td>
-      <a href="./contributors/index.html">Guide for Contributors</a>
+      <a href="./contributors/index.html">Guide for Contributors (Authors)</a>
     </td>
     <td>Guide for Hippo CMS users to perform the role
-        of <a href='./contributors/concepts/contributor.html'>contributor</a>. 
-        (author and supplier of images and such)</td>
+        of <a href='./contributors/concepts/contributor.html'>contributor</a>.
+        (often called author but in addition to writing, he may also
+        supply images and other files.)</td>
   </tr>
   <tr>
     <td>
