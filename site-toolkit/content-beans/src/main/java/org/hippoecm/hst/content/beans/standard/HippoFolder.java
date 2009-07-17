@@ -44,7 +44,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
         }
         if(this.node == null) {
             log.warn("Cannot get documents because node is null");
-            return null;
+            return new ArrayList<HippoFolderBean>();
         }
         try {
             this.hippoFolders = new ArrayList<HippoFolderBean>();
@@ -63,7 +63,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
             return this.hippoFolders;
         } catch (RepositoryException e) {
             log.warn("Repository Exception : {}", e);
-            return null;
+            return new ArrayList<HippoFolderBean>();
         }
     }
     
@@ -106,7 +106,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
         }
         if(this.node == null) {
             log.warn("Cannot get documents because node is null");
-            return null;
+            return new ArrayList<HippoDocumentBean>();
         }
         try {
             this.hippoDocuments = new ArrayList<HippoDocumentBean>();
@@ -125,7 +125,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
             return this.hippoDocuments;
         } catch (RepositoryException e) {
             log.warn("Repository Exception : {}", e);
-            return null;
+            return new ArrayList<HippoDocumentBean>();
         }
     }
     
