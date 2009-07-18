@@ -138,7 +138,7 @@ public class HippoItem implements HippoBean{
                }
            }
        } catch (RepositoryException e) {
-           log.error("RepositoryException: Cannot get ChildBeans for jcrPrimaryNodeType: {}", e);
+           log.error("RepositoryException: Error while trying to create childBeans:", e);
            return new ArrayList<T>();
        }
        return childBeans;
@@ -147,11 +147,11 @@ public class HippoItem implements HippoBean{
     public <T> List<T> getChildBeans(String jcrPrimaryNodeType) {
          Class annotatedClass = this.objectConverter.getAnnotatedClassFor(jcrPrimaryNodeType);
          if(annotatedClass == null) {
-             log.warn("Cannot get ChildBeans for jcrPrimaryNodeType '{}' because there is no annotated class for this node type. Return null");
+             log.warn("Cannot get ChildBeans for jcrPrimaryNodeType '{}' because there is no annotated class for this node type. Return null", jcrPrimaryNodeType);
              return new ArrayList<T>();
          }
          if(this.node == null) {
-             log.warn("Cannot get ChildBeans for jcrPrimaryNodeType '{}' because the jcr node is detached. ");
+             log.warn("Cannot get ChildBeans for jcrPrimaryNodeType '{}' because the jcr node is detached. ",  jcrPrimaryNodeType);
              return new ArrayList<T>();
          }
          
@@ -174,7 +174,7 @@ public class HippoItem implements HippoBean{
                 }
             }
         } catch (RepositoryException e) {
-            log.error("RepositoryException: Cannot get ChildBeans for jcrPrimaryNodeType: {}", e);
+            log.error("RepositoryException: Cannot get ChildBeans for jcrPrimaryNodeType: '"+jcrPrimaryNodeType+"' ", e);
             return new ArrayList<T>();
         }
         
