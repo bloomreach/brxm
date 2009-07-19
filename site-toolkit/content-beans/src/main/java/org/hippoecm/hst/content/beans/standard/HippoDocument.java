@@ -41,12 +41,19 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
             return wrapped.getBean();
         } else {
             Object o = getBean(relPath);
-            if(o instanceof HippoHtml) { 
+            if(o == null) {
+                if(log.isDebugEnabled()) {
+                    log.debug("No bean found for relPath '{}' at '{}'", relPath, this.getPath());
+                }
+                wrapped = new BeanWrapper<HippoHtml>(null);
+                htmls.put(relPath, wrapped);
+                return null;
+            } else if(o instanceof HippoHtml) { 
                 wrapped = new BeanWrapper<HippoHtml>((HippoHtml)o);
                 htmls.put(relPath, wrapped);
                 return wrapped.getBean();
             } else {
-                log.warn("Cannot get HippoHtml bean for relPath '{}' because returned bean is of a different class. Return null.", relPath);
+                log.warn("Cannot get HippoHtml bean for relPath '{}' at '{}' because returned bean is not of type HippoHtml but is '"+o.getClass().getName()+"'", relPath, this.getPath());
                 // even when null, put it in the map to avoid being refetched
                 wrapped = new BeanWrapper<HippoHtml>(null);
                 htmls.put(relPath, wrapped);
