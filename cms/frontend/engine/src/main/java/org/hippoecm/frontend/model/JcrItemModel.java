@@ -45,7 +45,7 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     private String uuid;
     private String relPath;
-    private transient String absPath;
+    private String absPath = null;
 
     // constructors
 
@@ -149,19 +149,29 @@ public class JcrItemModel extends LoadableDetachableModel {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             if (uuid != null) {
                 Node node = null;
-                node = session.getNodeByUUID(uuid);
-                if (relPath == null) {
-                    return node;
-                }
-                if (node.isSame(session.getRootNode())) {
-                    return session.getItem("/" + relPath);
-                } else {
-                    return session.getItem(node.getPath() + "/" + relPath);
+                try {
+                    node = session.getNodeByUUID(uuid);
+                    if (relPath == null) {
+                        return node;
+                    }
+                    if (node.isSame(session.getRootNode())) {
+                        return session.getItem("/" + relPath);
+                    } else {
+                        return session.getItem(node.getPath() + "/" + relPath);
+                    }
+                } catch (ItemNotFoundException ex) {
+                    if (absPath != null) {
+                        uuid = null;
+                        relPath = null;
+                        return session.getItem(absPath);
+                    } else { 
+                        throw ex;
+                    }
                 }
             } else if (absPath != null) {
                 return session.getItem(absPath);
             } else {
-                log.info("Neither path nor uuid present for item model");
+                log.debug("Neither path nor uuid present for item model, returning null");
             }
         } catch (ItemNotFoundException e) {
             log.info("ItemNotFoundException while loading JcrItemModel for uuid: {}", uuid);
@@ -176,7 +186,6 @@ public class JcrItemModel extends LoadableDetachableModel {
     @Override
     public void detach() {
         save();
-        absPath = null;
         super.detach();
     }
 
