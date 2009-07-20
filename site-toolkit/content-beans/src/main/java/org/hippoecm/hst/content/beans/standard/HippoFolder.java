@@ -81,12 +81,12 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
     
     public List<HippoDocumentBean> getDocuments(int from, int to, boolean sorted) {
         List<HippoDocumentBean> documents = getDocuments(sorted);
-        if(from < 0) {from = 0;}
-        if(from > documents.size()) {return new ArrayList<HippoDocumentBean>();}
-        if(to > documents.size()){
-        	to = documents.size();
+        try {
+            return documents.subList(from, to); 
+        } catch (IndexOutOfBoundsException e) {
+            log.warn("Invalid sublist for getDocuments '{}'. Return empty list.", e.getMessage());
+            return new ArrayList<HippoDocumentBean>();
         }
-        return documents.subList(from, to);
     }
     
     public <T> List<T> getDocuments(Class<T> clazz) {
