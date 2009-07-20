@@ -63,6 +63,7 @@ public class RemodelWorkflowImpl implements RepositoryWorkflow, InternalWorkflow
             nsreg.registerNamespace(prefix, uri);
         } catch (NamespaceException ex) {
             log.error(ex.getMessage() + " For: " + prefix + ":" + uri);
+            throw new WorkflowException("Cannot create new namespace", ex);
         }
     }
 
@@ -73,7 +74,7 @@ public class RemodelWorkflowImpl implements RepositoryWorkflow, InternalWorkflow
             StringReader istream = new StringReader(cnd);
             Remodeling.remodel(session, prefix, istream, "", new HashMap());
         } catch (NamespaceException ex) {
-            throw new RepositoryException(ex);
+             throw new WorkflowException("failed to update, corruption possible", ex);
         }
    }
 
@@ -84,7 +85,7 @@ public class RemodelWorkflowImpl implements RepositoryWorkflow, InternalWorkflow
             StringReader istream = new StringReader(cnd);
             Remodeling remodel = Remodeling.remodel(session, prefix, istream, contentUpdater, contentUpdaterCargo);
         } catch (NamespaceException ex) {
-            throw new RepositoryException(ex);
+            throw new WorkflowException("failed to update, corruption possible", ex);
         }
     }
 }
