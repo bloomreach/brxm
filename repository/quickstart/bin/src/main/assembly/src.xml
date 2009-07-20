@@ -22,8 +22,7 @@
     <fileSet>
       <directory>src/main/assembly</directory>
       <outputDirectory></outputDirectory>
-      <lineEnding>unix
-      </lineEnding>
+      <lineEnding>unix</lineEnding>
       <fileMode>755</fileMode>
       <includes>
         <include>startup.sh</include>
@@ -32,10 +31,18 @@
     <fileSet>
       <directory>src/main/assembly</directory>
       <outputDirectory></outputDirectory>
-      <lineEnding>dos
-      </lineEnding>
+      <lineEnding>dos</lineEnding>
       <includes>
         <include>startup.bat</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>src/main/assembly</directory>
+      <outputDirectory></outputDirectory>
+      <lineEnding>dos</lineEnding>
+      <includes>
+        <include>NOTICE.txt</include>
+        <include>LICENSE.txt</include>
       </includes>
     </fileSet>
   </fileSets>
