@@ -110,4 +110,78 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
         return urlString;
     }
     
+    public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
+        String urlString = "";
+        
+        String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
+        boolean containerResource = false;
+        
+        if (!this.portletResourceURLEnabled) {
+            containerResource = ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace);
+        }
+        
+        StringBuilder path = new StringBuilder(100);
+        String pathInfo = null;
+        
+        if (containerResource) {
+            String oldPathInfo = containerURL.getPathInfo();
+            String resourcePath = containerURL.getResourceId();
+            Map<String, String[]> oldParamMap = containerURL.getParameterMap();
+            
+            try {
+                containerURL.setResourceWindowReferenceNamespace(null);
+                ((HstContainerURLImpl) containerURL).setPathInfo(resourcePath);
+                ((HstContainerURLImpl) containerURL).setParameters(null);
+                pathInfo = buildHstURLPath(containerURL);
+            } finally {
+                containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
+                ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
+                ((HstContainerURLImpl) containerURL).setParameters(oldParamMap);
+            }
+            
+            path.append(getVirtualizedServletPath(containerURL, requestContext, pathInfo));
+        } else {
+            pathInfo = buildHstURLPath(containerURL);
+            
+            if (!this.portletResourceURLEnabled) {
+                VirtualHost virtualHost = requestContext.getVirtualHost();
+                containerResource = (virtualHost != null && virtualHost.getVirtualHosts().isExcluded(pathInfo));
+            }
+            
+            if (!containerResource) {
+                path.append(containerURL.getServletPath());
+            }
+        }
+        
+        path.append(pathInfo);
+        
+        if (containerResource) {
+            path.insert(0, contextPath);
+            urlString = path.toString();
+        } else {
+            urlString = path.toString();
+            
+            BaseURL url = null;
+            PortletResponse response = HstContainerPortletContext.getCurrentResponse();
+            
+            if (response instanceof MimeResponse) {
+                MimeResponse mimeResponse = (MimeResponse) response;
+                
+                if (containerURL.getActionWindowReferenceNamespace() != null) {
+                    url = mimeResponse.createActionURL();
+                } else if (resourceWindowReferenceNamespace != null) {
+                    url = mimeResponse.createResourceURL();
+                } else {
+                    url = mimeResponse.createRenderURL();
+                }
+                
+                url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString());
+                
+                urlString = url.toString();
+            }
+        }
+        
+        return urlString;
+    }
+
 }

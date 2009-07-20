@@ -109,4 +109,19 @@ public interface HstContainerURLProvider {
      */
     String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException;
     
+    /**
+     * Stringifying the containerURL as a full URL string.
+     * <P>
+     * By this method, you can specify the context path such as '/mycontext'.
+     * </P>
+     * 
+     * @param containerURL
+     * @param requestContext
+     * @param contextPath
+     * @return
+     * @throws UnsupportedEncodingException
+     * @throws ContainerException
+     */
+    String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException;
+    
 }

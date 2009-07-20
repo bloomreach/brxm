@@ -53,4 +53,34 @@ public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider
                 .toString();
     }
     
+    public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
+        String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
+        String path = null;
+        
+        if (ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace)) {
+            String oldPathInfo = containerURL.getPathInfo();
+            String resourcePath = containerURL.getResourceId();
+            Map<String, String[]> oldParamMap = containerURL.getParameterMap();
+
+            try {
+                containerURL.setResourceWindowReferenceNamespace(null);
+                ((HstContainerURLImpl) containerURL).setPathInfo(resourcePath);
+                ((HstContainerURLImpl) containerURL).setParameters(null);
+                path = buildHstURLPath(containerURL);
+            } finally {
+                containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
+                ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
+                ((HstContainerURLImpl) containerURL).setParameters(oldParamMap);
+            }
+        } else {
+            path = buildHstURLPath(containerURL);
+        }
+        
+        return new StringBuilder(100)
+        .append(contextPath)
+        .append(getVirtualizedServletPath(containerURL, requestContext, path))
+        .append(path)
+        .toString();
+    }
+    
 }

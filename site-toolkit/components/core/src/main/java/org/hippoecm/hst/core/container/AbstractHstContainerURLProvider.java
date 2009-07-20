@@ -244,6 +244,8 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
     }
     
     public abstract String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException;
+
+    public abstract String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException;
     
     protected String buildHstURLPath(HstContainerURL containerURL) throws UnsupportedEncodingException {
         String characterEncoding = containerURL.getCharacterEncoding();
