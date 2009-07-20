@@ -264,10 +264,7 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
                 // Load the properties associated with the path
                 IPropertiesFactory propertiesFactory = Application.get().getResourceSettings().getPropertiesFactory();
 
-                Locale locale = null;
-                if (Session.get() != null) {
-                    locale = Session.get().getLocale();
-                }
+                Locale locale = Session.get().getLocale();
                 String name = location.substring(location.lastIndexOf('/') + 1);
                 ResourceNameIterator iterator = new ResourceNameIterator(location, variant, locale, "properties");
                 while (iterator.hasNext()) {
