@@ -22,12 +22,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.util.resource.IResourceStream;
+import org.hippoecm.frontend.PluginTest;
 import org.junit.Test;
 
-public class LayoutDescriptorTest {
+public class LayoutDescriptorTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    /**
+     * verify the parsing of the layout.xml file
+     */
     @Test
     public void testDeserialization() {
         ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage()
@@ -43,6 +47,10 @@ public class LayoutDescriptorTest {
         assertEquals("up", first.getTransition(transitions.get(0)).getName());
     }
 
+    /**
+     * Verify that layout descriptor returns a default icon when there is none
+     * provided with the layout itself.
+     */
     @Test
     public void testNoIcon() throws Exception {
         ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage()
@@ -53,6 +61,9 @@ public class LayoutDescriptorTest {
         input.close();
     }
 
+    /**
+     * Verify that the properties file is used to provide user-readable names.
+     */
     @Test
     public void testName() throws Exception {
         ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage()

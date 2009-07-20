@@ -39,7 +39,7 @@ public class JavaLayoutDescriptor implements ILayoutDescriptor {
     
     public JavaLayoutDescriptor(String plugin) {
         this.plugin = plugin;
-        this.name = plugin.substring(plugin.lastIndexOf('.'));
+        this.name = plugin.substring(plugin.lastIndexOf('.') + 1);
         this.pads = new TreeMap<String, ILayoutPad>();
     }
     
