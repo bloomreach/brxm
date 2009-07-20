@@ -19,6 +19,7 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -115,7 +116,7 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
     public PersistableObjectBeanManagerWorkflowImpl(Session session, ObjectConverter objectConverter) {
         this(session, objectConverter, null);
     }
-    
+     
     /**
      * Constructor
      * @param session the session for this manager context
@@ -376,11 +377,12 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                         if (uuid != null && !"".equals(uuid)) {
                             contentNode = session.getNodeByUUID(uuid);
                         }
-                    
                         boolean changed = customContentNodeBinder.bind(content, contentNode);
                         
                         if (changed) {
                             contentNode.save();
+                            // we need to recreate the EditableWorkflow because the node has changed
+                            ewf = (EditableWorkflow)wfm.getWorkflow(documentNodeWorkflowCategory, contentNode);
                             ewf.commitEditableInstance();
                             nodeReplaced = true;
                         } else {
@@ -427,23 +429,45 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
         if (content instanceof HippoBean) {
             try {
                 HippoBean contentBean = (HippoBean) content;
+                
+                Node canonical = ((HippoNode)contentBean.getNode()).getCanonicalNode();
+                if(canonical == null) {
+                    throw new ContentPersistenceException("Cannot remove HippoBean because there is no canonical node for '"+contentBean.getPath()+"'");
+                }
+                Node handleNode = canonical.getParent();
+                String nodeName = handleNode.getName();
+                
                 HippoBean folderBean = contentBean.getParentBean();
                 Node folderNode = folderBean.getNode();
-                
-                if (folderNode instanceof HippoNode) {
-                    Node canonical = ((HippoNode) folderNode).getCanonicalNode();
-                    if(canonical == null) {
-                        throw new ContentPersistenceException("Cannot remove HippoBean because there is no canonical node for '"+folderNode.getPath()+"'");
-                    }
-                    folderNode = canonical;
+                canonical = ((HippoNode)folderNode).getCanonicalNode();
+                if(canonical == null) {
+                    throw new ContentPersistenceException("Cannot remove HippoBean because there is no canonical node for '"+folderNode.getPath()+"'");
                 }
+                folderNode = canonical;
+                
+                if(handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    handleNode.checkout();
+                    NodeIterator it = handleNode.getNodes();
+                    while(it.hasNext()) {
+                        Node doc = it.nextNode();
+                        if(doc == null) { 
+                            continue;
+                        }
+                        if(doc.isNodeType("mix:versionable")) {
+                            doc.checkout();
+                        }
+                    }
+                } else {
+                    // TODO : check for childs all being checked out??
+                }
+                    
                 
                 WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 Workflow wf = wfm.getWorkflow(folderNodeWorkflowCategory, folderNode);
                 
                 if (wf instanceof FolderWorkflow) {
                     FolderWorkflow fwf = (FolderWorkflow) wf;
-                    fwf.delete(contentBean.getName());
+                    fwf.delete(nodeName);
                 } else {
                     throw new ContentPersistenceException("The workflow is not a FolderWorkflow for " + folderBean.getPath() + ": " + wf);
                 }
