@@ -536,7 +536,40 @@ public class JcrObservationManager implements ObservationManager {
             return !match;
         }
 
+        void checkSession() throws ObservationException {
+            // listeners can be invoked after they have been removed
+            if (session == null) {
+                throw new ObservationException("Listener " + this + " is no longer registerd");
+            } else if (!session.isLive()) {
+                // events have references to the session, so they are useless now
+                events.clear();
+                try {
+                    unsubscribe();
+                } catch (RepositoryException ex) {
+                    log.debug("Failed to unsubscribe");
+                }
+
+                // get new session and subscribe event listener
+                session = getSession().getJcrSession();
+                if (session != null) {
+                    try {
+                        subscribe();
+                    } catch (RepositoryException x) {
+                        log.error("Failed to re-subscribe");
+                    }
+                } else {
+                    throw new ObservationException("No session found");
+                }
+            }
+        }
+        
         synchronized void getChanges(Set<String> paths) {
+            try {
+                checkSession();
+            } catch (ObservationException e1) {
+                return;
+            }
+
             if (events.size() > 0) {
                 for (Event event : events) {
                     String path;
@@ -554,27 +587,11 @@ public class JcrObservationManager implements ObservationManager {
         }
 
         synchronized void process(Map<String, NodeState> dirty) {
-            // listeners can be invoked after they have been removed
-            if (session == null) {
-                log.debug("Listener " + this + " is no longer registerd");
+            try {
+                checkSession();
+            } catch (ObservationException ex) {
+                log.debug(ex.getMessage(), ex);
                 return;
-            } else if (!session.isLive()) {
-                events.clear();
-                try {
-                    unsubscribe();
-                } catch (RepositoryException ex) {
-                    log.debug("Failed to unsubscribe");
-                }
-                session = getSession().getJcrSession();
-                if (session != null) {
-                    try {
-                        subscribe();
-                    } catch (RepositoryException x) {
-                        log.error("Failed to re-subscribe");
-                    }
-                } else {
-                    return;
-                }
             }
 
             // process pending changes

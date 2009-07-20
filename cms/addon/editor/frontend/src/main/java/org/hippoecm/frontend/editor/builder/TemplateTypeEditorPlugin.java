@@ -35,7 +35,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,8 +120,10 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
                     selectedExtensionPointModel);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
+            throw new RuntimeException("Failed to initialize", ex);
         } catch (BuilderException e) {
             log.error(e.getMessage());
+            throw new RuntimeException("Failed to initialize", e);
         }
 
         onModelChanged();
@@ -197,7 +198,11 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
 
     @Override
     protected void onDetach() {
-        builder.detach();
+        // null-check; if plugin has registered its render-service and then throws
+        // exception, no builder may be available.
+        if (builder != null) {
+            builder.detach();
+        }
         super.onDetach();
     }
 
