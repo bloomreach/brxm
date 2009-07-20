@@ -43,6 +43,8 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -71,6 +73,8 @@ public class JcrObservationManager implements ObservationManager {
 
     private static JcrObservationManager INSTANCE = new JcrObservationManager();
 
+    private WeakHashMap<Session, Map<String, NodeState>> cache = new WeakHashMap<Session, Map<String, NodeState>>();
+
     private static class ObservationException extends Exception {
         private static final long serialVersionUID = 1L;
 
@@ -79,9 +83,14 @@ public class JcrObservationManager implements ObservationManager {
         }
     }
 
-    private static class NodeCache {
+    /**
+     * Immutable class that contains the names of child nodes and the
+     * names and values of properties.  Can be used to generate events
+     * between two different states of a node.
+     */
+    private static class NodeState {
 
-        private class NodeEvent implements Event {
+        class NodeEvent implements Event {
 
             int type;
             String name;
@@ -117,19 +126,13 @@ public class JcrObservationManager implements ObservationManager {
         private Map<String, Value[]> properties;
         private List<String> nodes;
 
-        NodeCache(Node node) throws RepositoryException {
+        NodeState(Node node) throws RepositoryException {
             this.path = node.getPath();
             this.userId = node.getSession().getUserID();
 
             properties = new HashMap<String, Value[]>();
             nodes = new LinkedList<String>();
-        }
-        
-        void init(Node node) throws RepositoryException {
-            process(node, properties, nodes);
-        }
 
-        void process(Node node, Map<String, Value[]> properties, List<String> nodes) throws RepositoryException {
             PropertyIterator propIter = node.getProperties();
             while (propIter.hasNext()) {
                 Property property = propIter.nextProperty();
@@ -157,12 +160,11 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
-        Iterator<Event> update(Node node) throws RepositoryException {
+        Iterator<Event> getEvents(NodeState newState) throws RepositoryException {
             List<Event> events = new LinkedList<Event>();
 
-            Map<String, Value[]> newProperties = new HashMap<String, Value[]>();
-            List<String> nodes = new LinkedList<String>();
-            process(node, newProperties, nodes);
+            Map<String, Value[]> newProperties = newState.properties;
+            List<String> nodes = newState.nodes;
 
             for (Map.Entry<String, Value[]> entry : this.properties.entrySet()) {
                 if (newProperties.containsKey(entry.getKey())) {
@@ -177,7 +179,6 @@ public class JcrObservationManager implements ObservationManager {
                                 break;
                             }
                         }
-                        
                     }
                 } else {
                     events.add(new NodeEvent(entry.getKey(), Event.PROPERTY_REMOVED));
@@ -199,11 +200,13 @@ public class JcrObservationManager implements ObservationManager {
                     events.add(new NodeEvent(child, Event.NODE_REMOVED));
                 }
             }
-
-            this.properties = newProperties;
-            this.nodes = nodes;
             return events.iterator();
         }
+
+        Event getChangeEvent() {
+            return new NodeEvent(null, 0);
+        }
+
     }
 
     private class JcrListener extends WeakReference<EventListener> implements EventListener {
@@ -216,7 +219,6 @@ public class JcrObservationManager implements ObservationManager {
 
         boolean isvirtual;
         List<String> fixed;
-        Map<String, NodeCache> pending;
         List<Event> events;
         Session session;
         FacetSearchObserver fso;
@@ -258,7 +260,6 @@ public class JcrObservationManager implements ObservationManager {
             this.isvirtual = isVirtual(getRoot());
 
             session = getSession().getJcrSession();
-            pending = new HashMap<String, NodeCache>();
 
             if (session != null) {
                 subscribe();
@@ -268,16 +269,9 @@ public class JcrObservationManager implements ObservationManager {
 
             fixed = new ArrayList<String>();
             if (!isDeep) {
-                Node root = getRoot();
-                NodeCache cache = new NodeCache(root);
-                cache.init(root);
-                pending.put(absPath, cache);
                 fixed.add(absPath);
             } else if (uuids != null) {
                 for (Node node : getReferencedNodes()) {
-                    NodeCache cache = new NodeCache(node);
-                    cache.init(node);
-                    pending.put(node.getPath(), cache);
                     fixed.add(node.getPath());
                 }
             }
@@ -293,7 +287,6 @@ public class JcrObservationManager implements ObservationManager {
                 session = null;
             }
             events.clear();
-            pending = null;
         }
 
         void subscribe() throws RepositoryException {
@@ -379,7 +372,6 @@ public class JcrObservationManager implements ObservationManager {
                         validUuids.add(id);
                     } catch (ItemNotFoundException e) {
                         log.warn("Could not dereference uuid {} : {}", id, e.getMessage());
-                        throw new RuntimeException("uuid " + id + " has disappeared!", e);
                     } catch (RepositoryException e) {
                         log.warn("Could not dereference uuid {} : {}", id, e.getMessage());
                     }
@@ -427,7 +419,7 @@ public class JcrObservationManager implements ObservationManager {
             return false;
         }
 
-        void processPending(NodeIterator iter, List<Node> nodes) {
+        void processPending(NodeIterator iter, Set<Node> nodes) {
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
                 if (node != null) {
@@ -438,7 +430,7 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
-        void expandNew(final List<Node> nodes) {
+        void expandNew(final Set<Node> nodes) {
             for (Node node : new ArrayList<Node>(nodes)) {
                 if (node.isNew()) {
                     ItemVisitor visitor = new TraversingItemVisitor() {
@@ -472,6 +464,78 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
+        boolean blocks(Event event) throws RepositoryException {
+
+            // check event type
+            long type = event.getType();
+            if (type != 0 && (eventTypes & type) == 0) {
+                return true;
+            }
+
+            String eventPath = event.getPath();
+            if (type != 0) {
+                eventPath = eventPath.substring(0, eventPath.lastIndexOf('/'));
+            }
+            if (!session.itemExists(eventPath)) {
+                return true;
+            }
+            Node parent = (Node) session.getItem(eventPath);
+
+            // check UUIDs
+            if (uuids != null) {
+                if (!parent.isNodeType("mix:referenceable")) {
+                    return true;
+                }
+                String parentId = parent.getUUID();
+                boolean match = false;
+                for (String uuid : uuids) {
+                    if (uuid.equals(parentId)) {
+                        match = true;
+                        break;
+                    }
+                }
+                if (!match) {
+                    return true;
+                }
+            }
+
+            // check node types
+            if (nodeTypes != null) {
+                NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
+                Set<NodeType> eventTypes = new HashSet<NodeType>();
+                eventTypes.add(parent.getPrimaryNodeType());
+                if (parent.hasProperty("jcr:mixinTypes")) {
+                    Value[] mixins = parent.getProperty("jcr:mixinTypes").getValues();
+                    for (Value mixin : mixins) {
+                        eventTypes.add(ntMgr.getNodeType(mixin.getString()));
+                    }
+                }
+                boolean match = false;
+                for (int i = 0; i < nodeTypes.length && !match; i++) {
+                    for (Iterator<NodeType> iter = eventTypes.iterator(); iter.hasNext();) {
+                        NodeType nodeType = iter.next();
+                        if (nodeType.isNodeType(nodeTypes[i])) {
+                            match = true;
+                            break;
+                        }
+                    }
+                    if (match) {
+                        break;
+                    }
+                }
+                if (!match) {
+                    return true;
+                }
+            }
+
+            // finally check path
+            boolean match = eventPath.equals(path);
+            if (!match && isDeep) {
+                match = isAncestor(path, eventPath);
+            }
+            return !match;
+        }
+
         synchronized void getChanges(Set<String> paths) {
             if (events.size() > 0) {
                 for (Event event : events) {
@@ -489,7 +553,7 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
-        synchronized void process() {
+        synchronized void process(Map<String, NodeState> dirty) {
             // listeners can be invoked after they have been removed
             if (session == null) {
                 log.debug("Listener " + this + " is no longer registerd");
@@ -515,7 +579,17 @@ public class JcrObservationManager implements ObservationManager {
 
             // process pending changes
             Node root = null;
-            List<Node> nodes = new LinkedList<Node>();
+            Set<Node> nodes = new TreeSet<Node>(new Comparator<Node>() {
+
+                public int compare(Node o1, Node o2) {
+                    try {
+                        return o1.getPath().compareTo(o2.getPath());
+                    } catch (RepositoryException ex) {
+                        return 0;
+                    }
+                }
+
+            });
             if (!isvirtual) {
                 try {
                     root = getRoot();
@@ -525,7 +599,7 @@ public class JcrObservationManager implements ObservationManager {
                         }
                         // use pendingChanges to detect changes in sub-trees and properties
                         if (!root.isNew()) {
-                            NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, true);
+                            NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, false);
                             processPending(iter, nodes);
                         }
                     } else {
@@ -544,7 +618,8 @@ public class JcrObservationManager implements ObservationManager {
                         // use pendingChanges to detect changes in sub-trees and properties
                         if (!root.isNew()) {
                             for (String type : nodeTypes) {
-                                NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type, true);
+                                NodeIterator iter = ((HippoSession) root.getSession())
+                                        .pendingChanges(root, type, false);
                                 processPending(iter, nodes);
                             }
                         }
@@ -588,51 +663,32 @@ public class JcrObservationManager implements ObservationManager {
                     try {
                         path = node.getPath();
                         paths.add(path);
-                        NodeCache cache;
-                        if (pending.containsKey(path)) {
-                            cache = pending.get(path);
+
+                        NodeState newState;
+                        if (dirty.containsKey(path)) {
+                            newState = dirty.get(path);
                         } else {
-                            if (uuids != null) {
-                                log.debug("New cache entry for " + path + ", listener " + this.path + " uuids: " + uuids);
-                            }
-                            cache = new NodeCache(node);
-                            pending.put(path, cache);
+                            newState = new NodeState(node);
+                            dirty.put(path, newState);
                         }
-                        Iterator<Event> iter = cache.update(node);
-                        while (iter.hasNext()) {
-                            events.add(iter.next());
+
+                        NodeState oldState = getNodeState(session, path);
+                        if (oldState != null) {
+                            Iterator<Event> iter = oldState.getEvents(newState);
+                            while (iter.hasNext()) {
+                                Event event = iter.next();
+                                if (!blocks(event)) {
+                                    events.add(event);
+                                }
+                            }
+                        } else {
+                            events.add(newState.getChangeEvent());
                         }
                     } catch (RepositoryException e) {
                         log.warn("Failed to process node", e);
                     }
                 }
 
-                for (String path : new ArrayList<String>(pending.keySet())) {
-                    if (!paths.contains(path)) {
-                        if (!fixed.contains(path)) {
-                            pending.remove(path);
-                        } else {
-                            // update fixed nodes
-                            try {
-                                if (session.itemExists(path)) {
-                                    Node node = (Node) session.getItem(path);
-                                    pending.get(path).init(node);
-                                } else {
-                                    fixed.remove(path);
-                                    pending.remove(path);
-                                }
-                            } catch (PathNotFoundException ex) {
-                                log.warn("Fixed (monitored) node was not found at " + path);
-                                fixed.remove(path);
-                                pending.remove(path);
-                            } catch (RepositoryException ex) {
-                                log.warn("Fixed (monitored) node ("+ path+") error", ex);
-                                fixed.remove(path);
-                                pending.remove(path);
-                            }
-                        }
-                    }
-                }
             }
 
             final Iterator<Event> upstream = events.iterator();
@@ -696,6 +752,31 @@ public class JcrObservationManager implements ObservationManager {
         return INSTANCE;
     }
 
+    static boolean isAncestor(String candidate, String path) {
+        String[] cParts = candidate.split("/");
+        String[] pParts = path.split("/");
+
+        // if candidate has more elements than path, then it cannot be an ancestor
+        if (cParts.length > pParts.length) {
+            return false;
+        }
+
+        for (int i = 0; i < cParts.length; i++) {
+            String cEl = cParts[i];
+            String pEl = pParts[i];
+            if (cEl.endsWith("[1]")) {
+                cEl = cEl.substring(0, cEl.length() - 3);
+            }
+            if (pEl.endsWith("[1]")) {
+                pEl = pEl.substring(0, pEl.length() - 3);
+            }
+            if (!cEl.equals(pEl)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     ReferenceQueue<EventListener> listenerQueue;
     Map<EventListener, JcrListener> listeners;
 
@@ -715,6 +796,33 @@ public class JcrObservationManager implements ObservationManager {
                 realListener.init(eventTypes, absPath, isDeep, uuid, nodeTypeName, noLocal);
                 synchronized (listeners) {
                     listeners.put(listener, realListener);
+                }
+
+                // prefetch fixed nodes into cache
+                if (realListener.fixed.size() > 0) {
+                    Session jcrSession = session.getJcrSession();
+                    Map<String, NodeState> states;
+                    synchronized (cache) {
+                        states = cache.get(jcrSession);
+                        if (states == null) {
+                            states = new HashMap<String, NodeState>();
+                            cache.put(jcrSession, states);
+                        }
+                    }
+                    synchronized (states) {
+                        for (String path : realListener.fixed) {
+                            if (!states.containsKey(path)) {
+                                try {
+                                    if (jcrSession.itemExists(path)) {
+                                        NodeState state = new NodeState((Node) jcrSession.getItem(path));
+                                        states.put(path, state);
+                                    }
+                                } catch (RepositoryException ex) {
+                                    log.warn("Failed to initialize node state", ex);
+                                }
+                            }
+                        }
+                    }
                 }
             } catch (ObservationException ex) {
                 log.error(ex.getMessage());
@@ -790,6 +898,17 @@ public class JcrObservationManager implements ObservationManager {
         }
     }
 
+    private NodeState getNodeState(Session session, String path) {
+        synchronized (cache) {
+            Map<String, NodeState> states = cache.get(session);
+            if (states == null) {
+                states = new HashMap<String, NodeState>();
+                cache.put(session, states);
+            }
+            return states.get(path);
+        }
+    }
+
     private void prune(Set<String> paths) {
         // filter out descendants
         Iterator<String> pathIter = paths.iterator();
@@ -851,7 +970,8 @@ public class JcrObservationManager implements ObservationManager {
                         try {
                             session.getRootNode().getNode(path.substring(1)).refresh(true);
                         } catch (PathNotFoundException ex) {
-                            log.error("Could not find path " + path + " for event, discarding event and continue: " + ex.getMessage());
+                            log.error("Could not find path " + path + " for event, discarding event and continue: "
+                                    + ex.getMessage());
                         }
                     }
                 }
@@ -881,6 +1001,7 @@ public class JcrObservationManager implements ObservationManager {
                 }
 
             });
+
             synchronized (listeners) {
                 for (JcrListener listener : listeners.values()) {
                     if (listener.getSession() == session) {
@@ -889,8 +1010,38 @@ public class JcrObservationManager implements ObservationManager {
                 }
             }
 
+            Map<String, NodeState> dirty = new HashMap<String, NodeState>();
             for (JcrListener listener : set) {
-                listener.process();
+                listener.process(dirty);
+            }
+
+            Session jcrSession = session.getJcrSession();
+            Map<String, NodeState> states;
+            synchronized (cache) {
+                states = cache.get(jcrSession);
+                if (states == null) {
+                    states = new HashMap<String, NodeState>();
+                    cache.put(jcrSession, states);
+                }
+            }
+            synchronized (states) {
+                // update cache
+                for (Map.Entry<String, NodeState> nodes : dirty.entrySet()) {
+                    states.put(nodes.getKey(), nodes.getValue());
+                }
+
+                // remove stale entries
+                Iterator<Map.Entry<String, NodeState>> cacheIter = states.entrySet().iterator();
+                while (cacheIter.hasNext()) {
+                    Map.Entry<String, NodeState> entry = cacheIter.next();
+                    try {
+                        if (!jcrSession.itemExists(entry.getKey())) {
+                            cacheIter.remove();
+                        }
+                    } catch (RepositoryException ex) {
+                        log.warn("Could not determine whether " + entry.getKey() + " exists", ex);
+                    }
+                }
             }
         } else {
             log.error("No session found");

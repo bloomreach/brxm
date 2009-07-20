@@ -189,6 +189,7 @@ public class ObservationTest extends PluginTest {
     public void testNewNodeObservation() throws Exception {
         Node root = session.getRootNode();
         Node test = root.addNode("test", "nt:unstructured");
+        session.save();
 
         List<IEvent> events = new LinkedList<IEvent>();
         IObserver observer = new TestObserver(new JcrNodeModel(test), events);
@@ -202,7 +203,7 @@ public class ObservationTest extends PluginTest {
 
         home.processEvents();
 
-        assertEquals(2, events.size());
+        assertEquals(1, events.size());
         Event event = ((JcrEvent) events.get(0)).getEvent();
         assertEquals(Event.NODE_ADDED, event.getType());
         assertEquals("/test/sub[1]", event.getPath());
@@ -277,21 +278,17 @@ public class ObservationTest extends PluginTest {
         IObserver observer = new TestObserver(new TreeObservable(), events);
         context.registerService(observer, IObserver.class.getName());
 
+        // verify that a new node leads to a "node changed" event on the parent
         Node newNode = testNode.addNode("new", "nt:unstructured");
         home.processEvents();
         assertEquals(2, events.size());
         {
             JcrEvent jcrEvent = (JcrEvent) events.get(0);
             Event event = jcrEvent.getEvent();
-            assertEquals(Event.PROPERTY_ADDED, event.getType());
-            assertEquals(testNode.getPath() + "/jcr:primaryType", event.getPath());
+            assertEquals(0, event.getType());
+            assertEquals("/test", event.getPath());
         }
-        {
-            JcrEvent jcrEvent = (JcrEvent) events.get(1);
-            Event event = jcrEvent.getEvent();
-            assertEquals(Event.NODE_ADDED, event.getType());
-            assertEquals("/test/new[1]", event.getPath());
-        }
+        events.clear();
     }
 
     @Test
