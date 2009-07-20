@@ -15,12 +15,14 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
-import org.hippoecm.hst.content.beans.Node;
+/**
+ * Implementing classes represent a html node in the ecm repository. 
+ */
+public interface HippoHtmlBean extends HippoBean{
 
-@Node(jcrType="hippostd:html")
-public class HippoHtml extends HippoItem implements HippoHtmlBean{
-
-    public String getContent(){
-        return getProperty("hippostd:content");
-    }
+    /**
+     * @return the string value of the content for the html bean
+     */
+    String getContent();
+    
 }

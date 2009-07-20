@@ -13,39 +13,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.demo.beans;
-
-import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoImageBean;
-import org.hippoecm.hst.content.beans.standard.HippoItem;
-import org.hippoecm.hst.content.beans.standard.HippoResource;
-
+package org.hippoecm.hst.content.beans.standard;
 
 /**
- * Bean mapping class for the 'hippogallery:exampleImageSet' document type
- *
- * @author Roberto van der Linden
- * @author Jeroen Reijn
+ * This is a base interface for possible beans containing an imageset. A custom imageset might not have thumbnail or picture. This is more meant as an example api for the
+ * default image set as delivered by the hippo ecm. You might have an image set with many more variants, like get100By100Picture(). 
  */
-@Node(jcrType = "hippogallery:exampleImageSet")
-public class ImageBean extends HippoItem implements HippoImageBean {
 
+public interface HippoImageBean extends HippoBean{
+    
     /**
      * Get the thumbnail version of the image.
      *
      * @return the thumbnail version of the image
      */
-    public HippoResource getThumbnail() {
-        return getBean("hippogallery:thumbnail");
-    }
+    HippoResourceBean getThumbnail();
 
     /**
      * Get the picture version of the image.
      *
      * @return the picture version of the image
      */
-    public HippoResource getPicture() {
-        return getBean("hippogallery:picture");
-    }
-
+    HippoResourceBean getPicture();
 }
