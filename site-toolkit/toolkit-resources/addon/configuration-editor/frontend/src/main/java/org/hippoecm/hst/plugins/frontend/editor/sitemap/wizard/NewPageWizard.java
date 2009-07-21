@@ -22,13 +22,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.IRequestTarget;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardModel;
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardStep;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -55,6 +56,9 @@ public abstract class NewPageWizard extends AjaxWizard {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    /**
+     * Create a new page and give it a name 
+     */
     private final class PageNameStep extends DynamicWizardStep {
         private static final long serialVersionUID = 1L;
 
@@ -63,7 +67,7 @@ public abstract class NewPageWizard extends AjaxWizard {
 
             setTitleModel(new Model("Give your new page a name"));
 
-            RequiredTextField textField = new RequiredTextField("name", new PropertyModel(newPage, "name"));
+            FormComponent textField = new RequiredTextField("name", new PropertyModel(newPage, "name"));
             textField.add(new NodeUniqueValidator<Component>(new BeanProvider<Component>() {
                 private static final long serialVersionUID = 1L;
 
@@ -73,6 +77,8 @@ public abstract class NewPageWizard extends AjaxWizard {
 
             }));
             add(textField);
+            textField.setOutputMarkupId(true);
+            focus = textField;
         }
 
         public boolean isLastStep() {
@@ -84,6 +90,9 @@ public abstract class NewPageWizard extends AjaxWizard {
         }
     }
 
+    /**
+     * Next we choose a template for our new page 
+     */
     private final class PageTemplateStep extends DynamicWizardStep {
         private static final long serialVersionUID = 1L;
 
@@ -91,25 +100,6 @@ public abstract class NewPageWizard extends AjaxWizard {
             super(previousStep);
 
             setTitleModel(new Model("Select a template"));
-
-            List<String> templates = hstContext.template.getTemplatesAsList();
-
-            final String originalTemplate = newPage.getTemplate();
-            final DropDownChoice dc = new DropDownChoice("template", new PropertyModel(newPage, "template"), templates);
-            dc.setNullValid(false);
-            dc.setRequired(true);
-            dc.setOutputMarkupId(true);
-            dc.add(new AjaxFormComponentUpdatingBehavior("onChange") {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-                    if (!newPage.getTemplate().equals(originalTemplate)) {
-                        //info("Your template has changed, saving this session will create new child components as specified by the templates containers. Existing child components will be removed if they don't match the container names.");
-                    }
-                }
-            });
-            //add(dc);
 
             DescriptionProvider provider = new DescriptionProviderImpl(new DescriptionDAO(context, hstContext.page
                     .getNamespace()), hstContext.template.getModel());
@@ -131,18 +121,20 @@ public abstract class NewPageWizard extends AjaxWizard {
         }
     }
 
+    /**
+     * If the template we chose contains a list of containers we have to choose a corresponding Component 
+     * for each of them 
+     */
     private final class ComponentDescriptionStep extends DynamicWizardStep {
         private static final long serialVersionUID = 1L;
 
         public ComponentDescriptionStep(DynamicWizardStep previousStep) {
             super(previousStep);
 
-            //setTitleModel(new Model("Ben ik hier?"));
-
             add(new Label("containerName", new Model(containersModel.getName())));
 
             DescriptionProvider provider = new DescriptionProviderImpl(new DescriptionDAO(context, hstContext.page
-                    .getNamespace()), hstContext.template.getModel());
+                    .getNamespace()), hstContext.component.getModel());
             add(new DescriptionPicker("componentPicker", new PropertyModel(containersModel, "component"), provider));
         }
 
@@ -187,6 +179,8 @@ public abstract class NewPageWizard extends AjaxWizard {
 
     private Containers containersModel;
 
+    private org.apache.wicket.Component focus;
+
     public NewPageWizard(String id, IPluginContext context, IPluginConfig config) {
         super(id, false);
 
@@ -206,6 +200,18 @@ public abstract class NewPageWizard extends AjaxWizard {
     }
 
     @Override
+    protected void onBeforeRender() {
+        if (focus != null) {
+            IRequestTarget target = RequestCycle.get().getRequestTarget();
+            if (target != null && target instanceof AjaxRequestTarget) {
+                ((AjaxRequestTarget) target).focusComponent(focus);
+                focus = null;
+            }
+        }
+        super.onBeforeRender();
+    }
+
+    @Override
     public void onCancel() {
         if (pageDao.delete(newPage)) {
             info("Wizard cancelled");
@@ -215,13 +221,16 @@ public abstract class NewPageWizard extends AjaxWizard {
     @Override
     public final void onFinish() {
         if (pageDao.save(newPage)) {
-            ComponentDAO cDao = new ComponentDAO(context, hstContext.component.getNamespace());
-            for (Entry<String, String> e : containersModel.values.entrySet()) {
-                JcrNodeModel cModel = new JcrNodeModel(newPage.getModel().getItemModel().getPath() + "/" + e.getKey());
-                Component c = cDao.load(cModel);
-                c.setReference(true);
-                c.setReferenceName(e.getValue());
-                cDao.save(c);
+            if (containersModel.values != null) {
+                ComponentDAO cDao = new ComponentDAO(context, hstContext.component.getNamespace());
+                for (Entry<String, String> e : containersModel.values.entrySet()) {
+                    JcrNodeModel cModel = new JcrNodeModel(newPage.getModel().getItemModel().getPath() + "/"
+                            + e.getKey());
+                    Component c = cDao.load(cModel);
+                    c.setReference(true);
+                    c.setReferenceName(e.getValue());
+                    cDao.save(c);
+                }
             }
             onFinish(newPage);
         }

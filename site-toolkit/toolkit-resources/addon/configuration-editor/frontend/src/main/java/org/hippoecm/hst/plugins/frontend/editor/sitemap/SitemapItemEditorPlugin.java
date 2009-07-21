@@ -24,7 +24,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -68,7 +67,7 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
     private static final String BROWSE_LABEL = "[...]";
 
     DescriptionPicker pagePicker;
-    Component newPageWizard;
+    NewPageWizard newPageWizard;
     boolean wizardEnabled;
 
     public SitemapItemEditorPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -176,35 +175,41 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
         if (pagePicker != null) {
             pagePicker.refresh();
         }
+
+        checkWizard();
     }
 
     private void renderNewPageWizard(boolean show, IRequestTarget target) {
         wizardEnabled = show;
-        newPageWizard = show ? new NewPageWizard("wizard", getPluginContext(), getPluginConfig()) {
-            private static final long serialVersionUID = 1L;
+        if (wizardEnabled) {
+            form.addOrReplace(newPageWizard = new NewPageWizard("wizard", getPluginContext(), getPluginConfig()) {
+                private static final long serialVersionUID = 1L;
 
-            @Override
-            public void onCancel() {
-                super.onCancel();
-                renderNewPageWizard(false, RequestCycle.get().getRequestTarget());
-            }
-
-            @Override
-            protected void onFinish(org.hippoecm.hst.plugins.frontend.editor.domain.Component page) {
-                IRequestTarget target = RequestCycle.get().getRequestTarget();
-                renderNewPageWizard(false, target);
-
-                getBean().setPage(page.getName());
-                if (pagePicker != null) {
-                    pagePicker.refresh();
+                @Override
+                public void onCancel() {
+                    super.onCancel();
+                    renderNewPageWizard(false, RequestCycle.get().getRequestTarget());
                 }
 
-                if (target != null && target instanceof AjaxRequestTarget) {
-                    ((AjaxRequestTarget) target).addComponent(form);
+                @Override
+                protected void onFinish(org.hippoecm.hst.plugins.frontend.editor.domain.Component page) {
+                    IRequestTarget target = RequestCycle.get().getRequestTarget();
+                    renderNewPageWizard(false, target);
+
+                    getBean().setPage(page.getName());
+                    if (pagePicker != null) {
+                        pagePicker.refresh();
+                    }
+
+                    if (target != null && target instanceof AjaxRequestTarget) {
+                        ((AjaxRequestTarget) target).addComponent(form);
+                    }
                 }
-            }
-        } : new EmptyPanel("wizard").setOutputMarkupId(true);
-        form.addOrReplace(newPageWizard);
+            });
+        } else {
+            form.addOrReplace(new EmptyPanel("wizard").setOutputMarkupId(true));
+            newPageWizard = null;
+        }
 
         if (target != null && target instanceof AjaxRequestTarget) {
             ((AjaxRequestTarget) target).addComponent(form);
@@ -224,6 +229,17 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
     @Override
     protected Dialog newAddDialog() {
         return new AddSitemapItemDialog(dao, this, (JcrNodeModel) getModel());
+    }
+
+    private void checkWizard() {
+        if (newPageWizard != null) {
+            newPageWizard.getWizardModel().cancel();
+        }
+    }
+
+    @Override
+    public void stop() {
+        checkWizard();
     }
 
 }

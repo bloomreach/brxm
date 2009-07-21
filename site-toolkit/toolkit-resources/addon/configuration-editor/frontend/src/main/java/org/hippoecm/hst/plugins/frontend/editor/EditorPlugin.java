@@ -24,6 +24,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -33,7 +34,7 @@ import org.hippoecm.hst.plugins.frontend.editor.domain.EditorBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class EditorPlugin<K extends EditorBean> extends RenderPlugin {
+public abstract class EditorPlugin<K extends EditorBean> extends RenderPlugin implements IActivator {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -93,6 +94,12 @@ public abstract class EditorPlugin<K extends EditorBean> extends RenderPlugin {
     protected void detachModel() {
         hstContext.detach();
         super.detachModel();
+    }
+
+    public void start() {
+    }
+
+    public void stop() {
     }
 
     abstract protected EditorDAO<K> newDAO();
