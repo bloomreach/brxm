@@ -99,6 +99,22 @@ public abstract class ViewController implements IClusterable {
     protected boolean handleNode(Node node, List<String> viewers) throws RepositoryException {
         for (String type : viewers) {
             if (node.isNodeType(type)) {
+                //FIXME: a page is of nodeType hst:component instead of hst:page... So to load the correct editor I have to insert an ugly hack.
+                //Tnx Ard ‹^› ‹(•¿•)› ‹^›
+                if (node.isNodeType("hst:component")) {
+                    Node par = node.getParent();
+                    while (true) {
+                        if (par.isNodeType("hst:components")) {
+                            break;
+                        }
+                        if (par.isNodeType("hst:pages")) {
+                            type = "hst:page";
+                            break;
+                        }
+                        par = par.getParent();
+                    }
+                }
+
                 if (!type.equals(viewerName)) {
                     resetViewer();
 

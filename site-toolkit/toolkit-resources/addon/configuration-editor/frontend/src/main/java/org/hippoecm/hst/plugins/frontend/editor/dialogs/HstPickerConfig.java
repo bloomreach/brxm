@@ -8,8 +8,14 @@ public abstract class HstPickerConfig extends JavaPluginConfig {
 
     public HstPickerConfig(IPluginConfig config) {
         super(config);
-        if (!getPluginConfig("cluster.options").containsKey("content.path")) {
-            IPluginConfig cc = new JavaPluginConfig(getPluginConfig("cluster.options"));
+
+        if (getPluginConfig("cluster.options") == null) {
+            put("cluster.options", new JavaPluginConfig("cluster.options"));
+        }
+
+        IPluginConfig clusterOpts = getPluginConfig("cluster.options");
+        if (!clusterOpts.containsKey("content.path")) {
+            IPluginConfig cc = new JavaPluginConfig(clusterOpts);
             cc.put("content.path", getPath());
             put("cluster.options", cc);
         }

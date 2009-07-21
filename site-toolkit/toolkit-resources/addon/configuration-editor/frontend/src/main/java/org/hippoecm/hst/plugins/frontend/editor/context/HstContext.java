@@ -337,17 +337,26 @@ public class HstContext implements IDetachable {
             return HST_COMPONENTS + "/" + name;
         }
 
-        public List<String> getComponentsAsList() {
-            List<String> components = new ArrayList<String>();
+        public List<String> getReferenceables(boolean recursive) {
+            return getReferenceables(getModel().getNode(), recursive);
+        }
+
+        private List<String> getReferenceables(Node parent, boolean recursive) {
+            List<String> refs = new ArrayList<String>();
             try {
-                for (NodeIterator it = getModel().getNode().getNodes(); it.hasNext();) {
+                for (NodeIterator it = parent.getNodes(); it.hasNext();) {
                     Node child = it.nextNode();
-                    components.add(child.getName());
+                    String relPath = relativePath(child.getPath());
+                    refs.add(encodeReferenceName(relPath));
+
+                    if (recursive) {
+                        refs.addAll(getReferenceables(child, recursive));
+                    }
                 }
             } catch (RepositoryException e) {
                 log.error("Error loading list of hst:component", e);
             }
-            return components;
+            return refs;
         }
     }
 
@@ -404,6 +413,32 @@ public class HstContext implements IDetachable {
                 log.error("Error loading hst:pages into list", e);
             }
             return pages;
+        }
+
+        //Strip of hst:pages/
+        public String decodeReferenceName(String name) {
+            if (name.startsWith(HST_PAGES + "/")) {
+                return name.substring(HST_PAGES.length() + 1);
+            }
+            return "";
+        }
+
+        public String encodeReferenceName(String name) {
+            return HST_PAGES + "/" + name;
+        }
+
+        public List<String> getReferenceables() {
+            List<String> refs = new ArrayList<String>();
+            try {
+                for (NodeIterator it = getModel().getNode().getNodes(); it.hasNext();) {
+                    Node child = it.nextNode();
+                    String relPath = relativePath(child.getPath());
+                    refs.add(encodeReferenceName(relPath));
+                }
+            } catch (RepositoryException e) {
+                log.error("Error loading list of hst:component", e);
+            }
+            return refs;
         }
 
     }

@@ -172,6 +172,7 @@
 
   </sv:node>
   
+<!-- 
   <sv:node sv:name="components">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
@@ -210,7 +211,7 @@
         <sv:value>${content.path}</sv:value>
       </sv:property>
       <sv:property sv:name="browser.viewers" sv:type="String">
-        <sv:value>cms-folder-views</sv:value>
+        <sv:value>hst-folder-views</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String">
         <sv:value>extension.shortcuts</sv:value>
@@ -298,7 +299,7 @@
         <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
       </sv:property>
       <sv:property sv:name="cluster.name" sv:type="String">
-        <sv:value>hst-editor-tree-views/content-preview</sv:value>
+        <sv:value>hst-editor-tree-views/all-components</sv:value>
       </sv:property>
       <sv:node sv:name="cluster.config">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -315,6 +316,7 @@
         </sv:property>
       </sv:node>
     </sv:node>
-
   </sv:node>
+   -->
+  
 </sv:node>

@@ -16,31 +16,20 @@
 
 package org.hippoecm.hst.plugins.frontend.editor.dao;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
-import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Description;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component.Parameter;
-import org.hippoecm.hst.plugins.frontend.util.IOUtil;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
 
 public class ComponentDAO extends EditorDAO<Component> {
@@ -65,7 +54,7 @@ public class ComponentDAO extends EditorDAO<Component> {
 
     public ComponentDAO(IPluginContext context, String namespace) {
         super(context, namespace);
-        
+
         descriptionDao = new DescriptionDAO(context, namespace);
     }
 
@@ -85,7 +74,7 @@ public class ComponentDAO extends EditorDAO<Component> {
             String name = JcrUtilities.getProperty(model, HST_REFERENCECOMPONENT);
             if (name != null && !"".equals(name)) {
                 component.setReference(true);
-                component.setReferenceName(getHstContext().component.decodeReferenceName(name));
+                component.setReferenceName(name);
             }
         }
 
@@ -121,8 +110,7 @@ public class ComponentDAO extends EditorDAO<Component> {
 
         //save reference stuff
         if (component.isReference()) {
-            JcrUtilities.updateProperty(model, HST_REFERENCECOMPONENT, getHstContext().component
-                    .encodeReferenceName(component.getReferenceName()));
+            JcrUtilities.updateProperty(model, HST_REFERENCECOMPONENT, encodeReference(component.getReferenceName()));
         }
 
         //save componentClassName
@@ -145,13 +133,19 @@ public class ComponentDAO extends EditorDAO<Component> {
 
         //Create containers
         updateTemplate(component, model);
-        
+
         descriptionDao.persist(component, model);
     }
 
     private void updateTemplate(Component component, JcrNodeModel model) {
-        String templateName = component.getTemplate();
-        JcrUtilities.updateProperty(model, HST_TEMPLATE, templateName);
+        String templateName;
+        if (component.isReference()) {
+            Component refComponent = resolveComponent(component);
+            templateName = refComponent.getTemplate();
+        } else {
+            templateName = component.getTemplate();
+            JcrUtilities.updateProperty(model, HST_TEMPLATE, templateName);
+        }
 
         JcrNodeModel template = new JcrNodeModel(getHstContext().template.absolutePath(templateName));
         List<String> containers = JcrUtilities.getMultiValueProperty(template, TemplateDAO.HST_CONTAINERS);
@@ -185,4 +179,23 @@ public class ComponentDAO extends EditorDAO<Component> {
             log.error(e.getMessage());
         }
     }
+
+    private Component resolveComponent(Component component) {
+        while (component.isReference()) {
+            String absPath = getAbsoluteReferencePath(component.getReferenceName());
+            component = load(new JcrNodeModel(absPath));
+        }
+        return component;
+    }
+
+    protected String getAbsoluteReferencePath(String referenceName) {
+        String relPath = getHstContext().component.decodeReferenceName(referenceName);
+        return getHstContext().component.absolutePath(relPath);
+    }
+
+    protected String encodeReference(String name) {
+        return name;
+        //return getHstContext().component.encodeReferenceName(name);
+    }
+
 }

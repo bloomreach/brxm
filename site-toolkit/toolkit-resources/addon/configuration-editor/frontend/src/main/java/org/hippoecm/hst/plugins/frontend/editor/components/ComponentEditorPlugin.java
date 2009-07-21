@@ -19,9 +19,6 @@ package org.hippoecm.hst.plugins.frontend.editor.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
@@ -29,16 +26,13 @@ import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.DialogLink;
-import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -47,7 +41,6 @@ import org.hippoecm.hst.plugins.frontend.editor.BasicEditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.ComponentDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
 import org.hippoecm.hst.plugins.frontend.editor.description.DescriptionPanel;
-import org.hippoecm.hst.plugins.frontend.editor.dialogs.HstComponentPickerDialog;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component.Parameter;
 import org.hippoecm.hst.plugins.frontend.editor.validators.NodeUniqueValidator;
@@ -165,54 +158,30 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
         public RefComponentFragment() {
             super("frag", "refComponent", ComponentEditorPlugin.this);
 
-            FormComponent fc;
-
-            //Readonly name widget
-            fc = new RequiredTextField("referenceName");
-            fc.setOutputMarkupId(true);
-            fc.setEnabled(false);
-            //TODO: check if exists? add picker?
-            //fc.add(new NodeUniqueValidator<Component>(ComponentEditorPlugin.this));
-            add(fc);
-
-            // Linkpicker
-            final List<String> nodetypes = new ArrayList<String>();
-            nodetypes.add("hst:component");
-
-            IDialogFactory dialogFactory = new IDialogFactory() {
+            final List<String> availableComponents = getReferenceableComponents();
+            final DropDownChoice ddo = new DropDownChoice("referenceName", availableComponents, new IChoiceRenderer() {
                 private static final long serialVersionUID = 1L;
 
-                public AbstractDialog createDialog() {
-                    Model model = new Model(hstContext.component.absolutePath(getBean().getReferenceName()));
-                    return new HstComponentPickerDialog(getPluginContext(), getPluginConfig(), model, nodetypes) {
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        protected void saveNode(Node node) {
-                            try {
-                                getBean().setReferenceName(hstContext.component.relativePath(node.getPath()));
-                                redraw();
-                            } catch (RepositoryException e) {
-                                log.error(e.getMessage());
-                            }
-                        }
-                    };
+                public Object getDisplayValue(Object object) {
+                    return object;
                 }
-            };
 
-            DialogLink link = new DialogLink("referencePicker", new Model() {
+                public String getIdValue(Object object, int index) {
+                    return (String) object;
+                }
+
+            }) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public Object getObject() {
-                    return "..";
+                public boolean isVisible() {
+                    return availableComponents.size() > 0;
                 }
-            }, dialogFactory, getDialogService());
-            link.setOutputMarkupId(true);
-            add(link);
-
+            };
+            ddo.setNullValid(false);
+            ddo.setOutputMarkupId(true);
+            add(ddo);
         }
-
     }
 
     class ComponentFragment extends Fragment {
@@ -266,6 +235,10 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
     @Override
     protected EditorDAO<Component> newDAO() {
         return new ComponentDAO(getPluginContext(), hstContext.component.getNamespace());
+    }
+
+    public List<String> getReferenceableComponents() {
+        return hstContext.component.getReferenceables(true);
     }
 
     @Override
