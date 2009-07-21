@@ -47,7 +47,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.HstEditorPerspective;
-import org.hippoecm.hst.plugins.frontend.LinkHandler;
 import org.hippoecm.hst.plugins.frontend.editor.BasicEditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.DescriptionDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
@@ -191,6 +190,7 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
                 .add(descPicker = new DescriptionPicker("pagePicker", new PropertyModel(form.getModel(), "page"),
                         provider));
 
+        /*
         descPicker.enablePreview(new LinkHandler() {
             private static final long serialVersionUID = 1L;
 
@@ -215,6 +215,7 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
             }
 
         });
+        */
 
         renderNewPageWizard(false, null);
     }
