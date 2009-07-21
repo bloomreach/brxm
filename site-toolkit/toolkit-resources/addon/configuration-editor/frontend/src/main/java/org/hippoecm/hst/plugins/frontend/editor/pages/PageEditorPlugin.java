@@ -35,6 +35,9 @@ public class PageEditorPlugin extends ComponentEditorPlugin {
 
     public PageEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        
+        //Pages shouldn't be able to add nested pages
+        addLink.setVisible(false);
     }
 
     @Override

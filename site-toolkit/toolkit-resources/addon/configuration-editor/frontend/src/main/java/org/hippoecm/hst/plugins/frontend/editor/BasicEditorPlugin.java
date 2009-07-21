@@ -48,6 +48,8 @@ public abstract class BasicEditorPlugin<K extends EditorBean> extends EditorPlug
     private final FeedbackPanel feedback;
     protected final Form form;
     private K bean;
+    
+    protected AjaxSubmitLink saveLink;
 
     public BasicEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -70,7 +72,7 @@ public abstract class BasicEditorPlugin<K extends EditorBean> extends EditorPlug
             }
         })));
 
-        add(new AjaxSubmitLink("save", form) {
+        add(saveLink = new AjaxSubmitLink("save", form) {
             private static final long serialVersionUID = 1L;
 
             @Override

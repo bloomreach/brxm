@@ -32,9 +32,19 @@ div.hst-editor p{
 
 div.hst-editor a.menu, div.hst-editor > span > em {
  display:block;
- padding-top: 2px;
- padding-left: 7px;
+ margin-top: 2px;
+ margin-left: 7px;
+ padding-left: 3px;
+ padding-right: 3px;
+ border: 1px solid #999;
+ border-bottom: 0px;
+ color: #666;
  float:left;
+}
+
+div.hst-editor a.menu:hover {
+  background-color: #fff;
+  color: #000;
 }
 
 div.hst-editor > span > em  {

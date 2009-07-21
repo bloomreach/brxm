@@ -21,12 +21,12 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.hst.plugins.frontend.editor.EditorPlugin;
+import org.hippoecm.hst.plugins.frontend.editor.BasicEditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.SitemenuItemDAO;
 import org.hippoecm.hst.plugins.frontend.editor.domain.SitemenuItem;
 
-public class SitemenuEditorPlugin extends EditorPlugin<SitemenuItem> {
+public class SitemenuEditorPlugin extends BasicEditorPlugin<SitemenuItem> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -34,9 +34,11 @@ public class SitemenuEditorPlugin extends EditorPlugin<SitemenuItem> {
 
     public SitemenuEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        
+        saveLink.setEnabled(false);
+        saveLink.setVisible(false);
     }
 
-    //FIXME: This is a nasty hack
     @Override
     protected String getAddDialogTitle() {
         return new StringResourceModel("dialog.title", this, null).getString();
