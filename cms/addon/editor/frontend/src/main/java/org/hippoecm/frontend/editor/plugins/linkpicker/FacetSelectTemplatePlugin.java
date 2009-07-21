@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.plugins;
+package org.hippoecm.frontend.editor.plugins.linkpicker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,8 +42,6 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialog;
-import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
