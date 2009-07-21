@@ -24,44 +24,72 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 
 public class JcrHippoRepository implements Repository {
     
+    protected String repositoryURI;
     protected HippoRepository hippoRepository;
-
-    public JcrHippoRepository(HippoRepository hippoRepository) {
-        this.hippoRepository = hippoRepository;
+    protected boolean vmRepositoryUsed;
+    
+    public JcrHippoRepository(String repositoryURI) {
+        this.repositoryURI = repositoryURI;
+        vmRepositoryUsed = (repositoryURI != null && repositoryURI.startsWith("vm:"));
+    }
+    
+    private synchronized void initHippoRepository() throws RepositoryException {
+        try {
+            hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryURI);
+        } catch (Exception e) {
+            throw new RepositoryException(e);
+        }
     }
     
     public String getDescriptor(String key) {
-        ClassLoader currentClassloader = switchToRepositoryClassloader();
+        String descriptor = null;
         
-        try {
-            return this.hippoRepository.getRepository().getDescriptor(key);
-        } finally {
-            if (currentClassloader != null) {
-                Thread.currentThread().setContextClassLoader(currentClassloader);
+        if (hippoRepository != null) {
+            ClassLoader currentClassloader = switchToRepositoryClassloader();
+            
+            try {
+                descriptor = hippoRepository.getRepository().getDescriptor(key);
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }
             }
         }
+        
+        return descriptor;
     }
 
     public String[] getDescriptorKeys() {
-        ClassLoader currentClassloader = switchToRepositoryClassloader();
+        String [] descriptorKeys = {};
         
-        try {
-            return this.hippoRepository.getRepository().getDescriptorKeys();
-        } finally {
-            if (currentClassloader != null) {
-                Thread.currentThread().setContextClassLoader(currentClassloader);
+        if (hippoRepository != null) {
+            ClassLoader currentClassloader = switchToRepositoryClassloader();
+            
+            try {
+                descriptorKeys = hippoRepository.getRepository().getDescriptorKeys();
+            } finally {
+                if (currentClassloader != null) {
+                    Thread.currentThread().setContextClassLoader(currentClassloader);
+                }
             }
         }
+        
+        return descriptorKeys;
     }
 
     public Session login() throws LoginException, RepositoryException {
+        if (hippoRepository == null) {
+            initHippoRepository();
+        }
+        
         ClassLoader currentClassloader = switchToRepositoryClassloader();
         
         try {
-            return this.hippoRepository.login();
+            return hippoRepository.login();
         } finally {
             if (currentClassloader != null) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
@@ -70,10 +98,14 @@ public class JcrHippoRepository implements Repository {
     }
 
     public Session login(Credentials credentials) throws LoginException, RepositoryException {
+        if (hippoRepository == null) {
+            initHippoRepository();
+        }
+        
         ClassLoader currentClassloader = switchToRepositoryClassloader();
         
         try {
-            return this.hippoRepository.login((SimpleCredentials) credentials);
+            return hippoRepository.login((SimpleCredentials) credentials);
         } finally {
             if (currentClassloader != null) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
@@ -90,12 +122,22 @@ public class JcrHippoRepository implements Repository {
         return login(credentials);
     }
     
+    public void closeHippoRepository() {
+        if (hippoRepository != null) {
+            hippoRepository.close();
+        }
+    }
+    
     /*
      * Because HippoRepository can be loaded in other classloader which is not the same as the caller's classloader,
      * the context classloader needs to be switched.
      */
     private ClassLoader switchToRepositoryClassloader() {
-        ClassLoader repositoryClassloader = this.hippoRepository.getClass().getClassLoader();
+        if (vmRepositoryUsed) {
+            return null;
+        }
+        
+        ClassLoader repositoryClassloader = hippoRepository.getClass().getClassLoader();
         ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
         
         if (repositoryClassloader != currentClassloader) {

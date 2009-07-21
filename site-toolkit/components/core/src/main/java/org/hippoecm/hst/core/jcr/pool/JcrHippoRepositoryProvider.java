@@ -18,19 +18,15 @@ package org.hippoecm.hst.core.jcr.pool;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
-
 public class JcrHippoRepositoryProvider implements JcrRepositoryProvider {
 
     public Repository getRepository(String repositoryURI) throws RepositoryException {
-        HippoRepository hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryURI);
-        return new JcrHippoRepository(hippoRepository);
+        return new JcrHippoRepository(repositoryURI);
     }
 
     public void returnRepository(Repository repository) {
         if (repository instanceof JcrHippoRepository) {
-            ((JcrHippoRepository) repository).hippoRepository.close();
+            ((JcrHippoRepository) repository).closeHippoRepository();
         }
     }
 
