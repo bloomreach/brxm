@@ -87,6 +87,9 @@ public class TemplateListPlugin extends RenderPlugin {
                         if (containingType.getName().equals(type)) {
                             continue;
                         }
+                        if (descriptor.isMixin()) {
+                            continue;
+                        }
                         if (descriptor.isType(HippoNodeType.NT_DOCUMENT)) {
                             continue;
                         }
