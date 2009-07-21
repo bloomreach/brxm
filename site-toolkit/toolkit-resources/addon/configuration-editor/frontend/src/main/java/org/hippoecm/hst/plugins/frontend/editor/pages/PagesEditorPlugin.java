@@ -27,6 +27,9 @@ import org.hippoecm.hst.plugins.frontend.editor.domain.Component;
 public class PagesEditorPlugin extends EditorPlugin<Component> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     public PagesEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }

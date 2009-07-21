@@ -28,6 +28,9 @@ import org.hippoecm.hst.plugins.frontend.editor.domain.Template;
 public class TemplatesEditorPlugin extends EditorPlugin<Template> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     public TemplatesEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }

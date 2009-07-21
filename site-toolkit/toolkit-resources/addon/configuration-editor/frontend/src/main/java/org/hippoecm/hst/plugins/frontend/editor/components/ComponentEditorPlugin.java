@@ -118,6 +118,8 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
 
         final List<Parameter> overrides = new ArrayList<Parameter>();
         final DropDownChoice ddo = new DropDownChoice("parameterOverrides", overrides) {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public boolean isVisible() {
                 return overrides.size() > 0;

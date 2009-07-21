@@ -40,6 +40,9 @@ import org.slf4j.LoggerFactory;
 public abstract class BasicEditorPlugin<K extends EditorBean> extends EditorPlugin<K> implements BeanProvider<K> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     static final Logger log = LoggerFactory.getLogger(BasicEditorPlugin.class);
 
     private final FeedbackPanel feedback;

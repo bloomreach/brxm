@@ -27,6 +27,9 @@ import org.hippoecm.hst.plugins.frontend.editor.domain.EditorBean;
 public abstract class AddNodeDialog<K extends EditorBean> extends EditorDialog<K> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final ResourceReference STYLE = new ResourceReference(AddNodeDialog.class, "style.css");
 
     private RenderPlugin plugin;

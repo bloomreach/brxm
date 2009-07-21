@@ -28,6 +28,7 @@ import org.hippoecm.hst.plugins.frontend.editor.domain.Sitemenu;
 
 public class SitemenusEditorPlugin extends EditorPlugin<Sitemenu> {
     private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

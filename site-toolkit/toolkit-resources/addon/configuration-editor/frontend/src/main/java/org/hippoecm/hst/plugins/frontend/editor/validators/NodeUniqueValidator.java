@@ -26,6 +26,9 @@ import org.hippoecm.hst.plugins.frontend.editor.domain.EditorBean;
 public class NodeUniqueValidator<K extends EditorBean> extends EditorValidator<K> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     public NodeUniqueValidator(BeanProvider<K> provider) {
         super(provider);
     }

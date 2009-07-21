@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
 public abstract class EditorPlugin<K extends EditorBean> extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     static final Logger log = LoggerFactory.getLogger(EditorPlugin.class);
 
     protected final EditorDAO<K> dao;

@@ -37,9 +37,12 @@ import org.hippoecm.hst.plugins.frontend.editor.validators.NodeUniqueValidator;
 public class TemplateEditorPlugin extends BasicEditorPlugin<Template> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     public TemplateEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
         form.add(new DescriptionPanel("description", form.getInnermostModel(), context, config));
 
         //Readonly name widget

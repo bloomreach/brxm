@@ -30,9 +30,10 @@ import org.hippoecm.hst.plugins.frontend.editor.validators.NodeUniqueValidator;
  * The Class AddSitemenuItemDialog represents a Wicket dialog for adding sitemenu items.
  */
 public class AddSitemenuItemDialog extends AddNodeDialog<SitemenuItem> {
-
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
+
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Instantiates a new dialog for adding a sitemenu item.
@@ -41,10 +42,9 @@ public class AddSitemenuItemDialog extends AddNodeDialog<SitemenuItem> {
      * @param plugin the plugin
      * @param parent the parent
      */
-    public AddSitemenuItemDialog(EditorDAO<SitemenuItem> dao,
-			RenderPlugin plugin, JcrNodeModel parent) {
-		super(dao, plugin, parent);
-		
+    public AddSitemenuItemDialog(EditorDAO<SitemenuItem> dao, RenderPlugin plugin, JcrNodeModel parent) {
+        super(dao, plugin, parent);
+
         FormComponent textField = new RequiredTextField("name");
         textField.setOutputMarkupId(true);
         textField.add(new NodeUniqueValidator<SitemenuItem>(new BeanProvider<SitemenuItem>() {
@@ -58,6 +58,6 @@ public class AddSitemenuItemDialog extends AddNodeDialog<SitemenuItem> {
         add(textField);
         setFocus(textField);
 
-	}
+    }
 
 }

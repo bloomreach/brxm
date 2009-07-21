@@ -26,13 +26,11 @@ import org.hippoecm.hst.plugins.frontend.editor.domain.BeanProvider;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Sitemenu;
 import org.hippoecm.hst.plugins.frontend.editor.validators.NodeUniqueValidator;
 
-/**
- * The Class AddSitemenuDialog.
- */
 public class AddSitemenuDialog extends AddNodeDialog<Sitemenu> {
-
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
+
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Instantiates a new dialog for adds the sitemenus.
@@ -41,10 +39,9 @@ public class AddSitemenuDialog extends AddNodeDialog<Sitemenu> {
      * @param plugin the plugin
      * @param parent the parent
      */
-    public AddSitemenuDialog(EditorDAO<Sitemenu> dao,
-			RenderPlugin plugin, JcrNodeModel parent) {
-		super(dao, plugin, parent);
-		
+    public AddSitemenuDialog(EditorDAO<Sitemenu> dao, RenderPlugin plugin, JcrNodeModel parent) {
+        super(dao, plugin, parent);
+
         FormComponent textField = new RequiredTextField("name");
         textField.setOutputMarkupId(true);
         textField.add(new NodeUniqueValidator<Sitemenu>(new BeanProvider<Sitemenu>() {
@@ -58,6 +55,6 @@ public class AddSitemenuDialog extends AddNodeDialog<Sitemenu> {
         add(textField);
         setFocus(textField);
 
-	}
+    }
 
 }

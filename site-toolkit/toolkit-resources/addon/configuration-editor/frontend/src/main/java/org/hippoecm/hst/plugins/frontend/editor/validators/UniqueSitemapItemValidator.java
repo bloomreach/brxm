@@ -24,6 +24,9 @@ import org.hippoecm.hst.plugins.frontend.editor.domain.SitemapItem;
 public class UniqueSitemapItemValidator extends NodeUniqueValidator<SitemapItem> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private HstSitemapContext context;
 
     public UniqueSitemapItemValidator(BeanProvider<SitemapItem> provider, HstSitemapContext context) {
