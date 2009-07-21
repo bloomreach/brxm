@@ -221,7 +221,7 @@ public abstract class NewPageWizard extends AjaxWizard {
     @Override
     public final void onFinish() {
         if (pageDao.save(newPage)) {
-            if (containersModel.values != null) {
+            if (containersModel != null) {
                 ComponentDAO cDao = new ComponentDAO(context, hstContext.component.getNamespace());
                 for (Entry<String, String> e : containersModel.values.entrySet()) {
                     JcrNodeModel cModel = new JcrNodeModel(newPage.getModel().getItemModel().getPath() + "/"

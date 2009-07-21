@@ -14,6 +14,7 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:clusterfolder</sv:value>
   </sv:property>
+  
   <sv:node sv:name="content-preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
@@ -186,8 +187,7 @@
     </sv:node>
   </sv:node>
   
-  <!-- 
-  <sv:node sv:name="all-components">
+  <sv:node sv:name="sitemap">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
@@ -225,7 +225,7 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
-        <sv:node sv:name="showFolderType">
+        <sv:node sv:name="showSitemapItem">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
@@ -239,7 +239,7 @@
             <sv:value/>
           </sv:property>
           <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippostd:folder</sv:value>
+            <sv:value>hst:sitemapitem</sv:value>
           </sv:property>
           <sv:property sv:name="target" sv:type="String">
             <sv:value/>
@@ -251,191 +251,8 @@
             <sv:value/>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="showDirectoryType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="state" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="parent" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippostd:directory</sv:value>
-          </sv:property>
-          <sv:property sv:name="target" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="name" sv:type="String">
-            <sv:value/>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideUnstructuredType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="state" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="parent" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>nt:unstructured</sv:value>
-          </sv:property>
-          <sv:property sv:name="target" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="name" sv:type="String">
-            <sv:value/>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideHandleType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="state" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="parent" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:handle</sv:value>
-          </sv:property>
-          <sv:property sv:name="target" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="name" sv:type="String">
-            <sv:value/>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideFacetSearchType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="state" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="parent" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:facetsearch</sv:value>
-          </sv:property>
-          <sv:property sv:name="target" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="name" sv:type="String">
-            <sv:value/>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideSitemaps">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="state" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="parent" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hst:sitemap</sv:value>
-          </sv:property>
-          <sv:property sv:name="target" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="name" sv:type="String">
-            <sv:value/>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideTemplates">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="state" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="parent" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hst:templates</sv:value>
-          </sv:property>
-          <sv:property sv:name="target" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="name" sv:type="String">
-            <sv:value/>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideSitemenus">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="state" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="parent" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hst:sitemenus</sv:value>
-          </sv:property>
-          <sv:property sv:name="target" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="name" sv:type="String">
-            <sv:value/>
-          </sv:property>
-        </sv:node>        
       </sv:node>
     </sv:node>
   </sv:node>
-  -->
   
 </sv:node>

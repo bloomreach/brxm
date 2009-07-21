@@ -353,7 +353,7 @@
         <sv:value>hippo:namespaces/hsteditor/sitemenuitem</sv:value>
       </sv:property>
       <sv:property sv:name="cluster.name" sv:type="String">
-        <sv:value>hst-editor-pickers/site-content</sv:value>
+        <sv:value>hst-editor-pickers/sitemap-content</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

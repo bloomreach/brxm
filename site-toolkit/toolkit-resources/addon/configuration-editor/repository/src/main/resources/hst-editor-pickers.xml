@@ -46,7 +46,7 @@
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standards.browse.BrowserPlugin</sv:value>
+        <sv:value>org.hippoecm.hst.plugins.frontend.standards.browse.BrowserPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${wicket.id}</sv:value>
@@ -172,8 +172,7 @@
 
   </sv:node>
   
-<!-- 
-  <sv:node sv:name="components">
+  <sv:node sv:name="sitemap-content">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
@@ -188,12 +187,62 @@
       <sv:value>content.path</sv:value>
     </sv:property>
     
+    <sv:node sv:name="translations">
+	    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+	      <sv:value>frontend:plugin</sv:value>
+	    </sv:property>
+	    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+	      <sv:value>hippostd:translated</sv:value>
+	    </sv:property>
+	    <sv:property sv:name="plugin.class" sv:type="String">
+	      <sv:value>org.hippoecm.frontend.i18n.ConfigTraversingPlugin</sv:value>
+	    </sv:property>
+	    <sv:property sv:name="translator.id" sv:type="String">
+	      <sv:value>${cluster.id}.service.translator.config</sv:value>
+	    </sv:property>
+	    <sv:node sv:name="hippostd:translations">
+	      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+	        <sv:value>hippostd:translations</sv:value>
+	      </sv:property>
+	      <sv:node sv:name="section-sitemap">
+	        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+	          <sv:value>nt:base</sv:value>
+	        </sv:property>
+	        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+	          <sv:value>hippo:translated</sv:value>
+	        </sv:property>
+	        <sv:node sv:name="hippo:translation">
+	          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+	            <sv:value>hippo:translation</sv:value>
+	          </sv:property>
+	          <sv:property sv:name="hippo:language" sv:type="String">
+	            <sv:value>nl</sv:value>
+	          </sv:property>
+	          <sv:property sv:name="hippo:message" sv:type="String">
+	            <sv:value>URL mapping</sv:value>
+	          </sv:property>
+	        </sv:node>
+	        <sv:node sv:name="hippo:translation">
+	          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+	            <sv:value>hippo:translation</sv:value>
+	          </sv:property>
+	          <sv:property sv:name="hippo:language" sv:type="String">
+	            <sv:value>en</sv:value>
+	          </sv:property>
+	          <sv:property sv:name="hippo:message" sv:type="String">
+	            <sv:value>Sitemap mapping</sv:value>
+	          </sv:property>
+	        </sv:node>
+	      </sv:node>
+      </sv:node>
+    </sv:node>
+          
     <sv:node sv:name="internalLinkPicker">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standards.browse.BrowserPlugin</sv:value>
+        <sv:value>org.hippoecm.hst.plugins.frontend.standards.browse.TreeBrowserPlugin</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${wicket.id}</sv:value>
@@ -215,29 +264,10 @@
       </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String">
         <sv:value>extension.shortcuts</sv:value>
-        <sv:value>dialog.list</sv:value>
-        <sv:value>extension.breadcrumb</sv:value>
-      </sv:property>
-      <sv:property sv:name="dialog.list" sv:type="String">
-        <sv:value>${cluster.id}.dialog.browse.list</sv:value>
       </sv:property>
       <sv:property sv:name="extension.shortcuts" sv:type="String">
         <sv:value>${cluster.id}.service.dialog.shortcuts</sv:value>
       </sv:property>
-      <sv:property sv:name="extension.breadcrumb" sv:type="String">
-        <sv:value>${cluster.id}.service.dialog.breadcrumb</sv:value>
-      </sv:property>
-      <sv:node sv:name="browser.options">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="list.page.size" sv:type="String">
-          <sv:value>10</sv:value>
-        </sv:property>
-        <sv:property sv:name="list.view.size" sv:type="String">
-          <sv:value>8</sv:value>
-        </sv:property>
-      </sv:node>
     </sv:node>
 
     <sv:node sv:name="dialogBrowserPlugin">
@@ -254,44 +284,20 @@
         <sv:value>${cluster.id}.model.folder</sv:value>
       </sv:property>
       <sv:property sv:name="translator.id" sv:type="String">
-        <sv:value>service.translator.config</sv:value>
+        <sv:value>${cluster.id}.service.translator.config</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String">
         <sv:value>extension.content</sv:value>
       </sv:property>
       <sv:property sv:name="headers" sv:type="String">
-        <sv:value>section-documents</sv:value>
+        <sv:value>section-sitemap</sv:value>
       </sv:property>
       <sv:property sv:name="extension.content" sv:type="String">
         <sv:value>${cluster.id}.service.dialog.tree.content</sv:value>
       </sv:property>
     </sv:node>
-
-    <sv:node sv:name="dialogBreadcrumbPlugin">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standards.browse.BreadcrumbPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${cluster.id}.service.dialog.breadcrumb</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>${cluster.id}.model.folder</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${cluster.id}.model.folder</sv:value>
-      </sv:property>
-      <sv:property sv:name="translator.id" sv:type="String">
-        <sv:value>service.translator.config</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.paths" sv:type="String">
-        <sv:value>${content.path}</sv:value>
-      </sv:property>
-    </sv:node>
-
-    <sv:node sv:name="documentsTreeLoader">
+  
+    <sv:node sv:name="sitemapTreeLoader">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
@@ -299,7 +305,7 @@
         <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
       </sv:property>
       <sv:property sv:name="cluster.name" sv:type="String">
-        <sv:value>hst-editor-tree-views/all-components</sv:value>
+        <sv:value>hst-editor-tree-views/sitemap</sv:value>
       </sv:property>
       <sv:node sv:name="cluster.config">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -317,6 +323,4 @@
       </sv:node>
     </sv:node>
   </sv:node>
-   -->
-  
 </sv:node>

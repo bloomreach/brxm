@@ -37,7 +37,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.BasicEditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.SitemenuItemDAO;
-import org.hippoecm.hst.plugins.frontend.editor.dialogs.HstContentPickerDialog;
+import org.hippoecm.hst.plugins.frontend.editor.dialogs.HstSitemapItemPickerDialog;
 import org.hippoecm.hst.plugins.frontend.editor.domain.SitemenuItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,14 +74,14 @@ public class SitemenuItemEditorPlugin extends BasicEditorPlugin<SitemenuItem> {
 
             public AbstractDialog createDialog() {
                 String path = getBean().getSitemapReference();
-                Model model = new Model(hstContext.content.absolutePath(path));
-                return new HstContentPickerDialog(context, config, model, nodetypes) {
+                Model model = new Model(hstContext.sitemap.absolutePath(path));
+                return new HstSitemapItemPickerDialog(context, config, model, nodetypes) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     protected void saveNode(Node node) {
                         try {
-                            getBean().setSitemapReference(hstContext.content.relativePath(node.getPath()));
+                            getBean().setSitemapReference(hstContext.sitemap.relativePath(node.getPath()));
                             redraw();
                         } catch (RepositoryException e) {
                             log.error(e.getMessage());
