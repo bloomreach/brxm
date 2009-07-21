@@ -189,7 +189,6 @@ public class ObservationTest extends PluginTest {
     public void testNewNodeObservation() throws Exception {
         Node root = session.getRootNode();
         Node test = root.addNode("test", "nt:unstructured");
-        session.save();
 
         List<IEvent> events = new LinkedList<IEvent>();
         IObserver observer = new TestObserver(new JcrNodeModel(test), events);
