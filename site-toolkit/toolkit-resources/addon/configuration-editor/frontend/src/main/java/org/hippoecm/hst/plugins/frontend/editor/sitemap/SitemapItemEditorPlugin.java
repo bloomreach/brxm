@@ -67,7 +67,9 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
 
     private static final String BROWSE_LABEL = "[...]";
 
-    DescriptionPicker descPicker;
+    DescriptionPicker pagePicker;
+    Component newPageWizard;
+    boolean wizardEnabled;
 
     public SitemapItemEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -155,9 +157,15 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
             }
         };
 
-        form
-                .add(descPicker = new DescriptionPicker("pagePicker", new PropertyModel(form.getModel(), "page"),
-                        provider));
+        pagePicker = new DescriptionPicker("pagePicker", new PropertyModel(form.getModel(), "page"), provider) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isVisible() {
+                return !wizardEnabled;
+            }
+        };
+        form.add(pagePicker);
 
         renderNewPageWizard(false, null);
     }
@@ -165,13 +173,14 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
-        if (descPicker != null) {
-            descPicker.refresh();
+        if (pagePicker != null) {
+            pagePicker.refresh();
         }
     }
 
     private void renderNewPageWizard(boolean show, IRequestTarget target) {
-        Component c = show ? new NewPageWizard("wizard", getPluginContext(), getPluginConfig()) {
+        wizardEnabled = show;
+        newPageWizard = show ? new NewPageWizard("wizard", getPluginContext(), getPluginConfig()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -186,19 +195,19 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
                 renderNewPageWizard(false, target);
 
                 getBean().setPage(page.getName());
-                if (descPicker != null) {
-                    descPicker.refresh();
+                if (pagePicker != null) {
+                    pagePicker.refresh();
                 }
 
                 if (target != null && target instanceof AjaxRequestTarget) {
-                    ((AjaxRequestTarget) target).addComponent(descPicker);
+                    ((AjaxRequestTarget) target).addComponent(form);
                 }
             }
         } : new EmptyPanel("wizard").setOutputMarkupId(true);
-        form.addOrReplace(c);
+        form.addOrReplace(newPageWizard);
 
         if (target != null && target instanceof AjaxRequestTarget) {
-            ((AjaxRequestTarget) target).addComponent(c);
+            ((AjaxRequestTarget) target).addComponent(form);
         }
     }
 
