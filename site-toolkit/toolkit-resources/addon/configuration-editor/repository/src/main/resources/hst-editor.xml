@@ -103,7 +103,7 @@
             <sv:value>nl</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Plaatskaart</sv:value>
+            <sv:value>URL mapping</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
