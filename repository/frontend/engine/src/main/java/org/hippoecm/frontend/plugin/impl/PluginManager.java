@@ -258,7 +258,11 @@ public class PluginManager implements IClusterable {
             Iterator<IServiceTracker> iter = notify.iterator();
             while (iter.hasNext()) {
                 IServiceTracker tracker = iter.next();
-                tracker.removeService(service, name);
+                try {
+                    tracker.removeService(service, name);
+                } catch (Exception ex) {
+                    log.error("Error while unregistering service", ex);
+                }
             }
         }
 
