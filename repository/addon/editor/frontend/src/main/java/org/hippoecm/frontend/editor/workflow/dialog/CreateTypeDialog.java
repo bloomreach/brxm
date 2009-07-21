@@ -21,8 +21,6 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.wizard.Wizard;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -41,7 +39,7 @@ public abstract class CreateTypeDialog extends Wizard implements IDialogService.
     private IDialogService dialogService;
 
     public CreateTypeDialog(Action action, ILayoutProvider layouts) {
-        super("content");
+        super("content", false);
 
         this.action = action;
 
