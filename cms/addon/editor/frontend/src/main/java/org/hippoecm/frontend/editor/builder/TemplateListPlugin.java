@@ -79,10 +79,14 @@ public class TemplateListPlugin extends RenderPlugin {
 
         void load() {
             if (list == null) {
+                ITypeDescriptor containingType = (ITypeDescriptor) TemplateListPlugin.this.getModelObject();
                 SortedMap<String, ITypeDescriptor> types = new TreeMap<String, ITypeDescriptor>();
                 for (String type : editableTypes) {
                     try {
                         ITypeDescriptor descriptor = engine.getType(type);
+                        if (containingType.getName().equals(type)) {
+                            continue;
+                        }
                         if (descriptor.isType(HippoNodeType.NT_DOCUMENT)) {
                             continue;
                         }
