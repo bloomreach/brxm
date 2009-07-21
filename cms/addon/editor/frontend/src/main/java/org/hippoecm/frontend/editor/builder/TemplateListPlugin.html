@@ -21,11 +21,16 @@
     <wicket:container wicket:id="fragment"/>
   </wicket:panel>
   <wicket:fragment wicket:id="edit">
-    <ul class="hippo-editor-template-field-new">
-      <li wicket:id="templates">
-        <a wicket:id="template" href="#"><span wicket:id="template-name"></span></a>
-      </li>
-    </ul>
+    <div class="hippo-accordion-unit" wicket:id="categories">
+      <h2><a wicket:id="link"><span wicket:id="category">[ category ]</span></a></h2>
+      <wicket:container wicket:id="container">
+        <ul class="hippo-editor-template-field-new">
+          <li wicket:id="templates">
+            <a wicket:id="template" href="#"><span wicket:id="template-name"></span></a>
+          </li>
+        </ul>
+      </wicket:container>
+    </div>
   </wicket:fragment>
   <wicket:fragment wicket:id="view">
   </wicket:fragment>

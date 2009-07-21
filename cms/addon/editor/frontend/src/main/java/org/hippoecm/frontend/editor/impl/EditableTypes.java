@@ -25,6 +25,8 @@ import java.util.TreeSet;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.query.Query;
@@ -59,6 +61,7 @@ class EditableTypes extends AbstractList implements Serializable, IObservable {
         javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
         try {
             QueryManager qMgr = session.getWorkspace().getQueryManager();
+            NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
             Query query = qMgr.createQuery("//element(*, " + EditorNodeType.NT_EDITABLE + ")", Query.XPATH);
             NodeIterator iter = query.execute().getNodes();
             Set<String> types = new TreeSet<String>();
@@ -66,6 +69,7 @@ class EditableTypes extends AbstractList implements Serializable, IObservable {
                 Node ttNode = iter.nextNode();
                 TemplateEngine.log.debug("search result: {}", ttNode.getPath());
 
+                // verify that parent is of correct type
                 Node nsNode = ttNode.getParent();
                 if (!nsNode.isNodeType(HippoNodeType.NT_NAMESPACE)) {
                     continue;
@@ -76,7 +80,15 @@ class EditableTypes extends AbstractList implements Serializable, IObservable {
                     name = ttNode.getName();
                 } else {
                     name = nsNode.getName() + ":" + ttNode.getName();
+
+                    // skip types that haven't been persisted yet
+                    try {
+                        ntMgr.getNodeType(name);
+                    } catch (NoSuchNodeTypeException ex) {
+                        continue;
+                    }
                 }
+
                 types.add(name);
             }
             editableTypes.addAll(types);
