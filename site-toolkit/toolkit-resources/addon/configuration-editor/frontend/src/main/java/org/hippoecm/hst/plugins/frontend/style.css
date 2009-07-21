@@ -105,7 +105,7 @@ div.hst-editor-form fieldset div.wizard-button-bar {
 
 div.hst-editor-form fieldset div.description-picker {
   width: 368px;
-  background-color: #e3e3e3;
+  border: 1px solid #e3e3e3;
   margin-top: 10px;
 }
 
@@ -123,9 +123,15 @@ div.description-picker div.picker-prev img {
 }
 
 div.description-picker div.picker-data {
-  margin-left: 10px;	
+  margin-left: 10px;
+  width: 300px;
+  cursor: pointer;
 }
 
+div.description-picker div.selected {
+  background-color: #e3e3e3; 
+}
+ 
 div.description-picker div.picker-next {
   float: right;
   clear: none;

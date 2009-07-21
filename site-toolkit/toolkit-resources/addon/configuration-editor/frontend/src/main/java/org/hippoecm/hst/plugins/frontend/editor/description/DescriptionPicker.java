@@ -25,8 +25,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.image.NonCachingImage;
@@ -124,6 +127,36 @@ public class DescriptionPicker extends Panel {
         next.add(new Image("nextImg", new ResourceReference(DescriptionPicker.class, "next.png")));
         add(next);
 
+        WebMarkupContainer selector = new WebMarkupContainer("selector");
+        selector.setOutputMarkupId(true);
+        selector.add(new AjaxEventBehavior("onclick") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                try {
+                    DescriptionPicker.this.setModelObject(DescriptionPicker.this.descriptives.get(current).getModel()
+                            .getNode().getName());
+                } catch (RepositoryException e) {
+                    log.error("Error setting new page name", e);
+                }
+                target.addComponent(DescriptionPicker.this);
+            }
+        });
+        selector.add(new AttributeAppender("class", new AbstractReadOnlyModel() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Object getObject() {
+                if (isCurrentSelected()) {
+                    return "selected";
+                }
+                return "";
+            }
+
+        }, " "));
+        add(selector);
+
         AjaxLink select = new AjaxLink("select") {
             private static final long serialVersionUID = 1L;
 
@@ -140,17 +173,7 @@ public class DescriptionPicker extends Panel {
 
             @Override
             public boolean isEnabled() {
-                String selectedName = DescriptionPicker.this.getModelObjectAsString();
-                String currentName;
-                try {
-                    currentName = DescriptionPicker.this.descriptives.get(current).getModel().getNode().getName();
-                    if (selectedName != null && selectedName.equals(currentName)) {
-                        return false;
-                    }
-                } catch (RepositoryException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                return isCurrentSelected();
             }
         };
         select.add(new Label("selectLabel", new AbstractReadOnlyModel() {
@@ -158,22 +181,15 @@ public class DescriptionPicker extends Panel {
 
             @Override
             public Object getObject() {
-                String selectedName = DescriptionPicker.this.getModelObjectAsString();
-                String currentName;
-                try {
-                    currentName = DescriptionPicker.this.descriptives.get(current).getModel().getNode().getName();
-                    if (selectedName != null && selectedName.equals(currentName)) {
-                        return DescriptionPicker.this.getString("selected");
-                    }
-                } catch (RepositoryException e) {
-                    e.printStackTrace();
+                if (isCurrentSelected()) {
+                    return DescriptionPicker.this.getString("selected");
                 }
                 return DescriptionPicker.this.getString("unselected");
             }
         }));
-        add(select);
+        selector.add(select);
 
-        add(new Label("name", new AbstractReadOnlyModel() {
+        selector.add(new Label("name", new AbstractReadOnlyModel() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -187,7 +203,7 @@ public class DescriptionPicker extends Panel {
             }
         }));
 
-        add(new NonCachingImage("thumb", new AbstractReadOnlyModel() {
+        selector.add(new NonCachingImage("thumb", new AbstractReadOnlyModel() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -214,7 +230,7 @@ public class DescriptionPicker extends Panel {
 
         });
 
-        add(new Label("description", new AbstractReadOnlyModel() {
+        selector.add(new Label("description", new AbstractReadOnlyModel() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -247,5 +263,19 @@ public class DescriptionPicker extends Panel {
 
     public void refresh() {
         init();
+    }
+
+    private boolean isCurrentSelected() {
+        String selectedName = getModelObjectAsString();
+        String currentName;
+        try {
+            currentName = descriptives.get(current).getModel().getNode().getName();
+            if (selectedName != null && selectedName.equals(currentName)) {
+                return true;
+            }
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
