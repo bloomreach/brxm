@@ -21,9 +21,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -47,21 +44,10 @@ public class HstEditorPerspective extends Perspective {
     private static final String EDITOR_ROOT = "editor.root";
     private static final String NAMESPACES_ROOT = "namespaces.root";
 
-    private String previewUrlRoot;
-    private String previewUrl = "";
-
-    WebMarkupContainer previewContainer;
-    boolean previewShow;
-
     public HstEditorPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         String rootModelPath = config.getString(EDITOR_ROOT, null);
-
-        previewUrlRoot = config.getString("preview.url.root", "http://127.0.0.1:8085/site/preview/");
-        previewShow = config.getBoolean("preview.show");
-
-        add(previewContainer = new Preview());
 
         if (rootModelPath != null) {
             javax.jcr.Session jcrSession = ((UserSession) getSession()).getJcrSession();
@@ -130,27 +116,4 @@ public class HstEditorPerspective extends Perspective {
         parameters.put("sitemap.path", hstContext.sitemap.getPath());
         context.newCluster(cluster, parameters).start();
     }
-
-    public void openPreviewUrl(AjaxRequestTarget target, String string) {
-        previewUrl = string;
-        target.addComponent(previewContainer);
-    }
-
-    class Preview extends WebMarkupContainer {
-
-        public Preview() {
-            super("previewFrame");
-            setOutputMarkupId(true);
-        }
-
-        @Override
-        protected void onComponentTag(ComponentTag tag) {
-            if (previewShow) {
-                tag.put("src", previewUrlRoot + previewUrl);
-            }
-            super.onComponentTag(tag);
-        }
-
-    }
-
 }

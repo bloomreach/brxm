@@ -34,7 +34,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.hst.plugins.frontend.LinkHandler;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Descriptive;
 import org.slf4j.Logger;
@@ -82,9 +81,6 @@ public class DescriptionPicker extends Panel {
     private DescriptionProvider provider;
     private List<Descriptive> descriptives;
     private int current;
-
-    boolean showPreviewLink;
-    LinkHandler previewLinkHandler;
 
     public DescriptionPicker(String id, IModel model, DescriptionProvider provider) {
         super(id, model);
@@ -227,20 +223,6 @@ public class DescriptionPicker extends Panel {
             }
         }));
 
-        add(new AjaxLink("preview") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                previewLinkHandler.handle(target);
-            }
-
-            @Override
-            public boolean isVisible() {
-                return showPreviewLink;
-            }
-
-        });
-
     }
 
     private void init() {
@@ -265,10 +247,5 @@ public class DescriptionPicker extends Panel {
 
     public void refresh() {
         init();
-    }
-
-    public void enablePreview(LinkHandler handler) {
-        showPreviewLink = true;
-        this.previewLinkHandler = handler;
     }
 }

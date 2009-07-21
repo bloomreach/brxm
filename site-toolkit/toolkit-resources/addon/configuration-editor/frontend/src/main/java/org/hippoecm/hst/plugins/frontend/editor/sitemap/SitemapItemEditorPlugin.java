@@ -29,13 +29,10 @@ import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -46,7 +43,6 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.hst.plugins.frontend.HstEditorPerspective;
 import org.hippoecm.hst.plugins.frontend.editor.BasicEditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.DescriptionDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
@@ -71,7 +67,6 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
 
     private static final String BROWSE_LABEL = "[...]";
 
-    DropDownChoice ddc;
     DescriptionPicker descPicker;
 
     public SitemapItemEditorPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -81,32 +76,6 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
         fc = new RequiredTextField("matcher");
         fc.add(new UniqueSitemapItemValidator(this, hstContext.sitemap));
         form.add(fc);
-
-        //Model m = new Model()
-        ddc = new DropDownChoice("page", new LoadableDetachableModel() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected Object load() {
-                return hstContext.page.getPagesAsList();
-            }
-        });
-        ddc.setNullValid(false);
-        ddc.setRequired(true);
-        ddc.setOutputMarkupId(true);
-        ddc.setChoiceRenderer(new IChoiceRenderer() {
-            private static final long serialVersionUID = 1L;
-
-            public Object getDisplayValue(Object object) {
-                return object;
-            }
-
-            public String getIdValue(Object object, int index) {
-                return (String) object;
-            }
-
-        });
-        //form.add(ddc);
 
         // Linkpicker
         final List<String> nodetypes = new ArrayList<String>();
@@ -190,47 +159,7 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
                 .add(descPicker = new DescriptionPicker("pagePicker", new PropertyModel(form.getModel(), "page"),
                         provider));
 
-        /*
-        descPicker.enablePreview(new LinkHandler() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onHandle(AjaxRequestTarget target) {
-                String urlName = "";
-                JcrNodeModel m = getBean().getModel();
-                Node n;
-                try {
-                    n = m.getNode().getParent();
-                    while (n != null && n.isNodeType("hst:sitemapitem")) {
-                        SitemapItem i = dao.load(new JcrNodeModel(n.getPath()));
-                        urlName = i.getMatcher() + "/" + urlName;
-                        n = n.getParent();
-                    }
-                } catch (RepositoryException e) {
-                    e.printStackTrace();
-                }
-
-                urlName = urlName + getBean().getMatcher();
-                showUrl(target, urlName);
-            }
-
-        });
-        */
-
         renderNewPageWizard(false, null);
-    }
-
-    protected void showUrl(AjaxRequestTarget target, String string) {
-        HstEditorPerspective p = null;
-        Component c = getParent();
-        while (c != null) {
-            if (c instanceof HstEditorPerspective) {
-                p = (HstEditorPerspective) c;
-                p.openPreviewUrl(target, string);
-                break;
-            }
-            c = c.getParent();
-        }
     }
 
     @Override
@@ -261,7 +190,6 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
                     descPicker.refresh();
                 }
 
-                //ddc.setModelValue(new String[] { page.getName() });
                 if (target != null && target instanceof AjaxRequestTarget) {
                     ((AjaxRequestTarget) target).addComponent(descPicker);
                 }
