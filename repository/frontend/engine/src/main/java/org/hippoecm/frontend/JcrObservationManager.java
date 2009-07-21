@@ -699,7 +699,10 @@ public class JcrObservationManager implements ObservationManager {
                                 }
                             }
                         } else {
-                            events.add(newState.getChangeEvent());
+                            Event changeEvent = newState.getChangeEvent();
+                            if (!blocks(changeEvent)) {
+                                events.add(changeEvent);
+                            }
                         }
                     } catch (RepositoryException e) {
                         log.warn("Failed to process node", e);
