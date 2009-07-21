@@ -129,7 +129,8 @@ div.description-picker div.picker-data {
 }
 
 div.description-picker div.selected {
-  background-color: #e3e3e3; 
+  background-color: #e3e3e3;
+  cursor: default; 
 }
  
 div.description-picker div.picker-next {

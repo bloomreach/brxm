@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -141,6 +142,11 @@ public class DescriptionPicker extends Panel {
                     log.error("Error setting new page name", e);
                 }
                 target.addComponent(DescriptionPicker.this);
+            }
+            
+            @Override
+            public boolean isEnabled(Component component) {
+                return !isCurrentSelected();
             }
         });
         selector.add(new AttributeAppender("class", new AbstractReadOnlyModel() {
