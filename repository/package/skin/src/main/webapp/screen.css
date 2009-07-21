@@ -828,13 +828,14 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .create-type-select-layout .selected {background-color: #ccc; height: 80px;}
 
 /* field template editing */
-.hippo-editor-template-field {width: 100%; border: 1px solid #bbb;}
-.hippo-editor-template-field .active {background-color: #ccc;}
-.hippo-editor-template-field-controls {float: right;}
-.hippo-editor-template-field-controls .delete-16 {width: 49px; float: right;}
+.hippo-editor-template-field {padding: 2px; background-color: #bbb;}
+.hippo-editor-template-field-controls {height: 20px; padding-left: 5px; padding-right: 5px; background-color: white;}
+.active .hippo-editor-template-field-controls {background-color: #fedc89;}
+.hippo-editor-template-field-controls ul {float: right;}
 .hippo-editor-template-field-controls li {display: inline; }
 .hippo-editor-template-field-controls li a {float: left; display:block; background-position: center center; width: 16px; height: 16px;}
 .hippo-editor-template-field-controls li a:hover {background-color: white; }
+.hippo-editor-template-field-controls .delete-16 {width: 49px; float: right;}
 .hippo-editor-template-field-controls .up {background-image:url("images/icons/arrow-sort-up-16.png")} 
 .hippo-editor-template-field-controls .down {background-image:url("images/icons/arrow-sort-down-16.png")} 
 .hippo-editor-template-field-controls .left {background-image:url("images/icons/arrow-sort-left-16.png")} 
