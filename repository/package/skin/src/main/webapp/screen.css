@@ -824,8 +824,8 @@ div.wicket-modal div.link-picker table {background-color: #e3e3e3;}
 div.wicket-modal div.wicket-tree {border: 0px;}
 
 /* select layout wizard step */
-.create-type-select-layout td {text-align: center;}
-.create-type-select-layout .selected {background-color: #ccc; height: 80px;}
+.create-type-select-layout td {text-align: center; height: 80px;}
+.create-type-select-layout .selected {background-color: #ccc;}
 
 /* field template editing */
 .hippo-editor-template-field {padding: 2px; background-color: #bbb;}
@@ -841,7 +841,7 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor-template-field-controls .left {background-image:url("images/icons/arrow-sort-left-16.png")} 
 .hippo-editor-template-field-controls .right {background-image:url("images/icons/arrow-sort-right-16.png")} 
 
-.hippo-editor .hippo-editor-template-field-edit input{width: 140px;}
+.hippo-editor .hippo-editor-template-field-edit input{width: 180px;}
 .hippo-editor .hippo-editor-template-field-edit .hippo-editor-field-title{display: block}
 .hippo-editor .hippo-editor-template-field-edit table{margin-top: 5px;}
 .hippo-editor .hippo-editor-template-field-edit table tr td{color: #b2b2b2; padding: 2px; }
