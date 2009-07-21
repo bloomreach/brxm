@@ -1,0 +1,61 @@
+<!--
+    * Copyright 2009 Hippo
+    *
+    * Licensed under the Apache License, Version 2.0 (the  "License");
+    * you may not use this file except in compliance with the License.
+    * You may obtain a copy of the License at
+    *
+    * http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:head>
+  <style>
+    .hippo-editor-facetselect {
+      text-align: center;
+    }
+    .hippo-editor-facetselect table {
+      border: 1px solid black;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .hippo-editor-facetselect td {
+      border: 1px solid #B2B2B2;
+      padding: 5px;
+    }
+    .hippo-editor-facetselect th {
+      border: 2px solid #B2B2B2;
+      text-align: center;
+      padding: 5px;
+    }
+    .hippo-editor-facetselect input {
+      border: 1px solid #B2B2B2;
+    }
+  </style>
+  </wicket:head>
+  <wicket:panel>
+    <span class="hippo-editor-field-value" wicket:id="docbase"></span>
+    <div class="hippo-editor-facetselect">
+      <table>
+        <tr>
+          <th>Facet</th>
+          <th>Value</th>
+          <th>Mode</th>
+          <th></th>
+        </tr>
+        <tr wicket:id="arguments">
+          <td><span class="hippo-editor-field-subfield" wicket:id="facet">[ facet ]</span></td>
+          <td><span class="hippo-editor-field-subfield" wicket:id="value">[ value ]</span></td>
+          <td><span class="hippo-editor-field-subfield" wicket:id="mode">[ mode ]</span></td>
+          <td class="hippo-editor-field-subfield-controls"><a class="delete-16 icon-16" wicket:id="remove"></a></td>
+        </tr>
+        <tr><td colspan=4 class="hippo-editor-field-subfield-controls"><a class="add-16 icon-16" wicket:id="add"></a></td></tr>
+      </table>
+    </div>
+  </wicket:panel>
+</html>
