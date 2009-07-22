@@ -33,6 +33,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -65,7 +66,7 @@ public abstract class NewPageWizard extends AjaxWizard {
         public PageNameStep(IDynamicWizardStep previousStep) {
             super(previousStep);
 
-            setTitleModel(new Model("Give your new page a name"));
+            setTitleModel(new StringResourceModel("pagename.title", PageNameStep.this, null));
 
             FormComponent textField = new RequiredTextField("name", new PropertyModel(newPage, "name"));
             textField.add(new NodeUniqueValidator<Component>(new BeanProvider<Component>() {

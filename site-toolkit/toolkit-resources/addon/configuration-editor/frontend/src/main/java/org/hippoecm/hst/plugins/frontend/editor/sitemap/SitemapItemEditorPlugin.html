@@ -26,16 +26,12 @@
         <div>
           <label for="contentPath"><wicket:message key="matcher.contentpath">Content path</wicket:message></label><input type="text" name="contentPath" wicket:id="contentPath" style="width: 230px;"/> <span name="path" wicket:id="path">[Link Picker]</span>
         </div>  
-        <!-- 
         <div>
-          <label for="page"><wicket:message key="page.label">Page label</wicket:message></label><select name="page" wicket:id="page"></select>
-        </div> 
-        -->
-        <div>
-          <label for="pagepicker"><wicket:message key="page.picker">Page</wicket:message></label>
+          <!-- <label for="pagepicker"><wicket:message key="page.label">Page</wicket:message></label> -->
+          <wicket:message key="page.picker.label">Select a page from the list below or </wicket:message>
           <a wicket:id="newPage" style="margin-left: 10px;">
-            <wicket:message key="page.new.label">New page</wicket:message>
-          </a> <wicket:message key="page.picker.label">or select one below.</wicket:message>
+            <wicket:message key="page.new.label">create a new page.</wicket:message>
+          </a> 
           <div wicket:id="pagePicker">[ Page picker ]</div>
         </div>  
       </fieldset>
