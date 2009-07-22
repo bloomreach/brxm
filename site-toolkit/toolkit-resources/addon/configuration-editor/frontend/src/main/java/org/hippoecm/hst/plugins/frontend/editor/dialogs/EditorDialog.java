@@ -43,12 +43,11 @@ public abstract class EditorDialog<K extends EditorBean> extends AbstractDialog 
         this.bean = bean;
     }
 
-    //FIXME: This is a nasty hack
+    //FIXME: This is a hack
     public IModel getTitle() {
         return new StringResourceModel("dialog.title", this, null, new Object[] { getDialogTitle() });
     }
 
-    //FIXME: This is a nasty hack
     protected String getDialogTitle() {
         return "";
     }

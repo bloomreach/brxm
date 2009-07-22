@@ -18,8 +18,6 @@ package org.hippoecm.hst.plugins.frontend.editor.pages;
 
 import java.util.List;
 
-import org.hippoecm.frontend.dialog.IDialogService.Dialog;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.components.ComponentEditorPlugin;
@@ -45,10 +43,10 @@ public class PageEditorPlugin extends ComponentEditorPlugin {
         return new PageDAO(getPluginContext(), hstContext.page.getNamespace());
     }
 
-    @Override
-    protected Dialog newAddDialog() {
-        return new AddPageDialog((PageDAO) dao, this, (JcrNodeModel) getModel());
-    }
+    //    @Override
+    //    protected Dialog newAddDialog() {
+    //        return new AddPageDialog((PageDAO) dao, this, (JcrNodeModel) getModel());
+    //    }
 
     @Override
     public List<String> getReferenceableComponents() {

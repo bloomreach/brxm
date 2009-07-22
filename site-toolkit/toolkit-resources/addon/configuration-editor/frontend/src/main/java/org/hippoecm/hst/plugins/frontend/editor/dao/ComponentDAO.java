@@ -131,8 +131,11 @@ public class ComponentDAO extends EditorDAO<Component> {
         JcrUtilities.updateMultiValueProperty(model, HST_PARAMETERNAMES, names);
         JcrUtilities.updateMultiValueProperty(model, HST_PARAMETERVALUES, values);
 
-        //Create containers
-        updateTemplate(component, model);
+        //Don't auto create containers for now, instead update template here
+        if (!component.isReference()) {
+            JcrUtilities.updateProperty(model, HST_TEMPLATE, component.getTemplate());
+        }
+        //updateTemplate(component, model);
 
         descriptionDao.persist(component, model);
     }
@@ -180,7 +183,7 @@ public class ComponentDAO extends EditorDAO<Component> {
         }
     }
 
-    private Component resolveComponent(Component component) {
+    public Component resolveComponent(Component component) {
         while (component.isReference()) {
             String absPath = getAbsoluteReferencePath(component.getReferenceName());
             component = load(new JcrNodeModel(absPath));
@@ -195,7 +198,6 @@ public class ComponentDAO extends EditorDAO<Component> {
 
     protected String encodeReference(String name) {
         return name;
-        //return getHstContext().component.encodeReferenceName(name);
     }
 
 }

@@ -19,6 +19,12 @@ package org.hippoecm.hst.plugins.frontend.editor.components;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.IRequestTarget;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
@@ -40,8 +46,10 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.plugins.frontend.editor.BasicEditorPlugin;
 import org.hippoecm.hst.plugins.frontend.editor.dao.ComponentDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
+import org.hippoecm.hst.plugins.frontend.editor.dao.TemplateDAO;
 import org.hippoecm.hst.plugins.frontend.editor.description.DescriptionPanel;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component;
+import org.hippoecm.hst.plugins.frontend.editor.domain.Template;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Component.Parameter;
 import org.hippoecm.hst.plugins.frontend.editor.validators.NodeUniqueValidator;
 import org.slf4j.Logger;
@@ -56,9 +64,12 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
     static final Logger log = LoggerFactory.getLogger(ComponentEditorPlugin.class);
 
     private Fragment selected;
+    private List<String> choices;
 
     public ComponentEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        //TODO: test if all childnodes are created, if so disable add button
 
         form.add(new DescriptionPanel("componentDescription", form.getInnermostModel(), context, config));
 
@@ -136,21 +147,69 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
             }
         });
         form.add(ddo);
+    }
 
+    private void checkState() {
+        addLink.setVisible(true);//reset addLink
+        choices = getChoices();
+
+        boolean set = choices != null && choices.size() > 0;
+        if (addLink.isVisible() != set) {
+            addLink.setVisible(set);
+            IRequestTarget target = RequestCycle.get().getRequestTarget();
+            if (target instanceof AjaxRequestTarget) {
+                ((AjaxRequestTarget) target).addComponent(addLink);
+            }
+        }
+    }
+
+    private List<String> getChoices() {
+        Component c = getBean();
+        String templateName;
+        if (c.isReference() && c.getReferenceName() != null) {
+            Component refComponent = ((ComponentDAO) dao).resolveComponent(c);
+            templateName = refComponent.getTemplate();
+        } else {
+            templateName = c.getTemplate();
+        }
+
+        JcrNodeModel template = new JcrNodeModel(hstContext.template.absolutePath(templateName));
+        TemplateDAO tDao = new TemplateDAO(getPluginContext(), hstContext.template.getNamespace());
+        Template t = tDao.load(template);
+
+        List<String> choices = t.getContainers();
+        if (choices != null) {
+            Node parent = c.getModel().getNode();
+            try {
+                if (parent.hasNodes()) {
+                    for (NodeIterator it = parent.getNodes(); it.hasNext();) {
+                        String name = it.nextNode().getName();
+                        if (choices.contains(name)) {
+                            choices.remove(name);
+                        }
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.error("An error occured during filtering of existing child nodes", e);
+            }
+            if (choices.size() == 0) {
+                addLink.setVisible(false);
+            }
+        }
+        return choices;
     }
 
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
         setComponentForm();
+        checkState();
     }
 
     private void setComponentForm() {
         Fragment f = getBean().isReference() ? new RefComponentFragment() : new ComponentFragment();
-        if (selected == null) {
-            form.add(selected = f);
-        } else if (!selected.equals(f)) {
-            form.replace(selected = f);
+        if (selected == null || !selected.equals(f)) {
+            form.addOrReplace(selected = f);
         }
     }
 
@@ -245,7 +304,7 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
 
     @Override
     protected Dialog newAddDialog() {
-        return new AddComponentDialog(dao, this, (JcrNodeModel) getModel());
+        return new AddRestrictedComponentDialog((ComponentDAO) dao, this, (JcrNodeModel) getModel(), choices);
     }
 
 }
