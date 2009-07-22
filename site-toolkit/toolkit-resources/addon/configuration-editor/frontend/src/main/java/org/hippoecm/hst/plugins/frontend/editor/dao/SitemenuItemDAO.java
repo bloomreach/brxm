@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.hst.plugins.frontend.editor.context.HstContext;
 import org.hippoecm.hst.plugins.frontend.editor.domain.SitemenuItem;
 import org.hippoecm.hst.plugins.frontend.util.JcrUtilities;
 import org.slf4j.Logger;
@@ -36,7 +35,6 @@ public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    /** The logger. */
     static final Logger log = LoggerFactory.getLogger(SitemenuItemDAO.class);
 
     /** SITEMAP_PROPERTY represents the jcr propertyname of the referenced sitemap item. */
@@ -61,7 +59,6 @@ public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
     @Override
     public SitemenuItem load(JcrNodeModel model) {
         SitemenuItem item = new SitemenuItem(model);
-        HstContext ctx = getHstContext();
 
         //Set name value
         try {
@@ -87,8 +84,6 @@ public class SitemenuItemDAO extends EditorDAO<SitemenuItem> {
      */
     @Override
     protected void persist(SitemenuItem k, JcrNodeModel model) {
-        HstContext ctx = getHstContext();
-
         //Set matcher value as nodeName if it's not already the same
         String newName = k.getName();
         try {

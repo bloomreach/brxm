@@ -58,8 +58,6 @@ public class SitemenuDAO extends EditorDAO<Sitemenu> {
 
     @Override
     protected void persist(Sitemenu k, JcrNodeModel model) {
-        HstContext ctx = getHstContext();
-
         //Set matcher value as nodeName
         String newName = k.getName();
         k.setModel(JcrUtilities.rename(model, newName));
