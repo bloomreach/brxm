@@ -92,7 +92,7 @@
             <sv:value>en</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Sitemap</sv:value>
+            <sv:value>URL Designer</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hippo:translation">
@@ -103,7 +103,7 @@
             <sv:value>nl</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>URL mapping</sv:value>
+            <sv:value>URL Designer</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
