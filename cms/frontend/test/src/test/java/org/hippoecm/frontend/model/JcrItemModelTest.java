@@ -119,5 +119,23 @@ public class JcrItemModelTest extends PluginTest {
         root.save();
         assertTrue(test.isSame((Node) itemModel.getObject()));
     }
-    
+
+    @Test
+    public void testPathFollowsUuid() throws Exception {
+        Node root = this.root.addNode("test", "nt:unstructured");
+        Node test = root.addNode("child");
+        test.addMixin("mix:referenceable");
+
+        // retrieve path, making sure that it it cached
+        JcrNodeModel model = new JcrNodeModel(test);
+        String path = model.getItemModel().getPath();
+        assertEquals("/test/child", path);
+        model.detach();
+
+        session.move(test.getPath(), root.getPath() + "/newname");
+
+        assertEquals("/test/newname", model.getItemModel().getPath());
+        model.detach();
+    }
+
 }
