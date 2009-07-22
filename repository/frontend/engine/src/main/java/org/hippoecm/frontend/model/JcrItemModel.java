@@ -43,8 +43,12 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     static final Logger log = LoggerFactory.getLogger(JcrItemModel.class);
 
+    // the leading id of the item is the (uuid,relPath) tuple.
     private String uuid;
     private String relPath;
+
+    // the path of the item, used to retrieve the item when the uuid has not been
+    // determined yet or the uuid cannot be resolved.
     private String absPath = null;
 
     // constructors
@@ -71,46 +75,19 @@ public class JcrItemModel extends LoadableDetachableModel {
     }
 
     public String getPath() {
-        if (absPath == null) {
-            if (isAttached() && getObject() != null) {
-                Item item = (Item) getObject();
-                try {
-                    absPath = item.getPath();
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage());
-                }
-            } else if (uuid != null) {
-                javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-                try {
-                    Node node = session.getNodeByUUID(uuid);
-                    if (relPath == null) {
-                        return node.getPath();
-                    } else if (node.isSame(session.getRootNode())) {
-                        return "/" + relPath;
-                    } else {
-                        return node.getPath() + "/" + relPath;
-                    }
-                } catch (ItemNotFoundException e) {
-                    log.warn("Node not found with uuid: " + uuid);
-                } catch (RepositoryException e) {
-                    log.error("Error while fetching node with uuid: "+ uuid, e);
-                }
+        Item item = (Item) getObject();
+        if (item != null) {
+            try {
+                return item.getPath();
+            } catch (RepositoryException e) {
+                log.error(e.getMessage(), e);
             }
         }
         return absPath;
     }
 
     public boolean exists() {
-        String path = getPath();
-        if (path != null) {
-            try {
-                UserSession sessionProvider = (UserSession) Session.get();
-                return sessionProvider.getJcrSession().itemExists(path);
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-        }
-        return false;
+        return getObject() != null;
     }
 
     public JcrItemModel getParentModel() {
@@ -152,13 +129,15 @@ public class JcrItemModel extends LoadableDetachableModel {
                 try {
                     node = session.getNodeByUUID(uuid);
                     if (relPath == null) {
+                        absPath = node.getPath();
                         return node;
                     }
                     if (node.isSame(session.getRootNode())) {
-                        return session.getItem("/" + relPath);
+                        absPath = "/" + relPath;
                     } else {
-                        return session.getItem(node.getPath() + "/" + relPath);
+                        absPath = node.getPath() + "/" + relPath;
                     }
+                    return session.getItem(absPath);
                 } catch (ItemNotFoundException ex) {
                     if (absPath != null) {
                         uuid = null;
@@ -199,6 +178,7 @@ public class JcrItemModel extends LoadableDetachableModel {
                 Item item = (Item) getObject();
                 // determine uuid + relative path for attached item
                 if (item != null) {
+                    absPath = item.getPath();
                     if (item.isNode()) {
                         node = (Node) item;
                     } else {
