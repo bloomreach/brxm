@@ -249,17 +249,25 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     private void doArchive(String source, String destination) throws ConstraintViolationException, PathNotFoundException, ItemNotFoundException, VersionException, VersionException, AccessDeniedException, RepositoryException {
         rootSession.getWorkspace().move(source, destination);
-        Node target = rootSession.getRootNode().getNode(destination.substring(1));
-        if(target.isNodeType(HippoNodeType.NT_HANDLE)) {
-            target.checkout();
-            for(NodeIterator iter = target.getNodes(); iter.hasNext(); ) {
-                iter.nextNode().checkin();
+        String targetParentPath = destination.substring(1, destination.lastIndexOf("/"));
+        String targetName = destination.substring(destination.lastIndexOf("/")+1);
+        for (NodeIterator targetsIter = rootSession.getRootNode().getNode(targetParentPath).getNodes(targetName); targetsIter.hasNext(); ) {
+            Node target = targetsIter.nextNode();
+            try {
+                if (target.isNodeType(HippoNodeType.NT_HANDLE) && target.hasNodes()) {
+                    target.checkout();
+                    for (NodeIterator iter = target.getNodes(); iter.hasNext(); ) {
+                        iter.nextNode().checkin();
+                    }
+                    for (NodeIterator iter = target.getNodes(); iter.hasNext(); ) {
+                        iter.nextNode().remove();
+                    }
+                    target.save();
+                    target.checkin();
+                }
+            } catch(RepositoryException ex) {
+                log.error("error while deleting document variants from attic", ex);
             }
-            for(NodeIterator iter = target.getNodes(); iter.hasNext(); ) {
-                iter.nextNode().remove();
-            }
-            target.save();
-            target.checkin();
         }
     }
 
