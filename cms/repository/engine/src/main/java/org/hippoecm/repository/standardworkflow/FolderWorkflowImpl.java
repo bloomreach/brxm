@@ -182,7 +182,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public String add(String category, String template, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String name = arguments.get("name");
         QueryManager qmgr = userSession.getWorkspace().getQueryManager();
-        Node foldertype = userSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates").getNode(category);
+        Node foldertype = userSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
+        if (!foldertype.hasNode(category)) {
+            throw new WorkflowException("No category defined for add to folder");
+        }
+        foldertype = foldertype.getNode(category);
         Query query = qmgr.getQuery(foldertype);
         query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage());
         QueryResult rs = query.execute();
@@ -243,7 +247,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             userSession.save();
             return result.getPath();
         } else {
-            return null;
+            throw new WorkflowException("No template defined for add to folder");
         }
     }
 
