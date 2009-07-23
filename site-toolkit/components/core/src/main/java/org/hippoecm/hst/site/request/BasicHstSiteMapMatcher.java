@@ -175,23 +175,32 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     }
 
     private HstSiteMapItem traverseUp(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<HstSiteMapItem> checkedSiteMapItems) {
-       if(hstSiteMapItem == null) {
+        HstSiteMapItemService hstSiteMapItemService = (HstSiteMapItemService)hstSiteMapItem;
+        if(hstSiteMapItem == null) {
            return null;
        }
        HstSiteMapItem s; 
        if(hstSiteMapItem.isWildCard()) {
-           // as this tree path did not result in a match, remove some params again
            if( (s = hstSiteMapItem.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s)){
                return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
-           } else if(hstSiteMapItem.getChild(ANY) != null) {
+           } else if( (s = hstSiteMapItemService.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
+               return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
+           }else if(hstSiteMapItem.getChild(ANY) != null) {
                return traverseInToSiteMapItem(hstSiteMapItem, params,position, elements, checkedSiteMapItems);
-           }
+           } else if( (s = hstSiteMapItemService.getAnyPatternChild(elements, position, checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
+               return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
+           } 
+           // as this tree path did not result in a match, remove some params again
            params.remove(String.valueOf(params.size()));
            return traverseUp(hstSiteMapItem.getParentItem(),params, --position, elements, checkedSiteMapItems );
        } else if( (s = hstSiteMapItem.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s)){
            return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
+       } else if( (s = hstSiteMapItemService.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
+            return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
        } else if(hstSiteMapItem.getChild(ANY) != null ){
            return traverseInToSiteMapItem(hstSiteMapItem, params,position, elements, checkedSiteMapItems);
+       } else if( (s = hstSiteMapItemService.getAnyPatternChild(elements, position, checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
+           return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
        } else {    
            return traverseUp(hstSiteMapItem.getParentItem(),params, --position, elements, checkedSiteMapItems );
        }
