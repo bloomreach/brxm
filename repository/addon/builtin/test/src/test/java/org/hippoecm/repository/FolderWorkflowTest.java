@@ -16,9 +16,11 @@
 package org.hippoecm.repository;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -152,6 +154,32 @@ public class FolderWorkflowTest extends TestCase {
     }
 
     @Test
+    public void testNonExistent() throws RepositoryException, WorkflowException, RemoteException {
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
+        assertNotNull(workflow);
+        Map<String,Set<String>> types = workflow.list();
+        assertNotNull(types);
+
+        assertFalse(types.containsKey("new-does-not-exist"));
+        try {
+            workflow.add("new-does-not-exists", "does-not-exist", "d");
+            fail("exception expected when using undefined category");
+        } catch(WorkflowException ex) {
+            // expected
+        }
+
+        assertTrue(types.containsKey("new-folder"));
+        assertFalse(types.get("new-folder").contains("does-not-exist"));
+        try {
+            String path = workflow.add("new-folder", "does-not-exist", "d");
+            fail("exception expected when usng undefined prototype");
+        } catch(WorkflowException ex) {
+            // expected
+        }
+    }
+
+
+    @Ignore
     public void testTemplateDocument() throws RepositoryException, WorkflowException, RemoteException {
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         assertNotNull(workflow);
