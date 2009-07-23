@@ -26,24 +26,86 @@ import org.hippoecm.frontend.model.event.IObservable;
 public interface ITypeDescriptor extends IClusterable, IObservable {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * The name of the type.  It can be used to retrieve the type from a type store.
+     * 
+     * @return name of the type
+     */
     String getName();
 
+    /**
+     * The name of the underlying type can be different if this is a "pseudo" type.
+     * This can be used to impose additional conditions on the original type, or to
+     * associate different templates with the type.  
+     * 
+     * @return the name of the real (JCR) type
+     */
     String getType();
 
+    /**
+     * The super types of the type.  The type inherits fields from these types and the
+     * primary item, if it is defined in any of them.  If the type is primitive, null
+     * will be returned.
+     * 
+     * @return an immutable list of super types.
+     */
     List<String> getSuperTypes();
 
+    /**
+     * Set the super types of the type.  If the type is a mixin type, then all of the
+     * super types must be mixin types too.  This should not include nt:base for node
+     * types.
+     * @param superTypes the list of super types
+     */
     void setSuperTypes(List<String> superTypes);
 
+    /**
+     * The map of fields that are declared in this type of any of its super types.
+     * If the type is primitive, null will be returned.
+     * @return the list of fields in the type
+     */
     Map<String, IFieldDescriptor> getFields();
 
+    /**
+     * The map of fields that are declared in this type.  This does not include the
+     * fields that are declared in any of the super types.
+     * If the type is primitive, null will be returned.
+     * @return the list of fields declared in the type
+     */
+    Map<String, IFieldDescriptor> getDeclaredFields();
+
+    /**
+     * Retrieve the field associated with a key.
+     * @param key
+     * @return the field descriptor
+     */
     IFieldDescriptor getField(String key);
 
+    /**
+     * Add a field to the type.
+     * @param descriptor the field that is added to the type
+     */
     void addField(IFieldDescriptor descriptor);
 
+    /**
+     * Remove a field from the type.
+     * @param name the name of the field that is removed
+     */
     void removeField(String name);
 
+    /**
+     * Declare one of the fields to be the primary item.  This is only valid when
+     * the field has been declared in the type, not in any of its super types.
+     * Additionally, none of the super types may have defined a primary item.
+     * @param name
+     */
     void setPrimary(String name);
 
+    /**
+     * Is the type a compound or mixin type, corresponding to a node type.  False
+     * for the primitive types or any of their pseudo variants. 
+     * @return whether the type corresponds to a node type
+     */
     boolean isNode();
 
     void setIsNode(boolean isNode);

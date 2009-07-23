@@ -45,12 +45,15 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     private String type;
     private List<String> superTypes;
     private Map<String, IFieldDescriptor> fields;
+    private Map<String, IFieldDescriptor> declaredFields;
     private JavaFieldDescriptor primary;
     private boolean node;
     private boolean mixin;
+    private TypeLocator locator;
     private IObservationContext obContext;
+    private boolean mutable = true;
 
-    public JavaTypeDescriptor(String name, String type) {
+    public JavaTypeDescriptor(String name, String type, TypeLocator locator) {
         this.name = name;
         this.type = type;
         this.superTypes = new LinkedList<String>();
@@ -58,6 +61,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
         this.primary = null;
         this.node = true;
         this.mixin = false;
+        this.locator = locator;
     }
 
     public String getName() {
@@ -73,7 +77,12 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     }
 
     public void setSuperTypes(List<String> superTypes) {
+        checkMutable();
         this.superTypes = superTypes;
+    }
+
+    public Map<String, IFieldDescriptor> getDeclaredFields() {
+        return declaredFields;
     }
 
     public Map<String, IFieldDescriptor> getFields() {
@@ -85,6 +94,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     }
 
     public void addField(IFieldDescriptor field) {
+        checkMutable();
         String name = field.getName();
         fields.put(name, field);
         if (obContext != null) {
@@ -95,6 +105,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     }
 
     public void removeField(String name) {
+        checkMutable();
         IFieldDescriptor field = fields.remove(name);
         if (obContext != null) {
             EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
@@ -104,6 +115,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     }
 
     public void setPrimary(String name) {
+        checkMutable();
         if (primary != null) {
             if (!primary.getName().equals(name)) {
                 primary.setPrimary(false);
@@ -131,6 +143,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     }
 
     public void setIsNode(boolean isNode) {
+        checkMutable();
         this.node = isNode;
     }
 
@@ -139,6 +152,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     }
 
     public void setIsMixin(boolean isMixin) {
+        checkMutable();
         this.mixin = isMixin;
     }
 
@@ -184,6 +198,20 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
 
     public boolean isType(String typeName) {
         return getType().equals(typeName);
+    }
+
+    protected void checkMutable() {
+        if (!mutable) {
+            throw new UnsupportedOperationException("type is immutable");
+        }
+    }
+    
+    public boolean isMutable() {
+        return mutable;
+    }
+    
+    public void setMutable(boolean mutable) {
+        this.mutable = mutable;
     }
 
 }
