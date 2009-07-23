@@ -119,7 +119,7 @@ public abstract class Element {
 
     static class ProjectElement extends Element {
         String projectName;
-        private Node projectNode;
+        Node projectNode;
         URL url;
         Set<Element> elements = new HashSet<Element>();
         public String getElementName() {

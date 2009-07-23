@@ -15,8 +15,16 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    Be sure to only use this feature using administrative rights.<br/>
-    <span wicket:id="tree"/><br/>
-    <a wicket:id="download">download</a>
+    <div style="width: 75%; margin: 1em 1em 1em 1em;">
+      Select a project to be exported and enter the server side file system location of the subversion project to update.
+      Be sure to only use this feature using administrative rights.
+    </div>
+    <span class="hippo-projectexport-tree" wicket:id="tree"/>
+    Export project <span wicket:id="name"></span> to:
+    <form wicket:id="form">
+      <div style="display: block;">
+        <input type="text" wicket:id="input"/>&nbsp;<input type="submit" value="store" wicket:id="ok"/>&nbsp;(<a wicket:id="download">download</a>)
+      </div>
+    </form>
   </wicket:extend>
 </html>
