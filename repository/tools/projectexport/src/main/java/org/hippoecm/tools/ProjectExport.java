@@ -150,7 +150,7 @@ public class ProjectExport {
         }
         projectsScratch.save();
 
-        System.err.println("projects dump:");
+        //System.err.println("projects dump:");
         //Utilities.dump(System.err, projectsScratch);
 
         QueryManager queryManager = projectsScratch.getSession().getWorkspace().getQueryManager();
@@ -175,12 +175,17 @@ public class ProjectExport {
                             ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
                     Node contentroot = (relPath.length() > 0 ? contentScratch.getNode(relPath) : contentScratch);
                     NodeIterator pendingChangesIter = ((HippoNode)contentroot).pendingChanges("nt:base", true);
+                    if(pendingChangesIter.hasNext()) {
                     Node content = pendingChangesIter.nextNode();
                     if (pendingChangesIter.hasNext()) {
                         throw new NotExportableException("multiple changes in one xml file");
                     }
                     projectElement.elements.add(new ContentElement(node.getName(), absPath+"/"+content.getName(), node.getProperty("hippo:contentresource").getString(), content));
                     contentScratch.save();
+                    } else {
+                        System.err.println("expected some change");
+                        contentScratch.refresh(false);
+                    }
                 } else {
                     InputStream stream = getClass().getClassLoader().getResourceAsStream("org/hippoecm/repository/" + node.getProperty("hippo:contentresource").getString());
                     ((HippoSession)contentScratch.getSession()).importDereferencedXML(contentScratch.getPath() + absPath, stream,
@@ -192,7 +197,7 @@ public class ProjectExport {
             }
         }
         
-        System.err.println("content dump:");
+        //System.err.println("content dump:");
         contentScratch.save();
         //Utilities.dump(System.err, contentScratch);
 

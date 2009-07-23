@@ -15,11 +15,19 @@
  */
 package org.hippoecm.tools;
 
-public class NotExportableException extends Throwable {
+import javax.swing.tree.TreeNode;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
+
+public class ExportItem extends Panel
+{
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public NotExportableException(String reason) {
-        super(reason);
+    public ExportItem(MarkupContainer parent, String id, TreeNode node, String file) {
+        super(id);
+        add(new Label("test", new Model(file)));
     }
 }

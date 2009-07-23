@@ -16,7 +16,6 @@
 package org.hippoecm.tools;
 
 import java.io.InputStream;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;

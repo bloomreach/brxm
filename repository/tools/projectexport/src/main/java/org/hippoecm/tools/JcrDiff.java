@@ -27,6 +27,9 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 public class JcrDiff {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     public class Pair {
         Node node1;
         Node node2;
