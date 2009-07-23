@@ -44,7 +44,6 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.JcrObject;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.session.UserSession;
@@ -67,6 +66,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     private String name;
     private String type;
     private TypeLocator locator;
+    private transient Map<String, IFieldDescriptor> declaredFields;
     private transient Map<String, IFieldDescriptor> fields;
     private transient Map<String, IObserver> observers = new TreeMap<String, IObserver>();
     private transient JcrFieldDescriptor primary;
@@ -96,7 +96,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         }
 
         primary = null;
-        fields = loadFields();
+        loadFields();
         for (IFieldDescriptor field : fields.values()) {
             if (field.isPrimary()) {
                 primary = (JcrFieldDescriptor) field;
@@ -143,6 +143,10 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     public Map<String, IFieldDescriptor> getFields() {
         return fields;
+    }
+
+    public Map<String, IFieldDescriptor> getDeclaredFields() {
+        return declaredFields;
     }
 
     public IFieldDescriptor getField(String key) {
@@ -241,9 +245,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     }
 
     public void setPrimary(String name) {
-        getFields();
+        loadFields();
         if (primary != null) {
             if (!primary.getName().equals(name)) {
+                if (!(primary instanceof JcrFieldDescriptor)) {
+                    throw new IllegalArgumentException("Field " + name + " was not declared in type " + getName());
+                }
                 primary.setPrimary(false);
                 primary = null;
             } else {
@@ -251,10 +258,10 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             }
         }
 
-        IFieldDescriptor field = fields.get(name);
+        JcrFieldDescriptor field = (JcrFieldDescriptor) declaredFields.get(name);
         if (field != null) {
-            ((JcrFieldDescriptor) field).setPrimary(true);
-            primary = (JcrFieldDescriptor) field;
+            field.setPrimary(true);
+            primary = field;
         } else {
             log.warn("field " + name + " was not found");
         }
@@ -276,8 +283,16 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         return new HashCodeBuilder(53, 7).append(this.name).toHashCode();
     }
 
-    protected Map<String, IFieldDescriptor> loadFields() {
-        Map<String, IFieldDescriptor> fields = new HashMap<String, IFieldDescriptor>();
+    protected void loadFields() {
+        fields = new HashMap<String, IFieldDescriptor>();
+        declaredFields = new HashMap<String, IFieldDescriptor>();
+        for (String superType : getSuperTypes()) {
+            try {
+                fields.putAll(locator.locate(superType).getFields());
+            } catch (StoreException e) {
+                throw new IllegalStateException("Could not resolve type " + superType, e);
+            }
+        }
         try {
             Node node = getNode();
             if (node != null) {
@@ -286,6 +301,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                     Node child = it.nextNode();
                     if (child != null && child.isNodeType(HippoNodeType.NT_FIELD)) {
                         JcrFieldDescriptor field = new JcrFieldDescriptor(new JcrNodeModel(child), this);
+                        declaredFields.put(field.getName(), field);
                         fields.put(field.getName(), field);
                     }
                 }
@@ -304,7 +320,6 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
-        return fields;
     }
 
     private boolean getBoolean(String path) {
@@ -392,22 +407,24 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     protected void processEvents(EventCollection collection) {
         IObservationContext obContext = getObservationContext();
-        Map<String, IFieldDescriptor> newFields = loadFields();
-        for (String field : newFields.keySet()) {
-            if (!fields.containsKey(field)) {
-                fields.put(field, newFields.get(field));
-                collection.add(new TypeDescriptorEvent(this, fields.get(field),
+        Map<String, IFieldDescriptor> oldFields = fields;
+        fields = null;
+        loadFields();
+        for (String field : fields.keySet()) {
+            if (!oldFields.containsKey(field)) {
+                oldFields.put(field, fields.get(field));
+                collection.add(new TypeDescriptorEvent(this, oldFields.get(field),
                         TypeDescriptorEvent.EventType.FIELD_ADDED));
                 if (obContext != null) {
-                    IFieldDescriptor descriptor = newFields.get(field);
+                    IFieldDescriptor descriptor = fields.get(field);
                     subscribe(descriptor);
                 }
             }
         }
-        Iterator<Entry<String, IFieldDescriptor>> iter = fields.entrySet().iterator();
+        Iterator<Entry<String, IFieldDescriptor>> iter = oldFields.entrySet().iterator();
         while (iter.hasNext()) {
             Entry<String, IFieldDescriptor> entry = iter.next();
-            if (!newFields.containsKey(entry.getKey())) {
+            if (!fields.containsKey(entry.getKey())) {
                 collection.add(new TypeDescriptorEvent(this, entry.getValue(),
                         TypeDescriptorEvent.EventType.FIELD_REMOVED));
                 iter.remove();
