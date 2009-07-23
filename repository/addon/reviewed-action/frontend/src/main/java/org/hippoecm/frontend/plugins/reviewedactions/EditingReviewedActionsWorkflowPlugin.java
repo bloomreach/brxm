@@ -110,13 +110,12 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
                             public void save() {
                                 try {
+
                                     UserSession userSession = (UserSession) org.apache.wicket.Session.get();
                                     WorkflowDescriptor descriptor = (WorkflowDescriptor) plugin.getModelObject();
                                     WorkflowManager manager = userSession.getWorkflowManager();
-                                    userSession.getJcrSession().save();
+                                    ((EditableWorkflow) manager.getWorkflow(descriptor)).commitEditableInstance();
                                     userSession.getJcrSession().refresh(true);
-                                    ((EditableWorkflow) manager.getWorkflow(descriptor)).disposeEditableInstance();
-                                    userSession.getJcrSession().refresh(false);
                                 } catch (RepositoryException ex) {
                                     log.error("failure while reverting", ex);
                                 } catch (WorkflowException ex) {
@@ -191,7 +190,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 WorkflowManager manager = session.getWorkflowManager();
                 workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow(descriptor);
 
-                /* Document draft = */ workflow.obtainEditableInstance();
+                /* Document draft = */workflow.obtainEditableInstance();
                 return null;
             }
         });
