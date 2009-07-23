@@ -24,16 +24,18 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.ItemDefinition;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class BuiltinTypeDescriptor extends JavaTypeDescriptor {
+class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 
@@ -42,13 +44,17 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor {
     private static final Logger log = LoggerFactory.getLogger(BuiltinTypeDescriptor.class);
 
     private String type;
-    private Map<String, IFieldDescriptor> fields;
+    private transient boolean loaded = false;
+    private transient Map<String, IFieldDescriptor> fields;
+    private transient Map<String, IFieldDescriptor> declaredFields;
     private transient NodeType nt = null;
 
-    BuiltinTypeDescriptor(String type) {
-        super(type, type);
+    BuiltinTypeDescriptor(String type, TypeLocator locator) {
+        super(type, type, locator);
 
         this.type = type;
+
+        // set properties of super class
         if (type.indexOf(':') < 0) {
             setIsNode(false);
         }
@@ -62,6 +68,7 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor {
             }
             setSuperTypes(superTypes);
         }
+        setMutable(false);
     }
 
     boolean isValid() {
@@ -70,24 +77,23 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor {
     }
 
     void load() {
-        if (nt == null && isNode()) {
+        if (!loaded && isNode()) {
+            fields = new LinkedHashMap<String, IFieldDescriptor>();
+            declaredFields = new LinkedHashMap<String, IFieldDescriptor>();
             try {
                 Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
                 NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
                 nt = ntMgr.getNodeType(type);
 
-                fields = new LinkedHashMap<String, IFieldDescriptor>();
                 if (nt != null) {
                     String prefix = nt.getName().substring(0, nt.getName().indexOf(':'));
                     NodeDefinition[] childNodes = nt.getChildNodeDefinitions();
                     for (NodeDefinition definition : childNodes) {
-                        fields.put(definition.getName(), new BuiltinFieldDescriptor(prefix, definition));
+                        addDefinition(prefix, definition);
                     }
                     PropertyDefinition[] properties = nt.getPropertyDefinitions();
                     for (PropertyDefinition definition : properties) {
-                        if (!definition.getDeclaringNodeType().getName().equals("nt:base")) {
-                            fields.put(definition.getName(), new BuiltinFieldDescriptor(prefix, definition));
-                        }
+                        addDefinition(prefix, definition);
                     }
                 }
                 Set<String> explicit = new HashSet<String>();
@@ -104,6 +110,19 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor {
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
+            loaded = true;
+        }
+    }
+    
+    protected void addDefinition(String prefix, ItemDefinition definition) {
+        BuiltinFieldDescriptor field = new BuiltinFieldDescriptor(prefix, definition);
+        if (definition.getDeclaringNodeType().equals(nt)) {
+            declaredFields.put(definition.getName(), field);
+        }
+        fields.put(definition.getName(), field);
+        String primaryItemName = definition.getDeclaringNodeType().getPrimaryItemName();
+        if (primaryItemName != null && primaryItemName.equals(definition.getName())) {
+            field.setPrimary(true);
         }
     }
 
@@ -119,8 +138,21 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor {
     }
     
     @Override
+    public Map<String, IFieldDescriptor> getDeclaredFields() {
+        load();
+        return declaredFields;
+    }
+    
+    @Override
     public Map<String, IFieldDescriptor> getFields() {
+        load();
         return fields;
+    }
+
+    public void detach() {
+        nt = null;
+        fields = null;
+        declaredFields = null;
     }
 
 }

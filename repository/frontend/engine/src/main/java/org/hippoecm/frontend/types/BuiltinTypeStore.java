@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class BuiltinTypeStore implements ITypeStore {
     private static final Logger log = LoggerFactory.getLogger(BuiltinTypeStore.class);
 
     public ITypeDescriptor getTypeDescriptor(String type) {
-        BuiltinTypeDescriptor result = new BuiltinTypeDescriptor(type);
+        BuiltinTypeDescriptor result = new BuiltinTypeDescriptor(type, new TypeLocator(new IStore[] { this }));
         if (result.isValid()) {
             return result;
         }
