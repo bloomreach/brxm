@@ -378,16 +378,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         String parentJcrPath = npRes.getJCRPath(absPath.getAncestor(1));
         Set<Privilege> privileges = new HashSet<Privilege>();
         if ((permissions & Permission.ADD_NODE) != 0) {
-            // TODO: Remove when JCR-2036 is fixed, for now just do an extra check
-            try {
-                if (!hasPrivileges(npRes.getJCRPath(absPath), new Privilege[] {privilegeFromName("jcr:setProperties")})) {
-                    return false;
-                }
-            } catch (PathNotFoundException e) {
-                // this can happen during BatchedItemOpertations like workspace.copy() and workspace.move()
-                log.warn("Unable to find the node to be added, skipping setProperties check: {}",  npRes.getJCRPath(absPath));
-                log.debug("SetProperties check skipped on node: {}", npRes.getJCRPath(absPath), e);
-            }
             privileges.add(privilegeFromName("jcr:addChildNodes"));
         }
         if ((permissions & Permission.REMOVE_NODE) != 0) {
