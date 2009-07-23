@@ -69,7 +69,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     private transient Map<String, IFieldDescriptor> declaredFields;
     private transient Map<String, IFieldDescriptor> fields;
     private transient Map<String, IObserver> observers = new TreeMap<String, IObserver>();
-    private transient JcrFieldDescriptor primary;
+    private transient IFieldDescriptor primary;
 
     public JcrTypeDescriptor(JcrNodeModel nodeModel, TypeLocator locator) throws RepositoryException {
         super(nodeModel);
@@ -99,7 +99,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         loadFields();
         for (IFieldDescriptor field : fields.values()) {
             if (field.isPrimary()) {
-                primary = (JcrFieldDescriptor) field;
+                primary = field;
                 break;
             }
         }
@@ -251,7 +251,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                 if (!(primary instanceof JcrFieldDescriptor)) {
                     throw new IllegalArgumentException("Field " + name + " was not declared in type " + getName());
                 }
-                primary.setPrimary(false);
+                ((JcrFieldDescriptor) primary).setPrimary(false);
                 primary = null;
             } else {
                 return;
