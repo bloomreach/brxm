@@ -87,6 +87,7 @@ hippostd:publishableSummary, hippostd:languageable
 [hst:site]
 + hst:content (hippo:facetselect) mandatory
 + hst:configuration (hippo:facetselect) mandatory
+- hst:portalconfigurationenabled (boolean)
 
 [hst:sites]
 + * (hst:site) = hst:site

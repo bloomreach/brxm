@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -167,6 +168,17 @@ public class SitemapItemEditorPlugin extends BasicEditorPlugin<SitemapItem> {
         form.add(pagePicker);
 
         renderNewPageWizard(false, null);
+
+        form.add(hstContext.site.isPortalConfigEnabled() ? new PortalDetails("portalDetails",
+                new AbstractReadOnlyModel() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public Object getObject() {
+                        return hstContext.component.getReferenceables(true);
+                    }
+
+                }) : new EmptyPanel("portalDetails"));
     }
 
     @Override

@@ -35,8 +35,8 @@ public class SitemapItemDAO extends EditorDAO<SitemapItem> {
     static final Logger log = LoggerFactory.getLogger(SitemapItemDAO.class);
 
     private static final String PAGE_PROPERTY = "hst:componentconfigurationid";
-
     private static final String CONTENT_PATH_PROPERTY = "hst:relativecontentpath";
+    private static final String PORTLET_PROPERTY = "hst:portletcomponentconfigurationid";
 
     public SitemapItemDAO(IPluginContext context, String namespace) {
         super(context, namespace);
@@ -66,6 +66,12 @@ public class SitemapItemDAO extends EditorDAO<SitemapItem> {
             item.setContentPath(JcrUtilities.getProperty(model, CONTENT_PATH_PROPERTY));
         }
 
+        if (ctx.site.isPortalConfigEnabled()) {
+            if (JcrUtilities.hasProperty(model, PORTLET_PROPERTY)) {
+                item.setPortlet(JcrUtilities.getProperty(model, PORTLET_PROPERTY));
+            }
+        }
+
         return item;
     }
 
@@ -82,6 +88,10 @@ public class SitemapItemDAO extends EditorDAO<SitemapItem> {
 
         //save contentPath
         JcrUtilities.updateProperty(model, CONTENT_PATH_PROPERTY, k.getContentPath());
+
+        if (ctx.site.isPortalConfigEnabled()) {
+            JcrUtilities.updateProperty(model, PORTLET_PROPERTY, k.getPortlet());
+        }
     }
 
 }

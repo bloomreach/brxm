@@ -203,8 +203,15 @@ public class HstContext implements IDetachable {
     public class HstSiteContext extends HstModelContext {
         private static final long serialVersionUID = 1L;
 
+        boolean portalConfigEnabled;
+
         public HstSiteContext(JcrNodeModel model) throws RepositoryException {
             super(model);
+
+            Node node = this.model.getNode();
+            if (node.hasProperty("hst:portalconfigurationenabled")) {
+                portalConfigEnabled = node.getProperty("hst:portalconfigurationenabled").getBoolean();
+            }
         }
 
         @Override
@@ -216,6 +223,14 @@ public class HstContext implements IDetachable {
                     break;
                 }
             }
+        }
+
+        public boolean isPortalConfigEnabled() {
+            return portalConfigEnabled;
+        }
+
+        public void setPortalConfigEnabled(boolean portalConfigEnabled) {
+            this.portalConfigEnabled = portalConfigEnabled;
         }
     }
 

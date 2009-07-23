@@ -49,6 +49,7 @@ public class SitemapItem extends EditorBean {
     String matcher;
     String contentPath;
     String page;
+    String portlet;
 
     public String getMatcher() {
         return matcher;
@@ -72,6 +73,14 @@ public class SitemapItem extends EditorBean {
 
     public void setPage(String page) {
         this.page = page;
+    }
+
+    public String getPortlet() {
+        return portlet;
+    }
+
+    public void setPortlet(String portlet) {
+        this.portlet = portlet;
     }
 
 }
