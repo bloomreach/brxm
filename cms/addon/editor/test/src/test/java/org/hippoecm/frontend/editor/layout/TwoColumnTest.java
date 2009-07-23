@@ -38,6 +38,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TwoColumnTest extends PluginTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     String[] content = {
             "/test", "nt:unstructured",
