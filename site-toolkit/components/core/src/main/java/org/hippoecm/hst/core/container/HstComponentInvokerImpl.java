@@ -55,6 +55,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
 
             try {
+                if(log.isDebugEnabled()) {
+                    log.debug("invoking action of component: {}", component.getClass().getName());
+                }
                 component.doAction(hstRequest, hstResponse);
             } catch (Throwable th) {
                 HstComponentException hce = (th instanceof HstComponentException ? (HstComponentException) th : new HstComponentException(th.getMessage()));
@@ -90,6 +93,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
 
             try {
+                if(log.isDebugEnabled()) {
+                    log.debug("invoking doBeforeRender of component: {}", component.getClass().getName());
+                }
                 component.doBeforeRender(hstRequest, hstResponse);
             } catch (Throwable th) {
                 HstComponentException hce = (th instanceof HstComponentException ? (HstComponentException) th : new HstComponentException(th.getMessage()));
