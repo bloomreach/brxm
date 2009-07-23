@@ -150,7 +150,6 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
     }
 
     private void checkState() {
-        addLink.setVisible(true);//reset addLink
         choices = getChoices();
 
         boolean set = choices != null && choices.size() > 0;
