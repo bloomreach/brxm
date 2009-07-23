@@ -54,6 +54,7 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
+import org.hippoecm.frontend.types.TypeLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,9 +74,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private IStore<IClusterConfig> jcrTemplateStore;
     private IStore<IClusterConfig> builtinTemplateStore;
 
-    private IStore<ITypeDescriptor> jcrTypeStore;
+    private JcrTypeStore jcrTypeStore;
     private IStore<ITypeDescriptor> builtinTypeStore;
-    private IStore<ITypeDescriptor> fieldTypeStore;
+    private TypeLocator locator;
 
     private JcrPrototypeStore prototypeStore;
 
@@ -99,7 +100,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         this.jcrTypeStore = new JcrTypeStore();
         this.builtinTypeStore = new BuiltinTypeStore();
-        this.fieldTypeStore = new IStore<ITypeDescriptor>() {
+        locator = new TypeLocator(new IStore[] {jcrTypeStore, builtinTypeStore});
+        jcrTypeStore.setTypeLocator(locator);
+        IStore<ITypeDescriptor> fieldTypeStore = new IStore<ITypeDescriptor>() {
             private static final long serialVersionUID = 1L;
 
             public void close() {
@@ -258,7 +261,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     String oldPath = entry.getValue();
                     IFieldDescriptor newField = typeModel.getField(entry.getKey());
                     if (newField != null) {
-                        ITypeDescriptor fieldType = fieldTypeStore.load(newField.getType());
+                        ITypeDescriptor fieldType = locator.locate(newField.getType());
                         if (!newField.getPath().equals(oldPath) && !newField.getPath().equals("*")
                                 && !oldPath.equals("*")) {
                             if (fieldType.isNode()) {
@@ -327,7 +330,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         ITypeDescriptor fieldType;
         try {
-            fieldType = fieldTypeStore.load(fieldDescriptor.getType());
+            fieldType = locator.locate(fieldDescriptor.getType());
         } catch (StoreException ex) {
             log.error("Unknown type " + fieldDescriptor.getType(), ex);
             return;
