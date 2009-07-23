@@ -436,7 +436,6 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                 }
                 Node handleNode = canonical.getParent();
                 String nodeName = handleNode.getName();
-                
                 HippoBean folderBean = contentBean.getParentBean();
                 Node folderNode = folderBean.getNode();
                 canonical = ((HippoNode)folderNode).getCanonicalNode();
@@ -445,6 +444,7 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                 }
                 folderNode = canonical;
                 
+                // TODO when HREPTWO-2844 is fixed, this code can be removed
                 if(handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                     handleNode.checkout();
                     NodeIterator it = handleNode.getNodes();
