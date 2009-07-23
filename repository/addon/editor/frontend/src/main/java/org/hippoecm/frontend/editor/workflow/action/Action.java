@@ -21,6 +21,9 @@ import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 
 public class Action extends WorkflowAction {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public Action(CompatibilityWorkflowPlugin plugin, String id, String name,

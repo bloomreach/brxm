@@ -35,6 +35,9 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.repository.api.Workflow;
 
 public class NewDocumentTypeAction extends Action {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private ILayoutProvider layoutProvider;
