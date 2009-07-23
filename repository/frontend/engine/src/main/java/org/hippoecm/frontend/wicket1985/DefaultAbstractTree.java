@@ -587,13 +587,14 @@ public abstract class DefaultAbstractTree extends AbstractTree
                                 if (menuManager != null) {
                                         menuManager.collapse(this, target);
                                         menuManager.addContextMenu(this, target);
-																				target.appendJavascript("Hippo.ContextMenu.renderInTree('" + content.getMarkupId() + "');");
+					target.appendJavascript("Hippo.ContextMenu.renderInTree('" + content.getMarkupId() + "');");
                                 }																
 			}
                 };
                 setOutputMarkupId(true);
                 content.setOutputMarkupId(true);
                 content.setVisible(false);
+                link.add(newMenuIcon(link, "menuimage", node));
                 return link;
         }
 

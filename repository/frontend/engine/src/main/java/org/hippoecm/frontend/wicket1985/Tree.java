@@ -110,7 +110,6 @@ public class Tree extends DefaultAbstractTree
                 item.add(contextContent);
                 MarkupContainer contextLink = newContextLink(item, "contextLink", node, contextContent);
                 item.add(contextLink);
-                contextLink.add(newMenuIcon(contextLink, "menuimage", node));
 
 		// do distinguish between selected and unselected rows we add an
 		// behavior
