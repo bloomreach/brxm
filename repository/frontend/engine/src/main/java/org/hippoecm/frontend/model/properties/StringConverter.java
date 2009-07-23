@@ -15,11 +15,14 @@
  */
 package org.hippoecm.frontend.model.properties;
 
-import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,10 +53,11 @@ public class StringConverter implements IModel {
 
     public void setObject(Object object) {
         try {
-            Property property = decorated.getJcrPropertymodel().getProperty();
-            ValueFactory factory = property.getSession().getValueFactory();
+            ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
             String string = object == null ? "" : object.toString();
-            decorated.setValue(factory.createValue(string, property.getType()));
+            int type = decorated.getType();
+            Value value = factory.createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+            decorated.setValue(value);
         } catch (RepositoryException ex) {
             log.info(ex.getMessage());
             return;
