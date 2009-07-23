@@ -942,8 +942,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
         public RepositoryMap getWorkflowConfiguration() {
             try {
-                if(workflowDefinition.hasNode("hippo:config")) {
-                    return new RepositoryMapImpl(workflowDefinition.getNode("hippo:config"));
+                if(workflowDefinition.hasNode("hipposys:config")) {
+                    return new RepositoryMapImpl(workflowDefinition.getNode("hipposys:config"));
                 }
             } catch(RepositoryException ex) {
                 try {
