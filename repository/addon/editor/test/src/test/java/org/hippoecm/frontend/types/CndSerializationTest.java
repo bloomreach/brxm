@@ -50,22 +50,35 @@ public class CndSerializationTest extends PluginTest {
         assertTrue(mapping.getPrefixToURIMapping().containsKey("nt"));
         
         List<NodeTypeDef> ntDefs = cndReader.getNodeTypeDefs();
-        assertEquals(1, ntDefs.size());
+        assertEquals(2, ntDefs.size());
         
-        NodeTypeDef ntd = ntDefs.get(0);
-        NodeDef childNodes[] = ntd.getChildNodeDefs();
-        assertEquals(1, childNodes.length);
+        // test:test
+        {
+            NodeTypeDef ntd = ntDefs.get(0);
+            NodeDef childNodes[] = ntd.getChildNodeDefs();
+            assertEquals(1, childNodes.length);
+    
+            Name[] priTypes = childNodes[0].getRequiredPrimaryTypes();
+            assertEquals(1, priTypes.length);
+            assertEquals("nt", mapping.getPrefix(priTypes[0].getNamespaceURI()));
+            assertEquals("unstructured", priTypes[0].getLocalName());
+    
+            PropDef[] pds = ntd.getPropertyDefs();
+            assertEquals(1, pds.length);
+    
+            assertEquals("title", pds[0].getName().getLocalName());
+            assertEquals(1, pds[0].getRequiredType());
+        }
 
-        Name[] priTypes = childNodes[0].getRequiredPrimaryTypes();
-        assertEquals(1, priTypes.length);
-        assertEquals("nt", mapping.getPrefix(priTypes[0].getNamespaceURI()));
-        assertEquals("unstructured", priTypes[0].getLocalName());
-
-        PropDef[] pds = ntd.getPropertyDefs();
-        assertEquals(1, pds.length);
-
-        assertEquals("title", pds[0].getName().getLocalName());
-        assertEquals(1, pds[0].getRequiredType());
+        // test:inheriting
+        {
+            NodeTypeDef ntd = ntDefs.get(1);
+            PropDef[] pds = ntd.getPropertyDefs();
+            assertEquals(1, pds.length);
+    
+            assertEquals("extra", pds[0].getName().getLocalName());
+            assertEquals(1, pds[0].getRequiredType());
+        }
     }
 
 }

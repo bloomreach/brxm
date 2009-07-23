@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -158,9 +157,10 @@ public class CndSerializer implements IClusterable {
     public CndSerializer(JcrSessionModel sessionModel, String namespace) throws RepositoryException, StoreException {
         this.jcrSession = sessionModel;
 
-        IStore<ITypeDescriptor> jcrTypeStore = new JcrTypeStore();
+        JcrTypeStore jcrTypeStore = new JcrTypeStore();
         IStore<ITypeDescriptor> builtinTypeStore = new BuiltinTypeStore();
         locator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore });
+        jcrTypeStore.setTypeLocator(locator);
 
         this.namespaces = new HashMap<String, String>();
         addNamespace(namespace);
@@ -373,21 +373,10 @@ public class CndSerializer implements IClusterable {
         String type = typeDescriptor.getType();
         output.append("[" + encode(type) + "]");
 
-        List<String> superFields = new LinkedList<String>();
         Iterator<String> superTypes = typeDescriptor.getSuperTypes().iterator();
         boolean first = true;
         while (superTypes.hasNext()) {
             String superType = superTypes.next();
-            ITypeDescriptor superDescriptor = getTypeDescriptor(superType);
-            if (superDescriptor != null) {
-                Iterator<IFieldDescriptor> fields = superDescriptor.getFields().values().iterator();
-                while (fields.hasNext()) {
-                    IFieldDescriptor field = fields.next();
-                    if (!superFields.contains(field.getPath())) {
-                        superFields.add(field.getPath());
-                    }
-                }
-            }
             if (first) {
                 first = false;
                 output.append(" > " + superType);
@@ -400,6 +389,7 @@ public class CndSerializer implements IClusterable {
             output.append(" mixin");
         }
 
+        // type should be orderable if any of the fields is
         for (IFieldDescriptor field : typeDescriptor.getFields().values()) {
             if (field.isOrdered()) {
                 output.append(" orderable");
@@ -408,10 +398,8 @@ public class CndSerializer implements IClusterable {
         }
 
         output.append("\n");
-        for (IFieldDescriptor field : typeDescriptor.getFields().values()) {
-            if (!superFields.contains(field.getPath())) {
-                renderField(output, field);
-            }
+        for (IFieldDescriptor field : typeDescriptor.getDeclaredFields().values()) {
+            renderField(output, field);
         }
         output.append("\n");
     }

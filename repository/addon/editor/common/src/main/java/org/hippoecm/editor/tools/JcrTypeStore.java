@@ -59,6 +59,11 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         locator = new TypeLocator(new IStore[] { this });
     }
 
+    /**
+     * Set the type locator that will be used by type descriptors to resolve super
+     * types.
+     * @param locator
+     */
     public void setTypeLocator(TypeLocator locator) {
         this.locator = locator;
     }

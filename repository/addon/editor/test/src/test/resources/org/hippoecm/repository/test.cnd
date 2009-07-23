@@ -27,3 +27,6 @@
 [test:test2] > nt:base
 - test:title (string)
 + test:child (nt:unstructured)
+
+[test:inheriting] > test:test
+- test:extra (string)
