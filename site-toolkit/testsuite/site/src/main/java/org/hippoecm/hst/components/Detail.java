@@ -120,7 +120,7 @@ public class Detail extends BasePersistenceHstComponent {
                     // save the pending changes
                     cpm.save();
                 } catch (Exception e) {
-                    log.warn("Failed to create a comment. {}", e);
+                    log.warn("Failed to create a comment.", e);
                     
                     if (cpm != null) {
                         try {
@@ -152,7 +152,7 @@ public class Detail extends BasePersistenceHstComponent {
                     
                     cpm.remove(commentPage);
                 } catch (Exception e) {
-                    log.warn("Failed to create a comment. {}", e);
+                    log.warn("Failed to create a comment.", e);
                     
                     if (cpm != null) {
                         try {
