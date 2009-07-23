@@ -400,6 +400,102 @@
         <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
+        <sv:node sv:name="hipposysedit:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:name" sv:type="String">
+            <sv:value>docbase</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>hippo:docbase</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>Docbase</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hipposysedit:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:name" sv:type="String">
+            <sv:value>tree</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>*</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>nt:base</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <!-- FIXME: add ignore keyword -->
+        </sv:node>
+        <sv:node sv:name="hipposysedit:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:name" sv:type="String">
+            <sv:value>facets</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>hippo:facets</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hipposysedit:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:name" sv:type="String">
+            <sv:value>values</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>hippo:values</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hipposysedit:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:name" sv:type="String">
+            <sv:value>modes</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>hippo:modes</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+          <!-- FIXME: add restrictions on values -->
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="editor:templates">
@@ -528,6 +624,40 @@
         <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
+        <sv:node sv:name="hipposysedit:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:name" sv:type="String">
+            <sv:value>docbase</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>hippo:docbase</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>Docbase</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hipposysedit:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:name" sv:type="String">
+            <sv:value>tree</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>*</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>nt:base</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="editor:templates">
