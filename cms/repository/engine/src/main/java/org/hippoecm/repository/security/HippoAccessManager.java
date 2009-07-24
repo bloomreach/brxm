@@ -420,7 +420,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         try {
             id = getNodeId(absPath);
         } catch (PathNotFoundException e) {
-            log.warn("Unable to find node id, allowing read permissions " + npRes.getJCRPath(absPath), e);
+            log.warn("Unable to find node id, allowing read permissions: {}", e.getMessage());
+            log.debug("Stacktrace: ", e);
             return true;
         }
 
