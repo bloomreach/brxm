@@ -63,6 +63,13 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     public JCRValueProviderImpl(Node jcrNode) {
         this.jcrNode = jcrNode;
+        try {
+            this.nodeName = jcrNode.getName();
+            this.nodePath = jcrNode.getPath();
+        } catch (RepositoryException e) {
+            log.error("RepositoryException ", e);
+        }
+        
     }
 
     public Node getJcrNode(){
@@ -103,35 +110,11 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     }
     
     public String getName() {
-        if(this.nodeName != null) {
-            return this.nodeName;
-        }
-        if(isDetached()) {
-            return null;
-        } else if(this.jcrNode != null) {
-            try {
-                this.nodeName = jcrNode.getName();
-            } catch (RepositoryException e) {
-                log.error("Error while retrieving jcr node name {}", e);
-            }
-        }
-        return this.nodeName;
+       return this.nodeName;
     }
 
     public String getPath() {
-        if(this.nodePath != null) {
-            return this.nodePath;
-        }
-        if(isDetached()) {
-            return null;
-        } else if(this.jcrNode != null) {
-            try {
-                this.nodePath = jcrNode.getPath();
-            } catch (RepositoryException e) {
-                log.error("Error while retrieving jcr node path {}", e);
-            }
-        }
-        return this.nodePath;
+      return this.nodePath;
     }
     
     public boolean isNodeType(String nodeType) {

@@ -18,9 +18,11 @@ package org.hippoecm.hst.content.beans.standard;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,8 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
     private static Logger log = LoggerFactory.getLogger(HippoDocument.class);
     
     private Map<String, BeanWrapper<HippoHtml>> htmls = new HashMap<String, BeanWrapper<HippoHtml>>();
+    
+    private String canonicalHandleUUID;
     
     /**
      * @param relPath
@@ -62,6 +66,29 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         }
     }
 
+    public String getCanonicalHandleUUID() {
+        if(canonicalHandleUUID != null) {
+            return canonicalHandleUUID;
+        }
+        if(this.getNode() == null) {
+            log.warn("Cannot get handle uuid for detached node '{}'", this.getPath());
+            return null;
+        }
+        try {
+            javax.jcr.Node handle = this.getNode().getParent();
+            if (handle.hasProperty(HippoNodeType.HIPPO_UUID)) {
+                canonicalHandleUUID =  handle.getProperty(HippoNodeType.HIPPO_UUID).getString();
+            } else if (handle.isNodeType("mix:referenceable")) {
+                canonicalHandleUUID =  handle.getUUID();
+            } else {
+                log.warn("Cannot get uuid of handle for '{}'", this.getPath());
+            }
+        } catch (RepositoryException e) {
+            log.error("Cannot get handle uuid for node '"+this.getPath()+"'", e);
+        }
+        return canonicalHandleUUID;
+    }
+    
     @Override
     public void detach(){
         super.detach();
@@ -77,5 +104,6 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         super.attach(session);
         this.htmls.clear();
     }
+
 
 }

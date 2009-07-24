@@ -22,4 +22,9 @@ package org.hippoecm.hst.content.beans.standard;
  */
 public interface HippoDocumentBean extends HippoBean{
 
+    /**
+     * 
+     * @return the uuid of the canonical handle (the physical node) and <code>null</code> if some exception happened
+     */
+    String getCanonicalHandleUUID();
 }

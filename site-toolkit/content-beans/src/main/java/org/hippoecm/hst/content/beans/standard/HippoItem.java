@@ -62,7 +62,7 @@ public class HippoItem implements HippoBean{
     }
     
     public Node getNode() {
-        return node;
+        return this.node;
     }
     
     public JCRValueProvider getValueProvider(){
@@ -78,6 +78,27 @@ public class HippoItem implements HippoBean{
            this.path = valueProvider.getPath();
        }
        return this.path;
+    }
+    
+    public String getCanonicalUUID() {
+        if(this.canonicalId != null) {
+            return canonicalId;
+        }
+        if(this.node == null) {
+            log.warn("Cannot get uuid for detached node '{}'", this.getPath());
+            return null;
+        }
+        try {
+            if (this.node.hasProperty(HippoNodeType.HIPPO_UUID)) {
+               this.canonicalId = this.node.getProperty(HippoNodeType.HIPPO_UUID).getString();
+            } else if (this.node.isNodeType("mix:referenceable")) {
+                this.canonicalId = this.node.getUUID();
+            }
+        } catch (RepositoryException e) {
+            log.warn("RepositoryException while trying to get canonical uuid for '"+this.getPath()+"'", e);
+        }
+        return this.canonicalId;
+
     }
     
     /**
@@ -264,14 +285,14 @@ public class HippoItem implements HippoBean{
                 return false;
             }
             
-            HippoItem compareNode = (HippoItem)compare;  
-            if(compareNode.canonicalId == null) {
-               HippoNode node = (HippoNode)compareNode.getNode();
+            HippoItem compareItem = (HippoItem)compare;  
+            if(compareItem.canonicalId == null) {
+               HippoNode node = (HippoNode)compareItem.getNode();
                if(node == null) {
                    return false;
                }
-               compareNode.canonicalId = fetchComparatorId(node);
-               if(compareNode.canonicalId == null) {
+               compareItem.canonicalId = compareItem.getCanonicalUUID();
+               if(compareItem.canonicalId == null) {
                    return false;
                }
             }
@@ -280,32 +301,18 @@ public class HippoItem implements HippoBean{
                 if(node == null) {
                     return false;
                 }
-                HippoItem.this.canonicalId = fetchComparatorId(node);
+                HippoItem.this.canonicalId = HippoItem.this.getCanonicalUUID();
                 if(HippoItem.this.canonicalId == null) {
                     return false;
                 }
             }
-            if(compareNode.canonicalId != null && HippoItem.this.canonicalId != null ) {
-                return compareNode.canonicalId.equals(HippoItem.this.canonicalId);
+            if(compareItem.canonicalId != null && HippoItem.this.canonicalId != null ) {
+                return compareItem.canonicalId.equals(HippoItem.this.canonicalId);
             }
             return false;
         }
 
-        private String fetchComparatorId(HippoNode node) {
-            if(node == null) {
-                return null;
-            }
-            try {
-                if (node.hasProperty(HippoNodeType.HIPPO_UUID)) {
-                   return  node.getProperty(HippoNodeType.HIPPO_UUID).getString();
-                } else if (node.isNodeType("mix:referenceable")) {
-                   return node.getUUID();
-                }
-            } catch (RepositoryException e) {
-                log.warn("RepositoryException while comparing HippoStdNodes. Return false");
-            }
-            return null;
-        }       
+         
     }
     
     /**

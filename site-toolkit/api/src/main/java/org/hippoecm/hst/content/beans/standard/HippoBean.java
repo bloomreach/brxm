@@ -33,6 +33,12 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     String getName();
 
     String getPath();
+    
+    /**
+     * @return the jcr uuid of the backing canonical (physical) jcr node or <code>null</code> in case of any exception or when the jcr node is detached.
+     * For {@link HippoDocumentBean}'s, the uuid of the handle might be more valuable, which you can get with {@link HippoDocumentBean#getCanonicalHandleUUID()}. 
+     */
+    String getCanonicalUUID();
 
     /**
      * Same as getProperty, where getProperty is only there for having a nice .getProperty['propname'] in jsp expression language
