@@ -282,9 +282,13 @@ public abstract class AbstractHstResponseState implements HstResponseState {
      */
     public void setStatus(int statusCode) {
         if (!committed) {
-            this.statusCode = statusCode;
-            hasStatus = true;
-            resetBuffer();
+            if (response instanceof HstResponse) {
+                ((HstResponse) response).setStatus(statusCode);
+            } else {
+                this.statusCode = statusCode;
+                hasStatus = true;
+                resetBuffer();
+            }
         }
     }
 
@@ -631,7 +635,9 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                 headers = null;
             }
 
-            if (isResourceResponse && hasStatus) {
+            // NOTE: To allow setting status code from each component.
+            //if (isResourceResponse && hasStatus) {
+            if (hasStatus) {
                 setResponseStatus(statusCode);
             }
 

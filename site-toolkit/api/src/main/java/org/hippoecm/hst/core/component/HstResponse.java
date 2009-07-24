@@ -222,4 +222,16 @@ public interface HstResponse extends HttpServletResponse {
      */
     void sendError(int sc) throws  IOException;
     
+    /**
+     * Sets the status code for this response. 
+     * This method is used to set the return status code when there is no error 
+     * (for example, for the status codes SC_OK or SC_MOVED_TEMPORARILY). 
+     * If there is an error, and the caller wishes to invoke an error-page defined in the web application, 
+     * the sendError method should be used instead.
+     * <P>
+     * If there are multiple HST components to invoke this method, then the last invocation will be applied.
+     * </P>
+     */
+    void setStatus(int sc);
+    
 }
