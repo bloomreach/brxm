@@ -119,6 +119,9 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetachable {
         if (definition.getDeclaringNodeType().equals(nt)) {
             declaredFields.put(definition.getName(), field);
         }
+        if ("nt:base".equals(definition.getDeclaringNodeType().getName())) {
+            return;
+        }
         fields.put(definition.getName(), field);
         String primaryItemName = definition.getDeclaringNodeType().getPrimaryItemName();
         if (primaryItemName != null && primaryItemName.equals(definition.getName())) {

@@ -25,7 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.repository.TemplateEditorWorkflow;
@@ -35,6 +37,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
 import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 import org.junit.After;
 import org.junit.Before;
@@ -251,4 +254,34 @@ public class TemplateEditorWorkflowTest extends TestCase {
             assertTrue(node.hasProperty("hippotest4:second"));
         }
     }
+
+    @Test
+    public void mixinsAreCopiedToDraft() throws RepositoryException, WorkflowException, RemoteException {
+        Node root = session.getRootNode();
+
+        Node typeNode = root.getNode("hippo:namespaces/test/mixinTest");
+
+        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Workflow workflow = workflowManager.getWorkflow("test", typeNode);
+        assertTrue(workflow instanceof EditmodelWorkflow);
+
+        ((EditmodelWorkflow) workflow).edit();
+        session.refresh(false);
+
+        NodeIterator nodes = typeNode.getNode("hipposysedit:prototypes").getNodes("hipposysedit:prototype");
+        assertEquals(2, nodes.getSize());
+
+        Node draft = null;
+        while (nodes.hasNext()) {
+            Node node = nodes.nextNode();
+            if (node.isNodeType("nt:unstructured")) {
+                draft = node;
+            }
+        }
+        assertNotNull(draft);
+        NodeType[] mixins = draft.getMixinNodeTypes();
+        assertEquals(1, mixins.length);
+        assertEquals("test:mixin", mixins[0].getName());
+    }
+
 }

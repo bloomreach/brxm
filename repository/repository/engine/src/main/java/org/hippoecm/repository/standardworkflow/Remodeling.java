@@ -110,9 +110,9 @@ public class Remodeling {
             update.newName = (String) value.get("newName");
             update.prototype = (String) value.get("prototype");
             update.renames = new HashMap<FieldIdentifier, FieldIdentifier>();
-            
-            Map<Map<String, String>, Map<String, String>> origRenames =
-                (Map<Map<String, String>, Map<String, String>>) value.get("renames");
+
+            Map<Map<String, String>, Map<String, String>> origRenames = (Map<Map<String, String>, Map<String, String>>) value
+                    .get("renames");
             for (Map.Entry<Map<String, String>, Map<String, String>> rename : origRenames.entrySet()) {
                 FieldIdentifier src = new FieldIdentifier();
                 src.path = rename.getKey().get("path");
@@ -121,7 +121,7 @@ public class Remodeling {
                 FieldIdentifier dest = new FieldIdentifier();
                 dest.path = rename.getValue().get("path");
                 dest.type = rename.getValue().get("type");
-                
+
                 update.renames.put(src, dest);
             }
 
@@ -129,7 +129,7 @@ public class Remodeling {
         }
         return updates;
     }
-    
+
     /** The prefix of the namespace which has been changed
      */
     private String newPrefix;
@@ -162,9 +162,8 @@ public class Remodeling {
      */
     transient Session session;
 
-    Remodeling(Session session, String newPrefix, String oldUri)
-            throws RepositoryException {
-        this(session, newPrefix, oldUri, "", new HashMap<String,TypeUpdate>());
+    Remodeling(Session session, String newPrefix, String oldUri) throws RepositoryException {
+        this(session, newPrefix, oldUri, "", new HashMap<String, TypeUpdate>());
     }
 
     Remodeling(Session session, String newPrefix, String oldUri, String contentUpdater, Object contentUpdaterCargo)
@@ -200,7 +199,6 @@ public class Remodeling {
         changes = new HashSet<Node>();
         typeUpdates = new HashSet<Node>();
     }
-
 
     private String getNewName(String name) {
         if (name.startsWith(prefix + ":")) {
@@ -258,12 +256,13 @@ public class Remodeling {
                         if (values.length == 1) {
                             target.setProperty(name, values[0]);
                         } else if (values.length > 1) {
-                            throw new ValueFormatException("Property " + prop.getPath() + " cannot be converted to a single value");
+                            throw new ValueFormatException("Property " + prop.getPath()
+                                    + " cannot be converted to a single value");
                         }
                     }
                 } else {
                     if (targetDefinition.isMultiple()) {
-                        target.setProperty(name, new Value[] {prop.getValue()});
+                        target.setProperty(name, new Value[] { prop.getValue() });
                     } else {
                         target.setProperty(name, prop.getValue());
                     }
@@ -281,7 +280,8 @@ public class Remodeling {
                     if (values.length == 1) {
                         target.setProperty(name, values[0]);
                     } else if (values.length > 1) {
-                        throw new ValueFormatException("Property " + prop.getPath() + " cannot be converted to a single value");
+                        throw new ValueFormatException("Property " + prop.getPath()
+                                + " cannot be converted to a single value");
                     }
                 } else {
                     log.warn("Dropping property " + prop.getName() + " as there is no new definition.");
@@ -303,7 +303,7 @@ public class Remodeling {
 
     private void copyNode(Node target, Node child, String name, List<NodeDefinition> nodeDefs)
             throws ValueFormatException, VersionException, LockException, ConstraintViolationException,
-                   RepositoryException {
+            RepositoryException {
 
         for (NodeDefinition targetDefinition : nodeDefs) {
             String targetName = targetDefinition.getName();
@@ -319,7 +319,8 @@ public class Remodeling {
                             traverse(child, true, copy);
                             return;
                         } else {
-                            log.warn("Not copying node " + child.getPath() + " as the new type doesn't allow same name siblings");
+                            log.warn("Not copying node " + child.getPath()
+                                    + " as the new type doesn't allow same name siblings");
                         }
                     }
                 }
@@ -471,34 +472,41 @@ public class Remodeling {
         return true;
     }
 
+    private void addNodeType(NodeType type, List<PropertyDefinition> propDefs, List<NodeDefinition> nodeDefs)
+            throws RepositoryException {
+        for (PropertyDefinition def : type.getPropertyDefinitions()) {
+            propDefs.add(def);
+        }
+        for (NodeDefinition def : type.getChildNodeDefinitions()) {
+            nodeDefs.add(def);
+        }
+    }
+
     private void visit(Node source, Node target) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
 
+        // build a lists of property and node definitions to be able to find
+        // target definitions for the existing (source) properties and child nodes.
         List<PropertyDefinition> propDefs = new LinkedList<PropertyDefinition>();
         List<NodeDefinition> nodeDefs = new LinkedList<NodeDefinition>();
 
-        // copy primary type
         NodeType targetType = target.getPrimaryNodeType();
-        for (PropertyDefinition def : targetType.getPropertyDefinitions()) {
-            propDefs.add(def);
-        }
-        for (NodeDefinition def : targetType.getChildNodeDefinitions()) {
-            nodeDefs.add(def);
+        addNodeType(targetType, propDefs, nodeDefs);
+
+        NodeType[] targetMixins = target.getMixinNodeTypes();
+        for (int i = 0; i < targetMixins.length; i++) {
+            addNodeType(targetMixins[i], propDefs, nodeDefs);
         }
 
         NodeType[] sourceTypes = source.getMixinNodeTypes();
         for (int i = 0; i < sourceTypes.length; i++) {
             NodeType newType = conversion.get(sourceTypes[i]);
             if (newType != null) {
-                for (PropertyDefinition def : newType.getPropertyDefinitions()) {
-                    propDefs.add(def);
-                }
-                for (NodeDefinition def : newType.getChildNodeDefinitions()) {
-                    nodeDefs.add(def);
-                }
+                addNodeType(newType, propDefs, nodeDefs);
             }
         }
 
+        // copy items that are defined in the primary node type to the target
         NodeType sourceType = source.getPrimaryNodeType();
         copyType(source, target, sourceType, propDefs, nodeDefs);
 
@@ -686,9 +694,8 @@ public class Remodeling {
         }
     }
 
-    public static Remodeling remodel(Session session, String prefix, Reader cnd,
-                                     String contentUpdater, Object contentUpdaterCargo)
-            throws NamespaceException, RepositoryException {
+    public static Remodeling remodel(Session session, String prefix, Reader cnd, String contentUpdater,
+            Object contentUpdaterCargo) throws NamespaceException, RepositoryException {
         Workspace workspace = session.getWorkspace();
         NamespaceRegistryImpl nsreg = (NamespaceRegistryImpl) workspace.getNamespaceRegistry();
 
@@ -702,7 +709,8 @@ public class Remodeling {
             NamespaceMapping mapping = cndReader.getNamespaceMapping();
 
             String newNamespaceURI = mapping.getURI(prefix);
-            String newPrefix = prefix + "_" + newNamespaceURI.substring(newNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
+            String newPrefix = prefix + "_"
+                    + newNamespaceURI.substring(newNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
 
             nsreg.registerNamespace(newPrefix, newNamespaceURI);
 
@@ -716,7 +724,8 @@ public class Remodeling {
                 /* EffectiveNodeType effnt = */ntreg.registerNodeType(ntd);
             }
 
-            Remodeling remodel = new Remodeling(session, newPrefix, oldNamespaceURI, contentUpdater, contentUpdaterCargo);
+            Remodeling remodel = new Remodeling(session, newPrefix, oldNamespaceURI, contentUpdater,
+                    contentUpdaterCargo);
             remodel.traverse(session.getRootNode(), false, session.getRootNode());
             remodel.updateTypes();
 

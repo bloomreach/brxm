@@ -30,3 +30,7 @@
 
 [test:inheriting] > test:test
 - test:extra (string)
+
+[test:mixin] mixin
+
+[test:mixinTest]

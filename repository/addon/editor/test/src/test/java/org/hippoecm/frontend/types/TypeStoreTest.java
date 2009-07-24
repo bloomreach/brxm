@@ -66,9 +66,10 @@ public class TypeStoreTest extends PluginTest {
 
     @Test
     public void testJcrTypeSave() throws Exception {
-        IStore<ITypeDescriptor> jcrTypeStore = new JcrTypeStore();
-
+        JcrTypeStore jcrTypeStore = new JcrTypeStore();
         IStore<ITypeDescriptor> typeStore = new BuiltinTypeStore();
+        jcrTypeStore.setTypeLocator(new TypeLocator(new IStore[] { jcrTypeStore, typeStore }));
+
         ITypeDescriptor builtinType = typeStore.load("test:test2");
         String titleName = null;
         for (IFieldDescriptor field : builtinType.getFields().values()) {
