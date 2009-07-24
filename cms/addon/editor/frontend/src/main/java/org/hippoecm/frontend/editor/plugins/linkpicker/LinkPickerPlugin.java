@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
@@ -75,8 +76,11 @@ public class LinkPickerPlugin extends RenderPlugin {
                 } catch (PathNotFoundException e) {
                     log.warn("Docbase not found " + e.getMessage());
                     log.debug("Docbase not found ", e);
+                } catch (ItemNotFoundException e) {
+                    log.warn("Docbase not found " + e.getMessage());
+                    log.debug("Docbase not found ", e);
                 } catch (RepositoryException e) {
-                    log.error("Invalid docbase" + e.getMessage(), e);
+                    log.error("Invalid docbase " + e.getMessage(), e);
                 }
                 return "[...]";
             }
