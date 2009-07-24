@@ -55,6 +55,7 @@
 - hst:parametervalues (string) multiple
 - hst:statuscode (long)
 - hst:errorcode (long)
+- hst:errorsitemapitem (boolean)
 + * (hst:sitemapitem)
 
 [hst:sitemap] orderable
@@ -113,6 +114,7 @@ hippostd:publishableSummary, hippostd:languageable
 - hst:prefixexclusions (string) multiple
 - hst:suffixexclusions (string) multiple
 - hst:protocol (string)
+- hst:defaulthostname (string)
 + * (hst:virtualhost)
 
 

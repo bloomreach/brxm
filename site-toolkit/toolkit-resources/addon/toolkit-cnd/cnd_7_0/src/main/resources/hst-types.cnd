@@ -18,14 +18,18 @@
 <hippostd='http://www.hippoecm.org/hippostd/nt/1.2'>
 <hippo='http://www.hippoecm.org/nt/1.2'>
 
-[hst:template]
+[hst:descriptive] mixin
+- hst:description (string)
++ hst:icon (hippo:resource) = hippo:resource
+
+[hst:template] > nt:base, hst:descriptive
 - hst:renderpath (string)
 - hst:containers (string) multiple
 
 [hst:templates]
 + * (hst:template)
 
-[hst:component] orderable
+[hst:component] > nt:base, hst:descriptive orderable
 - hst:template (string)
 - hst:componentclassname (string)
 - hst:serveresourcepath(string)
@@ -34,7 +38,6 @@
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 + * (hst:component)
-
 
 [hst:components] orderable
 + * (hst:component)
@@ -51,6 +54,7 @@
 - hst:parametervalues (string) multiple
 - hst:statuscode (long)
 - hst:errorcode (long)
+- hst:errorsitemapitem (boolean)
 + * (hst:sitemapitem)
 
 [hst:sitemap] orderable
@@ -83,6 +87,7 @@ hippostd:publishableSummary, hippostd:languageable
 [hst:site]
 + hst:content (hippo:facetselect) mandatory
 + hst:configuration (hippo:facetselect) mandatory
+- hst:portalconfigurationenabled (boolean)
 
 [hst:sites]
 + * (hst:site) = hst:site
@@ -108,6 +113,7 @@ hippostd:publishableSummary, hippostd:languageable
 - hst:prefixexclusions (string) multiple
 - hst:suffixexclusions (string) multiple
 - hst:protocol (string)
+- hst:defaulthostname (string)
 + * (hst:virtualhost)
 
 
