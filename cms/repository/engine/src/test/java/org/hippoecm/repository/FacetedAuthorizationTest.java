@@ -22,6 +22,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.security.AccessControlException;
@@ -456,7 +457,7 @@ public class FacetedAuthorizationTest extends TestCase {
         }
     }
 
-    @Test
+    @Ignore
     public void testSelfExclusionNotAllowed() throws RepositoryException {
         Node node;
         try {
