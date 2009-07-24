@@ -18,6 +18,7 @@ package org.hippoecm.tools.importer.content;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.apache.commons.collections.iterators.ArrayIterator;
@@ -52,7 +53,12 @@ public class FolderContent extends FileContent {
 
     public Iterator<Content> getChildren() {
         final File[] files = getFile().listFiles();
+        if (files == null) {
+            return Collections.EMPTY_LIST.iterator();
+        }
+        
         final Iterator<File> base = new ArrayIterator(files);
+        
         return new Iterator<Content>() {
             private Content next;
             private boolean ready = false;
