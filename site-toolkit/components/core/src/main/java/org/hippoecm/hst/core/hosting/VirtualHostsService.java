@@ -43,6 +43,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
     
     private Map<String, VirtualHostService> rootVirtualHosts = new HashMap<String, VirtualHostService>();
     private String defaultSiteName;
+    private String defaultHostName;
     private boolean virtualHostsConfigured;
     private String jcrPath;
     private boolean portVisible;
@@ -71,6 +72,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         this.prefixExclusions = this.getValueProvider().getStrings(Configuration.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
         this.suffixExclusions = this.getValueProvider().getStrings(Configuration.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
         this.protocol = this.getValueProvider().getString(Configuration.VIRTUALHOSTS_PROPERTY_PROTOCOL);
+        this.defaultHostName  = this.getValueProvider().getString(Configuration.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
         if(protocol == null || "".equals(protocol)) {
             this.protocol = DEFAULT_PROTOCOL;
         }
@@ -220,5 +222,9 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
 
     public String getProtocol(){
         return this.protocol;
+    }
+
+    public String getDefaultHostName() {
+        return this.defaultHostName;
     }
 }

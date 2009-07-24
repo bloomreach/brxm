@@ -43,4 +43,9 @@ public interface VirtualHosts {
      */
     MatchedMapping findMapping(String hostName,String pathInfo);
   
+    /**
+     * 
+     * @return the hostname that is configured as default, or <code>null</code> if none is configured as default.
+     */
+    String getDefaultHostName();
 }

@@ -106,6 +106,7 @@
 			</sv:property>
 		</sv:node>
 	</sv:node>
+	
 	<sv:node sv:name="rss">
 		<sv:property sv:name="jcr:primaryType" sv:type="Name">
 			<sv:value>hst:component</sv:value>
@@ -139,6 +140,22 @@
 			<sv:property sv:name="hst:parametervalues" sv:type="String"/>
 			<sv:property sv:name="hst:template" sv:type="String">
 				<sv:value>searchresults</sv:value>
+			</sv:property>
+		</sv:node>
+	</sv:node>
+	<sv:node sv:name="bodyerror">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:component</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:referencecomponent" sv:type="String">
+			<sv:value>hst:components/general_threecolumnlayout</sv:value>
+		</sv:property>
+		<sv:node sv:name="content">
+			<sv:property sv:name="jcr:primaryType" sv:type="Name">
+				<sv:value>hst:component</sv:value>
+			</sv:property>
+			<sv:property sv:name="hst:template" sv:type="String">
+				<sv:value>bodyerror</sv:value>
 			</sv:property>
 		</sv:node>
 	</sv:node>

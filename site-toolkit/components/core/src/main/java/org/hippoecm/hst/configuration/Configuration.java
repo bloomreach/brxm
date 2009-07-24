@@ -50,6 +50,7 @@ public class Configuration {
     public final static String SITEMAPITEM_PROPERTY_ROLES =  "hst:roles";
     public final static String SITEMAPITEM_PROPERTY_STATUSCODE =  "hst:statuscode";
     public final static String SITEMAPITEM_PROPERTY_ERRORCODE =  "hst:errorcode";
+    public final static String SITEMAPITEM_PROPERTY_ERRORSITEMAPITEM =  "hst:errorsitemapitem";
     public final static String SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH =  "hst:relativecontentpath";
     public final static String SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID =  "hst:componentconfigurationid";
     public final static String SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID =  "hst:portletcomponentconfigurationid";
@@ -69,6 +70,7 @@ public class Configuration {
     public final static String VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS = "hst:suffixexclusions";
     public final static String VIRTUALHOSTS_PROPERTY_PORT = "hst:port";
     public final static String VIRTUALHOSTS_PROPERTY_PROTOCOL = "hst:protocol";
+    public final static String VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME = "hst:defaulthostname";
     public final static String VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
 
     public final static String VIRTUALHOST_PROPERTY_SHOWPORT = "hst:showport";

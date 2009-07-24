@@ -99,6 +99,15 @@
 			<sv:value>jsp/components/main/search.jsp</sv:value>
 		</sv:property>
 	</sv:node>
+	<sv:node sv:name="bodyerror">
+		<sv:property sv:name="jcr:primaryType" sv:type="Name">
+			<sv:value>hst:template</sv:value>
+		</sv:property>
+		<sv:property sv:name="hst:containers" sv:type="String"/>
+		<sv:property sv:name="hst:renderpath" sv:type="String">
+			<sv:value>jsp/components/main/error.jsp</sv:value>
+		</sv:property>
+	</sv:node>
     <sv:node sv:name="portletprefseditor">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:template</sv:value>

@@ -112,7 +112,12 @@ public class HstVirtualHostsFilter implements Filter {
                 request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
                 
                 MatchedMapping matchedMapping = vHosts.findMapping(req.getServerName(), pathInfo);
-                 if(matchedMapping != null) {
+                if(matchedMapping == null) {
+                    if(vHosts.getDefaultHostName() != null) {
+                        matchedMapping = vHosts.findMapping(vHosts.getDefaultHostName(), pathInfo);
+                    }
+                }
+                if(matchedMapping != null) {
                     /*
                      * put the matched Mapping temporarily on the request, as we do not yet have a HstRequestContext. When the
                      * HstRequestContext is created, and there is a Mapping on the request, we put it on the HstRequestContext.
