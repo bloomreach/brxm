@@ -14,11 +14,11 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>  
-    <br/>
-    Copy <strong><span wicket:id="source">/path/to/source</span></strong>
-    <br/>
-    To <strong><span wicket:id="target">/path/to/target</span></strong><span wicket:id="name"></span>
-    <br/>
+  <wicket:extend>
+    <div class="window-details">  
+    <label><wicket:message key="console.dialog.copy.from">Copy from </wicket:message></label><strong><span wicket:id="source">/path/to/source</span></strong>
+    <br/><br/>
+    <label><wicket:message key="console.dialog.copy.to">To </wicket:message></label><strong><span wicket:id="target">/path/to/target</span></strong><span wicket:id="name"></span>
+    </div>
   </wicket:extend>
 </html>
