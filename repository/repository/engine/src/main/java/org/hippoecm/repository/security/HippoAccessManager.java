@@ -1217,9 +1217,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         } catch (NoSuchItemStateException e) {
             throw new PathNotFoundException("Path not found " + absPath, e);
         }
-        if(nodeState.getStatus() == NodeState.STATUS_NEW) {
-            return true;
-        }
 
         for (Privilege priv : privileges) {
             log.debug("Checking [{}] : {}", priv.getName(), absPath);
