@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.service.render;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,9 @@ public class RenderPlugin extends RenderService implements IPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    class PluginEntry {
+    class PluginEntry implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         IClusterControl control;
         String serviceId;
 
