@@ -19,28 +19,27 @@ import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.persistence.ContentNodeBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
 
 @Node(jcrType="demosite:comment")
-public class CommentBean extends TextBean implements ContentNodeBinder{
+public class CommentBean extends TextBean {
 
-    private String newTitle;
-    private String newBody;
-    
-    public void setTitle(String title) { 
-        this.newTitle = title;
-    }
-    
-    public void setBody(String body) { 
-        this.newBody = body;
-    }
+    private Calendar date;
+    private String commentToUuidOfHandle;
     
     @Override
     public Calendar getDate() {
-        return getProperty("demosite:date");
+        return date == null ? (Calendar)getProperty("demosite:date"): date;
+    }
+    
+    public void setDate(Calendar date) {
+        this.date = date;
     }
 
+    public void setCommentTo(String commentToUuidOfHandle) {
+        this.commentToUuidOfHandle = commentToUuidOfHandle;
+    }
+    
     public BaseBean getCommentTo(){
         HippoBean bean = getBean("demosite:commentlink");
         if(!(bean instanceof CommentLinkBean)) {
@@ -58,19 +57,26 @@ public class CommentBean extends TextBean implements ContentNodeBinder{
     }
     
     public boolean bind(Object content, javax.jcr.Node node) throws ContentPersistenceBindingException {
+        super.bind(content, node);
         try {
-            if(this.newTitle != null) {
-                node.setProperty("demosite:title", newTitle);
+            BaseBean bean =  (BaseBean) content;
+            node.setProperty("demosite:date", bean.getDate());
+            javax.jcr.Node commentLink = null;
+            if(node.hasNode("demosite:commentlink")) {
+                 commentLink = node.getNode("demosite:commentlink");
+            } else {
+                commentLink = node.addNode("demosite:commentlink", "demosite:commentlink");
             }
-            if(this.newBody != null) {
-                javax.jcr.Node body = node.getNode("demosite:body");
-                body.setProperty("hippostd:content", newBody);
-            }
+            commentLink.setProperty("hippo:docbase", commentToUuidOfHandle);
+            commentLink.setProperty("hippo:values", new String[0]);
+            commentLink.setProperty("hippo:modes", new String[0]);
+            commentLink.setProperty("hippo:facets", new String[0]);
+            
+            
         } catch (Exception e) {
             throw new ContentPersistenceBindingException(e);
         }
-        
-        // FIXME: return true only if actual changes happen.
         return true;
     }
+    
 }

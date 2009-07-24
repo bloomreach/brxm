@@ -16,11 +16,15 @@
 package org.hippoecm.hst.demo.components;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.jcr.Session;
 
 import org.hippoecm.hst.component.support.bean.persistency.BasePersistenceHstComponent;
+import org.hippoecm.hst.content.beans.query.HstQuery;
+import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -29,6 +33,7 @@ import org.hippoecm.hst.demo.beans.CommentBean;
 import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.hst.persistence.workflow.WorkflowCallbackHandler;
 import org.hippoecm.hst.persistence.workflow.WorkflowPersistenceManager;
+import org.hippoecm.hst.utils.BeanUtils;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +46,23 @@ public class Detail extends BasePersistenceHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
 
         super.doBeforeRender(request, response);
-        HippoBean n = this.getContentBean(request);
+        HippoBean crBean = this.getContentBean(request);
 
-        if (n == null || !(n instanceof BaseBean)) {
+        if (crBean == null || !(crBean instanceof BaseBean)) {
             return;
         }
-        request.setAttribute("document", n);
+        request.setAttribute("document", crBean);
+        
+        try {
+            HstQuery commentQuery = BeanUtils.createIncomingBeansQuery((BaseBean)crBean, "demosite:commentlink/@hippo:docbase", request, this , CommentBean.class, false);
+            commentQuery.addOrderByDescending("demosite:date");
+            commentQuery.setLimit(15);
+            List<CommentBean> comments = BeanUtils.getIncomingBeans(commentQuery, CommentBean.class);
+            request.setAttribute("comments", comments);
+        } catch (QueryException e) {
+            e.printStackTrace();
+        }
+        
     }
 
     @Override
@@ -56,7 +72,12 @@ public class Detail extends BasePersistenceHstComponent {
         if ("add".equals(type)) {
             String title = request.getParameter("title");
             String comment = request.getParameter("comment");
-
+            HippoBean commentTo = this.getContentBean(request);
+            if( !(commentTo instanceof HippoDocumentBean)) {
+                log.warn("Cannot comment on non documents");
+                return;
+            }
+            String commentToUuidOfHandle = ((HippoDocumentBean)commentTo).getCanonicalHandleUUID();
             if (title != null && !"".equals(title.trim()) && comment != null) {
                 Session persistableSession = null;
                 WorkflowPersistenceManager cpm = null;
@@ -74,10 +95,10 @@ public class Detail extends BasePersistenceHstComponent {
 
                     // it is not important where we store comments. WE just use some time path below our project content
                     String siteContentBasePath = getSiteContentBasePath(request);
-                    Calendar cal = Calendar.getInstance();
+                    Calendar currentDate = Calendar.getInstance();
                     
-                    String commentsFolderPath = "/"+siteContentBasePath + "/comment/" + cal.get(Calendar.YEAR) + "/"
-                            + cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.DAY_OF_MONTH);
+                    String commentsFolderPath = "/"+siteContentBasePath + "/comment/" + currentDate.get(Calendar.YEAR) + "/"
+                            + currentDate.get(Calendar.MONTH) + "/" + currentDate.get(Calendar.DAY_OF_MONTH);
                     // comment node name is simply a concatenation of 'comment-' and current time millis. 
                     String commentNodeName = "comment-" + System.currentTimeMillis();
 
@@ -92,19 +113,24 @@ public class Detail extends BasePersistenceHstComponent {
                     }
                     commentBean.setTitle(title);
 
+                    commentBean.setHtml(comment);
+                    
+                    commentBean.setDate(currentDate);
+                    
+                    commentBean.setCommentTo(commentToUuidOfHandle);
+                    
                     // update now
                     cpm.update(commentBean);
 
-                    // save the pending changes
-                    //cpm.save();
+                    
                 } catch (Exception e) {
-                    log.warn("Failed to create a comment. {}", e);
+                    log.warn("Failed to create a comment: ", e);
 
                     if (cpm != null) {
                         try {
                             cpm.refresh();
                         } catch (ContentPersistenceException e1) {
-                            log.warn("Failed to reset. {}", e);
+                            log.warn("Failed to refresh: ", e);
                         }
                     }
                 } finally {

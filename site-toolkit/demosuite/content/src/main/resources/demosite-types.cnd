@@ -16,8 +16,6 @@
   
 [demosite:commentlink] > hippo:facetselect
 
-[demosite:comment] > hippostd:publishable, hippostd:publishableSummary, hippo:document
- - demosite:title (string)
+[demosite:comment] > demosite:textpage
  - demosite:date (date)
- + demosite:body (hippostd:html)
  + demosite:commentlink (demosite:commentlink)

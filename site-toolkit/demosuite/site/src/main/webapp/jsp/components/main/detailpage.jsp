@@ -32,6 +32,17 @@
   </hst:actionURL>
   
   <div>
+      <c:forEach var="comment" items="${comments}">
+         <div style="border:1px solid black; padding:15px;">
+             <b>${comment.title}</b>
+             <br/>
+             <hst:html hippohtml="${comment.html}"/>
+         </div>
+        </c:forEach>
+   
+  </div>
+  
+  <div>
     <form method="POST" action="${addURL}">
       <h4>Enter your comment here:</h4>
       <table>
