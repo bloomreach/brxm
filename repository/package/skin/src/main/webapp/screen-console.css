@@ -17,6 +17,14 @@ body{padding: 15px;}
 .hippo-console-editor{overflow: auto; height: 900px;}
 
 .hippo-console-tree .hippo-tree{overflow: auto; height: 900px; padding-bottom: 30px; font-size: 13px; width: 465px; padding-top: 24px;}
+
+/* Styling for tree in Dialog */
+.hippo-window .hippo-console-tree .hippo-tree{ height: 250px; width: 500px; padding-top: 0px; padding-bottom: 5px; border-bottom: 1px solid #e3e3e3;}
+.hippo-window label { display: block; }
+
+.hippo-window .hippo-console-tree { float: left; width: 500px; border-right: 1px solid #e3e3e3; }
+.hippo-window .window-details { width:450px; float: left; padding-top: 10px; padding-left: 10px; clear:left}
+
 .hippo-console-tree .wicket-tree a{color: #666666}
 .hippo-console-tree .wicket-tree a:hover{color: #32629b}
 .hippo-console .wicket-tree *{font-family: monospace}
@@ -30,8 +38,6 @@ body{padding: 15px;}
 .hippo-tree .wicket-tree span.corner, 
 .hippo-tree .wicket-tree span.indent-line,
 .hippo-tree .wicket-tree span.indent-blank {background-image: url("images/tree-console-icons.png"); width: 18px;} 
-
-
 
 .hippo-console-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}
 .hippo-console-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0px; padding-bottom: 0px}

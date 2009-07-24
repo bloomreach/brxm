@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.console.dialog;
 
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
@@ -26,6 +28,8 @@ public abstract class LookupDialog extends AbstractDialog {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    private static final IValueMap SIZE = new ValueMap("width=515,height=470");
 
     private LookupTargetTreeView tree;
     private JcrTreeModel treeModel;
@@ -53,6 +57,11 @@ public abstract class LookupDialog extends AbstractDialog {
     }
 
     protected void onSelect(JcrNodeModel nodeModel) {
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return SIZE;
     }
 
     protected abstract boolean isValidSelection(IJcrTreeNode targetModel);
