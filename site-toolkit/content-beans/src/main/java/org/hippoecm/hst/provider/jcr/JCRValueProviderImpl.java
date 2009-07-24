@@ -63,6 +63,9 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     public JCRValueProviderImpl(Node jcrNode) {
         this.jcrNode = jcrNode;
+        if(jcrNode == null) {
+            return;
+        }
         try {
             this.nodeName = jcrNode.getName();
             this.nodePath = jcrNode.getPath();
