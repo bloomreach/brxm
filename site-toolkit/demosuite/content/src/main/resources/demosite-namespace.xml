@@ -38,94 +38,11 @@
           <sv:value>hippo:harddocument</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>41291f82-e644-4c57-8457-28d4905a582a</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-          <sv:value>41291f82-e644-4c57-8457-28d4905a582a</sv:value>
-          <sv:value>bdd751a5-15d9-495d-bef5-34570e0563d3</sv:value>
-          <sv:value>8756731f-6bce-4f18-b2c7-435cc4d1dd18</sv:value>
-          <sv:value>8f2f2cb3-fce5-40d9-8a51-24c753e8075e</sv:value>
-          <sv:value>33d7cf67-6e18-47b5-96ba-2cb4130c0c43</sv:value>
-          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
-        <sv:property sv:name="hippo:supertype" sv:type="String">
-          <sv:value>hippo:document</sv:value>
-          <sv:value>hippostd:publishable</sv:value>
-          <sv:value>hippostd:publishableSummary</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst/nt/demosite/1.0</sv:value>
-        </sv:property>
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>title</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>demosite:title</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>summary</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>demosite:summary</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>body</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>demosite:body</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="hippo:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
-          <sv:value>hippo:harddocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>d2425cca-67eb-4d83-b14c-a5fb92d4ae1b</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-          <sv:value>d2425cca-67eb-4d83-b14c-a5fb92d4ae1b</sv:value>
-          <sv:value>bdd751a5-15d9-495d-bef5-34570e0563d3</sv:value>
-          <sv:value>8756731f-6bce-4f18-b2c7-435cc4d1dd18</sv:value>
-          <sv:value>8f2f2cb3-fce5-40d9-8a51-24c753e8075e</sv:value>
-          <sv:value>33d7cf67-6e18-47b5-96ba-2cb4130c0c43</sv:value>
-          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>hippo:document</sv:value>
           <sv:value>hippostd:publishable</sv:value>
@@ -204,8 +121,7 @@
         <sv:property sv:name="demosite:title" sv:type="String">
           <sv:value/>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String"> </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
@@ -384,15 +300,6 @@
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-          <sv:value>88755905-fb51-491d-8fd4-1ef68a41624c</sv:value>
-          <sv:value>7d4b974d-5a62-46c4-b5a6-d6cda37ab27c</sv:value>
-          <sv:value>80694336-a9bb-41b9-b37c-dfb12b3cff33</sv:value>
-          <sv:value>8f2f2cb3-fce5-40d9-8a51-24c753e8075e</sv:value>
-          <sv:value>33d7cf67-6e18-47b5-96ba-2cb4130c0c43</sv:value>
-          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>hippo:document</sv:value>
           <sv:value>hippostd:publishable</sv:value>
@@ -562,17 +469,6 @@
         <sv:property sv:name="demosite:title" sv:type="String">
           <sv:value/>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-          <sv:value>fdfbe0c3-ba69-40e7-b0ec-131c9346f36b</sv:value>
-          <sv:value>961c7ecf-d8fd-4cee-936c-a9544ac334b8</sv:value>
-          <sv:value>80694336-a9bb-41b9-b37c-dfb12b3cff33</sv:value>
-          <sv:value>8f2f2cb3-fce5-40d9-8a51-24c753e8075e</sv:value>
-          <sv:value>33d7cf67-6e18-47b5-96ba-2cb4130c0c43</sv:value>
-          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>demosite/newspage/hippo:prototype</sv:value>
-        </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
@@ -594,12 +490,9 @@
           <sv:property sv:name="hippo:docbase" sv:type="String">
             <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:facets" sv:type="String">
-          </sv:property>
-          <sv:property sv:name="hippo:modes" sv:type="String">
-          </sv:property>
-          <sv:property sv:name="hippo:values" sv:type="String">
-          </sv:property>
+          <sv:property sv:name="hippo:facets" sv:type="String"> </sv:property>
+          <sv:property sv:name="hippo:modes" sv:type="String"> </sv:property>
+          <sv:property sv:name="hippo:values" sv:type="String"> </sv:property>
         </sv:node>
       </sv:node>
     </sv:node>
@@ -793,7 +686,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  
+
   <sv:node sv:name="comment">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -819,8 +712,7 @@
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String"> </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>hippo:document</sv:value>
           <sv:value>hippostd:publishable</sv:value>
@@ -858,56 +750,7 @@
           </sv:property>
         </sv:node>
       </sv:node>
-      <sv:node sv:name="hippo:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
-          <sv:value>hippo:harddocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-        </sv:property>
-        <sv:property sv:name="hippo:supertype" sv:type="String">
-          <sv:value>hippo:document</sv:value>
-          <sv:value>hippostd:publishable</sv:value>
-          <sv:value>hippostd:publishableSummary</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst/nt/demosite/1.0</sv:value>
-        </sv:property>
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>title</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>demosite:title</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>body</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>demosite:body</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
+
     </sv:node>
     <sv:node sv:name="hippo:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -926,8 +769,7 @@
         <sv:property sv:name="demosite:title" sv:type="String">
           <sv:value/>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String"> </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
