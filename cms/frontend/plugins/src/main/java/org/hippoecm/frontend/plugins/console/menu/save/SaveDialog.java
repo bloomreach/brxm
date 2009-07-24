@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.save;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -79,9 +80,11 @@ public class SaveDialog extends AbstractDialog {
     public void onOk() {
         try {
             ((UserSession) Session.get()).getJcrSession().save();
+        } catch (AccessDeniedException e) {
+            error(e.getClass().getName() + ": " + e.getMessage());
         } catch (RepositoryException e) {
             log.error("Error while saving content from the console", e);
-            error(e.getClass().getName()+": "+e.getMessage());
+            error(e.getClass().getName() + ": " + e.getMessage());
         }
     }
 
