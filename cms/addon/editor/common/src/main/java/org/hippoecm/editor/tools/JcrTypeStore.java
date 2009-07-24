@@ -135,7 +135,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
                 WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 Workflow workflow = workflowManager.getWorkflow("editor", nsNode);
 
-                ((NamespaceWorkflow) workflow).addType("document", info.subType);
+                ((NamespaceWorkflow) workflow).addType("compound", info.subType);
 
                 nsNode.refresh(false);
 

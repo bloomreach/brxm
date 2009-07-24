@@ -50,7 +50,7 @@ public class CndSerializationTest extends PluginTest {
         assertTrue(mapping.getPrefixToURIMapping().containsKey("nt"));
         
         List<NodeTypeDef> ntDefs = cndReader.getNodeTypeDefs();
-        assertEquals(2, ntDefs.size());
+        assertEquals(3, ntDefs.size());
         
         // test:test
         {
