@@ -21,13 +21,10 @@ import java.util.TimeZone;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.yui.calendar.DateTimeField;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
@@ -48,29 +45,28 @@ public class AjaxDateTimeField extends DateTimeField {
 
         setOutputMarkupId(true);
 
-        Button today = new AjaxButton("today") {
+        add(new AjaxLink("today") {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
-                getField("date").setModelObject(new Date());
-
-                if (target != null) {
-                    target.addComponent(AjaxDateTimeField.this);
-                }
+            public void onClick(AjaxRequestTarget target) {
+                updateDateTime(new Date(), null, null, target);
             }
-        };
-        add(today);
-        today.setModel(new Model(getString("set-to-current-date")));
+
+        });
     }
 
     // callback that the ChangeBehaviour calls when one of the composing fields updates
     public void onUpdate(AjaxRequestTarget target) {
         Object dateFieldInput = getField("date").getModelObject();
-        MutableDateTime date = new MutableDateTime(dateFieldInput);
         Integer hours = (Integer) getField("hours").getModelObject();
         Integer minutes = (Integer) getField("minutes").getModelObject();
 
+        updateDateTime(dateFieldInput, hours, minutes, target);
+    }
+
+    private void updateDateTime(Object datetime, Integer hours, Integer minutes, AjaxRequestTarget target) {
+        MutableDateTime date = new MutableDateTime(datetime);
         try {
             TimeZone zone = getClientTimeZone();
             if (zone != null) {
