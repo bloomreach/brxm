@@ -36,9 +36,9 @@ public class BrowserPlugin extends RenderPlugin {
     private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(BrowserPlugin.class);
-    
+
     protected final BrowseView browseView;
-    
+
     public BrowserPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -51,14 +51,15 @@ public class BrowserPlugin extends RenderPlugin {
             }
         };
     }
- 
+
     abstract public class BrowseView extends AbstractBrowseView {
         private static final long serialVersionUID = 1L;
 
         protected BrowseView(IPluginContext context, IPluginConfig config, JcrNodeModel document) {
             super(context, config, document);
 
-            final IModelReference documentReference = context.getService(config.getString("model.document"), IModelReference.class);
+            final IModelReference documentReference = context.getService(config.getString("model.document"),
+                    IModelReference.class);
             context.registerService(new IObserver() {
                 private static final long serialVersionUID = 1L;
 
@@ -72,7 +73,8 @@ public class BrowserPlugin extends RenderPlugin {
 
             }, IObserver.class.getName());
 
-            final IModelReference folderReference = context.getService(config.getString("model.folder"), IModelReference.class);
+            final IModelReference folderReference = context.getService(config.getString("model.folder"),
+                    IModelReference.class);
             context.registerService(new IObserver() {
                 private static final long serialVersionUID = 1L;
 
@@ -81,7 +83,7 @@ public class BrowserPlugin extends RenderPlugin {
                 }
 
                 public void onEvent(Iterator<? extends IEvent> event) {
-                    BrowserPlugin.this.setModel(documentReference.getModel());
+                    BrowserPlugin.this.setModel(folderReference.getModel());
                 }
 
             }, IObserver.class.getName());
