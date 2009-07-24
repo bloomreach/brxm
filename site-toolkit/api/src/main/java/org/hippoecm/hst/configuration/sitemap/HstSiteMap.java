@@ -66,7 +66,7 @@ public interface HstSiteMap {
     
     /**
      * 
-     * @return the <code>HstSiteMapItem</code> that in the configuration is marked as errorSiteMapItem = true
+     * @return the <code>HstSiteMapItem</code> that in the configuration is marked as hst:errorsitemapitem = true
      */
     HstSiteMapItem getErrorSiteMapItem();
   }

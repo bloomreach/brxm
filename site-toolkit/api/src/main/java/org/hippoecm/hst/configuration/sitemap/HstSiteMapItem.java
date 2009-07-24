@@ -156,5 +156,10 @@ public interface HstSiteMapItem {
      * by this method . <code>0</code> is return is non is specified. 
      * @return if an error code is set, return this, otherwise <code>0</code>
      */
-    public int getErrorCode();
+    int getErrorCode();
+    
+    /**
+     * @return true if this SiteMapItem functions as a error sitemap item
+     */
+    boolean isErrorSiteMapItem();
 }
