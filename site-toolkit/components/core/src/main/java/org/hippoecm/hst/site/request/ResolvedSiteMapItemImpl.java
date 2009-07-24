@@ -118,4 +118,11 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
         return this.pathInfo;
     }
 
+    public ResolvedSiteMapItem getErrorResolvedSiteMapItem() {
+        if(this.hstSiteMapItem.getHstSiteMap().getErrorSiteMapItem() == null) {
+            return null;
+        }
+       return new ResolvedSiteMapItemImpl(this.hstSiteMapItem.getHstSiteMap().getErrorSiteMapItem(), this.resolvedParameters , this.pathInfo);
+    }
+
 }

@@ -19,7 +19,6 @@ import java.util.Properties;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
 /**
  * An instance of the implementation of this interface will be available on the <code>{@link HstRequestContext}</code>. It has a reference
@@ -90,5 +89,11 @@ public interface ResolvedSiteMapItem {
      * @return the <code>HstComponentConfiguration</code> for portlet that is found through {@link #getHstSiteMapItem()}
      */
     HstComponentConfiguration getPortletHstComponentConfiguration();
+    
+    /**
+     * @return the <code>ResolvedSiteMapItem</code> of the configured error sitemapitem
+     */
+    
+    ResolvedSiteMapItem getErrorResolvedSiteMapItem();
     
 }

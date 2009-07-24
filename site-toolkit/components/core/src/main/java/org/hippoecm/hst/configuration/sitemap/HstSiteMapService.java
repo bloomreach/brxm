@@ -47,6 +47,8 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
     
     private Map<String, HstSiteMapItem> rootSiteMapItems = new LinkedHashMap<String, HstSiteMapItem>();
     
+    private HstSiteMapItem errorSiteMapItem = null;
+    
     private Map<String, HstSiteMapItem> siteMapDescendants = new HashMap<String, HstSiteMapItem>();
     
     public HstSiteMapService(HstSite hstSite, Node siteMapNode) throws RepositoryException, ServiceException {
@@ -123,6 +125,10 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
 
     public HstSite getSite() {
         return this.hstSite;
+    }
+
+    public HstSiteMapItem getErrorSiteMapItem() {
+        return errorSiteMapItem;
     }
     
     
