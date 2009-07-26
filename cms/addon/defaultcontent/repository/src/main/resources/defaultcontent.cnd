@@ -30,6 +30,7 @@
 [defaultcontent:article] > defaultcontent:document
 - defaultcontent:title (string)
 - defaultcontent:introduction (string)
+- defaultcontent:lastPublished (date)
 + defaultcontent:text (defaultcontent:text) multiple
 
 [defaultcontent:news] > defaultcontent:document
