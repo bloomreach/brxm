@@ -16,7 +16,6 @@
 
 
 # Unit testing properties
-development.mode = false
 
 #test.default.repository.address = target/storage
 test.default.repository.address = rmi://127.0.0.1/hipporepository

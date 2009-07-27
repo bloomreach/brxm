@@ -28,6 +28,7 @@
     <property name="locations">
       <list>
         <value>classpath:build.properties</value>
+        <value>classpath:/org/hippoecm/hst/site/container/SpringComponentManager.properties</value>
       </list>
     </property>
   </bean>
