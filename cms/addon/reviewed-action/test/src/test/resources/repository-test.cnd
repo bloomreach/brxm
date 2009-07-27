@@ -23,6 +23,6 @@
 
 [hippo:ntunstructured] > nt:unstructured
 
-[hippo:testdocument] > hippo:document, hippostd:publishable
+[hippo:testpublishabledocument] > hippo:document, hippostd:publishable
 + * = hippo:ntunstructured multiple
 - *

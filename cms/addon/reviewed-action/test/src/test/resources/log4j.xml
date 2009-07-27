@@ -41,7 +41,7 @@
   <!-- ====================================================================== -->
 
   <category additivity="false" name="org.hippoecm.repository">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
 

@@ -48,7 +48,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
         node = root.addNode("test");
         node = node.addNode("myarticle", "hippo:handle");
         node.addMixin("mix:referenceable");
-        node = node.addNode("myarticle", "hippo:testdocument");
+        node = node.addNode("myarticle", "hippo:testpublishabledocument");
         node.addMixin("hippo:harddocument");
         node.setProperty("content", LOREM);
         node.setProperty("hippostd:holder", "admin");
