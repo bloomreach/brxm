@@ -122,9 +122,6 @@
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>hipposched:job</sv:value>
     </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
-    </sv:property>
     <sv:node sv:name="hipposys:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:types</sv:value>
@@ -151,9 +148,6 @@
     </sv:property>
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>hippostd:publishable</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
     </sv:property>
     <sv:node sv:name="hipposys:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -268,9 +262,6 @@
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>hipposys:request</sv:value>
     </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
-    </sv:property>
     <sv:node sv:name="hipposys:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:types</sv:value>
@@ -356,9 +347,6 @@
     </sv:property>
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>hippo:document</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
     </sv:property>
     <sv:node sv:name="hipposys:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

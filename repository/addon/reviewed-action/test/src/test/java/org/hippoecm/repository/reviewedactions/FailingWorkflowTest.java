@@ -59,7 +59,7 @@ public class FailingWorkflowTest extends TestCase {
         "jcr:mixinTypes", "hippo:harddocument",
         "/test/folder/document", "hippo:handle",
         "jcr:mixinTypes", "hippo:hardhandle",
-        "/test/folder/document/document", "hippo:testdocument",
+        "/test/folder/document/document", "hippo:testpublishabledocument",
         "jcr:mixinTypes", "hippo:harddocument",
         "hippostd:folder", "admin",
         "hippostd:state", "published"
