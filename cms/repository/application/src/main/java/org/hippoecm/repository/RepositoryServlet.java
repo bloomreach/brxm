@@ -235,8 +235,9 @@ public class RepositoryServlet extends HttpServlet {
         // explicitly set character encoding
         req.setCharacterEncoding("UTF-8");
         res.setContentType("text/html;charset=UTF-8");
-        
-        String username = "admin", password = "admin";
+
+        String username = null;
+        String password = null;
         String authhead = req.getHeader("Authorization");
         if (authhead != null) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -254,8 +255,6 @@ public class RepositoryServlet extends HttpServlet {
                 res.setHeader("WWW-Authenticate", "Basic realm=\"Repository\"");
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
                 return;
-            } else {
-                username = password = null;
             }
         }
 
@@ -346,41 +345,51 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("</table>");
             writer.println("  <h3>Referenced node</h3>");
 
-            Node node = session.getRootNode();
+            // parse path
             while (path.startsWith("/")) {
                 path = path.substring(1);
             }
-            writer.print("Accessing node <code>");
-
-            writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "//\">/root</a>");
-
             path = URLDecoder.decode(path, "UTF-8");
-
-            String pathElt = "";
-            String pathEltName = "";
-            String currentPath = "";
-            StringTokenizer pathElts = new StringTokenizer(path, "/");
-            while (pathElts.hasMoreTokens()) {
-                pathElt = pathElts.nextToken();
-                pathEltName = StringEscapeUtils.escapeHtml(NodeNameCodec.decode(pathElt));
-                currentPath += "/" + URLEncoder.encode(pathElt, "UTF-8");
-                writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "/" + currentPath + "/\">/"
-                        + pathEltName + "</a>");
-            }
-            writer.println("</code>");
-
+            Node node = session.getRootNode();
             if (!"".equals(path)) {
                 node = node.getNode(path);
             }
+
+            // create breadcrumb style path
+            StringBuilder breadCrumb = new StringBuilder();
+            breadCrumb.append("Accessing node <code>");
+            String[] elements = path.split("/");
+            int count = elements.length;
+            if ("".equals(path)) {
+                count = 0;
+            }
+            for (int i = 0; i < count + 1; i++) {
+                breadCrumb.append("<a href=\"./");
+                for (int j = i; j < count; j++) {
+                    breadCrumb.append("../");
+                }
+                breadCrumb.append("\">");
+                if (i == 0) {
+                    breadCrumb.append("/root");
+                } else {
+                    breadCrumb.append(StringEscapeUtils.escapeHtml(NodeNameCodec.decode(elements[i - 1])));
+                }
+                breadCrumb.append("/</a>");
+            }
+            breadCrumb.append("</code>");
+            writer.println(breadCrumb);
+
             writer.println("    <ul>");
+
+            // list nodes
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
-                String childPath = "";
-                StringTokenizer childElts = new StringTokenizer(child.getPath(), "/");
-                while (childElts.hasMoreTokens()) {
-                    childPath += "/" + URLEncoder.encode(childElts.nextToken(), "UTF-8");
+                String childPath = child.getName();
+                if (child.getIndex() > 1) {
+                    childPath = childPath + "[" + child.getIndex() + "]";
                 }
-                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + childPath + "/" + "\">");
+                childPath = URLEncoder.encode(childPath, "UTF-8");
+                writer.print("    <li type=\"circle\"><a href=\"./" + childPath + "/" + "\">");
                 String displayName = StringEscapeUtils.escapeHtml(NodeNameCodec.decode(child.getName()));
                 if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     writer.print(displayName + " [" + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
@@ -389,6 +398,8 @@ public class RepositoryServlet extends HttpServlet {
                 }
                 writer.println("</a>");
             }
+
+            // list properties
             for (PropertyIterator iter = node.getProperties(); iter.hasNext();) {
                 Property prop = iter.nextProperty();
                 writer.print("    <li type=\"disc\">");
@@ -404,6 +415,7 @@ public class RepositoryServlet extends HttpServlet {
                     writer.println(prop.getString());
                 }
             }
+
             writer.println("    </ul>");
 
 
