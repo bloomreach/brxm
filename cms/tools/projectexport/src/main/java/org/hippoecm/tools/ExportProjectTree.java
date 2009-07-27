@@ -132,13 +132,22 @@ class ExportProjectTree extends Tree implements Serializable {
     @Override
     protected MarkupContainer newContextLink(final MarkupContainer parent, String id, final TreeNode node, MarkupContainer content) {
         if (getModelObject() instanceof ExportTreeModel) {
-            Element element = ((ExportTreeModel) getModelObject()).backingElement(node);
+            ExportTreeModel treeModel = (ExportTreeModel) getModelObject();
+            Element element = treeModel.backingElement(node);
             if (element instanceof Element.ProjectElement) {
-                return new EmptyPanel(id);
+                if(((Element.ProjectElement)element).projectName.equals("")) {
+                    return new ExportNewProjectItem(parent, id, treeModel, node, (Element.ProjectElement)element);
+                } else {
+                    return new ExportProjectItem(parent, id, treeModel, node, (Element.ProjectElement)element);
+                }
             } else if (element instanceof Element.NamespaceElement) {
-                return new ExportItem(parent, id, node, ((Element.NamespaceElement)element).cnd);
+                return new ExportNamespaceItem(parent, id, treeModel, node, (Element.NamespaceElement)element);
             } else if (element instanceof Element.ContentElement) {
-                return new ExportItem(parent, id, node, ((Element.ContentElement)element).file);
+                if (treeModel.backingTreeNode(node) != null && treeModel.backingElement(treeModel.backingTreeNode(node)) instanceof Element.ProjectElement && ((Element.ProjectElement) treeModel.backingElement(treeModel.backingTreeNode(node))).projectName.equals("")) {
+                    return new ExportNewContentItem(parent, id, treeModel, node, (Element.ContentElement) element);
+                } else {
+                    return new ExportContentItem(parent, id, treeModel, node, (Element.ContentElement) element);
+                }
             } else {
                 return new EmptyPanel(id);
             }

@@ -34,6 +34,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.hippoecm.repository.api.HippoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
@@ -42,14 +44,21 @@ public class XMLExport {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static final Logger log = LoggerFactory.getLogger(ProjectExport.class);
+
     SAXParserFactory factory;
     boolean outputCopyright = false;
 
     public XMLExport() {
         factory = SAXParserFactory.newInstance();
     }
+    
+    private IOException threadIOException = null;
+    private RepositoryException threadRepositoryException = null;
 
-    private void export(final Node node, Set<String> paths, File file, OutputStream ostream, boolean keepStructure) throws IOException, RepositoryException {
+    private synchronized void export(final Node node, Set<String> paths, File file, OutputStream ostream, boolean keepStructure) throws IOException, RepositoryException {
+        threadIOException = null;
+        threadRepositoryException = null;
         try {
             String nodePath = node.getPath() + "/";
             if(nodePath.startsWith("/hippo:configuration/hippo:temporary/content")) {
@@ -57,7 +66,7 @@ public class XMLExport {
             }
             for(String path : paths) {
                 if(path.startsWith(nodePath)) {
-                    System.err.println("tmpremove "+node.getPath()+" "+path);
+                    // temporarily, in session remove the path, will be reverted in the finally clause
                     Node offspring = node.getNode(path.substring(nodePath.length()+1));
                     offspring.remove();
                 }
@@ -72,11 +81,11 @@ public class XMLExport {
                             ((HippoSession)node.getSession()).exportDereferencedView(node.getPath(), pstream, false, false);
                             pstream.close();
                         } catch (IOException ex) {
-                            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                            ex.printStackTrace(System.err);
+                            log.error(ex.getClass().getName()+" in exporting xml file: "+ex.getMessage());
+                            threadIOException = ex;
                         } catch (RepositoryException ex) {
-                            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                            ex.printStackTrace(System.err);
+                            log.error(ex.getClass().getName()+" in exporting xml file: "+ex.getMessage());
+                            threadRepositoryException = ex;
                         }
                     }
                 };
@@ -97,17 +106,23 @@ public class XMLExport {
                 }
                 processor.process();
                 istream.close();
+                try {
+                    outputThread.join();
+                } catch(InterruptedException ex) {
+                }
             } catch (SAXException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
                 throw new RepositoryException("Export exception", ex);
             } catch (ParserConfigurationException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
                 throw new RepositoryException("Export exception", ex);
             }
         } finally {
             node.refresh(false);
+        }
+        if (threadIOException != null) {
+            throw threadIOException;
+        }
+        if (threadRepositoryException != null) {
+            throw threadRepositoryException;
         }
     }
 

@@ -15,16 +15,21 @@
  */
 package org.hippoecm.tools;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import org.hippoecm.repository.api.HippoNode;
 
 public class JcrDiff {
     @SuppressWarnings("unused")
@@ -52,16 +57,19 @@ public class JcrDiff {
         }
     }
 
-    ItemVisitor visitor;
+    ItemVisitor visitor = null;
     Set<String> excludes;
+    List<Node> addedNodes = new LinkedList<Node>();
     
     public JcrDiff(Set<Pair> correlate, ItemVisitor visitor) {
         this.visitor = visitor;
     }
     public JcrDiff(Set<String> exclusions) {
+        this.excludes = exclusions;
     }
-    public boolean diff(Node node1, Node node2) {
-        return false;
+    public boolean diff(Node node1, Node node2) throws RepositoryException {
+        addedNodes.clear();
+        return compare(node1, node2) == 1.0;
     }
 
     final double SCORE_NAME = 0.3;
@@ -96,13 +104,13 @@ public class JcrDiff {
         }
 
         // primary node type comparison
-        if(node1.getPrimaryNodeType().getName().equals(node2.getPrimaryNodeType().getName())) {
+        if(!node1.getPrimaryNodeType().getName().equals(node2.getPrimaryNodeType().getName())) {
             score -= SCORE_PRIMARY;
         }
 
-        // mixin node types comparison
+        // FIXME mixin node types comparison
         
-        // orderability of child nodes comparison
+        // FIXME orderability of child nodes comparison
 
         // property comparison
         ComparePropertySet propertySet1 = new ComparePropertySet(node1);
@@ -140,28 +148,38 @@ public class JcrDiff {
                         equals = (property1.getDouble() != property2.getDouble());
                         break;
                     case PropertyType.STRING:
-                        equals = (property1.getString() != property2.getString());
+                        equals = (property1.getString().equals(property2.getString()));
                         break;
                     default:
                         equals = property1.getString().equals(property2.getString());
                     }
                     if(equals) {
-                        visitor.match(property1, property2);
+                        if(visitor != null) {
+                            visitor.match(property1, property2);
+                        }
                     } else {
-                        visitor.diff(node1, property1, node2, property2);
+                        if(visitor != null) {
+                            visitor.diff(node1, property1, node2, property2);
+                        }
                         ++propertyMismatch;
                     }
                 } else {
-                    visitor.diff(node1, property1, node2, property2);
+                    if(visitor != null) {
+                        visitor.diff(node1, property1, node2, property2);
+                    }
                     ++propertyMismatch;
                 }
                 property1 = property2 = null;
             } else if(compareResult < 0) {
-                visitor.diff(node1, property1, node2, null);
+                if(visitor != null) {
+                    visitor.diff(node1, property1, node2, null);
+                }
                 ++propertyMismatch;
                 property1 = null;
             } else { // compareResult > 0
-                visitor.diff(node1, null, node2, property2);
+                if(visitor != null) {
+                    visitor.diff(node1, null, node2, property2);
+                }
                 ++propertyMismatch;
                 property2 = null;
             }
@@ -170,16 +188,79 @@ public class JcrDiff {
             score -= SCORE_PROPERTIES * propertyMismatch / propertyCount;
         }
 
-        // compare child nodes
-        CompareChildNodeSet childrenSet1 = new CompareChildNodeSet(node1);
-        CompareChildNodeSet childrenSet2 = new CompareChildNodeSet(node2);
-        Iterator<Node> childIter1 = childrenSet1.iterator();
-        Iterator<Node> childIter2 = childrenSet2.iterator();
-        Node child1 = null;
-        Node child2 = null;
-        int childCount = 0, childMismatch = 0;
-        while(childIter1.hasNext() || childIter2.hasNext()) {
-            //if(child1 == null && childIter1.hasNext()
+        boolean childrenModified = false;
+        boolean childrenAdded = false;
+        int index1 = 0, index2 = 0;
+        ArrayList<Node> children1 = new ArrayList<Node>();
+        ArrayList<Node> children2 = new ArrayList<Node>();
+        List<Node> preliminaryAddedNodes = new LinkedList<Node>();
+        for(NodeIterator iter = node1.getNodes(); iter.hasNext(); )
+            children1.add(iter.nextNode());
+        for(NodeIterator iter = node2.getNodes(); iter.hasNext(); )
+            children2.add(iter.nextNode());
+        while(index1 < children1.size() || index2 < children2.size()) {
+            Node child1 = (index1 < children1.size() ? children1.get(index1) : null);
+            Node child2 = (index2 < children2.size() ? children2.get(index2) : null);
+            if(child1 == null) {
+                childrenAdded = true;
+                preliminaryAddedNodes.add(child2);
+                if(visitor != null) {
+                    visitor.diff(null, null, child2, null);
+                }
+                ++index2;
+                continue;
+            }
+            if(child2 == null) {
+                childrenModified = true;
+                if(visitor != null) {
+                    visitor.diff(child1, null, null, null);
+                }
+                ++index1;
+                continue;
+            }
+            if(!child1.isSame(((HippoNode)child1).getCanonicalNode())) {
+                ++index1;
+                continue;
+            }
+            if(!child2.isSame(((HippoNode)child2).getCanonicalNode())) {
+                ++index2;
+                continue;
+            }
+            int nameCompare = child1.getName().compareTo(child2.getName());
+            if(nameCompare < 0) {
+                childrenModified = true;
+                if(visitor != null) {
+                    visitor.diff(child1, null, null, null);
+                }
+                ++index1;
+            } else if(nameCompare > 0) {
+                childrenAdded = true;
+                if(visitor != null) {
+                    visitor.diff(null, null, child2, null);
+                }
+                ++index2;
+            } else {
+                if(excludes.contains(child1.getPath())) {
+                    if (compare(child1, child2) != 1.0) {
+                        childrenModified = true;
+                        if (visitor != null) {
+                            visitor.diff(child1, null, child2, null);
+                        }
+                    } else {
+                        if (visitor != null) {
+                            visitor.match(child1, child2);
+                        }
+                    }
+                }
+                ++index1;
+                ++index2;
+            }
+        }
+        if(childrenAdded) {
+            addedNodes.addAll(preliminaryAddedNodes);
+        }
+        if(childrenModified || childrenAdded) {
+            score -= SCORE_CHILDREN;
         }
 
         return score;
@@ -216,35 +297,4 @@ public class JcrDiff {
             }
         }
     }
-
-    class CompareChildNodeSet extends TreeSet<Node> {
-        public CompareChildNodeSet(Node parent) throws RepositoryException {
-            super(parent.getDefinition().getDeclaringNodeType().hasOrderableChildNodes() ? new Comparator<Node>() {
-                public boolean equals(Object obj) {
-                    return getClass().equals(obj.getClass());
-                }
-
-                public int compare(Node n1, Node n2) {
-                    try {
-                    return n1.getName().compareTo(n2.getName());
-                    }  catch(RepositoryException ex) {
-                        return 0;
-                    }
-                }
-            } : new Comparator<Node>() {
-                        public boolean equals(Object obj) {
-                            return getClass().equals(obj.getClass());
-                        }
-
-                        public int compare(Node n1, Node n2) {
-try {
-    return n1.getName().compareTo(n2.getName());
-                    }  catch(RepositoryException ex) {
-                        return 0;
-                    }
-                        }
-                    });
-        }
-    }
 }
-
