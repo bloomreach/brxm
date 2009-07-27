@@ -37,6 +37,9 @@ public abstract class Element {
     private final static String SVN_ID = "$Id$";
 
     public abstract String getElementName();
+    
+    boolean excluded = false;
+
     public String getFullName() {
         return getElementName();
     }
@@ -79,7 +82,11 @@ public abstract class Element {
         }
         public Node getCurrent() throws RepositoryException {
             if(current == null) {
-                return (current = previous.getSession().getRootNode().getNode(path.substring(1)));
+                if(previous.getSession().getRootNode().hasNode(path.substring(1))) {
+                    return (current = previous.getSession().getRootNode().getNode(path.substring(1)));
+                } else {
+                    return null;
+                }
             } else {
                 return current;
             }
@@ -119,7 +126,7 @@ public abstract class Element {
 
     static class ProjectElement extends Element {
         String projectName;
-        Node projectNode;
+        private Node projectNode;
         URL url;
         Set<Element> elements = new HashSet<Element>();
         public String getElementName() {
@@ -127,6 +134,10 @@ public abstract class Element {
         }
         public String getFullName() {
             return projectName;
+        }
+        ProjectElement() {
+            projectName = "";
+            url = null;
         }
         ProjectElement(URL url, Node projects) throws MalformedURLException, IOException, RepositoryException, NotExportableException {
             this.url = url;
@@ -151,7 +162,7 @@ public abstract class Element {
                 Node node = iter.nextNode();
                 if (node != null) {
                     if (node.isNodeType("hipposys:initializeitem")) {
-                        System.err.println("WARNING, unsupported feature");
+                        throw new NotExportableException("unsupported initialize item definition");
                     }
                     if (node.isNodeType("hippo:initializeitem")) {
                         if (node.hasProperty("hippo:contentdelete")) {

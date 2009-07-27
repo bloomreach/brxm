@@ -17,17 +17,14 @@ package org.hippoecm.tools;
 
 import javax.swing.tree.TreeNode;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
 
-public class ExportItem extends Panel
+public class ExportProjectItem extends Panel
 {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: ExportItem.java 18965 2009-07-23 07:16:15Z bvanhalderen $";
 
-    public ExportItem(MarkupContainer parent, String id, TreeNode node, String file) {
+    ExportProjectItem(MarkupContainer parent, String id, final ExportTreeModel tree, final TreeNode node, Element.ProjectElement element) {
         super(id);
-        add(new Label("test", new Model(file)));
     }
 }

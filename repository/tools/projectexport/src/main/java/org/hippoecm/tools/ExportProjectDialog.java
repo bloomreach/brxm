@@ -61,7 +61,6 @@ public class ExportProjectDialog extends AbstractDialog {
                 if(projectName == null || projectName.equals(""))
                     return;
                 try {
-                    System.err.println("BERRY selected project "+projectName);
                     ((ExportTreeModel)treeComponent.getModelObject()).getExporter().selectProject(projectName);
                     File basedir = new File(location);
                     if(basedir.exists()) {
@@ -75,6 +74,7 @@ public class ExportProjectDialog extends AbstractDialog {
                         if(!basedir.getParentFile().isDirectory()) {
                             throw new IOException("path does not exist");
                         }
+                        basedir.mkdir();
                     }
                     ((ExportTreeModel)treeComponent.getModelObject()).getExporter().exportProject(basedir);
                 } catch(RepositoryException ex) {
@@ -110,26 +110,19 @@ public class ExportProjectDialog extends AbstractDialog {
                                     pstream.close();
                                 }
                             } catch (IOException ex) {
-                                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                                ex.printStackTrace(System.err);
+                                log.error("failed to export project ", ex);
                             }
                         }
                     };
                     thread.start();
                     return pstream;
                 } catch(RepositoryException ex) {
-                                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                                ex.printStackTrace(System.err);
                     log.error("failed to export project ", ex);
                     return null;
                 } catch(IOException ex) {
-                                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                                ex.printStackTrace(System.err);
                     log.error("failed to export project ", ex);
                     return null;
                 } catch(NotExportableException ex) {
-                                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                                ex.printStackTrace(System.err);
                     log.error("failed to export project ", ex);
                     return null;
                 }

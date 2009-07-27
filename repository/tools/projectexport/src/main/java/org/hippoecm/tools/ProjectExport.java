@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -53,14 +54,22 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.tools.Element.ContentElement;
 import org.hippoecm.tools.Element.NamespaceElement;
 import org.hippoecm.tools.Element.ProjectElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProjectExport {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static final Logger log = LoggerFactory.getLogger(ProjectExport.class);
+
     Set<String> ignorePaths = new HashSet<String>();
+    
+    Set<String> ignoreNamespaces = new HashSet<String>();
  
-    Set<Element> elements = new HashSet<Element>();
+    Set<String> ignoreProjects = new HashSet<String>();
+    
+    LinkedHashSet<Element> elements = new LinkedHashSet<Element>();
 
     Set<String> paths = new HashSet<String>();
 
@@ -71,7 +80,7 @@ public class ProjectExport {
     }
 
     Set<ProjectElement> projectElements(Set<Element> elements) {
-        Set<ProjectElement> projects = new HashSet<ProjectElement>();
+        Set<ProjectElement> projects = new LinkedHashSet<ProjectElement>();
         for(Element element : elements)
             if(element instanceof ProjectElement)
                 projects.add((ProjectElement)element);
@@ -118,17 +127,22 @@ public class ProjectExport {
 
     public void base(Node root, Node projectsScratch, Node contentScratch) throws RepositoryException, IOException, NotExportableException {
         ((HippoSession)projectsScratch.getSession()).importDereferencedXML(contentScratch.getPath(), LocalHippoRepository.class.getResourceAsStream("configuration.xml"), ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, ImportMergeBehavior.IMPORT_MERGE_THROW);
+        elements.add(new Element.ContentElement(contentScratch.getNode("hippo:configuration")));
 
         Set<String> prefixes = new HashSet<String>();
         for (String prefix : root.getSession().getNamespacePrefixes()) {
-            if(!prefix.equals("")) {
-            System.err.println("prefix \""+prefix+"\"");
-            prefixes.add(prefix);
+            if (!prefix.equals("")) {
+                if (log.isDebugEnabled()) {
+                    log.debug("prefix \""+prefix+"\"");
+                }
+                prefixes.add(prefix);
             }
         }
         for (Enumeration<URL> e = getClass().getClassLoader().getResources("hippoecm-extension.xml"); e.hasMoreElements();) {
             URL url = e.nextElement();
-            System.err.println("module "+url.toString());
+            if (log.isDebugEnabled()) {
+                log.debug("module "+url.toString());
+            }
             ProjectElement projectElement = new ProjectElement(url, projectsScratch);
             elements.add(projectElement);
         }
@@ -136,35 +150,39 @@ public class ProjectExport {
 
         for (Enumeration<URL> e = getClass().getClassLoader().getResources("org/hippoecm/repository/extension.xml"); e.hasMoreElements();) {
             URL url = e.nextElement();
-            System.err.println("extension "+url.toString());
+            if(log.isDebugEnabled()) {
+                log.debug("extension "+url.toString());
+            }
             InputStream project = url.openStream();
             ((HippoSession)projectsScratch.getSession()).importDereferencedXML(projectsScratch.getPath(), project, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, ImportMergeBehavior.IMPORT_MERGE_THROW);
             if(!projectsScratch.hasNode("hippo:initialize") || !projectsScratch.getNode("hippo:initialize").isNodeType("hippo:initializefolder")) {
                 throw new NotExportableException("bad project description");
             }
-            Matcher match = Pattern.compile("^jar:file:.*/([a-zA-z\\-]*)-[0-9A-Z\\-\\.]*.jar\\!.*$").matcher(url.toString());
-            match.matches();
+            Matcher match = Pattern.compile("^jar:file:.*/([a-zA-z\\-]*)-[0-9A-Za-z\\-\\.]*.jar\\!.*$").matcher(url.toString());
+            if (!match.matches()) {
+                throw new NotExportableException("unrecognized extension location");
+            }
             String name = match.group(1);
             projectsScratch.getSession().move(projectsScratch.getPath()+"/hippo:initialize", projectsScratch.getPath()+"/"+name);
             projectsScratch.save();
         }
         projectsScratch.save();
-
-        //System.err.println("projects dump:");
-        //Utilities.dump(System.err, projectsScratch);
+        contentScratch.save();
 
         QueryManager queryManager = projectsScratch.getSession().getWorkspace().getQueryManager();
         Query query = queryManager.createQuery("SELECT * FROM hippo:initializeitem WHERE jcr:path = '"+projectsScratch.getPath()+"/%' ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC", Query.SQL);
-        System.err.println("query "+query.getStatement());
         QueryResult result = query.execute();
-        for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
+        for (NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
             Node node = iter.nextNode();
-            System.err.println("content "+node.getPath());
+            if (log.isDebugEnabled()) {
+                log.debug("content "+node.getPath());
+            }
             if (node != null && node.hasProperty("hippo:contentresource")) {
                 String absPath = node.getProperty("hippo:contentroot").getString();
                 String relPath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
                 if (relPath.length() > 0 && !contentScratch.hasNode(relPath)) {
                     contentScratch.addNode(relPath);
+                    contentScratch.save();
                 }
                 ProjectElement projectElement = projectElement(elements, node.getParent().getName());
                 if(projectElement != null) {
@@ -176,14 +194,30 @@ public class ProjectExport {
                     Node contentroot = (relPath.length() > 0 ? contentScratch.getNode(relPath) : contentScratch);
                     NodeIterator pendingChangesIter = ((HippoNode)contentroot).pendingChanges("nt:base", true);
                     if(pendingChangesIter.hasNext()) {
-                    Node content = pendingChangesIter.nextNode();
-                    if (pendingChangesIter.hasNext()) {
-                        throw new NotExportableException("multiple changes in one xml file");
-                    }
-                    projectElement.elements.add(new ContentElement(node.getName(), absPath+"/"+content.getName(), node.getProperty("hippo:contentresource").getString(), content));
-                    contentScratch.save();
+                        Node content = pendingChangesIter.nextNode();
+                        if (pendingChangesIter.hasNext()) {
+                            boolean reallyMultipleChanges = false;
+                            while(pendingChangesIter.hasNext()) {
+                                Node changed = pendingChangesIter.nextNode();
+                                if (content.isSame(contentroot)) {
+                                    content = changed;
+                                } else if (!changed.isSame(contentroot)) {
+                                    reallyMultipleChanges = true;
+                                }
+                                if (log.isDebugEnabled()) {
+                                    log.debug("multiple changes: "+content.getPath()+" and "+changed.getPath()+" in "+contentroot.getPath());
+                                }
+                            }
+                            if (reallyMultipleChanges) {
+                                throw new NotExportableException("multiple changes in one xml file");
+                            }
+                        }
+                        projectElement.elements.add(new ContentElement(node.getName(), (absPath.endsWith("/") ? absPath : absPath + "/")+content.getName(), node.getProperty("hippo:contentresource").getString(), content));
+                        contentScratch.save();
                     } else {
-                        System.err.println("expected some change");
+                        if (log.isDebugEnabled()) {
+                            log.debug("expected some change");
+                        }
                         contentScratch.refresh(false);
                     }
                 } else {
@@ -196,13 +230,13 @@ public class ProjectExport {
                 }
             }
         }
-        
-        //System.err.println("content dump:");
+
         contentScratch.save();
-        //Utilities.dump(System.err, contentScratch);
 
         for (ProjectElement project : projectElements(elements)) {
-            System.err.println("project "+project.projectName);
+            if (log.isDebugEnabled()) {
+                log.debug("project "+project.projectName);
+            }
             project.expand(project, contentScratch);
         }
         
@@ -210,29 +244,39 @@ public class ProjectExport {
             Node namespaceNode = iter.nextNode();
             if (namespaceNode != null && namespaceNode.isNodeType("hipposysedit:namespace")) {
                 if (prefixes.contains(namespaceNode.getName())) {
-                    elements.add(new NamespaceElement(namespaceNode));
-                    prefixes.remove(namespaceNode.getName());
+                    if(!ignoreNamespaces.contains(namespaceNode.getName())) {
+                        elements.add(new NamespaceElement(namespaceNode));
+                        prefixes.remove(namespaceNode.getName());
+                    }
                 } else if(!namespaceNode.getName().equals("system")){
-                    throw new NotExportableException("Namespace "+namespaceNode.getName()+" was never instantiated");
+                    if(!ignoreNamespaces.contains(namespaceNode.getName())) {
+                        throw new NotExportableException("Namespace "+namespaceNode.getName()+" was never instantiated");
+                    }
                 }
             }
         }
+        for (ProjectElement project : projectElements(elements)) {
+            for(NamespaceElement namespace : namespaceElements(project.elements)) {
+                prefixes.remove(namespace.prefix);
+            }
+        }
         for (String prefix : prefixes) {
-            elements.add(new NamespaceElement(prefix, root.getSession().getNamespaceURI(prefix)));
+            if(!ignoreNamespaces.contains(prefix)) {
+                elements.add(new NamespaceElement(prefix, root.getSession().getNamespaceURI(prefix)));
+            }
         }
         for (ContentElement content : contentElements(elements).values()) {
             paths.add(content.getPath());
         }
-        for (NodeIterator iter = root.getNodes(); iter.hasNext();) {
-            Node node = iter.nextNode();
-            if (node != null && !node.getName().equals("/jcr:system")) {
-                if (!paths.contains(node.getPath())) {
-                    elements.add(new ContentElement(node));
-                }
+        for (ProjectElement project : projectElements(elements)) {
+            for (ContentElement content : contentElements(project.elements).values()) {
+                paths.add(content.getPath());
             }
         }
-        for(String path : paths) {
-            System.err.println("path "+path);
+        if (log.isDebugEnabled()) {
+            for(String path : paths) {
+                log.debug("path "+path);
+            }
         }
     }
 
@@ -288,15 +332,70 @@ public class ProjectExport {
         try {
             ignorePaths.add("/jcr:system");
             ignorePaths.add("/hippo:log");
+            ignorePaths.add("/hippo:configuration");
             ignorePaths.add("/hippo:configuration/hippo:temporary");
+            ignorePaths.add("/hippo:configuration/hippo:temporary/content/hippo:configuration");
             ignorePaths.add("/hippo:log");
+            ignoreNamespaces.add("fn");
+            ignoreNamespaces.add("fn_old");
+            ignoreNamespaces.add("xml");
+            ignoreNamespaces.add("xs");
+            ignoreNamespaces.add("jcr");
+            ignoreNamespaces.add("mix");
+            ignoreNamespaces.add("nt");
+            ignoreNamespaces.add("rep");
+            ignoreNamespaces.add("sv");
+            ignoreNamespaces.add("hippo");
+            ignoreNamespaces.add("hippogallery");
+            ignoreNamespaces.add("hippolog");
+            ignoreNamespaces.add("hipposched");
+            ignoreNamespaces.add("hippostd");
+            ignoreNamespaces.add("hipposys");
+            ignoreNamespaces.add("hipposysedit");
+            ignoreNamespaces.add("frontend");
+            ignoreNamespaces.add("editmodel");
+            ignoreNamespaces.add("editor");
+            ignoreNamespaces.add("reporting");
+            ignoreNamespaces.add("defaultcontent");
+            ignoreNamespaces.add("hippoldap");
+            ignoreProjects.add("Frontend engine");
+            ignoreProjects.add("Repository modules");
+            ignoreProjects.add("Hippo ECM package configuration");
+            ignoreProjects.add("Hippo ECM editor repository addon");
+            //ignoreProjects.add("Gallery Addon"); FIXME turn on after demo
+            ignoreProjects.add("Builtin repository addon");
+            ignoreProjects.add("Faceted date repository addon");
+            ignoreProjects.add("Xinha addon frontend plugin");
+            ignoreProjects.add("Hippo ECM authorisation configuration");
+            ignoreProjects.add("Reviewed action repository addon");
+            ignoreProjects.add("Frontend plugins");
             Node projectsNode = scratch.addNode("projects");
             Node contentNode = scratch.addNode("content");
             session.save();
             base(root, projectsNode, contentNode);
+            diff(root);
+            
+            ProjectElement newProject = new ProjectElement();
+            for(Iterator<Element> elementIter = elements.iterator(); elementIter.hasNext(); ) {
+                Element element = elementIter.next();
+                if(element instanceof ProjectElement) {
+                    if(ignoreProjects.contains(((ProjectElement)element).projectName)) {
+                        elementIter.remove();
+                    }
+                } else if(element instanceof ContentElement) {
+                    if(!ignorePaths.contains(((ContentElement)element).path)) {
+                        newProject.elements.add(element);
+                        elementIter.remove();
+                    }
+                } else if(element instanceof NamespaceElement) {
+                    newProject.elements.add(element);
+                    elementIter.remove();
+                }
+            }
+            elements.add(newProject);
         } finally {
             scratch.refresh(false);
-            /*
+            /* FIXME put back in when project finalizes, leave for debugging
             if(scratch.hasNode("projects")) {
                 scratch.getNode("projects").remove();
             }
@@ -308,21 +407,53 @@ public class ProjectExport {
         }
     }
 
-    private void diff() throws RepositoryException {
+    private void diff(Node root) throws RepositoryException {
         // now check all content elements for changes
         Set<String> paths = new HashSet<String>();
-        paths.addAll(ignorePaths);
+        paths.addAll(this.paths);
         for (ContentElement content : contentElements(elements).values()) {
             paths.add(content.getPath());
         }
+        for (NodeIterator iter = root.getNodes(); iter.hasNext(); ) {
+            Node node = iter.nextNode();
+            if (node != null) {
+                if (!paths.contains(node.getPath())) {
+                    paths.add(node.getPath());
+                    elements.add(new ContentElement(node));
+                }
+            }
+        }
         JcrDiff diff = new JcrDiff(paths);
+        Set<ContentElement> addedContent = new HashSet<ContentElement>();
         for (ContentElement content : contentElements(elements).values()) {
-            if (!(diff.diff(content.getPrevious(), content.getCurrent()))) {
-                System.err.println("compare " + content.getPath() + " dirty");
+            Node previous = content.getPrevious();
+            Node current = content.getCurrent();
+            if(previous == null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("compare " + content.getPath() + " new");
+                }
+                content.setDirty();
+            } else if(current == null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("compare " + content.getPath() + " deleted");
+                }
+                content.setDirty();
+            } else if (!(diff.diff(content.getPrevious(), content.getCurrent()))) {
+                if (log.isDebugEnabled()) {
+                    log.debug("compare " + content.getPath() + " dirty");
+                }
+                if(content.getPath().startsWith("/hippo:configuration")) { // FIXME
+                    for(Node added : diff.addedNodes) {
+                        addedContent.add(new ContentElement(added));
+                    }
+                }
                 content.setDirty();
             } else {
-                System.err.println("compare " + content.getPath() + " clean");
+                if (log.isDebugEnabled()) {
+                    log.debug("compare " + content.getPath() + " clean");
+                }
             }
+            elements.addAll(addedContent);
         }
     }
 
@@ -441,7 +572,7 @@ public class ProjectExport {
         output.closeEntry();
 
         for (NamespaceElement namespace : nsElements) {
-            if(namespace.cnd != null) {
+            if(namespace.cnd != null && !namespace.excluded) {
                 ze = new ZipEntry("src/main/resources/" + namespace.prefix + ".cnd");
                 output.putNextEntry(ze);
                 PrintWriter writer = new PrintWriter(output);
@@ -451,10 +582,12 @@ public class ProjectExport {
             }
         }
         for (ContentElement element : elements) {
-            ze = new ZipEntry("src/main/resources/"+element.file);
-            output.putNextEntry(ze);
-            xmlexport.export(element.getCurrent(), output, paths);
-            output.closeEntry();
+            if(!element.excluded) {
+                ze = new ZipEntry("src/main/resources/" + element.file);
+                output.putNextEntry(ze);
+                xmlexport.export(element.getCurrent(), output, paths);
+                output.closeEntry();
+            }
         }
 
         output.close();
@@ -472,7 +605,7 @@ public class ProjectExport {
             resources.mkdirs();
         }
         for (NamespaceElement namespace : nsElements) {
-            if(namespace.cnd != null) {
+            if(namespace.cnd != null && !namespace.excluded) {
                 File file = new File("src/main/resources/" + namespace.prefix + ".cnd");
                 FileOutputStream ostream = new FileOutputStream(file);
                 PrintWriter writer = new PrintWriter(ostream);
@@ -482,24 +615,14 @@ public class ProjectExport {
             }
         }
         for (ContentElement element : elements) {
-            File file = new File(resources, element.file);
-            xmlexport.export(element.getCurrent(), file, paths);
+            if(!element.excluded) {
+                File file = new File(resources, element.file);
+                if (file.exists()) {
+                    xmlexport.export(element.getCurrent(), file, paths);
+                } else {
+                    xmlexport.export(element.getCurrent(), new FileOutputStream(file), paths);
+                }
+            }
         }
     }
-
-        // determine base
-        // find all projectsScratch not already in base
-        // allow the user to add a project
-        // ask the user where projectsScratch are located on disk
-        // look up new namespaces and add them to elements list
-        // find out all locations changed against base
-        //   excluding working location base
-        //   hippo:temporary
-        //   hippo:initializefolder
-        // match changes against locations listed in project
-        // provide default mapping for known possible configurations
-        // allow the user to enter new names for unknown mappings or split a mapping
-        //   and allow to exclude mappings
-        // select which project to export
-        // fitler on this project, and filter on 
 }
