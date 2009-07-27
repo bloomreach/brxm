@@ -44,4 +44,14 @@ public interface ContainerConstants {
      */
     String CONTEXT_NAMESPACE_ATTRIBUTE = "org.hippoecm.hst.container.context.namespace";
     
+    /**
+     * The key used to set forward path.
+     */
+    String HST_FORWARD_PATH_INFO = "org.hippoecm.hst.container.forward.path_info";
+    
+    /**
+     * The key used to set the forced path info for request processing.
+     */
+    String HST_CONTAINER_PATH_INFO = "org.hippoecm.hst.container.path_info";
+    
 }

@@ -81,6 +81,8 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     private Object response;
 
     private String redirectLocation;
+    
+    private String forwardPathInfo;
 
     public AbstractHstResponseState(Object request, Object response) {
         this.response = response;
@@ -229,11 +231,28 @@ public abstract class AbstractHstResponseState implements HstResponseState {
             this.redirectLocation = redirectLocation;
         }
     }
-
+    
     public String getRedirectLocation() {
         return redirectLocation;
     }
-
+    
+    public void forward(String pathInfo) throws IOException {
+        if (isRenderResponse) {
+            if (response instanceof HstResponse) {
+                ((HstResponse) response).forward(pathInfo);
+            } else {
+                failIfCommitted();
+                closed = true;
+                committed = true;
+                forwardPathInfo = pathInfo;
+            }
+        }
+    }
+    
+    public String getForwardPathInfo() {
+        return forwardPathInfo;
+    }
+    
     /*
      * (non-Javadoc)
      * 

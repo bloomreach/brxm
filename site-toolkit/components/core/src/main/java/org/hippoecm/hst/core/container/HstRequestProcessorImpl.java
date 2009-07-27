@@ -27,6 +27,10 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
     }
 
     public void processRequest(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+        processRequest(requestContainerConfig, servletRequest, servletResponse, null);
+    }
+    
+    public void processRequest(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, String pathInfo) throws ContainerException {
         // this request processor's classloader could be different from the above classloader
         // because this request processor and other components could be loaded from another web application context
         // such as a portal web application.
@@ -46,19 +50,27 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
                 Thread.currentThread().setContextClassLoader(processorClassLoader);
             }
             
+            if (pathInfo != null) {
+                servletRequest.setAttribute(ContainerConstants.HST_CONTAINER_PATH_INFO, pathInfo);
+            }
+            
             pipeline.beforeInvoke(requestContainerConfig, servletRequest, servletResponse);
             pipeline.invoke(requestContainerConfig, servletRequest, servletResponse);
         } catch(ContainerNotFoundException e){
-          throw e;  	
+          throw e;      
         } catch (Throwable th) {
             throw new ContainerException(th);
         } finally {
             pipeline.afterInvoke(requestContainerConfig, servletRequest, servletResponse);
+            
+            if (pathInfo != null) {
+                servletRequest.removeAttribute(ContainerConstants.HST_CONTAINER_PATH_INFO);
+            }
             
             if (processorClassLoader != containerClassLoader) {
                 Thread.currentThread().setContextClassLoader(containerClassLoader);
             }
         }
     }
-
+    
 }

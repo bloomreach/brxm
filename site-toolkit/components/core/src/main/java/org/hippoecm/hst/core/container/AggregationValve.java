@@ -110,6 +110,8 @@ public class AggregationValve extends AbstractValve {
                     }
                 }
                 
+                String forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
+                
                 if (errorCode > 0) {
                     
                     try {
@@ -126,9 +128,13 @@ public class AggregationValve extends AbstractValve {
                         if (log.isDebugEnabled()) {
                             log.warn("Exception invocation on sendError().", e);
                         } else if (log.isWarnEnabled()) {
-                            log.warn("Exception invocation on sendError().");
+                            log.warn("Exception invocation on sendError(). {}", e.toString());
                         }
                     }
+                    
+                } else if (forwardPathInfo != null) {
+                    
+                    servletRequest.setAttribute(ContainerConstants.HST_FORWARD_PATH_INFO, forwardPathInfo);
                     
                 } else {
 
@@ -155,7 +161,7 @@ public class AggregationValve extends AbstractValve {
                 }
             }
         }
-
+        
         // continue
         context.invokeNext();
     }
@@ -261,7 +267,7 @@ public class AggregationValve extends AbstractValve {
                             if (log.isDebugEnabled()) {
                                 log.warn("Exception during flushing the traceToolWindow's response state.", e);
                             } else if (log.isWarnEnabled()) {
-                                log.warn("Exception during flushing the traceToolWindow's response state.");
+                                log.warn("Exception during flushing the traceToolWindow's response state. {}", e.toString());
                             }                    
                         }
                     }
@@ -285,9 +291,9 @@ public class AggregationValve extends AbstractValve {
             if (window.hasComponentExceptions()) {
                 for (HstComponentException hce : window.getComponentExceptions()) {
                     if (log.isDebugEnabled()) {
-                        log.warn("Component exception found: {}", hce.toString(), hce);
+                        log.warn("Component exception found.", hce);
                     } else if (log.isWarnEnabled()) {
-                        log.warn("Component exception found: {}", hce.toString());
+                        log.warn("Component exception found. {}", hce.toString());
                     }
                 }
 

@@ -396,4 +396,8 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         }
     }
     
+    public void forward(String pathInfo) throws IOException {
+        this.responseState.forward(pathInfo);
+    }
+    
 }

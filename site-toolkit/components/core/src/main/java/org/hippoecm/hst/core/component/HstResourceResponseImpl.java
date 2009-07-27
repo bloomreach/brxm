@@ -108,4 +108,8 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
         throw new UnsupportedOperationException("Resource response is not allowed to invoke flushChildContent().");
     }
     
+    public void forward(String pathInfo) throws IOException {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke forward().");
+    }
+    
 }

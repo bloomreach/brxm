@@ -58,6 +58,17 @@ public interface HstContainerURLProvider {
     HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse);
     
     /**
+     * Parses the current request with a specified pathInfo
+     * and creates an {@link HstContainerURL} instance.
+     * 
+     * @param servletRequest
+     * @param servletResponse
+     * @param pathInfo
+     * @return
+     */
+    HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, String pathInfo);
+    
+    /**
      * Parses the current request with the current {@link HstReqeustContext} and a specified pathInfo
      * and creates an {@link HstContainerURL} instance.
      * 

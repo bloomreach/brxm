@@ -35,5 +35,16 @@ public interface HstRequestProcessor {
      * @throws ContainerException
      */
     void processRequest(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
-
+    
+    /**
+     * processes request
+     * 
+     * @param requestContainerConfig the holder for the servletConfig and classloader of the HST container
+     * @param servletRequest the servletRequest of the HST request
+     * @param servletResponse the servletResponse of the HST response
+     * @param pathInfo the forced path info for the HST request processing
+     * @throws ContainerException
+     */
+    void processRequest(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, String pathInfo) throws ContainerException;
+    
 }

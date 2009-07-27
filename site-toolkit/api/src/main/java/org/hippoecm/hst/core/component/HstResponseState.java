@@ -71,7 +71,11 @@ public interface HstResponseState
     void sendRedirect(String redirectLocation) throws IOException;
 
     String getRedirectLocation();
-
+    
+    void forward(String pathInfo) throws IOException;
+    
+    String getForwardPathInfo();
+    
     void setDateHeader(String name, long date);
 
     void setHeader(String name, String value);
@@ -123,5 +127,5 @@ public interface HstResponseState
     void clear();
 
     void flush() throws IOException;
-
+    
 }

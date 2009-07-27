@@ -90,6 +90,10 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         return parseURL(servletRequest, servletResponse, null, null);
     }
     
+    public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, String pathInfo) {
+        return parseURL(servletRequest, servletResponse, null, pathInfo);
+    }
+    
     public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, String pathInfo) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         

@@ -234,4 +234,18 @@ public interface HstResponse extends HttpServletResponse {
      */
     void setStatus(int sc);
     
+    /**
+     * Forwards the page request to pathInfo.
+     * <P>
+     * Only in {@link HstComponent#doBeforeRender(HstRequest, HstResponse)},
+     * the invocation on this method will be effective.
+     * If the invocation on this method is done in a view page during render phase,
+     * the invocation will be just ignored with no operation.
+     * </P>
+     * 
+     * @param pathInfo the path info to forward
+     * @throws IOException If the response was committed
+     */
+    void forward(String pathInfo) throws IOException;
+    
 }
