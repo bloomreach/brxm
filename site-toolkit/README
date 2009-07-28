@@ -20,9 +20,18 @@ How to test and build Hippo Site Toolkit
   (1) Start a repository server with test contents (/testsuite/cms).
 
   (2) Build and Run Tests
+  
+    - Copy build.properties-sample to build.properties in the project root folder.
 
     $ mvn clean install -DskipTests
     $ mvn test
+    
+    Note: If you run a unit test case in your IDE, 
+          you should set a Java system property, "test.properties.resource", 
+          to the absolute path of build.properties for your runtime or debugging environment of your IDE.
+          For example, you can set "VM Arguments" in Eclipse like the following:
+          
+            "-Dtest.properties.resource=file:/home/hstdev/hst-2/build.properties"
 
 4. Build
 
