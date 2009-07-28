@@ -37,6 +37,10 @@ public class DateFieldWidget extends Panel {
     private static final Logger log = LoggerFactory.getLogger(DateFieldWidget.class);
 
     public DateFieldWidget(String id, IModel model) {
+        this(id, model, false);
+    }
+    
+    public DateFieldWidget(String id, IModel model, boolean todayLinkVisible) {
         super(id, model);
 
         final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
@@ -64,7 +68,7 @@ public class DateFieldWidget extends Panel {
                 super.setObject(object);
             }
 
-        }));
+        }, todayLinkVisible));
     }
 
 }
