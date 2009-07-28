@@ -18,20 +18,17 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.browse.list.resolvers.TemplateTypeRenderer;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 
 public class TypesListingPlugin extends AbstractListingPlugin {
@@ -58,12 +55,7 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         columns.add(column);
 
         column = new ListColumn(new StringResourceModel("typeslisting-type", this, null), null);
-        column.setRenderer(new IListCellRenderer() {
-            private static final long serialVersionUID = 1L;
-            public Component getRenderer(String id, IModel model) {
-                return new Label(id, new StringResourceModel("typeslisting-item", TypesListingPlugin.this, null));
-            }
-        });
+        column.setRenderer(new TemplateTypeRenderer());
         columns.add(column);
 
         return new TableDefinition(columns);
