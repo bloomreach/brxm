@@ -263,7 +263,7 @@ public class PluginConfigTest extends PluginTest {
         plugins.add(1, first);
         assertEquals(2, plugins.size());
 
-        assertEquals("abc[1]", plugins.get(0).getName());
+        assertEquals("abc", plugins.get(0).getName());
 
         List<String> services = config.getServices();
         services.add("testing");
