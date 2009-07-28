@@ -15,6 +15,8 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.util.List;
+
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ResourceReference;
@@ -46,6 +48,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITranslateService;
+import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AjaxDateTimeField;
@@ -118,12 +121,29 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             if (dialog != null) {
                 getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
             } else {
-                try {
-                    execute();
-                } catch (Exception ex) {
-                    getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(
-                            createResponseDialog(ex.getClass().getName() + ": " + ex.getMessage()));
-                    ex.printStackTrace();
+                boolean submit = true;
+
+                IPluginConfig config = getPluginConfig();
+                if (config.getString(IValidateService.VALIDATE_ID) != null) {
+                    List<IValidateService> validators = getPluginContext().getServices(
+                            config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
+                    for (IValidateService validator : validators) {
+                        validator.validate();
+                        if (validator.hasError()) {
+                            submit = false;
+                        }
+                    }
+                }
+
+                if (submit) {
+                    try {
+                        execute();
+                    } catch (Exception ex) {
+                        getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(
+                                createResponseDialog(ex.getClass().getName() + ": " + ex.getMessage()));
+                        ex.printStackTrace();
+                        throw new RuntimeException("workflow exception", ex);
+                    }
                 }
             }
         }
@@ -200,6 +220,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 try {
                     execute();
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     error(ex);
                 }
             }

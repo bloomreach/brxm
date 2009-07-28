@@ -108,7 +108,6 @@ class MenuHierarchy {
 
     public void flatten() {
         Map<String, MenuHierarchy> submenus = this.submenus;
-        List<ActionDescription> items = this.items;
         this.submenus = new LinkedHashMap<String, MenuHierarchy>();
         this.items = new LinkedList<ActionDescription>();
         for(MenuHierarchy submenu : submenus.values()) {
