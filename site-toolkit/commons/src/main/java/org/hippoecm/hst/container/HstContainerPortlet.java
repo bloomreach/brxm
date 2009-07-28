@@ -227,7 +227,7 @@ public class HstContainerPortlet extends GenericPortlet {
         HstContainerPortletContext.reset(request, response);
         
         try {
-            boolean editMode = PortletMode.EDIT.equals(request.getPortletMode());
+            boolean isEditMode = PortletMode.EDIT.equals(request.getPortletMode());
 
             String portletTitle = defaultPortletTitle;
             
@@ -235,7 +235,7 @@ public class HstContainerPortlet extends GenericPortlet {
             
             String hstPathInfo = this.defaultHstPathInfo;
             
-            if (editMode && this.defaultHstPathInfoEditMode != null) {
+            if (isEditMode && this.defaultHstPathInfoEditMode != null) {
                 hstPathInfo = this.defaultHstPathInfoEditMode;
             }
             
@@ -255,7 +255,7 @@ public class HstContainerPortlet extends GenericPortlet {
                         hstServletPath = prefValue;
                     }
                     
-                    if (editMode) {
+                    if (isEditMode) {
                         prefValue = prefs.getValue(HST_PATH_INFO_EDIT_MODE_PARAM, null);
                         
                         if (prefValue == null && this.defaultHstPathInfoEditMode == null) {
@@ -303,9 +303,14 @@ public class HstContainerPortlet extends GenericPortlet {
     
     protected String getHstDispatchUrl(PortletRequest request, PortletResponse response, String hstServletPath, String hstPathInfo) {
         StringBuilder hstDispUrl = new StringBuilder(100);
+
+        String lifecyclePhase = (String) request.getAttribute(PortletRequest.LIFECYCLE_PHASE);
+        boolean isActionResponse = PortletRequest.ACTION_PHASE.equals(lifecyclePhase);
+        boolean isViewMode = PortletMode.VIEW.equals(request.getPortletMode());
+        
         String hstDispPathParam = request.getParameter(HST_PATH_PARAM_NAME + request.getPortletMode().toString());
         
-        if (hstDispPathParam == null) {
+        if (hstDispPathParam == null && (isViewMode || isActionResponse)) {
             hstDispPathParam = request.getParameter(HST_PATH_PARAM_NAME);
         }
         
