@@ -169,21 +169,22 @@
     </dependency>
     
   </dependencies>
-
+  
   <build>
-    <defaultGoal>package</defaultGoal>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-      <testResource>
-        <directory>..</directory>
-        <includes>
-          <include>*.properties</include>
-        </includes>
-      </testResource>
-    </testResources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>test.properties.resource</name>
+              <value>file:${basedir}/../build.properties</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
-
-
+  
 </project>

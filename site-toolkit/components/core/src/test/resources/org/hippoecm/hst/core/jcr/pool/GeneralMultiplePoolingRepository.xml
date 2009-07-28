@@ -37,7 +37,7 @@
     </property>
     <property name="locations">
       <list>
-        <value>classpath:build.properties</value>
+        <value>${test.properties.resource}</value>
       </list>
     </property>
   </bean>
