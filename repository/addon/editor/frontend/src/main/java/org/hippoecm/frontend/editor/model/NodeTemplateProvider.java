@@ -124,9 +124,8 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
                 if (predecessor != null) {
                     try {
                         Node parent = (Node) getItemModel().getObject();
-                        String srcPath = model.getNode().getName() + "[" + model.getNode().getIndex() + "]";
-                        String destPath = predecessor.getNode().getName() + "[" + predecessor.getNode().getIndex()
-                                + "]";
+                        String srcPath = model.getNode().getName() + (model.getNode().getIndex() > 1 ? "[" + model.getNode().getIndex() + "]" : "");
+                        String destPath = predecessor.getNode().getName() + (predecessor.getNode().getIndex() > 1 ? "[" + predecessor.getNode().getIndex() + "]" : "");
                         parent.orderBefore(srcPath, destPath);
                     } catch (RepositoryException ex) {
                         ex.printStackTrace();

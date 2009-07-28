@@ -107,7 +107,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 Node node = model.getNode();
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                workflow.rename(node.getName() + "[" + node.getIndex() + "]", NodeNameCodec.encode(name, true));
+                workflow.rename(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""), NodeNameCodec.encode(name, true));
             }
         });
 
@@ -174,7 +174,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 Node node = model.getNode();
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                workflow.delete(node.getName() + "[" + node.getIndex() + "]");
+                workflow.delete(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""));
             }
         });
 

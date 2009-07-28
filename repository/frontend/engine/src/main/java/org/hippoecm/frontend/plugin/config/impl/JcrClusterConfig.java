@@ -164,8 +164,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
 
                     if (node.getPrimaryNodeType().hasOrderableChildNodes() && (index < (size() - 1))) {
                         Node previous = getNode(index);
-                        node.orderBefore(previous.getName() + "[" + previous.getIndex() + "]", child.getName() + "["
-                                + child.getIndex() + "]");
+                        node.orderBefore(previous.getName() + (previous.getIndex() > 1 ? "[" + previous.getIndex() + "]" : ""), child.getName() + (child.getIndex() > 1 ? "[" + child.getIndex() + "]" : ""));
                     }
 
                     notifyObservers();

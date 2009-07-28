@@ -212,7 +212,7 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
         try {
             Node node = nodeModel.getNode();
             if (node != null) {
-                return node.getName() + "[" + node.getIndex() + "]";
+                return node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : "");
             } else {
                 log.warn("Node model is not valid");
             }
