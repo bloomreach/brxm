@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import java.util.Collection;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -24,6 +26,7 @@ import javax.swing.tree.TreeNode;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.tree.ITreeState;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.ILabelTreeNode;
@@ -60,6 +63,18 @@ public abstract class JcrTree extends Tree {
         treeState.expandNode((TreeNode) treeModel.getRoot());
     }
 
+    @Override
+    public void onDetach() {
+        ITreeState treeState = getTreeState();
+        Collection<TreeNode> collection = treeState.getSelectedNodes();
+        for (TreeNode object : collection) {
+            if (object instanceof IDetachable) {
+                ((IDetachable) object).detach();
+            }
+        }
+        super.onDetach();
+    }
+    
     @Override
     protected abstract void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode);
 
