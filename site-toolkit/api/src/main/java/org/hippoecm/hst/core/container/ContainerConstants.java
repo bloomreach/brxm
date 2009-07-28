@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
+import org.hippoecm.hst.core.request.HstRequestContext;
+
 /**
  * HstComponent container constants
  * 
@@ -33,6 +35,11 @@ public interface ContainerConstants {
      * <code>HttpServletRequest</code>.
      */
     String HST_RESPONSE = "org.hippoecm.hst.container.response";
+    
+    /**
+     * The attribute name used to set the request context object into the servlet request.
+     */
+    String HST_REQUEST_CONTEXT = "org.hippoecm.hst.core.request.HstRequestContext";
     
     /**
      * The reference namespace for container managed resource url.

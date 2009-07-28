@@ -27,7 +27,7 @@ public class SiteMenusResolvingValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException {
        
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
+        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         HstSiteMenus siteMenus = this.siteMenusManager.getSiteMenus(requestContext);
         ((HstRequestContextImpl)requestContext).setHstSiteMenus(siteMenus);
         

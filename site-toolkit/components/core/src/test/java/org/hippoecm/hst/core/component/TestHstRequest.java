@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConfigurationImpl;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstComponentWindowImpl;
 import org.hippoecm.hst.core.container.HstContainerURLImpl;
@@ -66,7 +67,7 @@ public class TestHstRequest extends AbstractSpringTestCase {
         // Sets attributes for portlet environment
         this.servletRequest.setAttribute("javax.portlet.request", "something");
         // Sets request context
-        this.servletRequest.setAttribute(HstRequestContext.class.getName(), this.requestContext);
+        this.servletRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, this.requestContext);
         
         HstComponentWindow rootWindow = new HstComponentWindowImpl("news", "news", "", null, null, null, null);
         HstComponentWindow headWindow = new HstComponentWindowImpl("head", "h", "h", null, null, null, rootWindow);
@@ -76,10 +77,10 @@ public class TestHstRequest extends AbstractSpringTestCase {
         HstRequest hstRequestForHeadWindow = new HstRequestImpl(this.servletRequest, this.requestContext, headWindow, HstRequest.RENDER_PHASE);
         HstRequest hstRequestForBodyWindow = new HstRequestImpl(this.servletRequest, this.requestContext, bodyWindow, HstRequest.RENDER_PHASE);
         
-        assertNotNull(this.servletRequest.getAttribute(HstRequestContext.class.getName()));
-        assertNotNull(hstRequestForRootWindow.getAttribute(HstRequestContext.class.getName()));
-        assertNotNull(hstRequestForHeadWindow.getAttribute(HstRequestContext.class.getName()));
-        assertNotNull(hstRequestForBodyWindow.getAttribute(HstRequestContext.class.getName()));
+        assertNotNull(this.servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT));
+        assertNotNull(hstRequestForRootWindow.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT));
+        assertNotNull(hstRequestForHeadWindow.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT));
+        assertNotNull(hstRequestForBodyWindow.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT));
         
         hstRequestForRootWindow.setAttribute("name", "root");
         hstRequestForHeadWindow.setAttribute("name", "head");

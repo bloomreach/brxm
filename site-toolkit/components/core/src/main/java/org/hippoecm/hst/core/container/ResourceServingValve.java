@@ -33,7 +33,7 @@ public class ResourceServingValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException {
         ServletRequest servletRequest = context.getServletRequest();
         ServletResponse servletResponse = context.getServletResponse();
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
+        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
 
         if (!context.getServletResponse().isCommitted() && requestContext.getBaseURL().getResourceWindowReferenceNamespace() != null) {
             HstContainerURL baseURL = requestContext.getBaseURL();

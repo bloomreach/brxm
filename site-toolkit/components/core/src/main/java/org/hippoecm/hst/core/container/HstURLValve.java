@@ -26,7 +26,7 @@ public class HstURLValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException {
 
         ServletRequest servletRequest = context.getServletRequest();
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
+        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
 
         String contextNamespace = (String) servletRequest.getAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE);
         

@@ -35,15 +35,20 @@ public class InitializationValve extends AbstractValve
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
-        HstRequestContext requestContext = getRequestContextComponent().create();
-        ((HstRequestContextImpl) requestContext).setContainerConfiguration(getContainerConfiguration());
         ServletRequest servletRequest = context.getServletRequest();
-        servletRequest.setAttribute(HstRequestContext.class.getName(), requestContext);
+        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+
+        if (requestContext == null) {
+            requestContext = getRequestContextComponent().create();
+            ((HstRequestContextImpl) requestContext).setContainerConfiguration(getContainerConfiguration());
+            servletRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
+        }
         
         // if there is a Mapping on the request, it is set on the HstRequestContext.
-        Object mapping;
-        if( (mapping = servletRequest.getAttribute(MatchedMapping.class.getName())) != null && mapping instanceof MatchedMapping  ) {
-            ((HstRequestContextImpl)requestContext).setMatchedMapping((MatchedMapping) mapping);
+        MatchedMapping matchedMapping = (MatchedMapping) servletRequest.getAttribute(MatchedMapping.class.getName());
+        
+        if (matchedMapping != null) {
+            ((HstRequestContextImpl) requestContext).setMatchedMapping(matchedMapping);
         }
         
         if (this.resourceLifecycleManagements != null) {

@@ -38,12 +38,16 @@ public class CleanupValve extends AbstractValve
                 resourceLifecycleManagement.disposeAllResources();
             }
         }
-       
-        ServletRequest servletRequest = context.getServletRequest();
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
         
-        if (requestContext != null) {
-            getRequestContextComponent().release(requestContext);
+        ServletRequest servletRequest = context.getServletRequest();
+        String forwardPathInfo = (String) servletRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+        
+        if (forwardPathInfo == null) {
+            HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+            
+            if (requestContext != null) {
+                getRequestContextComponent().release(requestContext);
+            }
         }
         
         // continue

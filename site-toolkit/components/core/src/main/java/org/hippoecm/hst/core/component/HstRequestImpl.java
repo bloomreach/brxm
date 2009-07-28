@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.collection.CompositeCollection;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -257,7 +258,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
     
     public HstRequestContext getRequestContext() {
-        return (HstRequestContext) super.getAttribute(HstRequestContext.class.getName());
+        return (HstRequestContext) super.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
 
     public HstComponentWindow getComponentWindow() {

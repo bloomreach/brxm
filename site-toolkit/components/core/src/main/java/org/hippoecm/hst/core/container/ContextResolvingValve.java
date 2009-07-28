@@ -35,7 +35,7 @@ public class ContextResolvingValve extends AbstractValve
     {
         HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
         HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(HstRequestContext.class.getName());
+        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         HstContainerURL baseURL = requestContext.getBaseURL();
         
         MatchedMapping matchedMapping;
