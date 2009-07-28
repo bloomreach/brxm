@@ -53,7 +53,7 @@ class MenuHierarchy {
                 if(!action.isVisible()) {
                     continue;
                 }
-                if(action.getId().equals("info")) {
+                if(action.getId().startsWith("info")) {
                     // processed in second round
                 } else if(action.getId().equals("edit")) {
                     put(action);
@@ -99,7 +99,7 @@ class MenuHierarchy {
                 if(!action.isVisible()) {
                     continue;
                 }
-                if(action.getId().equals("info")) {
+                if(action.getId().startsWith("info")) {
                     put(action);
                 }
             }
@@ -123,7 +123,7 @@ class MenuHierarchy {
         List<Component> list = new LinkedList<Component>();
         if (context instanceof MenuBar) {
             for (ActionDescription item : items) {
-                if (!(item.getId().equals("info") || item.getId().equals("spacer"))) {
+                if (!(item.getId().startsWith("info") || item.getId().equals("spacer"))) {
                     list.add(new MenuAction("item", item));
                 }
             }
@@ -131,7 +131,7 @@ class MenuHierarchy {
                 list.add(new MenuButton("item", submenu.getKey(), submenu.getValue()));
             }
             for (ActionDescription item : items) {
-                if (item.getId().equals("info")) {
+                if (item.getId().startsWith("info")) {
                     list.add(new MenuLabel("item", item));
                 } else if(item.getId().equals("spacer")) {
                     list.add(new MenuSpacer("item"));

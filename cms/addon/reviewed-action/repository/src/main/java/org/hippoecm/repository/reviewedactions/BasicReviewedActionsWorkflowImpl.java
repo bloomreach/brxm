@@ -100,6 +100,9 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         } else {
             editable = false;
         }
+        if(!editable && PublishableDocument.DRAFT.equals(state)) {
+            info.put("inUseBy", draftDocument.username);
+        }
         info.put("obtainEditableInstanceobtainEditableInstance", editable);
         info.put("publish", publishable);
         info.put("depublish", depublishable);

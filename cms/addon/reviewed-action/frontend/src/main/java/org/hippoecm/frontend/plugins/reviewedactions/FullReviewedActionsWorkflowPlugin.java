@@ -64,7 +64,10 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
     public String stateSummary = "UNKNOWN";
 
+    public String inUseBy = "";
+
     StdWorkflow infoAction;
+    StdWorkflow infoEditAction;
     WorkflowAction editAction;
     WorkflowAction publishAction;
     WorkflowAction depublishAction;
@@ -86,6 +89,16 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                         FullReviewedActionsWorkflowPlugin.this, "stateSummary"));
             }
 
+            @Override
+            protected void invoke() {
+            }
+        });
+
+        add(infoEditAction = new StdWorkflow("infoEdit", "infoEdit") {
+            @Override
+            protected IModel getTitle() {
+                return new StringResourceModel("in-use-by", this, null, new Object[] { new PropertyModel(FullReviewedActionsWorkflowPlugin.this, "inUseBy") });
+            }
             @Override
             protected void invoke() {
             }
@@ -377,35 +390,34 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                         && !((Boolean) info.get("obtainEditableInstanceobtainEditableInstance")).booleanValue()) {
                     editAction.setVisible(false);
                 }
-                if (info.containsKey("publish") && info.get("publish") instanceof Boolean
-                        && !((Boolean) info.get("publish")).booleanValue()) {
+                if (info.containsKey("publish") && info.get("publish") instanceof Boolean && !((Boolean) info.get("publish")).booleanValue()) {
                     publishAction.setVisible(false);
                     schedulePublishAction.setVisible(false);
                 }
-                if (info.containsKey("depublish") && info.get("depublish") instanceof Boolean
-                        && !((Boolean) info.get("depublish")).booleanValue()) {
+                if (info.containsKey("depublish") && info.get("depublish") instanceof Boolean && !((Boolean) info.get("depublish")).booleanValue()) {
                     depublishAction.setVisible(false);
                     scheduleDepublishAction.setVisible(false);
                 }
-                if (info.containsKey("delete") && info.get("delete") instanceof Boolean
-                        && !((Boolean) info.get("delete")).booleanValue()) {
+                if (info.containsKey("delete") && info.get("delete") instanceof Boolean && !((Boolean) info.get("delete")).booleanValue()) {
                     deleteAction.setVisible(false);
                 }
-                if (info.containsKey("rename") && info.get("rename") instanceof Boolean
-                        && !((Boolean) info.get("rename")).booleanValue()) {
+                if (info.containsKey("rename") && info.get("rename") instanceof Boolean && !((Boolean) info.get("rename")).booleanValue()) {
                     renameAction.setVisible(false);
                 }
-                if (info.containsKey("move") && info.get("move") instanceof Boolean
-                        && !((Boolean) info.get("move")).booleanValue()) {
+                if (info.containsKey("move") && info.get("move") instanceof Boolean && !((Boolean) info.get("move")).booleanValue()) {
                     moveAction.setVisible(false);
                 }
-                if (info.containsKey("copy") && info.get("copy") instanceof Boolean
-                        && !((Boolean) info.get("copy")).booleanValue()) {
+                if (info.containsKey("copy") && info.get("copy") instanceof Boolean && !((Boolean) info.get("copy")).booleanValue()) {
                     copyAction.setVisible(false);
                 }
-                if (info.containsKey("status") && info.get("status") instanceof Boolean
-                        && !((Boolean) info.get("status")).booleanValue()) {
+                if (info.containsKey("status") && info.get("status") instanceof Boolean && !((Boolean) info.get("status")).booleanValue()) {
                     infoAction.setVisible(false);
+                }
+                if (info.containsKey("inUseBy") && info.get("inUseBy") instanceof String) {
+                    inUseBy = (String) info.get("inUseBy");
+                    infoEditAction.setVisible(true);
+                } else {
+                    infoEditAction.setVisible(false);
                 }
             }
         } catch (RepositoryException ex) {

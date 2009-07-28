@@ -60,7 +60,10 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
 
     public String stateSummary = "UNKNOWN";
 
+    public String inUseBy = "";
+
     StdWorkflow infoAction;
+    StdWorkflow infoEditAction;
     WorkflowAction editAction;
     WorkflowAction publishAction;
     WorkflowAction depublishAction;
@@ -76,6 +79,16 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             @Override
             protected IModel getTitle() {
                 return translator.getValueName("hippostd:stateSummary", new PropertyModel(BasicReviewedActionsWorkflowPlugin.this, "stateSummary"));
+            }
+            @Override
+            protected void invoke() {
+            }
+        });
+
+        add(infoEditAction = new StdWorkflow("infoEdit", "infoEdit") {
+            @Override
+            protected IModel getTitle() {
+                return new StringResourceModel("in-use-by", this, null, new Object[] { new PropertyModel(BasicReviewedActionsWorkflowPlugin.this, "inUseBy") });
             }
             @Override
             protected void invoke() {
@@ -232,6 +245,12 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
                 }
                 if (info.containsKey("status") && info.get("status") instanceof Boolean && !((Boolean)info.get("status")).booleanValue()) {
                     infoAction.setVisible(false);
+                }
+                if (info.containsKey("inUseBy") && info.get("inUseBy") instanceof String) {
+                    inUseBy = (String) info.get("inUseBy");
+                    infoEditAction.setVisible(true);
+                } else {
+                    infoEditAction.setVisible(false);
                 }
             }
         } catch (RepositoryException ex) {
