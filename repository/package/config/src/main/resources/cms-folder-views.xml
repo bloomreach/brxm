@@ -286,7 +286,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="hippo:namespace">
+  <sv:node sv:name="hipposysedit:namespace">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
