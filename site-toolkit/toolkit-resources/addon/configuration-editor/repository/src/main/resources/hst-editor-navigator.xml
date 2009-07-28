@@ -55,17 +55,17 @@
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.sitemap</sv:value>
-      <sv:value>extension.pages</sv:value>
+      <sv:value>extension.sitemenus</sv:value>
       <sv:value>extension.components</sv:value>
       <sv:value>extension.templates</sv:value>
-      <sv:value>extension.sitemenus</sv:value>
+      <sv:value>extension.pages</sv:value>
     </sv:property>
     <sv:property sv:name="headers" sv:type="String">
       <sv:value>section-sitemap</sv:value>
-      <sv:value>section-pages</sv:value>
+      <sv:value>section-sitemenus</sv:value>
       <sv:value>section-components</sv:value>
       <sv:value>section-templates</sv:value>
-      <sv:value>section-sitemenus</sv:value>
+      <sv:value>section-pages</sv:value>
     </sv:property>
     <sv:property sv:name="extension.sitemap" sv:type="String">
       <sv:value>${cluster.id}.tree.sitemap</sv:value>
