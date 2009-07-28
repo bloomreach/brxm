@@ -52,7 +52,6 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -293,13 +292,14 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     }
 
     protected String clean(final String value) throws Exception {
-        IHtmlCleanerService cleaner = getPluginContext().getService(IHtmlCleanerService.class.getName(),
+        if(value != null) {
+            IHtmlCleanerService cleaner = getPluginContext().getService(IHtmlCleanerService.class.getName(),
                 IHtmlCleanerService.class);
-        if (cleaner != null) {
-            return cleaner.clean(value);
-        } else {
-            return value;
-        }
+            if (cleaner != null) {
+                return cleaner.clean(value);
+            }
+        } 
+        return value;
     }
 
     private Component createEditor(final IPluginConfig config) {
@@ -315,7 +315,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 try {
                     valueModel.setObject(clean((String) value));
                 } catch (Exception e) {
-                    error(new ResourceModel("error-while-cleaning-conent", "An error occured while cleaning the content"));
+                    error(new ResourceModel("error-while-cleaning-conent",
+                            "An error occured while cleaning the content"));
                     log.error("Exception caught during editor creation while cleaning value: " + value, e);
                 }
             }
