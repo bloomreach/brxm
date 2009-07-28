@@ -205,7 +205,7 @@ public class ObservationTest extends PluginTest {
         assertEquals(1, events.size());
         Event event = ((JcrEvent) events.get(0)).getEvent();
         assertEquals(Event.NODE_ADDED, event.getType());
-        assertEquals("/test/sub[1]", event.getPath());
+        assertEquals("/test/sub", event.getPath());
     }
 
     @Test
