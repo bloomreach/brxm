@@ -38,15 +38,44 @@ inputfields. Unlike the inputfields in forms,
 the inputfields in Hippo documents may allow quite complex editing.
 </p>
 <p>
+  For a tour, or documentation of specific concepts and howto, see the table.
+  For a more general introduction, see below the table.
+</p>
+
+<table>
+  <tr>
+    <td>
+      <a href="tour.html">Hippo CMS Contributor Tour</a>
+    </td>
+    <td>To get introduced to the role of CMS contributor, take the following tour.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="howto/index.html">Hippo CMS Contributor Howto</a>
+    </td>
+    <td>A collection of howto's for small tasks a CMS contributor may want to do.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="concepts/index.html">CMS Contributor Concepts</a>
+    </td>
+    <td>A collection of concepts a CMS contributor may want to know.</td>
+  </tr>
+</table>
+
+<p>
   Inputfields have a datatype. For example, a particular inputfield may allow only integers (round numbers) and
   we then say that the inputfield is of datatype integer.
-  An inputfield of datatype date allows only dates and times.
-  An inputfield of datatype 'rich text' (or html) allows any text, which may run over several lines and
+  An inputfield of datatype <a href="howto/fill_date_field_in_document.html">date</a> allows only dates and times.
+  An inputfield of datatype
+  <a href="howto/fill_markuped_text_in_document.html">'rich text' (or html)</a> allows any text, which may run over several lines and
   may contain markup like headers, links, underlining, included images, tables, italic, boldfacing, etc.
   Note that such markup is not always desirable. For example, you would not want a table within
   a document title. You would not even want underlining in a document title, as this would look weird in
   a list of many document titles. So document titles are generally of datatype string.
-  The datatype string allows text but without markup, i.e. it has to be unformatted, it may not even run over
+  The datatype
+  <a href="howto/fill_string_field_in_document.html">string</a> allows text but without markup,
+  i.e. it has to be unformatted, it may not even run over
   several lines. Think of a simple <i>string</i> of characters.
   You may also encounter inputfields of datetype text, that are like strings, but allow several lines,
   or formatted text, that are like text, but allow simple markup: boldfacing, underlining and italics.
@@ -59,32 +88,11 @@ the inputfields in Hippo documents may allow quite complex editing.
  in the (custom) CMS you are using.
 </p>
 
-<p>The meaning, caption, datatype, buttons, size, color and position of inputfields are chosen
-   for your (custom) CMS by information architects.
+<p>The <a href="howto/learn_meaning_of_inputfield.html">meaning</a>,
+   caption, datatype, buttons, size, color and position of inputfields have been chosen
+   for the (custom) CMS you are using
+   by <a href="../information_architects/index.html">information architects</a>.
 </p>
-
-
-<table>
-  <tr>
-    <td>
-      <a href="./tour.html">Hippo CMS Contributor Tour</a>
-    </td>
-    <td>To get introduced to the role of CMS contributor, take the following tour.</td>
-  </tr>
-  <tr>
-    <td>
-      <a href="./howto/index.html">Hippo CMS Contributor Howto</a>
-    </td>
-    <td>A collection of howto's for small tasks a CMS contributor may want to do.</td>
-  </tr>
-  <tr>
-    <td>
-      <a href="./concepts/index.html">CMS Contributor Concepts</a>
-    </td>
-    <td>A collection of concepts a CMS contributor may want to know.</td>
-  </tr>
-</table>
-
 
     </section>
   </body>

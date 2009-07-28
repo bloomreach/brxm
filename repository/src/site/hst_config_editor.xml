@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+ page design
+ container design
+
+ On the sliders:
+ 'URL Designer'
+ 'Menu Designer'
+ 'Page Designer'
+ 'Component Designer'
+ 'Templates'         (eventueel later aanpassen)
+
+ In URL design:
+ 'Matcher specification' -> 'Level pattern'
+ 'Details' -> 'Destination'
+ Level pattern boven Destination blok ipv er in.
+
+
+
+
+ level pattern
+
+ <body>
+
+<p>The HST configuration editor is a graphical user interface allowing non web developers like site
+  administrators to redesign a web site. The redesign is applied to a running site automatically.
+  The redesign does not involve any programming, only
+  reconfiguring how available site ingredients are combined.
+</p>
+<p>To allow for the above the site application is build on top of the
+   Hippo Site toolkit (HST). This is done by web developers who generate
+   customized site ingredients with JSP and Java. They may also use or adapt
+   generic site ingredients supplied by the Hippo Forge community.
+</p>
+
+<p>It would be very expensive to maintain a web site if only web developers could change
+   anything on it. Therefor, site applications build on the HST allow for easy maintenance by
+   CMS authors and site administrators. CMS authors can use the CMS to write and change documents that
+   are published on the site, while site administrators can use the HST configuration editor to
+   reconfigure the site.
+   To start with the HST configuration editor start with URL designs and site menu design.
+<p>
+  A URL ('uniform resource locator') is an address for a web page. With a URL design
+  you configure what URL is used as address for what web page.
+  This involves selection of destination content and selection of a page design.
+  The actual destination web page for the URL presents the destination content according to the
+  page design. URL design would become very tedious if every single URL had to be coupled
+  to a web page. To ease the URL design, patterns can be used to configure many URLs in a
+  single design rule. For URL designs open the URL Designer slider.
+</p>
+<p>
+  A site menu is a tree of links that jump the reader to the most important URLs of the site.
+  With menu design you configure what link jumps to what URL and how the links are organized
+  in sub menus. If you want a (sub) menu to mirror a folder structure in your content repository
+  it would be very tedious if you had to make all the links in that (sub) menu yourself.
+  To ease creating such repository based menus, you can configure that the mirroring should be
+  done automatically.  For site menu design open the Menu Designer slider.
+</p>
+<p>
+  If you understand URL design and site menu design, you can start with page design.
+  You probably know that many web pages contain regions in which very different things happen.
+  Often, there is a region in which a site map is shown.
+  Another region may show the content of a document and other regions
+  may show a small survey, links to related documents and a newsflash.
+  To allow for flexibility, such regions in which different things happen are designed separately.
+  For each such region a container is defined.
+  A container has a position within a larger container and a design of its own. Pages are the
+  largest containers. Their position is not defined in the designs, but by the browsers of the
+  site users.
+</p>
+<p>A container design consists of a choice of a template and 
+
+   a choice of a data supplier. The data supplier supplies data to show in the container.
+
+
+
+   A component defines the GUI of and the data for a particular region of the page.
+</p>
+
+
+  may define smaller containers of which that design defines only the
+  position. The design of the smaller containers is left to 
+
+
+  of that design. The design of the parent container defines where its child containers are
+  positioned inside of it
+
+
+   The web developers
+   of the site should setup a working set of page configurations, 
+
+  URL design is possible with the hipp
+
+</p>
+
+  <p>
+   The site configuration editor of the Hippo CMS7 can be used by site administrators
+   to create new menu items and page definitions for the site
+   and assign URLs for publication of selected content.
+   The new page definitions are build up from building blocks that should be
+   provided for the site by web developers, who write the building blocks in JSP and Java.
+   Building blocks can also be supplied by the Hippo Forge community.
+  </p>
+
+  should select from the available page configurations.
+
+
+-TODO: menu
+  24:20    
+  25:20     leg uit dat het geheel uit 3 concepten bestaat:
+  26:20     matcher
+  27:20     content path
+  28:20     page definition
+  29:20     Deze 3 tesamen maken het mogelijk om een nieuwe page te tonen.
+
+Link naar content: abstractie laag.
+Uitleg dat URLs los van folder name.
+Uitleg dat wat je bij matcher moet invullen de URL is.
+
+
+
+URL Designer
+
+  <p>
+   In the site configuration editor you define for which URL or URL pattern which content should be published
+   (if any) and you configure how the pages should look like and what functionalities they should have.
+   You do this by editing a sitemap item, which you select in the sitemap slider or add via the add button
+   at the top of the sitemap item editor.
+  </p>
+
+
+  <h2>URL matcher</h2>
+  <p>
+   In each sitemap item you define a matcher, which is a pattern for one step in a URL or the ending of a URL.
+   The first part of all your URLs is one of your domains and is configured by a system administrator.
+   After the domain name, some URL path elements may also be preconfigured.
+
+-Use / refer to the WWW specification. http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.2.2
+
+   The rest of each URL is defined in the sitemap. A simple word like 'home' or 'news' will do.
+   The URLs recognized (matched) would end in 'home' and 'news' respectively.
+
+-TODO: example
+  46:30      the matcher specifies pattern 'news'
+  47:30      So this url is matched: http://www.mycompany.com:8080/mysite/news  
+  48:30      this url is not matched: http://www.mycompany.com:8080/mysite/new   (notice the missing ending 's')
+
+
+   If you add to the news sitemap item
+   a child sitemap item (with the add button at the top) with matcher 'today', then the URL ending
+   in 'news' will is still matched, but also a URL ending in 'news/today'. If you prefer, you could
+   define the matcher as 'today.html' and the URL ending would be 'news/today.html'.
+   </p>
+   <h3>URL Wildcards</h3>
+   <p>
+   As matcher you could also use *.html.
+   This matches URLs ending in news/*.html with * being any word. Likewise * matches news/* with *
+   being any word, but not ending with .html. The wildcards **.html and ** are special in that they
+   match any number of steps in the URL (steps being separated by slashes).
+  </p>
+  <h2>Content path</h2>
+  <p>
+   By the content path you define which content should be shown for the URL defined by the matcher.
+   The content path is a slash separated sequence of folder names and possibly
+   as last name a document name. The content path defines a folder or document in your content repository.
+   Unlike the matcher entries, the content path entries do <i>not</i> cumulate. So if you want
+   your news/today URL to show content from news/today, your content path would be 'news/today' <i>not</i>
+   'today'.
+  </p>
+  <p>
+   A page does not have to show content from a repository. E.g. a page with a fixed form does not need
+   to show any content from a repository. In that case, the content path should be empty.
+  </p>
+  <h3>URL Wildcards</h3>
+  <p>
+   In cases where you have used URL wildcards in the matcher,
+   you probably want the matching steps of the URLs to match on folder
+   and document names in your repository. You do this with ${1}, ${2}, etc. as steps in the content path.
+   You use a sequence of ${i}, with i increasing digits if you have a tree with * matchers. For example
+   news/${1}/${2}/${3} if you have a tree with matchers, news, *, * and *.html. If you have
+   a ** matcher, you use only ${1}, which matches all the steps in the URL.
+   </p>
+  <h2>Page definition</h3>
+  <p>
+   Finally, you select a page definition from those available or you configure a new page definition.
+   Existing page definitions may have a description and a thumbnail to explain their functionalities and
+   show how the pages will look.
+  </p>
+  <h2>Saving</h3>
+   <p>
+   Save your changes by the pressing the save button at the bottom. If you select another sitemap item before
+   saving, your changes are lost without warning.
+   </p>
+  <h2>Conclusion</h3>
+  <p>
+   The content selected in the content path will be shown for URLs defined by the cumulative matchers
+   in a way according to the page definition selected.
+  </p>
+
+
+
+page definition
+
+   Different ingredients of a web page may have different dynamics,
+   i.e. who's actions or what circumstances
+
+  A web page contains information and has a layout and looks.
+
+</p>
+ <table>
+  <tr>
+   <td>Constant ingredients</td>
+     <td>available information, layout and looks that is the same until replaced by a web site developer.</td>
+  </tr>
+  <tr>
+   <td>CMS driven</td>
+        <td>information added and changed by authors of a CMS and derivation and selection of
+        information that depends on information supplied by authors.</td>
+    </td>
+  </tr>
+  <tr>
+    <td>Circumstance driven</td>
+      <td>derivation and selection of information, layout and looks
+        that depends on the time of day, the location of the reader or
+        on other aspects of the circumstance in which a web page is read.
+    </td>
+  </tr>
+  <tr>
+   <td>Reader driven</td>
+     <td>derivation or selection of information, layout and looks
+        that is a reaction to input from the reader.
+        A score to on online test is an example of derivation of information that depends on reader input.
+        The results of a search is an example of a selection of information that depends on user
+        input.
+     </td>
+  </tr>
+  <tr>
+   <td>Configuration driven</td>
+      <td>by a site administrator.</td>
+  </tr>
+  </table>
+<p>
+  The effort required from a web developer is different for each of these types of information.
+  Putting constant information on a web site is most easy for a web developer. However, after the
+  web developer has left, no one can change that information.
+</p>
+<p>
+  
+</p>
+
+
+
+<p>
+   Imagine a page containing three columns,
+   the first with a site menu, the second showing
+   a document and the third showing a simple survey.
+   To make it complete some logo will be shown above the columns and some
+   disclaimers and copyright information will be shown below the columns.
+
+</p>
+
+
+<p>
+   With the Hippo site toolkit, 
+   a region maker defines how the region should be split up 
+
+ is a single compound.
+
+
+ A compound may contain zero or more compounds.
+   Compounds that are not pages are called 'components'.
+
+   For example: a header
+   containing the companies logo and three columns,
+   That would make 5 regions: 3 columns + 1 header + 1 whole page! The page region is
+   the parent region which contains 4 child regions.
+   
+
+   is split up in regions and the child components take care of filling the regions.
+</p>
+<p>Each child component may also define a split up in regions and have child components for filling
+   the regions.
+</p>
+
+
+
+   A component defines the GUI of and the data for a particular region of the page.
+   A component consists of a template and a component class. The component class supplies
+   data for the region. The template defines the GUI of the region. It is supposed to render the data
+   supplied by the component class.
+</p>
+<p>The component class and the template are separate entities. If used well, this allows to build new
+   page definitions without any need for programming. If you have a template for rendering a list of
+   documents, it can be used for very different lists of documents.
+   For example: you could have a component class that supplies the list of documents in a given
+   folder in the content repository and you could have a component class that supplies the results
+   of a search
+
+
+   a folder lister component 
+
+</p>
+<p>
+   The component class has access to the content repository, the content path supplied in the sitemap
+   and information received from a browser, such as
+   the answers a user supplied to the questions in a form on a page.
+</p>
+<p>
+   What a component class does with the data it has access to depends on the functionality of that
+   component class. A component class will ignore any data it does not expect.
+   For example:
+</p>
+<ol>
+    <li>The content path supplied in the sitemap will be ignored some component classes.</li>
+    <li>A component class listing all child documents of a folder, finds the
+       folder referred to by the content path in the content repository, finds the child documents and
+       supplies a sequence of all these documents to the template.</li>
+    <li>Another component class may list all descendant documents of a folder. It will also find the
+       folder referred to by the content path in the content repository, but find all the descendent
+       documents of the folder and supply a sequence of all these documents to the template.</li>
+</ol>
+<p>
+   The last two component classes both supply a sequence of documents to 'their' template.
+   Both require a template that knows who to render a sequence of documents. The same template
+   could be used in both cases.
+</p>
+
+  </body>
+
+   Some web pages are updated once in a while, if ever, while other web pages are very dynamic.
+
+
+</html>
+

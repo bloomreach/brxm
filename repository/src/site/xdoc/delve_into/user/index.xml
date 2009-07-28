@@ -31,29 +31,30 @@ ________________________________________________________________________________
 
     <p>Hippo CMS allows to define which role(s) a user may perform.
        In day to day usage,
-       contributors
+       <a href="./contributors/index.html">contributors</a>
        write and add content,
-       and editors
+       and <a href="./editors/index.html">editors</a>
        decide about publishing
        the content.
-       The contributors write documents that each are of a certain document type.
+       The contributors write documents that each are of a certain
+       <a href="./contributors/concepts/document_type.html">document type</a>.
        The document type specifies what kind of information the document should provide.
        The document types are a kind of business rules and are
-       composed by information architects, generally before any meaningful documents
+       composed by <a href="./information_architects/index.html">information architects</a>,
+       generally before any meaningful documents
        are written.
-       All users: contributors, editors and information architects have to
-       get an account from a CMS administrator. Unlike the other users, CMS administrators
+       All users, contributors, editors and information architects have to
+       get an account from a
+       <a href="./cms_admins/index.html">CMS administrator</a>.
+       Unlike the other users, CMS administrators
        have no part in the content of the CMS, they only assign permissions.
     </p>
 
 <p>
-The use of document types guarantees that different documents are similar and this allows
-fast development of any application that
-makes use of the documents. For example, a web developer need only to know about a few document
-types to make a website for hundreds of thousands of documents. He need not know about
-the documents themselves. Contributors need not know about making websites, just about
-what kind of information they are supposed to provide.
+  For documentation for specific roles, see the table.
+  For a more general introduction on the use of the Hippo CMS, see below the table.
 </p>
+
 
 
 <!--
@@ -98,6 +99,15 @@ what kind of information they are supposed to provide.
         contributors, editors and information architects according to management decisions).</td>
   </tr>
 </table>
+
+<p>
+The use of document types guarantees that different documents are similar and this allows
+fast development of any application that
+makes use of the documents. For example, a web developer need only to know about a few document
+types to make a website for hundreds of thousands of documents. He need not know about
+the documents themselves. Users of the Hippo CMS need not know about making websites, just about
+what kind of information should be provided.
+</p>
 
     </section>
   </body>

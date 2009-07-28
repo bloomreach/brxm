@@ -29,10 +29,38 @@ ________________________________________________________________________________
       <span class="shortdesc">Guide for Hippo CMS users to perform the role of Information Architect.</span>
 
 <p>
-  In Hippo CMS, contributors write documents that are of a certain document type.
+ In Hippo CMS,
+ <a href="../contributors/index.html">contributors</a> write documents that are of a certain 
+ <a href="./concepts/documenttype.html">document type</a>.
   The document type specifies what kind of information the document should provide.
   Documents that contain the same kind of information are in that respect similar.
 </p>
+<p>
+  For a tour, or documentation of specific concepts and howto, see the table.
+  For a more general introduction on the role of information architect in Hippo CMS, see below the table.
+</p>
+
+
+<table>
+  <tr>
+    <td>
+      <a href="./tour.html">Hippo CMS Information Architect Tour</a>
+    </td>
+    <td>To get introduced to the role of CMS Information Architect, take the following tour.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./howto/index.html">CMS Information Architect Howto</a>
+    </td>
+    <td>A collection of howto's for small tasks an information architect may want to do.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./concepts/index.html">CMS Information Architect Concepts</a>
+    </td>
+    <td>A collection of concepts a CMS information architect may want to know.</td>
+  </tr>
+</table>
 
 <p>
 The guaranteed similarity of many different documents allows
@@ -71,7 +99,9 @@ what kind of information they are supposed to provide.
    <p>
     The CMS can delete obsolete parts from all documents of a particular document type.
     This only requires deleting the field from the document type and
-    allowing the CMS to update all content. The CMS will then check all content
+    allowing the CMS to
+    <a href="./howto/update_content.html">update all content</a>.
+    The CMS will then check all content
     and makes it conform to the new state of the document types.
     The time this procedure takes increases with the number of document
     that needs changing, but not much, almost linearly.
@@ -115,30 +145,9 @@ in the document types.
 
 <p>
 The document types can be defined by nesting compound types. This allows reuse
-of types and the easy definition of complex layouts for presenting documents to
+of these types and the easy definition of complex layouts for presenting documents to
 be edited.
 </p>
-
-<table>
-  <tr>
-    <td>
-      <a href="./tour.html">Hippo CMS Information Architect Tour</a>
-    </td>
-    <td>To get introduced to the role of CMS Information Architect, take the following tour.</td>
-  </tr>
-  <tr>
-    <td>
-      <a href="./howto/index.html">CMS Information Architect Howto</a>
-    </td>
-    <td>A collection of howto's for small tasks an information architect may want to do.</td>
-  </tr>
-  <tr>
-    <td>
-      <a href="./concepts/index.html">CMS Information Architect Concepts</a>
-    </td>
-    <td>A collection of concepts a CMS information architect may want to know.</td>
-  </tr>
-</table>
 
     </section>
   </body>
