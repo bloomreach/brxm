@@ -766,6 +766,13 @@ font-weight: bold;
 .hippo-editor-template-editor .even .hippo-editor-field{background: #f0f6ff}
 .hippo-editor-template-editor .odd .hippo-editor-field{background: #cee3f9}
 .hippo-editor {background: transparent url("images/hippo-shade.png")}
+
+/* feedback styling */
+.hippo-editor-feedback {width: 70%; margin: 0px 10px; padding: 0px 20px;}
+.hippo-editor-feedback ul {margin-top: 5px; margin-bottom: 5px; padding-top: 5px; padding-bottom: 5px;}
+.hippo-editor-feedback li {height: 20px; padding: 5px 40px;}
+.hippo-editor-feedback .feedbackPanelERROR {display: list-item; background-color: #c00;}
+
 /* field styling */
 .hippo-editor-field{padding: 8px; margin-bottom: 0px; }
 .hippo-editor-field-title{font-size: 11px; font-weight: bold; color: #666666; margin-bottom: 8px;}

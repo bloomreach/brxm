@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;

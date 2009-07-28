@@ -19,11 +19,11 @@ import java.util.List;
 
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -39,14 +39,14 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
     private static final Logger log = LoggerFactory.getLogger(EditorPlugin.class);
 
     private EditorForm form;
-    private FeedbackPanel feedback;
+    private YuiFeedbackPanel feedback;
 
     public EditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         add(form = newForm());
 
-        feedback = new FeedbackPanel("feedback", new IFeedbackMessageFilter() {
+        feedback = new YuiFeedbackPanel("feedback", new IFeedbackMessageFilter() {
             private static final long serialVersionUID = 1L;
 
             public boolean accept(FeedbackMessage message) {
@@ -61,8 +61,7 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
                 }
                 return false;
             }
-        });
-        feedback.setOutputMarkupId(true);
+        }, context);
         add(feedback);
 
         if (config.getString(IValidateService.VALIDATE_ID) != null) {
@@ -83,9 +82,7 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        if (target != null) {
-            target.addComponent(feedback);
-        }
+        feedback.render(target);
         if (form != null) {
             form.render(target);
         }

@@ -21,15 +21,16 @@ import java.util.Date;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.ActionDescription;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -37,10 +38,10 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.OnCloseDialog;
+import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
-import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -53,7 +54,7 @@ import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin implements IValidateService {
+public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -61,18 +62,11 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
     private static Logger log = LoggerFactory.getLogger(EditingReviewedActionsWorkflowPlugin.class);
 
-    private transient boolean validated = false;
-    private transient boolean isvalid = true;
+    private Fragment feedbackContainer;
     private transient boolean closing = false;
 
     public EditingReviewedActionsWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-
-        if (config.getString(IValidateService.VALIDATE_ID) != null) {
-            context.registerService(this, config.getString(IValidateService.VALIDATE_ID));
-        } else {
-            log.info("No validator id {} defined", IValidateService.VALIDATE_ID);
-        }
 
         final CompatibilityWorkflowPlugin plugin = this;
         final IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
@@ -110,7 +104,6 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
                             public void save() {
                                 try {
-
                                     UserSession userSession = (UserSession) org.apache.wicket.Session.get();
                                     WorkflowDescriptor descriptor = (WorkflowDescriptor) plugin.getModelObject();
                                     WorkflowManager manager = userSession.getWorkflowManager();
@@ -176,8 +169,10 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 workflow.commitEditableInstance();
 
                 DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-                info(new StringResourceModel("saved", EditingReviewedActionsWorkflowPlugin.this, null,
-                        new Object[] { df.format(new Date()) }).getString());
+                EditingReviewedActionsWorkflowPlugin.this.info(new StringResourceModel("saved",
+                        EditingReviewedActionsWorkflowPlugin.this, null, new Object[] { df.format(new Date()) })
+                        .getString());
+                showFeedback();
 
                 UserSession session = (UserSession) Session.get();
                 session.getJcrSession().refresh(false);
@@ -205,76 +200,37 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 return null;
             }
         });
+
+        Feedback fb = new Feedback();
+        feedbackContainer = (Fragment) fb.getFragment("text");
+        add(new Feedback());
     }
 
-    public boolean hasError() {
-        if (!validated) {
-            validate();
-        }
-        return !isvalid;
+    protected void showFeedback() {
+        YuiFeedbackPanel yfp = (YuiFeedbackPanel) feedbackContainer.get("feedback");
+        yfp.render(AjaxRequestTarget.get());
     }
 
-    public void validate() {
-        isvalid = true;
-        try {
-            Node handle = ((WorkflowDescriptorModel) getModel()).getNode();
-            String currentUser = handle.getSession().getUserID();
-            NodeIterator variants = handle.getNodes(handle.getName());
-            Node toBeValidated = null;
-            while (variants.hasNext()) {
-                Node variant = variants.nextNode();
-                if (variant.hasProperty("hippostd:state")
-                        && variant.getProperty("hippostd:state").getString().equals("draft")) {
-                    if (variant.hasProperty("hippostd:holder")
-                            && variant.getProperty("hippostd:holder").getString().equals(currentUser)) {
-                        toBeValidated = variant;
-                        break;
-                    }
+    class Feedback extends ActionDescription {
+        private static final long serialVersionUID = 1L;
+
+        public Feedback() {
+            super("info");
+
+            Fragment feedbackFragment = new Fragment("text", "feedback", EditingReviewedActionsWorkflowPlugin.this);
+            feedbackFragment.add(new YuiFeedbackPanel("feedback", new IFeedbackMessageFilter() {
+                private static final long serialVersionUID = 1L;
+
+                public boolean accept(FeedbackMessage message) {
+                    return EditingReviewedActionsWorkflowPlugin.class.isInstance(message.getReporter());
                 }
-            }
-            if (toBeValidated != null) {
-                PropertyIterator properties = toBeValidated.getProperties();
-                while (properties.hasNext()) {
-                    PropertyDefinition propertyDefinition = properties.nextProperty().getDefinition();
-                    if (propertyDefinition.isMandatory()) {
-                        String propName = propertyDefinition.getName();
-                        if (toBeValidated.hasProperty(propName)) {
-                            Property mandatory = toBeValidated.getProperty(propName);
-                            if (mandatory.getDefinition().isMultiple()) {
-                                if (mandatory.getLengths().length == 0) {
-                                    isvalid = false;
-                                    error("Mandatory field " + propName + " has no value.");
-                                    break;
-                                } else {
-                                    for (Value value : mandatory.getValues()) {
-                                        if (value.getString() == null || value.getString().equals("")) {
-                                            isvalid = false;
-                                            error("Mandatory field " + propName + " has no value.");
-                                            break;
-                                        }
-                                    }
-                                }
-                            } else {
-                                Value value = mandatory.getValue();
-                                if (value == null || value.getString() == null || value.getString().equals("")) {
-                                    isvalid = false;
-                                    error("Mandatory field " + propName + " has no value.");
-                                    break;
-                                }
-                            }
-                        } else {
-                            isvalid = false;
-                            error("Mandatory field " + propName + " has no value.");
-                            break;
-                        }
-                    }
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-            error("Problem while validating: " + ex.getMessage());
-            isvalid = false;
+            }, getPluginContext()));
+            add(feedbackFragment);
         }
-        validated = true;
+
+        @Override
+        protected void invoke() {
+        }
+
     }
 }

@@ -24,6 +24,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 
 class MenuBar extends Panel implements MenuComponent {
@@ -39,6 +40,11 @@ class MenuBar extends Panel implements MenuComponent {
         buttons = new LinkedList<IContextMenu>();
         add(new DataView("list", new ListDataProvider(list.list(this))) {
             private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Item newItem(String id, int index, IModel model) {
+                return super.newItem(String.valueOf(index), index, model);
+            }
 
             @Override
             public void populateItem(final Item item) {
