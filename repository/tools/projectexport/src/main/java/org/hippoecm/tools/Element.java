@@ -65,7 +65,7 @@ public abstract class Element {
             this.current = node;
         }
         ContentElement(Node node) throws RepositoryException {
-            this.name = null;
+            this.name = node.getName();
             this.path = node.getPath();
             this.file = null;
             this.previous = null;

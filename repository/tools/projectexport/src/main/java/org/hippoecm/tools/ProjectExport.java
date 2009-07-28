@@ -362,7 +362,7 @@ public class ProjectExport {
             ignoreProjects.add("Repository modules");
             ignoreProjects.add("Hippo ECM package configuration");
             ignoreProjects.add("Hippo ECM editor repository addon");
-            //ignoreProjects.add("Gallery Addon"); FIXME turn on after demo
+            ignoreProjects.add("Gallery Addon");
             ignoreProjects.add("Builtin repository addon");
             ignoreProjects.add("Faceted date repository addon");
             ignoreProjects.add("Xinha addon frontend plugin");
@@ -442,10 +442,8 @@ public class ProjectExport {
                 if (log.isDebugEnabled()) {
                     log.debug("compare " + content.getPath() + " dirty");
                 }
-                if(content.getPath().startsWith("/hippo:configuration")) { // FIXME
-                    for(Node added : diff.addedNodes) {
-                        addedContent.add(new ContentElement(added));
-                    }
+                for(Node added : diff.addedNodes) {
+                    addedContent.add(new ContentElement(added));
                 }
                 content.setDirty();
             } else {
@@ -534,12 +532,21 @@ public class ProjectExport {
     private Collection<ContentElement> selectedContentElements;
     private Collection<NamespaceElement> selectedNamespaceElements;
     public void selectProject(String name) throws RepositoryException, IOException, NotExportableException {
+        if (log.isDebugEnabled()) {
+            log.debug("export project selected "+name);
+        }
         selectedContentElements = prepare(name);
     }
     public void exportProject(OutputStream ostream) throws RepositoryException, IOException, NotExportableException {
+        if (log.isDebugEnabled()) {
+            log.debug("export project to stream ");
+        }
         export(selectedProject, selectedContentElements, selectedNamespaceElements, ostream);
     }
     public void exportProject(File basedir) throws RepositoryException, IOException, NotExportableException {
+        if (log.isDebugEnabled()) {
+            log.debug("export project to basedir "+basedir.toString());
+        }
         export(selectedProject, selectedContentElements, selectedNamespaceElements, basedir);
     }
 

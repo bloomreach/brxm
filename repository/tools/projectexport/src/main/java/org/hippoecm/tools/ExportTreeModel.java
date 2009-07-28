@@ -93,12 +93,10 @@ class ExportTreeModel extends DefaultTreeModel implements TreeModel, IDetachable
     }
 
     private class ElementTreeNode extends AbstractTreeNode implements TreeNode, Serializable {
-        private String name;
         Element element;
 
         ElementTreeNode(ProjectExport export) {
             super(null);
-            name = "Projects";
             element = null;
             if (export != null) {
                 List<Element> elements = export.getElements(null);
@@ -117,7 +115,6 @@ class ExportTreeModel extends DefaultTreeModel implements TreeModel, IDetachable
 
         private ElementTreeNode(ProjectExport export, ElementTreeNode parent, Element element) {
             super(parent);
-            name = element.getFullName();
             this.element = element;
             List<Element> elements = export.getElements(element);
 
@@ -146,7 +143,7 @@ class ExportTreeModel extends DefaultTreeModel implements TreeModel, IDetachable
 
         @Override
         public String toString() {
-            return name;
+            return (element != null ? element.getFullName() : "Projects");
         }
     }
 

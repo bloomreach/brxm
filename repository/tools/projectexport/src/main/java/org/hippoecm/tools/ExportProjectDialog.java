@@ -135,10 +135,11 @@ public class ExportProjectDialog extends AbstractDialog {
         treeComponent.getTreeState().setAllowSelectMultiple(false);
         treeComponent.getTreeState().addTreeStateListener(new ITreeStateListener() {
             public void nodeSelected(TreeNode node) {
-                TreeNode ancestor = ((ExportTreeModel)treeComponent.getModelObject()).backingTreeNode(node);
+                ExportTreeModel treeModel = (ExportTreeModel) treeComponent.getModelObject();
+                TreeNode ancestor = treeModel.backingTreeNode(node);
                 if(ancestor != null && ancestor != node) {
                     treeComponent.getTreeState().selectNode(ancestor, true);
-                    projectName = ancestor.toString();
+                    projectName = ((Element.ProjectElement)treeModel.backingElement(ancestor)).projectName;
                     projectNameComponent.setModel(new Model(projectName));
                 }
             }
