@@ -116,17 +116,11 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
                 if (node.hasProperty(propName)) {
                     Property mandatory = node.getProperty(propName);
                     if (mandatory.getDefinition().isMultiple()) {
-                        if (mandatory.getLengths().length == 0) {
-                            isvalid = false;
-                            component.error("Mandatory field " + propName + " has no value.");
-                            break;
-                        } else {
-                            for (Value value : mandatory.getValues()) {
-                                if (value.getString() == null || value.getString().equals("")) {
-                                    isvalid = false;
-                                    component.error("Mandatory field " + propName + " has no value.");
-                                    break;
-                                }
+                        for (Value value : mandatory.getValues()) {
+                            if (value.getString() == null || value.getString().equals("")) {
+                                isvalid = false;
+                                component.error("Mandatory field " + propName + " has no value.");
+                                break;
                             }
                         }
                     } else {
