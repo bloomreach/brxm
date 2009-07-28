@@ -20,17 +20,14 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
@@ -338,33 +335,18 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
         @Deprecated
         public class DateDialog extends WorkflowDialog {
-
+            
             public DateDialog(IModel question, final PropertyModel dateModel) {
                 super();
 
                 add(new Label("question", question));
-
-                add(new AjaxDateTimeField("value", dateModel));
-
-                AjaxButton now = new AjaxButton(getButtonId(), this) {
-
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void onSubmit(AjaxRequestTarget target, Form form) {
-                        dateModel.setObject(null);
-                        handleSubmit();
-                    }
-                };
-                now.setDefaultFormProcessing(false);
-                now.setModel(new ResourceModel("now", "Now"));
-                addButton(now);
+                add(new AjaxDateTimeField("value", dateModel, true));
                 setFocusOnCancel();
             }
 
             @Override
             public IValueMap getProperties() {
-                return MEDIUM;
+                return new ValueMap("width=520,height=200");
             }
         }
     }

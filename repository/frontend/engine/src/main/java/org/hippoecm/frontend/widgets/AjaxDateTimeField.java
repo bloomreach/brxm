@@ -35,7 +35,7 @@ public class AjaxDateTimeField extends DateTimeField {
 
     private static final long serialVersionUID = 1L;
 
-    public AjaxDateTimeField(String id, IModel model) {
+    public AjaxDateTimeField(String id, IModel model, boolean todayLinkVisible) {
         super(id, model);
 
         get("date").add(new ChangeBehaviour());
@@ -52,8 +52,7 @@ public class AjaxDateTimeField extends DateTimeField {
             public void onClick(AjaxRequestTarget target) {
                 updateDateTime(new Date(), null, null, target);
             }
-
-        });
+        }.setVisible(todayLinkVisible));
     }
 
     // callback that the ChangeBehaviour calls when one of the composing fields updates
@@ -110,11 +109,5 @@ public class AjaxDateTimeField extends DateTimeField {
         protected void onUpdate(AjaxRequestTarget target) {
             AjaxDateTimeField.this.onUpdate(target);
         }
-    }
-
-    @Override
-    protected void configure(Map widgetProperties) {
-        super.configure(widgetProperties);
-        //        widgetProperties.put("navigator", Boolean.TRUE);
     }
 }
