@@ -105,7 +105,11 @@ public class JcrObservationManager implements ObservationManager {
 
             public String getPath() throws RepositoryException {
                 if (type != 0) {
-                    return path + "/" + name;
+                    if (path.equals("/")) {
+                        return path + name;
+                    } else {
+                        return path + "/" + name;
+                    }
                 } else {
                     return path;
                 }
@@ -151,7 +155,7 @@ public class JcrObservationManager implements ObservationManager {
                 Node child = nodeIter.nextNode();
                 if (child != null) {
                     try {
-                        nodes.add(child.getName() + "[" + child.getIndex() + "]");
+                        nodes.add(child.getName() + (child.getIndex() > 1 ? "[" + child.getIndex() + "]" : ""));
                     } catch (RepositoryException e) {
                         log.warn("Unable to add child node to list: " + e.getMessage());
                         log.debug("Error while adding child node to list: ", e);
@@ -475,6 +479,9 @@ public class JcrObservationManager implements ObservationManager {
             String eventPath = event.getPath();
             if (type != 0) {
                 eventPath = eventPath.substring(0, eventPath.lastIndexOf('/'));
+                if (eventPath.equals("")) {
+                    eventPath = "/";
+                }
             }
             if (!session.itemExists(eventPath)) {
                 return true;

@@ -677,7 +677,7 @@ public class Remodeling {
                 String newName = getNewName(child.getName());
                 session.move(child.getPath(), node.getPath() + "/" + newName);
                 int index = (int) node.getNodes(newName).getSize();
-                child = node.getNode(newName + "[" + index + "]");
+                child = node.getNode(newName + (index > 1 ? "[" + index + "]" : ""));
                 traverse(child, false, child);
             }
 

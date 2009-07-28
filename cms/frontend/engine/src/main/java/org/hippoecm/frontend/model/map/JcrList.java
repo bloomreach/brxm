@@ -56,7 +56,7 @@ public class JcrList extends AbstractList<IHippoMap> implements IDetachable {
     @Override
     public IHippoMap get(int index) {
         try {
-            return new JcrMap(new JcrNodeModel(getNode().getNode(name + "[" + (index + 1) + "]")));
+            return new JcrMap(new JcrNodeModel(getNode().getNode(name + (index + 1 > 1 ? "[" + (index + 1) + "]" : ""))));
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -92,8 +92,8 @@ public class JcrList extends AbstractList<IHippoMap> implements IDetachable {
 
             Node node = getNode();
             if (node.getPrimaryNodeType().hasOrderableChildNodes() && (index < (size() - 1))) {
-                Node predecessor = node.getNode(name + "[" + (index + 1) + "]");
-                node.orderBefore(name + "[" + child.getIndex() + "]", name + "[" + predecessor.getIndex() + "]");
+                Node predecessor = node.getNode(name + (index + 1 > 1 ? "[" + (index + 1) + "]" : ""));
+                node.orderBefore(name + (child.getIndex() > 1 ? "[" + child.getIndex() + "]" : ""), name + (predecessor.getIndex() > 1 ? "[" + predecessor.getIndex() + "]" : ""));
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -104,7 +104,7 @@ public class JcrList extends AbstractList<IHippoMap> implements IDetachable {
     public IHippoMap remove(int index) {
         IHippoMap current = new HippoMap(get(index));
         try {
-            getNode().getNode(name + "[" + (index + 1) + "]").remove();
+            getNode().getNode(name + (index + 1 > 1 ? "[" + (index + 1) + "]" : "")).remove();
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
