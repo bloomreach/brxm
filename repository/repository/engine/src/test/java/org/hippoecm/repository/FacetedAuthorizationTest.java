@@ -457,7 +457,7 @@ public class FacetedAuthorizationTest extends TestCase {
         }
     }
 
-    @Test
+    @Ignore
     public void testSelfExclusionNotAllowed() throws RepositoryException {
         Node node;
         try {
