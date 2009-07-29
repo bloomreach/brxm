@@ -33,6 +33,7 @@ import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.exceptions.ScopeException;
 import org.hippoecm.hst.content.beans.query.filter.HstCtxWhereFilter;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdNode;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdNodeIterator;
 import org.hippoecm.hst.jackrabbit.ocm.impl.HippoStdNodeIteratorImpl;
@@ -48,6 +49,7 @@ public class HstOCMQuery {
     private HstCtxWhereFilter hstCtxWhereFilter;
     private HippoStdFilter hippoStdFilter;
     private Mapper mapper;
+    private HstCtxWhereClauseComputer ctxWhereClauseComputer;
     
     ClassDescriptor classDescriptor;
 
@@ -56,13 +58,14 @@ public class HstOCMQuery {
     private String orderByExpression = "";
     private ClassLoader classLoader;
     
-    public HstOCMQuery(Mapper mapper, ObjectContentManager ocm ,HstRequest request){
-        this(mapper, ocm, request, null);
+    public HstOCMQuery(HstCtxWhereClauseComputer ctxWhereClauseComputer, Mapper mapper, ObjectContentManager ocm ,HstRequest request){
+        this(ctxWhereClauseComputer, mapper, ocm, request, null);
     }
     
-    public HstOCMQuery(Mapper mapper, ObjectContentManager ocm ,HstRequest request, ClassLoader classLoader){
+    public HstOCMQuery(HstCtxWhereClauseComputer ctxWhereClauseComputer, Mapper mapper, ObjectContentManager ocm ,HstRequest request, ClassLoader classLoader){
         this.ocm = ocm;
         this.mapper = mapper;
+        this.ctxWhereClauseComputer = ctxWhereClauseComputer;
         this.request = request;
         this.classLoader = classLoader;
     }
@@ -79,7 +82,7 @@ public class HstOCMQuery {
 
     public void setScope(Node node) throws ScopeException{
         try {
-            this.hstCtxWhereFilter = new HstCtxWhereFilter(this.request.getRequestContext(), node);
+            this.hstCtxWhereFilter = new HstCtxWhereFilter(ctxWhereClauseComputer, node);
         } catch (FilterException e) {
             throw new ScopeException("Cannot create scope because ctx where filter failed");
         }

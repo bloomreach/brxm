@@ -42,11 +42,13 @@ import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdDirectory;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdDocument;
 import org.hippoecm.hst.jackrabbit.ocm.HippoStdFacetSelect;
@@ -58,6 +60,7 @@ import org.hippoecm.hst.jackrabbit.ocm.manager.cache.NOOPObjectCache;
 import org.hippoecm.hst.jackrabbit.ocm.manager.impl.HstAnnotationMapperImpl;
 import org.hippoecm.hst.jackrabbit.ocm.manager.impl.HstObjectConverterImpl;
 import org.hippoecm.hst.jackrabbit.ocm.query.HstOCMQuery;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,7 +152,9 @@ public class BaseHstComponent extends GenericHstComponent {
         
         HstOCMQuery hQuery = (HstOCMQuery)requestContext.getAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME);
         if(hQuery == null) {
-            hQuery = new HstOCMQuery(this.ocmMapper, ocm, request, Thread.currentThread().getContextClassLoader());
+            ComponentManager compMngr = HstServices.getComponentManager();
+            HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory)compMngr.getComponent(HstQueryManagerFactory.class.getName()); 
+            hQuery = new HstOCMQuery(hstQueryManagerFactory.getHstCtxWhereClauseComputer(), this.ocmMapper, ocm, request, Thread.currentThread().getContextClassLoader());
             requestContext.setAttribute(QUERY_REQUEST_CONTEXT_ATTR_NAME, hQuery);
         }
         return hQuery;
