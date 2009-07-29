@@ -13,21 +13,34 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.tools;
+package org.hippoecm.tools.projectexport;
 
 import javax.swing.tree.TreeNode;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.Panel;
 
-class NamespaceItem extends Panel
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.PropertyModel;
+
+class NewProjectItem extends Panel
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ExportItem.java 18965 2009-07-23 07:16:15Z bvanhalderen $";
 
-    NamespaceItem(MarkupContainer parent, String id, final ExportTreeModel tree, final TreeNode node, Element.NamespaceElement element) {
+    String name = "";
+
+    NewProjectItem(MarkupContainer parent, String id, final ExportTreeModel tree, final TreeNode node, final Element.ProjectElement element) {
         super(id);
-        add(new Label("uri", ((Element.NamespaceElement) element).uri));
-        add(new Label("filename", ((Element.NamespaceElement) element).cnd));
-     }
+        Component nameComponent;
+        add(nameComponent = new TextField("name", new PropertyModel(NewProjectItem.this, "name")));
+        nameComponent.add(new OnChangeAjaxBehavior() {
+            public void onUpdate(AjaxRequestTarget target) {
+                ((Element.ProjectElement) element).projectName = name;
+            }
+        });
+        nameComponent.setOutputMarkupId(true);
+    }
 }

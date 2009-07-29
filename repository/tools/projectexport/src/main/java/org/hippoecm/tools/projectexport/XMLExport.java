@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.tools;
+package org.hippoecm.tools.projectexport;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,17 +28,21 @@ import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.hippoecm.repository.api.HippoSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
+
+import org.hippoecm.repository.api.HippoSession;
 
 class XMLExport {
     @SuppressWarnings("unused")

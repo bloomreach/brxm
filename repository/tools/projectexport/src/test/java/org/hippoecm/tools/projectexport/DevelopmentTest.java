@@ -13,17 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.tools;
+package org.hippoecm.tools.projectexport;
 
-import java.io.FileOutputStream;
 import java.util.Collection;
+
 import javax.jcr.Node;
 import javax.jcr.Session;
+
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
+
 import org.junit.Test;
 import org.junit.Ignore;
 

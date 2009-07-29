@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.tools;
+package org.hippoecm.tools.projectexport;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,6 +37,7 @@ import java.util.jar.JarOutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -45,17 +46,19 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
-import org.hippoecm.tools.Element.ContentElement;
-import org.hippoecm.tools.Element.NamespaceElement;
-import org.hippoecm.tools.Element.ProjectElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.tools.projectexport.Element.ContentElement;
+import org.hippoecm.tools.projectexport.Element.NamespaceElement;
+import org.hippoecm.tools.projectexport.Element.ProjectElement;
 
 class ExportEngine {
     @SuppressWarnings("unused")
@@ -360,8 +363,8 @@ class ExportEngine {
             ignoreProjects.add("Repository modules");
             ignoreProjects.add("Hippo ECM package configuration");
             ignoreProjects.add("Hippo ECM editor repository addon");
-            //ignoreProjects.add("Gallery Addon");
-            ignoreProjects.add("Default content addon");
+            ignoreProjects.add("Gallery Addon");
+            ignoreProjects.add("Defaultcontent repository addon");
             ignoreProjects.add("Builtin repository addon");
             ignoreProjects.add("Faceted date repository addon");
             ignoreProjects.add("Xinha addon frontend plugin");
