@@ -171,4 +171,17 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
     public Node getCanonicalNode(Node node) throws RepositoryException {
         return helper.getCanonicalNode((NodeImpl)node);
     }
+
+    @Override
+    public void finalize() {
+        if(log.isDebugEnabled()) {
+            super.finalize();
+        } else {
+            if (alive) {
+                log.info("Unclosed session detected.");
+                logout();
+                alive = false;
+            }
+        }
+    }
 }
