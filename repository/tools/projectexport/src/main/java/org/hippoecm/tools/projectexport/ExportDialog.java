@@ -62,23 +62,15 @@ public class ExportDialog extends AbstractDialog {
         this.setOutputMarkupId(true);
         this.setOkVisible(false);
         this.setCancelVisible(false);
-        final Form form;
-        add(statusComponent = new Label("status", new Model("Select a project to be exported and enter the server side file system location of the subversion project to update.  Be sure to only use this feature using administrative rights.")));
+        add(statusComponent = new Label("status", new Model("Select a project to be exported and enter the server side file system location of the subversion project to update.  Be sure to only use this feature using administrative rights.  Check the log file for errors afterwards!")));
         statusComponent.setOutputMarkupId(true);
-        add(form = new Form("form"));
-        form.setOutputMarkupId(true);
-        form.add(new RequiredTextField("input", new PropertyModel(this, "location")));
-        form.add(okComponent = new AjaxButton("ok", form) {
+        add(new RequiredTextField("input", new PropertyModel(this, "location")));
+        add(okComponent = new AjaxButton("ok", this) {
             public void onSubmit(AjaxRequestTarget target, Form form) {
                 okComponent.setEnabled(false);
-                target.addComponent(okComponent);
-                FeedbackPanel feedback;
                 ExportDialog.this.addOrReplace(feedback = new FeedbackPanel("tree"));
                 statusComponent.setModel(new Model("Exported; check log files in case of errors"));
-                target.addComponent(statusComponent);
                 target.addComponent(ExportDialog.this);
-                target.addComponent(feedback);
-                target.addComponent(getPage());
                 if(projectName == null || projectName.equals(""))
                     return;
                 try {
@@ -107,7 +99,7 @@ public class ExportDialog extends AbstractDialog {
                 }
             }
         });
-        form.add(new DownloadLink("download", new Model("download")) {
+        add(new DownloadLink("download", new Model("download")) {
             protected String getFilename() {
                 return projectName + ".zip";
             }

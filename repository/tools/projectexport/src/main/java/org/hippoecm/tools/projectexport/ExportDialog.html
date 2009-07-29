@@ -18,10 +18,8 @@
     <div wicket:id="status" style="width: 75%; margin: 1em 1em 1em 1em;"/>
     <span class="hippo-projectexport-tree" wicket:id="tree"><blockquote><font color="red"><br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;Click here to activate project export, this will take a short while.</font></blockquote><br/><br/><br/><br/><br/></span>
     Export project <span wicket:id="name"></span> to:
-    <form wicket:id="form">
-      <div style="display: block;">
-        <input type="text" wicket:id="input"/>&nbsp;<input type="submit" value="store" wicket:id="ok"/>&nbsp;(<a wicket:id="download">download</a>)
-      </div>
-    </form>
+    <div style="display: block;">
+      <input type="text" wicket:id="input"/>&nbsp;<input type="submit" value="store" wicket:id="ok"/>&nbsp;(<a wicket:id="download">download</a>)
+    </div>
   </wicket:extend>
 </html>

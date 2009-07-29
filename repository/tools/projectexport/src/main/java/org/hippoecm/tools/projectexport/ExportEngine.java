@@ -363,7 +363,7 @@ class ExportEngine {
             ignoreProjects.add("Repository modules");
             ignoreProjects.add("Hippo ECM package configuration");
             ignoreProjects.add("Hippo ECM editor repository addon");
-            ignoreProjects.add("Gallery Addon");
+            //ignoreProjects.add("Gallery Addon");
             ignoreProjects.add("Defaultcontent repository addon");
             ignoreProjects.add("Builtin repository addon");
             ignoreProjects.add("Faceted date repository addon");
@@ -614,7 +614,7 @@ class ExportEngine {
         }
         for (NamespaceElement namespace : nsElements) {
             if(namespace.cnd != null && !namespace.excluded) {
-                File file = new File("src/main/resources/" + namespace.prefix + ".cnd");
+                File file = new File(resources, namespace.prefix + ".cnd");
                 FileOutputStream ostream = new FileOutputStream(file);
                 PrintWriter writer = new PrintWriter(ostream);
                 writer.print(namespace.cnd);
