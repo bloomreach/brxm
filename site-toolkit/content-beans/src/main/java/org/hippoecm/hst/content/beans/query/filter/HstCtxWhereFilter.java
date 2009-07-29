@@ -35,7 +35,7 @@ public class HstCtxWhereFilter implements BaseFilter{
        this.jcrExpression = null;
        
        try {
-           jcrExpression = requestContext.getHstCtxWhereClauseComputer().getCtxWhereClause(node, requestContext);
+           jcrExpression = requestContext.getHstCtxWhereClauseComputer().getCtxWhereClause(node);
        } catch (HstContextWhereClauseException e) {
            throw new FilterException("Exception while computing the context where clause", e);
        }

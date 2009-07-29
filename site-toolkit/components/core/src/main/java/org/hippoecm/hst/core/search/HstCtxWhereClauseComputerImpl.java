@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
 
     public final static Logger log = LoggerFactory.getLogger(HstCtxWhereClauseComputerImpl.class.getName()); 
     
-    public String getCtxWhereClause(Node node, HstRequestContext hstRequestContext) throws HstContextWhereClauseException{
+    public String getCtxWhereClause(Node node) throws HstContextWhereClauseException{
         StringBuffer facetSelectClauses = new StringBuffer();
         String path = null;
         try {
@@ -52,7 +51,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 if(node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                    String scopeUUID = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                    facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
-                   getFacetSelectClauses(hstRequestContext.getSession(), hnode, facetSelectClauses , false);
+                   getFacetSelectClauses(hnode.getSession(), hnode, facetSelectClauses , false);
                 } else {
                     // We are not searching in a virtual structure: return "" , there is no context where, and thus no filter on the search
                     log.debug("Not a search in a virtual structure. Return \"\" for the ctx where clause");
@@ -64,7 +63,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 // when we can get a canonical, we know for sure it is referenceable
                 String scopeUUID =  canonical.getUUID();
                 facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
-                getFacetSelectClauses(hstRequestContext.getSession(), hnode, facetSelectClauses , true);
+                getFacetSelectClauses(hnode.getSession(), hnode, facetSelectClauses , true);
             }
         } catch (RepositoryException e) {
            log.warn("Unable to get Context where clause: '{}'", e);
