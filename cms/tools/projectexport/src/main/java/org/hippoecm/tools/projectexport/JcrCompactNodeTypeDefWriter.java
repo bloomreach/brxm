@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.tools;
+package org.hippoecm.tools.projectexport;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -35,6 +36,7 @@ import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.OnParentVersionAction;
+
 import org.hippoecm.repository.api.ISO9075Helper;
 
 public class JcrCompactNodeTypeDefWriter {

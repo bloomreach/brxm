@@ -13,15 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.tools;
+package org.hippoecm.tools.projectexport;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -35,9 +40,8 @@ import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ExportDialog extends AbstractDialog {
     @SuppressWarnings("unused")

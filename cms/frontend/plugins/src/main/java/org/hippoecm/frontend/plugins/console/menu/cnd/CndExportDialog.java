@@ -43,8 +43,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
-import org.hippoecm.tools.DownloadLink;
-import org.hippoecm.tools.JcrCompactNodeTypeDefWriter;
+import org.hippoecm.tools.projectexport.DownloadLink;
+import org.hippoecm.tools.projectexport.JcrCompactNodeTypeDefWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

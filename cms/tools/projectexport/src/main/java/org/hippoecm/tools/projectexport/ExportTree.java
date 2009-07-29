@@ -13,10 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.tools;
+package org.hippoecm.tools.projectexport;
 
 import java.io.Serializable;
+
 import javax.swing.tree.TreeNode;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.RequestCycle;
@@ -27,6 +29,7 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+
 import org.hippoecm.frontend.wicket1985.Tree;
 
 class ExportTree extends Tree implements Serializable {

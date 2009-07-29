@@ -13,18 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.tools;
+package org.hippoecm.tools.projectexport;
 
 import javax.swing.tree.TreeNode;
+
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 
-class ProjectItem extends Panel
+class NamespaceItem extends Panel
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ExportItem.java 18965 2009-07-23 07:16:15Z bvanhalderen $";
 
-    ProjectItem(MarkupContainer parent, String id, final ExportTreeModel tree, final TreeNode node, Element.ProjectElement element) {
+    NamespaceItem(MarkupContainer parent, String id, final ExportTreeModel tree, final TreeNode node, Element.NamespaceElement element) {
         super(id);
-    }
+        add(new Label("uri", ((Element.NamespaceElement) element).uri));
+        add(new Label("filename", ((Element.NamespaceElement) element).cnd));
+     }
 }

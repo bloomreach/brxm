@@ -43,7 +43,7 @@ import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
 import org.hippoecm.frontend.plugins.console.menu.sorter.Sorter;
 import org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowDialog;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.tools.ExportDialog;
+import org.hippoecm.tools.projectexport.ExportDialog;
 
 public class MenuPlugin extends RenderPlugin {
     @SuppressWarnings("unused")

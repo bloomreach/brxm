@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.tools;
+package org.hippoecm.tools.projectexport;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -22,16 +22,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
-import org.apache.wicket.model.IDetachable;
-import org.hippoecm.frontend.session.UserSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.apache.wicket.model.IDetachable;
+
+import org.hippoecm.frontend.session.UserSession;
 
 class ExportTreeModel extends DefaultTreeModel implements TreeModel, IDetachable {
     @SuppressWarnings("unused")
