@@ -12,24 +12,30 @@
   distributed under the License is distributed on an "AS IS"
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
-  limitations under the License. -->
+  limitations under the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.onehippo.ecm.hst</groupId>
-  <artifactId>dependencies</artifactId>
-  <name>Hippo Site Toolkit Dependencies</name>
-  <description>Hippo Site Toolkit Dependencies</description>
+
   <parent>
-    <groupId>org.onehippo.ecm</groupId>
-    <artifactId>hst</artifactId>
+    <groupId>org.onehippo.ecm.hst</groupId>
+    <artifactId>dependencies</artifactId>
     <version>2.03.10-SNAPSHOT</version>
   </parent>
-  <packaging>pom</packaging>
 
-  <modules>
-    <module>server-dependencies</module>
-    <module>server-dependencies-war</module>
-  </modules>
-
+  <name>Hippo Site Toolkit Dependencies For Server</name>
+  <description>Hippo Site Toolkit Dependencies For Server</description>
+  <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+  <artifactId>hst-server-dependencies-war</artifactId>
+  <packaging>war</packaging>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+      <artifactId>hst-server-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+  </dependencies>
+  
 </project>

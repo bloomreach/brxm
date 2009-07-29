@@ -32,7 +32,7 @@
   <properties>
     <site.log.dir.name>${site.webapp.root}/WEB-INF/logs</site.log.dir.name>
   </properties>
-
+  
   <dependencies>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
@@ -475,102 +475,83 @@
                   </artifactItems>
                 </configuration>
               </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.2</version>
-            <executions>
               <execution>
-                <id>deploy-to-jetspeed</id>
+                <id>unpack-component-libs</id>
                 <phase>install</phase>
-                <configuration>
-                  <tasks>
-
-                    <echo>Replacing cms web application into jetspeed.</echo>
-                    <delete dir="${jetspeed.hst.cms.webapp}" />
-                    <mkdir dir="${jetspeed.hst.cms.webapp}" />
-                    <unwar src="../cms/target/cms.war" dest="${jetspeed.hst.cms.webapp}" overwrite="true" />
-                                      
-                    <echo>Replacing site portlet application into jetspeed.</echo>
-                    <delete dir="${jetspeed.server.home}/webapps/${project.build.finalName}" />
-                    <delete file="${jetspeed.server.home}/webapps/${project.build.finalName}.war" />
-                    <delete file="${jetspeed.portal.webapp}/WEB-INF/deploy/${project.build.finalName}.war" />
-                    <copy file="${project.build.directory}/${project.build.finalName}.war" tofile="${jetspeed.portal.webapp}/WEB-INF/deploy/${project.build.finalName}.war" overwrite="true" />
-
-                    <echo>Copy core libaries into jetspeed</echo>
-                    <copy todir="${jetspeed.portal.webapp}/WEB-INF/lib" overwrite="true">
-                      <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF/lib">
-                        <include name="commons-proxy-*.jar" />
-                      </fileset>
-                      <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF/lib">
-                        <exclude name="asm-*.jar" />
-                        <exclude name="commons-*.jar" />
-                        <exclude name="hst-client-*.jar" />
-                        <exclude name="jstl-*.jar" />
-                        <exclude name="slf4j-*.jar" />
-                        <exclude name="log4j-*.jar" />
-                        <exclude name="standard-*.jar" />
-                        <exclude name="spring-*.jar" />
-                        <exclude name="xml-apis-*.jar" />
-                        <exclude name="xercesImpl-*.jar" />
-                        <exclude name="xalan-*.jar" />
-                        <exclude name="jdo2-*.jar" />
-                        <exclude name="jpox-*.jar" />
-                        <exclude name="wicket-*.jar" />
-                      </fileset>
-                    </copy>
-
-                    <echo>Copy hst configuration into jetspeed</echo>
-                    <copy todir="${jetspeed.portal.webapp}/WEB-INF" overwrite="true">
-                      <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
-                        <include name="hst*.properties" />
-                        <include name="hst*.xml" />
-                      </fileset>
-                    </copy>
-                    
-                    <echo>Copy example psml page into jetspeed</echo>
-                    <copy todir="${jetspeed.portal.webapp}/WEB-INF/pages" overwrite="true">
-                      <fileset dir="src/main/webapp/WEB-INF/portal-pages">
-                        <include name="**/*.psml" />
-                      </fileset>
-                    </copy>
-                                        
-                    <echo><![CDATA[
-========================================================================
-[Notice]
-
-Thank you for trying jetspeed profile.
-
-Deploying artifacts are done, but you need to the web.xml file in jetspeed.
-
-Add the following servlet definition in /jetspeed/WEB-INF/web.xml
-
-  <servlet>
-    <servlet-name>HstSiteConfigServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
-    <init-param>
-      <param-name>forceful.reinit</param-name>
-      <param-value>true</param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  
-Restart your Jetspeed and visit the following page:
-
-http://localhost:8080/jetspeed/portal/
-
-And, click `HST-2 Demo' menu!
-
-========================================================================
-                    ]]></echo>
-                    
-                  </tasks>
-                </configuration>
                 <goals>
-                  <goal>run</goal>
+                  <goal>unpack</goal>
                 </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+                      <artifactId>hst-server-dependencies-war</artifactId>
+                      <version>${project.version}</version>
+                      <type>war</type>
+                      <overWrite>true</overWrite>
+                      <outputDirectory>${jetspeed.portal.webapp}</outputDirectory>
+                      <includes>WEB-INF/lib/*.jar</includes>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+              <execution>
+                <id>unpack-cms-app</id>
+                <phase>install</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst.testsuite</groupId>
+                      <artifactId>hst-testsuite-cms</artifactId>
+                      <version>${project.version}</version>
+                      <type>war</type>
+                      <overWrite>true</overWrite>
+                      <outputDirectory>${jetspeed.hst.cms.webapp}</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+              <execution>
+                <id>copy-site-war</id>
+                <phase>install</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst.testsuite</groupId>
+                      <artifactId>hst-testsuite-site</artifactId>
+                      <version>${project.version}</version>
+                      <type>war</type>
+                      <outputDirectory>${jetspeed.portal.webapp}/WEB-INF/deploy</outputDirectory>
+                      <destFileName>${project.build.finalName}.war</destFileName>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+              <execution>
+                <id>unpack-hst-configs-and-pages</id>
+                <phase>install</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst.testsuite</groupId>
+                      <artifactId>hst-testsuite-site</artifactId>
+                      <version>${project.version}</version>
+                      <type>war</type>
+                      <overWrite>true</overWrite>
+                      <outputDirectory>${jetspeed.portal.webapp}</outputDirectory>
+                      <includes>WEB-INF/hst*.properties, WEB-INF/hst*.xml, WEB-INF/**/*.psml</includes>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -579,6 +560,5 @@ And, click `HST-2 Demo' menu!
     </profile>
     
   </profiles>
-
 
 </project>
