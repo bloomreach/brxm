@@ -22,14 +22,15 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.HstServices;
 
 public class FilterImpl implements Filter{
 
-    private HstRequestContext hstRequestContext; 
     private StringBuilder jcrExpressionBuilder;
     
     private boolean negated = false;
@@ -41,8 +42,14 @@ public class FilterImpl implements Filter{
      */
     private List<FilterTypeWrapper> childFilters = new ArrayList<FilterTypeWrapper>();
     
+    /**
+     * @deprecated use {@link FilterImpl()}
+     */
+    @Deprecated 
     public FilterImpl(HstRequestContext hstRequestContext){
-        this.hstRequestContext = hstRequestContext;
+    }
+    
+    public FilterImpl(){
     }
 
     public Filter negate(){
@@ -306,13 +313,14 @@ public class FilterImpl implements Filter{
     }
     
     public String getCalendarWhereXPath(Calendar value) throws FilterException{
-        try {
-            // TODO : is this a repository roundtrip over rmi? If so, cache locally created values?
-            Value val =  this.hstRequestContext.getSession().getValueFactory().createValue(value);
-            return "xs:dateTime('"+val.getString() + "')";
-         } catch (RepositoryException e) {
-             throw new FilterException("Repository Exception: " , e);
-         }
+        //try {
+            // TODO : from HSTServices get the value factory component manager
+            //Value val =  this.hstRequestContext.getSession().getValueFactory().createValue(value);
+            //return "xs:dateTime('"+val.getString() + "')";
+            return " TODO ";
+        // } catch (RepositoryException e) {
+        //     throw new FilterException("Repository Exception: " , e);
+        // }
     }
 
     /**

@@ -49,8 +49,8 @@ import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResource;
 import org.hippoecm.hst.core.component.GenericHstComponent;
-import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -59,6 +59,8 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.search.HstQueryManagerFactory;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,7 +304,10 @@ public class BaseHstComponent extends GenericHstComponent {
     private synchronized void initBeansObjects() throws HstComponentException{
         if (!this.beansInitialized) {
             this.objectConverter = getObjectConverter();
-            this.queryManager = new HstQueryManagerImpl(this.objectConverter);
+            
+            ComponentManager compMngr = HstServices.getComponentManager();
+            HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory)compMngr.getComponent(HstQueryManagerFactory.class.getName());
+            this.queryManager = hstQueryManagerFactory.createQueryManager(this.objectConverter);
             this.beansInitialized = true;
         }
     }

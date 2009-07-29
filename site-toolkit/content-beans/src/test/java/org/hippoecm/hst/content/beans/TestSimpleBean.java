@@ -117,8 +117,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
         ObjectConverter objectConverter = getObjectConverter();
         
         final Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
-        final HstCtxWhereClauseComputer ctxWhereComputer = new MyHstCtxWhereClauseComputerImpl(); 
-
+      
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         
         HippoFolder folder = (HippoFolder) obm.getObject("/testcontent/documents/testproject/Products");
@@ -130,8 +129,6 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
                 String methodName = method.getName();
                 if ("getSession".equals(methodName)) {
                     return session;
-                } else if ("getHstCtxWhereClauseComputer".equals(methodName)) {
-                    return ctxWhereComputer;
                 } else {
                     throw new UnsupportedOperationException();
                 }
@@ -140,7 +137,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
         
         HstRequestContext requestContext = (HstRequestContext) factory.createInvokerProxy(invoker, new Class [] { HstRequestContext.class });
         
-        HstQueryManager queryManager = new HstQueryManagerImpl(objectConverter);
+        HstQueryManager queryManager = new HstQueryManagerImpl(objectConverter, new MyHstCtxWhereClauseComputerImpl());
         
         HstQuery hstQuery = queryManager.createQuery(requestContext, folder);
 

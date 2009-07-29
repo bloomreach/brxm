@@ -12,7 +12,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
+import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public abstract class AbstractValve implements Valve
     protected HstURLFactory urlFactory;
     protected HstLinkCreator linkCreator;
     protected HstSiteMenusManager siteMenusManager;
-    protected HstCtxWhereClauseComputer ctxWhereClauseComputer;
+    protected HstQueryManagerFactory hstQueryManagerFactory;
     
     protected String traceToolComponentName = "hstTraceToolComponent";
     protected String traceToolComponentClassName = "org.hippoecm.hst.component.support.tool.HstTraceToolComponent";
@@ -126,12 +126,12 @@ public abstract class AbstractValve implements Valve
         return this.siteMenusManager;
     }
     
-    public HstCtxWhereClauseComputer getCtxWhereClauseComputer(){
-        return this.ctxWhereClauseComputer;
+    public HstQueryManagerFactory getHstQueryManagerFactory(){
+        return this.hstQueryManagerFactory;
     }
     
-    public void setCtxWhereClauseComputer(HstCtxWhereClauseComputer ctxWhereClauseComputer){
-        this.ctxWhereClauseComputer = ctxWhereClauseComputer;
+    public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory){
+        this.hstQueryManagerFactory = hstQueryManagerFactory;
     }
     
     public abstract void invoke(ValveContext context) throws ContainerException;

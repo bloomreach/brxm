@@ -36,6 +36,7 @@ import org.hippoecm.hst.content.beans.query.filter.HstCtxWhereFilter;
 import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +44,8 @@ public class HstQueryImpl implements HstQuery {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstQueryImpl.class);
 
-    private HstRequestContext hstRequestContext;
     private ObjectConverter objectConverter;
-    
+    private HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
     /*
      * By default, if you do not use setLimit(int limit), we use a limit of 1000. This is for performance reasons (internal repo)
      */
@@ -58,15 +58,15 @@ public class HstQueryImpl implements HstQuery {
     private NodeTypeFilter nodeTypeFilter;
     private IsNodeTypeFilter isNodeTypeFilter;
 
-    public HstQueryImpl(HstRequestContext hstRequestContext, ObjectConverter objectConverter, Node scope, NodeTypeFilter nodeTypeFilter) {
-        this.hstRequestContext = hstRequestContext;
+    public HstQueryImpl(HstCtxWhereClauseComputer hstCtxWhereClauseComputer, ObjectConverter objectConverter, Node scope, NodeTypeFilter nodeTypeFilter) {
+        this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
         this.objectConverter = objectConverter;
         this.scope = scope;
         this.nodeTypeFilter = nodeTypeFilter; 
     }
     
-    public HstQueryImpl(HstRequestContext hstRequestContext, ObjectConverter objectConverter, Node scope, IsNodeTypeFilter isNodeTypeFilter) {
-        this.hstRequestContext = hstRequestContext;
+    public HstQueryImpl(HstCtxWhereClauseComputer hstCtxWhereClauseComputer, ObjectConverter objectConverter, Node scope, IsNodeTypeFilter isNodeTypeFilter) {
+        this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
         this.objectConverter = objectConverter;
         this.scope = scope;
         this.isNodeTypeFilter = isNodeTypeFilter; 
@@ -83,11 +83,9 @@ public class HstQueryImpl implements HstQuery {
     
 
     public Filter createFilter() {
-        return new FilterImpl(this.hstRequestContext);
+        return new FilterImpl();
     }
 
-
-    
     public BaseFilter getFilter() {
         return this.filter;
     }
@@ -105,7 +103,10 @@ public class HstQueryImpl implements HstQuery {
     }
 
     public String getQuery() throws QueryException{
-        BaseFilter ctxWhereFilter = new HstCtxWhereFilter(this.hstRequestContext, this.scope);
+        if(this.scope == null) {
+            throw new QueryException("Scope for a search is not allowed to be null");
+        }
+        BaseFilter ctxWhereFilter = new HstCtxWhereFilter(this.hstCtxWhereClauseComputer, this.scope);
         if(ctxWhereFilter.getJcrExpression() == null) {
             throw new ScopeException("HstContextWhereClause is not allowed to be null");
         }
@@ -163,7 +164,7 @@ public class HstQueryImpl implements HstQuery {
     public HstQueryResult execute() throws QueryException {
         String query = getQuery();
         try {
-            QueryManager jcrQueryManager = this.hstRequestContext.getSession().getWorkspace().getQueryManager();
+            QueryManager jcrQueryManager = scope.getSession().getWorkspace().getQueryManager();
             
             Query jcrQuery = jcrQueryManager.createQuery(query, "xpath");
             if(jcrQuery instanceof HippoQuery)  {

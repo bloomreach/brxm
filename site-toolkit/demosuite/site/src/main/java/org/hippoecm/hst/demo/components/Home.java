@@ -30,7 +30,7 @@ public class Home extends BaseHstComponent {
  
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-
+        
         super.doBeforeRender(request, response);
         HippoBean n = this.getContentBean(request);
         

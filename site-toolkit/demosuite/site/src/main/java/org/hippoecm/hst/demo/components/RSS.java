@@ -51,7 +51,7 @@ public class RSS extends BaseHstComponent {
         HstQueryManager manager = getQueryManager();
         try {
 
-            final HstQuery query = manager.createQuery(request.getRequestContext(), contentBean);
+            final HstQuery query = manager.createQuery(contentBean);
             query.addOrderByDescending("demosite:date");
             
             final HstQueryResult result = query.execute();
@@ -63,7 +63,6 @@ public class RSS extends BaseHstComponent {
                 HippoBean bean = iterator.nextHippoBean();
                 // note: bean can be null
                 if (bean != null && bean instanceof BaseBean) {
-                    BaseBean pageBean = (BaseBean)bean;
                     results.add(bean);
                 }
             }

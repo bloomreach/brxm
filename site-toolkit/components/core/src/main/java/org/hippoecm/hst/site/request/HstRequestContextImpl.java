@@ -39,6 +39,7 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
+import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
 public class HstRequestContextImpl implements HstRequestContext {
@@ -54,11 +55,10 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected HstLinkCreator linkCreator;
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstSiteMenus siteMenus;
-    protected HstCtxWhereClauseComputer ctxWhereClauseComputer;
+    protected HstQueryManagerFactory hstQueryManagerFactory;
     protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
     
-
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
     }
@@ -142,12 +142,17 @@ public class HstRequestContextImpl implements HstRequestContext {
         return this.siteMenus;
     }
     
-    public void setCtxWhereClauseComputer(HstCtxWhereClauseComputer ctxWhereClauseComputer){
-        this.ctxWhereClauseComputer = ctxWhereClauseComputer;
+    public HstQueryManagerFactory getHstQueryManagerFactory() {
+        return hstQueryManagerFactory;
     }
+
+    public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory) {
+        this.hstQueryManagerFactory = hstQueryManagerFactory;
+    }
+   
     
     public HstCtxWhereClauseComputer getHstCtxWhereClauseComputer(){
-        return this.ctxWhereClauseComputer;
+        return this.getHstQueryManagerFactory().getHstCtxWhereClauseComputer();
     }
 
     public Object getAttribute(String name) {

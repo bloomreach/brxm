@@ -27,6 +27,7 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
+import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
 /**
@@ -107,8 +108,16 @@ public interface HstRequestContext {
      * in virtual structures.
      * 
      * @return HstCtxWhereClauseComputer
+     * @deprecated Use {@link HstQueryManagerFactory#getHstCtxWhereClauseComputer()} instead
      */
+    @Deprecated
     HstCtxWhereClauseComputer getHstCtxWhereClauseComputer();
+    
+    /**
+     * Returns a {@link HstQueryManagerFactory} instance responsible for creating a query manager
+     * @return HstQueryManagerFactory
+     */
+    HstQueryManagerFactory getHstQueryManagerFactory();
     
     /**
      * Set an attribute to be shared among each HstComponent windows.

@@ -24,69 +24,102 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public interface HstQueryManager {
 
     /**
-     * @param hstRequestContext
+     * Creates a empty query, with scope
      * @param scope 
-     * @return a new <code>{@link HstQuery}</code> with scope 
+     * @return a new <code>{@link HstQuery}</code> with scope {@code scope}
      */
-    HstQuery createQuery(HstRequestContext hstRequestContext, Node scope) throws QueryException;
+    HstQuery createQuery(Node scope) throws QueryException;
     
     /**
      * Creates a query, with scope  and Filter for types of filterBean. If includeSubTypes is <code>true</code>,
      * the result may also contain HippoBean's whose primarytype is a subtype of the filterBean type. 
      * 
-     * @param hstRequestContext
      * @param scope
      * @param filterBean
      * @param includeSubTypes
      * @return a new <code>{@link HstQuery}</code> with scope & filter
      * @throws QueryException
      */
-    HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException;
+    HstQuery createQuery(Node scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException;
 
     /**
-     * @param hstRequestContext
+     * Creates a empty query, with scope
      * @param scope 
-     * @return a new <code>{@link HstQuery}</code> with scope 
-     */
-    HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope) throws QueryException;
+     * @return a new <code>{@link HstQuery}</code> with scope {@code scope}
+     */ 
+    HstQuery createQuery(HippoBean scope) throws QueryException;
     
     /**
      * Creates a query, with scope HippoBean and Filter for types of filterBean. If includeSubTypes is <code>true</code>,
      * the result may also contain HippoBean's whose primarytype is a subtype of the filterBean type. 
      * 
-     * @param hstRequestContext
      * @param scope
      * @param filterBean
      * @param includeSubTypes
      * @return a new <code>{@link HstQuery}</code> with scope & filter
      * @throws QueryException
      */
-    HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException;
+    HstQuery createQuery(HippoBean scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException;
     
     /**
      * Creates a query, with the scope HippoBean and with a Filter that filters to only return HippoBeans of the types that are 
      * added as variable arguments. It is not possible to retrieve subtypes of the applied filterBeans. If needed, use 
      * {@link #createQuery(HstRequestContext, HippoBean, Class, boolean)} instead.
-     * @param hstRequestContext
+     * 
      * @param scope
      * @param filterBeans
      * @return a new <code>{@link HstQuery}</code> with scope & filter on jcr primary nodetype of the filterBean
      * @throws QueryException
      */
-    
-    HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException;
+    HstQuery createQuery(Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException;
     
     /**
      * Creates a query, with a scope and with a Filter that filters to only return HippoBeans of the types that are 
      * added as variable arguments. It is not possible to retrieve subtypes of the applied filterBeans with this method. If needed, use 
      * {@link #createQuery(HstRequestContext, Node, Class, boolean)} instead.
-     * @param hstRequestContext
+     * 
      * @param scope
      * @param varargs filterBean
      * @return a new <code>{@link HstQuery}</code> with scope and filter on jcr primary nodetype of the filterBean
      * @throws QueryException
      */
-    public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean>... filterBean) throws QueryException;
+    HstQuery createQuery(HippoBean scope, Class<? extends HippoBean>... filterBean) throws QueryException;
+    
+    /**
+     * @Deprecated Use {@link #createQuery(Node)}
+     */
+    @Deprecated
+    HstQuery createQuery(HstRequestContext hstRequestContext, Node scope) throws QueryException;
+    
+    /**
+     * @deprecated  Use {@link #createQuery(Node,HippoBean ,boolean)}
+     */
+    @Deprecated
+    HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException;
+
+    /**
+     * @deprecated Use {@link #createQuery(HippoBean)}
+     */ 
+    @Deprecated 
+    HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope) throws QueryException;
+    
+    /**
+     * @Deprecated Use {@link #createQuery(HippoBean, HippoBean , boolean)}
+     */
+    @Deprecated
+    HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException;
+    
+    /**
+     * @Deprecated Use {@link #createQuery(Node, HippoBean... )}
+     */
+    @Deprecated
+    HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException;
+    
+    /**
+     * @Deprecated Use {@link #createQuery(HippoBean, HippoBean... )}
+     */
+    @Deprecated
+    HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean>... filterBean) throws QueryException;
     
 
 }

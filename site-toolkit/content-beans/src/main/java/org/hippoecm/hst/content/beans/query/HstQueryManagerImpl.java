@@ -27,6 +27,7 @@ import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.PrimaryNodeTypeFilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.slf4j.LoggerFactory;
 
 
@@ -34,16 +35,24 @@ public class HstQueryManagerImpl implements HstQueryManager{
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstQueryManagerImpl.class);
     private ObjectConverter objectConverter;
-    
-    public HstQueryManagerImpl(ObjectConverter objectConverter){
+    private HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
+ 
+    public HstQueryManagerImpl(ObjectConverter objectConverter, HstCtxWhereClauseComputer hstCtxWhereClauseComputer) {
         this.objectConverter = objectConverter;
+        this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
     }
     
-    /**
-     * Creates a empty query, with scope
-     */
+    @Deprecated
     public HstQuery createQuery(HstRequestContext hstRequestContext, Node scope) throws QueryException {
-        return createQuery(hstRequestContext, scope, (NodeTypeFilter)null);
+        return createQuery(scope);
+    }
+    public HstQuery createQuery(Node scope) throws QueryException {
+        return createQuery(scope, (NodeTypeFilter)null);
+    }
+    
+    @Deprecated
+    public HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
+        return createQuery(scope, filterBean, includeSubTypes);
     }
     
     /**
@@ -51,9 +60,9 @@ public class HstQueryManagerImpl implements HstQueryManager{
      * the result may also contain HippoBean's whose primarytype is a subtype of the filterBean type. 
      * 
      */
-    public HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
+    public HstQuery createQuery(Node scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
         if(!includeSubTypes) {
-           return createQuery(hstRequestContext, scope, filterBean);
+           return createQuery(scope, filterBean);
         }
         String primaryNodeTypeNameForBean = objectConverter.getPrimaryNodeTypeNameFor(filterBean);
         IsNodeTypeFilter isNodeTypeFilter = null;
@@ -62,17 +71,30 @@ public class HstQueryManagerImpl implements HstQueryManager{
         } else {
             isNodeTypeFilter = new IsNodeTypeFilter(primaryNodeTypeNameForBean);
         }
-        return new HstQueryImpl(hstRequestContext, this.objectConverter, scope, isNodeTypeFilter);
+        return new HstQueryImpl(this.hstCtxWhereClauseComputer, this.objectConverter, scope, isNodeTypeFilter);
+    }
+    
+    @Deprecated
+    public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope) throws QueryException{
+        if(scope.getNode() == null) {
+            throw new QueryException("Cannot create a query for a detached HippoBean where the jcr node is null");
+        }
+        return createQuery(scope.getNode());
     }
     
     /**
      * Creates a empty query, with the scope HippoBean
      */
-    public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope) throws QueryException{
+    public HstQuery createQuery(HippoBean scope) throws QueryException{
         if(scope.getNode() == null) {
             throw new QueryException("Cannot create a query for a detached HippoBean where the jcr node is null");
         }
-        return createQuery(hstRequestContext, scope.getNode());
+        return createQuery(scope.getNode());
+    }
+    
+    @Deprecated
+    public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
+        return createQuery(scope, filterBean, includeSubTypes);
     }
     
     /**
@@ -80,25 +102,34 @@ public class HstQueryManagerImpl implements HstQueryManager{
      * the result may also contain HippoBean's whose primarytype is a subtype of the filterBean type. 
      * 
      */
-    public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
+    public HstQuery createQuery(HippoBean scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
         if(scope.getNode() == null) {
             throw new QueryException("Cannot create a query for a detached HippoBean where the jcr node is null");
         }
-        return createQuery(hstRequestContext, scope.getNode(), filterBean, includeSubTypes);
+        return createQuery(scope.getNode(), filterBean, includeSubTypes);
     }
     
+    @Deprecated
     public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
+        return createQuery(scope, filterBeans);
+    }
+    
+    public HstQuery createQuery(HippoBean scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
         if(scope.getNode() == null) {
             throw new QueryException("Cannot create a query for a detached HippoBean where the jcr node is null");
         }
-        return createQuery(hstRequestContext, scope.getNode(), filterBeans);
+        return createQuery(scope.getNode(), filterBeans);
     }
     
+    @Deprecated
+    public HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
+       return createQuery(scope, filterBeans);
+    }
     /**
      * Creates a query, with the scope HippoBean and with a Filter that filters to only return HippoBeans of the types that are 
      * added as variable arguments. It is not possible to retrieve subtypes of the applied filterBeans.
      */
-    public HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
+    public HstQuery createQuery(Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
         if(scope == null) {
             throw new QueryException("Cannot create a query for a detached HippoBean where the jcr node is null");
         }
@@ -116,11 +147,11 @@ public class HstQueryManagerImpl implements HstQueryManager{
         if(primaryNodeTypes.size() > 0) {
             primaryNodeTypeFilter  = new PrimaryNodeTypeFilterImpl(primaryNodeTypes.toArray(new String[primaryNodeTypes.size()]));
         }
-        return createQuery(hstRequestContext, scope, primaryNodeTypeFilter);
+        return createQuery(scope, primaryNodeTypeFilter);
     }
 
-    private HstQuery createQuery(HstRequestContext hstRequestContext, Node scope, NodeTypeFilter filter) throws QueryException {
-        return new HstQueryImpl(hstRequestContext, this.objectConverter, scope, filter);
+    private HstQuery createQuery(Node scope, NodeTypeFilter filter) throws QueryException {
+        return new HstQueryImpl(this.hstCtxWhereClauseComputer, this.objectConverter, scope, filter);
     }
     
  

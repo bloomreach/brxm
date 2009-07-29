@@ -54,7 +54,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
         HstQueryManager manager = getQueryManager();
         try {
 
-            final HstQuery hstQuery = manager.createQuery(request.getRequestContext(), scope);
+            final HstQuery hstQuery = manager.createQuery(scope);
 
             if (nodeType != null) {
                 // TODO
@@ -65,7 +65,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             }
             
             if (query != null) {
-                Filter filter = new FilterImpl(request.getRequestContext());
+                Filter filter = new FilterImpl();
                 filter.addContains(".", query);
                 hstQuery.setFilter(filter);
                 request.setAttribute("query", query);
