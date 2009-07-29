@@ -29,6 +29,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 import org.hippoecm.repository.api.HippoNode;
 
 public class JcrDiff {
@@ -73,7 +74,8 @@ public class JcrDiff {
     }
 
     final double SCORE_NAME = 0.3;
-    final double SCORE_PRIMARY = 0.25;
+    final double SCORE_PRIMARY = 0.20;
+    final double SCORE_MIXINS  = 0.05;
     final double SCORE_ORDERABLE = 0.1;
     final double SCORE_PROPERTIES = 0.2;
     final double SCORE_CHILDREN = 0.15;
@@ -83,20 +85,6 @@ public class JcrDiff {
 
     private double compare(Node node1, Node node2) throws RepositoryException {
         double score = 1.0;
-
-        Comparator propertyComparator = new Comparator<Property>() {
-            public int compare(Property p1, Property p2) {
-                try {
-                return p1.getName().compareTo(p2.getName());
-                } catch(RepositoryException ex) {
-                    return 0;
-                }
-            }
-        };
-        SortedSet<Property> props1 = new TreeSet<Property>(propertyComparator);
-        SortedSet<Property> props2 = new TreeSet<Property>(propertyComparator);
-        //addCompareProperties(props1, node1);
-        //addCompareProperties(props2, node2);
 
         // name of nodes comparison
         if(!node1.getName().equals(node2.getName())) {
@@ -108,9 +96,17 @@ public class JcrDiff {
             score -= SCORE_PRIMARY;
         }
 
-        // FIXME mixin node types comparison
-        
-        // FIXME orderability of child nodes comparison
+        SortedSet<String> nodetypes1 = new TreeSet<String>();
+        SortedSet<String> nodetypes2 = new TreeSet<String>();
+        for (NodeType nt : node1.getMixinNodeTypes()) {
+            nodetypes1.add(nt.getName());
+        }
+        for (NodeType nt : node2.getMixinNodeTypes()) {
+            nodetypes2.add(nt.getName());
+        }
+        if (!nodetypes1.equals(nodetypes2)) {
+            score -= SCORE_MIXINS;
+        }
 
         // property comparison
         ComparePropertySet propertySet1 = new ComparePropertySet(node1);
