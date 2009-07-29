@@ -18,15 +18,16 @@ package org.hippoecm.frontend.plugins.cms.browse.list.resolvers;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.editor.tools.JcrTypeStore;
+import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
+import org.hippoecm.frontend.types.BuiltinTypeStore;
+import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class TemplateTypeRenderer extends AbstractNodeRenderer {
@@ -34,6 +35,15 @@ public class TemplateTypeRenderer extends AbstractNodeRenderer {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    private JcrTypeStore typeStore;
+
+    public TemplateTypeRenderer() {
+        typeStore = new JcrTypeStore();
+        IStore<ITypeDescriptor> builtin = new BuiltinTypeStore();
+        TypeLocator locator = new TypeLocator(new IStore[] { typeStore, builtin });
+        typeStore.setTypeLocator(locator);
+    }
 
     @Override
     protected Component getViewer(String id, Node node) throws RepositoryException {
@@ -51,19 +61,16 @@ public class TemplateTypeRenderer extends AbstractNodeRenderer {
             }
         }
 
-        NodeTypeManager ntMgr = node.getSession().getWorkspace().getNodeTypeManager();
         if (ntNode.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
             String type = ntNode.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
             if (type.indexOf(':') < 0) {
                 return new Label(id, new ResourceModel("type-primitive"));
             }
-            try {
-                NodeType nt = ntMgr.getNodeType(type);
-                if (nt.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            ITypeDescriptor descriptor = typeStore.getTypeDescriptor(type);
+            if (descriptor != null) {
+                if (descriptor.isType(HippoNodeType.NT_DOCUMENT)) {
                     return new Label(id, new ResourceModel("type-document"));
                 }
-            } catch (NoSuchNodeTypeException ex) {
-                return new Label(id, new ResourceModel("type-compound"));
             }
         }
 
@@ -71,13 +78,11 @@ public class TemplateTypeRenderer extends AbstractNodeRenderer {
             Value[] values = ntNode.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
             for (int i = 0; i < values.length; i++) {
                 Value value = values[i];
-                try {
-                    NodeType nt = ntMgr.getNodeType(value.getString());
-                    if (nt.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                ITypeDescriptor descriptor = typeStore.getTypeDescriptor(value.getString());
+                if (descriptor != null) {
+                    if (descriptor.isType(HippoNodeType.NT_DOCUMENT)) {
                         return new Label(id, new ResourceModel("type-document"));
                     }
-                } catch (NoSuchNodeTypeException ex) {
-                    continue;
                 }
             }
         }

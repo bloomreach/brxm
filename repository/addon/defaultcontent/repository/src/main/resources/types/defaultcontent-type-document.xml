@@ -18,7 +18,7 @@
          xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
          xmlns:hipposysedit="http://www.onehippo.org/jcr/hipposysedit/nt/1.0"
          xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="document">
+         sv:name="basedocument">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:templatetype</sv:value>
   </sv:property>
@@ -34,7 +34,7 @@
       <sv:value>nl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Document</sv:value>
+      <sv:value>Basis Document</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -45,7 +45,7 @@
       <sv:value>en</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Document</sv:value>
+      <sv:value>Base Document</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hipposysedit:nodetype">
