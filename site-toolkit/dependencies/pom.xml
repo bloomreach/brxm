@@ -28,7 +28,9 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>shared-dependencies</module>
     <module>server-dependencies</module>
+    <module>client-dependencies</module>
     <module>server-dependencies-war</module>
   </modules>
 

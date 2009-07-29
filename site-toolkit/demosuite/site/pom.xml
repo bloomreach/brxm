@@ -35,16 +35,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.1_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
@@ -131,32 +121,6 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-commons</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-ocm</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.components</groupId>
-      <artifactId>hst-core</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-client</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <!-- temporarily added as long as in sandbox -->
     <dependency>
       <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
@@ -214,16 +178,6 @@
             <version>3.1.4</version>
             <scope>runtime</scope>
           </dependency>
-          
-          <!-- Shared Libraries
-          The followings will be located in shared lib folder in the servlet container. -->
-          <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.1_spec</artifactId>
-            <version>${jta.version}</version>
-            <scope>runtime</scope>
-          </dependency>
-          
         </dependencies>
       </plugin>
       <plugin>
@@ -275,9 +229,65 @@
   </build>
   
   <profiles>
-
+    
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>javax.jcr</groupId>
+          <artifactId>jcr</artifactId>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-shared-dependencies</artifactId>
+          <version>${project.version}</version>
+          <type>pom</type>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-server-dependencies</artifactId>
+          <version>${project.version}</version>
+          <type>pom</type>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-client-dependencies</artifactId>
+          <version>${project.version}</version>
+          <type>pom</type>
+        </dependency>
+      </dependencies>
+    </profile>
+    
     <profile>
       <id>tomcat</id>
+      <dependencies>
+        <dependency>
+          <groupId>javax.jcr</groupId>
+          <artifactId>jcr</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-shared-dependencies</artifactId>
+          <version>${project.version}</version>
+          <type>pom</type>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-server-dependencies</artifactId>
+          <version>${project.version}</version>
+          <type>pom</type>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-client-dependencies</artifactId>
+          <version>${project.version}</version>
+          <type>pom</type>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -354,11 +364,9 @@
 
     <profile>
       <id>jetspeed</id>
-      
       <properties>
         <site.log.dir.name>${org.apache.portals.logdir}</site.log.dir.name>
       </properties>
-
       <dependencies>
         <dependency>
           <groupId>javax.jcr</groupId>
@@ -366,19 +374,19 @@
           <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>org.onehippo.ecm.hst</groupId>
-          <artifactId>hst-api</artifactId>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-shared-dependencies</artifactId>
           <version>${project.version}</version>
+          <type>pom</type>
           <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>org.onehippo.ecm.hst</groupId>
-          <artifactId>hst-commons</artifactId>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-client-dependencies</artifactId>
           <version>${project.version}</version>
-          <scope>provided</scope>
+          <type>pom</type>
         </dependency>
       </dependencies>
-      
       <build>
         <plugins>
           <plugin>
@@ -433,11 +441,13 @@
                     <artifactItem>
                       <groupId>org.onehippo.ecm.hst</groupId>
                       <artifactId>hst-api</artifactId>
+                      <version>${project.version}</version>
                       <outputDirectory>${jetspeed.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.onehippo.ecm.hst</groupId>
                       <artifactId>hst-commons</artifactId>
+                      <version>${project.version}</version>
                       <outputDirectory>${jetspeed.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                   </artifactItems>

@@ -23,48 +23,21 @@
     <version>2.03.10-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Dependencies For Server</name>
-  <description>Hippo Site Toolkit Dependencies For Server</description>
+  <name>Hippo Site Toolkit Dependencies For Shared Libraries</name>
+  <description>Hippo Site Toolkit Dependencies For Shared Libraries</description>
   <groupId>org.onehippo.ecm.hst.dependencies</groupId>
-  <artifactId>hst-server-dependencies</artifactId>
+  <artifactId>hst-shared-dependencies</artifactId>
   <packaging>pom</packaging>
   
   <dependencies>
     <dependency>
-      <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <!-- hippo-ecm-api, jdo, hippo-ecm-addon-builtin-common and hippo-ecm-addon-reviewed-action-common
-    should be moved to 'shared-dependencies' after fix of HREPTWO-2866. -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.jdo</groupId>
-      <artifactId>jdo2-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-content-beans</artifactId>
+      <artifactId>hst-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.ecm.hst.components</groupId>
-      <artifactId>hst-core</artifactId>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-commons</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

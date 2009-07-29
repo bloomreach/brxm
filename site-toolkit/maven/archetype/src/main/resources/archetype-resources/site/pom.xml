@@ -36,24 +36,6 @@
   
   <dependencies>
     <dependency>
-      <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <!-- Dependencies needed to be able to send mail -->
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>1.4</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.activation</groupId>
-      <artifactId>activation</artifactId>
-      <version>1.1</version>
-      <scope>provided</scope>
-    </dependency>   
-    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
@@ -102,6 +84,19 @@
       <artifactId>log4j</artifactId>
       <scope>runtime</scope>
     </dependency>
+    <!-- Dependencies needed to be able to send mail -->
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>1.1</version>
+      <scope>provided</scope>
+    </dependency>   
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
@@ -119,46 +114,10 @@
       <artifactId>spring-aop</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-commons</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.components</groupId>
-      <artifactId>hst-core</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-client</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-content-beans</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-ocm</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.1_spec</artifactId>
-      <scope>provided</scope>
-      <version>1.1</version>
-    </dependency>
-  
-    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>2.4</version>
     </dependency>
-   
   </dependencies>
   
   <build>
@@ -210,14 +169,6 @@
             <groupId>com.atomikos</groupId>
             <artifactId>atomikos-util</artifactId>
             <version>3.1.4</version>
-            <scope>runtime</scope>
-          </dependency>
-          <!-- Shared Libraries
-          The followings will be located in shared lib folder in the servlet container. -->
-          <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.1_spec</artifactId>
-            <version>${dollar}{jta.version}</version>
             <scope>runtime</scope>
           </dependency>
         </dependencies>
@@ -278,7 +229,64 @@
   <profiles>
     
     <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>javax.jcr</groupId>
+          <artifactId>jcr</artifactId>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-shared-dependencies</artifactId>
+          <version>${dollar}{hst.version}</version>
+          <type>pom</type>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-server-dependencies</artifactId>
+          <version>${dollar}{hst.version}</version>
+          <type>pom</type>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-client-dependencies</artifactId>
+          <version>${dollar}{hst.version}</version>
+          <type>pom</type>
+        </dependency>
+      </dependencies>
+    </profile>
+    
+    <profile>
       <id>tomcat</id>
+      <dependencies>
+        <dependency>
+          <groupId>javax.jcr</groupId>
+          <artifactId>jcr</artifactId>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-shared-dependencies</artifactId>
+          <version>${dollar}{hst.version}</version>
+          <type>pom</type>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-server-dependencies</artifactId>
+          <version>${dollar}{hst.version}</version>
+          <type>pom</type>
+        </dependency>
+        <dependency>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-client-dependencies</artifactId>
+          <version>${dollar}{hst.version}</version>
+          <type>pom</type>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -355,32 +363,29 @@
     
     <profile>
       <id>jetspeed</id>
-      
       <properties>
         <site.log.dir.name>${dollar}{org.apache.portals.logdir}</site.log.dir.name>
       </properties>
-      
       <dependencies>
         <dependency>
           <groupId>javax.jcr</groupId>
           <artifactId>jcr</artifactId>
-          <version>${dollar}{javax.jcr.version}</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>org.onehippo.ecm.hst</groupId>
-          <artifactId>hst-api</artifactId>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-shared-dependencies</artifactId>
           <version>${dollar}{hst.version}</version>
+          <type>pom</type>
           <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>org.onehippo.ecm.hst</groupId>
-          <artifactId>hst-commons</artifactId>
+          <groupId>org.onehippo.ecm.hst.dependencies</groupId>
+          <artifactId>hst-client-dependencies</artifactId>
           <version>${dollar}{hst.version}</version>
-          <scope>provided</scope>
+          <type>pom</type>
         </dependency>
       </dependencies>
-      
       <build>
         <plugins>
           <plugin>
@@ -435,11 +440,13 @@
                     <artifactItem>
                       <groupId>org.onehippo.ecm.hst</groupId>
                       <artifactId>hst-api</artifactId>
+                      <version>${dollar}{hst.version}</version>
                       <outputDirectory>${dollar}{jetspeed.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.onehippo.ecm.hst</groupId>
                       <artifactId>hst-commons</artifactId>
+                      <version>${dollar}{hst.version}</version>
                       <outputDirectory>${dollar}{jetspeed.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                   </artifactItems>

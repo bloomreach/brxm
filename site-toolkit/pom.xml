@@ -285,7 +285,6 @@
         <groupId>javax.jcr</groupId>
         <artifactId>jcr</artifactId>
         <version>${javax.jcr.version}</version>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>

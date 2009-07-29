@@ -31,6 +31,11 @@
   
   <dependencies>
     <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.ecm.hst.dependencies</groupId>
       <artifactId>hst-server-dependencies</artifactId>
       <version>${project.version}</version>
