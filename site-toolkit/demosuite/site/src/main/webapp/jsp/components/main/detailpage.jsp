@@ -19,6 +19,12 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<div align="right">
+  <a href="<hst:link path="/news"/>">
+    <img src="<hst:link path="/images/goback.jpg"/>" border="0"/>
+  </a>
+</div>
+
 <div class="yui-u">
     <h2>${document.title}</h2>
     <p>${document.summary}</p>
