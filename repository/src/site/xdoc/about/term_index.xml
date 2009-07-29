@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 995 terms</span>
+      <span class="shortdesc">Term index, 1044 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -52,6 +52,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/custom/project_export/add_project.html#Add_a_new_project">Add a new project</a>
+            </td>
+            <td>Add a new project</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#Add_boolean_to_document_type">Add boolean to document type</a>
             </td>
             <td>Howto: Add boolean to document type</td>
@@ -61,6 +67,12 @@
               <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#Add_boolean_to_document_type_screenshot">Add boolean to document type screenshot</a>
             </td>
             <td>Howto: Add boolean to document type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/add_custom_compound.html#Add_custom_compound">Add custom compound</a>
+            </td>
+            <td>Howto: Add custom compound</td>
           </tr>
           <tr>
             <td>
@@ -187,6 +199,36 @@
               <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Advanced_-_Subject_to_Change">Advanced - Subject to Change</a>
             </td>
             <td>Frontend Plugin Communication</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/add_project.html#Alternative">Alternative</a>
+            </td>
+            <td>Add a new project</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/excludes.html#Alternative">Alternative</a>
+            </td>
+            <td>Excludes</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/export_project.html#Alternative">Alternative</a>
+            </td>
+            <td>Export a sub project</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/start.html#Alternative">Alternative</a>
+            </td>
+            <td>Start a Project Export</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/why_export.html#Alternative">Alternative</a>
+            </td>
+            <td>Why Export?</td>
           </tr>
           <tr>
             <td>
@@ -325,12 +367,6 @@
               <a href="../delve_into/user/contributors/concepts/boolean.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Boolean</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/card.html#Alternative">Alternative</a>
-            </td>
-            <td>Concept: Tab page</td>
           </tr>
           <tr>
             <td>
@@ -676,6 +712,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/compoundtype.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Compound type</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/concepts/documenttype.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Document type</td>
@@ -760,6 +802,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/howto/add_custom_compound.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Add custom compound</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/add_date_to_documenttype.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Add date to document type</td>
@@ -787,6 +835,12 @@
               <a href="../delve_into/user/information_architects/howto/change_field_in_documenttype.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Change field in document type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/create_custom_compound.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Create custom compound</td>
           </tr>
           <tr>
             <td>
@@ -865,6 +919,18 @@
               <a href="../delve_into/user/information_architects/howto/save_documenttype.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Save document type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_details.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Specify type details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_layout.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Specify type layout</td>
           </tr>
           <tr>
             <td>
@@ -1240,6 +1306,18 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/compoundtype.html#compound_templates_diagram">compound templates diagram</a>
+            </td>
+            <td>Concept: Compound type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/compoundtype.html#Compound_type">Compound type</a>
+            </td>
+            <td>Concept: Compound type</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#Configuration_file_syntax_error">Configuration file syntax error</a>
             </td>
             <td>Help startup in Servlet Container</td>
@@ -1445,6 +1523,18 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/howto/create_custom_compound.html#Create_custom_compound">Create custom compound</a>
+            </td>
+            <td>Howto: Create custom compound</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/create_custom_compound.html#Create_custom_compound">Create custom compound</a>
+            </td>
+            <td>Howto: Create custom compound</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/create_document.html#Create_Document">Create Document</a>
             </td>
             <td>Howto: Create Document</td>
@@ -1598,12 +1688,6 @@
               <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#Date">Date</a>
             </td>
             <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../about/roadmap.html#Dates_for_future_releases_of_Hippo_CMS">Dates for future releases of Hippo CMS</a>
-            </td>
-            <td>Roadmap Hippo CMS</td>
           </tr>
           <tr>
             <td>
@@ -1796,12 +1880,6 @@
               <a href="../delve_into/user/contributors/todo-concepts/document_card.html#Document_tab_page">Document tab page</a>
             </td>
             <td>Document tab page</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/card.html#document_tab_pages">document tab pages</a>
-            </td>
-            <td>Concept: Tab page</td>
           </tr>
           <tr>
             <td>
@@ -2051,15 +2129,39 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/custom/project_export/excludes.html#Excludes">Excludes</a>
+            </td>
+            <td>Excludes</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/reference/frontend/frontend_plugin_architecture.html#Explanation_of_the_frontend_plugin_architecture_">Explanation of the frontend plugin architecture.</a>
             </td>
             <td>Frontend Plugin Architecture</td>
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/custom/project_export/export_project.html#Export_a_sub_project">Export a sub project</a>
+            </td>
+            <td>Export a sub project</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/export_project.html#Export_a_sub_project">Export a sub project</a>
+            </td>
+            <td>Export a sub project</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/web/add-ons/howto/editing_template.html#Export_CND">Export CND</a>
             </td>
             <td>Howto: Create an Editing Template Add-on</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/excludes.html#Export_excludes">Export excludes</a>
+            </td>
+            <td>Excludes</td>
           </tr>
           <tr>
             <td>
@@ -2072,6 +2174,12 @@
               <a href="../delve_into/tools/howto/export_node.html#Export_node_from_Hippo_repository_in_XML_format">Export node from Hippo repository in XML format</a>
             </td>
             <td>Howto: Export node</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/export_project.html#Export_project">Export project</a>
+            </td>
+            <td>Export a sub project</td>
           </tr>
           <tr>
             <td>
@@ -2321,6 +2429,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/custom/project_export/export_project.html#Folder">Folder</a>
+            </td>
+            <td>Export a sub project</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/folder.html#Folder">Folder</a>
             </td>
             <td>Concept: Folder</td>
@@ -2423,6 +2537,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/namespace.html#full_names">full names</a>
+            </td>
+            <td>Concept: namespace</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/web/add-ons/howto/packaging.html#Full_pom_xml">Full pom.xml</a>
             </td>
             <td>Howto: Creating your own WAR package</td>
@@ -2438,6 +2558,24 @@
               <a href="../delve_into/custom/howto/editing_template_plugin.html#Further_reading">Further reading</a>
             </td>
             <td>Howto: Create an Editing Template Plugin</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/index.html#General_introduction_for_contributors">General introduction for contributors</a>
+            </td>
+            <td>Welcome: Contributors Guide</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/index.html#General_introduction_for_users_of_the_Hippo_CMS">General introduction for users of the Hippo CMS</a>
+            </td>
+            <td>Welcome: User Guide</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/index.html#General_introduction_to_document_types">General introduction to document types</a>
+            </td>
+            <td>Welcome: Information Architects Guide</td>
           </tr>
           <tr>
             <td>
@@ -2532,12 +2670,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#Glassfish_logo">Glassfish logo</a>
-            </td>
-            <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/howto/goto_documenttype_card.html#Go_to_a_Document_type">Go to a Document type</a>
             </td>
             <td>Howto: Go to a Document type</td>
@@ -2565,18 +2697,6 @@
               <a href="../delve_into/user/information_architects/howto/goto_namespace.html#Go_to_namespace_screenshot">Go to namespace screenshot</a>
             </td>
             <td>Howto: Go to a namespace</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../about/roadmap.html#Goal:_All_CMS_6_functionalities_+_faceted_functionalities">Goal: All CMS 6 functionalities + faceted functionalities</a>
-            </td>
-            <td>Roadmap Hippo CMS</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../about/roadmap.html#Goal:_deliver_all_basic_CMS_functionalities,_production_ready">Goal: deliver all basic CMS functionalities, production ready</a>
-            </td>
-            <td>Roadmap Hippo CMS</td>
           </tr>
           <tr>
             <td>
@@ -2826,19 +2946,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:authrole">hippo:authrole</a>
-            </td>
-            <td>Domains Configuration</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:domain">hippo:domain</a>
-            </td>
-            <td>Domains Configuration</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:domainrule">hippo:domainrule</a>
             </td>
             <td>Domains Configuration</td>
           </tr>
@@ -2856,12 +2964,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/nodes/groups.html#hippo:group">hippo:group</a>
-            </td>
-            <td>Groups Configuration</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#hippo:query">hippo:query</a>
             </td>
             <td>Field Types Reference</td>
@@ -2874,13 +2976,31 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/nodes/roles.html#hippo:role">hippo:role</a>
+              <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hipposys:authrole">hipposys:authrole</a>
+            </td>
+            <td>Domains Configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hipposys:domainrule">hipposys:domainrule</a>
+            </td>
+            <td>Domains Configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/nodes/groups.html#hipposys:group">hipposys:group</a>
+            </td>
+            <td>Groups Configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/nodes/roles.html#hipposys:role">hipposys:role</a>
             </td>
             <td>Roles Configuration</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/nodes/users.html#hippo:user">hippo:user</a>
+              <a href="../delve_into/sysadmin/configuration/nodes/users.html#hipposys:user">hipposys:user</a>
             </td>
             <td>Users Configuration</td>
           </tr>
@@ -2934,6 +3054,13 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/howto/add_custom_compound.html#How_to_add_a_custom_compound_to_a_document_type_or_other&#10;_____custom_compound_">How to add a custom compound to a document type or other
+     custom compound?</a>
+            </td>
+            <td>Howto: Add custom compound</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/add_date_to_documenttype.html#How_to_add_a_date_field_to_a_document_type_">How to add a date field to a document type.</a>
             </td>
             <td>Howto: Add date to document type</td>
@@ -2949,6 +3076,13 @@
               <a href="../delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.html#How_to_add_a_marked-up_text_field_to_a_document_type_">How to add a marked-up text field to a document type.</a>
             </td>
             <td>Howto: Add marked-up text field to document type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/add_project.html#How_to_add_a_new_project_to_the_list_of_known_projects_in_the&#10;______project_export_">How to add a new project to the list of known projects in the
+      project export.</a>
+            </td>
+            <td>Add a new project</td>
           </tr>
           <tr>
             <td>
@@ -3027,6 +3161,12 @@
               <a href="../delve_into/user/editors/howto/check_for_requests.html#How_to_check_for_requests_">How to check for requests.</a>
             </td>
             <td>Howto: Check for requests</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/create_custom_compound.html#How_to_create_a_custom_compund">How to create a custom compund</a>
+            </td>
+            <td>Howto: Create custom compound</td>
           </tr>
           <tr>
             <td>
@@ -3112,6 +3252,18 @@
               <a href="../delve_into/user/cms_admins/howto/change_group_properties.html#How_to_edit_the_properties_of_a_Hippo_CMS_user_group_">How to edit the properties of a Hippo CMS user group.</a>
             </td>
             <td>Howto: Edit group properties</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/excludes.html#How_to_exclude_nodes_from_an_export">How to exclude nodes from an export</a>
+            </td>
+            <td>Excludes</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/index.html#How_to_export_customized_content_">How to export customized content </a>
+            </td>
+            <td>Welcome: Project Export</td>
           </tr>
           <tr>
             <td>
@@ -3333,6 +3485,18 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_layout.html#How_to_specify_the_elemental_layout_for_a_document_type_or_compound_type_">How to specify the elemental layout for a document type or compound type?</a>
+            </td>
+            <td>Howto: Specify type layout</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_details.html#How_to_specify_type_details">How to specify type details</a>
+            </td>
+            <td>Howto: Specify type details</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/cms_admins/howto/start_CMS.html#How_to_start_a_CMS_session_in_your_browser">How to start a CMS session in your browser</a>
             </td>
             <td>Howto: Start CMS</td>
@@ -3342,6 +3506,12 @@
               <a href="../delve_into/user/information_architects/howto/start_CMS.html#How_to_start_a_CMS_session_in_your_browser">How to start a CMS session in your browser</a>
             </td>
             <td>Howto: Start CMS</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/start.html#How_to_start_a_project_export">How to start a project export</a>
+            </td>
+            <td>Start a Project Export</td>
           </tr>
           <tr>
             <td>
@@ -3831,6 +4001,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/custom/project_export/export_project.html#Maven_Project">Maven Project</a>
+            </td>
+            <td>Export a sub project</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/howto/gui_plugin.html#Maven_structure">Maven structure</a>
             </td>
             <td>Howto: Hello World</td>
@@ -3861,15 +4037,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#MS_windows_logo">MS windows logo</a>
+              <a href="../delve_into/user/information_architects/concepts/namespace.html#More_explanation_about_the_concept">More explanation about the concept</a>
             </td>
-            <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/requirements.html#MS_windows_logo">MS windows logo</a>
-            </td>
-            <td>Requirements</td>
+            <td>Concept: namespace</td>
           </tr>
           <tr>
             <td>
@@ -3891,6 +4061,24 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/namespace.html#Namespace_name_examples">Namespace name examples</a>
+            </td>
+            <td>Concept: namespace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/namespace.html#Namespace_name_format_rules">Namespace name format rules</a>
+            </td>
+            <td>Concept: namespace</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/namespace.html#Namespace_name_format_rules">Namespace name format rules</a>
+            </td>
+            <td>Concept: namespace</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/naming_a_field.html#Naming_a_field">Naming a field</a>
             </td>
             <td>Howto: Naming a field</td>
@@ -3909,9 +4097,45 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_layout.html#Nested_layout">Nested layout</a>
+            </td>
+            <td>Howto: Specify type layout</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/jcr/jcr.html#Next">Next</a>
             </td>
             <td>JCR Basics</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/excludes.html#Next">Next</a>
+            </td>
+            <td>Excludes</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/export_project.html#Next">Next</a>
+            </td>
+            <td>Export a sub project</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/index.html#Next">Next</a>
+            </td>
+            <td>Welcome: Project Export</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/start.html#Next">Next</a>
+            </td>
+            <td>Start a Project Export</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/why_export.html#Next">Next</a>
+            </td>
+            <td>Why Export?</td>
           </tr>
           <tr>
             <td>
@@ -4032,12 +4256,6 @@
               <a href="../delve_into/user/contributors/concepts/boolean.html#Next">Next</a>
             </td>
             <td>Concept: Boolean</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/card.html#Next">Next</a>
-            </td>
-            <td>Concept: Tab page</td>
           </tr>
           <tr>
             <td>
@@ -4359,6 +4577,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/compoundtype.html#Next">Next</a>
+            </td>
+            <td>Concept: Compound type</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/concepts/documenttype.html#Next">Next</a>
             </td>
             <td>Concept: Document type</td>
@@ -4431,6 +4655,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/howto/add_custom_compound.html#Next">Next</a>
+            </td>
+            <td>Howto: Add custom compound</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/add_date_to_documenttype.html#Next">Next</a>
             </td>
             <td>Howto: Add date to document type</td>
@@ -4458,6 +4688,12 @@
               <a href="../delve_into/user/information_architects/howto/change_field_in_documenttype.html#Next">Next</a>
             </td>
             <td>Howto: Change field in document type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/create_custom_compound.html#Next">Next</a>
+            </td>
+            <td>Howto: Create custom compound</td>
           </tr>
           <tr>
             <td>
@@ -4530,6 +4766,18 @@
               <a href="../delve_into/user/information_architects/howto/save_documenttype.html#Next">Next</a>
             </td>
             <td>Howto: Save document type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_details.html#Next">Next</a>
+            </td>
+            <td>Howto: Specify type details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_layout.html#Next">Next</a>
+            </td>
+            <td>Howto: Specify type layout</td>
           </tr>
           <tr>
             <td>
@@ -4707,6 +4955,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/custom/project_export/index.html#Project_Export">Project Export</a>
+            </td>
+            <td>Welcome: Project Export</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/core/project-structure.html#Project_Structure">Project Structure</a>
             </td>
             <td>Project Structure</td>
@@ -4752,12 +5006,6 @@
               <a href="../integration_testing.html#Recording_a_Selenium_test">Recording a Selenium test</a>
             </td>
             <td>Setting up and using Selenium tests</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/requirements.html#Redhat_logo">Redhat logo</a>
-            </td>
-            <td>Requirements</td>
           </tr>
           <tr>
             <td>
@@ -5187,6 +5435,36 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_details.html#Specify_type_details">Specify type details</a>
+            </td>
+            <td>Howto: Specify type details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_details.html#Specify_type_details">Specify type details</a>
+            </td>
+            <td>Howto: Specify type details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_layout.html#Specify_type_layout">Specify type layout</a>
+            </td>
+            <td>Howto: Specify type layout</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_layout.html#Specify_type_layout">Specify type layout</a>
+            </td>
+            <td>Howto: Specify type layout</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/start.html#Start_a_Project_Export">Start a Project Export</a>
+            </td>
+            <td>Start a Project Export</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/cms_admins/howto/start_CMS.html#Start_CMS">Start CMS</a>
             </td>
             <td>Howto: Start CMS</td>
@@ -5238,6 +5516,12 @@
               <a href="../delve_into/tools/howto/eclipse/start_eclipse.html#Start_Eclipse_to_work_on_Hippo_projects_">Start Eclipse to work on Hippo projects.</a>
             </td>
             <td>Start Eclipse</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/start.html#Start_project_export">Start project export</a>
+            </td>
+            <td>Start a Project Export</td>
           </tr>
           <tr>
             <td>
@@ -5295,21 +5579,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#Suse_logo">Suse logo</a>
-            </td>
-            <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/synonyms.html#Synonyms">Synonyms</a>
             </td>
             <td>Synonyms</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/card.html#Tab_page">Tab page</a>
-            </td>
-            <td>Concept: Tab page</td>
           </tr>
           <tr>
             <td>
@@ -5328,6 +5600,12 @@
               <a href="../delve_into/user/contributors/concepts/tab_pages_panel.html#tab_pages_panel">tab pages panel</a>
             </td>
             <td>Concept: Tab pages panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_details.html#Taggable">Taggable</a>
+            </td>
+            <td>Howto: Specify type details</td>
           </tr>
           <tr>
             <td>
@@ -5453,12 +5731,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/requirements.html#Tux_logo">Tux logo</a>
-            </td>
-            <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/cms_admins/todo/type_in_editing_region.html#Type_in_editing_region">Type in editing region</a>
             </td>
             <td>Type in editing region</td>
@@ -5504,6 +5776,12 @@
               <a href="../delve_into/user/information_architects/concepts/URL.html#URL">URL</a>
             </td>
             <td>Concept: URL</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/concepts/namespace.html#usage">usage</a>
+            </td>
+            <td>Concept: namespace</td>
           </tr>
           <tr>
             <td>
@@ -5606,12 +5884,6 @@
               <a href="../delve_into/user/contributors/concepts/slider.html#What_and_where_are_sliders_">What and where are sliders?</a>
             </td>
             <td>Concept: Slider</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/card.html#What_and_where_are_tab_pages_">What and where are tab pages?</a>
-            </td>
-            <td>Concept: Tab page</td>
           </tr>
           <tr>
             <td>
@@ -5729,6 +6001,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/concepts/compoundtype.html#What_is_a_compound_type">What is a compound type</a>
+            </td>
+            <td>Concept: Compound type</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/concepts/documenttype.html#What_is_a_document_type">What is a document type</a>
             </td>
             <td>Concept: Document type</td>
@@ -5777,7 +6055,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/concepts/namespace.html#What_is_a_namespace">What is a namespace</a>
+              <a href="../delve_into/user/information_architects/concepts/namespace.html#What_is_a_namespace_">What is a namespace?</a>
             </td>
             <td>Concept: namespace</td>
           </tr>
@@ -5903,9 +6181,28 @@
           </tr>
           <tr>
             <td>
+              <a href="../about/roadmap.html#What's_up_for_the_future_">What's up for the future?</a>
+            </td>
+            <td>Roadmap Hippo CMS</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/learn_meaning_of_inputfield.html#Why_and_how_to_learn_the_meaning_of_an_inputfield_">Why and how to learn the meaning of an inputfield?</a>
             </td>
             <td>Howto: Learn meaning of inputfield</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/why_export.html#Why_customized_content_in_sources_&#10;____">Why customized content in sources?
+    </a>
+            </td>
+            <td>Why Export?</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/project_export/why_export.html#Why_Export_">Why Export?</a>
+            </td>
+            <td>Why Export?</td>
           </tr>
           <tr>
             <td>
