@@ -73,6 +73,10 @@
             <param-name>configuration</param-name>
             <param-value>deployment</param-value>
         </init-param>
+        <init-param>
+            <param-name>repository-address</param-name>
+            <param-value>vm://</param-value>
+        </init-param>
     </filter>
 
     <filter-mapping>
