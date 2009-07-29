@@ -87,7 +87,12 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
 
     public TreeNode getChildAt(int i) {
         ensureChildrenLoaded();
-        return children.get(i);
+        if (i < children.size()) {
+            return children.get(i);
+        }
+        log.error("Index too large: " + i + " of " + children.size() + " children [node "
+                + nodeModel.getItemModel().getPath() + "]");
+        return new LabelTreeNode(this, "invalid tree node");
     }
 
     public int getChildCount() {
@@ -134,7 +139,7 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
         }
         super.detach();
     }
-    
+
     protected int loadChildcount() throws RepositoryException {
         int result;
         Node node = nodeModel.getNode();
@@ -162,7 +167,8 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
             }
         }
         if (jcrChildren.hasNext()) {
-            LabelTreeNode treeNodeModel = new LabelTreeNode(this, jcrChildren.getSize() - jcrChildren.getPosition());
+            String label = " ... " + (jcrChildren.getSize() - jcrChildren.getPosition()) + " more ...";
+            LabelTreeNode treeNodeModel = new LabelTreeNode(this, label);
             newChildren.add(treeNodeModel);
         }
         return newChildren;
