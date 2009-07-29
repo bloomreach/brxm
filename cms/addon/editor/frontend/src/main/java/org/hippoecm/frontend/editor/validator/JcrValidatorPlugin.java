@@ -152,10 +152,12 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
         NodeIterator nodes = node.getNodes();
         while (nodes.hasNext()) {
             Node child = nodes.nextNode();
-            if (new JcrNodeModel(child).isVirtual()) {
-                continue;
+            if (child.getDefinition().getDeclaringNodeType().equals(type)) {
+                if (new JcrNodeModel(child).isVirtual()) {
+                    continue;
+                }
+                validateNode(child);
             }
-            validateNode(child);
         }
     }
 
