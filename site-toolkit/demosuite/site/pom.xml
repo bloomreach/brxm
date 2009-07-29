@@ -319,49 +319,45 @@
                   </artifactItems>
                 </configuration>
               </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.2</version>
-            <executions>
               <execution>
-                <id>deploy-to-tomcat</id>
+                <id>unpack-cms-app</id>
                 <phase>install</phase>
-                <configuration>
-                  <tasks>
-
-                    <echo>Replacing cms web application into tomcat.</echo>
-                    <delete dir="${tomcat.hst.cms.webapp}" />
-                    <mkdir dir="${tomcat.hst.cms.webapp}" />
-                    <unwar src="../cms/target/cms.war" dest="${tomcat.hst.cms.webapp}" overwrite="true" />
-                                      
-                    <echo>Replacing site web application into tomcat.</echo>
-                    <delete dir="${tomcat.server.home}/webapps/${project.build.finalName}.war" />
-                    <delete dir="${tomcat.server.home}/webapps/${project.build.finalName}" />
-                    <copy file="${project.build.directory}/${project.build.finalName}.war" tofile="${tomcat.server.home}/webapps/${project.build.finalName}.war" overwrite="true" />
-                    
-                  </tasks>
-                </configuration>
                 <goals>
-                  <goal>run</goal>
+                  <goal>unpack</goal>
                 </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst.demosuite</groupId>
+                      <artifactId>hst-demosuite-cms</artifactId>
+                      <version>${project.version}</version>
+                      <type>war</type>
+                      <overWrite>true</overWrite>
+                      <outputDirectory>${tomcat.hst.cms.webapp}</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+              <execution>
+                <id>copy-site-war</id>
+                <phase>install</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst.demosuite</groupId>
+                      <artifactId>hst-demosuite-site</artifactId>
+                      <version>${project.version}</version>
+                      <type>war</type>
+                      <outputDirectory>${tomcat.server.home}/webapps</outputDirectory>
+                      <destFileName>${project.build.finalName}.war</destFileName>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
               </execution>
             </executions>
-            <dependencies>
-              <dependency>
-                <groupId>javax.jcr</groupId>
-                <artifactId>jcr</artifactId>
-                <version>${javax.jcr.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jta_1.1_spec</artifactId>
-                <version>${jta.version}</version>
-                <scope>runtime</scope>
-              </dependency>
-            </dependencies>
           </plugin>
         </plugins>
       </build>
