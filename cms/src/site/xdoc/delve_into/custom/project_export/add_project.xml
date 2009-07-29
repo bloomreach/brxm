@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2009 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Add a new project</title>
+  </properties>
+
+  <body>
+   <section name="Add a new project">
+    <span class="shortdesc">How to add a new project to the list of known projects in the
+      project export.</span>
+
+   <p>To add a new project click open the unnamed project. You will see a list of nodes that
+     have changed and an input field behind each of them to supply the filename to
+     export the node to.
+   </p>
+   <p>
+     Also supply a name for the project. The name is just an identifier specific for the
+     project export.
+   </p>
+   <p>
+     If you change the same nodes again, this is considered a change of the project.
+     If you change other nodes, they are listed in the new unnamed project.
+     Note that you make changes to the repository by using the CMS and by using
+     the web console.
+   </p>
+
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='index.html'>Introduction</a></li>
+    </ul>
+   </subsection>
+
+  </section>
+ </body>
+</document>

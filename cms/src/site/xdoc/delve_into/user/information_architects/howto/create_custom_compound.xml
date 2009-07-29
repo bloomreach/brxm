@@ -22,44 +22,37 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Save document type</title>
+    <title>Create custom compound</title>
   </properties>
 
   <body>
-    <section name="Save document type">
-      <span class="shortdesc">How to save a document type.</span>
+    <section name="Create custom compound">
+     <span class="shortdesc">How to create a custom compund</span>
 
    <script type="text/javascript">
     leftpx=450;
-    bottompx=350;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M13/contribs/save_document.png" alt='save document type screenshot'/> 
+     <img src="../../../../images/screenshots/cms_T07/inars/create_custom_compound.png" alt='Create custom compound'/>
     </div></div>
     <p>
-     The buttons for saving a documenttype are the same as for
-       <a href='../../contributors/howto/save_document.html'>saving a normal document</a>.
-     Note that after saving, the documenttype will NOT yet be available to write documents of that type.
+     You create a custom compound just like a normal document type.
+     Just add fields e.g. a <a href='./add_boolean_to_documenttype.html'>boolean field</a>.
+     This is a compound called 'keys' that contains three primitive fields:
+     Audience (letters), Difficulty (number) and On homepage (check button).
     </p>
    </div>
 
-   <p>
-    The effect of saving a documenttype will not be the same as for a normal document,
-    as there will be no preview of a documenttype on any site.
-    After saving, <a href='./update_content.html'>update all content</a>
-    to make the documenttype available to
-    <a href='../../contributors/concepts/contributor.html'>contributors</a>, to write
-    documents of that type.
-   </p>
-
   <subsection name='Next'>
    <ul>
-    <li><a href='./update_content.html'>Update all content</a>.</li>
-    <li><a href='create_custom_compound.html'>Create custom compound</a> (continue <a href='../tour.html'>tour</a>).</li>
-    <li><a href='./logout.html'>Logout</a>.</li>
-    <li><a href='./create_documenttype.html'>Create a document type</a>.</li>
-    <li><a href='./goto_namespace.html'>Go to namespace</a>.</li>
+    <li><a href='add_custom_compound.html'>Add custom compound</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='./add_string_to_documenttype.html'>Add a string field to a type</a>.</li>
+    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a type</a>.</li>
+    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a type</a>.</li>
+    <li><a href='./add_date_to_documenttype.html'>Add date field to a type</a>.</li>
+    <li><a href='./change_field_in_documenttype.html'>Change a field in a type</a>.</li>
+    <li><a href='./remove_field_from_documenttype.html'>Remove field of a type</a>.</li>
    </ul>
   </subsection>
    <subsection name='Alternative'>

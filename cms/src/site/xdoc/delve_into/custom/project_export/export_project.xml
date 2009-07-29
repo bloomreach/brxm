@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2009 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Export a sub project</title>
+  </properties>
+
+  <body>
+   <section name="Export a sub project">
+    <span class="shortdesc">Export a sub project</span>
+
+   <script type="text/javascript">
+    leftpx=0;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
+     <img src="../../../images/screenshots/cms_T07/console/export_project.png" alt='Export project'/> 
+    </div></div>
+    <p>
+     After you have <a href='start.html'>started project export</a> you see a list of
+     CMS addon projects that have content stored in the repository. Core addon projects
+     are not listed. There is one unnamed project for changes you made in the running
+     repository. You can select one of the named projects by clicking on it.
+     In the screenshot above, the project 'Defaultcontent repository addon' is selected.
+   </p>
+  </div>
+
+  <subsection>Folder</subsection>
+   <p>
+     When you export the selected project, it is stored as a folder
+     on the filesystem of the server that is running the repository. You need
+     the appropriate write permission. If the repository is running remotely from where
+     you are using the CMS or web console, you will not be able to store the export
+     locally.
+   </p>
+   <p>
+     In the 'Export project to' input field you type the path for the folder to export to.
+     If the folder does not exist, it is created, but parent folders must exist.
+     If the folder exists, the export is merged with the existing content of that folder.
+     In this case, there must be content in the folder. See below for details.
+   </p>
+   <p>
+    You are free to choose any folder name.
+    There is no relation between this folder name and the project name in the list.
+    In the screenshot, an absolute path for the folder (starting with a /)
+    is specified: '/home/rita/myproject/content'. An absolute path always refers to the
+    same position in the filesystem.
+    The referred position of a relative path depends on the configuration
+    of the servlet container that is running the repository.
+   </p>
+
+  <subsection>Maven Project</subsection>
+   <p>
+    A new export is a complete maven 2 project for a CMS content addon project.
+    The export contains several xml exports of nodes in the repository.
+    A hippoecm-extension.xml with the required configuration to automatically import those
+    xml files is included. A simple non-unique pom.xml is also included.
+   </p>
+   <p>
+    The export may also be merged with an existing maven 2
+    project. The existing pom.xml is not changed.
+    Other existing XML files are merged: the XML comments are retained, the rest is updated.
+    Consecutive XML comments are joined into a single comment.
+    Files of which the export supplies no copy are retained. This allows to export
+    customized content to a project that also contains java code.
+    If you set things up correctly you can update
+    the customized content of
+    your project with a few clicks, after changes you made with the CMS or web console.
+   </p>
+   <p>
+    Modules in your project are sub projects and if they supply their own customized content,
+    you will <a href='add_project.html'>add a separate project</a> to the export project list
+    for each of them.
+   </p>
+   <p>
+    In the screenshot, an export is made of 'Defaultcontent repository addon', which is
+    an addon in the quickstart war, but not in the package war,
+    so it is not part of the core. As it is a standard addon, it can be educational to see
+    what you get if you export it:
+   </p>
+    <source>
+`-- content
+    |-- pom.xml
+    `-- src
+        `-- main
+            `-- resources
+                `-- defaultcontent-image-example.xml
+</source>
+
+   <subsection name='Next'>
+    <ul>
+      <li><a href='add_project.html'>Add a new project</a></li>
+      <li><a href='excludes.html'>Exclude nodes from an export</a></li>
+    </ul>
+   </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='index.html'>Introduction</a></li>
+    </ul>
+   </subsection>
+
+  </section>
+ </body>
+</document>

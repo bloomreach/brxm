@@ -30,10 +30,11 @@ ________________________________________________________________________________
 
 <p>
  In Hippo CMS,
- <a href="../contributors/index.html">contributors</a> write documents that are of a certain 
+ <a href="../contributors/index.html">contributors</a> write documents that are of a certain
  <a href="./concepts/documenttype.html">document type</a>.
   The document type specifies what kind of information the document should provide.
   Documents that contain the same kind of information are in that respect similar.
+  The guaranteed similarity of many different documents has many advantages.
 </p>
 <p>
   For a tour, or documentation of specific concepts and howto, see the table.
@@ -62,6 +63,7 @@ ________________________________________________________________________________
   </tr>
 </table>
 
+<subsection name='General introduction to document types'>
 <p>
 The guaranteed similarity of many different documents allows
 fast development of any application that
@@ -144,10 +146,12 @@ in the document types.
 </p>
 
 <p>
-The document types can be defined by nesting compound types. This allows reuse
+ The document types can be defined by nesting
+ <a href='concepts/compoundtype.html'>compound types</a>. This allows reuse
 of these types and the easy definition of complex layouts for presenting documents to
 be edited.
 </p>
+</subsection>
 
     </section>
   </body>
