@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon-reviewed-action</artifactId>
-    <version>2.07.01-SNAPSHOT</version>
+    <version>2.08.00-SNAPSHOT</version>
   </parent>
 
   <name>Reviewed action common addon</name>
@@ -37,12 +37,12 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.07.01-SNAPSHOT</version>
+      <version>2.08.00-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.07.01-SNAPSHOT</version>
+      <version>2.08.00-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>javax.jdo</groupId>
