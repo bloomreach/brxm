@@ -247,7 +247,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Boole</sv:value>
+        <sv:value>Boolean</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
