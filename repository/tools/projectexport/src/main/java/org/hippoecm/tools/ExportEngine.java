@@ -57,11 +57,11 @@ import org.hippoecm.tools.Element.ProjectElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ProjectExport {
+class ExportEngine {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    static final Logger log = LoggerFactory.getLogger(ProjectExport.class);
+    static final Logger log = LoggerFactory.getLogger(ExportEngine.class);
 
     Set<String> ignorePaths = new HashSet<String>();
     
@@ -318,7 +318,7 @@ public class ProjectExport {
 
     Session session;
 
-    public ProjectExport(Session session) throws RepositoryException, IOException, NotExportableException {
+    public ExportEngine(Session session) throws RepositoryException, IOException, NotExportableException {
         this.session = session;
         Node root = session.getRootNode();
         Node scratch = root.getNode("hippo:configuration/hippo:temporary"); 

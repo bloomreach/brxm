@@ -16,30 +16,18 @@
 package org.hippoecm.tools;
 
 import javax.swing.tree.TreeNode;
-import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.PropertyModel;
 
-public class ExportNewProjectItem extends Panel
+class NamespaceItem extends Panel
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ExportItem.java 18965 2009-07-23 07:16:15Z bvanhalderen $";
 
-    String name = "";
-
-    ExportNewProjectItem(MarkupContainer parent, String id, final ExportTreeModel tree, final TreeNode node, final Element.ProjectElement element) {
+    NamespaceItem(MarkupContainer parent, String id, final ExportTreeModel tree, final TreeNode node, Element.NamespaceElement element) {
         super(id);
-        Component nameComponent;
-        add(nameComponent = new TextField("name", new PropertyModel(ExportNewProjectItem.this, "name")));
-        nameComponent.add(new OnChangeAjaxBehavior() {
-            public void onUpdate(AjaxRequestTarget target) {
-                ((Element.ProjectElement) element).projectName = name;
-            }
-        });
-        nameComponent.setOutputMarkupId(true);
-    }
+        add(new Label("uri", ((Element.NamespaceElement) element).uri));
+        add(new Label("filename", ((Element.NamespaceElement) element).cnd));
+     }
 }

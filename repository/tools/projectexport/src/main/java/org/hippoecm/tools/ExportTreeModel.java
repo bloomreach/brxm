@@ -95,7 +95,7 @@ class ExportTreeModel extends DefaultTreeModel implements TreeModel, IDetachable
     private class ElementTreeNode extends AbstractTreeNode implements TreeNode, Serializable {
         Element element;
 
-        ElementTreeNode(ProjectExport export) {
+        ElementTreeNode(ExportEngine export) {
             super(null);
             element = null;
             if (export != null) {
@@ -113,7 +113,7 @@ class ExportTreeModel extends DefaultTreeModel implements TreeModel, IDetachable
             }
         }
 
-        private ElementTreeNode(ProjectExport export, ElementTreeNode parent, Element element) {
+        private ElementTreeNode(ExportEngine export, ElementTreeNode parent, Element element) {
             super(parent);
             this.element = element;
             List<Element> elements = export.getElements(element);
@@ -187,9 +187,9 @@ class ExportTreeModel extends DefaultTreeModel implements TreeModel, IDetachable
         }
     }
 
-    private ProjectExport exporter;
+    private ExportEngine exporter;
 
-    ExportTreeModel(ProjectExport export) {
+    ExportTreeModel(ExportEngine export) {
         super(null);
         this.exporter = export;
         setRoot(new ElementTreeNode(exporter));
@@ -204,10 +204,10 @@ class ExportTreeModel extends DefaultTreeModel implements TreeModel, IDetachable
         // ignore, the transient fields will go null
     }
     
-    ProjectExport getExporter() {
+    ExportEngine getExporter() {
         if (exporter == null) {
             try {
-                exporter = new ProjectExport(((UserSession)org.apache.wicket.Session.get()).getJcrSession());
+                exporter = new ExportEngine(((UserSession)org.apache.wicket.Session.get()).getJcrSession());
             } catch (RepositoryException ex) {
                 log.error("Everything is broken", ex);
             } catch (IOException ex) {

@@ -15,21 +15,21 @@
  */
 package org.hippoecm.tools;
 
-class Location implements Comparable<Location> {
+class XMLLocation implements Comparable<XMLLocation> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private Type type;
+    private XMLItemType type;
     private String path;
     private boolean afterElement;
 
-    public Location(Type type, String path, boolean afterElement) {
+    public XMLLocation(XMLItemType type, String path, boolean afterElement) {
         this.type = type;
         this.path = path;
         this.afterElement = afterElement;
     }
 
-    public int compareTo(Location other) {
+    public int compareTo(XMLLocation other) {
         int rtvalue = type.compareTo(other.type);
         if (rtvalue == 0) {
             if (path == null || other.path == null) {
@@ -54,8 +54,8 @@ class Location implements Comparable<Location> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Location) {
-            Location other = (Location)o;
+        if (o instanceof XMLLocation) {
+            XMLLocation other = (XMLLocation)o;
             return type == other.type && (path == null ? other.path == null : path.equals(other.path)) && afterElement == other.afterElement;
         } else {
             return false;

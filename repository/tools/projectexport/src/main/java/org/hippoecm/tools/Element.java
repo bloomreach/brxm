@@ -32,7 +32,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 
-public abstract class Element {
+abstract class Element {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

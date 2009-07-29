@@ -24,10 +24,13 @@ import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -36,28 +39,42 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExportProjectDialog extends AbstractDialog {
+public class ExportDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ExportProjectDialog.class);
+    static final Logger log = LoggerFactory.getLogger(ExportDialog.class);
 
     private String projectName;
     private String location;
     private Label projectNameComponent;
-    private ExportProjectTree treeComponent;
+    private Button okComponent;
+    private ExportTree treeComponent;
+    private Label statusComponent;
 
-    public ExportProjectDialog() {
+    public ExportDialog() {
+        this.setOutputMarkupId(true);
         this.setOkVisible(false);
         this.setCancelVisible(false);
-
-        Form form;
+        final Form form;
+        add(statusComponent = new Label("status", new Model("Select a project to be exported and enter the server side file system location of the subversion project to update.  Be sure to only use this feature using administrative rights.")));
+        statusComponent.setOutputMarkupId(true);
         add(form = new Form("form"));
+        form.setOutputMarkupId(true);
         form.add(new RequiredTextField("input", new PropertyModel(this, "location")));
-        form.add(new AjaxButton("ok", form) {
+        form.add(okComponent = new AjaxButton("ok", form) {
             public void onSubmit(AjaxRequestTarget target, Form form) {
+                okComponent.setEnabled(false);
+                target.addComponent(okComponent);
+                FeedbackPanel feedback;
+                ExportDialog.this.addOrReplace(feedback = new FeedbackPanel("tree"));
+                statusComponent.setModel(new Model("Exported; check log files in case of errors"));
+                target.addComponent(statusComponent);
+                target.addComponent(ExportDialog.this);
+                target.addComponent(feedback);
+                target.addComponent(getPage());
                 if(projectName == null || projectName.equals(""))
                     return;
                 try {
@@ -128,19 +145,32 @@ public class ExportProjectDialog extends AbstractDialog {
                 }
             }
         });
+        okComponent.setEnabled(false);
+        okComponent.setOutputMarkupId(true);
         add(projectNameComponent = new Label("name", new PropertyModel(this, "projectName")));
         projectNameComponent.setOutputMarkupId(true);
-        add(treeComponent = new ExportProjectTree("tree", new ExportTreeModel(), new Component[] { projectNameComponent } ));
+        add(new AjaxLink("tree", new Model("click here to activate")) {
+            public void onClick(AjaxRequestTarget target) {
+                loadtree(target);
+                okComponent.setEnabled(true);
+                target.addComponent(okComponent);
+                target.addComponent(ExportDialog.this);
+            }
+        });
+    }
+    
+    private void loadtree(AjaxRequestTarget target) {
+        addOrReplace(treeComponent = new ExportTree("tree", new ExportTreeModel(), new Component[] { projectNameComponent } ));
         treeComponent.setRootLess(true);
         treeComponent.getTreeState().setAllowSelectMultiple(false);
         treeComponent.getTreeState().addTreeStateListener(new ITreeStateListener() {
             public void nodeSelected(TreeNode node) {
                 ExportTreeModel treeModel = (ExportTreeModel) treeComponent.getModelObject();
                 TreeNode ancestor = treeModel.backingTreeNode(node);
+                projectName = ((Element.ProjectElement)treeModel.backingElement(ancestor)).projectName;
+                projectNameComponent.setModel(new Model(projectName));
                 if(ancestor != null && ancestor != node) {
                     treeComponent.getTreeState().selectNode(ancestor, true);
-                    projectName = ((Element.ProjectElement)treeModel.backingElement(ancestor)).projectName;
-                    projectNameComponent.setModel(new Model(projectName));
                 }
             }
             public void nodeUnselected(TreeNode node) {

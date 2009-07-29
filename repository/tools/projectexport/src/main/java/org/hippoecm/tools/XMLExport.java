@@ -40,11 +40,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
-public class XMLExport {
+class XMLExport {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    static final Logger log = LoggerFactory.getLogger(ProjectExport.class);
+    static final Logger log = LoggerFactory.getLogger(ExportEngine.class);
 
     SAXParserFactory factory;
     boolean outputCopyright = false;
@@ -208,7 +208,7 @@ public class XMLExport {
         protected void insert(String literal) throws SAXException {
             if (startOfDocument)
                 return;
-            String whitespace = literals.get(new Location(Type.WHITESPACE, path, false));
+            String whitespace = literals.get(new XMLLocation(XMLItemType.WHITESPACE, path, false));
             if (whitespace != null) {
                 out.print(whitespace);
             }
@@ -223,7 +223,7 @@ public class XMLExport {
                 out.print(literal);
                 out.print("-->\n");
             }
-            whitespace = literals.get(new Location(Type.WHITESPACE, path, true));
+            whitespace = literals.get(new XMLLocation(XMLItemType.WHITESPACE, path, true));
             if (whitespace != null) {
                 out.print(whitespace);
             }
@@ -299,7 +299,7 @@ public class XMLExport {
         private StringBuffer commentBuffer = null;
         private StringBuffer whitespaceBuffer = null;
         protected String path = null;
-        protected Map<Location, String> literals;
+        protected Map<XMLLocation, String> literals;
         private boolean playback;
         private SAXParser saxParser;
         private InputStream istream;
@@ -312,14 +312,14 @@ public class XMLExport {
             this.istream = istream;
             saxParser = factory.newSAXParser();
             saxParser.setProperty("http://xml.org/sax/properties/lexical-handler", this);
-            literals = new TreeMap<Location, String>();
+            literals = new TreeMap<XMLLocation, String>();
             playback = false;
         }
 
         protected XmlProcessor(SAXParserFactory factory, XmlProcessor recordProcessor, InputStream istream) throws IOException, ParserConfigurationException, SAXException {
             this.istream = istream;
             saxParser = factory.newSAXParser();
-            literals = new TreeMap<Location, String>(recordProcessor.literals);
+            literals = new TreeMap<XMLLocation, String>(recordProcessor.literals);
             playback = true;
         }
 
@@ -342,20 +342,20 @@ public class XMLExport {
 
         private void flush(boolean afterElement) throws SAXException {
             if (playback) {
-                Location location = new Location(Type.COMMENT, path, afterElement);
+                XMLLocation location = new XMLLocation(XMLItemType.COMMENT, path, afterElement);
                 if (literals.containsKey(location)) {
                     insert(literals.get(location));
                 }
             } else {
                 if (whitespaceBuffer != null) {
-                    literals.put(new Location(Type.WHITESPACE, path, (commentBuffer == null)), new String(whitespaceBuffer));
+                    literals.put(new XMLLocation(XMLItemType.WHITESPACE, path, (commentBuffer == null)), new String(whitespaceBuffer));
                 }
                 whitespaceBuffer = null;
                 if (commentBuffer == null)
                     return;
                 String s = new String(commentBuffer);
                 if (!s.trim().equals("")) {
-                    literals.put(new Location(Type.COMMENT, path, afterElement), s);
+                    literals.put(new XMLLocation(XMLItemType.COMMENT, path, afterElement), s);
                 }
                 commentBuffer = null;
             }

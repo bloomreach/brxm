@@ -15,7 +15,7 @@
  */
 package org.hippoecm.tools;
 
-public class NotExportableException extends Throwable {
+class NotExportableException extends Throwable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
