@@ -23,11 +23,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.editor.tools.JcrTypeStore;
-import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
-import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class TemplateTypeRenderer extends AbstractNodeRenderer {
@@ -40,9 +37,6 @@ public class TemplateTypeRenderer extends AbstractNodeRenderer {
 
     public TemplateTypeRenderer() {
         typeStore = new JcrTypeStore();
-        IStore<ITypeDescriptor> builtin = new BuiltinTypeStore();
-        TypeLocator locator = new TypeLocator(new IStore[] { typeStore, builtin });
-        typeStore.setTypeLocator(locator);
     }
 
     @Override

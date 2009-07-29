@@ -61,6 +61,10 @@ public class NewDocumentTypeAction extends Action {
     protected String execute(Workflow wf) throws Exception {
         NamespaceValidator.checkName(name);
 
+        if (layout == null) {
+            throw new Exception("No layout specified");
+        }
+
         NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
         try {
             workflow.addType("document", name);
@@ -83,7 +87,7 @@ public class NewDocumentTypeAction extends Action {
 
         // create layout
         // FIXME: should be managed by template engine
-        JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeStore());
+        JcrTemplateStore templateStore = new JcrTemplateStore(typeStore);
         IClusterConfig template = new TemplateFactory().createTemplate(layoutProvider.getDescriptor(layout));
         template.put("type", workflow.hints().get("prefix") + ":" + name);
         templateStore.save(template);
