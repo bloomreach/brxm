@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon</artifactId>
-    <version>2.07.00-SNAPSHOT</version>
+    <version>2.07.00</version>
   </parent>
 
   <name>Workflow</name>
@@ -28,9 +28,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/workflow</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/workflow</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/workflow</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_07_00/addon/workflow</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_07_00/addon/workflow</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_07_00/addon/workflow</url>
   </scm>
 
   <dependencies>
@@ -42,19 +42,19 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.07.00-SNAPSHOT</version>
+      <version>2.07.00</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.07.00-SNAPSHOT</version>
+      <version>2.07.00</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.07.00-SNAPSHOT</version>
+      <version>2.07.00</version>
       <type>jar</type>
     </dependency>
     <dependency>
