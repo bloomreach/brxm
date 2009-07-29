@@ -15,16 +15,6 @@
  */
 package org.hippoecm.tools;
 
-import javax.swing.tree.TreeNode;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.html.panel.Panel;
-
-public class ExportProjectItem extends Panel
-{
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ExportItem.java 18965 2009-07-23 07:16:15Z bvanhalderen $";
-
-    ExportProjectItem(MarkupContainer parent, String id, final ExportTreeModel tree, final TreeNode node, Element.ProjectElement element) {
-        super(id);
-    }
+enum XMLItemType {
+    COMMENT, WHITESPACE
 }

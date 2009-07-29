@@ -32,7 +32,7 @@ public class DevelopmentTest {
     private final static String SVN_ID = "$Id$";
 
     @Test
-    public void dummy() throws Exception, NotExportableException {
+    public void dummy() {
     }
 
     @Ignore
@@ -49,11 +49,10 @@ public class DevelopmentTest {
         n.setProperty("plugin.class","test");
         session.save();
         
-        ProjectExport export = new ProjectExport(session);
+        ExportEngine export = new ExportEngine(session);
         //export.selectProject("Gallery Addon");
         //export.exportProject(new FileOutputStream("test.zip"));
-        System.err.println("DUMP");
-        print(export.elements, 1);
+        //print(export.elements, 1);
 
         session.logout();
         repository.close();

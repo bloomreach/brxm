@@ -32,7 +32,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 import org.hippoecm.repository.api.HippoNode;
 
-public class JcrDiff {
+class JcrDiff {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

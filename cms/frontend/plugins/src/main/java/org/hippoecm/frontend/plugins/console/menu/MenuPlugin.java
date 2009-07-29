@@ -43,7 +43,7 @@ import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
 import org.hippoecm.frontend.plugins.console.menu.sorter.Sorter;
 import org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowDialog;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.tools.ExportProjectDialog;
+import org.hippoecm.tools.ExportDialog;
 
 public class MenuPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -208,7 +208,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog() {
-                return new ExportProjectDialog();
+                return new ExportDialog();
             }
         };
         add(new DialogLink("project-export-dialog", new Model("Project Export"), dialogFactory, dialogService));

@@ -14,20 +14,14 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
-    <div class="hippo-console-tree">
-      <div class="wicket-tree">
-        <div wicket:id="i">
-          <div class="a_">
-            <span wicket:id="indent"></span><a wicket:id="link"><span wicket:id="image"/></a>
-            <a wicket:id="nodeLink"><span class="icon" wicket:id="icon"></span><span wicket:id="label"></span></a>
-          </div>
-          <span class="hippo-tree-dropdown-icon-container" wicket:id="contextLink" >
-            <a class="hippo-tree-dropdown-icon" wicket:id="menuimage" ></a>
-          </span>
-          <span wicket:id="contextContent" class="hippo-tree-dropdown"></span>
-        </div>
+  <wicket:extend>
+    <div wicket:id="status" style="width: 75%; margin: 1em 1em 1em 1em;"/>
+    <span class="hippo-projectexport-tree" wicket:id="tree"><blockquote><font color="red"><br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;Click here to activate project export, this will take a short while.</font></blockquote><br/><br/><br/><br/><br/></span>
+    Export project <span wicket:id="name"></span> to:
+    <form wicket:id="form">
+      <div style="display: block;">
+        <input type="text" wicket:id="input"/>&nbsp;<input type="submit" value="store" wicket:id="ok"/>&nbsp;(<a wicket:id="download">download</a>)
       </div>
-    </div>
-  </wicket:panel>
+    </form>
+  </wicket:extend>
 </html>

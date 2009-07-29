@@ -29,17 +29,17 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.wicket1985.Tree;
 
-class ExportProjectTree extends Tree implements Serializable {
+class ExportTree extends Tree implements Serializable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final ResourceReference ICO_PROJECT = new ResourceReference(ExportProjectTree.class, "project.gif");
-    private static final ResourceReference ICO_NAMESPACE = new ResourceReference(ExportProjectTree.class, "namespace.gif");
-    private static final ResourceReference ICO_CONTENT = new ResourceReference(ExportProjectTree.class, "content.gif");
+    private static final ResourceReference ICO_PROJECT = new ResourceReference(ExportTree.class, "project.gif");
+    private static final ResourceReference ICO_NAMESPACE = new ResourceReference(ExportTree.class, "namespace.gif");
+    private static final ResourceReference ICO_CONTENT = new ResourceReference(ExportTree.class, "content.gif");
 
     private Component[] listeners;
     
-    public ExportProjectTree(String id, ExportTreeModel model, Component[] listeners) {
+    ExportTree(String id, ExportTreeModel model, Component[] listeners) {
         super(id, model);
         this.listeners = listeners;
     }
@@ -136,17 +136,17 @@ class ExportProjectTree extends Tree implements Serializable {
             Element element = treeModel.backingElement(node);
             if (element instanceof Element.ProjectElement) {
                 if(((Element.ProjectElement)element).projectName.equals("")) {
-                    return new ExportNewProjectItem(parent, id, treeModel, node, (Element.ProjectElement)element);
+                    return new NewProjectItem(parent, id, treeModel, node, (Element.ProjectElement)element);
                 } else {
-                    return new ExportProjectItem(parent, id, treeModel, node, (Element.ProjectElement)element);
+                    return new ProjectItem(parent, id, treeModel, node, (Element.ProjectElement)element);
                 }
             } else if (element instanceof Element.NamespaceElement) {
-                return new ExportNamespaceItem(parent, id, treeModel, node, (Element.NamespaceElement)element);
+                return new NamespaceItem(parent, id, treeModel, node, (Element.NamespaceElement)element);
             } else if (element instanceof Element.ContentElement) {
                 if (treeModel.backingTreeNode(node) != null && treeModel.backingElement(treeModel.backingTreeNode(node)) instanceof Element.ProjectElement && ((Element.ProjectElement) treeModel.backingElement(treeModel.backingTreeNode(node))).projectName.equals("")) {
-                    return new ExportNewContentItem(parent, id, treeModel, node, (Element.ContentElement) element);
+                    return new NewContentItem(parent, id, treeModel, node, (Element.ContentElement) element);
                 } else {
-                    return new ExportContentItem(parent, id, treeModel, node, (Element.ContentElement) element);
+                    return new ContentItem(parent, id, treeModel, node, (Element.ContentElement) element);
                 }
             } else {
                 return new EmptyPanel(id);
