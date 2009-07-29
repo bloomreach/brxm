@@ -45,24 +45,25 @@ the inputfields in Hippo documents may allow quite complex editing.
 <table>
   <tr>
     <td>
-      <a href="tour.html">Hippo CMS Contributor Tour</a>
+      <a href="./tour.html">Hippo CMS Contributor Tour</a>
     </td>
     <td>To get introduced to the role of CMS contributor, take the following tour.</td>
   </tr>
   <tr>
     <td>
-      <a href="howto/index.html">Hippo CMS Contributor Howto</a>
+      <a href="./howto/index.html">Hippo CMS Contributor Howto</a>
     </td>
     <td>A collection of howto's for small tasks a CMS contributor may want to do.</td>
   </tr>
   <tr>
     <td>
-      <a href="concepts/index.html">CMS Contributor Concepts</a>
+      <a href="./concepts/index.html">CMS Contributor Concepts</a>
     </td>
     <td>A collection of concepts a CMS contributor may want to know.</td>
   </tr>
 </table>
 
+<subsection name='General introduction for contributors'>
 <p>
   Inputfields have a datatype. For example, a particular inputfield may allow only integers (round numbers) and
   we then say that the inputfield is of datatype integer.
@@ -93,7 +94,7 @@ the inputfields in Hippo documents may allow quite complex editing.
    for the (custom) CMS you are using
    by <a href="../information_architects/index.html">information architects</a>.
 </p>
-
+</subsection>
     </section>
   </body>
 </document>

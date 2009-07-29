@@ -100,6 +100,7 @@ ________________________________________________________________________________
   </tr>
 </table>
 
+<subsection name='General introduction for users of the Hippo CMS'>
 <p>
 The use of document types guarantees that different documents are similar and this allows
 fast development of any application that
@@ -108,6 +109,7 @@ types to make a website for hundreds of thousands of documents. He need not know
 the documents themselves. Users of the Hippo CMS need not know about making websites, just about
 what kind of information should be provided.
 </p>
+</subsection>
 
     </section>
   </body>

@@ -236,10 +236,13 @@
           <item name="Editing Template Plugin" href="/delve_into/custom/howto/editing_template_plugin.html"/>
           <item name="Customize Skin" href="/delve_into/custom/howto/customize_skin.html"/>
           <item name="Custom Workflow" href="/delve_into/custom/howto/workflow.html"/>
+        </item>
+
+       <item name="Project export" href="/delve_into/custom/project_export/index.html" collapse="false"/>
       <!--
         <item name="Customize Versioning" href="/delve_into/custom/howto/customize_versioning.html"/>
       -->
-        </item>
+
         <item name="Reference Guide" href="/delve_into/custom/reference/index.html" collapse="true">
           <item name="Repository Plugins" href="/delve_into/custom/reference/repository/repository_plugins.html"/>
           <item name="Frontend Plugins" href="/delve_into/custom/reference/frontend/index.html" collapse="true">

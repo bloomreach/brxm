@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Add custom compound</title>
+  </properties>
+
+  <body>
+    <section name="Add custom compound">
+     <span class="shortdesc">How to add a custom compound to a document type or other
+     custom compound?</span>
+
+  <!--
+   <script type="text/javascript">
+    leftpx=450;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
+     <img src="../../../../images/screenshots/cms_T07/inars/add_custom_compound.png" alt='Add custom compound'/>
+   </div></div>
+ -->
+    <p>
+     You add a custom compound just like any field. Just select from the
+     Custom Compound slider.
+     </p>
+ <!--
+  </div>
+ -->
+
+  <subsection name='Next'>
+   <ul>
+    <li><a href='./logout.html'>Logout</a> (continue <a href='../tour.html'>tour</a>).</li>
+   </ul>
+  </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
+
+   </section>
+  </body>
+</document>

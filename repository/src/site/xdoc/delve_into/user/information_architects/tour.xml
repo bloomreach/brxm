@@ -77,12 +77,24 @@
       <td>
        <span class='structure-48 icon-48'/>
       </td>
-      <td> 
+      <td>
          <a href="./howto/create_documenttype.html">Create document types</a>.
          Alice decides that the online newspaper should at least contain
          documents for announcing an upcoming happening and documents for
-         describing the author's hobby. So for the time being, she creates two document types,
-         which she calls `upcoming' and `myhobby'.
+         describing the author's hobby. So for the time being, she decides to create two document types,
+         which she calls `upcoming' and `myhobby'. You will see her working on 'upcoming'.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Specify type layout</td>
+      <td>
+       <span class='structure-48 icon-48'/>
+      </td>
+      <td>
+       <a href="./howto/specify_type_layout.html">Specify type layout</a>.
+        One thing the document type specifies is the layout of documents as they appear to an
+        author in the document editor.
       </td>
      </tr>
 
@@ -119,7 +131,7 @@
       <td>
        <span class='structure-48 icon-48'/> 
       </td>
-      <td> 
+      <td>
          <a href="./howto/add_boolean_to_documenttype.html">Add boolean to document type</a>. 
          Alice thinks that every author of an article about an upcoming happening should
          answer the question if the happening is indoors. 
@@ -154,9 +166,9 @@
        <span class='structure-48 icon-48'/> 
       </td>
       <td> 
-         <a href="./howto/add_markuped_text_to_documenttype.html">Add marked-up text to document type</a>. 
+         <a href="./howto/add_markuped_text_to_documenttype.html">Add marked-up text to document type</a>.
          Well, an article about an upcoming happening should allow for a description of the happening.
-         However, that should be optional, as the title may in some cases enough. So Alice adds a 
+         However, that should be optional, as the title may in some cases be enough. So Alice adds a
          optional markuped text field, called 'Description'.
       </td>
      </tr>
@@ -164,45 +176,67 @@
      <tr>
       <td>Change field</td>
       <td>
-       <span class='structure-48 icon-48'/> 
+       <span class='structure-48 icon-48'/>
       </td>
-      <td> 
-         <a href="./howto/change_field_in_documenttype.html">Change field in document type</a>. 
+      <td>
+         <a href="./howto/change_field_in_documenttype.html">Change field in document type</a>.
          Alice decides that the title of an 'upcoming' article, may be more than 60 characters.
-         She decides that the maximum number of characters should be 68. So she changes 
-         the size value for the title field.          
+         She decides that the maximum number of characters should be 68. So she changes
+         the size value for the title field.
       </td>
      </tr>
 
      <tr>
       <td>Remove field</td>
       <td>
-       <span class='structure-48 icon-48'/> 
+       <span class='structure-48 icon-48'/>
       </td>
-      <td> 
-         <a href="./howto/remove_field_from_documenttype.html">Remove field from document type</a>. 
-         Alice adds another field, does not like it, and removes it again.          
+      <td>
+         <a href="./howto/remove_field_from_documenttype.html">Remove field from document type</a>.
+         Alice adds another field, does not like it, and removes it again.
       </td>
      </tr>
 
      <tr>
       <td>Save documenttype</td>
       <td>
-       <span class='structure-48 icon-48'/> 
+       <span class='structure-48 icon-48'/>
       </td>
-      <td> 
+      <td>
          <a href="./howto/save_documenttype.html">Save document type</a>. 
-         Alice saves here new document type called 'upcoming'.
+         Alice saves her new document type called 'upcoming'.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Create custom compound</td>
+      <td>
+       <span class='structure-48 icon-48'/>
+      </td>
+      <td>
+       <a href="howto/create_custom_compound.html">Create custom compound</a>.
+        Alice decides to create a custom compound containing some key information that
+        see wants to include in several document types.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Add compound</td>
+      <td>
+       <span class='structure-48 icon-48'/>
+      </td>
+      <td>
+       <a href="howto/add_custom_compound.html">Add custom compound</a>.
       </td>
      </tr>
 
      <tr>
       <td>Logout</td>
       <td>
-       <span class='logout-48 icon-48'/> 
+       <span class='logout-48 icon-48'/>
       </td>
-      <td> 
-         <a href="./howto/logout.html">Logout</a>. 
+      <td>
+         <a href="./howto/logout.html">Logout</a>.
          Alice quits for today.
       </td>
      </tr>

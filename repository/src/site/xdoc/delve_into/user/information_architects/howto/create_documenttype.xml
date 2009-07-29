@@ -37,24 +37,27 @@ ________________________________________________________________________________
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M13/inars/create_documenttype.png" alt='Create document type screenshot'/> 
+     <img src="../../../../images/screenshots/cms_T07/inars/create_documenttype.png" alt='Create document type screenshot'/> 
     </div></div>
     <p>
-     About to select the <a href='../../contributors/concepts/folder_action_menu.html'>folder action</a>
-     'New document type' while in the folder snp, which is a namespace folder.
-     A dialog window will appear. The new document type will be added to the document types in the snp namespace,
+     The <a href='../../contributors/concepts/folder_action_menu.html'>folder action menu</a> for
+     the folder snp is popped up. The snp folder is a namespace folder. You can choose to create a new
+     <a href='../concepts/documenttype.html'>document type</a> or a new
+     <a href='../concepts/compoundtype.html'>compound type</a>, which is a building block for a document type.
+     Dialog windows for the
+     <a href='specify_type_details.html'>details</a> and the
+     <a href='specify_type_layout.html'>layout</a> of the new type will appear.
+     The new document type will be added to the document types in the snp namespace,
      which are now 'myhobby' and 'upcoming'.
     </p>
    </div>
 
-   <p>
-    Type an informative name for the documenttype.
-   </p>
-
   <subsection name='Next'>
    <ul>
-    <li><a href='./add_date_to_documenttype.html'>Add date to document type</a> (continue <a href='../tour.html'>tour</a>).</li>
-    <li><a href='./create_documenttype.html'>Create another document type</a>.</li>
+    <li><a href='specify_type_details.html'>Howto specify the type details</a>.</li>
+    <li><a href='specify_type_layout.html'>Howto specify the type layout</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='add_date_to_documenttype.html'>Add date to document type</a>.</li>
+    <li><a href='create_documenttype.html'>Create another document type</a>.</li>
    </ul>
   </subsection>
    <subsection name='Alternative'>
