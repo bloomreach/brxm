@@ -332,9 +332,7 @@ public class ProjectExport {
         try {
             ignorePaths.add("/jcr:system");
             ignorePaths.add("/hippo:log");
-            ignorePaths.add("/hippo:configuration");
             ignorePaths.add("/hippo:configuration/hippo:temporary");
-            ignorePaths.add("/hippo:configuration/hippo:temporary/content/hippo:configuration");
             ignorePaths.add("/hippo:log");
             ignoreNamespaces.add("fn");
             ignoreNamespaces.add("fn_old");
@@ -362,7 +360,8 @@ public class ProjectExport {
             ignoreProjects.add("Repository modules");
             ignoreProjects.add("Hippo ECM package configuration");
             ignoreProjects.add("Hippo ECM editor repository addon");
-            ignoreProjects.add("Gallery Addon");
+            //ignoreProjects.add("Gallery Addon");
+            ignoreProjects.add("Default content addon");
             ignoreProjects.add("Builtin repository addon");
             ignoreProjects.add("Faceted date repository addon");
             ignoreProjects.add("Xinha addon frontend plugin");
@@ -490,12 +489,11 @@ public class ProjectExport {
                     }
                 }
             } else {
-                // FIXME
                item.setProperty("hippo:nodetypesresource", element.getElementName() + ".cnd");
                try {
                    element.cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(extension.getSession().getWorkspace(), element.getElementName());
-               }catch(IOException ex) {
-                   // ignore for the moment FIXME
+               } catch(IOException ex) {
+                   throw new NotExportableException("error writing content node definition", ex);
                }
             }
         }
