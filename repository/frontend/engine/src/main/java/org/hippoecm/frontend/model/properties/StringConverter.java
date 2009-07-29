@@ -43,7 +43,7 @@ public class StringConverter implements IModel {
             if (decorated != null && decorated.getValue() != null) {
                 return decorated.getValue().getString();
             } else {
-                log.warn("StringConverter: JcrPropertyValueModel decorated equals null");
+                log.debug("StringConverter: JcrPropertyValueModel decorated equals null");
             }
         } catch (RepositoryException ex) {
             log.info(ex.getMessage());
