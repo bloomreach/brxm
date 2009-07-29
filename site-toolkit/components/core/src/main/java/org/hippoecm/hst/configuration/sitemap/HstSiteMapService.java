@@ -46,9 +46,7 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
     private String siteMapRootNodePath;
     
     private Map<String, HstSiteMapItem> rootSiteMapItems = new LinkedHashMap<String, HstSiteMapItem>();
-    
-    private HstSiteMapItem errorSiteMapItem = null;
-    
+   
     private Map<String, HstSiteMapItem> siteMapDescendants = new HashMap<String, HstSiteMapItem>();
     
     public HstSiteMapService(HstSite hstSite, Node siteMapNode) throws RepositoryException, ServiceException {
@@ -100,13 +98,6 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
     
     private void populateDescendants(HstSiteMapItem hstSiteMapItem) {
         siteMapDescendants.put(hstSiteMapItem.getId(), hstSiteMapItem);
-        if(hstSiteMapItem.isErrorSiteMapItem()) {
-            if(this.errorSiteMapItem != null) {
-                log.warn("Multiple sitemap items have 'hst:errorsitemapitem = true'. There can be only one error sitemap item. Skipping this one: '{}'", hstSiteMapItem.getId());
-            } else {
-                errorSiteMapItem = hstSiteMapItem;
-            }
-        }
         for(HstSiteMapItem child : hstSiteMapItem.getChildren()) {
             populateDescendants(child);
         }
@@ -133,16 +124,6 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
     public HstSite getSite() {
         return this.hstSite;
     }
-
-    public HstSiteMapItem getErrorSiteMapItem() {
-        if(errorSiteMapItem == null) {
-            log.warn("We cannot forward the call to the error sitemapitem as there is no ErrorSiteMapItem configured (hst:errorsitemapitem=true).");
-        }
-        return errorSiteMapItem;
-    }
-    
-    
-    
 
 
 }

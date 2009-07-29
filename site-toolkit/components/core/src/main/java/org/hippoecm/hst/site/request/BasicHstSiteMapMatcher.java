@@ -266,10 +266,5 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             return null;
         }
 
-        public ResolvedSiteMapItem getErrorResolvedSiteMapItem() {
-            return null;
-        }
-
-        
     }
 }

@@ -158,8 +158,4 @@ public interface HstSiteMapItem {
      */
     int getErrorCode();
     
-    /**
-     * @return true if this SiteMapItem functions as a error sitemap item
-     */
-    boolean isErrorSiteMapItem();
 }

@@ -102,9 +102,6 @@
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/errorpage</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:errorsitemapitem" sv:type="Boolean">
-            <sv:value>true</sv:value>
-        </sv:property>
     </sv:node>
     <sv:node sv:name="portletprefseditor">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

@@ -89,11 +89,5 @@ public interface ResolvedSiteMapItem {
      * @return the <code>HstComponentConfiguration</code> for portlet that is found through {@link #getHstSiteMapItem()}
      */
     HstComponentConfiguration getPortletHstComponentConfiguration();
-    
-    /**
-     * @return the <code>ResolvedSiteMapItem</code> of the configured error sitemapitem
-     */
-    
-    ResolvedSiteMapItem getErrorResolvedSiteMapItem();
-    
+  
 }
