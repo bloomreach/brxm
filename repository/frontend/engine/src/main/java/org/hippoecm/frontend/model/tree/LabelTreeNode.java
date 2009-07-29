@@ -15,13 +15,15 @@
  */
 package org.hippoecm.frontend.model.tree;
 
-import java.util.Enumeration;
 import java.io.Serializable;
+import java.util.Enumeration;
 
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 public class LabelTreeNode implements TreeNode, Serializable {
     @SuppressWarnings("unused")
@@ -30,15 +32,19 @@ public class LabelTreeNode implements TreeNode, Serializable {
     private static final long serialVersionUID = 1L;
 
     private TreeNode parentNode;
-    private long moreCount;
+    private IModel label;
 
-    public LabelTreeNode(TreeNode parentNode, long moreCount) {
-        this.moreCount = moreCount;
-        this.parentNode = parentNode;
+    public LabelTreeNode(TreeNode parentNode, String label) {
+        this(parentNode, new Model(label));
     }
 
+    public LabelTreeNode(TreeNode parentNode, IModel label) {
+        this.parentNode = parentNode;
+        this.label = label;
+    }
+    
     public String getLabel() {
-        return " ... " + moreCount + " more ...";
+        return (String) label.getObject();
     }
 
     public Enumeration<TreeNode> children() {
