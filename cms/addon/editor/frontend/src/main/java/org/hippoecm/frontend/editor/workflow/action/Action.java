@@ -40,7 +40,7 @@ public class Action extends WorkflowAction {
         try {
             super.execute();
         } catch (Exception e) {
-            error(e.getMessage());
+            error("Error while executing action: " + e.getMessage());
         }
     }
 

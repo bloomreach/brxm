@@ -71,7 +71,7 @@ public class NamespaceWorkflowImpl extends WorkflowImpl implements NamespaceWork
         FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext().getWorkflow("internal");
         Map<String,String> replacements = new TreeMap<String,String>();
         replacements.put("name", name);
-        replacements.put("prefix:document", prefix + ":document");
+        replacements.put("prefix:basedocument", prefix + ":basedocument");
 
         // ignore return type, as workflow chaining implies that the folder workflow
         // isn't executed until current method completes  
