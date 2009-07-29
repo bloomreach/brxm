@@ -20,7 +20,7 @@ plugins for the Hippo OEM.
   To create a project, execute the following maven command:
 
 +--
-mvn -DartifactId=your-artifactid -DgroupId=your-groupid -DarchetypeArtifactId=hippo-ecm-archetype-addon -DarchetypeGroupId=org.hippoecm -DarchetypeVersion=2.02.00-SNAPSHOT archetype:create
+mvn -DartifactId=your-artifactid -DgroupId=your-groupid -DarchetypeArtifactId=hippo-ecm-archetype-addon -DarchetypeGroupId=org.hippoecm -DarchetypeVersion=2.08.00 archetype:create
 +--
 
   Replace your-artifactid and your-groupid by the artifact and group to be used in your project,
