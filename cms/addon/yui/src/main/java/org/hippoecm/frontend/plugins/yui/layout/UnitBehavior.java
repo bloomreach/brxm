@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxRequestTarget.IJavascriptResponse;
 import org.apache.wicket.ajax.AjaxRequestTarget.IListener;
@@ -54,6 +55,9 @@ public class UnitBehavior extends AbstractBehavior {
         if (target != null) {
             target.addListener(new IListener() {
                 public void onBeforeRespond(Map map, AjaxRequestTarget target) {
+                    if (target.getPage() != component.findParent(Page.class)) {
+                        return;
+                    }
                     MarkupContainer parent = component.getParent();
                     boolean found = false;
                     while (parent != null) {
