@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath org.hippoecm.Main ../../war/target/hippo-ecm-quickstart-war-2.04.00-SNAPSHOT.war</exec.args>
+                <exec.args>-classpath %classpath org.hippoecm.Main ../../war/target/hippo-ecm-quickstart-war-2.08.00-SNAPSHOT.war</exec.args>
                 <exec.workingdir>target</exec.workingdir>
                 <exec.executable>java</exec.executable>
             </properties>
@@ -25,7 +25,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xdebug -Djava.compiler=none -Xnoagent -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath org.hippoecm.Main ../../war/target/hippo-ecm-quickstart-war-2.04.00-SNAPSHOT.war</exec.args>
+                <exec.args>-Xdebug -Djava.compiler=none -Xnoagent -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath org.hippoecm.Main ../../war/target/hippo-ecm-quickstart-war-2.08.00-SNAPSHOT.war</exec.args>
                 <exec.workingdir>target</exec.workingdir>
                 <jpda.listen>true</jpda.listen>
                 <exec.executable>java</exec.executable>
