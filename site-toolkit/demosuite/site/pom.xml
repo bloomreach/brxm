@@ -320,7 +320,7 @@
                 </configuration>
               </execution>
               <execution>
-                <id>unpack-cms-app</id>
+                <id>unpack-cms-and-site-app</id>
                 <phase>install</phase>
                 <goals>
                   <goal>unpack</goal>
@@ -335,24 +335,13 @@
                       <overWrite>true</overWrite>
                       <outputDirectory>${tomcat.hst.cms.webapp}</outputDirectory>
                     </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-              <execution>
-                <id>copy-site-war</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
                     <artifactItem>
                       <groupId>org.onehippo.ecm.hst.demosuite</groupId>
                       <artifactId>hst-demosuite-site</artifactId>
                       <version>${project.version}</version>
                       <type>war</type>
-                      <outputDirectory>${tomcat.server.home}/webapps</outputDirectory>
-                      <destFileName>${project.build.finalName}.war</destFileName>
+                      <overWrite>true</overWrite>
+                      <outputDirectory>${tomcat.server.home}/webapps/${project.build.finalName}</outputDirectory>
                     </artifactItem>
                   </artifactItems>
                 </configuration>

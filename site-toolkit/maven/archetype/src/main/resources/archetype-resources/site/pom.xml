@@ -321,7 +321,7 @@
                 </configuration>
               </execution>
               <execution>
-                <id>unpack-cms-app</id>
+                <id>unpack-cms-and-site-app</id>
                 <phase>install</phase>
                 <goals>
                   <goal>unpack</goal>
@@ -336,24 +336,13 @@
                       <overWrite>true</overWrite>
                       <outputDirectory>${dollar}{tomcat.hst.cms.webapp}</outputDirectory>
                     </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-              <execution>
-                <id>copy-site-war</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
                     <artifactItem>
                       <groupId>${groupId}</groupId>
                       <artifactId>${artifactId}</artifactId>
                       <version>${dollar}{project.version}</version>
                       <type>war</type>
-                      <outputDirectory>${dollar}{tomcat.server.home}/webapps</outputDirectory>
-                      <destFileName>${dollar}{project.build.finalName}.war</destFileName>
+                      <overWrite>true</overWrite>
+                      <outputDirectory>${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}</outputDirectory>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
