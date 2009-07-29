@@ -215,13 +215,11 @@ public class JcrItemModel extends LoadableDetachableModel {
                     node = node.getParent();
                 }
 
-                if (node == null) {
-                    throw new IllegalStateException("No referenceable parent node was found");
-                }
-
-                uuid = node.getUUID();
-                if (spb.length() > 1) {
-                    relPath = spb.toString().substring(1);
+                if (node != null) {
+                    uuid = node.getUUID();
+                    if (spb.length() > 1) {
+                        relPath = spb.toString().substring(1);
+                    }
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
