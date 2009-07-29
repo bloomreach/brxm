@@ -22,4 +22,8 @@ public class NotExportableException extends Throwable {
     public NotExportableException(String reason) {
         super(reason);
     }
+
+    public NotExportableException(String reason, Exception cause) {
+        super(reason, cause);
+    }
 }
