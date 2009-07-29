@@ -23,6 +23,8 @@ import javax.jcr.Session;
 import org.hippoecm.hst.component.support.bean.persistency.BasePersistenceHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.content.beans.query.filter.Filter;
+import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -57,10 +59,20 @@ public class Detail extends BasePersistenceHstComponent {
             HstQuery commentQuery = BeanUtils.createIncomingBeansQuery((BaseBean)crBean, this.getSiteContentBaseBean(request), "demosite:commentlink/@hippo:docbase", this , CommentBean.class, false);
             commentQuery.addOrderByDescending("demosite:date");
             commentQuery.setLimit(15);
+            
+            boolean onlyLastWeek = false;
+            if(onlyLastWeek) {
+                // example how to get the comments only of last week
+                Calendar sinceLastWeek = Calendar.getInstance();
+                sinceLastWeek.add(Calendar.DAY_OF_MONTH, -7);
+                Filter f = new FilterImpl();
+                f.addGreaterOrEqualThan("demosite:date", sinceLastWeek);
+                ((Filter)commentQuery.getFilter()).addAndFilter(f);
+            }
             List<CommentBean> comments = BeanUtils.getIncomingBeans(commentQuery, CommentBean.class);
             request.setAttribute("comments", comments);
         } catch (QueryException e) {
-            e.printStackTrace();
+            log.warn("QueryException ", e);
         }
         
     }
@@ -89,7 +101,7 @@ public class Detail extends BasePersistenceHstComponent {
                     cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
                         public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
                             FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
-                            fraw.requestPublication();
+                            fraw.publish();
                         }
                     });
 

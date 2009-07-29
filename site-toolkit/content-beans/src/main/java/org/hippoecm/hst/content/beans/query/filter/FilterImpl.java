@@ -21,6 +21,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
+
+import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -308,14 +313,11 @@ public class FilterImpl implements Filter{
     }
     
     public String getCalendarWhereXPath(Calendar value) throws FilterException{
-        //try {
-            // TODO : from HSTServices get the value factory component manager
-            //Value val =  this.hstRequestContext.getSession().getValueFactory().createValue(value);
-            //return "xs:dateTime('"+val.getString() + "')";
-            return " TODO ";
-        // } catch (RepositoryException e) {
-        //     throw new FilterException("Repository Exception: " , e);
-        // }
+          try {
+            return "xs:dateTime('"+ValueFactoryImpl.getInstance().createValue(value).getString() + "')";
+        } catch (RepositoryException e) {
+           throw new FilterException("Cannot create xpath for calendar value:", e);
+        }
     }
 
     /**
