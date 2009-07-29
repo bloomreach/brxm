@@ -14,9 +14,7 @@
    <section>Features</section>
   </document><document ext="xml" filename="roadmap" relpath="about">Roadmap Hippo CMS
    <section>Roadmap Hippo CMS</section>
-   <shortdesc>Dates for future releases of Hippo CMS</shortdesc>
-   <h4>Goal: deliver all basic CMS functionalities, production ready</h4>
-   <h4>Goal: All CMS 6 functionalities + faceted functionalities</h4>
+   <shortdesc>What's up for the future?</shortdesc>
   </document><document ext="xml" filename="term_index" relpath="about">
   </document><document ext="xml" filename="use_cases" relpath="about">Use cases
    <section>Use cases</section>
@@ -244,7 +242,44 @@
    <h4>First subsubsection title</h4>
    <h4>First subsubsection title</h4>
    <subsection>Second subsection title</subsection>
-  </document></folder></folder><folder>reference
+  </document></folder></folder><folder>project_export
+   
+   <document ext="xml" filename="add_project" relpath="delve_into/custom/project_export">Add a new project
+   <section>Add a new project</section>
+   <shortdesc>How to add a new project to the list of known projects in the
+      project export.</shortdesc>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="excludes" relpath="delve_into/custom/project_export">Excludes
+   <section>Excludes</section>
+   <shortdesc>How to exclude nodes from an export</shortdesc>
+   <img>Export excludes</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="export_project" relpath="delve_into/custom/project_export">Export a sub project
+   <section>Export a sub project</section>
+   <shortdesc>Export a sub project</shortdesc>
+   <img>Export project</img>
+   <subsection>Folder</subsection>
+   <subsection>Maven Project</subsection>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="index" relpath="delve_into/custom/project_export">Project Export
+   <section>Project Export</section>
+   <shortdesc>How to export customized content </shortdesc>
+   <subsection>Next</subsection>
+  </document><document ext="xml" filename="start" relpath="delve_into/custom/project_export">Start a Project Export
+   <section>Start a Project Export</section>
+   <shortdesc>How to start a project export</shortdesc>
+   <img>Start project export</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="why_export" relpath="delve_into/custom/project_export">Why Export?
+   <section>Why Export?</section>
+   <shortdesc>Why customized content in sources?
+    </shortdesc>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document></folder><folder>reference
    
    <folder>frontend
    
@@ -344,26 +379,26 @@
    <section>Structure</section>
    <section>Nodes</section>
    <subsection>hippo:domain</subsection>
-   <subsection>hippo:domainrule</subsection>
+   <subsection>hipposys:domainrule</subsection>
    <subsection>hippo:facetrule</subsection>
-   <subsection>hippo:authrole</subsection>
+   <subsection>hipposys:authrole</subsection>
   </document><document ext="xml" filename="groups" relpath="delve_into/sysadmin/configuration/nodes">Groups Configuration
    <section>Groups Configuration</section>
    <section>Structure</section>
    <section>Nodes</section>
-   <subsection>hippo:group</subsection>
+   <subsection>hipposys:group</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration/nodes">Configuration nodes
    <section>Configuration nodes</section>
   </document><document ext="xml" filename="roles" relpath="delve_into/sysadmin/configuration/nodes">Roles Configuration
    <section>Roles Configuration</section>
    <section>Structure</section>
    <section>Nodes</section>
-   <subsection>hippo:role</subsection>
+   <subsection>hipposys:role</subsection>
   </document><document ext="xml" filename="users" relpath="delve_into/sysadmin/configuration/nodes">Users Configuration
    <section>Users Configuration</section>
    <section>Structure</section>
    <section>Nodes</section>
-   <subsection>hippo:user</subsection>
+   <subsection>hipposys:user</subsection>
   </document><document ext="xml" filename="workflow" relpath="delve_into/sysadmin/configuration/nodes">Workflow configuration
    <section>Workflow configuration</section>
   </document></folder><document ext="xml" filename="performance_tuning" relpath="delve_into/sysadmin/configuration">Performance tuning
@@ -529,17 +564,11 @@
    <shortdesc>What do you need to run Hippo CMS?</shortdesc>
    <img>Firefox logo</img>
    <img>internet explorer logo</img>
-   <img>MS windows logo</img>
-   <img>MS windows logo</img>
-   <img>Redhat logo</img>
-   <img>Suse logo</img>
    <img>Java logo</img>
    <img>Sun logo</img>
-   <img>Tux logo</img>
    <img>Java logo</img>
    <img>Jetty logo</img>
    <img>Tomcat logo</img>
-   <img>Glassfish logo</img>
    <img>Derby logo</img>
    <img>Oracle logo</img>
   </document></folder><folder>tools
@@ -750,12 +779,6 @@
    <document ext="xml" filename="boolean" relpath="delve_into/user/contributors/concepts">Boolean
    <section>Boolean</section>
    <shortdesc>What is a boolean</shortdesc>
-   <subsection>Next</subsection>
-   <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="card" relpath="delve_into/user/contributors/concepts">Tab page
-   <section>Tab page</section>
-   <shortdesc>What and where are tab pages?</shortdesc>
-   <img>document tab pages</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="content_workspace" relpath="delve_into/user/contributors/concepts">Content Workspace
@@ -999,6 +1022,7 @@
   </document></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide
    <section>Contributors Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of contributor.</shortdesc>
+   <subsection>General introduction for contributors</subsection>
   </document><folder>todo
    <title>todo</title><shortdesc>This folder contains howto's that are in development.</shortdesc>
    <document ext="xml" filename="browsing_history_of_document" relpath="delve_into/user/contributors/todo">Browsing history of a document
@@ -1126,6 +1150,7 @@
   </document></folder><document ext="xml" filename="index" relpath="delve_into/user">User Guide
    <section>User Guide</section>
    <shortdesc>How to work as a user of Hippo CMS.</shortdesc>
+   <subsection>General introduction for users of the Hippo CMS</subsection>
   </document><folder>information_architects
    
    <folder>concepts
@@ -1139,6 +1164,12 @@
    <document ext="xml" filename="boolean" relpath="delve_into/user/information_architects/concepts">Boolean
    <section>Boolean</section>
    <shortdesc>What is a boolean</shortdesc>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="compoundtype" relpath="delve_into/user/information_architects/concepts">Compound type
+   <section>Compound type</section>
+   <shortdesc>What is a compound type</shortdesc>
+   <img>compound templates diagram</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="documenttype" relpath="delve_into/user/information_architects/concepts">Document type
@@ -1188,7 +1219,13 @@
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="namespace" relpath="delve_into/user/information_architects/concepts">namespace
    <section>namespace</section>
-   <shortdesc>What is a namespace</shortdesc>
+   <shortdesc>What is a namespace?</shortdesc>
+   <subsection>Namespace name examples</subsection>
+   <subsection>Namespace name format rules</subsection>
+   <subsection>full names</subsection>
+   <subsection>Namespace name format rules</subsection>
+   <subsection>usage</subsection>
+   <subsection>More explanation about the concept</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="review_mode" relpath="delve_into/user/information_architects/concepts">Review mode
    <section>Review mode</section>
@@ -1259,6 +1296,12 @@
    <img>Add boolean to document type screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="add_custom_compound" relpath="delve_into/user/information_architects/howto">Add custom compound
+   <section>Add custom compound</section>
+   <shortdesc>How to add a custom compound to a document type or other
+     custom compound?</shortdesc>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="add_date_to_documenttype" relpath="delve_into/user/information_architects/howto">Add date to document type
    <section>Add date to document type</section>
    <shortdesc>How to add a date field to a document type.</shortdesc>
@@ -1286,6 +1329,12 @@
    <section>Change field in document type</section>
    <shortdesc>How to change a field in a document type.</shortdesc>
    <img>change field screenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="create_custom_compound" relpath="delve_into/user/information_architects/howto">Create custom compound
+   <section>Create custom compound</section>
+   <shortdesc>How to create a custom compund</shortdesc>
+   <img>Create custom compound</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="create_documenttype" relpath="delve_into/user/information_architects/howto">Create document type
@@ -1364,6 +1413,20 @@
    <img>save document type screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="specify_type_details" relpath="delve_into/user/information_architects/howto">Specify type details
+   <section>Specify type details</section>
+   <shortdesc>How to specify type details</shortdesc>
+   <img>Specify type details</img>
+   <subsection>Taggable</subsection>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="specify_type_layout" relpath="delve_into/user/information_architects/howto">Specify type layout
+   <section>Specify type layout</section>
+   <shortdesc>How to specify the elemental layout for a document type or compound type?</shortdesc>
+   <img>Specify type layout</img>
+   <subsection>Nested layout</subsection>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/information_architects/howto">Start CMS
    <section>Start CMS</section>
    <shortdesc>How to start a CMS session in your browser</shortdesc>
@@ -1378,6 +1441,7 @@
   </document></folder><document ext="xml" filename="index" relpath="delve_into/user/information_architects">Information Architects Guide
    <section>Information Architects Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of Information Architect.</shortdesc>
+   <subsection>General introduction to document types</subsection>
   </document><folder>old
    
    <document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/information_architects/old">Go to content browse tab

@@ -30,7 +30,6 @@ ________________________________________________________________________________
      <span class="shortdesc">How to add a custom compound to a document type or other
      custom compound?</span>
 
-  <!--
    <script type="text/javascript">
     leftpx=450;
    </script>
@@ -38,14 +37,19 @@ ________________________________________________________________________________
     <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_T07/inars/add_custom_compound.png" alt='Add custom compound'/>
    </div></div>
- -->
     <p>
      You add a custom compound just like any field. Just select from the
-     Custom Compound slider.
+     Custom Compound slider. In the screenshot a keys compound type is selected and
+     positioned between the title field and the introduction field. Then it has
+     been given a title.
      </p>
- <!--
-  </div>
- -->
+   </div>
+
+ <p>Note that after you
+    <a href='create_custom_compound.html'>create a custom compound</a>
+      you have to run <a href='update_content.html'>update all content</a>
+      to make it available for use in document types or other custom compounds.
+  </p>
 
   <subsection name='Next'>
    <ul>

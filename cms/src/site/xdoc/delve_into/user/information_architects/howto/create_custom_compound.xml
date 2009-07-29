@@ -44,6 +44,10 @@ ________________________________________________________________________________
     </p>
    </div>
 
+   <p>Make your custom compound available for use in document types or other custom compounds
+      by <a href='update_content.html'>update all content</a>.
+  </p>
+
   <subsection name='Next'>
    <ul>
     <li><a href='add_custom_compound.html'>Add custom compound</a> (continue <a href='../tour.html'>tour</a>).</li>

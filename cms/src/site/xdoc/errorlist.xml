@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">436 errors and/or todos in 241 out of 241 documents (100%).</span>
+      <span class="shortdesc">442 errors and/or todos in 251 out of 251 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -45,13 +45,13 @@
      </li>
         <li>9 documents to rewrite.
      </li>
-        <li>12 documents requiring additions.
+        <li>11 documents requiring additions.
      </li>
         <li>11 documents with unidentified TODO strings.
      </li>
         <li>1 not valid XML documents.
      </li>
-        <li>17 documents with bad text.
+        <li>16 documents with bad text.
      </li>
         <li>10 multisection documents.
      </li>
@@ -90,14 +90,8 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with empty elements: 9">
+      <subsection name="Documents with empty elements: 8">
         <ol>
-          <li>
-            <a href="./about/roadmap.html">roadmap: Roadmap Hippo CMS</a>
-            <ul>
-              <li>&lt;td/&gt;</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/core/project-structure.html">project-structure: Project Structure</a>
             <ul>
@@ -140,7 +134,6 @@
           <li>
             <a href="./delve_into/sysadmin/requirements.html">requirements: Requirements</a>
             <ul>
-              <li>&lt;td/&gt;</li>
               <li>&lt;td/&gt;</li>
               <li>&lt;td/&gt;</li>
             </ul>
@@ -623,7 +616,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Add something to documents: 12">
+      <subsection name="Add something to documents: 11">
         <ol>
           <li>
             <a href="./delve_into/custom/howto/eclipse/configure_workspace.html">configure_workspace: Configure Workspace</a>
@@ -650,12 +643,6 @@ repository is;
             <a href="./delve_into/tools/howto/maven/learning_maven.html">learning_maven: Learning Maven</a>
             <ul>
               <li>References to Maven pages</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/concepts/card.html">card: Tab page</a>
-            <ul>
-              <li>more about tab pages in the image</li>
             </ul>
           </li>
           <li>
@@ -861,14 +848,8 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 17">
+      <subsection name="badtext documents: 16">
         <ol>
-          <li>
-            <a href="./about/roadmap.html">roadmap: Roadmap Hippo CMS</a>
-            <ul>
-              <li>Suggesting the CMS user what possible metadata could be added to the<span xmlns="" class="bad"> current </span>document, based on the user's behavior in the CMS itself.</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/custom/howto/extend_dashboard.html">extend_dashboard: Giving our plugin a place on the dashboard</a>
             <ul>

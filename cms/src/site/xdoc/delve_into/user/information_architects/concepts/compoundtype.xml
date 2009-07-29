@@ -29,21 +29,12 @@ ________________________________________________________________________________
     <section name="Compound type">
      <span class="shortdesc">What is a compound type</span>
 
-   <script type="text/javascript">
-    leftpx=0;
-    toppx=0;
-    bottompx=500;
-   </script>
-   <div class='group'> 
-    <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_T07/inars/compound_templates_diagram.png" alt='compound templates diagram'/> 
-    </div></div>
+    <img src="../../../../images/screenshots/cms_T07/inars/compound_templates_diagram.png" alt='compound templates diagram'/>
     <p>
       Diagram of a complex layout build up from elemental layouts.
       Such a complex layout can be defined for all documents of a particular type by
       using compound types.
     </p>
-   </div>
 
      <p>
       <a href='documenttype.html'>Document types</a> can be defined by
