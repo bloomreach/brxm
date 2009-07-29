@@ -27,7 +27,6 @@ import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
-import org.hippoecm.hst.core.component.HstRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,30 +39,30 @@ public class BeanUtils {
     private final static Logger log = LoggerFactory.getLogger(BeanUtils.class);
 
     /**
-     * Returns a HstQuery for incoming beans. You can add filters and ordering to the query before executing it 
+     * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it 
      * 
      * You need to add a <code>linkPath</code>: this is that path, that the incoming beans use to link to the HippoDocumentBean {@code bean}. For example, with '/myproject:link/@hippo:docbase' or even 'wildcard/@hippo:docbase' or 
      * 'wildcard/wildcard/@hippo:docbase' where wildcard = *
      * 
      */
 
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean,
-            String linkPath, HstRequest request, BaseHstComponent component,
+    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope, 
+            String linkPath, BaseHstComponent component,
             Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
 
         List<String> linkPaths = new ArrayList<String>();
         linkPaths.add(linkPath);
-        return createIncomingBeansQuery(bean, linkPaths, request, component, beanMappingClass, includeSubTypes);
+        return createIncomingBeansQuery(bean, scope, linkPaths, component, beanMappingClass, includeSubTypes);
     }
 
     /**
-     * Returns a HstQuery for incoming beans. You can add filters and ordering to the query before executing it 
+     * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it 
      * 
      * The depth indicates how many child nodes deep is searched for a link to the HippoDocumentBean {@code bean}. The depth is allowed to range from 0 (direct hippo:docbase) to 4 (at most 4 levels deep searching is done)
      */
 
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, int depth,
-            HstRequest request, BaseHstComponent component, Class<? extends HippoBean> beanMappingClass,
+    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope, int depth,
+            BaseHstComponent component, Class<? extends HippoBean> beanMappingClass,
             boolean includeSubTypes) throws QueryException{
         if (depth < 0 || depth > 4) {
             throw new FilterException("Depth must be (including) between 0 and 4");
@@ -75,7 +74,7 @@ public class BeanUtils {
             path = "*/" + path;
             linkPaths.add(path);
         }
-        return createIncomingBeansQuery(bean, linkPaths, request, component, beanMappingClass, includeSubTypes);
+        return createIncomingBeansQuery(bean, scope, linkPaths, component, beanMappingClass, includeSubTypes);
     }
 
     /**
@@ -83,13 +82,13 @@ public class BeanUtils {
      * 
      * List<String> linkPaths is the list of paths that are searched that might have a link to the HippoDocumentBean {@code bean}. For example {/myproject:link/@hippo:docbase, /myproject:body/hippostd:content/@hippo:docbase}
      */
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean,
-            List<String> linkPaths, HstRequest request, BaseHstComponent component,
+    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope,
+            List<String> linkPaths, BaseHstComponent component,
             Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
 
         String canonicalHandleUUID = bean.getCanonicalHandleUUID();
 
-        HstQuery query = component.getQueryManager().createQuery(request.getRequestContext(), component.getSiteContentBaseBean(request), beanMappingClass, includeSubTypes);
+        HstQuery query = component.getQueryManager().createQuery(scope, beanMappingClass, includeSubTypes);
         Filter filter = query.createFilter();
         for (String linkPath : linkPaths) {
             Filter orFilter = query.createFilter();

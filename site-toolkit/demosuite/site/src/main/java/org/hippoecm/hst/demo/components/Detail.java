@@ -54,7 +54,7 @@ public class Detail extends BasePersistenceHstComponent {
         request.setAttribute("document", crBean);
         
         try {
-            HstQuery commentQuery = BeanUtils.createIncomingBeansQuery((BaseBean)crBean, "demosite:commentlink/@hippo:docbase", request, this , CommentBean.class, false);
+            HstQuery commentQuery = BeanUtils.createIncomingBeansQuery((BaseBean)crBean, this.getSiteContentBaseBean(request), "demosite:commentlink/@hippo:docbase", this , CommentBean.class, false);
             commentQuery.addOrderByDescending("demosite:date");
             commentQuery.setLimit(15);
             List<CommentBean> comments = BeanUtils.getIncomingBeans(commentQuery, CommentBean.class);
