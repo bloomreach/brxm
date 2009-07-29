@@ -15,12 +15,18 @@
  */
 package org.hippoecm.frontend.editor.workflow.dialog;
 
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.wizard.Wizard;
+import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -36,12 +42,28 @@ public abstract class CreateTypeDialog extends Wizard implements IDialogService.
     private static final long serialVersionUID = 1L;
 
     private Action action;
+    private FeedbackPanel feedback;
     private IDialogService dialogService;
 
     public CreateTypeDialog(Action action, ILayoutProvider layouts) {
         super("content", false);
 
         this.action = action;
+        final IFeedbackMessageFilter[] filters = new IFeedbackMessageFilter[2];
+        filters[0] = new ContainerFeedbackMessageFilter(action);
+        filters[1] = new ContainerFeedbackMessageFilter(this);
+        this.feedback = new FeedbackPanel(FEEDBACK_ID, new IFeedbackMessageFilter() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean accept(FeedbackMessage message) {
+                for (IFeedbackMessageFilter filter : filters) {
+                    if (filter.accept(message)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
 
         setOutputMarkupId(true);
     }
@@ -78,6 +100,11 @@ public abstract class CreateTypeDialog extends Wizard implements IDialogService.
     }
 
     @Override
+    protected FeedbackPanel newFeedbackPanel(String id) {
+        return feedback;
+    }
+
+    @Override
     public void onCancel() {
         dialogService.close();
     }
@@ -85,6 +112,13 @@ public abstract class CreateTypeDialog extends Wizard implements IDialogService.
     @Override
     public void onFinish() {
         action.execute();
+
+        List<FeedbackMessage> messages = (List) feedback.getFeedbackMessagesModel().getObject();
+        for (FeedbackMessage message : messages) {
+            if (message.getLevel() == FeedbackMessage.ERROR) {
+                return;
+            }
+        }
         dialogService.close();
     }
 

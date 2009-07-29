@@ -26,14 +26,20 @@ public class NamespaceValidator {
 
     private NamespaceValidator() {
     }
-    
+
     public static void checkName(String name) throws Exception {
+        if (name == null) {
+            throw new Exception("No name specified");
+        }
         if (!NAME_PATTERN.matcher(name).matches()) {
             throw new Exception("Invalid name; only a-z characters allowed");
         }
     }
 
     public static void checkURI(String name) throws Exception {
+        if (name == null) {
+            throw new Exception("No URI specified");
+        }
         if (!URL_PATTERN.matcher(name).matches()) {
             throw new Exception("Invalid name; only a-z characters allowed");
         }

@@ -31,6 +31,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeLocator;
@@ -56,7 +57,12 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
     private Map<String, JcrTypeDescriptor> types = new HashMap<String, JcrTypeDescriptor>();
 
     public JcrTypeStore() {
-        locator = new TypeLocator(new IStore[] { this });
+        IStore<ITypeDescriptor> builtinTypeStore = new BuiltinTypeStore();
+        locator = new TypeLocator(new IStore[] { this, builtinTypeStore });
+    }
+
+    public TypeLocator getTypeLocator() {
+        return this.locator;
     }
 
     /**
