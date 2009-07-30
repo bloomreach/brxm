@@ -158,6 +158,26 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     /**
+     * @see {@link #getContentBean(HstRequest)} but only returns the bean if the found content bean is of type {@code beanMappingClass}. When the bean cannot be found, or is not of type 
+     * {@code beanMappingClass}, <code>null</code> is returned 
+     * @param request
+     * @param beanMappingClass the class of the bean that you expect
+     * @return A HippoBean of {@code beanMappingClass} or <code>null</code> if bean cannot be found or is of a different class
+     */
+    public <T extends HippoBean> T getContentBean(HstRequest request, Class<T> beanMappingClass) {
+        ResolvedSiteMapItem resolvedSiteMapItem = request.getRequestContext().getResolvedSiteMapItem();
+        HippoBean bean = this.getBeanForResolvedSiteMapItem(request, resolvedSiteMapItem);
+        if(bean == null) {
+            return null;
+        }
+        if(!beanMappingClass.isAssignableFrom(bean.getClass())) {
+            log.debug("Expected bean of type '{}' but found of type '{}'. Return null.", beanMappingClass.getName(), bean.getClass().getName());
+            return null;
+        }
+        return (T)bean;
+    }
+    
+    /**
      * Use {@link BaseHstComponent#getSiteContentBaseBean(HstRequest)}
      */
     @Deprecated
