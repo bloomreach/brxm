@@ -50,7 +50,14 @@ public class Detail extends BasePersistenceHstComponent {
         super.doBeforeRender(request, response);
         HippoBean crBean = this.getContentBean(request);
 
+        // we only have a goBackLink for sitemap items that have configured one. 
+        String goBackLink = request.getRequestContext().getResolvedSiteMapItem().getParameter("go-back-link");
+        request.setAttribute("goBackLink", goBackLink);
+        
+        
         if (crBean == null || !(crBean instanceof BaseBean)) {
+            response.setStatus(404);
+            // or if load error page: response.forward("/error");
             return;
         }
         request.setAttribute("document", crBean);

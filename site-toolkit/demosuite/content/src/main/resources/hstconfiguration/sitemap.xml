@@ -71,6 +71,12 @@
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>news/${1}</sv:value>
             </sv:property>
+            <sv:property sv:name="hst:parameternames" sv:type="String">
+                <sv:value>go-back-link</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:parametervalues" sv:type="String">
+                <sv:value>/news</sv:value>
+            </sv:property>
         </sv:node>
     </sv:node>
     <sv:node sv:name="rss.xml">

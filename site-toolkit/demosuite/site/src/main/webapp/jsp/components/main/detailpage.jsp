@@ -19,11 +19,13 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<c:if test="${not empty goBackLink}">
 <div align="right">
-  <a href="<hst:link path="/news"/>">
+  <a href="<hst:link path="${goBackLink}"/>">
     <img src="<hst:link path="/images/goback.jpg"/>" border="0"/>
   </a>
 </div>
+</c:if>
 
 <div class="yui-u">
     <h2>${document.title}</h2>
