@@ -61,12 +61,14 @@ div.hst-editor-form-buttons {
   margin-left: 8px;
 }
 div.hst-editor-form-buttons a {
- background-color: #DDD;
+  background-color: #DDD;
   padding:4px;
   font-size: 1.1em;
   font-weight:bold;
   color: #666666;
-  border: 1px solid #999;   
+  border: 1px solid #999;
+  display: block;
+  float:left;
 }
 
 div.hst-editor .intro {
@@ -89,6 +91,8 @@ div.hst-editor-form input.small {
 div.hst-editor-form fieldset { margin: 10px 0; padding: 10px; border: #DDD 1px solid; }
 div.hst-editor-form legend { font-weight: bold; color: #666; }
 div.hst-editor-form fieldset div { padding: 0.25em 0; float:left; clear:left; margin-bottom: 3px; }
+
+div.hst-editor-form fieldset > div, div.hst-editor-form fieldset > div > div { width: 375px; }
 
 div.hst-editor-form fieldset label { margin-right: 10px; padding-right: 10px; width: 85px; display: block; float: left; text-align: right; position: relative; }
 
