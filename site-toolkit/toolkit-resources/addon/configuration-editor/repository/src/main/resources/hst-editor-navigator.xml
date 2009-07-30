@@ -89,10 +89,10 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="nodename.max.length" sv:type="String">
-      <sv:value>23</sv:value>
+      <sv:value>30</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.hst.plugins.frontend.HstFolderTreePlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>${cluster.id}.tree.sitemap</sv:value>
@@ -113,7 +113,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="nodename.max.length" sv:type="String">
-      <sv:value>23</sv:value>
+      <sv:value>30</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
@@ -220,7 +220,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="nodename.max.length" sv:type="String">
-      <sv:value>23</sv:value>
+      <sv:value>30</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
@@ -301,7 +301,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="nodename.max.length" sv:type="String">
-      <sv:value>23</sv:value>
+      <sv:value>30</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
@@ -325,7 +325,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="nodename.max.length" sv:type="String">
-      <sv:value>23</sv:value>
+      <sv:value>30</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>

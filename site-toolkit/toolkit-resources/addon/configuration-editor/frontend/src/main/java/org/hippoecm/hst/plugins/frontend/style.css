@@ -153,5 +153,7 @@ div.description-picker div.picker-next {
   margin-right: 5px;
 }
 
-
+div.hst-perspective-left-body span.hippo-tree-dropdown-icon-container {
+  display: none;
+}
 
