@@ -17,29 +17,31 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
     <wicket:extend>
-      <p><wicket:message key="intro">Intro</wicket:message></p>  
+      <p><wicket:message key="intro">Intro</wicket:message></p>
       <fieldset>
-        <legend><wicket:message key="fieldset.legend">Legend</wicket:message></legend>
-        <div>
-          <label for="matcher"><wicket:message key="matcher.label">Matcher label</wicket:message></label><input type="text" wicket:id="matcher" name="matcher"/>
-        </div>
+       <div>
+        <label for="matcher"><wicket:message key="matcher.label">Matcher label</wicket:message></label><input type="text" wicket:id="matcher" name="matcher"/>
+       </div>
+      </fieldset>
+      <fieldset>
+        <legend><wicket:message key="fieldset.legend">Destination</wicket:message></legend>
         <div>
           <label for="contentPath"><wicket:message key="matcher.contentpath">Content path</wicket:message></label><input type="text" name="contentPath" wicket:id="contentPath" style="width: 230px;"/> <span name="path" wicket:id="path">[Link Picker]</span>
-        </div>  
+        </div>
         <div>
-          <!-- <label for="pagepicker"><wicket:message key="page.label">Page</wicket:message></label> -->
+         <!-- <label for="pagepicker"><wicket:message key="page.label">Page</wicket:message></label> -->
           <wicket:message key="page.picker.label">Select a page from the list below or </wicket:message>
           <a wicket:id="newPage" style="margin-left: 10px;">
             <wicket:message key="page.new.label">create a new page.</wicket:message>
-          </a> 
+          </a>
           <div wicket:id="pagePicker">[ Page picker ]</div>
-        </div>  
+        </div>
       </fieldset>
-      
+
       <div wicket:id="wizard">[ Wizard ]</div>
-      
+
       <div wicket:id="portalDetails">[ Portal details ] </div>
     </wicket:extend>
-    
+
   </wicket:panel>
 </html>

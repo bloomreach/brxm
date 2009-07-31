@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Copyright 2007 Hippo
-    
+
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
-    
+
     http://www.apache.org/licenses/LICENSE-2.0
-    
+
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS"
     BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<sv:node sv:name="hst-editor-navigator" 
-  xmlns:sv="http://www.jcp.org/jcr/sv/1.0" 
-  xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
-  xmlns:jcr="http://www.jcp.org/jcr/1.0" 
-  xmlns:mix="http://www.jcp.org/jcr/mix/1.0" 
-  xmlns:hippo="http://www.hippoecm.org/nt/1.3" 
+<sv:node sv:name="hst-editor-navigator"
+  xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+  xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+  xmlns:jcr="http://www.jcp.org/jcr/1.0"
+  xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+  xmlns:hippo="http://www.hippoecm.org/nt/1.3"
   xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4">
 
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -56,16 +56,16 @@
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.sitemap</sv:value>
       <sv:value>extension.sitemenus</sv:value>
+      <sv:value>extension.pages</sv:value>
       <sv:value>extension.components</sv:value>
       <sv:value>extension.templates</sv:value>
-      <sv:value>extension.pages</sv:value>
     </sv:property>
     <sv:property sv:name="headers" sv:type="String">
       <sv:value>section-sitemap</sv:value>
       <sv:value>section-sitemenus</sv:value>
+      <sv:value>section-pages</sv:value>
       <sv:value>section-components</sv:value>
       <sv:value>section-templates</sv:value>
-      <sv:value>section-pages</sv:value>
     </sv:property>
     <sv:property sv:name="extension.sitemap" sv:type="String">
       <sv:value>${cluster.id}.tree.sitemap</sv:value>
