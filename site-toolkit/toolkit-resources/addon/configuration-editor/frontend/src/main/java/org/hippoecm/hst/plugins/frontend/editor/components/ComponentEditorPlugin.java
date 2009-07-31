@@ -231,11 +231,12 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
                 private static final long serialVersionUID = 1L;
 
                 public Object getDisplayValue(Object object) {
-                    String name = (String) object;
-                    int split = name.indexOf('/');
-                    String prefix = name.substring(0, split);
-                    prefix = prefix.substring(prefix.indexOf(':') + 1);
-                    return prefix + ": " + name.substring(split + 1);
+                    //                    String name = (String) object;
+                    //                    int split = name.indexOf('/');
+                    //                    String prefix = name.substring(0, split);
+                    //                    prefix = prefix.substring(prefix.indexOf(':') + 1);
+                    //                    return prefix + ": " + name.substring(split + 1);
+                    return object;
                 }
 
                 public String getIdValue(Object object, int index) {
