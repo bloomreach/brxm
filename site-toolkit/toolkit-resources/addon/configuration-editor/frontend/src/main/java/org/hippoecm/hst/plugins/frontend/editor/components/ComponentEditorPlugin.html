@@ -61,8 +61,12 @@
 
       <wicket:fragment wicket:id="refComponent">
         <div>
+          <label for="name"><wicket:message key="name.label">Name label</wicket:message></label>
+          <input type="text" wicket:id="name" name="name"/>
+        </div>
+        <div>
           <label for="componentDD"><wicket:message key="componentReferenceName.label">Reference name label</wicket:message></label><br/>
-          <select wicket:id="referenceName"><option>Component picker</option></select>
+          <select wicket:id="referenceName" style="float:right;"><option>Component picker</option></select>
         </div>
       </wicket:fragment>
       

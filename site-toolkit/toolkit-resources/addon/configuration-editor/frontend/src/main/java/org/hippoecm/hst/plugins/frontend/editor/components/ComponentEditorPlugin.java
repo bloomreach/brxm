@@ -218,12 +218,24 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
         public RefComponentFragment() {
             super("frag", "refComponent", ComponentEditorPlugin.this);
 
+            //Readonly name widget
+            RequiredTextField tf = new RequiredTextField("name");
+            tf.setOutputMarkupId(true);
+            //Readonly so no validation should be needed
+            //tf.add(new NodeUniqueValidator<Component>(ComponentEditorPlugin.this));
+            tf.setEnabled(false);
+            add(tf);
+
             final List<String> availableComponents = getReferenceableComponents();
             final DropDownChoice ddo = new DropDownChoice("referenceName", availableComponents, new IChoiceRenderer() {
                 private static final long serialVersionUID = 1L;
 
                 public Object getDisplayValue(Object object) {
-                    return object;
+                    String name = (String) object;
+                    int split = name.indexOf('/');
+                    String prefix = name.substring(0, split);
+                    prefix = prefix.substring(prefix.indexOf(':') + 1);
+                    return prefix + ": " + name.substring(split + 1);
                 }
 
                 public String getIdValue(Object object, int index) {
