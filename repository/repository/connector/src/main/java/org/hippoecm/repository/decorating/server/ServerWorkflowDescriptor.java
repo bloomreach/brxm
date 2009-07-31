@@ -33,9 +33,11 @@ public class ServerWorkflowDescriptor extends UnicastRemoteObject implements Rem
 
     WorkflowManager manager;
     WorkflowDescriptor descriptor;
+    ServerServicingAdapterFactory factory;
 
-    protected ServerWorkflowDescriptor(WorkflowDescriptor descriptor, WorkflowManager manager) throws RemoteException {
+    protected ServerWorkflowDescriptor(ServerServicingAdapterFactory factory, WorkflowDescriptor descriptor, WorkflowManager manager) throws RemoteException {
         super();
+        this.factory = factory;
         this.descriptor = descriptor;
         this.manager = manager;
     }
@@ -62,6 +64,8 @@ public class ServerWorkflowDescriptor extends UnicastRemoteObject implements Rem
     }
 
     public Workflow getWorkflow() throws RepositoryException, RemoteException {
-        return manager.getWorkflow(descriptor);
+        Workflow workflow = manager.getWorkflow(descriptor);
+        factory.export(workflow);
+        return workflow;
     }
 }

@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.ServerObject;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -34,8 +35,11 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
 
     private WorkflowManager workflowManager;
 
-    protected ServerWorkflowManager(WorkflowManager manager, RemoteServicingAdapterFactory factory) throws RemoteException {
+    private ServerServicingAdapterFactory factory;
+
+    protected ServerWorkflowManager(WorkflowManager manager, ServerServicingAdapterFactory factory) throws RemoteException {
         super(factory);
+        this.factory = factory;
         this.workflowManager = manager;
     }
 
@@ -50,7 +54,7 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
                 node = node.getNode(path);
             WorkflowDescriptor descriptor = workflowManager.getWorkflowDescriptor(category, node);
             if (descriptor != null) {
-                return new ServerWorkflowDescriptor(descriptor, workflowManager);
+                return new ServerWorkflowDescriptor(factory, descriptor, workflowManager);
             } else {
                 return null;
             }
@@ -67,7 +71,9 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
             Node node = workflowManager.getSession().getRootNode();
             if (!path.equals(""))
                 node = node.getNode(path);
-            return workflowManager.getWorkflow(category, node);
+            Workflow workflow = workflowManager.getWorkflow(category, node);
+            factory.export(workflow);
+            return workflow;
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }
@@ -76,7 +82,9 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
     public Workflow getWorkflow(RemoteWorkflowDescriptor descriptor) throws RepositoryException, RemoteException {
         try {
             ServerWorkflowDescriptor serverDescriptor = (ServerWorkflowDescriptor) descriptor;
-            return workflowManager.getWorkflow(serverDescriptor.descriptor);
+            Workflow workflow = workflowManager.getWorkflow(serverDescriptor.descriptor);
+            factory.export(workflow);
+            return workflow;
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }
