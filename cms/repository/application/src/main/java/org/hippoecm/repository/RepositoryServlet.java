@@ -19,8 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.rmi.ConnectException;
@@ -156,8 +154,8 @@ public class RepositoryServlet extends HttpServlet {
             HippoRepositoryFactory.setDefaultRepository(repository);
 
             // the the remote repository
-            RepositoryRmiUrl url = new RepositoryRmiUrl(bindingAddress);
-            rmiRepository = new ServerServicingAdapterFactory().getRemoteRepository(repository.getRepository());
+            RepositoryUrl url = new RepositoryUrl(bindingAddress);
+            rmiRepository = new ServerServicingAdapterFactory(url).getRemoteRepository(repository.getRepository());
             System.setProperty("java.rmi.server.useCodebaseOnly", "true");
 
             // Get or start registry and bind the remote repository
@@ -200,7 +198,7 @@ public class RepositoryServlet extends HttpServlet {
         // unbinding from registry
         String name = null;
         try {
-            name = new RepositoryRmiUrl(bindingAddress).getName();
+            name = new RepositoryUrl(bindingAddress).getName();
             log.warn("Unbinding '"+name+"' from registry.");
             registry.unbind(name);
         } catch (RemoteException e) {
@@ -587,81 +585,5 @@ public class RepositoryServlet extends HttpServlet {
             }
         }
         writer.println("</body></html>");
-    }
-
-    private class RepositoryRmiUrl {
-        // defaults
-        public final static String DEFAULT_RMI_NAME = "hipporepository";
-        public final static String RMI_PREFIX = "rmi";
-        private String name;
-        private String host;
-        private int port;
-
-        RepositoryRmiUrl(String str) throws MalformedURLException {
-            try {
-                URI uri = new URI(str);
-                if (uri.getFragment() != null) {
-                    throw new MalformedURLException("invalid character, '#', in URL name: " + str);
-                } else if (uri.getQuery() != null) {
-                    throw new MalformedURLException("invalid character, '?', in URL name: " + str);
-                } else if (uri.getUserInfo() != null) {
-                    throw new MalformedURLException("invalid character, '@', in URL host: " + str);
-                }
-                String scheme = uri.getScheme();
-                if (scheme != null && !scheme.equals(RMI_PREFIX)) {
-                    throw new MalformedURLException("invalid URL scheme: " + str);
-                }
-
-                name = uri.getPath();
-                if (name != null) {
-                    if (name.startsWith("/")) {
-                        name = name.substring(1);
-                    }
-                    if (name.length() == 0) {
-                        name = DEFAULT_RMI_NAME;
-                    }
-                }
-
-                host = uri.getHost();
-                if (host == null) {
-                    host = "";
-                    if (uri.getPort() == -1) {
-                        /* handle URIs with explicit port but no host
-                         * (e.g., "//:1098/foo"); although they do not strictly
-                         * conform to RFC 2396, Naming's javadoc explicitly allows
-                         * them.
-                         */
-                        String authority = uri.getAuthority();
-                        if (authority != null && authority.startsWith(":")) {
-                            authority = "localhost" + authority;
-                            uri = new URI(null, authority, null, null, null);
-                        }
-                    }
-                }
-                port = uri.getPort();
-                if (port == -1) {
-                    port = Registry.REGISTRY_PORT;
-                }
-            } catch (URISyntaxException ex) {
-                throw (MalformedURLException) new MalformedURLException("invalid URL string: " + str).initCause(ex);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return RMI_PREFIX + host + ":" + port + "/" + name;
-        }
-
-        public int getPort() {
-            return port;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getHost() {
-            return host;
-        }
     }
 }
