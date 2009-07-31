@@ -25,20 +25,16 @@
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
  >
 
- <bean id="org.hippoecm.hst.core.linking.HstLinkCreator"
-  class="org.hippoecm.hst.core.linking.BasicHstLinkCreator">
-  <property name="binariesPrefix" value="${binaries.prefix.path}"/>
-  <property name="binaryLocations">
-   <list>
-    <value>/content/gallery/</value>
-    <value>/content/assets/</value>
-   </list>
-  </property>
-  <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
- </bean>
-
+ <!-- override the default bean and add a chain of link rewriter -->
+ 
  <bean id="org.hippoecm.hst.core.linking.HstLinkProcessor"
       class="org.hippoecm.hst.core.linking.HstLinkProcessorImpl">
+      <property name="processorChain">
+	   <list>
+	 	   <bean class="org.hippoecm.hst.demo.linking.ExampleHstLinkProcessorChain"/>
+	   </list>
+	  </property>
+      
   </bean>
   
  </beans>

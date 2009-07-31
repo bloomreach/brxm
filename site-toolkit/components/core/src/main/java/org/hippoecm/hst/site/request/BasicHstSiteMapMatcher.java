@@ -26,6 +26,9 @@ import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.linking.HstLinkImpl;
+import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
@@ -48,6 +51,12 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
      */
     private Map<String, ResolvedSiteMapItem> cache = Collections.synchronizedMap(new LRUMap(10000));
     
+    private HstLinkProcessor linkProcessor;
+    
+    public void setlinkProcessor(HstLinkProcessor linkProcessor) {
+        this.linkProcessor = linkProcessor;
+    }
+    
     public void invalidate(){
         this.cache.clear();
     }
@@ -66,6 +75,13 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         Properties params = new Properties();
         
         pathInfo = PathUtils.normalizePath(pathInfo);
+        
+        if(linkProcessor != null) {
+            HstLink link = new HstLinkImpl(pathInfo, null);
+            link = linkProcessor.preProcess(link);
+            pathInfo = link.getPath();
+        }
+        
         String[] elements = pathInfo.split("/"); 
         
         /*

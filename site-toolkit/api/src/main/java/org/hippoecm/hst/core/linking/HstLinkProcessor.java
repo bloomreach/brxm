@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.core.linking;
 
-public interface HstLinkPostProcessor {
+public interface HstLinkProcessor {
 
     HstLink postProcess(HstLink link);
+    
+    HstLink preProcess(HstLink link);
 }

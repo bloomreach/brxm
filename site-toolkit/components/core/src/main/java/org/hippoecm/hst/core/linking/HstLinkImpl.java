@@ -31,7 +31,6 @@ public class HstLinkImpl implements HstLink{
     
     private String path;
     private HstSite hstSite;
-    private String[] pathElements;
     private boolean containerResource;
     
     public HstLinkImpl(String path, HstSite hstSite){
@@ -41,7 +40,6 @@ public class HstLinkImpl implements HstLink{
     public HstLinkImpl(String path, HstSite hstSite, boolean containerResource) {
         this.path = path;
         this.hstSite = hstSite;
-        this.pathElements = this.path.split("/");
         this.containerResource = containerResource;
     }
     
@@ -53,8 +51,20 @@ public class HstLinkImpl implements HstLink{
         return this.path;
     }
     
+    public void setPath(String path) {
+        this.path = path;
+    }
+    
+    public boolean getContainerResource() {
+        return this.containerResource;
+    }
+
+    public void setContainerResource(boolean containerResource) {
+       this.containerResource = containerResource;
+    }
+    
     public String[] getPathElements() {
-        return pathElements;
+        return this.path.split("/");
     }
 
     public String toUrlForm(HstRequest request, HstResponse response, boolean external) {
@@ -110,5 +120,7 @@ public class HstLinkImpl implements HstLink{
         }
         return urlString;
     }
+
+    
 
 }

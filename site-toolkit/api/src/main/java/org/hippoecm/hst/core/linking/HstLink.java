@@ -38,6 +38,22 @@ public interface HstLink {
     String getPath();
     
     /**
+     * (re)-sets the path of the HstLink
+     * @param path
+     */
+    void setPath(String path);
+    
+    /**
+     * @return <code>true</code> when the HstLink represents a container resource, like a repository binary
+     */
+    boolean getContainerResource();
+    
+    /**
+     * @param sets the containerResource
+     */
+    void setContainerResource(boolean containerResource);
+    
+    /**
      * @param request
      * @param external if true, the returned url is external, in other words including http/https etc
      * @return the url form of this HstLink, which is a url

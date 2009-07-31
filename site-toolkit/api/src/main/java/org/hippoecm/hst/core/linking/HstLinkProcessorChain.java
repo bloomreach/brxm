@@ -15,14 +15,27 @@
  */
 package org.hippoecm.hst.core.linking;
 
-public interface HstLinkPostProcessorChain {
+/**
+ * Interface for <code>HstLinkPostProcessorChain</code>'s. After a link creation, all <code>HstLinkPostProcessorChain</code>'s which are configured are executed. 
+ * 
+ * Note that implementation most likely need to have a reversible HstLinkProcessorChain: Thus doHstLinkPostProcess(doHstLinkPreProcess(HstLink a)).getPath().equals(a.getPath())
+ *
+ */
+public interface HstLinkProcessorChain {
 
    /**
     * Causes the next link post processor in the chain to be invoked, or if the calling post processor is the last post processor
     * in the chain, returns the HstLink
     * @param hstLink
-    * @return
+    * @return the new PostProcessed HstLink
     */
    HstLink doHstLinkPostProcess(HstLink hstLink);
    
+   /**
+    * Causes the next link pre processor in the chain to be invoked, or if the calling pre processor is the last pre processor
+    * in the chain, returns the HstLink
+    * @param hstLink
+    * @return the new PreProcessed HstLink
+    */
+   HstLink doHstLinkPreProcess(HstLink hstLink);
 }

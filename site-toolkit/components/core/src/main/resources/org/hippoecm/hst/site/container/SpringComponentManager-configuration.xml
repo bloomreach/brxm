@@ -37,6 +37,7 @@
   </bean>
   
   <bean id="org.hippoecm.hst.core.request.HstSiteMapMatcher" class="org.hippoecm.hst.site.request.BasicHstSiteMapMatcher">
+  	  <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
   </bean>
 
 </beans>

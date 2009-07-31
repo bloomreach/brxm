@@ -41,6 +41,7 @@ public class BasicHstLinkCreator implements HstLinkCreator {
 
     private String[] binaryLocations;
     private String binariesPrefix;
+    private HstLinkProcessor linkProcessor;
    
     public void setBinariesPrefix(String binariesPrefix){
         this.binariesPrefix = PathUtils.normalizePath(binariesPrefix);
@@ -48,6 +49,10 @@ public class BasicHstLinkCreator implements HstLinkCreator {
     
     public void setBinaryLocations(String[] binaryLocations) {
         this.binaryLocations = binaryLocations;
+    }
+    
+    public void setlinkProcessor(HstLinkProcessor linkProcessor) {
+        this.linkProcessor = linkProcessor;
     }
     
     /**
@@ -154,7 +159,7 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         
         if(isBinaryLocation(path)) {
             log.debug("Binary path, return hstLink prefixing this path with '{}'", this.getBinariesPrefix());
-            return new HstLinkImpl(this.getBinariesPrefix()+path, hstSite);
+            return postProcess(new HstLinkImpl(this.getBinariesPrefix()+path, hstSite));
         }
         
         if(hstSite.getLocationMapTree() instanceof BasicLocationMapTree) {
@@ -163,9 +168,9 @@ public class BasicHstLinkCreator implements HstLinkCreator {
                 if(resolvedLocation != null) {
                     if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
                     if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, resolvedLocation.getPath());
-                    return new HstLinkImpl(resolvedLocation.getPath(), hstSite);
+                    return postProcess(new HstLinkImpl(resolvedLocation.getPath(), hstSite));
                 } else {
-                    // TODO what to return??
+                     // TODO what to return??
                      if (log.isWarnEnabled()) {
                         log.warn("Unable to create a link for '{}' for HstSite '{}'. Return null", path, hstSite.getName());
                     }
@@ -180,7 +185,6 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         return null;
     }
     
-
     public HstLink create(String toSiteMapItemId, ResolvedSiteMapItem currentSiteMapItem) {
         HstSiteMap hstSiteMap = currentSiteMapItem.getHstSiteMapItem().getHstSiteMap();
         HstSiteMapItem toSiteMapItem = hstSiteMap.getSiteMapItemById(toSiteMapItemId);
@@ -204,21 +208,21 @@ public class BasicHstLinkCreator implements HstLinkCreator {
 
         String path = getPath(toSiteMapItem);
 
-        return new HstLinkImpl(path, hstSiteMap.getSite());
+        return postProcess(new HstLinkImpl(path, hstSiteMap.getSite()));
     }
 
 
     public HstLink create(String path, HstSite hstSite) {
-        return new HstLinkImpl(PathUtils.normalizePath(path), hstSite);
+        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite));
     }
     
     public HstLink create(String path, HstSite hstSite, boolean containerResource) {
-        return new HstLinkImpl(PathUtils.normalizePath(path), hstSite, containerResource);
+        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite, containerResource));
     }
 
     
     public HstLink create(HstSiteMapItem toHstSiteMapItem) {
-        return new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite());
+        return postProcess(new HstLinkImpl(getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite()));
     }
 
     public HstLink create(HstSite hstSite, String toSiteMapItemId) {
@@ -231,10 +235,18 @@ public class BasicHstLinkCreator implements HstLinkCreator {
             }
             return null;
         }
-
-        return new HstLinkImpl(getPath(siteMapItem), hstSite);
+        
+        return postProcess(new HstLinkImpl(getPath(siteMapItem), hstSite));
     }
 
+
+    private HstLink postProcess(HstLink link) {
+        if(linkProcessor != null) {
+            link = linkProcessor.postProcess(link);
+        }
+        return link;
+    }
+    
     /**
      * @param siteMapItem
      * @return String representation of the path
