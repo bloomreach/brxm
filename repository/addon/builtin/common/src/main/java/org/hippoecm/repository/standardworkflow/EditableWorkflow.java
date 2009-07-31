@@ -33,15 +33,15 @@ public interface EditableWorkflow extends Workflow {
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
-     * Request this editable copy of the document.
+     * Persists editable copy of the document.
      */
-    public void commitEditableInstance()
+    public Document commitEditableInstance()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Do away with the editable copy of the document which was previously
      * obtained.
      */
-    public void disposeEditableInstance()
+    public Document disposeEditableInstance()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

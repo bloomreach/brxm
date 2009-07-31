@@ -58,7 +58,6 @@ import org.slf4j.LoggerFactory;
 import org.hippoecm.repository.RepositoryMapImpl;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
@@ -270,20 +269,22 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return null;
     }
 
+    public WorkflowDescriptor getWorkflowDescriptor(String category, Document document) throws RepositoryException {
+        Node workflowNode = getWorkflowNode(category, document, session);
+        if (workflowNode!=null) {
+            return new WorkflowDescriptorImpl(this, category, workflowNode, document);
+        }
+        log.debug("Workflow for category "+category+" on "+document.getIdentity()+" is not available");
+        return null;
+    }
+
     public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
         WorkflowDescriptorImpl descriptorImpl = (WorkflowDescriptorImpl)descriptor;
         try {
-            String path = descriptorImpl.nodeAbsPath;
-            if (path.startsWith("/")) {
-                path = path.substring(1);
-            }
-            Node node = session.getRootNode();
-            if (!path.equals("")) {
-                node = node.getNode(path);
-            }
+            Node node = session.getNodeByUUID(descriptorImpl.uuid);
             return getWorkflow(descriptorImpl.category, node);
         } catch (PathNotFoundException ex) {
-            log.debug("Workflow no longer available "+descriptorImpl.nodeAbsPath);
+            log.debug("Workflow no longer available "+descriptorImpl.uuid);
             return null;
         }
     }
@@ -314,7 +315,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                                       && Session.class.isAssignableFrom(params[2])
                                                       && Node.class.isAssignableFrom(params[3])) {
                                     workflow = (Workflow)constructors[constructorIndex].newInstance(new Object[] {
-                                            new WorkflowContextImpl(workflowNode, item), getSession(), rootSession, item });
+                                            new WorkflowContextNodeImpl(workflowNode, getSession(), item), getSession(), rootSession, item });
                                     break;
                                 } else if(params.length == 3 && Session.class.isAssignableFrom(params[0])
                                                              && Session.class.isAssignableFrom(params[1])
@@ -342,7 +343,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         Object object = documentManager.getObject(uuid, classname, types);
                         workflow = (Workflow)object;
                         if (workflow instanceof WorkflowImpl) {
-                            ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContextImpl(workflowNode, item));
+                            ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContextNodeImpl(workflowNode, getSession(), item));
                         }
                     }
 
@@ -393,6 +394,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
         log.debug("Workflow for category "+category+" on "+item.getPath()+" is not available");
         return null;
+    }
+
+    public Workflow getWorkflow(String category, Document document) throws RepositoryException {
+        return getWorkflow(category, session.getNodeByUUID(document.getIdentity()));
     }
 
     private Workflow getWorkflow(Node workflowNode, WorkflowChainHandler handler) throws RepositoryException, WorkflowException {
@@ -727,7 +732,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 String uuid = null;
 
                 Node item = workflowSubjectNode;
-                if (item==null) {
+                if (item == null) {
                     item = manager.rootSession.getNodeByUUID(workflowSubject.getIdentity());
                 }
                 try {
@@ -739,7 +744,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             Class[] params = constructors[constructorIndex].getParameterTypes();
                             if (params.length == 4 && WorkflowContext.class.isAssignableFrom(params[0]) && Session.class.isAssignableFrom(params[1]) && Session.class.isAssignableFrom(params[2]) && Node.class.isAssignableFrom(params[3])) {
                                 workflow = (Workflow)constructors[constructorIndex].newInstance(new Object[] {
-                                            manager.new WorkflowContextImpl(workflowNode, item), manager.getSession(), manager.rootSession, item
+                                            manager.new WorkflowContextNodeImpl(workflowNode, workflowSubjectNode.getSession(), item), manager.getSession(), manager.rootSession, item
                                         });
                                 break;
                             } else if (params.length == 3 && Session.class.isAssignableFrom(params[0]) && Session.class.isAssignableFrom(params[1]) && Node.class.isAssignableFrom(params[2])) {
@@ -757,7 +762,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         Object object = manager.documentManager.getObject(uuid, classname, types);
                         workflow = (Workflow)object;
                         if (workflow instanceof WorkflowImpl) {
-                            ((WorkflowImpl)workflow).setWorkflowContext(manager.new WorkflowContextImpl(workflowNode, item));
+                            ((WorkflowImpl)workflow).setWorkflowContext(manager.new WorkflowContextNodeImpl(workflowNode, workflowSubjectNode.getSession(), item));
                         }
                     }
                 } catch (IllegalAccessException ex) {
@@ -841,34 +846,36 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
 
-    private class WorkflowContextImpl implements WorkflowContext {
-        Node subject;
+    private abstract class WorkflowContextImpl implements WorkflowContext {
+        Session subjectSession;
         Node workflowDefinition;
         WorkflowModule module;
 
-        WorkflowContextImpl(Node workflowNode, Node subject) {
-            this.workflowDefinition = workflowNode;
-            this.subject = subject;
-            this.module = new WorkflowModule() {
-                    public void submit(WorkflowManager manager, WorkflowInvocation invocation) {
-                        invocationIndex.add(invocation);
-                    }
-                };
+        WorkflowContextImpl(Node workflowNode, Session subjectSession) {
+            this(workflowNode, subjectSession, null);
         }
 
-        WorkflowContextImpl(Node workflowNode, Node subject, WorkflowModule module) {
+        WorkflowContextImpl(Node workflowNode, Session subjectSession, WorkflowModule module) {
             this.workflowDefinition = workflowNode;
-            this.subject = subject;
-            this.module = module;
+            this.subjectSession = subjectSession;
+            if(module == null) {
+                this.module = new WorkflowModule() {
+                        public void submit(WorkflowManager manager, WorkflowInvocation invocation) {
+                            invocationIndex.add(invocation);
+                        }
+                    };
+            } else {
+                this.module = module;
+            }
         }
 
         public WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException {
             if(specification instanceof java.util.Date) {
-                return new WorkflowContextImpl(workflowDefinition, subject, new SchedulerWorkflowModule((java.util.Date)specification));
+                return newContext(workflowDefinition, subjectSession, new SchedulerWorkflowModule((java.util.Date)specification));
             } else if(specification instanceof Document) {
                 String uuid = ((Document)specification).getIdentity();
-                Node node = subject.getSession().getNodeByUUID(uuid);
-                return new WorkflowContextImpl(workflowDefinition, node);
+                Node node = subjectSession.getNodeByUUID(uuid);
+                return newContext(workflowDefinition, subjectSession, null);
             }
             log.debug("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
             throw new MappingException("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
@@ -893,20 +900,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
             throw new MappingException("Workflow for category "+category+" on document is not available");
         }
 
-        public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException {
-            Node workflowNode = WorkflowManagerImpl.this.getWorkflowNode(category, subject, documentManager.getSession());
-            if (workflowNode != null) {
-                return WorkflowManagerImpl.this.getWorkflow(workflowNode,
-                       new WorkflowChainHandler(workflowNode, module) {
-                           @Override
-                           public void invoke(Method method, Object[] args) throws RepositoryException {
-                               module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, subject, method, args));
-                           }
-                       });
-            }
-            log.debug("Workflow for category "+category+" on document is not available");
-            throw new MappingException("Workflow for category "+category+" on document is not available");
-        }
+        protected abstract WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowModule specification);
+        
+        public abstract Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException;
 
         public String getUserIdentity() {
             return session.getUserID();
@@ -925,6 +921,72 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 }
             }
             return new RepositoryMapImpl();
+        }
+    }
+
+    private class WorkflowContextNodeImpl extends WorkflowContextImpl {
+        Node subject;
+
+        WorkflowContextNodeImpl(Node workflowNode, Session subjectSession, Node subject) {
+            super(workflowNode, subjectSession);
+            this.subject = subject;
+        }
+
+        WorkflowContextNodeImpl(Node workflowNode, Session subjectSession, Node subject, WorkflowModule module) {
+            super(workflowNode, subjectSession, module);
+            this.subject = subject;
+        }
+
+        public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException {
+            Node workflowNode = WorkflowManagerImpl.this.getWorkflowNode(category, subject, documentManager.getSession());
+            if (workflowNode != null) {
+                return WorkflowManagerImpl.this.getWorkflow(workflowNode,
+                       new WorkflowChainHandler(workflowNode, module) {
+                           @Override
+                           public void invoke(Method method, Object[] args) throws RepositoryException {
+                               module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, subject, method, args));
+                           }
+                       });
+            }
+            log.debug("Workflow for category "+category+" on document is not available");
+            throw new MappingException("Workflow for category "+category+" on document is not available");
+        }
+        
+        protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowModule specification) {
+            return new WorkflowContextNodeImpl(workflowDefinition, subjectSession, subject, specification);
+        }
+    }
+
+    private class WorkflowContextDocumentImpl extends WorkflowContextImpl {
+        Document subject;
+
+        WorkflowContextDocumentImpl(Node workflowNode, Session subjectSession, Document subject) {
+            super(workflowNode, subjectSession);
+            this.subject = subject;
+        }
+
+        WorkflowContextDocumentImpl(Node workflowNode, Session subjectSession, Document subject, WorkflowModule module) {
+            super(workflowNode, subjectSession, module);
+            this.subject = subject;
+        }
+
+        public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException {
+            Node workflowNode = WorkflowManagerImpl.this.getWorkflowNode(category, subject, documentManager.getSession());
+            if (workflowNode != null) {
+                return WorkflowManagerImpl.this.getWorkflow(workflowNode,
+                       new WorkflowChainHandler(workflowNode, module) {
+                           @Override
+                           public void invoke(Method method, Object[] args) throws RepositoryException {
+                               module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, subject, method, args));
+                           }
+                       });
+            }
+            log.debug("Workflow for category "+category+" on document is not available");
+            throw new MappingException("Workflow for category "+category+" on document is not available");
+        }
+        
+        protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowModule specification) {
+            return new WorkflowContextDocumentImpl(workflowDefinition, subjectSession, subject, specification);
         }
     }
 }

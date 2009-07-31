@@ -21,6 +21,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
@@ -102,6 +103,14 @@ public abstract class ReviewedActionsWorkflowAbstractTest {
         }
         Node canonicalNode = ((HippoNode) node).getCanonicalNode();
         return workflowMgr.getWorkflow(category, canonicalNode);
+    }
+
+    protected Workflow getWorkflow(Document document, String category) throws RepositoryException {
+        if (workflowMgr == null) {
+            HippoWorkspace wsp = (HippoWorkspace) session.getWorkspace();
+            workflowMgr = wsp.getWorkflowManager();
+        }
+        return workflowMgr.getWorkflow(category, document);
     }
 
     protected Node getNode(String path) throws RepositoryException {

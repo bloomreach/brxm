@@ -25,8 +25,6 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
 
-import org.hippoecm.repository.Utilities;
-
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -262,5 +260,53 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.disposeEditableInstance();
         }
+    }
+
+    @Test
+    public void testEditing() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Document document;
+        Node node, root = session.getRootNode();
+        {
+            assertTrue(session.getRootNode().hasNode("test"));
+            assertTrue(session.getRootNode().getNode("test").hasNode("myarticle"));
+            assertTrue(session.getRootNode().getNode("test").getNode("myarticle").hasNode("myarticle"));
+            assertTrue(session.getRootNode().getNode("test/myarticle").hasNode("myarticle"));
+            assertTrue(session.getRootNode().getNode("test/myarticle").hasNode("myarticle"));
+            node = getNode("test/myarticle/myarticle");
+
+            FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+            workflow.publish();
+
+            node = getNode("test/myarticle/myarticle");
+            workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+            document = workflow.obtainEditableInstance();
+            assertNotNull(document);
+            node = session.getNodeByUUID(document.getIdentity());
+            assertNotNull(node);
+            assertEquals("draft", node.getProperty("hippostd:state").getString());
+
+            workflow = (FullReviewedActionsWorkflow) getWorkflow(document, "default");
+            document = workflow.disposeEditableInstance();
+            assertNotNull(document);
+            node = session.getNodeByUUID(document.getIdentity());
+            assertNotNull(node);
+            assertEquals("published", node.getProperty("hippostd:state").getString());
+
+            workflow = (FullReviewedActionsWorkflow) getWorkflow(document, "default");
+            document = workflow.obtainEditableInstance();
+            assertNotNull(document);
+            node = session.getNodeByUUID(document.getIdentity());
+            assertNotNull(node);
+            assertEquals("draft", node.getProperty("hippostd:state").getString());
+
+            workflow = (FullReviewedActionsWorkflow) getWorkflow(document, "default");
+            document = workflow.commitEditableInstance();
+            assertNotNull(document);
+            node = session.getNodeByUUID(document.getIdentity());
+            assertNotNull(node);
+            assertEquals("unpublished", node.getProperty("hippostd:state").getString());
+
+            session.refresh(true);
+         }
     }
 }

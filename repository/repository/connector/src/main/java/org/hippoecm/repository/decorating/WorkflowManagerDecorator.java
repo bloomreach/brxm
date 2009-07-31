@@ -15,12 +15,9 @@
  */
 package org.hippoecm.repository.decorating;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 
 public abstract class WorkflowManagerDecorator implements WorkflowManager {
@@ -36,10 +33,4 @@ public abstract class WorkflowManagerDecorator implements WorkflowManager {
     public Session getSession() throws RepositoryException {
         return session;
     }
-
-    public abstract WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException;
-
-    public abstract Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException;
-
-    public abstract Workflow getWorkflow(String category, Node item) throws RepositoryException;
 }

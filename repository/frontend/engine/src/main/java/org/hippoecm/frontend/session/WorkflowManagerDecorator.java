@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -50,6 +51,16 @@ public class WorkflowManagerDecorator implements WorkflowManager {
         }
     }
 
+    public Workflow getWorkflow(String category, Document document) throws MappingException, RepositoryException {
+        ClassLoader old = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(loader);
+        try {
+            return delegate.getWorkflow(category, document);
+        } finally {
+            Thread.currentThread().setContextClassLoader(old);
+        }
+    }
+
     public Workflow getWorkflow(WorkflowDescriptor descriptor) throws MappingException, RepositoryException {
         ClassLoader old = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(loader);
@@ -70,4 +81,13 @@ public class WorkflowManagerDecorator implements WorkflowManager {
         }
     }
 
+    public WorkflowDescriptor getWorkflowDescriptor(String category, Document document) throws RepositoryException {
+        ClassLoader old = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(loader);
+        try {
+            return delegate.getWorkflowDescriptor(category, document);
+        } finally {
+            Thread.currentThread().setContextClassLoader(old);
+        }
+    }
 }

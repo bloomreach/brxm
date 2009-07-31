@@ -20,15 +20,19 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 
 public interface RemoteWorkflowManager extends Remote {
     final static String SVN_ID = "$Id$";
 
-    public RemoteWorkflowDescriptor getWorkflowDescriptor(String category, String absPath)
+    public RemoteWorkflowDescriptor getWorkflowDescriptor(String category, String uuid)
         throws RepositoryException, RemoteException;
 
     public Workflow getWorkflow(String category, String absPath)
+        throws RepositoryException, RemoteException;
+
+    public Workflow getWorkflow(String category, Document document)
         throws RepositoryException, RemoteException;
 
     public Workflow getWorkflow(RemoteWorkflowDescriptor descriptor)

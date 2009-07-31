@@ -23,6 +23,7 @@ import javax.jcr.Session;
 
 import org.apache.jackrabbit.rmi.client.ClientObject;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -48,7 +49,20 @@ public class ClientWorkflowManager extends ClientObject implements WorkflowManag
 
     public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
         try {
-            RemoteWorkflowDescriptor remoteDescriptor = remote.getWorkflowDescriptor(category, item.getPath());
+            RemoteWorkflowDescriptor remoteDescriptor = remote.getWorkflowDescriptor(category, item.getUUID());
+            if (remoteDescriptor != null) {
+                return new ClientWorkflowDescriptor(remoteDescriptor);
+            } else {
+                return null;
+            }
+        } catch(RemoteException ex) {
+            throw new RemoteRuntimeException(ex);
+        }
+    }
+
+    public WorkflowDescriptor getWorkflowDescriptor(String category, Document document) throws RepositoryException {
+        try {
+            RemoteWorkflowDescriptor remoteDescriptor = remote.getWorkflowDescriptor(category, document.getIdentity());
             if (remoteDescriptor != null) {
                 return new ClientWorkflowDescriptor(remoteDescriptor);
             } else {
@@ -62,6 +76,14 @@ public class ClientWorkflowManager extends ClientObject implements WorkflowManag
     public Workflow getWorkflow(String category, Node item) throws RepositoryException {
         try {
             return remote.getWorkflow(category, item.getPath());
+        } catch(RemoteException ex) {
+            throw new RemoteRuntimeException(ex);
+        }
+    }
+
+    public Workflow getWorkflow(String category, Document document) throws RepositoryException {
+        try {
+            return remote.getWorkflow(category, document);
         } catch(RemoteException ex) {
             throw new RemoteRuntimeException(ex);
         }
