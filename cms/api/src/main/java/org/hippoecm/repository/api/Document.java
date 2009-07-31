@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,13 +24,25 @@ public class Document implements Serializable, Cloneable {
     private transient Document isCloned = null;
     private String identity = null;
 
+    /** 
+     * Constructor that should be considered protected rather than public, and may be used for extending classes to create a new Document.
+     */
     public Document() {
     }
 
+    /**
+     * THIS CALL IS NOT PART OF THE PUBLIC API OF HIPPO ECM.<p/>
+     * In no circumstance should this call be used.
+     */
     public Document(String identity) {
         this.identity = identity;
     }
 
+    /**
+     * Clone a document object, which is useful to create a new copy of a repository-backed document including all its contents from the repository, rather than just the information currently mapped to the Document object.
+     * @return the cloned Document object
+     * @throws java.lang.CloneNotSupportedException is never really cloned
+     */
     public Object clone() throws CloneNotSupportedException {
         Document document = (Document) super.clone();
         document.setCloned(this);
@@ -59,7 +71,7 @@ public class Document implements Serializable, Cloneable {
 
     /**
      * THIS CALL IS NOT PART OF THE PUBLIC API OF HIPPO ECM.<p/>
-     * In no cirtumstance should this call be used.
+     * In no circumstance should this call be used.
      */
     public final void setIdentity(String uuid) {
         identity = uuid;
@@ -73,6 +85,9 @@ public class Document implements Serializable, Cloneable {
         return isCloned;
     }
 
+    /**
+     * @inheritDoc
+     */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("Document[");
