@@ -142,19 +142,27 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         return draftDocument;
     }
 
-    public void commitEditableInstance() throws WorkflowException {
+    public Document commitEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("commit editable instance of document ");
         if(draftDocument != null) {
             unpublishedDocument = null;
             draftDocument.setState(PublishableDocument.UNPUBLISHED);
+            return draftDocument;
         } else {
             throw new WorkflowException("no draft version of publication");
         }
     }
 
-    public void disposeEditableInstance() throws WorkflowException {
+    public Document disposeEditableInstance() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("dispose editable instance on document ");
         draftDocument = null;
+        if (unpublishedDocument != null) {
+            return unpublishedDocument;
+        } else if (publishedDocument != null) {
+            return publishedDocument;
+        } else {
+            return null;
+        }
     }
 
     public void requestDeletion() throws WorkflowException {

@@ -43,15 +43,10 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
         this.workflowManager = manager;
     }
 
-    public RemoteWorkflowDescriptor getWorkflowDescriptor(String category, String absPath) throws RepositoryException,
+    public RemoteWorkflowDescriptor getWorkflowDescriptor(String category, String uuid) throws RepositoryException,
             RemoteException {
         try {
-            String path = absPath;
-            if (absPath.startsWith("/"))
-                path = path.substring(1);
-            Node node = workflowManager.getSession().getRootNode();
-            if (!path.equals(""))
-                node = node.getNode(path);
+            Node node = workflowManager.getSession().getNodeByUUID(uuid);
             WorkflowDescriptor descriptor = workflowManager.getWorkflowDescriptor(category, node);
             if (descriptor != null) {
                 return new ServerWorkflowDescriptor(factory, descriptor, workflowManager);
@@ -72,6 +67,16 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
             if (!path.equals(""))
                 node = node.getNode(path);
             Workflow workflow = workflowManager.getWorkflow(category, node);
+            factory.export(workflow);
+            return workflow;
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
+
+    public Workflow getWorkflow(String category, Document document) throws RepositoryException, RemoteException {
+        try {
+            Workflow workflow = workflowManager.getWorkflow(category, document);
             factory.export(workflow);
             return workflow;
         } catch (RepositoryException ex) {

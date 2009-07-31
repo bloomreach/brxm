@@ -94,11 +94,12 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
         return document;
     }
 
-    public void commitEditableInstance()
+    public Document commitEditableInstance()
             throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return document;
     }
 
-    public void disposeEditableInstance()
+    public Document disposeEditableInstance()
             throws WorkflowException, MappingException, RepositoryException, RemoteException {
         throw new WorkflowException("Document type does not allow for reverting changes");
     }

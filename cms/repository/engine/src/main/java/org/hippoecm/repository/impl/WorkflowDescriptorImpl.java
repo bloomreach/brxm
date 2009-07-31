@@ -31,6 +31,7 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -40,22 +41,30 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    String nodeAbsPath;
+    String uuid;
     String category;
     protected String displayName;
     protected Map<String, String> attributes;
     protected String serviceName;
     protected Map<String, Serializable> hints;
 
+    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, Document document) throws RepositoryException {
+        this(manager, category, node, document.getIdentity());    
+    }
+
     WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, Node item) throws RepositoryException {
+        this(manager, category, node, item.getUUID());
+    }
+
+    private WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, String uuid) throws RepositoryException {
         this.category = category;
-        nodeAbsPath = item.getPath();
+        this.uuid = uuid;
         try {
             try {
                 serviceName = node.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 displayName = node.getProperty(HippoNodeType.HIPPO_DISPLAY).getString();
             } catch (PathNotFoundException ex) {
-                WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + nodeAbsPath);
+                WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + uuid);
                 throw new RepositoryException("workflow specification corrupt", ex);
             }
 
@@ -73,7 +82,7 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
                 }
             }
         } catch (ValueFormatException ex) {
-            WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + nodeAbsPath);
+            WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + uuid);
             throw new RepositoryException("workflow specification corrupt", ex);
         }
 
@@ -110,7 +119,7 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     }
 
     public String toString() {
-        return getClass().getName() + "[node=" + nodeAbsPath + ",category=" + category + ",service=" + serviceName
+        return getClass().getName() + "[node=" + uuid + ",category=" + category + ",service=" + serviceName
                 + ",attributes=" + attributes.toString() + "]";
     }
 

@@ -85,7 +85,11 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
         return new WorkflowManagerDecorator(session) {
                 public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
                     WorkflowManager remoteWorkflowManager = remoteWorkspace.getWorkflowManager();
-                    return remoteWorkflowManager.getWorkflowDescriptor(category, remoteSession.getRootNode().getNode(item.getPath().substring(1)));
+                    return remoteWorkflowManager.getWorkflowDescriptor(category, remoteSession.getRootNode().getNode(item.getUUID()));
+                }
+                public WorkflowDescriptor getWorkflowDescriptor(String category, Document document) throws RepositoryException {
+                    WorkflowManager remoteWorkflowManager = remoteWorkspace.getWorkflowManager();
+                    return remoteWorkflowManager.getWorkflowDescriptor(category, remoteSession.getRootNode().getNode(document.getIdentity()));
                 }
                 public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
                     WorkflowManager remoteWorkflowManager = remoteWorkspace.getWorkflowManager();
@@ -94,6 +98,10 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
                 public Workflow getWorkflow(String category, Node item) throws RepositoryException {
                     WorkflowManager remoteWorkflowManager = remoteWorkspace.getWorkflowManager();
                     return (Workflow) wrap(remoteWorkflowManager.getWorkflow(category, remoteSession.getRootNode().getNode(item.getPath().substring(1))));
+                }
+                public Workflow getWorkflow(String category, Document document) throws RepositoryException {
+                    WorkflowManager remoteWorkflowManager = remoteWorkspace.getWorkflowManager();
+                    return (Workflow) wrap(remoteWorkflowManager.getWorkflow(category, document));
                 }
 
         };
