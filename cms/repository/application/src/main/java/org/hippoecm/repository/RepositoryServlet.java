@@ -228,6 +228,25 @@ public class RepositoryServlet extends HttpServlet {
                 log.error("Error during rmi shutdown for address: " + bindingAddress, e);
             }
         }
+
+        // force the distributed GC to fire, otherwise in tomcat with embedded
+        // rmi registry the process won't end
+        // this procedure is necessary specifically for Tomcat and may leave
+        // a running thread on other systems unfortunately.
+        log.info("Repository terminated, waiting for garbage to clear");
+        Thread garbageClearThread = new Thread("garbage clearer") {
+            public void run() {
+                for(;;) {
+                    try {
+                        Thread.sleep(3000);
+                        System.gc();
+                    } catch(InterruptedException ex) {
+                    }
+                }
+            }
+        };
+        garbageClearThread.setDaemon(true);
+        garbageClearThread.start();
     }
 
     @Override

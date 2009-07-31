@@ -95,6 +95,12 @@ public class HippoRepositoryServer extends LocalHippoRepository {
                 registry = null;
             }
         }
+
+        // force the distributed GC to fire, otherwise in tomcat with embedded
+        // rmi registry the process won't end, this procedure is deliberately
+        // different from the RepositoryServlet, as this class will be used in
+        // a different environment, where the server isn't necessarily shut down.
+        System.gc();
     }
 
     public void run(boolean background) throws RemoteException, AlreadyBoundException, MalformedURLException {
@@ -195,7 +201,7 @@ public class HippoRepositoryServer extends LocalHippoRepository {
                     throw new MalformedURLException("invalid character, '?', in URL name: " + str);
                 } else if (uri.getUserInfo() != null) {
                     throw new MalformedURLException("invalid character, '@', in URL host: " + str);
-                }
+}
                 String scheme = uri.getScheme();
                 if (scheme != null && !scheme.equals(RMI_PREFIX)) {
                     throw new MalformedURLException("invalid URL scheme: " + str);
