@@ -108,7 +108,7 @@ public class Detail extends BasePersistenceHstComponent {
                     cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
                         public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
                             FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
-                            fraw.publish();
+                            fraw.requestPublication();
                         }
                     });
 
@@ -119,7 +119,7 @@ public class Detail extends BasePersistenceHstComponent {
                     String commentsFolderPath = "/"+siteContentBasePath + "/comment/" + currentDate.get(Calendar.YEAR) + "/"
                             + currentDate.get(Calendar.MONTH) + "/" + currentDate.get(Calendar.DAY_OF_MONTH);
                     // comment node name is simply a concatenation of 'comment-' and current time millis. 
-                    String commentNodeName = "comment-" + System.currentTimeMillis();
+                    String commentNodeName = "comment-for-"+commentTo.getName()+"-" + System.currentTimeMillis();
 
                     // create comment node now
                     cpm.create(commentsFolderPath, "demosite:comment", commentNodeName, true);
