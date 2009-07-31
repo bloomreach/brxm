@@ -38,9 +38,10 @@ public class AddSitemapItemDialog extends AddNodeDialog<SitemapItem> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    final List<Matcher> matchers = Arrays.asList(new Matcher[] { Matcher.WILDCARD, Matcher.INFINITE, Matcher.CUSTOM });
+    final List<Matcher> matchers = Arrays.asList(new Matcher[] { Matcher.WILDCARD, Matcher.WILDCARD_HTML,
+            Matcher.INFINITE, Matcher.INFINITE_HTML, Matcher.CUSTOM });
 
-    private Matcher selection = Matcher.CUSTOM;
+    private final Matcher selection = Matcher.CUSTOM;
 
     public AddSitemapItemDialog(EditorDAO<SitemapItem> dao, RenderPlugin plugin, JcrNodeModel parent) {
         super(dao, plugin, parent);
@@ -68,6 +69,9 @@ public class AddSitemapItemDialog extends AddNodeDialog<SitemapItem> {
             protected void onChange(AjaxRequestTarget target, Object object) {
                 getBean().setMatcher(selection.getValue());
                 target.addComponent(textField);
+                if (selection == Matcher.CUSTOM) {
+                    target.focusComponent(textField);
+                }
             }
         });
 

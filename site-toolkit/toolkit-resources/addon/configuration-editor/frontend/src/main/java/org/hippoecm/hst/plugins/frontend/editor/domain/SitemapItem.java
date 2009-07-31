@@ -25,7 +25,7 @@ public class SitemapItem extends EditorBean {
     private final static String SVN_ID = "$Id$";
 
     public enum Matcher {
-        CUSTOM(""), WILDCARD("*"), INFINITE("**");
+        CUSTOM(""), WILDCARD("*"), INFINITE("**"), WILDCARD_HTML("*.html"), INFINITE_HTML("**.html");
 
         private String value;
 
