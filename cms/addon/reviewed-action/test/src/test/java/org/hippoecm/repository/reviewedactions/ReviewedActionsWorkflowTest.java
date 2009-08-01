@@ -58,6 +58,11 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
     @Override
     @After
     public void tearDown() throws Exception {
+        Node root = session.getRootNode();
+        while(root.hasNode("test")) {
+            root.getNode("test").remove();
+        }
+        root.save();
         super.tearDown();
     }
 
@@ -273,6 +278,8 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             assertTrue(session.getRootNode().getNode("test/myarticle").hasNode("myarticle"));
             assertTrue(session.getRootNode().getNode("test/myarticle").hasNode("myarticle"));
             node = getNode("test/myarticle/myarticle");
+            node.setProperty("hippostd:state", "unpublished");
+            node.save();
 
             FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.publish();
