@@ -9,6 +9,7 @@
 		</sv:property>
 		<sv:property sv:name="hst:containers" sv:type="String">
 			<sv:value>header</sv:value>
+			<sv:value>body</sv:value>
 		</sv:property>
 		<sv:property sv:name="hst:renderpath" sv:type="String">
 			<sv:value>jsp/templates/webpage.jsp</sv:value>
