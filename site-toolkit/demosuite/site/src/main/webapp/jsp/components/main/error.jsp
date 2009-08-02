@@ -20,6 +20,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <div class="yui-u">
-    <h2>Error has occured</h2>
+    <h2>Page not found</h2>
 </div>
 
