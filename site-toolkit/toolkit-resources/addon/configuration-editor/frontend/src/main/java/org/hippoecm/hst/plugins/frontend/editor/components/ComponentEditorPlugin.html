@@ -35,7 +35,7 @@
         <div wicket:id="frag">[ Frag ]</div>
         <div>
           <label for="parameters"><wicket:message key="parameters.label">Parameters label</wicket:message></label>
-          <a href="#" wicket:id="addParameter"><wicket:message key="parameters.add.label">Add parameter</wicket:message></a>
+          <a href="#" wicket:id="addParameter" class='button'><wicket:message key="parameters.add.label">Add parameter</wicket:message></a>
           <select wicket:id="parameterOverrides"><option>Override parameter</option></select>
         </div>
         <div>
@@ -75,8 +75,12 @@
 
       <wicket:fragment wicket:id="refComponent">
         <div>
-          <label for="componentDD"><wicket:message key="componentReferenceName.label">Reference name label</wicket:message></label><br/>
+         <label for="componentDD"><wicket:message key="componentReferenceName.label">Reference name label</wicket:message></label>
+         <select wicket:id="referenceName" style="float:right;"><option>Component picker</option></select>
+         <!--
+          <br/>
           <select wicket:id="referenceName" style="float:right;"><option>Component picker</option></select>
+         -->
         </div>
       </wicket:fragment>
 

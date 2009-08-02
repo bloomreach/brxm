@@ -3,16 +3,25 @@
 HST Editor
 */
 
+a.button {
+  border-style: outset;
+}
+
+a.button:active {
+  border-style: inset;
+}
+
+
 div.hst-perspective {
   margin-top:25px;
 }
 div.hst-editor {
   background: #ffffff url('../../skin/images/document-list-back.png') repeat-x;
-  border-left: 1px solid #afafaf; 
+  border-left: 1px solid #afafaf;
   border-right: 1px solid #afafaf;
-  
+
   width: 400px;
-  height: 725px; /*hack*/ 
+  height: 725px; /*hack*/
 }
 div.hst-editor h2{
   color: #666666; 
@@ -82,6 +91,10 @@ div.hst-editor-form fieldset {
 
 div.hst-editor-form fieldset input {
   width: 230px;
+}
+
+select {
+   max-width: 270px;
 }
 
 div.hst-editor-form input.small {
