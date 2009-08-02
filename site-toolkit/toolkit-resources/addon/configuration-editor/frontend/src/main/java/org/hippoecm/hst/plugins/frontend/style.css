@@ -81,11 +81,11 @@ div.hst-editor-form fieldset {
 }
 
 div.hst-editor-form fieldset input {
-  width: 230px; 
+  width: 230px;
 }
 
 div.hst-editor-form input.small {
-  width: 110px; 
+  width: 110px;
 }
 
 div.hst-editor-form fieldset { margin: 10px 0; padding: 10px; border: #DDD 1px solid; }
@@ -96,7 +96,7 @@ div.hst-editor-form fieldset > div, div.hst-editor-form fieldset > div > div { w
 
 div.hst-editor-form fieldset label { margin-right: 10px; padding-right: 10px; width: 85px; display: block; float: left; text-align: right; position: relative; }
 
-div.hst-editor-form fieldset div ul, div.hst-editor-form fieldset div table { margin-left: 105px; }
+table.parameters, div.hst-editor-form fieldset div ul { margin-left: 105px; }
 
 div.hst-editor-feedback ul { margin: 0 0 10px 0; background-color: #FFC;padding: 5px 10px; border: #FC6 1px solid; }
 div.hst-editor-feedback ul li { list-style-type:disc; margin-left: 10px;}
