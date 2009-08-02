@@ -18,7 +18,7 @@ package org.hippoecm.hst.content.beans.query.filter;
 import javax.jcr.Node;
 
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
-import org.hippoecm.hst.core.search.HstContextWhereClauseException;
+import org.hippoecm.hst.core.search.HstContextualizeException;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class HstCtxWhereFilter implements BaseFilter{
        
        try {
            jcrExpression = hstCtxWhereClauseComputer.getCtxWhereClause(node);
-       } catch (HstContextWhereClauseException e) {
+       } catch (HstContextualizeException e) {
            throw new FilterException("Exception while computing the context where clause", e);
        }
        if(jcrExpression == null) {

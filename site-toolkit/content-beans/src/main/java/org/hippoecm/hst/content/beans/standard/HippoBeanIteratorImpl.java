@@ -17,9 +17,12 @@ package org.hippoecm.hst.content.beans.standard;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.core.search.HstContextualizeException;
+import org.hippoecm.hst.core.search.HstVirtualizer;
 import org.slf4j.LoggerFactory;
 
 public class HippoBeanIteratorImpl implements HippoBeanIterator{
@@ -29,11 +32,12 @@ public class HippoBeanIteratorImpl implements HippoBeanIterator{
     
     private ObjectConverter objectConverter;
     private NodeIterator nodeIterator;
+    private HstVirtualizer virtualizer;
     
-    public HippoBeanIteratorImpl(ObjectConverter objectConverter, NodeIterator nodeIterator){
+    public HippoBeanIteratorImpl(ObjectConverter objectConverter, NodeIterator nodeIterator, HstVirtualizer virtualizer){
         this.objectConverter = objectConverter;
         this.nodeIterator = nodeIterator;
-        
+        this.virtualizer = virtualizer;
     }
     
     public long getPosition() {
@@ -45,17 +49,38 @@ public class HippoBeanIteratorImpl implements HippoBeanIterator{
     }
 
     public HippoBean nextHippoBean() {
+        Node n = null;
         try {
-            Node n = nodeIterator.nextNode();
+            n = nodeIterator.nextNode();
             if(n != null) {
-                return (HippoBean)objectConverter.getObject(n);
+                Node ctxAwareNode = virtualizer.virtualize(n);
+                if(ctxAwareNode == null) {
+                    return null;
+                }
+                return (HippoBean)objectConverter.getObject(ctxAwareNode);
             } else {
                 log.warn("Node in node iterator is null. Cannot return a HippoStdNode");
             }
         } catch (ObjectBeanManagerException  e) {
-            log.warn("ObjectContentManagerException. Return null : {}" , e);
-        }
+            String path = getPath(n);
+            log.warn("ObjectContentManagerException. Return null for '"+path+"'" , e);
+        } catch (HstContextualizeException e) {
+            String path = getPath(n);
+            log.warn("HstContextualizeException. Return null for '"+path+"'" , e);
+        } 
         return null;
+    }
+
+    private String getPath(Node n) {
+        if(n == null) {
+            return "";
+        }
+        try {
+            return n.getPath();
+        } catch (RepositoryException e) {
+            log.error("RepositoryException ", e);
+            return "";
+        }
     }
 
     public void skip(int skipNum) {

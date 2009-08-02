@@ -15,15 +15,18 @@
  */
 package org.hippoecm.hst.core.search;
 
-public class HstContextWhereClauseException extends Exception{
+import javax.jcr.Node;
 
-    private static final long serialVersionUID = 1L;
+/**
+ * A virtualizer implementation converts a physical node to its virtual context aware node
+ *
+ */
+public interface HstVirtualizer {
 
-    public HstContextWhereClauseException(String message) {
-        super(message);
-    }
-    
-    public HstContextWhereClauseException(String message, Throwable th) {
-        super(message, th);
-    }
+    /**
+     * @param canonical
+     * @return the canonical node as a virtual node in the right context
+     * @throws HstContextualizeException
+     */
+    Node virtualize(Node canonical) throws HstContextualizeException;
 }

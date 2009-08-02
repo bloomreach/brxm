@@ -35,7 +35,9 @@ import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.query.filter.HstCtxWhereFilter;
 import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
+import org.hippoecm.hst.core.search.HstContextualizeException;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
+import org.hippoecm.hst.core.search.HstVirtualizer;
 import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.LoggerFactory;
 
@@ -179,12 +181,14 @@ public class HstQueryImpl implements HstQuery {
             long start = System.currentTimeMillis();
             QueryResult queryResult = jcrQuery.execute();
             log.debug("Executing query took --({})-- ms to complete for '{}'", (System.currentTimeMillis() - start), query);
-            return new HstQueryResultImpl(this.objectConverter, queryResult);
+            return new HstQueryResultImpl(this.objectConverter, queryResult, this.hstCtxWhereClauseComputer.getVirtualizer(scope));
         } catch (InvalidQueryException e) {
             throw new QueryException(e.getMessage(), e);
         } catch (LoginException e) {
             log.warn("LoginException. Return null : {}", e);
         } catch (RepositoryException e) {
+            throw new QueryException(e.getMessage(), e);
+        } catch (HstContextualizeException e) {
             throw new QueryException(e.getMessage(), e);
         }
         return null;

@@ -20,6 +20,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.jackrabbit.uuid.UUID;
+import org.hippoecm.hst.configuration.Configuration;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -29,25 +31,72 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
 
     public final static Logger log = LoggerFactory.getLogger(HstCtxWhereClauseComputerImpl.class.getName()); 
     
-    public String getCtxWhereClause(Node node) throws HstContextWhereClauseException{
+    public HstVirtualizer getVirtualizer(Node ctxAwareNode) throws HstContextualizeException{
+        try {
+            Session session = ctxAwareNode.getSession();
+            Node contentFacetSelectNode = null;
+            Node start = ctxAwareNode;
+            Node jcrRoot = session.getRootNode();
+            while(!start.isSame(jcrRoot)) {
+                start = start.getParent();
+                if(start.isNodeType(Configuration.NODETYPE_HST_SITE)) {
+                    // get the content mirror
+                   if(start.hasNode(Configuration.NODENAME_HST_CONTENTNODE)) {
+                       contentFacetSelectNode = start.getNode(Configuration.NODENAME_HST_CONTENTNODE);
+                       break;
+                   } else {
+                       throw new HstContextualizeException("Cannot create a Virtualizer for : " + ctxAwareNode.getPath());
+                   }
+                }
+            }
+            if(start.isSame(jcrRoot)) {
+                // it was not a search in a virtual tree in the first place. Return a NOOP virtualizer
+                return new HstVirtualizer(){
+                    public Node virtualize(Node canonical) throws HstContextualizeException {
+                        return canonical;
+                    } 
+                };
+            }
+            if(contentFacetSelectNode == null || !contentFacetSelectNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                throw new HstContextualizeException("Cannot create a Virtualizer for : " + ctxAwareNode.getPath());
+            }
+           
+            String docbase = contentFacetSelectNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+            try {
+                UUID.fromString(docbase);
+            } catch (IllegalArgumentException e){
+                throw new HstContextualizeException("Unable to create a Virtualizer: '{}'", e);
+            }
+            
+            Node canonicalContentNode = session.getNodeByUUID(docbase);
+            
+            String canonicalContentNodePath = canonicalContentNode.getPath();
+            String contentFacetSelectNodePath = contentFacetSelectNode.getPath();
+            return new HstVirtualizerImpl(canonicalContentNodePath, contentFacetSelectNodePath);
+        } catch (RepositoryException e) {
+           throw new HstContextualizeException("Unable to create a Virtualizer: '{}'", e);
+        }
+        
+    }
+    
+    public String getCtxWhereClause(Node node) throws HstContextualizeException{
         StringBuffer facetSelectClauses = new StringBuffer();
         String path = null;
         try {
             path = node.getPath();
             if(!(node instanceof HippoNode)) {
-                log.warn("Cannot compute a ctx where clause for a non HippoNode '{}'", node.getPath());
-                throw new HstContextWhereClauseException("Cannot compute a ctx where clause for a non HippoNode : " + node.getPath());
+                throw new HstContextualizeException("Cannot compute a ctx where clause for a non HippoNode : " + node.getPath());
             }
             
             HippoNode hnode = (HippoNode)node;
             HippoNode canonical = (HippoNode)hnode.getCanonicalNode();
             
             if(canonical == null) {
-                throw new HstContextWhereClauseException("Cannot compute a ctx where clause for a node that does not have a physical equivalence : " + node.getPath());
+                throw new HstContextualizeException("Cannot compute a ctx where clause for a node that does not have a physical equivalence : " + node.getPath());
             }
             
             if(!canonical.isNodeType("mix:referenceable") && !canonical.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                throw new  HstContextWhereClauseException("Cannot create a context where clause for node '"+canonical.getPath()+"'");
+                throw new  HstContextualizeException("Cannot create a context where clause for node '"+canonical.getPath()+"'");
              }
             if (canonical.isSame(node)){
                 // either the site content root node (hst:content) or just a physical node.
@@ -72,18 +121,18 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             }
         } catch (RepositoryException e) {
            log.warn("Unable to get Context where clause: '{}'", e);
-           throw new HstContextWhereClauseException("Unable to get Context where clause", e);
+           throw new HstContextualizeException("Unable to get Context where clause", e);
         }
         
         if(facetSelectClauses.length() == 0) {
-            throw new HstContextWhereClauseException("Exception during creating ContextWhereClause. Cannot create a proper search.");
+            throw new HstContextualizeException("Exception during creating ContextWhereClause. Cannot create a proper search.");
         }
         facetSelectClauses.append(" and not(@jcr:primaryType='nt:frozenNode')");
         log.debug("For node '{}' the ctxWhereClause is '{}'", path , facetSelectClauses.toString());
         return facetSelectClauses.toString();
     }
     
-    private void getFacetSelectClauses(Session jcrSession, HippoNode node, StringBuffer facetSelectClauses, boolean traversUp) throws HstContextWhereClauseException{
+    private void getFacetSelectClauses(Session jcrSession, HippoNode node, StringBuffer facetSelectClauses, boolean traversUp) throws HstContextualizeException{
         try {
             if(node == null || node.isSame(jcrSession.getRootNode())) {
                 return;
@@ -115,7 +164,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                     }
                 } else {
                     log.warn("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
-                    throw new HstContextWhereClauseException("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
+                    throw new HstContextualizeException("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
                 }
             }
             
@@ -137,7 +186,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             }
         } catch (RepositoryException e) {
             log.warn("RepositoryException while trying to resolve facetselect clauses. Return null");
-            throw new HstContextWhereClauseException("RepositoryException while trying to resolve facetselect clauses. Return null", e);
+            throw new HstContextualizeException("RepositoryException while trying to resolve facetselect clauses. Return null", e);
         }
         
     }

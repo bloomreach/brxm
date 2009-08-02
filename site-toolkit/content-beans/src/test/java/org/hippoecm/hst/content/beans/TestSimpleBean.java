@@ -46,8 +46,9 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.search.HstContextWhereClauseException;
+import org.hippoecm.hst.core.search.HstContextualizeException;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
+import org.hippoecm.hst.core.search.HstVirtualizer;
 import org.hippoecm.hst.proxy.ProxyFactory;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -179,14 +180,14 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
 
         public final Logger log = LoggerFactory.getLogger(MyHstCtxWhereClauseComputerImpl.class.getName()); 
         
-        public String getCtxWhereClause(Node node) throws HstContextWhereClauseException{
+        public String getCtxWhereClause(Node node) throws HstContextualizeException{
             StringBuffer facetSelectClauses = new StringBuffer();
             String path = null;
             try {
                 path = node.getPath();
                 if(!(node instanceof HippoNode)) {
                     log.warn("Cannot compute a ctx where clause for a non HippoNode '{}'", node.getPath());
-                    throw new HstContextWhereClauseException("Cannot compute a ctx where clause for a non HippoNode : " + node.getPath());
+                    throw new HstContextualizeException("Cannot compute a ctx where clause for a non HippoNode : " + node.getPath());
                 }
                 
                 HippoNode hnode = (HippoNode)node;
@@ -194,7 +195,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
                 
                 if(canonical == null) {
                     log.warn("Cannot compute a ctx where clause for a node that does not have a physical equivalence: '{}'. Return", node.getPath());
-                    throw new HstContextWhereClauseException("Cannot compute a ctx where clause for a node that does not have a physical equivalence : " + node.getPath());
+                    throw new HstContextualizeException("Cannot compute a ctx where clause for a node that does not have a physical equivalence : " + node.getPath());
                 }
                 else if (canonical.isSame(node)){
                     // either the site content root node (hst:content) or just a physical node.
@@ -217,7 +218,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
                 }
             } catch (RepositoryException e) {
                log.warn("Unable to get Context where clause: '{}'", e);
-               throw new HstContextWhereClauseException("Unable to get Context where clause", e);
+               throw new HstContextualizeException("Unable to get Context where clause", e);
             }
             
             if(facetSelectClauses.length() == 0) {
@@ -230,7 +231,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
             return facetSelectClauses.toString();
         }
         
-        private void getFacetSelectClauses(Session jcrSession, HippoNode node, StringBuffer facetSelectClauses, boolean traversUp) throws HstContextWhereClauseException{
+        private void getFacetSelectClauses(Session jcrSession, HippoNode node, StringBuffer facetSelectClauses, boolean traversUp) throws HstContextualizeException{
             try {
                 if(node == null || node.isSame(jcrSession.getRootNode())) {
                     return;
@@ -262,7 +263,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
                         }
                     } else {
                         log.warn("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
-                        throw new HstContextWhereClauseException("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
+                        throw new HstContextualizeException("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
                     }
                 }
                 
@@ -284,9 +285,14 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
                 }
             } catch (RepositoryException e) {
                 log.warn("RepositoryException while trying to resolve facetselect clauses. Return null");
-                throw new HstContextWhereClauseException("RepositoryException while trying to resolve facetselect clauses. Return null", e);
+                throw new HstContextualizeException("RepositoryException while trying to resolve facetselect clauses. Return null", e);
             }
             
+        }
+
+        public HstVirtualizer getVirtualizer(Node ctxAwareNode) throws HstContextualizeException {
+           // TODO 
+            return null;
         }
 
     }

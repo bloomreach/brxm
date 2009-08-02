@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIteratorImpl;
+import org.hippoecm.hst.core.search.HstVirtualizer;
 import org.slf4j.LoggerFactory;
 
 public class HstQueryResultImpl implements HstQueryResult {
@@ -28,15 +29,17 @@ public class HstQueryResultImpl implements HstQueryResult {
     
     private javax.jcr.query.QueryResult queryResult;
     private ObjectConverter objectConverter;
+    private HstVirtualizer virtualizer;
 
-    public HstQueryResultImpl(ObjectConverter objectConverter, javax.jcr.query.QueryResult queryResult) {
+    public HstQueryResultImpl(ObjectConverter objectConverter, javax.jcr.query.QueryResult queryResult, HstVirtualizer virtualizer) {
         this.objectConverter = objectConverter;
         this.queryResult = queryResult;
+        this.virtualizer = virtualizer;
     }
 
     public HippoBeanIterator getHippoBeans() {
         try {
-            return new HippoBeanIteratorImpl(this.objectConverter, this.queryResult.getNodes());
+            return new HippoBeanIteratorImpl(this.objectConverter, this.queryResult.getNodes(), virtualizer);
         } catch (RepositoryException e) {
             log.error("RepositoryException. Return null. {}", e);
             return null;

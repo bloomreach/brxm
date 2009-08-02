@@ -115,6 +115,9 @@ public class BeanUtils {
         HippoBeanIterator beans = result.getHippoBeans();
         while (beans.hasNext()) {
             T incomingBean = (T) beans.nextHippoBean();
+            if(incomingBean == null) {
+                continue;
+            }
             if (!beanMappingClass.isAssignableFrom(incomingBean.getClass())) {
                 // should not be possible
                 log.warn("Found a bean not being of type or subtype of '{}'. Skip bean", beanMappingClass.getName());
