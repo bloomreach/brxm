@@ -27,7 +27,7 @@ public interface HippoBeanIterator extends Iterator<HippoBean> {
      * to a <code>HippoBean</code>
      * @throws java.util.NoSuchElementException if iteration has no more <code>HippoBean</code>s.
     */
-   public HippoBean nextHippoBean();
+   HippoBean nextHippoBean();
    
    /**
     * Skip a number of elements in the iterator.
@@ -36,7 +36,7 @@ public interface HippoBeanIterator extends Iterator<HippoBean> {
     * @throws java.util.NoSuchElementException
     *          if skipped past the last element in the iterator.
     */
-   public void skip(int skipNum);
+   void skip(int skipNum);
 
    /**
     * Returns the number of elements in the iterator.
@@ -44,7 +44,7 @@ public interface HippoBeanIterator extends Iterator<HippoBean> {
     *
     * @return a long
     */
-   public long getSize();
+   long getSize();
 
    /**
     * Returns the current position within the iterator. The number
@@ -56,5 +56,5 @@ public interface HippoBeanIterator extends Iterator<HippoBean> {
     *
     * @return a long
     */
-   public long getPosition();
+   long getPosition();
 }

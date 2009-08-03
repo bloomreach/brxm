@@ -23,6 +23,6 @@ public interface JCRService extends Service{
     /**
      * @return JCRValueProvider giving access to the underlying jcr backed data
      */
-    public JCRValueProvider getValueProvider();
+    JCRValueProvider getValueProvider();
     
 }

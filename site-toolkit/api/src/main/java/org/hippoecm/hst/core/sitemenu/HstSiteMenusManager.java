@@ -16,5 +16,5 @@ public interface HstSiteMenusManager {
      * @param hstRequestContext the current hstRequestContext
      * @return returns the HstSiteMenus for this request and <code>null</code> if not available
      */
-    public HstSiteMenus getSiteMenus(HstRequestContext hstRequestContext);
+    HstSiteMenus getSiteMenus(HstRequestContext hstRequestContext);
 }

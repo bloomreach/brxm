@@ -41,7 +41,7 @@ public interface ObjectBeanManager {
      * @throws ObjectBeanManagerException
      *             when it is not possible to retrieve the object
      */
-    public Object getObject(String path) throws ObjectBeanManagerException;
+    Object getObject(String path) throws ObjectBeanManagerException;
 
     /**
      * Get an object from the JCR repository
@@ -53,7 +53,7 @@ public interface ObjectBeanManager {
      * @throws ObjectBeanManagerException
      *             when it is not possible to retrieve the object
      */
-    public Object getObjectByUuid(String uuid) throws ObjectBeanManagerException;
+    Object getObjectByUuid(String uuid) throws ObjectBeanManagerException;
     
     /**
      * This method returns the JCR session. The JCR session could be used to
@@ -61,6 +61,6 @@ public interface ObjectBeanManager {
      *
      * @return the associated JCR session
      */
-    public Session getSession();
+    Session getSession();
     
 }

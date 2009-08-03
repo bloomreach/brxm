@@ -34,17 +34,17 @@ public interface HstRequest extends HttpServletRequest {
     /**
      * String identifier for the HST action lifecycle phase.
      */
-    public static final String ACTION_PHASE = "ACTION_PHASE";
+    static final String ACTION_PHASE = "ACTION_PHASE";
     
     /**
      * String identifier for the HST render lifecycle phase.
      */
-    public static final String RENDER_PHASE = "RENDER_PHASE";
+    static final String RENDER_PHASE = "RENDER_PHASE";
     
     /**
      * String identifier for the HST resource serving lifecycle phase.
      */
-    public static final String RESOURCE_PHASE = "RESOURCE_PHASE";
+    static final String RESOURCE_PHASE = "RESOURCE_PHASE";
       
     /**
      * Returns the current request context

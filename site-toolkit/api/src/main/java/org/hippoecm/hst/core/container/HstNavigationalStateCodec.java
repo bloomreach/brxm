@@ -32,7 +32,7 @@ public interface HstNavigationalStateCodec {
      * @return
      * @throws UnsupportedEncodingException
      */
-    public String encodeParameters(String value, String characterEncoding) throws UnsupportedEncodingException;
+    String encodeParameters(String value, String characterEncoding) throws UnsupportedEncodingException;
 
     /**
      * Decodes the parameter with the specified character encoding
@@ -42,6 +42,6 @@ public interface HstNavigationalStateCodec {
      * @return
      * @throws UnsupportedEncodingException
      */
-    public String decodeParameters(String value, String characterEncoding) throws UnsupportedEncodingException;
+    String decodeParameters(String value, String characterEncoding) throws UnsupportedEncodingException;
     
 }

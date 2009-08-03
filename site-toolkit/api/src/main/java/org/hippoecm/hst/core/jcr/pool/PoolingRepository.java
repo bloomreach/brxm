@@ -53,32 +53,32 @@ public interface PoolingRepository extends Repository {
      * Initializes the pool
      * @throws Exception
      */
-    public void initialize() throws Exception;
+    void initialize() throws Exception;
     
     /**
      * Closes the pool
      */
-    public void close() throws Exception;
+    void close() throws Exception;
     
     /**
      * Returns the current active session count in the pool.
      * 
      * @return
      */
-    public int getNumActive();
+    int getNumActive();
 
     /**
      * Returns the current idle session count in the pool.
      * @return
      */
-    public int getNumIdle();
+    int getNumIdle();
 
     /**
      * Returns the session to the pool.
      * 
      * @param session
      */
-    public void returnSession(Session session);
+    void returnSession(Session session);
     
     /**
      * Returns the resource lifecycle management implementation of this pool.
@@ -86,7 +86,7 @@ public interface PoolingRepository extends Repository {
      * @see {@link ResourceLifecycleManagement}
      * @return
      */
-    public ResourceLifecycleManagement getResourceLifecycleManagement(); 
+    ResourceLifecycleManagement getResourceLifecycleManagement(); 
     
     /**
      * Tries impersonation by the provided the credentials.
@@ -100,7 +100,7 @@ public interface PoolingRepository extends Repository {
      * @throws LoginException
      * @throws RepositoryException
      */
-    public Session impersonate(Credentials credentials) throws LoginException, RepositoryException;
+    Session impersonate(Credentials credentials) throws LoginException, RepositoryException;
 
     /**
      * Sets time millis to have each session be refreshed on activation if the session
@@ -108,6 +108,6 @@ public interface PoolingRepository extends Repository {
      * 
      * @param sessionsRefreshPendingTimeMillis
      */
-    public void setSessionsRefreshPendingAfter(long sessionsRefreshPendingTimeMillis);
+    void setSessionsRefreshPendingAfter(long sessionsRefreshPendingTimeMillis);
     
 }

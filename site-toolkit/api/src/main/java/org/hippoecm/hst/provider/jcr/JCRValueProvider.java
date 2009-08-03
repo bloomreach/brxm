@@ -26,35 +26,35 @@ public interface JCRValueProvider extends ValueProvider{
      * node is already detached
      * @return the jcr node 
      */
-    public Node getJcrNode();
+    Node getJcrNode();
     
     /**
      * returns the parent {@link Node} of this value provider or <code>null</code> when the node is detached.
      * If the node is the jcr rootNode, <code>null</code> will be returned
      * @return the parent Node or <code>null</code> if the node is null or there is no parent
      */
-    public Node getParentJcrNode();
+    Node getParentJcrNode();
 
     /**
      * Method for detaching the jcr node. After calling this method, the jcr node is not available anymore
      */
-    public void detach();
+    void detach();
     
     /**
      * Test whether the jcr node is detached or not
      * @return true if the node is detached
      */
-    public boolean isDetached();
+    boolean isDetached();
     
     /** 
      * @param nodeType
      * @return true when the underlying jcr node is of type nodeType
      */
-    public boolean isNodeType(String nodeType);
+    boolean isNodeType(String nodeType);
     
     /**
      * Flushes all fetched data kept in instance variables
      */
-    public void flush();
+    void flush();
    
 }

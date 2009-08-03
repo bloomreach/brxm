@@ -27,6 +27,6 @@ public interface PoolingRepositoryAware
      * 
      * @param poolingRepository
      */
-    public void setPoolingRepository(PoolingRepository poolingRepository);
+    void setPoolingRepository(PoolingRepository poolingRepository);
 }
 

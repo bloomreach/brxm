@@ -19,7 +19,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 
 public interface HstQueryResult {
     
-    public int getSize();
+    int getSize();
     
-    public HippoBeanIterator getHippoBeans();
+    HippoBeanIterator getHippoBeans();
 }

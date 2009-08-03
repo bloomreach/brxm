@@ -22,19 +22,19 @@ public interface Service {
     /**
      * @return ValueProvider giving access to the underlying object providing the values
      */
-    public ValueProvider getValueProvider();
+    ValueProvider getValueProvider();
     
     /**
      * 
      * @return an array of child Services. If there are no child services, an empty array is returned
      */
-    public Service[] getChildServices();
+    Service[] getChildServices();
     
     /**
      * Closing a valueprovider means that the underlying value provider might be closed after calling this method, though 
      * this is up to the implementation.
      * @param closeChildServices
      */
-    public void closeValueProvider(boolean closeChildServices);
+    void closeValueProvider(boolean closeChildServices);
     
 }

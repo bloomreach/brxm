@@ -30,11 +30,11 @@ public interface Valve
      * @param context
      * @throws ContainerException
      */
-    public void invoke(ValveContext context) throws ContainerException;
+    void invoke(ValveContext context) throws ContainerException;
 
     /**
      * Initialize the valve before using in a pipeline.
      */
-    public void initialize() throws ContainerException;
+    void initialize() throws ContainerException;
 
 }

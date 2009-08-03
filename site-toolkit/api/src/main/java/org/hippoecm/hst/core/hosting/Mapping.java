@@ -63,26 +63,26 @@ public interface Mapping extends Comparable<Mapping>{
      * @param pathInfo
      * @return true when this pathInfo matches the uri prefix
      */
-    public boolean match(String pathInfo);
+    boolean match(String pathInfo);
 
     /**
      * 
      * @return the <code>VirtualHost</code> containing this Mapping
      */
-    public VirtualHost getVirtualHost();
+    VirtualHost getVirtualHost();
 
     /**
      * The prefix in the url might be different then the servletpath. It might be that the url uses
      * '/p/r/e/v/i/e/w' and the servletpath is /preview. This method would return /p/r/e/v/i/e/w. 
      * @return the uri prefix as it is in the url or <code>null</code> if there should be no url prefix
      */
-    public String getUriPrefix();
+    String getUriPrefix();
     
     /**
      * The prefix in the url might be different then the servletpath. It might be that the url uses
      * '/p/r/e/v/i/e/w' and the servletpath is /preview. This method would return /preview
      * @return the rewritten prefix as it is in the application
      */
-    public String getRewrittenPrefix();
+    String getRewrittenPrefix();
     
 }

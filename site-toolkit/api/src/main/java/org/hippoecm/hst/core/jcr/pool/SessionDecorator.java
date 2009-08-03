@@ -35,6 +35,6 @@ public interface SessionDecorator
      * @param session
      * @return
      */
-    public Session decorate(Session session);
+    Session decorate(Session session);
     
 }

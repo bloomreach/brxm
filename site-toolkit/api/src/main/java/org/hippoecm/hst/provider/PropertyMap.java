@@ -20,27 +20,27 @@ import java.util.Map;
 
 public interface PropertyMap {
 
-    public abstract Map<String, Boolean[]> getBooleanArrays();
+    Map<String, Boolean[]> getBooleanArrays();
 
-    public abstract Map<String, Boolean> getBooleans();
+    Map<String, Boolean> getBooleans();
 
-    public abstract Map<String, Calendar[]> getCalendarArrays();
+    Map<String, Calendar[]> getCalendarArrays();
 
-    public abstract Map<String, Calendar> getCalendars();
+    Map<String, Calendar> getCalendars();
 
-    public abstract Map<String, Double[]> getDoubleArrays();
+    Map<String, Double[]> getDoubleArrays();
 
-    public abstract Map<String, Double> getDoubles();
+    Map<String, Double> getDoubles();
 
-    public abstract Map<String, Long[]> getLongArrays();
+    Map<String, Long[]> getLongArrays();
 
-    public abstract Map<String, Long> getLongs();
+    Map<String, Long> getLongs();
 
-    public abstract Map<String, String[]> getStringArrays();
+    Map<String, String[]> getStringArrays();
 
-    public abstract Map<String, String> getStrings();
+    Map<String, String> getStrings();
 
-    public Map<String, Object> getAllMapsCombined();
+    Map<String, Object> getAllMapsCombined();
     
-    public void flush();
+    void flush();
 }
