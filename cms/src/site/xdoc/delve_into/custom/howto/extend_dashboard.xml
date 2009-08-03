@@ -46,7 +46,7 @@
   <div class="plugin" wicket:id="extension.helloworld">HelloWorld</div>
 </div>]]>
       </source>
-      
+
       <subsection name="Adding you plugin to the repository">
         <p>
           First we need to create a node for our plugin. To do this navigate (in the console) to 
@@ -59,11 +59,11 @@
           Now the plugin is added to the repository and it is time for the dashboard to find it 
           (Don't forget to save your changes).
         </p>
-        
+
         <p>
           Our plugin is in the repository but the dashboard doesn't know that, so time to
-          update the dashboard. Using the console, navigate to 
-          <b>hippo:configuration/hippo:frontend/cms/cms-static/dashboardPerspective</b>. Under wicket.extensions 
+          update the dashboard. Using the console, navigate to
+          <b>hippo:configuration/hippo:frontend/cms/cms-dashboard/dashboardPerspective</b>. Under wicket.extensions
           you will see the current plugins shown on the dashboard. Add an entry "extension.helloworld".
           Next add a property called "extension.helloworld" and give it the value "service.helloworld".
           Now the dashboard knows where to find the plugin that is referenced by extension.helloworld 
@@ -72,7 +72,7 @@
         <p>
           Now if you log in to the CMS the HelloWorldPlugin should show up on the dashboard.
         </p>
-        
+
       </subsection>
 
       <p>
