@@ -744,7 +744,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             Class[] params = constructors[constructorIndex].getParameterTypes();
                             if (params.length == 4 && WorkflowContext.class.isAssignableFrom(params[0]) && Session.class.isAssignableFrom(params[1]) && Session.class.isAssignableFrom(params[2]) && Node.class.isAssignableFrom(params[3])) {
                                 workflow = (Workflow)constructors[constructorIndex].newInstance(new Object[] {
-                                            manager.new WorkflowContextNodeImpl(workflowNode, workflowSubjectNode.getSession(), item), manager.getSession(), manager.rootSession, item
+                                            manager.new WorkflowContextNodeImpl(workflowNode, item.getSession(), item), manager.getSession(), manager.rootSession, item
                                         });
                                 break;
                             } else if (params.length == 3 && Session.class.isAssignableFrom(params[0]) && Session.class.isAssignableFrom(params[1]) && Node.class.isAssignableFrom(params[2])) {
@@ -762,7 +762,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         Object object = manager.documentManager.getObject(uuid, classname, types);
                         workflow = (Workflow)object;
                         if (workflow instanceof WorkflowImpl) {
-                            ((WorkflowImpl)workflow).setWorkflowContext(manager.new WorkflowContextNodeImpl(workflowNode, workflowSubjectNode.getSession(), item));
+                            ((WorkflowImpl)workflow).setWorkflowContext(manager.new WorkflowContextNodeImpl(workflowNode, item.getSession(), item));
                         }
                     }
                 } catch (IllegalAccessException ex) {
