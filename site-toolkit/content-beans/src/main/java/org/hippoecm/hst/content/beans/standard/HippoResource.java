@@ -30,10 +30,13 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
 
 
     private static Logger log = LoggerFactory.getLogger(HippoResource.class);
-    /**
-     * 
-     * @return the number of bytes of binary stored in this resoure
-     */
+    
+    
+    public String getMimeType() {
+        return getProperty("jcr:mimeType");
+    }
+    
+    
     public long getLength(){
         if(this.getNode() == null) {
             log.warn("Cannot get length for detached node");

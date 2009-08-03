@@ -22,8 +22,15 @@ package org.hippoecm.hst.content.beans.standard;
 public interface HippoResourceBean extends HippoBean{
     
     /**
+     * Get the mime type of this resource.
+     *
+     * @return the mime type of this resource
+     */
+    String getMimeType();
+    
+    /**
      * 
-     * @return the number of bytes of binary stored in this resoure
+     * @return the number of bytes of binary stored in this resource
      */
      long getLength();
 }
