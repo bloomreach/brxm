@@ -58,7 +58,7 @@ public abstract class NewPageWizard extends AjaxWizard {
     private final static String SVN_ID = "$Id$";
 
     /**
-     * Create a new page and give it a name 
+     * Create a new page and give it a name
      */
     private final class PageNameStep extends DynamicWizardStep {
         private static final long serialVersionUID = 1L;
@@ -92,7 +92,7 @@ public abstract class NewPageWizard extends AjaxWizard {
     }
 
     /**
-     * Next we choose a template for our new page 
+     * Next we choose a template for our new page
      */
     private final class PageTemplateStep extends DynamicWizardStep {
         private static final long serialVersionUID = 1L;
@@ -123,8 +123,8 @@ public abstract class NewPageWizard extends AjaxWizard {
     }
 
     /**
-     * If the template we chose contains a list of containers we have to choose a corresponding Component 
-     * for each of them 
+     * If the template we chose contains a list of containers we have to choose a corresponding Component
+     * for each of them
      */
     private final class ComponentDescriptionStep extends DynamicWizardStep {
         private static final long serialVersionUID = 1L;
@@ -171,12 +171,12 @@ public abstract class NewPageWizard extends AjaxWizard {
 
     }
 
-    private PageDAO pageDao;
-    private Component newPage;
-    private HstContext hstContext;
+    private final PageDAO pageDao;
+    private final Component newPage;
+    private final HstContext hstContext;
 
-    private IPluginContext context;
-    private IPluginConfig config;
+    private final IPluginContext context;
+    private final IPluginConfig config;
 
     private Containers containersModel;
 
@@ -225,9 +225,7 @@ public abstract class NewPageWizard extends AjaxWizard {
             if (containersModel != null) {
                 ComponentDAO cDao = new ComponentDAO(context, hstContext.component.getNamespace());
                 for (Entry<String, String> e : containersModel.values.entrySet()) {
-                    JcrNodeModel cModel = new JcrNodeModel(newPage.getModel().getItemModel().getPath() + "/"
-                            + e.getKey());
-                    Component c = cDao.load(cModel);
+                    Component c = cDao.create(newPage.getModel(), e.getKey());
                     c.setReference(true);
                     c.setReferenceName(e.getValue());
                     cDao.save(c);
@@ -258,7 +256,7 @@ public abstract class NewPageWizard extends AjaxWizard {
         }
 
         public boolean hasNext() {
-            return containers.size() < (current + 1);
+            return containers.size() > (current + 1);
         }
 
         public String getName() {
