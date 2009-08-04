@@ -38,28 +38,39 @@ public abstract class EditorDAO<K extends IEditorBean> implements IClusterable {
     static final Logger log = LoggerFactory.getLogger(EditorDAO.class);
 
     String prototypePath;
-    private IPluginContext context;
+    private final IPluginContext context;
 
     public EditorDAO(IPluginContext context, String namespace) {
         this.context = context;
         this.prototypePath = namespace + "/hippo:prototype/hippo:prototype";
     }
 
-    public K create(JcrNodeModel model) {
-        Node node = model.getNode();
+    public K create(JcrNodeModel model, String name) {
         try {
-            String name = "new";
-            String suffix = "";
-            int count = 1;
-            while (node.hasNode(name + suffix)) {
-                suffix = String.valueOf(count++);
-            }
-            String newPath = model.getItemModel().getPath() + "/" + name + suffix;
+            Node node = model.getNode();
+            String newPath = model.getItemModel().getPath() + "/" + name;
             Node prototype = model.getNode().getSession().getRootNode().getNode(prototypePath);
             node = ((HippoSession) model.getNode().getSession()).copy(prototype, newPath);
             return load(new JcrNodeModel(node));
         } catch (RepositoryException e) {
             log.error("Error creating new node", e);
+        }
+        return null;
+    }
+
+    public K create(JcrNodeModel parentModel) {
+        Node parentNode = parentModel.getNode();
+        try {
+            String name = "new";
+            String suffix = "";
+            int count = 1;
+            while (parentNode.hasNode(name + suffix)) {
+                suffix = String.valueOf(count++);
+            }
+            return create(parentModel, name + suffix);
+        } catch (RepositoryException e) {
+            log.error("Error calculating new child node name for parent node[" + parentModel.getItemModel().getPath()
+                    + "]", e);
         }
         return null;
     }
