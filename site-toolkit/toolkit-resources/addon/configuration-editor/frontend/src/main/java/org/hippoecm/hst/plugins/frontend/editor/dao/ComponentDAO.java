@@ -125,6 +125,8 @@ public class ComponentDAO extends EditorDAO<Component> {
         //save reference stuff
         if (component.isReference()) {
             JcrUtilities.updateProperty(model, HST_REFERENCECOMPONENT, component.getReferenceName());
+        } else if (JcrUtilities.hasProperty(model, HST_REFERENCECOMPONENT)) {
+            JcrUtilities.removeProperty(model, HST_REFERENCECOMPONENT);
         }
 
         //save componentClassName
@@ -154,7 +156,11 @@ public class ComponentDAO extends EditorDAO<Component> {
         descriptionDao.persist(component, model);
     }
 
-    @Deprecated
+    /**
+     * if template has changed, remove nodes that aren't part of container mapping
+     * @param component
+     * @param model
+     */
     private void updateTemplate(Component component, JcrNodeModel model) {
         String templateName;
         if (component.isReference()) {
@@ -162,7 +168,6 @@ public class ComponentDAO extends EditorDAO<Component> {
             templateName = refComponent.getTemplate();
         } else {
             templateName = component.getTemplate();
-            JcrUtilities.updateProperty(model, HST_TEMPLATE, templateName);
         }
 
         JcrNodeModel template = new JcrNodeModel(getHstContext().template.absolutePath(templateName));

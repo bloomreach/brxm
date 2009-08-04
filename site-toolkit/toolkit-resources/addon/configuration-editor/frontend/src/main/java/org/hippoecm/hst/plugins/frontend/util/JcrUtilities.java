@@ -142,4 +142,15 @@ public class JcrUtilities {
             log.error("Error saving property {0} of type Long", new Object[] { property });
         }
     }
+
+    public static void removeProperty(JcrNodeModel model, String property) {
+        Node node = model.getNode();
+        if (node != null) {
+            try {
+                node.getProperty(property).remove();
+            } catch (RepositoryException e) {
+                log.error("Error removing property {0}", new Object[] { property });
+            }
+        }
+    }
 }
