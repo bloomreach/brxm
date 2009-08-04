@@ -244,6 +244,15 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
             };
             ddo.setNullValid(false);
             ddo.setOutputMarkupId(true);
+            ddo.add(new AjaxFormComponentUpdatingBehavior("onChange") {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    info(ComponentEditorPlugin.this.getString("reference.changed"));
+                }
+            });
+
             add(ddo);
         }
     }
@@ -275,8 +284,7 @@ public class ComponentEditorPlugin extends BasicEditorPlugin<Component> {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     if (!getBean().getTemplate().equals(originalTemplate)) {
-                        //    info("Your template has changed, saving this session will create new child components as specified by the templates containers. Existing child components will be removed if they don't match the container names.");
-                        info("Your template has changed. Saving this session will remove some container references and their region designs, if the new template does not specify the same containers as the old one. For all containers that are specified in the new template, but not yet referenced, new container references will be added. Their region designs will be empty. Region designs for containers that are not in the new template will be removed.");
+                        info(ComponentEditorPlugin.this.getString("template.changed"));
                     }
                 }
             });

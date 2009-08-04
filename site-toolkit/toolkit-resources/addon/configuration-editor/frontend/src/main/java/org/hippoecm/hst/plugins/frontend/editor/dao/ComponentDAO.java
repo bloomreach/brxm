@@ -18,12 +18,9 @@ package org.hippoecm.hst.plugins.frontend.editor.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -120,6 +117,8 @@ public class ComponentDAO extends EditorDAO<Component> {
     @Override
     public void persist(Component component, JcrNodeModel model) {
 
+        Component previousComponent = load(model);
+
         component.setModel(JcrUtilities.rename(model, component.getName()));
 
         //save reference stuff
@@ -147,21 +146,43 @@ public class ComponentDAO extends EditorDAO<Component> {
         JcrUtilities.updateMultiValueProperty(model, HST_PARAMETERNAMES, names);
         JcrUtilities.updateMultiValueProperty(model, HST_PARAMETERVALUES, values);
 
-        //Don't auto create containers for now, instead update template here
+        updateTemplate(component, previousComponent);
         if (!component.isReference()) {
             JcrUtilities.updateProperty(model, HST_TEMPLATE, component.getTemplate());
         }
-        //updateTemplate(component, model);
 
         descriptionDao.persist(component, model);
     }
 
     /**
      * if template has changed, remove nodes that aren't part of container mapping
-     * @param component
+     * @param currentComponent
      * @param model
+     * @param previousComponent
      */
-    private void updateTemplate(Component component, JcrNodeModel model) {
+    private void updateTemplate(Component currentComponent, Component previousComponent) {
+        List<String> previousContainers = getContainers(previousComponent);
+        if (previousContainers == null || previousContainers.size() == 0) {
+            return;
+        }
+
+        List<String> currentContainers = getContainers(currentComponent);
+        Node node = currentComponent.getModel().getNode();
+
+        for (String prev : previousContainers) {
+            if (currentContainers == null || !currentContainers.contains(prev)) {
+                try {
+                    if (node.hasNode(prev)) {
+                        node.getNode(prev).remove();
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Error while trying to remove node", e);
+                }
+            }
+        }
+    }
+
+    private List<String> getContainers(Component component) {
         String templateName;
         if (component.isReference()) {
             Component refComponent = resolveComponent(component);
@@ -171,36 +192,7 @@ public class ComponentDAO extends EditorDAO<Component> {
         }
 
         JcrNodeModel template = new JcrNodeModel(getHstContext().template.absolutePath(templateName));
-        List<String> containers = JcrUtilities.getMultiValueProperty(template, TemplateDAO.HST_CONTAINERS);
-
-        Node node = model.getNode();
-        Set<String> nodes = new HashSet<String>();
-        try {
-            if (node.hasNodes()) {
-                NodeIterator it = node.getNodes();
-                while (it.hasNext()) {
-                    String name = it.nextNode().getName();
-                    if (!NON_CONTAINER_NODES.contains(name)) {
-                        nodes.add(name);
-                    }
-                }
-            }
-
-            if (containers != null) {
-                for (String container : containers) {
-                    if (nodes.contains(container)) {
-                        nodes.remove(container);
-                        continue;
-                    }
-                    node.addNode(container, "hst:component");
-                }
-            }
-            for (String name : nodes) {
-                node.getNode(name).remove();
-            }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
+        return JcrUtilities.getMultiValueProperty(template, TemplateDAO.HST_CONTAINERS);
     }
 
     public Component resolveComponent(Component component) {
