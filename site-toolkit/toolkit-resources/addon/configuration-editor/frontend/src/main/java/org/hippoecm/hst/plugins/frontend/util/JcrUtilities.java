@@ -75,10 +75,12 @@ public class JcrUtilities {
     }
 
     public static boolean hasProperty(JcrNodeModel model, String property) {
-        try {
-            return model.getNode().hasProperty(property);
-        } catch (RepositoryException e) {
-            log.error("Failed to check if property " + property + " exists", e);
+        if (model.getNode() != null) {
+            try {
+                return model.getNode().hasProperty(property);
+            } catch (RepositoryException e) {
+                log.error("Failed to check if property " + property + " exists", e);
+            }
         }
         return false;
     }
