@@ -19,13 +19,7 @@
     <wicket:extend>
       <p><wicket:message key="intro">Intro</wicket:message></p>  
       <fieldset>
-       <legend><wicket:message key="fieldset.legend">Detials</wicket:message></legend>
-        <!--
-        <div>
-          <label for="name"><wicket:message key="name.label">Name label</wicket:message></label>
-          <input type="text" wicket:id="name" name="name"/>
-         </div>
-        -->
+       <legend><wicket:message key="fieldset.legend">Details</wicket:message></legend>
         <div>
           <label for="renderPath"><wicket:message key="renderPath.label">RenderPath label</wicket:message></label>
           <input type="text" wicket:id="renderPath" name="renderPath"/>
@@ -34,21 +28,12 @@
           <label for="containers"><wicket::message key="containers.label">Containers</wicket::message></label>
           <a href="#" wicket:id="addContainer" class='button'><wicket::message key="containers.add.label">add name of container specified in template</wicket::message></a>
         </div>
-        <table class='parameters'>
+        <table class="parameters">
             <tr><th>name&nbsp;</th><th>delete&nbsp;</th></tr>
             <tr wicket:id="containers">
              <td><input type="text" wicket:id="containerName" /></td><td><a wicket:id="removeContainer"><em>X</em></a></td>
             </tr>
         </table>
-        <!--
-        <div>
-          <ul>
-            <li wicket:id="containers">
-              <input type="text" wicket:id="containerName" /> <a wicket:id="removeContainer"><em>X</em></a>
-            </li>
-          </ul>
-        </div>
-       -->
       </fieldset>
 
       <div wicket:id="description">[ Template description ]</div>

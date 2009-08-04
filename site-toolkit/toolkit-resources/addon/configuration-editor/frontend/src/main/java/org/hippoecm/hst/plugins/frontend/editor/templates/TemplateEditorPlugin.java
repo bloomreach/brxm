@@ -32,7 +32,6 @@ import org.hippoecm.hst.plugins.frontend.editor.dao.EditorDAO;
 import org.hippoecm.hst.plugins.frontend.editor.dao.TemplateDAO;
 import org.hippoecm.hst.plugins.frontend.editor.description.DescriptionPanel;
 import org.hippoecm.hst.plugins.frontend.editor.domain.Template;
-import org.hippoecm.hst.plugins.frontend.editor.validators.NodeUniqueValidator;
 
 public class TemplateEditorPlugin extends BasicEditorPlugin<Template> {
     private static final long serialVersionUID = 1L;
@@ -45,15 +44,8 @@ public class TemplateEditorPlugin extends BasicEditorPlugin<Template> {
 
         form.add(new DescriptionPanel("description", form.getInnermostModel(), context, config));
 
-        //Readonly name widget
-        FormComponent fc = new RequiredTextField("name");
-        fc.setOutputMarkupId(true);
-        fc.add(new NodeUniqueValidator<Template>(this));
-        fc.setEnabled(false);
-        form.add(fc);
-
         //Render path widget
-        fc = new RequiredTextField("renderPath");
+        FormComponent fc = new RequiredTextField("renderPath");
         fc.setOutputMarkupId(true);
         form.add(fc);
 
