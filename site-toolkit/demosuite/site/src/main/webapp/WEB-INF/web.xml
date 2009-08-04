@@ -130,6 +130,15 @@
         <servlet-class>org.hippoecm.hst.servlet.StaticResourceServlet</servlet-class>
     </servlet>
     
+    <servlet>
+        <servlet-name>YUIResourceServlet</servlet-name>
+        <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
+        <init-param>
+            <param-name>jarPathPrefix</param-name>
+            <param-value>org/onehippo/yui/inc/2.6.0/</param-value>
+        </init-param>
+    </servlet>
+    
 	<servlet-mapping>
 	    <servlet-name>HstContainerServlet</servlet-name>
 	    <url-pattern>/preview/*</url-pattern>
@@ -149,7 +158,12 @@
         <servlet-name>StaticResourceServlet</servlet-name>
         <url-pattern>/staticresource/*</url-pattern>
     </servlet-mapping>
-
+    
+    <servlet-mapping>
+        <servlet-name>YUIResourceServlet</servlet-name>
+        <url-pattern>/javascript/yui/*</url-pattern>
+    </servlet-mapping>
+        
     <!-- The Usual Welcome File List -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

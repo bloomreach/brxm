@@ -121,6 +121,14 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.webflow</groupId>
+      <artifactId>org.springframework.js</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.yui</groupId>
+      <artifactId>yui-2.xx-sources</artifactId>
+    </dependency>
     <!-- temporarily added as long as in sandbox -->
     <dependency>
       <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>

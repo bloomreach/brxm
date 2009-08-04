@@ -1,0 +1,164 @@
+.yui-editor-container {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    z-index: 999; /* So Safari behaves */
+}
+
+.editor-hidden {
+    visibility: hidden;
+    top: -9999px;
+    left: -9999px;
+    position: absolute;
+}
+
+.inline-editor-editor {
+    visibility: hidden;
+    position: absolute;
+}
+
+.inline-editor-toolbar {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+}
+
+/* FIXME hardcoded image urls */
+
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-editcode span.yui-toolbar-icon {
+    background-image: url( /site/images/icons/html_editor.gif );
+    background-position: 0 1px;
+    left: 5px;
+}
+.yui-skin-sam .yui-toolbar-container .yui-button-editcode-selected span.yui-toolbar-icon {
+    background-image: url( /site/images/icons/html_editor.gif );
+    background-position: 0 1px;
+    left: 5px;
+}
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-save span.yui-toolbar-icon {
+    background-image: url( /site/images/icons/document-save-16.png );
+    background-position: 1px 0px;
+    margin-top: 1px;
+    margin-left: 6px;
+}
+.yui-skin-sam .yui-toolbar-container .yui-button-save-selected span.yui-toolbar-icon {
+    background-image: url( /site/images/icons/document-save-16.png );
+    background-position: 1px 0px;
+}
+
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-close span.yui-toolbar-icon {
+    background-image: url( /site/images/icons/document-revert-16.png );
+    background-position: 1px 0px;
+    margin-left: 6px;
+}
+.yui-skin-sam .yui-toolbar-container .yui-button-close-selected span.yui-toolbar-icon {
+    background-image: url( /site/images/icons/document-revert-16.png );
+    background-position: 1px 0px;
+}
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-requestPublication span.yui-toolbar-icon {
+    background-image: url( /site/images/icons/workflow-requestpublish-16.png );
+    background-position: 1px 0px;
+    margin-top: 1px;
+    margin-left: 6px;
+}
+.yui-skin-sam .yui-toolbar-container .yui-button-requestPublication-selected span.yui-toolbar-icon {
+    background-image: url( /site/images/icons/workflow-requestpublish-16.png );
+    background-position: 1px 0px;
+}
+
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-editInCMS span.yui-toolbar-icon {
+    background-image: url( /site/images/icons/edit-16.png );
+    background-position: 1px 0px;
+    margin-top: 1px;
+    margin-left: 6px;
+}
+.yui-skin-sam .yui-toolbar-container .yui-button-editInCMS-selected span.yui-toolbar-icon {
+    background-image: url( /site/images/icons/edit-16.png );
+    background-position: 1px 0px;
+}
+
+/* Finetuning & fixes for inline editor - BLOG- */
+/* moved here from screen.css so it only loads when inline editing is enabled */
+
+.yui-toolbar-container {
+    position: relative;
+}
+
+.yui-toolbar-container div.yui-toolbar-group-fileactions {
+    position: absolute;
+    right: 12px;
+}
+
+.inline-editor-editable-container span.editable {
+    border: 1px solid white;
+    font-style: normal;
+    display: block;
+}
+
+.inline-editor-editable-container span.inline {
+    display: inline;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.inline-editor-editable-container span.editable:hover {
+    cursor: pointer;
+    border: 1px dashed black;
+    background-image: url(/site/images/icons/edit-16.png);
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+/* removes borders and such from span elements inside the editor, when editing text that contains an span element */
+
+.inline-editor-editable-container span.editable span {
+    border: none;
+    padding: 0;
+    margin-bottom: 0;
+    display: inline;
+}
+
+div#feedbackPanel {
+    background: transparent url(/site/javascript/yui/assets/skins/sam/sprite.png) repeat-x scroll 0 0;
+    border: 1px solid #808080;
+    font-family: arial,helvetica,clean,sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 3px;
+    text-align: center;
+    z-index: 998;
+}
+
+/* CSS hack for vertical alignment of the content*/
+div#feedbackPanel .vert-align1 {
+    width: 100%;
+    display: table;
+    height: 50px;
+     #position: relative;
+    overflow: hidden;
+}
+div#feedbackPanel .vert-align2 {
+     #position: absolute;
+     #top: 50%;
+    display: table-cell;
+    vertical-align: middle;
+}
+div#feedbackPanel .vert-align3 {
+     #position: relative;
+     #top: -50%
+     width: 200px;
+     margin-left: auto;
+     margin-right: auto;
+}
+
+/* Override the default Resize CSS and make the handle a little bigger. */
+.inline-editor-editable-container .yui-resize-handle-br {
+    /* Make the handle a little bigger than the default */
+    height: 11px;
+    width: 11px;
+    /* Resposition the image */
+    background-position: -20px -60px;
+    /* Kill the hover on the handle */
+    background-color: transparent;
+}

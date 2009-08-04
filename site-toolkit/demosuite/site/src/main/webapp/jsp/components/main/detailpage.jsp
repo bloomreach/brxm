@@ -19,6 +19,23 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<hst:element var="yuiLoader" name="script">
+  <hst:attribute name="id" value="yuiloader" />
+  <hst:attribute name="type" value="text/javascript" />
+  <hst:attribute name="language" value="javascript" />
+  <hst:attribute name="src" value="/site/javascript/yui/yuiloader/yuiloader-min.js" />
+</hst:element>
+<hst:head-contribution keyHint="yuiLoader" element="${yuiLoader}" />
+<hst:element var="inlineEditing" name="script">
+  <hst:attribute name="id" value="inlineEditing" />
+  <hst:attribute name="type" value="text/javascript" />
+  <hst:attribute name="language" value="javascript" />
+  <hst:attribute name="src" value="/site/javascript/inline-editing.js" />
+</hst:element>
+<hst:head-contribution keyHint="inlineEditing" element="${inlineEditing}" />
+
+<c:set var="isEditable" value="true"/>
+
 <c:if test="${not empty goBackLink}">
 <div align="right">
   <a href="<hst:link path="${goBackLink}"/>">
@@ -28,12 +45,33 @@
 </c:if>
 
 <div class="yui-u">
+  <div id="editable_cont" class="inline-editor-editable-container">
     <h2>${document.title}</h2>
-    <p>${document.summary}</p>
-    <p><hst:html hippohtml="${document.html}"/></p>
-    <c:if test="${not empty document.image}">
-        <img src="<hst:link hippobean="${document.image.picture}"/>"/>
-    </c:if>
+    <p>
+        <c:choose>
+            <c:when test="${isEditable}">
+                <span class="editable" id="demosite:summary">${document.summary}</span>
+            </c:when>
+            <c:otherwise>
+                ${document.summary}
+            </c:otherwise>
+        </c:choose>
+    </p>
+    <p>
+        <c:choose>
+            <c:when test="${isEditable}">
+                <span class="editable inline" id="demosite:body"><hst:html hippohtml="${document.html}"/></span>
+            </c:when>
+            <c:otherwise>
+                <hst:html hippohtml="${document.html}"/>
+            </c:otherwise>
+        </c:choose>
+    </p>
+  </div>
+  
+  <c:if test="${not empty document.image}">
+    <img src="<hst:link hippobean="${document.image.picture}"/>"/>
+  </c:if>
     
   <hst:actionURL var="addURL">
     <hst:param name="type" value="add"/>
@@ -74,3 +112,63 @@
   
 </div>
 
+<form id="editorForm" method="post" action="<hst:resourceURL/>">
+  <div class="yui-skin-sam">
+    <input type="hidden" name="nodepath" value="${document.path}"/>
+    <input type="hidden" name="customnodepath" value=""/>
+    <input type="hidden" name="field" value=""/>
+    <input type="hidden" name="workflowAction" value=""/>
+    <textarea id="editor" name="editor" class="inline-editor-editor" cols="50" rows="5"></textarea>
+    <span id="editorToolbar" class="inline-editor-toolbar">
+      <img src="/site/images/icons/document-save-16.png" id="editorToolbar_save" alt="Save" title="Save"/>
+      <img src="/site/images/icons/document-revert-16.png" id="editorToolbar_close" alt="Close without saving" title="Close without saving"/>
+      <img src="/site/images/icons/workflow-requestpublish-16.png" id="editorToolbar_requestPublication" alt="Request publication" title="Request publication"/>
+      <img src="/site/images/icons/edit-16.png" id="editorToolbar_editInCMS" alt="Edit in CMS" title="Edit in CMS"/>
+    </span>
+  </div>
+</form>
+
+<script type="text/javascript" language="javascript">
+//Instantiate and configure Loader:
+var loader = new YAHOO.util.YUILoader({
+
+    // Identify the components you want to load.  Loader will automatically identify
+    // any additional dependencies required for the specified components.
+    require: ["container", "menu", "button", "editor", "json", "resize"],
+
+    // Configure loader to retrieve the libraries locally
+    base: '/site/javascript/yui/',
+
+    // Configure loader to pull in optional dependencies.  For example, animation
+    // is an optional dependency for slider.
+    loadOptional: true,
+
+    // The function to call when all script/css resources have been loaded
+    onSuccess: function() {
+        //this is your callback function; you can use
+        //this space to call all of your instantiation
+        //logic for the components you just loaded.
+        
+        // Load the edited css for the inline editor.
+        // This must be done after the loader has been fully instantiated, so the css loads
+        // after the default css (skin.css). That way, the element classes can be overwritten
+        // by our own css file.
+        var addcss=document.createElement("link")
+        addcss.setAttribute("rel", "stylesheet")
+        addcss.setAttribute("type", "text/css")
+        addcss.setAttribute("href", "/site/css/inline-editing.css")
+        document.getElementsByTagName("head")[0].appendChild(addcss);
+
+        // Initialize editor
+        initEditor("editable_cont", "editorForm", "editor", "editor2", "editorToolbar");
+    },
+
+    // Configure the Get utility to timeout after 10 seconds for any given node insert
+    timeout: 10000
+});
+
+// Load the files using the insert() method. The insert method takes an optional
+// configuration object, and in this case we have configured everything in
+// the constructor, so we don't need to pass anything to insert().
+loader.insert();
+</script>
