@@ -124,7 +124,7 @@ public class ComponentDAO extends EditorDAO<Component> {
 
         //save reference stuff
         if (component.isReference()) {
-            JcrUtilities.updateProperty(model, HST_REFERENCECOMPONENT, encodeReference(component.getReferenceName()));
+            JcrUtilities.updateProperty(model, HST_REFERENCECOMPONENT, component.getReferenceName());
         }
 
         //save componentClassName
@@ -209,10 +209,6 @@ public class ComponentDAO extends EditorDAO<Component> {
     protected String getAbsoluteReferencePath(String referenceName) {
         String relPath = getHstContext().component.decodeReferenceName(referenceName);
         return getHstContext().component.absolutePath(relPath);
-    }
-
-    protected String encodeReference(String name) {
-        return name;
     }
 
 }

@@ -39,8 +39,4 @@ public class PageDAO extends ComponentDAO {
         return super.getAbsoluteReferencePath(name);
     }
 
-    @Override
-    protected String encodeReference(String name) {
-        return getHstContext().page.encodeReferenceName(name);
-    }
 }
