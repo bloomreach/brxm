@@ -17,6 +17,7 @@
 package org.hippoecm.hst.plugins.frontend.editor.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class ComponentDAO extends EditorDAO<Component> {
         NON_CONTAINER_NODES.add(DescriptionDAO.HST_ICON);
     }
 
-    private DescriptionDAO descriptionDao;
+    private final DescriptionDAO descriptionDao;
 
     public ComponentDAO(IPluginContext context, String namespace) {
         super(context, namespace);
@@ -64,10 +65,16 @@ public class ComponentDAO extends EditorDAO<Component> {
         Component component = new Component(model, desc);
 
         //Load name
-        try {
-            component.setName(model.getNode().getName());
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
+        if (model.getItemModel().exists()) {
+            try {
+                component.setName(model.getNode().getName());
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        } else {
+            String path = model.getItemModel().getPath();
+            String name = path.substring(path.lastIndexOf('/') + 1);
+            component.setName(name);
         }
 
         if (JcrUtilities.hasProperty(model, HST_REFERENCECOMPONENT)) {
@@ -93,11 +100,18 @@ public class ComponentDAO extends EditorDAO<Component> {
             component.setServerResourcePath(JcrUtilities.getProperty(model, HST_SERVERESOURCEPATH));
         }
 
-        List<String> names = JcrUtilities.getMultiValueProperty(model, HST_PARAMETERNAMES);
-        if (names != null && names.size() > 0) {
-            List<String> values = JcrUtilities.getMultiValueProperty(model, HST_PARAMETERVALUES);
-            for (int i = 0; i < names.size(); i++) {
-                component.addParameter(names.get(i), values.get(i));
+        if (JcrUtilities.hasProperty(model, HST_PARAMETERNAMES)) {
+            List<String> names = JcrUtilities.getMultiValueProperty(model, HST_PARAMETERNAMES);
+            if (names != null && names.size() > 0) {
+                String[] values = new String[names.size()];
+                if (JcrUtilities.hasProperty(model, HST_PARAMETERVALUES)) {
+                    values = JcrUtilities.getMultiValueProperty(model, HST_PARAMETERVALUES).toArray(values);
+                } else {
+                    Arrays.fill(values, "");
+                }
+                for (int i = 0; i < names.size(); i++) {
+                    component.addParameter(names.get(i), values[i]);
+                }
             }
         }
         return component;
@@ -140,6 +154,7 @@ public class ComponentDAO extends EditorDAO<Component> {
         descriptionDao.persist(component, model);
     }
 
+    @Deprecated
     private void updateTemplate(Component component, JcrNodeModel model) {
         String templateName;
         if (component.isReference()) {
