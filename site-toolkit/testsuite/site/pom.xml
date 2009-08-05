@@ -167,9 +167,6 @@
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <webAppConfig>
             <contextPath>/site</contextPath>
-            <baseResource implementation="org.mortbay.resource.ResourceCollection">
-              <resourcesAsCSV>src/main/webapp, ${project.build.directory}/${project.build.finalName}</resourcesAsCSV>
-            </baseResource>
             <tempDirectory>${project.build.directory}/work</tempDirectory>
           </webAppConfig>
           <connectors>

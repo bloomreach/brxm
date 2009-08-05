@@ -91,7 +91,7 @@
         <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
         <init-param>
             <param-name>jarPathPrefix</param-name>
-            <param-value>org/onehippo/yui/inc/2.6.0/</param-value>
+            <param-value>/org/onehippo/yui/inc/2.6.0</param-value>
         </init-param>
     </servlet>
     
