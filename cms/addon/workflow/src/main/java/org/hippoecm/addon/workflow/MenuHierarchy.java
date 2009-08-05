@@ -104,6 +104,12 @@ class MenuHierarchy {
                 }
             }
         }
+        if(submenus.containsKey("custom")) {
+            MenuHierarchy submenu = submenus.get("custom");
+            for(ActionDescription action : submenu.items) {
+                put(action);
+            }
+        }
     }
 
     public void flatten() {
