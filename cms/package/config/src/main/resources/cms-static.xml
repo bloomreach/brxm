@@ -496,6 +496,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
+    <sv:property sv:name="extension.check" sv:type="String">
+      <sv:value>service.check</sv:value>
+    </sv:property>
     <sv:property sv:name="extension.logout" sv:type="String">
       <sv:value>service.logout</sv:value>
     </sv:property>
@@ -506,6 +509,7 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.root.HeaderPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.check</sv:value>
       <sv:value>extension.logout</sv:value>
       <sv:value>extension.shortcuts</sv:value>
     </sv:property>
@@ -1204,6 +1208,17 @@
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.edit.AutoEditPlugin</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="checkPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.root.CheckPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.check</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="logoutPlugin">
