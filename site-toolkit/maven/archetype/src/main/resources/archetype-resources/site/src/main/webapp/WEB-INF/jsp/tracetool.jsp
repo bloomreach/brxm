@@ -25,13 +25,11 @@ String traceLogLevelName = traceLogEventBuffer.getLevelName();
 <hst:element var="hstTraceToolStyles" name="style">
   <hst:attribute name="id" value="hstTraceToolStyles" />
   <hst:attribute name="type" value="text/css" />
-  @import url('<hst:link path="/javascript/dojo-1.3.0/dijit/themes/tundra/tundra.css"/>');
-  @import url('<hst:link path="/javascript/dojo-1.3.0/dojox/layout/resources/FloatingPane.css"/>');
-  @import url('<hst:link path="/javascript/dojo-1.3.0/dojox/layout/resources/ResizeHandle.css"/>');
+  @import url('<hst:link path="/javascript/dojo/dijit/themes/tundra/tundra.css"/>');
 </hst:element>
 <hst:head-contribution keyHint="hstTraceToolStyles" element="${hstTraceToolStyles}" />
 
-<hst:link var="dojoPath" path="/javascript/dojo-1.3.0/dojo/dojo.js"/>
+<hst:link var="dojoPath" path="/javascript/dojo/dojo/dojo.js"/>
 <hst:element var="hstTraceToolDojoInclude" name="script">
   <hst:attribute name="id" value="hstTraceToolDojoInclude" />
   <hst:attribute name="language" value="javascript" />
@@ -45,7 +43,6 @@ String traceLogLevelName = traceLogEventBuffer.getLevelName();
   <hst:attribute name="language" value="javascript" />
   <hst:attribute name="type" value="text/javascript" />
   dojo.require("dojo.parser");
-  dojo.require("dojox.layout.FloatingPane");
   dojo.require("dijit.layout.TabContainer");
   dojo.require("dijit.layout.ContentPane");
 </hst:element>
@@ -53,34 +50,39 @@ String traceLogLevelName = traceLogEventBuffer.getLevelName();
 
 <hst:resourceURL var="logResourcePath" resourceId="log" />
 
-<div dojoType="dojox.layout.FloatingPane" title="HST Trace" class="tundra"
-     resizable="true" dockable="true" maxable="true" closable="true"
-     style="width: 600px; height: 400px; visibility: hidden;">
-  <div dojoType="dijit.layout.TabContainer">
-    <div dojoType="dijit.layout.ContentPane" title="Logs"
-         href="${logResourcePath}" preventCache="true" refreshOnShow="true"
-         style="font-size: 10px; white-space: pre">
-    </div>
-    <div dojoType="dijit.layout.ContentPane" title="Settings">
-      <form name="theForm">
-        <div>
-          Log Level: 
-          <select id="<hst:namespace/>logLevel">
-            <option value="DEBUG" <%=("DEBUG".equals(traceLogLevelName) ? "selected" : "")%>>DEBUG</option>
-            <option value="INFO" <%=("INFO".equals(traceLogLevelName) ? "selected" : "")%>>INFO</option>
-            <option value="WARN" <%=("WARN".equals(traceLogLevelName) ? "selected" : "")%>>WARN</option>
-            <option value="ERROR" <%=("ERROR".equals(traceLogLevelName) ? "selected" : "")%>>ERROR</option>
-          </select>
-          <input id="<hst:namespace/>logLevelSave" type="button" value="Save"/>
-        </div>
-      </form>
-    </div>
+<a href="javascript:toggleHstTraceWindow()">>> HST Traces</a>
+<div id="hstTraceTabContainer" dojoType="dijit.layout.TabContainer" class="tundra" style="DISPLAY: 'none'; WIDTH: 100%; HEIGHT: 400px">
+  <div dojoType="dijit.layout.ContentPane" title="Logs"
+       href="${logResourcePath}" preventCache="true" refreshOnShow="true"
+       style="font-size: 10px; white-space: pre">
+  </div>
+  <div dojoType="dijit.layout.ContentPane" title="Settings">
+    <form name="theForm">
+      <div>
+        Log Level: 
+        <select id="<hst:namespace/>logLevel">
+          <option value="DEBUG" <%=("DEBUG".equals(traceLogLevelName) ? "selected" : "")%>>DEBUG</option>
+          <option value="INFO" <%=("INFO".equals(traceLogLevelName) ? "selected" : "")%>>INFO</option>
+          <option value="WARN" <%=("WARN".equals(traceLogLevelName) ? "selected" : "")%>>WARN</option>
+          <option value="ERROR" <%=("ERROR".equals(traceLogLevelName) ? "selected" : "")%>>ERROR</option>
+        </select>
+        <input id="<hst:namespace/>logLevelSave" type="button" value="Save"/>
+      </div>
+    </form>
   </div>
 </div>
 
 <hst:resourceURL var="logLevelUrl" resourceId="level" />
 
 <script type="text/javascript" language="javascript">
+function toggleHstTraceWindow() {
+    var hstTraceTabContainer = document.getElementById("hstTraceTabContainer");
+    if (hstTraceTabContainer.style.display == "") {
+        hstTraceTabContainer.style.display = "none";
+    } else {
+        hstTraceTabContainer.style.display = "";
+    }
+}
 dojo.addOnLoad(function() {
     var btnSaveNode = dojo.byId("<hst:namespace/>logLevelSave");
     dojo.connect(btnSaveNode, "onclick", function() {

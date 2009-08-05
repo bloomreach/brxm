@@ -196,35 +196,6 @@
           <source>1.5</source>
         </configuration>
       </plugin>
-      
-      <!-- Include DOJO Library -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.dojotoolkit</groupId>
-                  <artifactId>dojo</artifactId>
-                  <version>1.3.0</version>
-                  <type>zip</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/${project.build.finalName}/javascript</outputDirectory>
-                  <includes>**/*</includes>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      
     </plugins>
     
     <resources>

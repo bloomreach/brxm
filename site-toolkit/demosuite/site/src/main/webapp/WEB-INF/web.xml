@@ -139,6 +139,11 @@
         </init-param>
     </servlet>
     
+    <servlet>
+        <servlet-name>DojoResourceServlet</servlet-name>
+        <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
+    </servlet>
+    
 	<servlet-mapping>
 	    <servlet-name>HstContainerServlet</servlet-name>
 	    <url-pattern>/preview/*</url-pattern>
@@ -162,6 +167,11 @@
     <servlet-mapping>
         <servlet-name>YUIResourceServlet</servlet-name>
         <url-pattern>/javascript/yui/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>DojoResourceServlet</servlet-name>
+        <url-pattern>/javascript/dojo/*</url-pattern>
     </servlet-mapping>
         
     <!-- The Usual Welcome File List -->
