@@ -133,6 +133,7 @@
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>default</sv:value>
+      <sv:value>custom</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
