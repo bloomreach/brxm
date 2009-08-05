@@ -78,7 +78,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         if (parameterMap == null) {
             parameterMap = new HashMap<String, String []>();
 
-            if (this.requestContext.getBaseURL().getActionWindowReferenceNamespace() != null) {
+            if (HstRequest.ACTION_PHASE.equals(lifecyclePhase)) {
                 Map<String, String []> actionParams = this.requestContext.getBaseURL().getActionParameterMap();
                 
                 if (actionParams != null) {
@@ -89,6 +89,12 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
                     }
                 }
                 
+                for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
+                    String paramName = (String) paramNames.nextElement();
+                    String [] paramValues = super.getParameterValues(paramName);
+                    parameterMap.put(paramName, paramValues);
+                }
+            } else if (HstRequest.RESOURCE_PHASE.equals(lifecyclePhase)) {
                 for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
                     String paramName = (String) paramNames.nextElement();
                     String [] paramValues = super.getParameterValues(paramName);
