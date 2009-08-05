@@ -161,4 +161,73 @@ public class Detail extends BasePersistenceHstComponent {
         } else if ("remove".equals(type)) {
         }
     }
+    
+    @Override
+    public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
+        boolean succeeded = true;
+        String errorMessage = "";
+        
+        String workflowAction = request.getParameter("workflowAction");
+        HippoBean n = this.getContentBean(request);
+        String path = n.getPath();
+        String physicalPath = path.replace("/preview/demosite/hst:content/", "/content/documents/demosite/");
+        
+        String field = request.getParameter("field");
+        
+        final boolean saveDocument = "save".equals(workflowAction);
+        final boolean requestPublication = "requestPublication".equals(workflowAction);
+        
+        if (saveDocument || requestPublication) {
+            String documentPath = this.getContentBean(request).getPath();
+            Session persistableSession = null;
+            WorkflowPersistenceManager cpm = null;
+
+            try {
+                // retrieves writable session. NOTE: this session should be logged out manually!
+                persistableSession = getPersistableSession(request);
+                cpm = getWorkflowPersistenceManager(persistableSession);
+                cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                        if (requestPublication) {
+                            FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
+                            fraw.requestPublication();
+                        }
+                    }
+                });
+
+                BaseBean page = (BaseBean) cpm.getObject(documentPath);
+
+                if (saveDocument) {
+                    String content = request.getParameter("editor");
+                    
+                    if ("demosite:summary".equals(field)) {
+                        page.setSummary(content);
+                    } else if ("demosite:body".equals(field)) {
+                        page.setHtml(content);
+                    }
+                }
+
+                // update now
+                cpm.update(page);
+            } catch (Exception e) {
+                log.warn("Failed to create a comment: ", e);
+
+                if (cpm != null) {
+                    try {
+                        cpm.refresh();
+                    } catch (ContentPersistenceException e1) {
+                        log.warn("Failed to refresh: ", e);
+                    }
+                }
+            } finally {
+                if (persistableSession != null) {
+                    persistableSession.logout();
+                }
+            }
+        }
+        
+        request.setAttribute("payload", "{\"success\": " + succeeded + ", \"message\": \"" + errorMessage + "\"}");
+        response.setServeResourcePath("/jsp/components/main/detailpage-ajaxresult.jsp");
+    }
+
 }
