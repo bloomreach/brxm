@@ -34,8 +34,6 @@
 </hst:element>
 <hst:head-contribution keyHint="inlineEditing" element="${inlineEditing}" />
 
-<c:set var="isEditable" value="true"/>
-
 <c:if test="${not empty goBackLink}">
 <div align="right">
   <a href="<hst:link path="${goBackLink}"/>">
@@ -49,7 +47,7 @@
     <h2>${document.title}</h2>
     <p>
         <c:choose>
-            <c:when test="${isEditable}">
+            <c:when test="${isPreview}">
                 <span class="editable" id="demosite:summary">${document.summary}</span>
             </c:when>
             <c:otherwise>
@@ -59,7 +57,7 @@
     </p>
     <p>
         <c:choose>
-            <c:when test="${isEditable}">
+            <c:when test="${isPreview}">
                 <span class="editable inline" id="demosite:body"><hst:html hippohtml="${document.html}"/></span>
             </c:when>
             <c:otherwise>

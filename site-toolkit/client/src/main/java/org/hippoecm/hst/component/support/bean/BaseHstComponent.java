@@ -79,6 +79,10 @@ import org.xml.sax.SAXException;
  */
 public class BaseHstComponent extends GenericHstComponent {
 
+    public static final String IS_PREVIEW_ATTRIBUTE = BaseHstComponent.class.getName() + ".isPreview";
+    
+    private static final String PREVIEW_REPOSITORY_ENTRY_PATH = "preview.repository.entry.path";
+
     private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);
 
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "beans-annotated-classes";
@@ -135,6 +139,18 @@ public class BaseHstComponent extends GenericHstComponent {
         return PathUtils.normalizePath(getHstSite(request).getContentPath());
     }
     
+    public boolean isPreview(HstRequest request) {
+        HstRequestContext hstRequestContext = request.getRequestContext();
+        Boolean isPreview = (Boolean) hstRequestContext.getAttribute(IS_PREVIEW_ATTRIBUTE);
+        
+        if (isPreview == null) {
+            String previewRepositoryEntryPath = request.getRequestContext().getContainerConfiguration().getString(PREVIEW_REPOSITORY_ENTRY_PATH, "");
+            isPreview = (getSiteContentBasePath(request).startsWith(previewRepositoryEntryPath) ? Boolean.TRUE : Boolean.FALSE);
+            hstRequestContext.setAttribute(IS_PREVIEW_ATTRIBUTE, isPreview);
+        }
+        
+        return isPreview.booleanValue();
+    }
     
     /**
      * Use {@link BaseHstComponent#getContentBean(HstRequest)}
