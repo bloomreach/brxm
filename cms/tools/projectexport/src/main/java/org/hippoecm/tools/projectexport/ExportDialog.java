@@ -55,8 +55,10 @@ public class ExportDialog extends AbstractDialog {
     private String location;
     private Label projectNameComponent;
     private Button okComponent;
+    private DownloadLink downloadComponent;
     private ExportTree treeComponent;
     private Label statusComponent;
+    private Form formComponent;
 
     public ExportDialog() {
         this.setOutputMarkupId(true);
@@ -64,42 +66,54 @@ public class ExportDialog extends AbstractDialog {
         this.setCancelVisible(false);
         add(statusComponent = new Label("status", new Model("Select a project to be exported and enter the server side file system location of the subversion project to update.  Be sure to only use this feature using administrative rights.  Check the log file for errors afterwards!")));
         statusComponent.setOutputMarkupId(true);
-        add(new RequiredTextField("input", new PropertyModel(this, "location")));
-        add(okComponent = new AjaxButton("ok", this) {
+        add(formComponent = new Form("form"));
+        formComponent.add(new RequiredTextField("input", new PropertyModel(this, "location")));
+        formComponent.add(okComponent = new AjaxButton("ok") {
+            @Override
             public void onSubmit(AjaxRequestTarget target, Form form) {
-                okComponent.setEnabled(false);
-                ExportDialog.this.addOrReplace(feedback = new FeedbackPanel("tree"));
-                statusComponent.setModel(new Model("Exported; check log files in case of errors"));
-                target.addComponent(ExportDialog.this);
-                if(projectName == null || projectName.equals(""))
-                    return;
                 try {
-                    ((ExportTreeModel)treeComponent.getModelObject()).getExporter().selectProject(projectName);
-                    File basedir = new File(location);
-                    if(basedir.exists()) {
-                        if(!basedir.isDirectory()) {
-                            throw new IOException("invalid base directory");
-                        }
-                        if(!new File(basedir, "pom.xml").exists()) {
-                            throw new IOException("invalid project structure");
-                        }
+                    if (projectName == null || projectName.equals("")) {
+                        log.error("no project selected for export");
+                        return;
                     } else {
-                        if(!basedir.getParentFile().isDirectory()) {
-                            throw new IOException("path does not exist");
+                        ((ExportTreeModel)treeComponent.getModelObject()).getExporter().selectProject(projectName);
+                        File basedir = new File(location);
+                        if (basedir.exists()) {
+                            if (!basedir.isDirectory()) {
+                                throw new IOException("invalid base directory");
+                            }
+                            if (!new File(basedir, "pom.xml").exists()) {
+                                throw new IOException("invalid project structure");
+                            }
+                        } else {
+                            if (!basedir.getParentFile().isDirectory()) {
+                                throw new IOException("path does not exist");
+                            }
+                            basedir.mkdir();
                         }
-                        basedir.mkdir();
+                        ((ExportTreeModel)treeComponent.getModelObject()).getExporter().exportProject(basedir);
                     }
-                    ((ExportTreeModel)treeComponent.getModelObject()).getExporter().exportProject(basedir);
                 } catch(RepositoryException ex) {
                     log.error("failed to export project ", ex);
+                    error("failed to export project ");
                 } catch(IOException ex) {
                     log.error("failed to export project ", ex);
+                    error("failed to export project ");
                 } catch(NotExportableException ex) {
                     log.error("failed to export project ", ex);
                 }
+                okComponent.setEnabled(false);
+                downloadComponent.setEnabled(false);
+                ExportDialog.this.addOrReplace(feedback = new FeedbackPanel("tree"));
+                feedback.setOutputMarkupId(true);
+                treeComponent = null;
+                statusComponent.setModel(new Model("Operation completed; check log files in case of errors"));
+                target.addComponent(ExportDialog.this);
+                // shameless/full hack
+                target.appendJavascript("Wicket.Window.unloadConfirmation=false;window.location.reload();");
             }
         });
-        add(new DownloadLink("download", new Model("download")) {
+        formComponent.add(downloadComponent = new DownloadLink("download", new Model("download")) {
             protected String getFilename() {
                 return projectName + ".zip";
             }
@@ -111,6 +125,7 @@ public class ExportDialog extends AbstractDialog {
                     final PipedOutputStream ostream = new PipedOutputStream();
                     final PipedInputStream pstream = new PipedInputStream(ostream);
                     Thread thread = new Thread() {
+                        @Override
                         public void run() {
                             try {
                                 try {
@@ -157,6 +172,7 @@ public class ExportDialog extends AbstractDialog {
     
     private void loadtree(AjaxRequestTarget target) {
         addOrReplace(treeComponent = new ExportTree("tree", new ExportTreeModel(), new Component[] { projectNameComponent } ));
+        treeComponent.setOutputMarkupId(true);
         treeComponent.setRootLess(true);
         treeComponent.getTreeState().setAllowSelectMultiple(false);
         treeComponent.getTreeState().addTreeStateListener(new ITreeStateListener() {

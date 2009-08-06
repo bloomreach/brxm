@@ -238,7 +238,7 @@ class JcrDiff {
                 }
                 ++index2;
             } else {
-                if(excludes.contains(child1.getPath())) {
+                if(!excludes.contains(child1.getPath())) {
                     if (compare(child1, child2) != 1.0) {
                         childrenModified = true;
                         if (visitor != null) {
@@ -267,16 +267,21 @@ class JcrDiff {
     class ComparePropertySet extends TreeSet<Property> {
         public ComparePropertySet() {
             super(new Comparator<Property>() {
-                public boolean equals(Object obj) {
-                    return getClass().equals(obj.getClass());
-                }
-
                 public int compare(Property p1, Property p2) {
                     try {
-                    return p1.getName().compareTo(p2.getName());
+                        return p1.getName().compareTo(p2.getName());
                     } catch(RepositoryException ex) {
                         return 0;
                     }
+                }
+                @Override
+                public boolean equals(Object obj) {
+                    return getClass().equals(obj.getClass());
+                }
+                @Override
+                public int hashCode() {
+                    int hash = 5;
+                    return hash;
                 }
             });
         }
