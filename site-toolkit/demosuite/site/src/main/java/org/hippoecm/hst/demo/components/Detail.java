@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.jcr.Session;
+import javax.servlet.ServletConfig;
 
 import org.hippoecm.hst.component.support.bean.persistency.BasePersistenceHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
@@ -30,6 +31,7 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.demo.beans.BaseBean;
 import org.hippoecm.hst.demo.beans.CommentBean;
 import org.hippoecm.hst.persistence.ContentPersistenceException;
@@ -43,6 +45,21 @@ import org.slf4j.LoggerFactory;
 public class Detail extends BasePersistenceHstComponent {
 
     public static final Logger log = LoggerFactory.getLogger(Detail.class);
+    
+    private String cmsApplicationUrl = "/cms/";
+
+    @Override
+    public void init(ServletConfig servletConfig, ComponentConfiguration componentConfig) throws HstComponentException {
+        super.init(servletConfig, componentConfig);
+        
+        String param = servletConfig.getInitParameter("cmsApplicationUrl");
+        if (param == null) {
+            param = servletConfig.getServletContext().getInitParameter("cmsApplicationUrl");
+        }
+        if (param != null) {
+            cmsApplicationUrl = param;
+        }
+    }
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
@@ -51,6 +68,8 @@ public class Detail extends BasePersistenceHstComponent {
         HippoBean crBean = this.getContentBean(request);
         
         request.setAttribute("isPreview", isPreview(request) ? Boolean.TRUE : Boolean.FALSE);
+        
+        request.setAttribute("cmsApplicationUrl", cmsApplicationUrl);
 
         // we only have a goBackLink for sitemap items that have configured one. 
         String goBackLink = request.getRequestContext().getResolvedSiteMapItem().getParameter("go-back-link");

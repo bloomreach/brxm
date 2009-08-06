@@ -22,7 +22,7 @@
  * 
  */
 
-function initEditor(editableElementsContainerName, editorFormName, richEditorTextAreaName, plainEditorTextAreaName, toolbarContainerName) {
+function initEditor(editableElementsContainerName, editorFormName, richEditorTextAreaName, plainEditorTextAreaName, toolbarContainerName, cmsAppUrl) {
     var Dom = YAHOO.util.Dom,
         Event = YAHOO.util.Event,
         editing = null;
@@ -105,7 +105,7 @@ function initEditor(editableElementsContainerName, editorFormName, richEditorTex
             var formObject = document.getElementById(editorFormName); 
             formObject.workflowAction.value = "close";
     		// FIXME make CMS URL configurable
-            window.open('/basedemo/cms', 'cms');
+            window.open(cmsAppUrl, 'cms');
             close_editor();
         }, myEditor, true);
     	

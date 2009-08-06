@@ -110,7 +110,7 @@
   
 </div>
 
-<form id="editorForm" method="post" action="<hst:resourceURL/>">
+<form id="editorForm" method="post" action="<hst:resourceURL resourceId='inlineEdit' />">
   <div class="yui-skin-sam">
     <input type="hidden" name="nodepath" value="${document.path}"/>
     <input type="hidden" name="customnodepath" value=""/>
@@ -158,7 +158,7 @@ var loader = new YAHOO.util.YUILoader({
         document.getElementsByTagName("head")[0].appendChild(addcss);
 
         // Initialize editor
-        initEditor("editable_cont", "editorForm", "editor", "editor2", "editorToolbar");
+        initEditor("editable_cont", "editorForm", "editor", "editor2", "editorToolbar", "${cmsApplicationUrl}");
     },
 
     // Configure the Get utility to timeout after 10 seconds for any given node insert
