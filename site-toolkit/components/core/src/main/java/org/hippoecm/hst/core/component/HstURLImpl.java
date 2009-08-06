@@ -92,6 +92,7 @@ public class HstURLImpl implements HstURL {
     
     public String toString() {
         HstContainerURL containerURL = this.urlProvider.createURL(this.baseContainerURL, this);
+        containerURL.setResourceId(getResourceID());
         
         try {
             return this.urlProvider.toURLString(containerURL, requestContext);

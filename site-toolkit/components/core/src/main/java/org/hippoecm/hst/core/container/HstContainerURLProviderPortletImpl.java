@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.portlet.BaseURL;
 import javax.portlet.MimeResponse;
 import javax.portlet.PortletResponse;
+import javax.portlet.ResourceURL;
 
 import org.hippoecm.hst.container.HstContainerPortlet;
 import org.hippoecm.hst.container.HstContainerPortletContext;
@@ -97,6 +98,7 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
                     url = mimeResponse.createActionURL();
                 } else if (resourceWindowReferenceNamespace != null) {
                     url = mimeResponse.createResourceURL();
+                    ((ResourceURL) url).setResourceID(containerURL.getResourceId());
                 } else {
                     url = mimeResponse.createRenderURL();
                 }
@@ -171,6 +173,7 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
                     url = mimeResponse.createActionURL();
                 } else if (resourceWindowReferenceNamespace != null) {
                     url = mimeResponse.createResourceURL();
+                    ((ResourceURL) url).setResourceID(containerURL.getResourceId());
                 } else {
                     url = mimeResponse.createRenderURL();
                 }
