@@ -17,6 +17,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
+<%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
 
 <%
 String hstPortletTitle = "News Demo";
@@ -59,7 +60,16 @@ if (prefValues.containsKey("hstPathInfo")) {
       <tr>
         <th>Path:</th>
         <td>
-          <input type="text" name="hstPathInfo" value="<%=hstPathInfo%>"/>
+          <select name="hstPathInfo2" onchange="this.form.hstPathInfo.value = this.value; return true;">
+            <option value="">(Choose One)</option>
+            <c:forEach var="menuItem" items="${hstSiteMenu.menuItems}">
+              <option value="/${menuItem.hstLink.path}">${menuItem.name}</option>
+            </c:forEach>
+          </select>
+          <input type="text" name="hstPathInfo" value="<%=hstPathInfo%>" disabled="true" />
+          <input type="checkbox" id="<portlet:namespace/>manualHstUrl" 
+                 onclick="this.form.hstPathInfo.disabled = !this.checked; return true;">
+          <label for="<portlet:namespace/>manualHstUrl">Manual Configuration</label>
         </td>
       </tr>
       <tr>

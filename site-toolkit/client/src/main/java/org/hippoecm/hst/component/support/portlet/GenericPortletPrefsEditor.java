@@ -27,6 +27,8 @@ import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.sitemenu.EditableMenu;
+import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,10 +36,16 @@ public class GenericPortletPrefsEditor extends GenericHstComponent {
     
     static Logger logger = LoggerFactory.getLogger(GenericPortletPrefsEditor.class);
     
+    protected String defaultSiteMenuName = "main";
+    
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         String hstPortletTitle = request.getParameter("hstPortletTitle");
         String hstServletPath = request.getParameter("hstServletPath");
         String hstPathInfo = request.getParameter("hstPathInfo");
+        
+        if (hstPathInfo == null) {
+            hstPathInfo = request.getParameter("hstPathInfo2");
+        }
         
         PortletRequest portletRequest = HstContainerPortletContext.getCurrentRequest();
         PortletResponse portletResponse = HstContainerPortletContext.getCurrentResponse();
@@ -86,6 +94,26 @@ public class GenericPortletPrefsEditor extends GenericHstComponent {
         }
         
         request.setAttribute("prefValues", prefValues);
+        
+        String hstSiteMenuName = prefs.getValue("hstSiteMenuName", null);
+        
+        if (hstSiteMenuName == null) {  
+            hstSiteMenuName = getComponentConfiguration().getParameter("hstsitemenuname", request.getRequestContext().getResolvedSiteMapItem());
+        }
+        
+        if (hstSiteMenuName == null) {
+            hstSiteMenuName = defaultSiteMenuName;
+        }
+        
+        HstSiteMenu menu = request.getRequestContext().getHstSiteMenus().getSiteMenu(hstSiteMenuName);
+        
+        if (menu != null) {
+            EditableMenu editableMenu = menu.getEditableMenu();
+            
+            if (editableMenu != null) {
+                request.setAttribute("hstSiteMenu", editableMenu);
+            }
+        }
     }
     
 }
