@@ -44,7 +44,7 @@ public class DevelopmentTest {
         RepositoryWorkflow wf = (RepositoryWorkflow) ((HippoWorkspace)session.getWorkspace()).getWorkflowManager().getWorkflow("internal", session.getRootNode());
         wf.createNamespace("test", "http://www.hippo.nl/test/nt/1.0");
         session.refresh(false);
-        session.getRootNode().addNode("newcontent");
+        session.getRootNode().addNode("newconfiguration");
         Node n = session.getRootNode().getNode("hippo:configuration/hippo:frontend/login/login").addNode("test","frontend:plugin");
         n.setProperty("wicket.id","test");
         n.setProperty("plugin.class","test");
@@ -54,6 +54,7 @@ public class DevelopmentTest {
         //export.selectProject("Gallery Addon");
         //export.exportProject(new FileOutputStream("test.zip"));
         //print(export.elements, 1);
+        export.close();
 
         session.logout();
         repository.close();

@@ -31,7 +31,6 @@ import org.apache.jackrabbit.core.xml.ImportHandler;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.core.xml.NodeInfo;
 import org.apache.jackrabbit.core.xml.TextValue;
-import org.hippoecm.repository.jackrabbit.xml.NamespaceContext;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
@@ -90,6 +89,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
      * @throws SAXException if the importer can not be initialized
      * @see DefaultHandler#startDocument()
      */
+    @Override
     public void startDocument() throws SAXException {
         try {
             importer.start();
@@ -106,6 +106,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
      * @throws SAXException if the importer can not be closed
      * @see DefaultHandler#endDocument()
      */
+    @Override
     public void endDocument() throws SAXException {
         try {
             importer.end();
@@ -142,7 +143,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
         }
         Name[] mixinNames = null;
         if (state.mixinNames != null) {
-            mixinNames = (Name[]) state.mixinNames.toArray(new Name[state.mixinNames.size()]);
+            mixinNames = state.mixinNames.toArray(new Name[state.mixinNames.size()]);
         }
         NodeId id = null;
         if (state.uuid != null) {
@@ -173,6 +174,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
     /**
     * {@inheritDoc}
     */
+    @Override
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
         Name name = NameFactoryImpl.getInstance().create(namespaceURI, localName);
         // check element name
@@ -188,7 +190,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
 
             if (!stack.isEmpty()) {
                 // process current node first
-                ImportState current = (ImportState) stack.peek();
+                ImportState current = stack.peek();
                 // need to start current node
                 if (!current.started) {
                     processNode(current, true, false);
@@ -250,6 +252,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
     /**
     * {@inheritDoc}
     */
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (currentPropValue != null) {
             // property value (character data of sv:value element)
@@ -264,6 +267,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
     /**
     * {@inheritDoc}
     */
+    @Override
     public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
         if (currentPropValue != null) {
             // property value
@@ -281,10 +285,11 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
     /**
     * {@inheritDoc}
     */
+    @Override
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
         Name name = NameFactoryImpl.getInstance().create(namespaceURI, localName);
         // check element name
-        ImportState state = (ImportState) stack.peek();
+        ImportState state = stack.peek();
         if (name.equals(NameConstants.SV_NODE)) {
             // sv:node element
             if (!state.started) {
@@ -303,7 +308,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             // check if all system properties (jcr:primaryType, jcr:uuid etc.)
             // have been collected and create node as necessary
             if (currentPropName.equals(NameConstants.JCR_PRIMARYTYPE)) {
-                BufferedStringValue val = (BufferedStringValue) currentPropValues.get(0);
+                BufferedStringValue val = currentPropValues.get(0);
                 String s = null;
                 try {
                     s = val.retrieve();
@@ -320,7 +325,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
                     state.mixinNames = new ArrayList<Name>(currentPropValues.size());
                 }
                 for (int i = 0; i < currentPropValues.size(); i++) {
-                    BufferedStringValue val = (BufferedStringValue) currentPropValues.get(i);
+                    BufferedStringValue val = currentPropValues.get(i);
                     String s = null;
                     try {
                         s = val.retrieve();
@@ -335,14 +340,16 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
                     }
                 }
             } else if (currentPropName.equals(NameConstants.JCR_UUID)) {
-                BufferedStringValue val = (BufferedStringValue) currentPropValues.get(0);
-                try {
-                    state.uuid = val.retrieve();
-                } catch (IOException ioe) {
-                    throw new SAXException("error while retrieving value", ioe);
+                if(currentPropValues.size() > 0) {
+                    BufferedStringValue val = currentPropValues.get(0);
+                    try {
+                        state.uuid = val.retrieve();
+                    } catch (IOException ioe) {
+                        throw new SAXException("error while retrieving value", ioe);
+                    }
                 }
             } else {
-                PropInfo prop = new PropInfo(resolver, currentPropName, currentPropType, (TextValue[]) currentPropValues
+                PropInfo prop = new PropInfo(resolver, currentPropName, currentPropType, currentPropValues
                         .toArray(new TextValue[currentPropValues.size()]));
                 state.props.add(prop);
             }

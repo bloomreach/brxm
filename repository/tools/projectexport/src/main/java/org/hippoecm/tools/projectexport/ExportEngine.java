@@ -68,6 +68,8 @@ class ExportEngine {
 
     Set<String> ignorePaths = new HashSet<String>();
     
+    Set<String> ignoreTrees = new HashSet<String>();
+    
     Set<String> ignoreNamespaces = new HashSet<String>();
  
     Set<String> ignoreProjects = new HashSet<String>();
@@ -134,7 +136,7 @@ class ExportEngine {
 
         Set<String> prefixes = new HashSet<String>();
         for (String prefix : root.getSession().getNamespacePrefixes()) {
-            if (!prefix.equals("")) {
+            if (!prefix.equals("") && !prefix.contains("_")) {
                 if (log.isDebugEnabled()) {
                     log.debug("prefix \""+prefix+"\"");
                 }
@@ -334,9 +336,16 @@ class ExportEngine {
         scratch.save();
         try {
             ignorePaths.add("/jcr:system");
-            ignorePaths.add("/hippo:log");
-            ignorePaths.add("/hippo:configuration/hippo:temporary");
-            ignorePaths.add("/hippo:log");
+            ignorePaths.add("/hippo:configuration");
+            ignorePaths.add("/hippo:configuration/hippo:frontend/cms/cms-pickers");
+            ignoreTrees.add("/hippo:configuration/hippo:temporary");
+            ignoreTrees.add("/hippo:log");
+            ignoreTrees.add("/hippo:namespaces");
+            ignoreTrees.add("/hippo:namespaces/hippo");
+            ignoreTrees.add("/live");
+            ignoreTrees.add("/preview");
+            ignoreTrees.add("/content/documents/state");
+            ignoreTrees.add("/content/documents/tags");
             ignoreNamespaces.add("fn");
             ignoreNamespaces.add("fn_old");
             ignoreNamespaces.add("xml");
@@ -363,7 +372,7 @@ class ExportEngine {
             ignoreProjects.add("Repository modules");
             ignoreProjects.add("Hippo ECM package configuration");
             ignoreProjects.add("Hippo ECM editor repository addon");
-            //ignoreProjects.add("Gallery Addon");
+            ignoreProjects.add("Gallery Addon");
             ignoreProjects.add("Defaultcontent repository addon");
             ignoreProjects.add("Builtin repository addon");
             ignoreProjects.add("Faceted date repository addon");
@@ -385,28 +394,46 @@ class ExportEngine {
                         elementIter.remove();
                     }
                 } else if(element instanceof ContentElement) {
-                    if(!ignorePaths.contains(((ContentElement)element).path)) {
+                    String path = ((ContentElement)element).path;
+                    boolean include = !ignorePaths.contains(path);
+                    if (include == true) {
+                        while (path.lastIndexOf("/") > 1) {
+                            path = path.substring(0, path.lastIndexOf("/"));
+                            if (ignoreTrees.contains(path)) {
+                                include = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (include) {
                         newProject.elements.add(element);
                         elementIter.remove();
                     }
                 } else if(element instanceof NamespaceElement) {
                     newProject.elements.add(element);
                     elementIter.remove();
+                    if(((NamespaceElement)element).uri == null) {
+                        ((NamespaceElement)element).uri = session.getNamespaceURI(element.getElementName());
+                    }
+                    newProject.elements.add(new ContentElement(session.getRootNode().getNode("hippo:namespaces").getNode(element.getElementName())));
                 }
             }
             elements.add(newProject);
         } finally {
-            scratch.refresh(false);
-            /* FIXME put back in when project finalizes, leave for debugging
-            if(scratch.hasNode("projects")) {
-                scratch.getNode("projects").remove();
-            }
-            if(scratch.hasNode("content")) {
-                scratch.getNode("content").remove();
-            }
-            scratch.save();
-            */
         }
+    }
+
+    public void close() throws RepositoryException {
+        Node root = session.getRootNode();
+        Node scratch = root.getNode("hippo:configuration/hippo:temporary"); 
+        scratch.refresh(false);
+        if(scratch.hasNode("projects")) {
+            scratch.getNode("projects").remove();
+        }
+        if(scratch.hasNode("content")) {
+            scratch.getNode("content").remove();
+        }
+        scratch.save();
     }
 
     private void diff(Node root) throws RepositoryException {
@@ -460,14 +487,14 @@ class ExportEngine {
     XMLExport xmlexport = new XMLExport();
 
     static ContentElement buildExtension(Set<Element> elements, Node extension) throws RepositoryException, NotExportableException {
-        boolean sequence = false;
+        boolean sequence = true;
         List<NamespaceElement> namespaces = namespaceElements(elements);
 
         if(extension.hasNode("hippo:initialize"))
             throw new NotExportableException("already selected for export");
         extension = extension.addNode("hippo:initialize", "hippo:initializefolder");
 
-        double sequenceNumber = 0.0;
+        double sequenceNumber = 10000.0;
         for (NamespaceElement element : namespaces) {
             Node item = extension.addNode(element.getElementName(), "hippo:initializeitem");
             if (sequence) {
@@ -501,7 +528,14 @@ class ExportEngine {
             }
         }
         for(ContentElement element : contentElements(elements).values()) {
-            Node item = extension.addNode(element.getElementName(), "hippo:initializeitem");
+            String name = element.getElementName();
+            if(extension.hasNode(name)) {
+                int count = 1;
+                while(extension.hasNode(name+count))
+                    ++count;
+                name += count;
+            }
+            Node item = extension.addNode(name, "hippo:initializeitem");
             if (sequence) {
                 item.setProperty("hippo:sequence", sequenceNumber);
                 sequenceNumber += 1.0;
