@@ -176,8 +176,8 @@ public class Detail extends BasePersistenceHstComponent {
         
         String field = request.getParameter("field");
         
-        final boolean saveDocument = "save".equals(workflowAction);
         final boolean requestPublication = "requestPublication".equals(workflowAction);
+        final boolean saveDocument = ("save".equals(workflowAction) || requestPublication);
         
         if (saveDocument || requestPublication) {
             String documentPath = this.getContentBean(request).getPath();
