@@ -49,15 +49,6 @@ if (prefValues.containsKey("hstPathInfo")) {
         <td><input type="text" name="hstPortletTitle" value="<%=hstPortletTitle%>"/></td>
       </tr>
       <tr>
-        <th>Type:</th>
-        <td>
-          <select name="hstServletPath">
-            <option value="/preview" <%=("/preview".equals(hstServletPath) ? "selected" : "")%>>Preview</option>
-            <option value="/live" <%=("/live".equals(hstServletPath) ? "selected" : "")%>>Live</option>
-          </select>
-        </td>
-      </tr>
-      <tr>
         <th>Path:</th>
         <td>
           <select name="hstPathInfo2" onchange="this.form.hstPathInfo.value = this.value; return true;">
