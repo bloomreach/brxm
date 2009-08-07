@@ -30,6 +30,7 @@ import javax.jcr.Repository;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
@@ -46,14 +47,15 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
+
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.widgets.Pinger;
 import org.hippoecm.repository.HippoRepositoryFactory;
 
 public class LoginPlugin extends RenderPlugin {
@@ -187,6 +189,15 @@ public class LoginPlugin extends RenderPlugin {
         }
 
         @Override
+        public void onDetach() {
+            WebRequest webRequest = ((WebRequestCycle)RequestCycle.get()).getWebRequest();
+            if (!webRequest.getHttpServletRequest().getMethod().equals("POST") && !webRequest.isAjax()) {
+                ((UserSession)getSession()).getJcrSessionModel().flush();
+            }
+            super.onDetach();
+        }
+
+        @Override
         public void onSubmit() {
             UserSession userSession = (UserSession) getSession();
             String username = usernameTextField.getModelObjectAsString();
@@ -212,5 +223,4 @@ public class LoginPlugin extends RenderPlugin {
             return String.class;
         }
     }
-
 }
