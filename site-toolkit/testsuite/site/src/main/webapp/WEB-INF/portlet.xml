@@ -35,7 +35,7 @@
         </init-param>
         <init-param>
             <name>hstPortletRequestDispatcherPathProvider.servletPathMap</name>
-            <value>JetspeedPipeline=/live, PreviewJetspeedPipeline=/preview</value>
+            <value>JetspeedPipeline=/live, PreviewJetspeedPipeline=/preview, DesktopPipeline=/live, PreviewDesktopPipeline=/preview</value>
         </init-param>
         <expiration-cache>0</expiration-cache>
         <supports>
