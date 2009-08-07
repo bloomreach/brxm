@@ -26,12 +26,16 @@
         <display-name>SiteHomePortlet</display-name>
         <portlet-class>org.hippoecm.hst.container.HstContainerPortlet</portlet-class>
         <init-param>
-            <name>hstServletPath</name>
-            <value>/preview</value>
+            <name>hstPortletRequestDispatcherPathProvider.attributeName</name>
+            <value>org.apache.jetspeed.request.RequestContext</value>
         </init-param>
         <init-param>
-            <name>hstPathInfo</name>
-            <value>/home</value>
+            <name>hstPortletRequestDispatcherPathProvider.propertyPath</name>
+            <value>pipeline.name</value>
+        </init-param>
+        <init-param>
+            <name>hstPortletRequestDispatcherPathProvider.servletPathMap</name>
+            <value>JetspeedPipeline=/live, PreviewJetspeedPipeline=/preview</value>
         </init-param>
         <expiration-cache>0</expiration-cache>
         <supports>
@@ -44,6 +48,16 @@
             <short-title>SiteHomePortlet</short-title>
             <keywords>site</keywords>
         </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>hstServletPath</name>
+                <value>/preview</value>
+            </preference>
+            <preference>
+                <name>hstPathInfo</name>
+                <value>/home</value>
+            </preference>
+        </portlet-preferences>
     </portlet>
     
 </portlet-app>

@@ -26,6 +26,18 @@
         <display-name>Generic HST Portlet</display-name>
         <portlet-class>org.hippoecm.hst.container.HstContainerPortlet</portlet-class>
         <init-param>
+            <name>hstPortletRequestDispatcherPathProvider.attributeName</name>
+            <value>org.apache.jetspeed.request.RequestContext</value>
+        </init-param>
+        <init-param>
+            <name>hstPortletRequestDispatcherPathProvider.propertyPath</name>
+            <value>pipeline.name</value>
+        </init-param>
+        <init-param>
+            <name>hstPortletRequestDispatcherPathProvider.servletPathMap</name>
+            <value>JetspeedPipeline=/live, PreviewJetspeedPipeline=/preview</value>
+        </init-param>
+        <init-param>
             <name>AllowPreferences</name>
             <value>true</value>
         </init-param>
@@ -71,6 +83,18 @@
         <portlet-name>NewsDemoPortlet</portlet-name>
         <display-name>News Demo</display-name>
         <portlet-class>org.hippoecm.hst.container.HstContainerPortlet</portlet-class>
+        <init-param>
+            <name>hstPortletRequestDispatcherPathProvider.attributeName</name>
+            <value>org.apache.jetspeed.request.RequestContext</value>
+        </init-param>
+        <init-param>
+            <name>hstPortletRequestDispatcherPathProvider.propertyPath</name>
+            <value>pipeline.name</value>
+        </init-param>
+        <init-param>
+            <name>hstPortletRequestDispatcherPathProvider.servletPathMap</name>
+            <value>JetspeedPipeline=/live, PreviewJetspeedPipeline=/preview</value>
+        </init-param>
         <init-param>
             <name>AllowPreferences</name>
             <value>true</value>

@@ -44,6 +44,11 @@ public class HstContainerPortlet extends GenericPortlet {
     private static final String LOGGER_CATEGORY_NAME = HstContainerPortlet.class.getName();
 
     /**
+     * Name of implementation class name of <CODE>HstPortletRequestDispatcherPathProvider</CODE> interface.
+     */
+    public static final String HST_PORTLET_REQUEST_DISPATCHER_PATH_PROVIDER   = "hstPortletRequestDispatcherPathProvider.className";
+    
+    /**
      * Name of portlet preference to allow the use of preferences to set pages
      */
     public static final String PARAM_ALLOW_PREFERENCES   = "AllowPreferences";
@@ -91,6 +96,8 @@ public class HstContainerPortlet extends GenericPortlet {
     protected String defaultPortletTitle;
     protected String defaultHeaderPage;
     protected String defaultHelpPage;
+    
+    protected HstPortletRequestDispatcherPathProvider hstPortletRequestDispatcherPathProvider;
 
     /**
      * Allow preferences to be set by preferences.
@@ -101,8 +108,22 @@ public class HstContainerPortlet extends GenericPortlet {
         super.init(config);
 
         this.portletContext = config.getPortletContext();
+        
+        String param = config.getInitParameter(HST_PORTLET_REQUEST_DISPATCHER_PATH_PROVIDER);
+        
+        if (param != null) {
+            try {
+                hstPortletRequestDispatcherPathProvider = (HstPortletRequestDispatcherPathProvider) Thread.currentThread().getContextClassLoader().loadClass(param.trim()).newInstance();
+            } catch (Exception e) {
+                throw new PortletException("Cannot create hstPortletRequestDispatcherPathProvider object from " + param);
+            }
+        } else {
+            hstPortletRequestDispatcherPathProvider = new DefaultPortletRequestDispatcherImpl();
+        }
+        
+        hstPortletRequestDispatcherPathProvider.init(config);
 
-        String param = config.getInitParameter(PARAM_ALLOW_PREFERENCES);
+        param = config.getInitParameter(PARAM_ALLOW_PREFERENCES);
         
         if (param != null) {
             this.allowPreferences = Boolean.parseBoolean(param);
@@ -231,13 +252,13 @@ public class HstContainerPortlet extends GenericPortlet {
 
             String portletTitle = defaultPortletTitle;
             
-            String hstServletPath = this.defaultHstServletPath;
-            
             String hstPathInfo = this.defaultHstPathInfo;
             
             if (isEditMode && this.defaultHstPathInfoEditMode != null) {
                 hstPathInfo = this.defaultHstPathInfoEditMode;
             }
+            
+            String hstServletPath = hstPortletRequestDispatcherPathProvider.getServletPath(request);
             
             if (allowPreferences) {
                 PortletPreferences prefs = request.getPreferences();
@@ -249,10 +270,12 @@ public class HstContainerPortlet extends GenericPortlet {
                         portletTitle = prefValue;
                     }
                     
-                    prefValue = prefs.getValue(HST_SERVLET_PATH_PARAM, null);
-                    
-                    if (prefValue != null) {
-                        hstServletPath = prefValue;
+                    if (hstServletPath == null) {
+                        prefValue = prefs.getValue(HST_SERVLET_PATH_PARAM, null);
+                        
+                        if (prefValue != null) {
+                            hstServletPath = prefValue;
+                        }
                     }
                     
                     if (isEditMode) {
@@ -269,6 +292,10 @@ public class HstContainerPortlet extends GenericPortlet {
                         hstPathInfo = prefValue;
                     }
                 }
+            }
+
+            if (hstServletPath == null) {
+                hstServletPath = this.defaultHstServletPath;
             }
             
             String hstDispUrl = getHstDispatchUrl(request, response, hstServletPath, hstPathInfo);
