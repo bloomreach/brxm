@@ -57,6 +57,7 @@ public class UserSession extends WebSession {
         dirty();
     }
 
+    @Override
     protected void finalize() {
         jcrSessionModel.logout();
     }

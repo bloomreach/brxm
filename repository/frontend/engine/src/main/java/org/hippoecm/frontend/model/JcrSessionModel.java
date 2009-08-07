@@ -59,11 +59,11 @@ public class JcrSessionModel extends LoadableDetachableModel {
 
     public JcrSessionModel(ValueMap credentials) {
         this.credentials = credentials;
-        /* Warning: non-trivial side effect of load() operation below,
+        /* Warning: non-trivial side effect of getObject() operation below,
          * this causes the invalid-login (username/password mismatch)
          * to be displayed.
          */
-        load();
+        getObject();
     }
 
     public void logout() {
@@ -135,7 +135,27 @@ public class JcrSessionModel extends LoadableDetachableModel {
         }
         return facetSearchObserver;
     }
-    
+
+    @Override
+    public void detach() {
+        if (isAttached()) {
+            javax.jcr.Session session = (javax.jcr.Session)getObject();
+            if (session.isLive()) {
+                session.logout();
+            }
+        }
+        super.detach();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        if (isAttached()) {
+            javax.jcr.Session session = (javax.jcr.Session)getObject();
+            session.logout();
+        }
+        super.finalize();
+    }
+
     @Override
     protected Object load() {
         javax.jcr.Session result = null;
