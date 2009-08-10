@@ -18,9 +18,11 @@ package org.hippoecm.hst.component.support.portlet;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.portlet.PortletMode;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
+import javax.portlet.StateAwareResponse;
 
 import org.hippoecm.hst.container.HstContainerPortletContext;
 import org.hippoecm.hst.core.component.GenericHstComponent;
@@ -66,6 +68,8 @@ public class GenericPortletPrefsEditor extends GenericHstComponent {
             }
             
             prefs.store();
+            
+            ((StateAwareResponse) portletResponse).setPortletMode(PortletMode.VIEW);
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {
                 logger.warn("Failed to store preferences.", e);
