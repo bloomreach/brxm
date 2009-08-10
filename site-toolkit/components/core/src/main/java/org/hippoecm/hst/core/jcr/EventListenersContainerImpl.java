@@ -158,7 +158,12 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         if (this.eventListenersContainerSessionChecker != null) {
             try {
                 this.eventListenersContainerSessionChecker.interrupt();
-            } catch (Throwable th) {
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread", e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread. {}", e.toString());
+                }
             }
             this.eventListenersContainerSessionChecker = null;
         }

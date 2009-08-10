@@ -56,10 +56,10 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
             
             pipeline.beforeInvoke(requestContainerConfig, servletRequest, servletResponse);
             pipeline.invoke(requestContainerConfig, servletRequest, servletResponse);
-        } catch(ContainerNotFoundException e){
-          throw e;      
-        } catch (Throwable th) {
-            throw new ContainerException(th);
+        } catch (ContainerException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ContainerException(e);
         } finally {
             pipeline.afterInvoke(requestContainerConfig, servletRequest, servletResponse);
             

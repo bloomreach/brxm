@@ -251,8 +251,12 @@ public class AggregationValve extends AbstractValve {
                 if (window == traceToolWindow) {
                     try {
                         getComponentInvoker().invokeRender(requestContainerConfig, request, response);
-                    } catch (Throwable th) {
-                        log.warn("Failed to render tracetool: {} - {}", th.toString(), th.getMessage());
+                    } catch (Exception e) {
+                        if (log.isDebugEnabled()) {
+                            log.warn("Failed to render tracetool.", e);
+                        } else if (log.isWarnEnabled()) {
+                            log.warn("Failed to render tracetool. {}", e.toString());
+                        }
                     }
                 } else {
                     getComponentInvoker().invokeRender(requestContainerConfig, request, response);

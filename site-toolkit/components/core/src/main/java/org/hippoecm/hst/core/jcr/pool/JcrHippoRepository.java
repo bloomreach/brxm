@@ -25,8 +25,12 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JcrHippoRepository implements Repository {
+    
+    private static final Logger log = LoggerFactory.getLogger(JcrHippoRepository.class);
     
     protected String repositoryURI;
     protected HippoRepository hippoRepository;
@@ -39,7 +43,15 @@ public class JcrHippoRepository implements Repository {
     
     private synchronized void initHippoRepository() throws RepositoryException {
         try {
+            if (log.isInfoEnabled()) {
+                log.info("Trying to get hippo repository from {}.", repositoryURI);
+            }
+            
             hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryURI);
+            
+            if (log.isInfoEnabled()) {
+                log.info("Has retrieved hippo repository from {}.", repositoryURI);
+            }
         } catch (Exception e) {
             throw new RepositoryException(e);
         }

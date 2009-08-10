@@ -58,20 +58,31 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 if(log.isDebugEnabled()) {
                     log.debug("invoking action of component: {}", component.getClass().getName());
                 }
-                component.doAction(hstRequest, hstResponse);
-            } catch (Throwable th) {
-                HstComponentException hce = (th instanceof HstComponentException ? (HstComponentException) th : new HstComponentException(th.getMessage()));
                 
+                component.doAction(hstRequest, hstResponse);
+            } catch (HstComponentException e) {
                 if (this.exceptionThrowable) {
-                    throw hce;
+                    throw e;
                 }
                 
-                window.addComponentExcpetion(hce);
+                window.addComponentExcpetion(e);
                 
                 if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: " + th.toString(), th);
+                    log.warn("Component exception caught: " + e.toString(), e);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {}", th.toString());
+                    log.warn("Component exception caught: {}", e.toString());
+                }
+            } catch (Exception e) {
+                if (this.exceptionThrowable) {
+                    throw new HstComponentException(e);
+                }
+                
+                window.addComponentExcpetion(new HstComponentException(e));
+                
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: " + e.toString(), e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", e.toString());
                 }
             } finally {
                 if (currentClassloader != null) {
@@ -96,20 +107,31 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 if(log.isDebugEnabled()) {
                     log.debug("invoking doBeforeRender of component: {}", component.getClass().getName());
                 }
-                component.doBeforeRender(hstRequest, hstResponse);
-            } catch (Throwable th) {
-                HstComponentException hce = (th instanceof HstComponentException ? (HstComponentException) th : new HstComponentException(th.getMessage()));
                 
+                component.doBeforeRender(hstRequest, hstResponse);
+            } catch (HstComponentException e) {
                 if (this.exceptionThrowable) {
-                    throw hce;
+                    throw e;
                 }
                 
-                window.addComponentExcpetion(hce);
+                window.addComponentExcpetion(e);
                 
                 if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: " + th.toString(), th);
+                    log.warn("Component exception caught: " + e.toString(), e);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {}", th.toString());
+                    log.warn("Component exception caught: {}", e.toString());
+                }
+            } catch (Exception e) {
+                if (this.exceptionThrowable) {
+                    throw new HstComponentException(e);
+                }
+                
+                window.addComponentExcpetion(new HstComponentException(e));
+                
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: " + e.toString(), e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", e.toString());
                 }
             } finally {
                 if (currentClassloader != null) {
@@ -136,16 +158,29 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         try {
             setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
             invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
-        } catch (Throwable th) {
+        } catch (HstComponentException e) {
             if (this.exceptionThrowable) {
-                throw new HstComponentException(th);
+                throw e;
             }
             
-            window.addComponentExcpetion(new HstComponentException(th.getMessage()));
+            window.addComponentExcpetion(e);
+            
             if (log.isDebugEnabled()) {
-                log.warn("Component exception caught: " + th.toString(), th);
+                log.warn("Component exception caught: " + e.toString(), e);
             } else if (log.isWarnEnabled()) {
-                log.warn("Component exception caught: {}", th.toString());
+                log.warn("Component exception caught: {}", e.toString());
+            }
+        } catch (Exception e) {
+            if (this.exceptionThrowable) {
+                throw new HstComponentException(e);
+            }
+            
+            window.addComponentExcpetion(new HstComponentException(e));
+            
+            if (log.isDebugEnabled()) {
+                log.warn("Component exception caught: " + e.toString(), e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Component exception caught: {}", e.toString());
             }
         } finally {
             removeHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
@@ -167,19 +202,29 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
 
             try {
                 component.doBeforeServeResource(hstRequest, hstResponse);
-            } catch (Throwable th) {
-                HstComponentException hce = (th instanceof HstComponentException ? (HstComponentException) th : new HstComponentException(th.getMessage()));
-                
+            } catch (HstComponentException e) {
                 if (this.exceptionThrowable) {
-                    throw hce;
+                    throw e;
                 }
                 
-                window.addComponentExcpetion(hce);
+                window.addComponentExcpetion(e);
                 
                 if (log.isDebugEnabled()) {
-                    log.warn("Component exception caught: " + th.toString(), th);
+                    log.warn("Component exception caught: " + e.toString(), e);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception caught: {}", th.toString());
+                    log.warn("Component exception caught: {}", e.toString());
+                }
+            } catch (Exception e) {
+                if (this.exceptionThrowable) {
+                    throw new HstComponentException(e);
+                }
+                
+                window.addComponentExcpetion(new HstComponentException(e));
+                
+                if (log.isDebugEnabled()) {
+                    log.warn("Component exception caught: " + e.toString(), e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Component exception caught: {}", e.toString());
                 }
             } finally {
                 if (currentClassloader != null) {
@@ -211,19 +256,29 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         try {
             setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
             invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, dispatchUrl, window);
-        } catch (Throwable th) {
-            HstComponentException hce = (th instanceof HstComponentException ? (HstComponentException) th : new HstComponentException(th.getMessage()));
-            
+        } catch (HstComponentException e) {
             if (this.exceptionThrowable) {
-                throw hce;
+                throw e;
             }
             
-            window.addComponentExcpetion(hce);
+            window.addComponentExcpetion(e);
             
             if (log.isDebugEnabled()) {
-                log.warn("Component exception caught: " + th.toString(), th);
+                log.warn("Component exception caught: " + e.toString(), e);
             } else if (log.isWarnEnabled()) {
-                log.warn("Component exception caught: {}", th.toString());
+                log.warn("Component exception caught: {}", e.toString());
+            }
+        } catch (Exception e) {
+            if (this.exceptionThrowable) {
+                throw new HstComponentException(e);
+            }
+            
+            window.addComponentExcpetion(new HstComponentException(e));
+            
+            if (log.isDebugEnabled()) {
+                log.warn("Component exception caught: " + e.toString(), e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Component exception caught: {}", e.toString());
             }
         } finally {
             removeHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
@@ -234,7 +289,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         }
     }
 
-    protected void invokeDispatcher(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl, HstComponentWindow window) throws Throwable {
+    protected void invokeDispatcher(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, String dispatchUrl, HstComponentWindow window) throws Exception {
         RequestDispatcher disp = null;
         
         if (dispatchUrl != null) {
@@ -253,6 +308,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             if (log.isWarnEnabled()) {
                 log.warn("The request dispatcher for {} is null. window: {}", dispatchUrl, "" + window.getReferenceNamespace() + ", " + window.getName());
             }
+            
             window.addComponentExcpetion(new HstComponentException("The dispatch url is null."));
         } else {
             ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
@@ -280,9 +336,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                     servletRequest.removeAttribute("errorComponentWindow");
                 }
             }
-        } catch (Throwable th) {
+        } catch (Exception e) {
             if (log.isWarnEnabled()) {
-                log.warn("Failed to dispatch to error page: " + th);
+                log.warn("Failed to dispatch to error page: " + e);
             }
             
             servletResponse.reset();

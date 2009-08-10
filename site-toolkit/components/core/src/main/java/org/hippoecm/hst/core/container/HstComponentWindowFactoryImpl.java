@@ -82,8 +82,10 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
             component = compFactory.getComponentInstance(requestContainerConfig, compConfig);
         } catch (HstComponentFatalException e) {
             throw e;
-        } catch (Throwable th) {
-            componentFactoryException = new HstComponentException(th.getMessage());
+        } catch (HstComponentException e) {
+            componentFactoryException = e;
+        } catch (Exception e) {
+            componentFactoryException = new HstComponentException(e);
         }
         
         HstComponentWindowImpl window = 

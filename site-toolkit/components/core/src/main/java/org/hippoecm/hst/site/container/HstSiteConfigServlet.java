@@ -305,17 +305,23 @@ public class HstSiteConfigServlet extends HttpServlet {
             log.info("HstSiteConfigServlet has successfuly started the Component Manager....");
             this.initialized = true;
             log.info(INIT_DONE_MSG);
-        } catch (Throwable th) {
+        } catch (Exception e) {
             if (this.componentManager != null) {
                 try { 
                     this.componentManager.stop();
                     this.componentManager.close();
                 } catch (Exception ce) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Exception occurred during stopping componentManager.", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Exception occurred during stopping componentManager. {}", e.toString());
+                    }
                 }
             }
+            
             // save the exception to complain loudly later :-)
             final String msg = "HSTSite: init() failed.";
-            log.error(msg, th);
+            log.error(msg, e);
         }
     }
 

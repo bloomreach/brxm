@@ -360,7 +360,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         if (getRepository() == null && getRepositoryProviderClassName() != null && getRepositoryAddress() != null) {
             try {
                 this.jcrRepositoryProvider = (JcrRepositoryProvider) Class.forName(getRepositoryProviderClassName()).newInstance();
-            } catch (Throwable th) {
+            } catch (Exception e) {
                 throw new RepositoryException("Cannot create an instance of JcrRepositoryProvider: " + getRepositoryProviderClassName());
             }
             

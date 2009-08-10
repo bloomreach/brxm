@@ -125,8 +125,8 @@ public class HstContainerServlet extends HttpServlet {
                 clientComponentManager.start();
                 config.getServletContext().setAttribute(clientComponentManagerContextAttributeName, clientComponentManager);
             }
-        } catch (Throwable th) {
-            log("Invalid client component manager class or configuration: " + th);
+        } catch (Exception e) {
+            log("Invalid client component manager class or configuration: " + e);
         } finally {
             initialized = true;
         }
