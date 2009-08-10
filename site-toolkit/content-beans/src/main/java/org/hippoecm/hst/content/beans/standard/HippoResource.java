@@ -46,7 +46,7 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
         try {
             return this.getNode().getProperty("jcr:data").getLength();
         }catch (RepositoryException e) {
-           log.warn("Error while fetching binary data length : {}", e);
+           log.warn("Error while fetching binary data length.", e);
         }
         return 0;
     }
