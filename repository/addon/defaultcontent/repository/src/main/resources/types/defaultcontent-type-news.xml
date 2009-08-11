@@ -352,7 +352,7 @@
         <sv:value>introduction</sv:value>
       </sv:property>
       <sv:property sv:name="defaultcontent:title" sv:type="String">
-        <sv:value>title</sv:value>
+        <sv:value></sv:value>
       </sv:property>
       <sv:property sv:name="hippo:paths" sv:type="String">
       </sv:property>
