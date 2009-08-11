@@ -64,9 +64,11 @@ public class CheckPlugin extends RenderPlugin {
         });
 
         UserSession session = (UserSession)getSession();
+	/* Uncommented at this time, the console can always show this plugin
         if (session.getApplication().getConfigurationType().equals(Application.DEPLOYMENT)) {
             setVisible(false);
         }
+	*/
     }
 
     private String check() {
