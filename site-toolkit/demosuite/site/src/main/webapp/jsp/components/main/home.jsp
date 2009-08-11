@@ -9,14 +9,15 @@
   <h1>${document.title}</h1>
   <p>${document.summary}</p>
   <p><hst:html hippohtml="${document.html}"/></p>
+
+  <p> </p>
+  
+  <div>
+    <h2>My todo list</h2>
+    <hst:include ref="todolist"/>
+  </div>
+
   <p style="height: 30em;">  </p>
   
-  <ul>
-      <c:forEach var="item" items="${todoList}">
-          <li>
-             ${item.type}
-          </li>
-      </c:forEach>
-  </ul>
 </div>
 

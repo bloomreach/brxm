@@ -193,3 +193,12 @@ ul.list-overview {
   border-bottom:1px solid #e0e0e0;
 }
 
+ul.todo {
+  margin-left:1.5em;
+}
+
+li.todo {
+  list-style-image:none;
+  list-style-position:outside;
+  list-style-type:circle;
+}

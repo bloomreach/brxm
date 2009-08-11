@@ -16,11 +16,71 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Node(jcrType = "hippo:request")
-public class HippoRequest extends HippoItem{
-
-    public String getType(){
-        return this.getProperty("type");
+public class HippoRequest extends HippoItem {
+    
+    static Logger log = LoggerFactory.getLogger(HippoRequest.class);
+    
+    private String type;
+    private HippoItem document;
+    private Long requestedDate;
+    private String requestUsername;
+    private String reason;
+    
+    public String getType() {
+        if (type == null) {
+            type = getProperty("type");
+        }
+        
+        return type;
     }
+    
+    public HippoItem getDocument() {
+        if (document == null) {
+            String documentUuid = getProperty("document");
+            
+            if (documentUuid != null) {
+                try {
+                    javax.jcr.Node documentNode = getNode().getSession().getNodeByUUID(documentUuid);
+                    document = (HippoItem) getObjectConverter().getObject(documentNode);
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to retrive document node.", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Failed to retrive document node. {}", e.toString());
+                    }
+                }
+            }
+        }
+        
+        return document;
+    }
+    
+    public Long getRequestedDate() {
+        if (requestedDate == null) {
+            requestedDate = getProperty("reqdate");
+        }
+        
+        return requestedDate;
+    }
+    
+    public String getRequestUsername() {
+        if (requestUsername == null) {
+            requestUsername = getProperty("username");
+        }
+        
+        return requestUsername;
+    }
+    
+    public String getReason() {
+        if (reason == null) {
+            reason = getProperty("reason");
+        }
+        
+        return reason;
+    }
+    
 }
