@@ -115,6 +115,12 @@
       <artifactId>gallerypicker</artifactId>
       <version>1.02.02</version>
       <type>jar</type>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     
