@@ -69,7 +69,7 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
         config.put("wicket.dialog", "service.dialog");
         config.put("wicket.model", "service.model");
 
-        String[] extensions = new String[] { "extension.browser", "extension.breadcrumb", "extension.editor", "extension.logout", "extension.menu" };
+        String[] extensions = new String[] { "extension.browser", "extension.breadcrumb", "extension.editor", "extension.logout", "extension.menu", "extension.check" };
         config.put("wicket.extensions", extensions);
 
         config.put("extension.browser", "service.browser");

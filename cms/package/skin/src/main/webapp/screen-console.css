@@ -75,6 +75,8 @@ body{padding: 15px;}
 .hippo-console-logout{position: absolute; right: 20px; top: 10px; font-size: 11px}
 .hippo-console-logout span.name{font-weight: bold; text-transform: capitalize}
 .hippo-console-logout li{display: inline}
+.hippo-console-check{position: absolute; left: 20px; top: 10px; font-size: 11px}
+.hippo-console-check li{display: inline}
 .hippo-console-leftpanel{width: 465px; border: 1px solid #666666;}
 .hippo-console-rightpanel{border: 1px solid #666666;}
 
