@@ -34,8 +34,10 @@ public class MemoryTest extends FacetedNavigationAbstractTest {
     private static final String TEST_USER_PASS = "password";
 
     private static final int NUMBER_OF_LOGINS = 2;
-    private static final int NUMBER_OF_GCS = 5;
-    private static final long GC_DELAY_MS = 5;
+    private static final int NUMBER_OF_TRAVERSE_LOGINS = 2;
+    private static final int NUMBER_OF_TRAVERSE_NODES = 10;
+    private static final int NUMBER_OF_GCS = 2;
+    private static final long GC_DELAY_MS = 2;
     private static final long FINITSH_DELAY_MS = 1;
 
     public void cleanup() throws RepositoryException  {
@@ -68,20 +70,18 @@ public class MemoryTest extends FacetedNavigationAbstractTest {
     }
     
     /**
-     * Increase NUMBER_OF_LOGINS and run with:
+     * Increase NUMBER_OF_TRAVERSE_LOGINS and/or NUMBER_OF_TRAVERSE_NODES and run with:
      *  mvn -o test -Dtest=MemoryTest -Dmaven.surefire.debug="-agentlib:yjpagent -Xmx128m"
      *  and make a memorydump during FINISH_DELAY_MS
      * @throws RepositoryException
      */
     @Test
-    public void testManyLogins() throws RepositoryException {
-        commonStart(100);
+    public void testManyLoginsWithTraverse() throws RepositoryException {
+        commonStart(NUMBER_OF_TRAVERSE_NODES);
         // setup user session
         Session userSession = null;
-        
-        for (int i = 0; i < NUMBER_OF_LOGINS; i++) {
-            //userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
-            userSession = server.login("admin", "admin".toCharArray());
+        for (int i = 0; i < NUMBER_OF_TRAVERSE_LOGINS; i++) {
+            userSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             Node node = userSession.getRootNode().getNode("test/navigation/xyz");
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
@@ -106,6 +106,32 @@ public class MemoryTest extends FacetedNavigationAbstractTest {
         commonEnd();
     }
 
+    /**
+     * Increase NUMBER_OF_LOGINS and run with:
+     *  mvn -o test -Dtest=MemoryTest -Dmaven.surefire.debug="-agentlib:yjpagent -Xmx128m"
+     *  and make a memorydump during FINISH_DELAY_MS
+     * @throws RepositoryException
+     */
+    @Test
+    public void testManyLogins() throws RepositoryException {
+        // setup user session
+        Session userSession = null;
 
-
+        for (int i = 0; i < NUMBER_OF_LOGINS; i++) {
+            userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+            userSession.logout();
+        }
+        for (int i = 0; i < NUMBER_OF_GCS; i++) {
+            System.gc();
+            try {
+                Thread.sleep(GC_DELAY_MS);
+            } catch(InterruptedException ex) {
+            }
+        }
+        try {
+            Thread.sleep(FINITSH_DELAY_MS);
+        } catch(InterruptedException ex) {
+        }
+    }
 }
+
