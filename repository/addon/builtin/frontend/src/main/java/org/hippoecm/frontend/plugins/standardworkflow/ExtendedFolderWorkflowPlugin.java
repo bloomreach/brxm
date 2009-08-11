@@ -1,0 +1,285 @@
+/*
+ *  Copyright 2009 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.frontend.plugins.standardworkflow;
+
+import java.rmi.RemoteException;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
+
+import org.apache.wicket.ResourceReference;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoQuery;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
+import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+
+public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
+    private static final long serialVersionUID = 1L;
+
+    private static Logger log = LoggerFactory.getLogger(ExtendedFolderWorkflowPlugin.class);
+
+    final static String QUERY_LANGUAGE_PUBLISH = Query.SQL;
+    final static String QUERY_STATEMENT_PUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '$basefolder/%' AND hippostd:state='unpublished'";
+    final static String QUERY_LANGUAGE_DEPUBLISH = Query.SQL;
+    final static String QUERY_STATEMENT_DEPUBLISH = "SELECT * FROM hippostd:publishable WHERE jcr:path LIKE '$basefolder/%' AND hippostd:state='published'";
+    final static String WORKFLOW_CATEGORY = "default";
+    
+    public String name;
+    private int processed;
+    private Set<String> documents;
+
+    public ExtendedFolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
+        super(context, config);
+
+        add(new WorkflowAction("publishAll", new StringResourceModel("publish-all-title", this, null)) {
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "publish-all-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                name = getInputNodeName();
+                documents = new HashSet<String>();
+                Session session = ((UserSession)getSession()).getJcrSession();
+                Query query = null;
+                try {
+                    QueryManager qMgr = session.getWorkspace().getQueryManager();
+                    query = qMgr.createQuery(QUERY_STATEMENT_PUBLISH, QUERY_LANGUAGE_PUBLISH);
+                } catch (RepositoryException ex) {
+                    log.error("Error preparing to publish all documents: {}", ex);
+                }
+                return new ConfirmDialog(this,
+                        new StringResourceModel("publish-all-title", ExtendedFolderWorkflowPlugin.this, null),
+                        new StringResourceModel("publish-all-text", ExtendedFolderWorkflowPlugin.this, null),
+                        new PropertyModel(ExtendedFolderWorkflowPlugin.this, "name"),
+                        documents, query);
+            }
+
+            @Override
+            protected void execute(WorkflowDescriptorModel model) throws Exception {
+                Session session = ((UserSession) getSession()).getJcrSession();
+                WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+                for (String uuid : documents) {
+                    try {
+                        Node document = session.getNodeByUUID(uuid);
+                        if (document.getDepth() > 0) {
+                            Node handle = document.getParent();
+                            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                for (NodeIterator requestIter = handle.getNodes(HippoNodeType.NT_REQUEST); requestIter.hasNext(); ) {
+                                    Node request = requestIter.nextNode();
+                                    if (request != null) {
+                                        Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, request);
+                                        if (workflow instanceof FullRequestWorkflow) {
+                                            ((FullRequestWorkflow) workflow).cancelRequest();
+                                            log.info("removed request(s) from document "+document.getPath()+" ("+uuid+")");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, document);
+                        if (workflow instanceof FullReviewedActionsWorkflow) {
+                            ((FullReviewedActionsWorkflow) workflow).publish();
+                            log.info("published document "+document.getPath()+" ("+uuid+")");
+                            ++processed;
+                        }
+                    } catch (MappingException ex) {
+                        log.warn("Publication of {} failed: {}", uuid, ex);
+                    } catch (WorkflowException ex) {
+                        log.warn("Publication of {} failed: {}", uuid, ex);
+                    } catch (RemoteException ex) {
+                        log.warn("Publication of {} failed: {}", uuid, ex);
+                    } catch (RepositoryException ex) {
+                        log.warn("Publication of {} failed: {}", uuid, ex);
+                    }
+                    session.refresh(true);
+                }
+            }
+        });
+
+        add(new WorkflowAction("depublishAll", new StringResourceModel("depublish-all-title", this, null)) {
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "depublish-all-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                name = getInputNodeName();
+                documents = new HashSet<String>();
+                Session session = ((UserSession)getSession()).getJcrSession();
+                Query query = null;
+                try {
+                    QueryManager qMgr = session.getWorkspace().getQueryManager();
+                    query = qMgr.createQuery(QUERY_STATEMENT_DEPUBLISH, QUERY_LANGUAGE_DEPUBLISH);
+                } catch (RepositoryException ex) {
+                    log.error("Error preparing to publish all documents: {}", ex);
+                }
+                return new ConfirmDialog(this,
+                        new StringResourceModel("depublish-all-title", ExtendedFolderWorkflowPlugin.this, null),
+                        new StringResourceModel("depublish-all-text", ExtendedFolderWorkflowPlugin.this, null),
+                        new PropertyModel(ExtendedFolderWorkflowPlugin.this, "name"),
+                        documents, query);
+            }
+
+            @Override
+            protected void execute(WorkflowDescriptorModel model) throws Exception {
+                Session session = ((UserSession) getSession()).getJcrSession();
+                WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+                for (String uuid : documents) {
+                    try {
+                        Node document = session.getNodeByUUID(uuid);
+                        if (document.getDepth() > 0) {
+                            Node handle = document.getParent();
+                            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                for (NodeIterator requestIter = handle.getNodes(HippoNodeType.NT_REQUEST); requestIter.hasNext(); ) {
+                                    Node request = requestIter.nextNode();
+                                    if (request != null) {
+                                        Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, request);
+                                        if (workflow instanceof FullRequestWorkflow) {
+                                            ((FullRequestWorkflow) workflow).cancelRequest();
+                                            log.info("removed request(s) from document "+document.getPath()+" ("+uuid+")");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, document);
+                        if (workflow instanceof FullReviewedActionsWorkflow) {
+                            ((FullReviewedActionsWorkflow) workflow).depublish();
+                            log.info("depublished document "+document.getPath()+" ("+uuid+")");
+                            ++processed;
+                        }
+                    } catch (MappingException ex) {
+                        log.warn("Depublication of {} failed: {}", uuid, ex);
+                    } catch (WorkflowException ex) {
+                        log.warn("Depublication of {} failed: {}", uuid, ex);
+                    } catch (RemoteException ex) {
+                        log.warn("Depublication of {} failed: {}", uuid, ex);
+                    } catch (RepositoryException ex) {
+                        log.warn("Depublication of {} failed: {}", uuid, ex);
+                    }
+                    session.refresh(true);
+                }
+            }
+        });
+    }
+
+    public class ConfirmDialog extends WorkflowAction.WorkflowDialog {
+        private IModel title;
+
+        Label affectedComponent;
+
+        public ConfirmDialog(WorkflowAction action, IModel dialogTitle, IModel dialogText, IModel folderName, Set<String> documents, Query query) {
+            action.super();
+            this.title = dialogTitle;
+
+            try {
+                Node folder = (ExtendedFolderWorkflowPlugin.this.getModel() instanceof WorkflowDescriptorModel ? ((WorkflowDescriptorModel)ExtendedFolderWorkflowPlugin.this.getModel()).getNode() : null);
+                if (query != null) {
+                    ((HippoQuery)query).bindValue("basefolder", folder.getSession().getValueFactory().createValue(folder.getPath()));
+                    QueryResult result = ((HippoQuery)query).execute();
+                    for (NodeIterator documentIter = result.getNodes(); documentIter.hasNext();) {
+                        Node document = documentIter.nextNode();
+                        if (document != null) {
+                            if (document.isNodeType("mix:referenceable") && document.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                                documents.add(document.getUUID());
+                            }
+                        }
+                    }
+                } else {
+                    error("Error preparing to publish all documents");
+                }
+            } catch(RepositoryException ex) {
+                log.error("Error preparing to publish all documents", ex);
+                error("Error preparing to publish all documents");
+            }
+
+            Label textComponent = new Label("text");
+            textComponent.setModel(dialogText);
+            add(textComponent);
+            
+            Label countComponent = new Label("count");
+            countComponent.setModel(new Model(Integer.toString(documents.size())));
+            add(countComponent);
+            
+            Label locationComponent = new Label("location");
+            locationComponent.setModel(new Model((String) folderName.getObject()));
+            add(locationComponent);
+
+            affectedComponent = new Label("affected");
+            affectedComponent.setVisible(false);
+            add(affectedComponent);
+        }
+
+        @Override
+        public IModel getTitle() {
+            return title;
+        }
+
+        @Override
+        public IValueMap getProperties() {
+            return LARGE;
+        }
+
+        @Override
+        protected void handleSubmit() {
+            setOkVisible(false);
+            setCancelVisible(true);
+            setCancelLabel("Done");
+            onOk();
+            affectedComponent.setModel(new Model(Integer.toString(processed)));
+            affectedComponent.setVisible(true);
+            AjaxRequestTarget.get().addComponent(this);
+       }
+    }
+}
