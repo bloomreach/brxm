@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.root;
+package org.hippoecm.frontend.plugins.console.menu;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -21,15 +21,18 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import org.apache.wicket.Application;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
+
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -69,20 +72,33 @@ public class CheckPlugin extends RenderPlugin {
     private String check() {
         try {
             Session session = ((UserSession)getSession()).getJcrSession();
-            check(session.getRootNode());
+            check(session);
         } catch (RepositoryException ex) {
             log.error("error during user consistency check", ex);
             return "error";
         }
         try {
             Session session = ((UserSession)getSession()).getJcrSession().getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
-            check(session.getRootNode());
+            check(session);
             session.logout();
         } catch (RepositoryException ex) {
             log.error("error during root consistency check", ex);
             return "Error";
         }
         return null;
+    }
+
+    private void check(Session session) throws RepositoryException {
+        check(session.getRootNode());
+
+        Query query = session.getWorkspace().getQueryManager().createQuery("//*", Query.XPATH);
+        QueryResult result = query.execute();
+        for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
+            Node node = iter.nextNode();
+            if (node != null) {
+                node.getPath();
+            }
+        }
     }
 
     private void check(Node node) throws RepositoryException {
