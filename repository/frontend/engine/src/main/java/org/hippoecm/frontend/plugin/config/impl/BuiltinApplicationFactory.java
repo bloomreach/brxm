@@ -76,6 +76,7 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
         config.put("extension.breadcrumb", "service.breadcrumb");
         config.put("extension.editor", "service.editor");
         config.put("extension.menu", "service.menu");
+        config.put("extension.check", "service.check");
         config.put("extension.logout", "service.logout");
         plugins.addPlugin(config);
 
@@ -102,6 +103,11 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
         config.put("wicket.id", "service.menu");
         config.put("wicket.model", "service.model");
         config.put("wicket.dialog", "service.dialog");
+        plugins.addPlugin(config);
+
+        config = new JavaPluginConfig("check");
+        config.put("plugin.class", "org.hippoecm.frontend.plugins.console.menu.CheckPlugin");
+        config.put("wicket.id", "service.check");
         plugins.addPlugin(config);
 
         config = new JavaPluginConfig("logout");
