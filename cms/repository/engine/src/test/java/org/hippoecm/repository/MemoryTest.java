@@ -16,6 +16,7 @@
 package org.hippoecm.repository;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -24,7 +25,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MemoryTest extends TestCase {
+public class MemoryTest extends FacetedNavigationAbstractTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -34,8 +35,8 @@ public class MemoryTest extends TestCase {
 
     private static final int NUMBER_OF_LOGINS = 2;
     private static final int NUMBER_OF_GCS = 5;
-    private static final long GC_DELAY_MS = 2;
-    private static final long FINITSH_DELAY_MS = 1;
+    private static final long GC_DELAY_MS = 500;
+    private static final long FINITSH_DELAY_MS = 10000;
 
     public void cleanup() throws RepositoryException  {
         Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
@@ -67,17 +68,28 @@ public class MemoryTest extends TestCase {
     }
     
     /**
-     *  run with: mvn -o test -Dtest=MemoryTest -Dmaven.surefire.debug="-agentlib:yjpagent"
+     * Increase NUMBER_OF_LOGINS and run with:
+     *  mvn -o test -Dtest=MemoryTest -Dmaven.surefire.debug="-agentlib:yjpagent -Xmx128m"
      *  and make a memorydump during FINISH_DELAY_MS
      * @throws RepositoryException
      */
     @Test
     public void testManyLogins() throws RepositoryException {
+        commonStart(100);
         // setup user session
         Session userSession = null;
         
         for (int i = 0; i < NUMBER_OF_LOGINS; i++) {
-            userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+            //userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+            userSession = server.login("admin", "admin".toCharArray());
+            Node node = userSession.getRootNode().getNode("test/navigation/xyz");
+            for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+                Node child = iter.nextNode();
+                if (!"jcr:system".equals(child.getName())) {
+                    traverse(child);
+               }
+           }
+
             userSession.logout();
         }
         for (int i = 0; i < NUMBER_OF_GCS; i++) {
@@ -91,6 +103,7 @@ public class MemoryTest extends TestCase {
             Thread.sleep(FINITSH_DELAY_MS);
         } catch(InterruptedException ex) {
         }
+        commonEnd();
     }
 
 
