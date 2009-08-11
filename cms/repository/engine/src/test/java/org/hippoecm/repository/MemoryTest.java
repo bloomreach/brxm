@@ -35,8 +35,8 @@ public class MemoryTest extends FacetedNavigationAbstractTest {
 
     private static final int NUMBER_OF_LOGINS = 2;
     private static final int NUMBER_OF_GCS = 5;
-    private static final long GC_DELAY_MS = 500;
-    private static final long FINITSH_DELAY_MS = 10000;
+    private static final long GC_DELAY_MS = 5;
+    private static final long FINITSH_DELAY_MS = 1;
 
     public void cleanup() throws RepositoryException  {
         Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
