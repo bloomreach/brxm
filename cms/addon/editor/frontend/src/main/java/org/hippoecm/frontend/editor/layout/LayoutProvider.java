@@ -17,14 +17,12 @@ package org.hippoecm.frontend.editor.layout;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -49,7 +47,7 @@ public class LayoutProvider implements ILayoutProvider {
 
     static final Logger log = LoggerFactory.getLogger(LayoutProvider.class);
 
-    private static class LayoutEntry {
+    private static class LayoutEntry implements Serializable {
 
         String plugin;
         String variant;
