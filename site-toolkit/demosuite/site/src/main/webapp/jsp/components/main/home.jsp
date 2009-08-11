@@ -10,5 +10,13 @@
   <p>${document.summary}</p>
   <p><hst:html hippohtml="${document.html}"/></p>
   <p style="height: 30em;">  </p>
+  
+  <ul>
+      <c:forEach var="item" items="${todoList}">
+          <li>
+             ${item.type}
+          </li>
+      </c:forEach>
+  </ul>
 </div>
 
