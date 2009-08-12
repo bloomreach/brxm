@@ -4,6 +4,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
+<h2>My todo list</h2>
+
 <hst:actionURL var="documentActionUrl" />
 
 <c:choose>

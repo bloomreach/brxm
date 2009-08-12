@@ -13,7 +13,6 @@
   <p> </p>
   
   <div>
-    <h2>My todo list</h2>
     <hst:include ref="todolist"/>
   </div>
 

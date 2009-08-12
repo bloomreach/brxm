@@ -117,6 +117,14 @@
             <sv:value>hst:pages/errorpage</sv:value>
         </sv:property>
     </sv:node>
+    <sv:node sv:name="todo">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:components/bodyhome/bodymain/todolist</sv:value>
+        </sv:property>
+    </sv:node>
     <sv:node sv:name="portletprefseditor">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
