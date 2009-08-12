@@ -406,8 +406,8 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                             throw new ContentPersistenceException("The handle does not contain documents. Cannot call workflowCallbackHandler");
                         }
                     }
-                    if (wf instanceof FullReviewedActionsWorkflow) {
-                        workflowCallbackHandler.processWorkflow((FullReviewedActionsWorkflow) wf);
+                    if (wf != null) {
+                        workflowCallbackHandler.processWorkflow(wf);
                     } else {
                         throw new ContentPersistenceException("Callback cannot be called because the workflow is not applicable: " + wf);
                     }
