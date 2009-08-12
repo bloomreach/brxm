@@ -19,9 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
@@ -39,10 +36,14 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.service.render.ListRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SectionTreePlugin extends ListRenderService implements IPlugin {
     @SuppressWarnings("unused")
@@ -51,6 +52,8 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     private static final long serialVersionUID = 1L;
 
     private class Section implements IClusterable {
+        private static final long serialVersionUID = 1L;
+        
         String extension;
         IModel focusModel;
         boolean focussed;
@@ -85,8 +88,12 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     List<Section> sections;
     boolean toggleBehaviour = false;
 
+    AccordionManagerBehavior accordionManager;
+
     public SectionTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
+        add(accordionManager = new AccordionManagerBehavior(YuiPluginHelper.getManager(context)));
 
         final List<String> headers = Arrays.asList(config.getStringArray("headers"));
         String[] behaviours = config.getStringArray("behaviours");
@@ -142,7 +149,9 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 link.add(new Label("header", new StringResourceModel(label, SectionTreePlugin.this, null)));
 
                 if (section.extPt.getChildren().size() > 0) {
-                    item.add(section.extPt.getChildren().get(0).getComponent());
+                    Component c = section.extPt.getChildren().get(0).getComponent();
+                    item.add(c);
+                    c.add(accordionManager.newAccordion());
                 } else {
                     item.add(new EmptyPanel("id"));
                     link.setVisible(false);

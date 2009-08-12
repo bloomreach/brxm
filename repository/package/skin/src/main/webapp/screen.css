@@ -623,7 +623,9 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 /* Tree Plugin */
 
 /* overriding standard wicket tree styling */
-.hippo-tree {overflow: scroll; -ms-overflow-y: auto; overflow-y: auto; -ms-overflow-x: hidden; overflow-x: hidden; width: 200px; height: 350px; z-index: 1;}
+/*
+.hippo-tree {overflow: scroll; -ms-overflow-y: auto; overflow-y: auto; -ms-overflow-x: hidden; overflow-x: hidden; width: 200px;  z-index: 1;}
+*/
 
 /* remove margins */
 .hippo-tree div.wicket-tree{margin: 0px; border: none;}
@@ -691,7 +693,7 @@ table tr.selected span.folder-virtual-open-16, .folder-virtual-open-16{backgroun
 /* Accordion */
 .hippo-accordion-unit{background: #f4f4f4;}
 /* change the tree if he's inside an accordion */
-.hippo-accordion-unit .hippo-tree .wicket-tree{min-height: 100px; margin-bottom: 0px; padding-left: 0px; padding-top: 0px; }
+.hippo-accordion-unit .hippo-tree .wicket-tree{/*min-height: 100px;*/ margin-bottom: 0px; padding-left: 0px; padding-top: 0px; }
 
 .hippo-accordion-unit h2{background-image: url("images/accordion-unit-back2.png"); background-repeat: repeat-x}
 
@@ -719,7 +721,7 @@ font-weight: bold;
 .hippo-accordion-unit h2 a.focus:active{background-position: 0px -72px}
 
 /* Show add-root button in tree*/
-.hippo-accordion-unit-add { display: block; background: url("images/addfolder.png") no-repeat left bottom; padding-left: 30px; padding-bottom: 5px; padding-top: 5px; margin-bottom: 10px; text-align: left; margin-left: 5px; }
+.hippo-accordion-unit-add { display: block; background-image: url("images/addfolder.png"); background-repeat: no-repeat; background-position: 0px 0px; text-align: left; padding-left: 30px; padding-top: 3px; margin-left: 5px; margin-bottom: 5px; margin-top: 3px; height: 20px;}
 
 /* But hide it in pickers */
 .wicket-modal .hippo-accordion-unit-add { display: none; }
