@@ -33,7 +33,7 @@
       <c:when test="${hstRequest.requestContext.baseURL.viaPortlet}">
         <hst:actionURL var="searchURL" />
         <form action="${searchURL}" method="post">
-          <input type="text" name="query" value="${query}"/>
+          <input type="text" name="searchquery" value="${query}"/>
           <input type="submit" value="Search"/>
         </form>
       </c:when>

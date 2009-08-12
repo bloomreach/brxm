@@ -27,7 +27,7 @@ public class Search extends AbstractSearchComponent {
     
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        String query = request.getParameter("query");
+        String query = request.getParameter("searchquery");
         response.setRenderParameter("query", query);
     }
     
@@ -41,11 +41,11 @@ public class Search extends AbstractSearchComponent {
             query = request.getParameter("query");
         }
 
-        if(query == null) {
+        if (query == null) {
             return;
         }
+        
         doSearch(request, response, query, null, null, DEFAULT_PAGE_SIZE, getSiteContentBaseBean(request));
-
     }
 
 }
