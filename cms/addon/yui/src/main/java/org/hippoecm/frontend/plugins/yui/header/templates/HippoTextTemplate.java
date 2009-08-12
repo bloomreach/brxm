@@ -39,7 +39,7 @@ public abstract class HippoTextTemplate extends DynamicTextTemplate {
     }
 
     @Override
-    Map<String, Object> getVariables() {
+    protected Map<String, Object> getVariables() {
         Map<String, Object> vars = super.getVariables();
         vars.put("id", getId());
         vars.put("class", moduleClass);

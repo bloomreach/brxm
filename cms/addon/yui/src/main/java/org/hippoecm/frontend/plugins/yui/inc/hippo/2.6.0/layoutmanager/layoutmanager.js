@@ -130,7 +130,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
             },
             
-            registerResizeListener : function(el, obj, func) {
+            registerResizeListener : function(el, obj, func, executeNow, calculateSizes) {
                 var layoutUnitEl = this.findLayoutUnit(el);
                 if (layoutUnitEl) {
                     var layoutUnit = YAHOO.widget.LayoutUnit
@@ -142,14 +142,19 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     }
                     layoutUnit.customEvent.subscribe(func, obj);
                     var func = function() {
-                        var sizes = layoutUnit.getSizes();
-                        var scrollBottom = layoutUnit.body.scrollHeight - (layoutUnit.body.scrollTop + layoutUnit.body.clientHeight); // height of element scroll
-                        var scroll = layoutUnit.body.scrollTop + scrollBottom > 0;
-                        sizes['scroll'] = scroll;
+                        var sizes = null;
+                        if(calculateSizes) {
+                            sizes = layoutUnit.getSizes();
+                            var scrollBottom = layoutUnit.body.scrollHeight - (layoutUnit.body.scrollTop + layoutUnit.body.clientHeight); // height of element scroll
+                            var scroll = layoutUnit.body.scrollTop + scrollBottom > 0;
+                            sizes['scroll'] = scroll;
+                        }
                         layoutUnit.customEvent.fire(sizes);
                     };
                     layoutUnit.on('resize', func);
-                    func();
+                    if(executeNow) {
+                        func();
+                    }
                 }
             },
 

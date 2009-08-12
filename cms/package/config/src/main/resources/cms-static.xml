@@ -871,7 +871,7 @@
         <sv:value>navigator-wrapper</sv:value>
       </sv:property>
       <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=navigator-top,body=navigator-top-body,height=25px,resize=false</sv:value>
+        <sv:value>id=navigator-top,height=25px,resize=false</sv:value>
       </sv:property>
       <sv:property sv:name="units" sv:type="String">
         <sv:value>top</sv:value>

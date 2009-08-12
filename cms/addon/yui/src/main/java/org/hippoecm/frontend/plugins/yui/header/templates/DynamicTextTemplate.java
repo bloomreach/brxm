@@ -27,7 +27,7 @@ import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
 
-public abstract class DynamicTextTemplate implements IHeaderContributor, IDetachable {
+public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -35,20 +35,31 @@ public abstract class DynamicTextTemplate implements IHeaderContributor, IDetach
 
     private TextTemplateHeaderContributor headerContributor;
     private Map<String, Object> variables;
+    private YuiObject settings;
 
     public DynamicTextTemplate(Class<?> clazz, String filename) {
         this(new PackagedTextTemplate(clazz, filename));
     }
 
+    public DynamicTextTemplate(Class<?> clazz, String filename, YuiObject settings) {
+        this(clazz, filename);
+        this.settings = settings;
+    }
+    
     public DynamicTextTemplate(PackagedTextTemplate template) {
-        headerContributor = TextTemplateHeaderContributor.forJavaScript(template, new DynamicReadOnlyModel() {
+        headerContributor = TextTemplateHeaderContributor.forJavaScript(template, new AbstractReadOnlyModel() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            Map<String, Object> getVariables() {
+            public Object getObject() {
                 return DynamicTextTemplate.this.getVariables();
             }
         });
+    }
+    
+    public DynamicTextTemplate(PackagedTextTemplate template, YuiObject settings) {
+        this(template);
+        this.settings = settings;
     }
 
     public void renderHead(IHeaderResponse response) {
@@ -59,24 +70,18 @@ public abstract class DynamicTextTemplate implements IHeaderContributor, IDetach
         headerContributor.detach(null);
     }
 
-    Map<String, Object> getVariables() {
+    protected Map<String, Object> getVariables() {
         if (variables == null) {
             variables = new MiniMap(5);
         }
-        variables.put("config", getSettings().toScript());
+        if(getSettings() != null) {
+            variables.put("config", getSettings().toScript());
+        }
         return variables;
     }
 
-    abstract public YuiObject getSettings();
-
-    private static abstract class DynamicReadOnlyModel extends AbstractReadOnlyModel {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public Object getObject() {
-            return getVariables();
-        }
-
-        abstract Map<String, Object> getVariables();
+    public YuiObject getSettings() {
+        return settings;
     }
+
 }
