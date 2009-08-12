@@ -205,21 +205,17 @@ public class ReferringDocumentsTest extends TestCase
             }
         });
         if(!document.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            System.err.println("not a document "+document.getPath()+" "+document.getPrimaryNodeType().getName());
             return null;
         }
         document = ((HippoNode)document).getCanonicalNode();
         Node handle = document.getParent();
         if(!handle.isNodeType(HippoNodeType.NT_HANDLE) || !handle.isNodeType(HippoNodeType.NT_HARDHANDLE)) {
-            System.err.println("not a handle "+handle.getPath()+" "+handle.getPrimaryNodeType().getName());
             return null;
         }
         String uuid = handle.getUUID();
         QueryManager queryManager = document.getSession().getWorkspace().getQueryManager();
         String statement = "//*[@hippo:docbase='"+uuid+"']";
-        System.err.println("statement "+statement);
         Query query = queryManager.createQuery(statement, Query.XPATH);
-        //Query query = queryManager.createQuery("SELECT * FROM nt:base WHERE @hippo:docbase = '"+uuid+"'", Query.SQL);
         QueryResult result = query.execute();
         for(NodeIterator iter=result.getNodes(); iter.hasNext(); ) {
             Node node = iter.nextNode();
