@@ -53,17 +53,17 @@
             <property name="defaultCredentialsUserID" value="${default.repository.user.name}" />
             <property name="defaultCredentialsPassword" value="${default.repository.password}" />
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
-            <property name="maxActive" value="250" />
-            <property name="maxIdle" value="5" />
+            <property name="maxActive" value="25" />
+            <property name="maxIdle" value="10" />
             <property name="minIdle" value="0" />
             <property name="initialSize" value="0" />
             <property name="maxWait" value="10000" />
             <property name="testOnBorrow" value="true" />
             <property name="testOnReturn" value="false" />
             <property name="testWhileIdle" value="false" />
-            <property name="timeBetweenEvictionRunsMillis" value="60000" />
+            <property name="timeBetweenEvictionRunsMillis" value="3600000" />
             <property name="numTestsPerEvictionRun" value="1" />
-            <property name="minEvictableIdleTimeMillis" value="60000" />
+            <property name="minEvictableIdleTimeMillis" value="3600000" />
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.writable">
@@ -74,17 +74,17 @@
             <property name="defaultCredentialsUserID" value="${writable.repository.user.name}" />
             <property name="defaultCredentialsPassword" value="${writable.repository.password}" />
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
-            <property name="maxActive" value="250" />
-            <property name="maxIdle" value="5" />
+            <property name="maxActive" value="25" />
+            <property name="maxIdle" value="10" />
             <property name="minIdle" value="0" />
             <property name="initialSize" value="0" />
             <property name="maxWait" value="10000" />
             <property name="testOnBorrow" value="true" />
             <property name="testOnReturn" value="false" />
             <property name="testWhileIdle" value="false" />
-            <property name="timeBetweenEvictionRunsMillis" value="60000" />
+            <property name="timeBetweenEvictionRunsMillis" value="3600000" />
             <property name="numTestsPerEvictionRun" value="1" />
-            <property name="minEvictableIdleTimeMillis" value="60000" />
+            <property name="minEvictableIdleTimeMillis" value="3600000" />
           </bean>
         </entry>
         <!--

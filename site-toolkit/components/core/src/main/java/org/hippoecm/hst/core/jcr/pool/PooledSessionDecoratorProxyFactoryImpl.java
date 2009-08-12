@@ -78,6 +78,9 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                     poolingRepository.returnSession(pooledSessionProxy);
                 } else if ("logoutSession".equals(methodName)) {
                     Session session = (Session) invocation.getProxy();
+                    // temporary, in fact unneeded fix, to reduce memory kept by repo. This is fixed in repo trunk already, not in the ecm 2.06.07 and 2.07.00 versions
+                    session.refresh(false);
+                    // 
                     session.logout();
                 } else if ("getRepository".equals(methodName)) {
                     // when getRepository(), it actually returns the session pooling repository
