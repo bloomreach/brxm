@@ -11,7 +11,7 @@
         <property layout="TwoColumns" name="column" value="0"/>
     </fragment>
     
-    <fragment id="hstdemo-pickanum" type="portlet" name="site::CMSTodoListPortlet" >
+    <fragment id="hstdemo-cmstodolist" type="portlet" name="site::CMSTodoListPortlet" >
       <property layout="TwoColumns" name="row" value="1" />
       <property layout="TwoColumns" name="column" value="0" />
     </fragment>
@@ -21,8 +21,13 @@
       <property layout="TwoColumns" name="column" value="0" />
     </fragment>
     
-    <fragment id="hstdemo-newsdemo" type="portlet" name="site::NewsDemoPortlet">
+    <fragment id="hstdemo-cmssearch" type="portlet" name="site::CMSSearchPortlet">
       <property layout="TwoColumns" name="row" value="0"/>
+      <property layout="TwoColumns" name="column" value="1"/>
+    </fragment>
+    
+    <fragment id="hstdemo-newsdemo" type="portlet" name="site::NewsDemoPortlet">
+      <property layout="TwoColumns" name="row" value="1"/>
       <property layout="TwoColumns" name="column" value="1"/>
     </fragment>
     
