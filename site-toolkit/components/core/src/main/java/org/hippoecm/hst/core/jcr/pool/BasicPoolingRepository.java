@@ -177,7 +177,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     }
 
     /**
-     * <strong>BasicPoolingRepository will return a read-only session by this method.</strong>
+     * <strong>BasicPoolingRepository will return a session by this method.</strong>
      *
      * @throws LoginException
      * @throws RepositoryException
@@ -198,7 +198,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     }
 
     /**
-     * <strong>BasicPoolingRepository will return a writable session by this method.</strong>
+     * <strong>BasicPoolingRepository will return a session by this method.</strong>
      *
      * @throws LoginException
      * @throws RepositoryException
@@ -213,7 +213,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     }
 
     /**
-     * <strong>BasicPoolingRepository does not support workspaceName parameter. So it returns a read-only session.</strong>
+     * <strong>BasicPoolingRepository does not support workspaceName parameter. So it returns a normal session.</strong>
      *
      * @throws LoginException
      * @throws RepositoryException
@@ -733,6 +733,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      */
     public synchronized int getNumActive() {
         if (sessionPool != null) {
+            System.out.println("!!!! --> " + sessionPool.getNumActive());
             return sessionPool.getNumActive();
         } else {
             return 0;
