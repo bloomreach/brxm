@@ -11,12 +11,12 @@
         <property layout="TwoColumns" name="column" value="0"/>
     </fragment>
     
-    <fragment id="hstdemo-bookmark" type="portlet" name="demo::BookmarkPortlet">
+    <fragment id="hstdemo-pickanum" type="portlet" name="site::CMSTodoListPortlet" >
       <property layout="TwoColumns" name="row" value="1" />
       <property layout="TwoColumns" name="column" value="0" />
     </fragment>
     
-    <fragment id="hstdemo-pickanum" type="portlet" name="demo::PickANumberPortlet" >
+    <fragment id="hstdemo-bookmark" type="portlet" name="demo::BookmarkPortlet">
       <property layout="TwoColumns" name="row" value="2" />
       <property layout="TwoColumns" name="column" value="0" />
     </fragment>
