@@ -45,13 +45,15 @@ if (!YAHOO.hippo.AccordionManager) {
 
             renderUnit : function(id, unitId) {
                 var el = Dom.get(id);
-                if( el != null) {
+                if(el != null) {
                     if(typeof(el.accordion) == 'undefined') {
                         YAHOO.log("Creating accordion instance[" + id + "]");
                         el.accordion = new YAHOO.hippo.Accordion(id, this.configurations.get(id));
                     }
                     YAHOO.log('Render unit[' + unitId + '] on parent[' + id + ']');
                     el.accordion.render(unitId);
+                } else {
+                    YAHOO.log("Failed to render accordion, element[" + id + "] not found", "error");
                 }
             }
 
@@ -86,8 +88,9 @@ if (!YAHOO.hippo.AccordionManager) {
             },
     
             init: function() {
-                if(this.initialized)
+                if(this.initialized) {
                     return;
+                }
     
                 var me = this;
                 YAHOO.hippo.LayoutManager.registerResizeListener(Dom.get(this.id), me, function() {
@@ -97,8 +100,9 @@ if (!YAHOO.hippo.AccordionManager) {
             },
     
             calculate : function() {
-                if(this.calculated)
+                if(this.calculated) {
                     return;
+                }
                 
                 var parent = Dom.getAncestorByClassName(this.id, this.cfg.ancestorClassName);
                 if(parent != null) {
@@ -108,8 +112,9 @@ if (!YAHOO.hippo.AccordionManager) {
                 var children = Dom.getElementsByClassName(this.cfg.unitClassName, 'div', this.id);
                 if(this.cfg.calculateTotalHeight) {
                     //set display of tree to none to calculate height of section headers
-                    if(this.current != null)
+                    if(this.current != null) {
                         Dom.setStyle(this.current, 'display', 'none');
+                    }
 
                     var calculatedHeight = 0;
                     for(var i=0; i<children.length; i++) {
@@ -143,8 +148,9 @@ if (!YAHOO.hippo.AccordionManager) {
             },
     
             update: function() {
-                if(this.current == null)
+                if(this.current == null) {
                     return;
+                }
     
                 if(!this.cfg.throttleUpdate) {
                     this.calculated = false;
