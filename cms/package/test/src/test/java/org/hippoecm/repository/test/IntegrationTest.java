@@ -24,8 +24,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 
 @RunWith(IntegrationTest.class)
-@Suite.SuiteClasses( { BasicCmsSeleniumTest.class })
-
+@Suite.SuiteClasses( { SmokeTest.class })
 public class IntegrationTest extends Suite {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -47,8 +46,7 @@ public class IntegrationTest extends Suite {
                 deployer = new Deployer();
                 deployer.deploy(product);
             } catch (Exception ex) {
-                notifier
-                        .fireTestFailure(new Failure(Description.createSuiteDescription(this.getClass().getName()), ex));
+                notifier.fireTestFailure(new Failure(Description.createSuiteDescription(this.getClass().getName()), ex));
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             }
@@ -61,8 +59,7 @@ public class IntegrationTest extends Suite {
                     deployer.undeploy(product);
                 }
             } catch (Exception ex) {
-                notifier
-                        .fireTestFailure(new Failure(Description.createSuiteDescription(this.getClass().getName()), ex));
+                notifier.fireTestFailure(new Failure(Description.createSuiteDescription(this.getClass().getName()), ex));
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             }
