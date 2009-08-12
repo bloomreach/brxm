@@ -161,6 +161,7 @@ public class HstLinkTag extends TagSupport {
         /*cleanup*/
         parametersMap.clear();
         var = null;
+        hippoBean = null;
         scope = null;
         path = null;
         link = null;
