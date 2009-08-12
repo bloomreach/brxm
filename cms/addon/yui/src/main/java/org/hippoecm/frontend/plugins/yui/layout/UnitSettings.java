@@ -45,10 +45,11 @@ public class UnitSettings extends YuiObject {
 
     private static final StringSetting GUTTER = new StringSetting("gutter");
     private static final BooleanSetting SCROLL = new BooleanSetting("scroll");
+    private static final BooleanSetting RESIZE = new BooleanSetting("resize");
 
     private static final IntSetting Z_INDEX = new IntSetting("zindex");
 
-    protected final static YuiType TYPE = new YuiType(POSITION, ID, BODY, WIDTH, HEIGHT, GUTTER, SCROLL, Z_INDEX);
+    protected final static YuiType TYPE = new YuiType(POSITION, ID, BODY, WIDTH, HEIGHT, GUTTER, SCROLL, RESIZE, Z_INDEX);
 
     public static final String TOP = "top";
     public static final String RIGHT = "right";
