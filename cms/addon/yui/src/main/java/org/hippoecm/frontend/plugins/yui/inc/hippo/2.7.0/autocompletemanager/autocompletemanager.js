@@ -48,7 +48,6 @@ if (!YAHOO.hippo.AutoCompleteManager) {
 			},
 			
 			add: function(id, clazz, config) {
-				YAHOO.log("Add autocomplete component[" + id + "] of type " + clazz, "info", "AutoCompleteManager");
 				this._add(id, clazz, config, this.instances);
 			},
 
@@ -65,7 +64,6 @@ if (!YAHOO.hippo.AutoCompleteManager) {
 
     YAHOO.hippo.AutoCompleteManager = new YAHOO.hippo.AutoCompleteManagerImpl();
     YAHOO.register("autocompletemanager", YAHOO.hippo.AutoCompleteManager, {
-        version :"2.6.0",
-        build :"1321"
+        version: "2.7.0", build: "1799"        
     });
 }

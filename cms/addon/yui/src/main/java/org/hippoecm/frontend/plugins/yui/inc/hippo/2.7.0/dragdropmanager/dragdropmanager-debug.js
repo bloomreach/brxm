@@ -62,11 +62,15 @@ if (!YAHOO.hippo.DragDropManager) {
 
             addDraggable : function(id, modelClass, config) {
                 var clazz = this.getClass(modelClass, YAHOO.hippo.DDModel);
+                YAHOO.log("Add draggable component[" + id + "] of type "
+                        + clazz, "info", "DragDropManager");
                 this._add(id, clazz, config, this.draggables);
             },
 
             addDroppable : function(id, modelClass, config) {
                 var clazz = this.getClass(modelClass, YAHOO.util.DDTarget);
+                YAHOO.log("Add droppable component[" + id + "] of type "
+                        + clazz, "info", "DragDropManager");
                 this._add(id, clazz, config, this.droppables);
             },
 
@@ -85,19 +89,17 @@ if (!YAHOO.hippo.DragDropManager) {
                 this.loader.registerFunction(func);
             },
 
-            // TODO: test for isObject?
             getClass : function(clazz, defaultClazz) {
-                if (!Lang.isUndefined(clazz) && !Lang.isNull(clazz)) {
-                    return clazz;
-                }
-                return defaultClazz;
-            }
+                if (!Lang.isUndefined(clazz) && !Lang.isNull(clazz)) { // TODO:
+            return clazz;
+        }
+        return defaultClazz;
+    }
         };
     })();
 
     YAHOO.hippo.DragDropManager = new YAHOO.hippo.DragDropManagerImpl();
     YAHOO.register("dragdropmanager", YAHOO.hippo.DragDropManager, {
-        version :"2.6.0",
-        build :"1321"
+        version: "2.7.0", build: "1799"
     });
 }

@@ -75,4 +75,4 @@
   };
 })();
 
-YAHOO.register("ajaxindicator", YAHOO.hippo.AjaxIndicator, {version: "2.6.0", build: "1321"});
+YAHOO.register("ajaxindicator", YAHOO.hippo.AjaxIndicator, {version: "2.7.0", build: "1799"});

@@ -29,6 +29,6 @@ public class HippoNamespace implements YuiNamespace {
     }
 
     public String getPath() {
-        return "inc/hippo/2.6.0/";
+        return "inc/hippo/2.7.0/";
     }
 }

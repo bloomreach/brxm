@@ -23,7 +23,7 @@
  
  //TODO: might register to a custom layout-processing event to extend the loading indication
  //untill after the layout has processed, instead of just the postAjaxEvent
- 
+
 (function() {
   var Dom = YAHOO.util.Dom,
   Lang = YAHOO.util.Lang;
@@ -79,4 +79,4 @@
   };
 })();
 
-YAHOO.register("ajaxindicator", YAHOO.hippo.AjaxIndicator, {version: "2.6.0", build: "1321"});
+YAHOO.register("ajaxindicator", YAHOO.hippo.AjaxIndicator, {version: "2.7.0", build: "1799"});

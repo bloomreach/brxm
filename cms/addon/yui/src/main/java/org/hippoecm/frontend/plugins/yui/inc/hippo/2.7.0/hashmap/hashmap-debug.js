@@ -184,8 +184,7 @@ Array.prototype.removeAt = _removeAt;
 })();
 
 YAHOO.register("hashmap", YAHOO.hippo.HashMap, {
-    version :"2.6.0",
-    build :"1321"
+    version: "2.7.0", build: "1799"
 });
 
 /*

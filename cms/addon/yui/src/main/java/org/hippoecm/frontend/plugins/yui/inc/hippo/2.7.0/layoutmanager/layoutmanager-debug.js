@@ -143,17 +143,17 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     layoutUnit.customEvent.subscribe(func, obj);
                     var func = function() {
                         var sizes = null;
-                        if(calculateSizes) {
-                            sizes = layoutUnit.getSizes();
-                            var scrollBottom = layoutUnit.body.scrollHeight - (layoutUnit.body.scrollTop + layoutUnit.body.clientHeight); // height of element scroll
-                            var scroll = layoutUnit.body.scrollTop + scrollBottom > 0;
-                            sizes['scroll'] = scroll;
-                        }
+                    	if(calculateSizes) {
+                    		sizes = layoutUnit.getSizes();
+	                        var scrollBottom = layoutUnit.body.scrollHeight - (layoutUnit.body.scrollTop + layoutUnit.body.clientHeight); // height of element scroll
+	                        var scroll = layoutUnit.body.scrollTop + scrollBottom > 0;
+	                        sizes['scroll'] = scroll;
+                    	}
                         layoutUnit.customEvent.fire(sizes);
                     };
                     layoutUnit.on('resize', func);
                     if(executeNow) {
-                        func();
+                    	func();
                     }
                 }
             },
@@ -596,8 +596,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
     YAHOO.hippo.LayoutManager = new YAHOO.hippo.LayoutManagerImpl();
     YAHOO.register("layoutmanager", YAHOO.hippo.LayoutManager, {
-        version :"2.6.0",
-        build :"1321"
+        version: "2.7.0", build: "1799"
     });
 }
 

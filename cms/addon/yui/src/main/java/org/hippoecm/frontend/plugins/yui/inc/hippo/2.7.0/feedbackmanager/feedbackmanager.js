@@ -74,7 +74,6 @@ if (!YAHOO.hippo.FeedbackManager) {
 
 	YAHOO.hippo.FeedbackManager = new YAHOO.hippo.FeedbackManagerImpl();
 	YAHOO.register("feedbackmanager", YAHOO.hippo.FeedbackManager, {
-		version : "2.6.0",
-		build : "1321"
+	    version: "2.7.0", build: "1799"
 	});
 }
