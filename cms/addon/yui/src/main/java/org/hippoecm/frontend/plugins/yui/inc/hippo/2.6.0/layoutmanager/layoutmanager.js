@@ -21,7 +21,7 @@
  * page loads and ajax events.
  * </p>
  * @namespace YAHOO.hippo
- * @requires yahoo, dom, event, animation, dragdrop, selector, layout, resize, functionqueue, hippodom, json, hashmap
+ * @requires yahoo, dom, event, animation, dragdrop, selector, layout, resize, cookie, functionqueue, hippodom, json, hashmap
  * @module layoutmanager
  * @beta
  */
@@ -202,7 +202,10 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             resize : function() {
-                this.layout.resize();
+            	if(this.layout != null) {
+            		this.layout.resize();
+            		this.storeDimensions();
+            	}
             },
 
             registerChild  : function(c) {
@@ -219,12 +222,46 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             updateDimensions : function() {
             },
             
+            storeDimensions : function() {
+            	var sizes = this.layout.getSizes();
+            	this.storeDimension(sizes, 'doc');
+            	this.storeDimension(sizes, 'top');
+            	this.storeDimension(sizes, 'right');
+            	this.storeDimension(sizes, 'bottom');
+            	this.storeDimension(sizes, 'left');
+            	this.storeDimension(sizes, 'center');
+            	console.log('Stored sizes');
+            	console.dir(sizes);
+            },
+            
+            storeDimension : function(sizes, dim) {
+            	YAHOO.util.Cookie.setSub(this.id + '-sizes', dim, sizes[dim].w + ',' + sizes[dim].h);
+            },
+            
+            readDimension : function(dim) {
+            	var val = YAHOO.util.Cookie.getSub(this.id + '-sizes', dim);
+            	if(val == null) {
+            		return false;
+            	}
+            	var ar = val.split(',');
+            	return {w:ar[0], h:ar[1]};
+            },
+            
             afterRender : function() {
+            	Dom.setStyle(this.id, 'display', 'block');
                 for (var i = 0; i < this.config.units.length; i++) {
                     var uCfg = this.config.units[i];
                     var un = this.layout.getUnitByPosition(uCfg.position);
-                    if(un && uCfg.zindex > 0) {
-                        un.setStyle('zIndex', uCfg.zindex);
+                    if(un) {
+                    	if(uCfg.zindex > 0) {
+                    		un.setStyle('zIndex', uCfg.zindex);
+                    	}
+                    	if(uCfg.resize) {
+                    		var me = this;
+                    		un.on("endResize", function() {
+                    			me.storeDimensions();
+                    		});
+                    	}
                     }
                 }    
             },
@@ -308,6 +345,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 
                 //hack!
                 Dom.setStyle('doc3', 'display', 'none');
+                
+                this.storeDimensions();
             },
             
             enhanceIds : function(){
@@ -345,7 +384,24 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             initDimensions : function() {
-                this.updateDimensions();
+            	console.log('Init dimensions: ' + this.id);
+            	var docDim = this.readDimension('doc');
+            	if(docDim != null && docDim.w != null && docDim.h != null) {
+            		console.log('found sizes');
+            		console.dir(docDim);
+            		this.config.width = docDim.w;
+            		this.config.height = docDim.h;
+                    for(var i=0; i<this.config.units.length; i++) {
+                        var unit = this.config.units[i];
+                        var dim = this.readDimension(unit.position);
+                        if(dim) {
+                        	this.config.units[i].width = dim.w;
+                        	this.config.units[i].height = dim.h;
+                        }
+            		}
+            	} else {
+            		this.updateDimensions();
+            	}
             },
             
             updateDimensions : function() {

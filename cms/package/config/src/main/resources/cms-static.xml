@@ -862,7 +862,7 @@
         <sv:value>id=navigator-center,body=navigator-center-body,width=250</sv:value>
       </sv:property>
       <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=navigator-left,body=navigator-left-body,width=200,zindex=2</sv:value>
+        <sv:value>id=navigator-left,body=navigator-left-body,width=200,zindex=2,resize=true</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
