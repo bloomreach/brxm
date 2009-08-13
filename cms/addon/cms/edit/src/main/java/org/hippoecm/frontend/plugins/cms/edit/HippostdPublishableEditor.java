@@ -114,6 +114,20 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
         super.stop();
     }
 
+    @Override
+    void refresh() {
+        // verify that a document exists, i.e. the document has not been deleted
+        try {
+            getMode(getModel());
+        } catch (CmsEditorException ex) {
+            try {
+                close();
+            } catch (EditorException ex2) {
+                log.error("Could not close editor for empty handle");
+            }
+        }
+    }
+
     static Mode getMode(JcrNodeModel nodeModel) throws CmsEditorException {
         // select draft if it exists
         JcrNodeModel draftDocument = getDraftModel(nodeModel);
