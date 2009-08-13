@@ -94,8 +94,7 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
     })();
 
     YAHOO.register("hippodom", YAHOO.hippo.Dom, {
-        version :"2.6.0",
-        build :"1321"
+        version: "2.7.0", build: "1799"
     });
 }
 

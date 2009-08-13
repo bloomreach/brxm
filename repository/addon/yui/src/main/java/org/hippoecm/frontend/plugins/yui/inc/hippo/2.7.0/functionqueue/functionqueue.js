@@ -41,8 +41,6 @@
     YAHOO.hippo.FunctionQueue.prototype = {
 
         handleQueue : function() {
-            YAHOO.log('Handle function  queue[' + this.id + '] with size: '
-                    + this.queue.length, 'info', 'FunctionQueue');
             if (Lang.isFunction(this.preQueueHandler)) {
                 this.preQueueHandler.apply();
             }
@@ -57,8 +55,6 @@
         },
 
         registerFunction : function(func, uniqueId) {
-            YAHOO.log('Register function[' + uniqueId + '] in queue[' + this.id
-                    + '] -> func=' + func, 'info', 'FunctionQueue');
             if (!Lang.isFunction(func))
                 return;
             if (!Lang.isUndefined(uniqueId) && !Lang.isNull(uniqueId)) {
@@ -77,6 +73,5 @@
     };
 })();
 YAHOO.register("functionqueue", YAHOO.hippo.FunctionQueue, {
-    version :"2.6.0",
-    build :"1321"
+    version: "2.7.0", build: "1799"
 });

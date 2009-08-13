@@ -21,8 +21,7 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
     })();
 
     YAHOO.register("hippoajax", YAHOO.hippo.HippoAjax, {
-        version :"2.6.0",
-        build :"1321"
+        version: "2.7.0", build: "1799"
     });
 }
 
