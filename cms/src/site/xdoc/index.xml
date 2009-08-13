@@ -24,8 +24,10 @@
   <body>
     <section name="What is Hippo CMS?">
       <span class='shortdesc'>What part of Hippo ECM is it, what are its tasks?</span>
-
-      <span class='add'>Enlightning diagram?</span>
+	  
+	  <script src="vimeo.js"></script>
+      
+	  <span class='add'>Enlightning diagram?</span>
       <span class='review'>all text: move short features list to feature document?</span>
 
       <span class='listrank'>1</span>
