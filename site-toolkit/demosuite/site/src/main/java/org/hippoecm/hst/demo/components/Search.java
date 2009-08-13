@@ -27,7 +27,7 @@ public class Search extends AbstractSearchComponent {
     
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        String query = request.getParameter("searchquery");
+        String query = request.getParameter("query");
         response.setRenderParameter("query", query);
     }
     

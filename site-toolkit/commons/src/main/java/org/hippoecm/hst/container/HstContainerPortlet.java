@@ -304,15 +304,22 @@ public class HstContainerPortlet extends GenericPortlet {
             request.setAttribute(HstResponseState.class.getName(), portletResponseState);
     
             if (portletResponseState.isActionResponse()) {
+                String hstActionDispUrl = hstDispUrl;
+                int offset = hstActionDispUrl.indexOf('?');
+                
+                if (offset != -1) {
+                    hstActionDispUrl = hstActionDispUrl.substring(0, offset);
+                }
+                
                 // create the request dispatcher, to delegate the request to the hst url
-                PortletRequestDispatcher rd = getPortletContext().getRequestDispatcher(hstDispUrl);
+                PortletRequestDispatcher rd = getPortletContext().getRequestDispatcher(hstActionDispUrl);
                 
                 if (rd != null) {
                     // delegate to HST Container servlet
                     rd.include(request, response);
-                    processActionResponseState((ActionRequest) request, (ActionResponse) response, hstServletPath, hstDispUrl, portletResponseState);
+                    processActionResponseState((ActionRequest) request, (ActionResponse) response, hstServletPath, portletResponseState);
                 } else {
-                    throw new PortletException("HST URL Dispatcher is not found: " + hstDispUrl);
+                    throw new PortletException("HST URL Dispatcher is not found: " + hstActionDispUrl);
                 }
             } else if (portletResponseState.isMimeResponse()) {
                 if (portletResponseState.isRenderResponse() && portletTitle != null) {
@@ -357,7 +364,7 @@ public class HstContainerPortlet extends GenericPortlet {
         portletResponseState.flush();
     }
     
-    private void processActionResponseState(ActionRequest request, ActionResponse response, String hstServletPath, String hstDispUrl, HstResponseState portletResponseState) throws PortletException, IOException {
+    private void processActionResponseState(ActionRequest request, ActionResponse response, String hstServletPath, HstResponseState portletResponseState) throws PortletException, IOException {
         // write out Cookies to ActionResponse
         portletResponseState.flush();
         
