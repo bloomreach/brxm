@@ -22,7 +22,7 @@
         <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hst:port" sv:type="Long">
-        <sv:value>8085</sv:value>
+        <sv:value>0</sv:value>
     </sv:property>
     <sv:property sv:name="hst:showcontextpath" sv:type="Boolean">
         <sv:value>true</sv:value>
