@@ -43,15 +43,15 @@ public class ReferringDocumentsTest extends TestCase
     /** height (depth) of the tree of documents to build, together with the fan-out this determins the number of documents the
      * tree holds
      */
-    private final int DEPTH = 4;
+    private final int DEPTH = 3;
 
     /** the number of subfolders and the number of documents for each folder, the total number of html-consisting
      * documents will be FANOUT^DEPTH, currently over 130000
      */
-    private final int FANOUT = 10;
+    private final int FANOUT = 4;
 
     /** number of references to each document, must be smaller than number of documents */
-    private final int NUMREFS = 25;
+    private final int NUMREFS = 20;
 
     /** limit of the number of documents to create between session.save() */
     private final int SAVECNT = 150;
@@ -71,7 +71,7 @@ public class ReferringDocumentsTest extends TestCase
         buildContent(DEPTH, test);
         session.save();
         long t2 = System.currentTimeMillis();
-        System.err.println("timing building="+(t2-t1)/1000.0+"s");
+        //System.err.println("timing building="+(t2-t1)/1000.0+"s");
 
         random = new Random(478923066);
 
@@ -80,7 +80,7 @@ public class ReferringDocumentsTest extends TestCase
         buildReferences(DEPTH, test);
         session.save();
         long t4 = System.currentTimeMillis();
-        System.err.println("timing linking="+(t4-t3)/1000.0+"s");
+        //System.err.println("timing linking="+(t4-t3)/1000.0+"s");
     }
 
     @Override
@@ -104,9 +104,9 @@ public class ReferringDocumentsTest extends TestCase
         document = document.getNode(document.getName());
         long t1 = System.currentTimeMillis();
         Set<Node> referrers = getReferrers(document);
-        System.err.println("result "+referrers.size()+" out of "+documents.size());
+        //System.err.println("result "+referrers.size()+" out of "+documents.size());
         long t2 = System.currentTimeMillis();
-        System.err.println("timing references "+(t2-t1)/1000.0);
+        //System.err.println("timing references "+(t2-t1)/1000.0);
 
         uuid = documents.get(random.nextInt(documents.size()));
         document = session.getNodeByUUID(uuid);
@@ -114,17 +114,17 @@ public class ReferringDocumentsTest extends TestCase
         t1 = System.currentTimeMillis();
         referrers = getReferrers(document);
         t2 = System.currentTimeMillis();
-        System.err.println("timing references "+(t2-t1)/1000.0);
+        //System.err.println("timing references "+(t2-t1)/1000.0);
     }
 
     private void buildContent(int level, Node base) throws RepositoryException {
         if(level > 1) {
             for(int i=0; i<FANOUT; i++) {
-                if(level == DEPTH) {
-                    System.err.println(i);
-                } else if(level == DEPTH-1) {
-                    System.err.println("  "+i);
-                }
+                //if(level == DEPTH) {
+                //    System.err.println(i);
+                //} else if(level == DEPTH-1) {
+                //    System.err.println("  "+i);
+                //}
                 Node folder = addFolder(base, "folder"+i);
                 buildContent(level-1, folder);
             }
@@ -143,11 +143,11 @@ public class ReferringDocumentsTest extends TestCase
     private void buildReferences(int level, Node base) throws RepositoryException {
         if(level > 1) {
             for(int i=0; i<FANOUT; i++) {
-                if(level == DEPTH) {
-                    System.err.println(i);
-                } else if(level == DEPTH-1) {
-                    System.err.println("  "+i);
-                }
+                //if(level == DEPTH) {
+                //    System.err.println(i);
+                //} else if(level == DEPTH-1) {
+                //    System.err.println("  "+i);
+                //}
                 buildReferences(level-1, base.getNode("folder"+i));
             }
         } else {
