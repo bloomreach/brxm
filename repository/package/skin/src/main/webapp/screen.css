@@ -17,7 +17,6 @@ fieldset,img { border : 0; }
 caption,th { text-align : left; }
 /* ======================================== */
 
-
 #hd { text-align: left; }
 #bd { text-align: left; }
 .wicket-modal { text-align:left }
@@ -1151,6 +1150,8 @@ div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top:
   z-index: 10000;
   color: #000;
   padding:3px;
+  left: -1000px;
+  top: -1000px;
 }
 
 #global-feedback-container {
@@ -1167,4 +1168,11 @@ li.feedbackPanelERROR {
 
 table.hippo-defaultcontent td {
   vertical-align: top;
+}
+
+.smooth_load_workaround {
+  display: none;
+  left: -2000px;
+  top: -2000px;
+  position: absolute;
 }
