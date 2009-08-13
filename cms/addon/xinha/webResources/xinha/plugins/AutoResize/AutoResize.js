@@ -34,7 +34,7 @@ function AutoResize(editor) {
     YAHOO.hippo.LayoutManager.registerResizeListener(this.editor._textArea,
             this, function(type, args, me) {
         me.checkResize(editor);
-    });
+    }, true, false);
 }
 
 AutoResize.prototype.getDim = function(vWidth, vHeight) {
