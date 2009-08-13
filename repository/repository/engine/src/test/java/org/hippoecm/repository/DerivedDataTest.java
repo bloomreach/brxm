@@ -140,6 +140,21 @@ public class DerivedDataTest extends TestCase {
         }
     }
 
+    @Test
+    public void testDerivedNotReferenceable() throws Exception {
+        Node folder = root.addNode("folder","nt:unstructured");
+        folder.addMixin("mix:referenceable");
+
+        Node document = folder.addNode("document", "hippo:testderiveddocument");
+        document.addMixin("hippo:testderived");
+        document.setProperty("hippo:a", 3);
+        document.setProperty("hippo:b", 4);
+        document.setProperty("hippo:c", 6);
+        session.save();
+        session.refresh(false);
+        assertEquals(5, session.getRootNode().getNode("test/folder/document").getProperty("hippo:c").getLong());
+    }
+
     public static class Function extends DerivedDataFunction {
         static final long serialVersionUID = 1;
         public Map<String,Value[]> compute(Map<String,Value[]> parameters) {
