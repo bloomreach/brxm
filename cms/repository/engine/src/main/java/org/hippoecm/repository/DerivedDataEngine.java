@@ -477,7 +477,9 @@ public class DerivedDataEngine {
                     }
                 }
 
-                dependencies.remove(modified.getUUID());
+                if (modified.isNodeType("mix:referenceable")) {
+                    dependencies.remove(modified.getUUID());
+                }
                 Value[] dependenciesValues = new Value[dependencies.size()];
                 int i = 0;
                 for(String dependency : dependencies) {
