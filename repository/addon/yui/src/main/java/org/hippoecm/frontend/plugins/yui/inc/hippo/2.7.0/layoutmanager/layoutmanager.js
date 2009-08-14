@@ -265,7 +265,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     if(dim) {
                         this.config.units[i].width = dim.w;
                         this.config.units[i].height = dim.h;
-                        IEIE += unit.position + '[w=' + dim.w + ',h=' + dim.h + '], ';
                     }
                 }
                 return true;
