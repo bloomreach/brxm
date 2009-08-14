@@ -156,6 +156,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
                 throw new WorkflowException("Document has already been published");
             }
         }
+        if(draftDocument != null)
+            throw new WorkflowException("cannot publish document being edited");
         if(current != null)
             throw new WorkflowException("cannot publish document with pending publication request");
         if(current2 != null)
@@ -186,6 +188,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot depublish document with pending publication request");
         if(current2 != null)
             throw new WorkflowException("cannot depublish document with pending depublication request");
+        if(draftDocument != null)
+            throw new WorkflowException("cannot publish document being edited");
         doDepublish();
     }
 
