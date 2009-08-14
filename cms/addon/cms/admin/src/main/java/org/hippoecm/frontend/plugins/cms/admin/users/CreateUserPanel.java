@@ -25,8 +25,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.PasswordTextField;
@@ -35,9 +33,8 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -55,6 +52,11 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
     private static final Logger log = LoggerFactory.getLogger(CreateUserPanel.class);
 
     private final Form form;
+    
+    private String password;
+    private String passwordCheck;
+
+
 
     private DetachableUser userModel = new DetachableUser();
 
@@ -85,18 +87,17 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
         fc.setRequired(false);
         form.add(fc);
 
-        final PasswordTextField password = new PasswordTextField("password", new Model(""));
-        password.setResetPassword(false);
-        password.add(new PasswordStrengthValidator());
-        form.add(password);
+        final PasswordTextField passwordField = new PasswordTextField("password", new PropertyModel(this, "password"));
+        passwordField.setResetPassword(false);
+        passwordField.add(new PasswordStrengthValidator());
+        form.add(passwordField);
 
-        final PasswordTextField passwordCheck = new PasswordTextField("password-check");
-        passwordCheck.setRequired(false);
-        passwordCheck.setModel(password.getModel());
-        passwordCheck.setResetPassword(false);
-        form.add(passwordCheck);
+        final PasswordTextField passwordCheckField = new PasswordTextField("password-check", new PropertyModel(this, "passwordCheck"));
+        passwordCheckField.setRequired(false);
+        passwordCheckField.setResetPassword(false);
+        form.add(passwordCheckField);
 
-        form.add(new EqualPasswordInputValidator(password, passwordCheck));
+        form.add(new EqualPasswordInputValidator(passwordField, passwordCheckField));
 
         form.add(new AjaxButton("create-button", form) {
             private static final long serialVersionUID = 1L;
@@ -105,9 +106,10 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 User user = userModel.getUser();
                 String username = user.getUsername();
+                System.out.println("Username " + username);
                 try {
                     user.create();
-                    user.savePassword(password.getModelObjectAsString());
+                    user.savePassword(password);
                     log.info("User '" + username + "' created by "
                             + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
                     UserDataProvider.setDirty();
@@ -138,6 +140,22 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
     
     public IModel getTitle(Component component) {
         return new StringResourceModel("user-create", component, null);
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPasswordCheck() {
+        return passwordCheck;
+    }
+
+    public void setPasswordCheck(String passwordCheck) {
+        this.passwordCheck = passwordCheck;
     }
 
 }
