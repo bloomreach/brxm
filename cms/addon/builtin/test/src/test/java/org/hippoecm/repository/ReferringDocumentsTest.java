@@ -46,7 +46,7 @@ public class ReferringDocumentsTest extends TestCase
     private final int DEPTH = 3;
 
     /** the number of subfolders and the number of documents for each folder, the total number of html-consisting
-     * documents will be FANOUT^DEPTH, currently over 130000
+     * documents will be FANOUT^DEPTH
      */
     private final int FANOUT = 4;
 
