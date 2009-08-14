@@ -77,7 +77,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
     public ExtendedFolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(new WorkflowAction("publishAll", new StringResourceModel("publish-all-title", this, null)) {
+        add(new WorkflowAction("publishAll", new StringResourceModel("publish-all-label", this, null)) {
 
             @Override
             protected ResourceReference getIcon() {
@@ -99,6 +99,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 return new ConfirmDialog(this,
                         new StringResourceModel("publish-all-title", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("publish-all-text", ExtendedFolderWorkflowPlugin.this, null),
+                        new StringResourceModel("publish-all-subtext", ExtendedFolderWorkflowPlugin.this, null),
                         new PropertyModel(ExtendedFolderWorkflowPlugin.this, "name"),
                         documents, query);
             }
@@ -145,7 +146,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             }
         });
 
-        add(new WorkflowAction("depublishAll", new StringResourceModel("depublish-all-title", this, null)) {
+        add(new WorkflowAction("depublishAll", new StringResourceModel("depublish-all-label", this, null)) {
 
             @Override
             protected ResourceReference getIcon() {
@@ -167,6 +168,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 return new ConfirmDialog(this,
                         new StringResourceModel("depublish-all-title", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("depublish-all-text", ExtendedFolderWorkflowPlugin.this, null),
+                        new StringResourceModel("depublish-all-subtext", ExtendedFolderWorkflowPlugin.this, null),
                         new PropertyModel(ExtendedFolderWorkflowPlugin.this, "name"),
                         documents, query);
             }
@@ -219,7 +221,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
         Label affectedComponent;
 
-        public ConfirmDialog(WorkflowAction action, IModel dialogTitle, IModel dialogText, IModel folderName, Set<String> documents, Query query) {
+        public ConfirmDialog(WorkflowAction action, IModel dialogTitle, IModel dialogText, IModel dialogSubText, IModel folderName, Set<String> documents, Query query) {
             action.super();
             this.title = dialogTitle;
 
@@ -237,16 +239,18 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                         }
                     }
                 } else {
-                    error("Error preparing to publish all documents");
+                    error("Error preparing to (de)publish all documents");
                 }
             } catch(RepositoryException ex) {
-                log.error("Error preparing to publish all documents", ex);
-                error("Error preparing to publish all documents");
+                log.error("Error preparing to (de)publish all documents", ex);
+                error("Error preparing to (de)publish all documents");
             }
 
             Label textComponent = new Label("text");
             textComponent.setModel(dialogText);
             add(textComponent);
+            
+            add(new Label("counttext", dialogSubText));
             
             Label countComponent = new Label("count");
             countComponent.setModel(new Model(Integer.toString(documents.size())));
@@ -268,14 +272,13 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
         @Override
         public IValueMap getProperties() {
-            return LARGE;
+            return MEDIUM;
         }
 
         @Override
         protected void handleSubmit() {
             setOkVisible(false);
-            setCancelVisible(true);
-            setCancelLabel("Done");
+            setCancelLabel(new StringResourceModel("done-label", ConfirmDialog.this, null));
             onOk();
             affectedComponent.setModel(new Model(Integer.toString(processed)));
             affectedComponent.setVisible(true);
