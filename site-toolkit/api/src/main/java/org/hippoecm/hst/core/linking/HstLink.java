@@ -68,7 +68,7 @@ public interface HstLink {
     /**
      * @return the HstSite that can represent this link. This might be an HstSite which is a different one then the
      * HstSite the link was created in. This could result in a cross-domain (different hostname) link being created, depending
-     * on the backing {@link org.hippoecm.hst.core.hosting.VirtualHost}
+     * on the backing {@link org.hippoecm.hst.core.hosting.VirtualHost}. If no HstSite is set, <code>null</code> can be returned
      */
     HstSite getHstSite();
     
