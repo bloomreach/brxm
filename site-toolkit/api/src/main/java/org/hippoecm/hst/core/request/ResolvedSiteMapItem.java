@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.request;
 
+import java.util.List;
 import java.util.Properties;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -79,6 +80,16 @@ public interface ResolvedSiteMapItem {
      * @return the errorCode specified by <code>{@link HstSiteMapItem#getErrorCode()}</code> 
      */
     int getErrorCode();
+    
+    /**
+     * @return the roles that are allowed to proceed the request with this resolved sitemap item. If no roles present, and empty list is returned
+     */
+    List<String> getRoles();
+    
+    /**
+     * @return <code>true</code> if {@link #getRoles} should be applied to this ResolvedSiteMap item
+     */
+    boolean isSecured();
     
     /**
      * @return the <code>HstComponentConfiguration</code> that is found through {@link #getHstSiteMapItem()}

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.site.request;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Map.Entry;
 
@@ -116,6 +118,14 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
 
     public String getPathInfo() {
         return this.pathInfo;
+    }
+
+    public List<String> getRoles() {
+        return new ArrayList<String>() ;
+    }
+
+    public boolean isSecured() {
+        return false;
     }
 
 }

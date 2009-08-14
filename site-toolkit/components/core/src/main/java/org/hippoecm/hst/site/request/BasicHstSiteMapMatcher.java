@@ -277,6 +277,13 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             return 0;
         }
 
+        public List<String> getRoles() {
+            return new ArrayList<String>() ;
+        }
+
+        public boolean isSecured() {
+            return false;
+        }
         
         public String getPathInfo() {
             return null;
