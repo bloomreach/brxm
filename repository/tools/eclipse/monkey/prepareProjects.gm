@@ -40,9 +40,19 @@ removeProjectDependency('hippo-ecm-addon-cms-edit', 'hippo-ecm-frontend-engine-t
 removeProjectDependency('hippo-ecm-addon-standards-frontend', 'hippo-ecm-frontend-engine-test');
 removeProjectDependency('hippo-ecm-tools-projectexport', 'hippo-ecm-addon-builtin-test');
 
+cleanupSharedResources();
+
 println "\n$metadata.menuName finished";
 
 /////////////
+
+def cleanupSharedResources() {
+    workspace.root.projects.each() {
+        if (it.hasNature('org.eclipse.jdt.core.javanature')) {
+            removeClasspathEntry(it.name, 'target/maven-shared-archive-resources');
+        }
+    }
+}
 
 def removeClasspathEntry(projectName, pathPattern) {
     def project = workspace.root.getProject(projectName);
