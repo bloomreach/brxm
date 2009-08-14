@@ -32,6 +32,9 @@ import javax.jcr.query.QueryResult;
 import org.junit.Test;
 import org.junit.Ignore;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -40,15 +43,17 @@ public class ReferringDocumentsTest extends TestCase
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static final Logger log = LoggerFactory.getLogger(ReferringDocumentsTest.class);
+
     /** height (depth) of the tree of documents to build, together with the fan-out this determins the number of documents the
      * tree holds
      */
-    private final int DEPTH = 3;
+    private final int DEPTH = 3; // use 4 for a proper test
 
     /** the number of subfolders and the number of documents for each folder, the total number of html-consisting
      * documents will be FANOUT^DEPTH
      */
-    private final int FANOUT = 4;
+    private final int FANOUT = 4; // use 12 for a proper test
 
     /** number of references to each document, must be smaller than number of documents */
     private final int NUMREFS = 20;
@@ -71,7 +76,9 @@ public class ReferringDocumentsTest extends TestCase
         buildContent(DEPTH, test);
         session.save();
         long t2 = System.currentTimeMillis();
-        //System.err.println("timing building="+(t2-t1)/1000.0+"s");
+        if(log.isDebugEnabled()) {
+            System.err.println("timing building="+(t2-t1)/1000.0+"s");
+        }
 
         random = new Random(478923066);
 
@@ -80,7 +87,9 @@ public class ReferringDocumentsTest extends TestCase
         buildReferences(DEPTH, test);
         session.save();
         long t4 = System.currentTimeMillis();
-        //System.err.println("timing linking="+(t4-t3)/1000.0+"s");
+        if(log.isDebugEnabled()) {
+            System.err.println("timing linking="+(t4-t3)/1000.0+"s");
+        }
     }
 
     @Override
@@ -104,9 +113,13 @@ public class ReferringDocumentsTest extends TestCase
         document = document.getNode(document.getName());
         long t1 = System.currentTimeMillis();
         Set<Node> referrers = getReferrers(document);
-        //System.err.println("result "+referrers.size()+" out of "+documents.size());
+        if(log.isDebugEnabled()) {
+            System.err.println("result "+referrers.size()+" out of "+documents.size());
+        }
         long t2 = System.currentTimeMillis();
-        //System.err.println("timing references "+(t2-t1)/1000.0);
+        if(log.isDebugEnabled()) {
+            System.err.println("timing references "+(t2-t1)/1000.0);
+        }
 
         uuid = documents.get(random.nextInt(documents.size()));
         document = session.getNodeByUUID(uuid);
@@ -114,17 +127,21 @@ public class ReferringDocumentsTest extends TestCase
         t1 = System.currentTimeMillis();
         referrers = getReferrers(document);
         t2 = System.currentTimeMillis();
-        //System.err.println("timing references "+(t2-t1)/1000.0);
+        if(log.isDebugEnabled()) {
+            System.err.println("timing references "+(t2-t1)/1000.0);
+        }
     }
 
     private void buildContent(int level, Node base) throws RepositoryException {
         if(level > 1) {
             for(int i=0; i<FANOUT; i++) {
-                //if(level == DEPTH) {
-                //    System.err.println(i);
-                //} else if(level == DEPTH-1) {
-                //    System.err.println("  "+i);
-                //}
+                if(log.isDebugEnabled()) {
+                    if(level == DEPTH) {
+                        System.err.println(i);
+                    } else if(level == DEPTH-1) {
+                        System.err.println("  "+i);
+                    }
+                }
                 Node folder = addFolder(base, "folder"+i);
                 buildContent(level-1, folder);
             }
@@ -143,11 +160,13 @@ public class ReferringDocumentsTest extends TestCase
     private void buildReferences(int level, Node base) throws RepositoryException {
         if(level > 1) {
             for(int i=0; i<FANOUT; i++) {
-                //if(level == DEPTH) {
-                //    System.err.println(i);
-                //} else if(level == DEPTH-1) {
-                //    System.err.println("  "+i);
-                //}
+                if(log.isDebugEnabled()) {
+                    if(level == DEPTH) {
+                        System.err.println(i);
+                    } else if(level == DEPTH-1) {
+                        System.err.println("  "+i);
+                    }
+                }
                 buildReferences(level-1, base.getNode("folder"+i));
             }
         } else {
@@ -185,6 +204,8 @@ public class ReferringDocumentsTest extends TestCase
         handle.addMixin(HippoNodeType.NT_HARDHANDLE);
         Node document = handle.addNode(name, "hippo:coredocument");
         document.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+        document.addMixin("hippostd:publishable");
+        document.setProperty("hippostd:state", "published");
         Node html = document.addNode("html", "hippostd:html");
         html.setProperty("hippostd:content", "<html><body>Lorem</body></html>");
         return handle;
@@ -223,7 +244,10 @@ public class ReferringDocumentsTest extends TestCase
                 node = (node.getDepth() > 0 ? node.getParent() : null);
             }
             if(node != null) {
-                referrers.add(node);
+                if(node.isNodeType("hippostd:publishable") && node.hasProperty("hippostd:state") &&
+                   node.getProperty("hippostd:state").getString().equals("published")) {
+                    referrers.add(node);
+                }
             }
         }
         return referrers;

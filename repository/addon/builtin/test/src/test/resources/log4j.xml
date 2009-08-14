@@ -64,6 +64,11 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
+
+  <category additivity="true" name="org.hippoecm.repository.ReferringDocumentsTest">
+    <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
   
   <root>
     <level value="warn"/>
