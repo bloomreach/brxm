@@ -1,0 +1,12 @@
+#set($hyphen = '-')
+#set($empty = '')
+<'${rootArtifactId.replace($hyphen,$empty)}'='http://www.hippoecm.org/hst/nt/${rootArtifactId.replace($hyphen,$empty)}/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<'hippostd'='http://www.hippoecm.org/hippostd/nt/1.3'>
+
+[${rootArtifactId.replace($hyphen,$empty)}:basedocument] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+
+[${rootArtifactId.replace($hyphen,$empty)}:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+  - ${rootArtifactId.replace($hyphen,$empty)}:summary (string)
+  - ${rootArtifactId.replace($hyphen,$empty)}:title (string)
+  + ${rootArtifactId.replace($hyphen,$empty)}:body (hippostd:html)

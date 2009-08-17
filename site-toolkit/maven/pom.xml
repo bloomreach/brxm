@@ -29,7 +29,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>archetype</module>
+    <module>archetype_7_1</module>
+    <module>archetype_7_2</module>
   </modules>
 
   <reporting>
