@@ -106,7 +106,6 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 User user = userModel.getUser();
                 String username = user.getUsername();
-                System.out.println("Username " + username);
                 try {
                     user.create();
                     user.savePassword(password);
