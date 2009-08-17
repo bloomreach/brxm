@@ -21,12 +21,11 @@ import java.util.List;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 
-public class DialogWindow extends PersistentModalWindow implements IDialogService {
+public class DialogWindow extends ModalWindow implements IDialogService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -86,14 +85,10 @@ public class DialogWindow extends PersistentModalWindow implements IDialogServic
     }
 
     @Override
-    public boolean isShown() { 
-        if (shown == null) {
-            return false;
-        } else {
-            return super.isShown();
-        }
+    public boolean isShown() {
+        return (shown != null);
     }
-    
+
     private void internalShow(Dialog dialog) {
         shown = dialog;
         dialog.setDialogService(this);
