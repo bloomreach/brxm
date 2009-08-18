@@ -19,7 +19,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,7 +30,6 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.commons.beanutils.MethodUtils;
-import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.AbstractBeanSpringTestCase;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
@@ -45,11 +43,9 @@ import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstContextualizeException;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.core.search.HstVirtualizer;
-import org.hippoecm.hst.proxy.ProxyFactory;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
@@ -123,27 +119,12 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
         
         HippoFolder folder = (HippoFolder) obm.getObject("/testcontent/documents/testproject/Products");
         
-        ProxyFactory factory = new ProxyFactory();
-        
-        Invoker invoker = new Invoker() {
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                String methodName = method.getName();
-                if ("getSession".equals(methodName)) {
-                    return session;
-                } else {
-                    throw new UnsupportedOperationException();
-                }
-            }
-        };
-        
-        HstRequestContext requestContext = (HstRequestContext) factory.createInvokerProxy(invoker, new Class [] { HstRequestContext.class });
-        
         HstQueryManager queryManager = new HstQueryManagerImpl(objectConverter, new MyHstCtxWhereClauseComputerImpl());
         
-        HstQuery hstQuery = queryManager.createQuery(requestContext, folder);
+        HstQuery hstQuery = queryManager.createQuery(folder);
 
         String query = "CMS";
-        Filter filter = new FilterImpl(requestContext);
+        Filter filter = new FilterImpl();
         filter.addContains(".", query);
         hstQuery.setFilter(filter);
         
@@ -151,7 +132,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
         assertFalse("The query cannot find any result with '" + query + "'.", resultBeans.isEmpty());
         
         query = "is";
-        filter = new FilterImpl(requestContext);
+        filter = new FilterImpl();
         filter.addContains(".", query);
         hstQuery.setFilter(filter);
         
@@ -180,13 +161,16 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
 
         public final Logger log = LoggerFactory.getLogger(MyHstCtxWhereClauseComputerImpl.class.getName()); 
         
+        public HstVirtualizer getVirtualizer(Node ctxAwareNode) throws HstContextualizeException{
+            return null;
+        }
+        
         public String getCtxWhereClause(Node node) throws HstContextualizeException{
             StringBuffer facetSelectClauses = new StringBuffer();
             String path = null;
             try {
                 path = node.getPath();
                 if(!(node instanceof HippoNode)) {
-                    log.warn("Cannot compute a ctx where clause for a non HippoNode '{}'", node.getPath());
                     throw new HstContextualizeException("Cannot compute a ctx where clause for a non HippoNode : " + node.getPath());
                 }
                 
@@ -194,20 +178,25 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
                 HippoNode canonical = (HippoNode)hnode.getCanonicalNode();
                 
                 if(canonical == null) {
-                    log.warn("Cannot compute a ctx where clause for a node that does not have a physical equivalence: '{}'. Return", node.getPath());
                     throw new HstContextualizeException("Cannot compute a ctx where clause for a node that does not have a physical equivalence : " + node.getPath());
                 }
-                else if (canonical.isSame(node)){
+                
+                if(!canonical.isNodeType("mix:referenceable") && !canonical.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    throw new  HstContextualizeException("Cannot create a context where clause for node '"+canonical.getPath()+"'");
+                 }
+                if (canonical.isSame(node)){
                     // either the site content root node (hst:content) or just a physical node.
                     if(node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                        String scopeUUID = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                        facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
                        getFacetSelectClauses(hnode.getSession(), hnode, facetSelectClauses , false);
                     } else {
-                        // We are not searching in a virtual structure: return "" , there is no context where, and thus no filter on the search
-                        log.debug("Not a search in a virtual structure. Return \"\" for the ctx where clause");
-                        // return '' : no filter will be applied
-                        return "";
+                        // We are not searching in a virtual structure: return "" , there is no context where, only a where on the scope of the node
+                        if(log.isDebugEnabled()) {
+                            log.debug("Not a search in a virtual structure. Return the scope for the node '{}' only.", node.getPath());
+                        }
+                        String scopeUUID =  canonical.getUUID();
+                        facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
                     }
                 } else {
                     // we are searching in a virtual node. Let's compute the context where clause to represent this in a physical search
@@ -222,9 +211,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
             }
             
             if(facetSelectClauses.length() == 0) {
-                log.warn("No ctx where clause found");
-                // return '' : no filter will be applied
-                return "";
+                throw new HstContextualizeException("Exception during creating ContextWhereClause. Cannot create a proper search.");
             }
             facetSelectClauses.append(" and not(@jcr:primaryType='nt:frozenNode')");
             log.debug("For node '{}' the ctxWhereClause is '{}'", path , facetSelectClauses.toString());
@@ -288,11 +275,6 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
                 throw new HstContextualizeException("RepositoryException while trying to resolve facetselect clauses. Return null", e);
             }
             
-        }
-
-        public HstVirtualizer getVirtualizer(Node ctxAwareNode) throws HstContextualizeException {
-           // TODO 
-            return null;
         }
 
     }

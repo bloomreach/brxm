@@ -40,6 +40,13 @@ public interface HstCtxWhereClauseComputer {
      */
     String getCtxWhereClause(Node node) throws HstContextualizeException;
     
+    /**
+     * Returns a virtualizer for the ctxAwareNode. If the ctxAwareNode is physical, a virtualizer can be 
+     * returned that just returns the physical node directly, or <code>null</code>. 
+     * @param ctxAwareNode
+     * @return A virtualizer for the ctxAwareNode. If <code>null</code> is returned, no virtualization can be done
+     * @throws HstContextualizeException
+     */
     HstVirtualizer getVirtualizer(Node ctxAwareNode) throws HstContextualizeException;
    
 }

@@ -38,6 +38,9 @@ public class HippoBeanIteratorImpl implements HippoBeanIterator{
         this.objectConverter = objectConverter;
         this.nodeIterator = nodeIterator;
         this.virtualizer = virtualizer;
+        if(this.virtualizer == null) {
+            log.debug("HippoBeanIteratorImpl will not return virtualized beans, as the virtualizer is null.");
+        }
     }
     
     public long getPosition() {
@@ -53,11 +56,14 @@ public class HippoBeanIteratorImpl implements HippoBeanIterator{
         try {
             n = nodeIterator.nextNode();
             if(n != null) {
-                Node ctxAwareNode = virtualizer.virtualize(n);
-                if(ctxAwareNode == null) {
-                    return null;
+                if(virtualizer != null) {
+                    n = virtualizer.virtualize(n);
+                    if(n == null) {
+                        log.debug("Unable to virtualize.");
+                        return null;
+                    }
                 }
-                return (HippoBean)objectConverter.getObject(ctxAwareNode);
+                return (HippoBean)objectConverter.getObject(n);
             } else {
                 log.warn("Node in node iterator is null. Cannot return a HippoStdNode");
             }

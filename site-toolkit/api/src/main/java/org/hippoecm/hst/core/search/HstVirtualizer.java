@@ -18,7 +18,8 @@ package org.hippoecm.hst.core.search;
 import javax.jcr.Node;
 
 /**
- * A virtualizer implementation converts a physical node to its virtual context aware node
+ * A virtualizer implementation converts a physical node to its virtual context aware node, or
+ * if the context wasn't virtual, it just returns the physical node
  *
  */
 public interface HstVirtualizer {
