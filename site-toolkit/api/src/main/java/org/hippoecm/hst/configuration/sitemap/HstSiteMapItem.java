@@ -86,11 +86,28 @@ public interface HstSiteMapItem {
     String getPortletComponentConfigurationId();
     
     /**
+     * Returns the roles that are allowed to access this sitemap item when {@link isSecure()} is true. If the sitemap items does not have any roles defined by itself, it
+     * inherits them from the parent. If it defines roles, the roles from any ancestor are ignored. An empty list of roles
+     * in combination with {@link #isSecured()} return <code>true</code> means nobody has access to the item
+     * 
      * {@link HstComponent} instances can access <code>HstSiteMapItem</code> but should not be able to modify them, implementations
-     * should return an unmodifiable List
-     * @return
+     * should return an unmodifiable List. 
+     * 
+     * @return The list of roles that are allowed to access this sitemap item. When no roles defined, the roles from the parent item are inherited. If none of the 
+     * parent items have a role defined, an empty list is returned
      */
     List<String> getRoles();  
+    
+    /**
+     * If this method returns true, then only if the <code>servletRequest.isUserInRole(role)</code> returns <code>true</code> this
+     * sitemap item is accessible for the request. 
+     * 
+     * If a sitemap item does not have a configuration for isSecure, the value from the parent item is taken. The root sitemap items 
+     * return by default <code>false</code> for {@link #isSecured()} when no configuration is set for isSecure.
+     * 
+     * @return <code>true</code> if the sitemap item is secured. 
+     */
+    boolean isSecured();
     
     /**
      * Returns a <code>List</code> of all child <code>HstSiteMapItem</code>'s of this <code>HstSiteMapItem</code>.    
@@ -117,6 +134,10 @@ public interface HstSiteMapItem {
      * for example named <code>lux</code> and the value <code>${foo}</code>. If the <code>HstSiteMapItem</code> is a WILDCARD or any of its
      * ancestors, you can also set the parameter values to <code>${1}</code>, <code>${2}</code> etc where <code>${1}</code> refers to the 
      * first matched wildcard, <code>${2}</code> to the second, etc.
+     * 
+     * Parameters are inherited from ancestor sitemap items. When this sitemap item configures the same parameter as an ancestor, the
+     * value from the ancestor is overwritten. Thus, child items have precedence. Note that this is opposite to {@link HstComponentConfiguration#getParameter(String)}
+     * 
      * @param name the name of the parameter
      * @return the value of the parameter
      */
@@ -126,6 +147,11 @@ public interface HstSiteMapItem {
      * See {@link #getParameter(String)}, only now the parameters map is returned.
      * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
      * client code changing configuration
+     * 
+     * Parameters are inherited from ancestor sitemap items. When this sitemap item configures the same parameter as an ancestor, the
+     * value from the ancestor is overwritten. Thus, child items have precedence. Note that this is opposite to {@link HstComponentConfiguration#getParameters()}
+     * 
+     * 
      * @return the Map of parameters contained in this <code>HstSiteMapItem</code>
      */
     Map<String, String> getParameters();

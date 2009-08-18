@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -63,6 +64,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private String portletComponentConfigurationId;
     
     private List<String> roles;
+    
+    private boolean secured = false;
 
     private boolean isWildCard;
     
@@ -160,13 +163,33 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
            }
         }
         
+        if(this.parentItem != null){
+            // add the parent parameters that are not already present
+            for(Entry<String, String> parentParam : this.parentItem.getParameters().entrySet()) {
+                if(!this.parameters.containsKey(parentParam.getKey())) {
+                    this.parameters.put(parentParam.getKey(), parentParam.getValue());
+                }
+            }
+        }
+        
         this.relativeContentPath = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
         this.componentConfigurationId = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
         this.portletComponentConfigurationId = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
-        String[] rolesProp = getValueProvider().getStrings(Configuration.SITEMAPITEM_PROPERTY_ROLES);
-        if(rolesProp!=null) {
+        
+        if(getValueProvider().hasProperty(Configuration.SITEMAPITEM_PROPERTY_ROLES)) {
+            String[] rolesProp = getValueProvider().getStrings(Configuration.SITEMAPITEM_PROPERTY_ROLES);
             this.roles = Arrays.asList(rolesProp);
+        } else if(this.parentItem != null){
+            this.roles = parentItem.getRoles();
+        } else {
+            this.roles = new ArrayList<String>();
         }
+        
+        if(getValueProvider().hasProperty(Configuration.SITEMAPITEM_PROPERTY_SECURED)) {
+            this.secured = getValueProvider().getBoolean(Configuration.SITEMAPITEM_PROPERTY_SECURED);
+        } else if(this.parentItem != null){
+            this.secured = parentItem.isSecured();
+        } 
         
         init(jcrNode);
     }
@@ -251,6 +274,10 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
 
     public List<String> getRoles() {
         return Collections.unmodifiableList(this.roles);
+    }
+
+    public boolean isSecured() {
+        return this.secured;
     }
 
     public String getValue() {

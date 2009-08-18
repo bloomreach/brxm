@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration.components;
 import java.util.Map;
 import java.util.SortedMap;
 
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponent;
 
 /**
@@ -128,7 +129,11 @@ public interface HstComponentConfiguration {
      * Returns the parameter value for the parameter <code>name</code> and <code>null</code> if not present. Note that
      * from the <code>HstComponentConfiguration</code> always 'raw' parameters are returned. 'Raw' as in unresolved with respect
      * to property placeholders. So, a value might be ${year} or ${1}. In a {@link org.hippoecm.hst.core.component.HstComponent} 
-     * instance, the implementation might have implemented some resolving for these values. 
+     * instance, the implementation might have implemented some resolving for these values.
+     * 
+     * Parameters are inherited from ancestor configurations. Parameters that are configured in an ancestor override parameters
+     * configured in this component. Ancestors have precedence. Note that this is opposite to {@link HstSiteMapItem#getParameter(String)}
+     *  
      * @param name the name of the parameter
      * @return the configured parameter value for this <code>name</code> and <code>null</code> if not existing
      */
@@ -138,6 +143,10 @@ public interface HstComponentConfiguration {
      * Returns the map of all parameters. Also see {@link #getParameter(String)}.
      * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
      * client code changing configuration
+     * 
+     * Parameters are inherited from ancestor configurations. Parameters that are configured in an ancestor override parameters
+     * configured in this component. Ancestors have precedence. Note that this is opposite to {@link HstSiteMapItem#getParameters()}
+     * 
      * @return the map of all configured parameters, and an empty map if no parameters present
      */
     Map<String, String> getParameters();
