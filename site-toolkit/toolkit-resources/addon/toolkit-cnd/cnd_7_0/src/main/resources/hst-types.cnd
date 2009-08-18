@@ -54,6 +54,8 @@
 - hst:parametervalues (string) multiple
 - hst:statuscode (long)
 - hst:errorcode (long)
+- hst:secured (boolean)
+- hst:roles (string) multiple
 + * (hst:sitemapitem)
 
 [hst:sitemap] orderable
