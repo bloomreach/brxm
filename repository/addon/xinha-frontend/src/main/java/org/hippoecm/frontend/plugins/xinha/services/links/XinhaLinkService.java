@@ -17,12 +17,13 @@
 package org.hippoecm.frontend.plugins.xinha.services.links;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.XinhaUtil;
 import org.hippoecm.frontend.plugins.xinha.services.XinhaFacetHelper;
@@ -59,6 +60,28 @@ public abstract class XinhaLinkService implements IClusterable {
         return null;
     }
 
+    /**
+     * Remove any facetselects that are no longer used.
+     * 
+     * @param references the current list of link names 
+     */
+    public void cleanup(Set<String> references) {
+        try {
+            NodeIterator iter = nodeModel.getNode().getNodes();
+            while (iter.hasNext()) {
+                Node child = iter.nextNode();
+                if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    String name = child.getName();
+                    if (!references.contains(name)) {
+                        child.remove();
+                    }
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error("Error removing unused links", ex);
+        }
+    }
+    
     private String createLink(JcrNodeModel nodeModel) {
         try {
             String link = createLink(new NodeItem(nodeModel.getNode()));
@@ -70,7 +93,7 @@ public abstract class XinhaLinkService implements IClusterable {
     }
 
     private String createLink(NodeItem item) {
-        XinhaFacetHelper helper = new XinhaFacetHelper(false);
+        XinhaFacetHelper helper = new XinhaFacetHelper();
         Node node = nodeModel.getNode();
         try {
             return helper.createFacet(node, item.getNodeName(), item.getUuid());
@@ -83,10 +106,7 @@ public abstract class XinhaLinkService implements IClusterable {
     private class NodeItem implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        private String path;
         private String uuid;
-        private String displayName;
-        private boolean isHandle;
         private String nodeName;
 
         public NodeItem(Node listNode) throws RepositoryException {
@@ -94,17 +114,8 @@ public abstract class XinhaLinkService implements IClusterable {
         }
 
         public NodeItem(Node listNode, String displayName) throws RepositoryException {
-            this.path = listNode.getPath();
-            if (displayName == null) {
-                this.displayName = (String) new NodeTranslator(new JcrNodeModel(listNode)).getNodeName().getObject();
-            } else {
-                this.displayName = displayName;
-            }
             if (listNode.isNodeType("mix:referenceable")) {
                 this.uuid = listNode.getUUID();
-            }
-            if (listNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                isHandle = true;
             }
             this.nodeName = NodeNameCodec.encode(listNode.getName());
         }
@@ -115,18 +126,6 @@ public abstract class XinhaLinkService implements IClusterable {
 
         public String getUuid() {
             return uuid;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public boolean isHandle() {
-            return isHandle;
-        }
-
-        public String getDisplayName() {
-            return displayName;
         }
     }
 

@@ -109,7 +109,7 @@ public abstract class XinhaImageService implements IClusterable {
     }
 
     private boolean attachImageItem(ImageItem item) {
-        XinhaFacetHelper helper = new XinhaFacetHelper(false);
+        XinhaFacetHelper helper = new XinhaFacetHelper();
         Node node = nodeModel.getNode();
         try {
             String facet = helper.createFacet(node, item.getNodeName(), item.getUuid());

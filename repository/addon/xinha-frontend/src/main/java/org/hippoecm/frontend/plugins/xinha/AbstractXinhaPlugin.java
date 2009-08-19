@@ -22,8 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -92,9 +90,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     // hardcoded ignore path set
     private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
             "/hippo:configuration", "/hippo:namespaces" }));
-
-    private static Pattern IMG_PATTERN = Pattern.compile("<img[^>]+>", Pattern.CASE_INSENSITIVE);
-    private static Pattern SRC_PATTERN = Pattern.compile("src=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
 
     private final String mode;
     private TextArea editor;
@@ -197,33 +192,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                                 + propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath())
                                 + "/";
 
-                        StringBuffer processed = new StringBuffer();
-                        Matcher m = IMG_PATTERN.matcher(text);
-                        while (m.find()) {
-                            String img = m.group();
-                            StringBuffer newImg = new StringBuffer();
-                            Matcher s = SRC_PATTERN.matcher(img);
-                            if (s.find()) {
-                                String src = s.group();
-                                // skip src=
-                                String link = src.substring(4);
-                                if (link.charAt(0) == '"') {
-                                    link = link.substring(1);
-                                }
-                                if (link.charAt(link.length() - 1) == '"') {
-                                    link = link.substring(0, link.length() - 1);
-                                }
-                                if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                                    s.appendReplacement(newImg, ("src=\"" + prefix + link + "\"").replace("\\", "\\\\")
-                                            .replace("$", "\\$"));
-                                } else {
-                                    s.appendReplacement(newImg, src.replace("\\", "\\\\").replace("$", "\\$"));
-                                }
-                            }
-                            s.appendTail(newImg);
-                            m.appendReplacement(processed, newImg.toString().replace("\\", "\\\\").replace("$", "\\$"));
-                        }
-                        m.appendTail(processed);
+                        String processed = XinhaHtmlProcessor.prefixImageLinks(text, prefix);
                         getResponse().write(processed);
                     }
                     renderComponentTagBody(markupStream, openTag);
@@ -302,6 +271,11 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         return value;
     }
 
+    private void removeLinks(String text) {
+        Set<String> linkNames = XinhaHtmlProcessor.getInternalLinks(text);
+        linkService.cleanup(linkNames);
+    }
+    
     private Component createEditor(final IPluginConfig config) {
         final JcrPropertyValueModel valueModel = getValueModel();
         editor = new TextArea("value", new IModel() {
@@ -313,7 +287,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
             public void setObject(Object value) {
                 try {
-                    valueModel.setObject(clean((String) value));
+                    String cleanedValue = clean((String) value);
+                    removeLinks(cleanedValue);
+                    valueModel.setObject(cleanedValue);
                 } catch (Exception e) {
                     error(new ResourceModel("error-while-cleaning-conent",
                             "An error occured while cleaning the content"));

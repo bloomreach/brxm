@@ -36,66 +36,51 @@ public class XinhaFacetHelper {
 
     static final Logger log = LoggerFactory.getLogger(XinhaFacetHelper.class);
 
-    private String facetLink;
-    private boolean alreadyPresent;
-    private boolean useSharedFacets;
-
-    public XinhaFacetHelper(boolean useSharedFacets) {
-        this.useSharedFacets = useSharedFacets;
-    }
-
     public String createFacet(Node node, String link, String uuid) throws ItemExistsException, PathNotFoundException,
             NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
         if (uuid == null) {
             log.error("uuid is null. Should never be possible for facet");
             return "";
         }
-        
-        visit(node, link, uuid, 0);
-        if (!alreadyPresent) {
-            Node facetselect = node.addNode(facetLink, HippoNodeType.NT_FACETSELECT);
-            facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, uuid);
-            facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {});
-            facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
-            facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {});
-            // need a node save (the draft so no problem)
-            node.getSession().save();
-        }
-        return facetLink;
-    }
-    
-    private void visit(Node node, String link, String uuid, int postfix) {
-        try {
-            String testLink = link;
-            if (postfix > 0) {
-                testLink += "_" + postfix;
-            }
-            if (node.hasNode(testLink)) {
-                Node htmlLinkNode = node.getNode(testLink);
-                if (htmlLinkNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    String docbase = htmlLinkNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getValue().getString();
-                    if (docbase.equals(uuid)) {
-                        // we already have a link for this internal link
-                        if (useSharedFacets) { //, so reuse it
-                            facetLink = testLink;
-                            alreadyPresent = true;
-                        } else {
-                            visit(node, link, uuid, ++postfix);
-                        }
-                    } else {
-                        // we already have a link of this name, but points to different node, hence, try with another name
-                        visit(node, testLink, uuid, ++postfix);
-                    }
+
+        String linkName = newLinkName(node, link);
+
+        Node facetselect = node.addNode(linkName, HippoNodeType.NT_FACETSELECT);
+        facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, uuid);
+        facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {});
+        facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
+        facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {});
+
+        // save the document (the draft so no problem)
+        Node document = node.getParent();
+        while (document.getDepth() > 0) {
+            if (document.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                if (document.isNew()) {
+                    log.warn("Document is new, saving session");
+                    document.getSession().save();
                 } else {
-                    // there is a node which is has the same name as the testLink, but is not a facetselect, try with another name
-                    visit(node, testLink, uuid, ++postfix);
+                    document.save();
                 }
-            } else {
-                facetLink = testLink;
-                alreadyPresent = false;
+                break;
             }
-        } catch (RepositoryException e) {
-            log.error("error occured while validating Xinha link: " + link, e);
+            document.getParent();
+        }
+
+        return linkName;
+    }
+
+    private String newLinkName(Node node, String link) throws RepositoryException {
+        if (!node.hasNode(link)) {
+            return link;
+        }
+        int postfix = 1;
+        while (true) {
+            String testLink = link + "_" + postfix;
+            if (!node.hasNode(testLink)) {
+                return testLink;
+            }
+            postfix++;
         }
     }
+
 }
