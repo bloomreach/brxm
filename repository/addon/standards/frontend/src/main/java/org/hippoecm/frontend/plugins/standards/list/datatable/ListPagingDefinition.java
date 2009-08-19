@@ -16,36 +16,35 @@
 
 package org.hippoecm.frontend.plugins.standards.list.datatable;
 
-import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class ListPagingDefinition implements IClusterable {
+public class ListPagingDefinition implements IPagingDefinition {
     private static final long serialVersionUID = 1L;
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private int viewSize;
     private int pageSize;
-    
+
     public ListPagingDefinition() {
         pageSize = 15;
         viewSize = 10;
     }
-    
+
     public ListPagingDefinition(IPluginConfig config) {
         this.pageSize = config.getInt("list.page.size", 15);
         this.viewSize = config.getInt("list.view.size", 10);
     }
-    
+
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
-    
+
     public int getPageSize() {
         return pageSize;
     }
-    
+
     public void setViewSize(int viewSize) {
         this.viewSize = viewSize;
     }
@@ -53,5 +52,5 @@ public class ListPagingDefinition implements IClusterable {
     public int getViewSize() {
         return viewSize;
     }
-    
+
 }

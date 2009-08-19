@@ -57,7 +57,7 @@ public class ListDataTable extends DataTable {
     }
 
     public ListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
-            TableSelectionListener selectionListener, final boolean triState, ListPagingDefinition pagingDefinition) {
+            TableSelectionListener selectionListener, final boolean triState, IPagingDefinition pagingDefinition) {
         super(id, tableDefinition.getColumns(), dataProvider, pagingDefinition.getPageSize());
         setOutputMarkupId(true);
         setVersioned(false);

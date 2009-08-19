@@ -31,7 +31,7 @@ public class ListNavigationToolBar extends AbstractToolbar {
 
     private static final long serialVersionUID = 1L;
 
-    public ListNavigationToolBar(DataTable table, ListPagingDefinition pagingDefinition) {
+    public ListNavigationToolBar(DataTable table, IPagingDefinition pagingDefinition) {
         super(table);
 
         WebMarkupContainer span = new WebMarkupContainer("span");
@@ -49,7 +49,7 @@ public class ListNavigationToolBar extends AbstractToolbar {
     }
 
     private PagingNavigator newPagingNavigator(String navigatorId, final DataTable table,
-            ListPagingDefinition pagingDefinition) {
+            IPagingDefinition pagingDefinition) {
         return new ListPagingNavigator(navigatorId, table, new ListPagingLabelProvider(), pagingDefinition) {
             private static final long serialVersionUID = 1L;
 
