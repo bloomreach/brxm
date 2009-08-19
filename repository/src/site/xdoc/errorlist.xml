@@ -24,11 +24,11 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">442 errors and/or todos in 251 out of 251 documents (100%).</span>
+      <span class="shortdesc">396 errors and/or todos in 239 out of 239 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
-        <li>1 documents using dummy references.
+        <li>0 documents using dummy references.
      </li>
         <li> 
         Checking if documents are linked to was not possible (no previous, readable linkreport to compare to).
@@ -39,7 +39,7 @@
      </li>
         <li>2 documents to review.
      </li>
-        <li>51 documents missing required info.
+        <li>35 documents missing required info.
      </li>
         <li>3 empty documents.
      </li>
@@ -47,25 +47,15 @@
      </li>
         <li>11 documents requiring additions.
      </li>
-        <li>11 documents with unidentified TODO strings.
+        <li>0 documents with unidentified TODO strings.
      </li>
-        <li>1 not valid XML documents.
+        <li>9 not valid XML documents.
      </li>
-        <li>16 documents with bad text.
+        <li>15 documents with bad text.
      </li>
-        <li>10 multisection documents.
+        <li>9 multisection documents.
      </li>
       </ul>
-      <subsection name="Documents with dummy references: 1">
-        <ol>
-          <li>
-            <a href="./delve_into/tools/howto/export_node.html">export_node: Export node</a>
-            <ul>
-              <li>Export node from Hippo repository<span xmlns="" class="bad"> in X </span>ML format</li>
-            </ul>
-          </li>
-        </ol>
-      </subsection>
       <subsection name="Documents with standard typos: 3">
         <ol>
           <li>
@@ -100,12 +90,6 @@
               <li>&lt;p/&gt;</li>
               <li>&lt;p/&gt;</li>
               <li>&lt;p/&gt;</li>
-              <li>&lt;p/&gt;</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/custom/jcr/jcr_dropbox_example.html">jcr_dropbox_example: Demo on interfacing with Hippo ECM Repository</a>
-            <ul>
               <li>&lt;p/&gt;</li>
             </ul>
           </li>
@@ -155,6 +139,12 @@
             </ul>
           </li>
           <li>
+            <a href="./index.html">index: What is Hippo CMS?</a>
+            <ul>
+              <li>&lt;script src='vimeo.js'/&gt;</li>
+            </ul>
+          </li>
+          <li>
             <a href="./support/forums.html">forums: Public Forums</a>
             <ul>
               <li>&lt;script src='../nabble.js'/&gt;</li>
@@ -195,31 +185,13 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 51">
+      <subsection name="Documents lacking some information: 35">
         <ol>
-          <li>
-            <a href="./about/architecture.html">architecture: Architecture</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./about/features.html">features: Features</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
           <li>
             <a href="./about/term_index.html">term_index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
               <li>Missing section. Add &lt;section name='...'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./about/use_cases.html">use_cases: Use cases</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
           </li>
           <li>
@@ -229,15 +201,17 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/core/architecture/index.html">index: Architecture</a>
+            <a href="./delve_into/core/building/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
             </ul>
           </li>
           <li>
-            <a href="./delve_into/core/building/maven.html">maven: Developing with Maven</a>
+            <a href="./delve_into/core/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
             </ul>
           </li>
           <li>
@@ -260,9 +234,10 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/custom/jcr/jcr_dropbox_example.html">jcr_dropbox_example: Demo on interfacing with Hippo ECM Repository</a>
+            <a href="./delve_into/custom/jcr/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
             </ul>
           </li>
           <li>
@@ -298,49 +273,14 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/sysadmin/configuration/nodes/domains.html">domains: Domains Configuration</a>
+            <a href="./delve_into/sysadmin/configuration/nodes/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/sysadmin/configuration/nodes/groups.html">groups: Groups Configuration</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/sysadmin/configuration/nodes/index.html">index: Configuration nodes</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/sysadmin/configuration/nodes/roles.html">roles: Roles Configuration</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/sysadmin/configuration/nodes/users.html">users: Users Configuration</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/sysadmin/configuration/nodes/workflow.html">workflow: Workflow configuration</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
             </ul>
           </li>
           <li>
             <a href="./delve_into/sysadmin/configuration/repository/authentication.html">authentication: Repository based authentication</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/sysadmin/configuration/repository/index.html">index: Repository configuration</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
@@ -378,21 +318,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/tools/howto/eclipse/index.html">index: </a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-              <li>Missing section. Add &lt;section name='...'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/tools/howto/index.html">index: </a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-              <li>Missing section. Add &lt;section name='...'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/tools/howto/maven/index.html">index: </a>
+            <a href="./delve_into/tools/eclipse/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
               <li>Missing section. Add &lt;section name='...'&gt;.</li>
@@ -400,6 +326,20 @@ repository is;
           </li>
           <li>
             <a href="./delve_into/tools/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/tools/maven/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/tools/svn/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
               <li>Missing section. Add &lt;section name='...'&gt;.</li>
@@ -434,20 +374,6 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/todo/index.html">index: </a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-              <li>Missing section. Add &lt;section name='...'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/todo-concepts/index.html">index: </a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-              <li>Missing section. Add &lt;section name='...'&gt;.</li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/user/editors/concepts/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
@@ -466,36 +392,6 @@ repository is;
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
               <li>Missing section. Add &lt;section name='...'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/document_types/editor.html">editor: The Document Type Editor</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/document_types/examples.html">examples: Examples of document types</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/document_types/fieldtypes.html">fieldtypes: Field Types Reference</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/document_types/index.html">index: Document Types</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/document_types/tutorial.html">tutorial: Document Type Tutorial</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
           </li>
           <li>
@@ -619,6 +515,12 @@ repository is;
       <subsection name="Add something to documents: 11">
         <ol>
           <li>
+            <a href="./delve_into/custom/howto/customize_editing_template.html">customize_editing_template: Customize an Editing Template</a>
+            <ul>
+              <li>include screenshot</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/custom/howto/eclipse/configure_workspace.html">configure_workspace: Configure Workspace</a>
             <ul>
               <li>Explanation about installing JPOX eclipse plugin</li>
@@ -640,7 +542,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/tools/howto/maven/learning_maven.html">learning_maven: Learning Maven</a>
+            <a href="./delve_into/tools/maven/learning_maven.html">learning_maven: Tips and tricks</a>
             <ul>
               <li>References to Maven pages</li>
             </ul>
@@ -676,12 +578,6 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/contributors/todo-concepts/document_card.html">document_card: Document tab page</a>
-            <ul>
-              <li>more about cards in the image</li>
-            </ul>
-          </li>
-          <li>
             <a href="./index.html">index: What is Hippo CMS?</a>
             <ul>
               <li>Enlightning diagram?</li>
@@ -689,113 +585,12 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with unidentified TODO strings: 11">
-        <ol>
-          <li>
-            <a href="./about/architecture.html">architecture: Architecture</a>
-            <ul>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="./about/features.html">features: Features</a>
-            <ul>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="./about/use_cases.html">use_cases: Use cases</a>
-            <ul>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/architecture/index.html">index: Architecture</a>
-            <ul>
-              <li><span xmlns="" class="bad"> TODO </span>: in-depth explanation of architecture</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/fundamentals/index.html">index: Fundamentals</a>
-            <ul>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/custom/howto/customize_editing_template.html">customize_editing_template: Customize an Editing Template</a>
-            <ul>
-              <li><span xmlns="" class="bad"> TODO </span>: include screenshot</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/custom/jcr/data_migration.html">data_migration: Data Migration</a>
-            <ul>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/tools/howto/maven/learning_maven.html">learning_maven: Learning Maven</a>
-            <ul>
-              <li>References to good Maven pages (<span xmlns="" class="bad"> TODO </span>) and some handy notes.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/document_types/examples.html">examples: Examples of document types</a>
-            <ul>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/document_types/fieldtypes.html">fieldtypes: Field Types Reference</a>
-            <ul>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/document_types/index.html">index: Document Types</a>
-            <ul>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-            </ul>
-          </li>
-        </ol>
-      </subsection>
-      <subsection name="multisection documents: 10">
+      <subsection name="multisection documents: 9">
         <ol>
           <li>
             <a href="./delve_into/core/project-structure.html">project-structure: Project Structure</a>
             <ul>
               <li>Has 9 sections.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/custom/jcr/jcr_dropbox_example.html">jcr_dropbox_example: Demo on interfacing with Hippo ECM Repository</a>
-            <ul>
-              <li>Has 2 sections.</li>
             </ul>
           </li>
           <li>
@@ -848,7 +643,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 16">
+      <subsection name="badtext documents: 15">
         <ol>
           <li>
             <a href="./delve_into/custom/howto/extend_dashboard.html">extend_dashboard: Giving our plugin a place on the dashboard</a>
@@ -876,7 +671,7 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/tools/howto/maven/learning_maven.html">learning_maven: Learning Maven</a>
+            <a href="./delve_into/tools/maven/learning_maven.html">learning_maven: Tips and tricks</a>
             <ul>
               <li>Maven commands always works on the<span xmlns="" class="bad"> current </span>directory, so you have to cd to the directory you want Maven to work on.</li>
             </ul>
@@ -908,15 +703,6 @@ repository is;
             <a href="./delve_into/user/contributors/howto/start_CMS.html">start_CMS: Start CMS site</a>
             <ul>
               <li>ia.org/. The site is not yet visible, because the user has not clicked yet. Coincidentially, the site<span xmlns="" class="bad"> current </span>ly visible happens to be the Hippo CMS documentation site at</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/todo/browsing_history_of_document.html">browsing_history_of_document: Browsing history of a document</a>
-            <ul>
-              <li>Initially the<span xmlns="" class="bad"> current </span>version is show. With the "Older" link you can browse back into previous versions of the document, or back again towards the most current version using the "Newer" link.</li>
-              <li>the version is shown. The name of the article is shown (which is constant over all versions, only the<span xmlns="" class="bad"> current </span>name is shown, renaming or moving a document is not part of the document history of the document itself but --if available-- part of the document in which a document is embedded).</li>
-              <li>on number is indicated, which counts from 1, the first version of a document created towards the most<span xmlns="" class="bad"> current </span>document, which does not have a version number yet. It will show the date and time, when a historic version of the document was created and until when that version of the document was the most current</li>
-              <li>Note that this is not the same as when the next<span xmlns="" class="bad"> current </span>document was created, as it may be that there was no current document in the document history.</li>
             </ul>
           </li>
           <li>
@@ -977,8 +763,56 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="notvalid documents: 1">
+      <subsection name="notvalid documents: 9">
         <ol>
+          <li>
+            <a href="./delve_into/core/architecture/*.html">*: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/core/building/maven.html">maven: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/core/fundamentals/*.html">*: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/tools/howto/eclipse/*.html">*: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/tools/howto/maven/*.html">*: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/todo/*.html">*: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/todo-concepts/*.html">*: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/document_types/*.html">*: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
           <li>
             <a href="./delve_into/web/jcr/*.html">*: </a>
             <ul>

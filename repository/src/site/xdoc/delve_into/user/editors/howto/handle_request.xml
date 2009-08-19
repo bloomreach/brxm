@@ -33,9 +33,9 @@ ________________________________________________________________________________
     leftpx=450;
     bottompx=480;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M13/editors/handle_request.png" alt='handle requests screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M13/editors/handle_request.png" alt='handle requests screenshot'/>
     </div></div>
      <p>
       Handling a <a href='../concepts/request.html'>request</a> concerning the document
@@ -47,7 +47,7 @@ ________________________________________________________________________________
     If you click on a <a href='./check_for_requests.html'>request in your todo list</a>, the
     <a href='../../contributors/concepts/tab_page.html'>tab page</a> of that document
     is pulled out and shown in the
-    <a href='../../contributors/concepts/tab_pages_panel.html'>cards panel</a> 
+    <a href='../../contributors/concepts/tab_pages_panel.html'>cards panel</a>
     in <a href='../../contributors/concepts/review_mode.html'>review mode</a>.
     You can review the document. Then decide to either
     accept the request or reject the request, by pressing one of the buttons at the top.

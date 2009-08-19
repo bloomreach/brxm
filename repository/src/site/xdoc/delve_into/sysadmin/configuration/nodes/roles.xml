@@ -22,11 +22,13 @@
         <title>Roles Configuration</title>
     </properties>
     <body>
-        <section name="Roles Configuration">
+       <section name="Roles Configuration">
+            <span class='shortdesc'>The roles define which JCR
+                permissions each role has.</span>
             <p>
-                The roles are stored in the repository as childeren of the node
-                <code>/hippo:configuration/hippo:roles</code>. The roles define which JCR
-                permissions each role has. The following JCR permissions exist in the repository:
+                The roles are stored in the repository as children of the node
+                <code>/hippo:configuration/hippo:roles</code>.
+                The following JCR permissions exist in the repository:
                 "READ", "WRITE" and "REMOVE". The roles are also used for assigning workflows to users
                 and groups.
             </p>

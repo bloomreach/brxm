@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+ <properties>
+  <title>Configure workspace</title>
+ </properties>
+ <body>
+
+ <section name="Configure Workspace">
+  <span class='shortdesc'>Configure Eclipse Workspace for Hippo projects.</span>
+
+  <p>An Eclipse workspace is a folder tree that contains information Eclipse
+   keeps of some of your projects. Eclipse will make all projects in a single workspace
+   available simultaneously, which will require memory that depends on the number of
+   projects in the workspace.
+  </p>
+
+  <subsection name='Identify Maven local repository'>
+
+   <p>You need to have <a href='../maven/install_maven.html'>installed maven</a>.
+   </p>
+   <p>Ensure that a folder intended as Eclipse workspace for Hippo CMS addon projects exists.
+    You can just create it, or <a href='start_eclipse.html'>start Eclipse</a> and have Eclipse
+    create it.
+   </p>
+   <p>
+    In the rest of this document, this folder will be called <code>$WORKSPACE-PATH</code>.
+   </p>
+   <p>
+    Have Maven tell Eclipse where it can find your local Maven repository by opening a command shell and running:
+   </p>
+   <source>&gt; mvn -Declipse.workspace=$WORKSPACE-PATH eclipse:add-maven-repo</source>
+
+   <p>Maven will download maven-eclipse-plugin-#.#.#.jar and dependencies.</p>
+
+  </subsection>
+
+  </section>
+ </body>
+</document>
+
+

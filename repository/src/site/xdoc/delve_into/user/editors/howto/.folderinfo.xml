@@ -1,0 +1,11 @@
+<info>
+ <title>CMS Editor Howto</title>
+ <shortdesc>A collection of howto's for small tasks an CMS editor may want to do.</shortdesc>
+ <afterlist>
+  <subsection name='Alternative'>
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+  </subsection>
+ </afterlist>
+</info>

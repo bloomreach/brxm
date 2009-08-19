@@ -4,7 +4,7 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
   Copyright 2007-2008 Hippo
-  
+
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -24,17 +24,31 @@
   <body>
 
     <section name="Developing Hippo CMS with Eclipse">
-        <span class='shortdesc'>How to import and work with the Hippo CMS project in the Eclipse IDE.</span>
-
-  <div class='warn'>
-   Part of the contents of this page has been split up and the components have
-   been moved to <a href='../../tools/howto/eclipse/index.html'>Eclipse howto</a> 
-   in <a href='../../tools/howto/index.html'>Tools howto</a>.
-   This document now has links
-   to them, but all of this document will go there too.
-  </div>
+     <span class='shortdesc'>How to import and work with the Hippo CMS project in the Eclipse IDE.</span>
 
     <subsection name="Introduction">
+
+    <p class='publiek'>
+     You are always welcome to checkout and build the open source Hippo CMS project!
+     However, if you only want to use the Hippo CMS, either as a user or as a
+     addon or website developer, there is no need to build the Hippo CMS yourself:
+     using one of the 2 war packages of the Hippo CMS is more convenient for you then.
+     As a user you are all set with
+     the <a href="../../quickstart.html">quickstart war package</a>
+     and as a developer you can use the Hippo CMS as war overlay within your own
+     project (the war overlay can be seen as a kind of complex dependency, if you take 'dependency' not
+     too strict).
+     If you use a Hippo maven archetype for your own project, the war overlay is already taken care of.
+     See <a href='http://www.onehippo.org/site-toolkit/getting+started/generate+project'>generate project</a>.
+    </p>
+
+   <p class='publiek'>
+     Some people build their own project against the Hippo CMS trunk,
+     which is not recommended, as this means they have a snapshot
+     dependency, for which no package can be found in our maven repository.
+     Those people need to build the Hippo CMS trunk to create the snapshot of the Hippo CMS
+     locally.
+    </p>
 
       <p>
         This chapter is meant as a guide for setting up and managing a debugging environment
@@ -62,17 +76,17 @@
     </subsection>
 
     <subsection name='Configure Eclipse workspace'>
-     Read the document <a href='../../tools/howto/eclipse/configure_workspace.html'>Configure Eclipse workspace</a>
+     Read the document <a href='../../tools/eclipse/configure_workspace.html'>Configure Eclipse workspace</a>
      and the documents it refers to.
     </subsection>
 
     <subsection name="Create Eclipse projects">
       <div style="border:1px solid black; padding:1em;"> NOTE: Make sure that there is no
-        .project file in the toplevel (hippo-ecm) directory before proceding. If there is
-        one the Eclipse import projects wizard will fail. 
+        .project file in the toplevel (hippo-ecm) directory before proceeding. If there is
+        one the Eclipse import projects wizard will fail.
       </div>
       <p> <br/>Use the <a href="http://maven.apache.org/plugins/maven-eclipse-plugin/">Maven
-        Eclipse plugin</a> to generate Eclipse project files: 
+        Eclipse plugin</a> to generate Eclipse project files:
       </p>
       <source>
 ~/> cd hippo-ecm
@@ -84,7 +98,7 @@
         flag which will make it a lot faster.
         <br/><br/>
         Note that this goal fails if there are unresolved (jar) dependencies. So before using the '-o'
-        flag you need to ensure that this isn't the case by running eg. "mvn [-Dmaven.test.skip=true] [clean]
+        flag you need to ensure that this isn't the case by running e.g. "mvn [-Dmaven.test.skip=true] [clean]
         [install | package]". See the section on <b>Keeping up</b> below for more on this.
       </p>
       <p> <br/><br/> Import the Eclipse projects into your workspace: </p>
@@ -108,7 +122,7 @@
         <li>
           <p>Wait until Eclipse has finished building everything, until there is no more activity in the Eclipse 'Progress' view.</p>
         </li>
-      </ol>     
+      </ol>
     </subsection>
 
     <subsection name="Fixup">
@@ -125,9 +139,8 @@
         the 'mvn eclipse:eclipse' step above. If the script fails with a ClassNotFoundException
         or a MethodNotFoundException you are probably using an older or 'light' version of Eclipse,
         consider upgrading to the 3.4 'Classic' or 'EE' editions. If this is not an option you can fix
-        the projects by hand, see the script for what it does.  
-        <br/><br/>
-      </p>      
+        the projects by hand, see the script for what it does.
+      </p>
     </subsection>
 
     <subsection name="Run">
@@ -176,7 +189,7 @@
         using the standard Hippo code formatting rules. Download
         <a href="${project_repository_url}/coding-standards/hippo-eclipse-formatting.xml">hippo-eclipse-formatting.xml</a>
         and load it into Eclipse using <i>Window -> Preferences -> Java -> Code style -> Formatter -> Import</i>.
-        Formatting a Java file is done in Eclipse by hitting Ctrl-Shift-F 
+        Formatting a Java file is done in Eclipse by hitting Ctrl-Shift-F
       </p>
     </subsection>
 
@@ -184,17 +197,17 @@
       <p>
         Hippo ECM is a very active project with many updates every day. 'Ordinary' updates can be digested
         by using the Eclipse Synchronization perspective and simple dependency changes can be fixed
-        maually by using the Eclipse project properties "Build Path" dialog.
+        manually by using the Eclipse project properties "Build Path" dialog.
         <br/><br/>
-        When your Eclipse projects are too much broken due to dependency changes to be fixed manually 
+        When your Eclipse projects are too much broken due to dependency changes to be fixed manually
         the most straightforward (although not most elegant) way out is to regenerate all Eclipse
         project information:
       </p>
       <ol>
         <li>Delete all projects (do not delete contents)</li>
-        <li>Run <b>mvn [-DskipTests=true] [clean] install</b>, this will resolve any new dependencies</li>        
+        <li>Run <b>mvn [-DskipTests=true] [clean] install</b>, this will resolve any new dependencies</li>
         <li>Run <b>mvn [-o] [eclipse:clean] eclipse:eclipse</b>, this will regenerate the Eclipse projects</li>
-        <li>Make sure there is no .project file in the project root (ie. there is no 'ecm files' resource
+        <li>Make sure there is no .project file in the project root (i.e. there is no 'ecm files' resource
         project for the whole source tree)</li>
         <li>Run the import project wizard</li>
         <li>Run the <b>"Prepare Hippo ECM projects"</b> script from the <i>Groovy Monkey</i> Eclipse menu</li>
@@ -202,7 +215,6 @@
       <p>
         This should always work (in theory at least :-) Note that it is not always necessary to go through all
         these steps, often one or more steps can be skipped. Choose your strategy depending on the type of update.
-        <br/><br/>
       </p>
     </subsection>
     </section>

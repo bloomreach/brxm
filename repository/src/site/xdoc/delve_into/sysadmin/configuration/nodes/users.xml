@@ -23,8 +23,12 @@
     </properties>
     <body>
         <section name="Users Configuration">
+         <span class='shortdesc'>A user in the configuration is an account for a real, living user.
+          A user is member of one or more groups and is granted
+          all the permissions defined for his groups.
+         </span>
             <p>
-                The users are stored in the repository as childeren of the node
+                The users are stored in the repository as children of the node
                 <code>/hippo:configuration/hippo:users</code>.
                 A user node has the following configuration:
             </p>

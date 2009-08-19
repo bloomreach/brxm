@@ -8,30 +8,35 @@
    
    <folder>about
    
-   <document ext="xml" filename="architecture" relpath="about">Architecture<linkto_unchecked/>
-    <todo><span class="bad"> TODO </span></todo>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="features" relpath="about">Features<linkto_unchecked/>
-    <todo><span class="bad"> TODO </span></todo>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="roadmap" relpath="about">Roadmap Hippo CMS<linkto_unchecked/></document><document ext="xml" filename="term_index" relpath="about"><linkto_unchecked/>
+   <document ext="xml" filename="roadmap" relpath="about">Roadmap Hippo CMS<linkto_unchecked/></document><document ext="xml" filename="term_index" relpath="about"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="use_cases" relpath="about">Use cases<linkto_unchecked/>
-    <todo><span class="bad"> TODO </span></todo>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="version_numbers" relpath="about">Version numbering scheme<linkto_unchecked/></document></folder><folder>delve_into
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="version_numbers" relpath="about">Version numbering scheme<linkto_unchecked/></document></folder><folder>delve_into
    
    <document ext="xml" filename="bin_startup_help" relpath="delve_into">Bin Startup Help<linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>core
-   
+   <title>Hacking the core</title><shortdesc>Take a deep dive into core Hippo CMS development.</shortdesc><introduction>
+          Hippo CMS is open source software. All source code is available from our SVN repository 
+          under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache license</a>.
+          This section explains how to get the source code, how to build it, and how to set
+          up your IDE. In addition, the architecture and the conceptual ideas behind it
+          are explained in detail.
+ </introduction>
    <folder>architecture
    
-   <document ext="xml" filename="index" relpath="delve_into/core/architecture">Architecture<linkto_unchecked/>
-    <todo><span class="bad"> TODO </span>: in-depth explanation of architecture</todo>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><folder>building
+   <document ext="" filename="*" relpath="delve_into/core/architecture"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>building
+   <title>Building Hippo CMS</title><shortdesc>Build Hippo CMS from source using your tool of choice.</shortdesc><introduction>
+    Getting the Hippo CMS source code and building it is easy. Hippo CMS
+    uses a <a href="http://maven.apache.org/">Maven</a> build environment,
+    but it is also possible to use a Java IDE like <a href="http://www.eclipse.org/">Eclipse</a>
+    or <a href="http://www.netbeans.org/">Netbeans</a>.
+ </introduction>
+   <document ext="xml.vm" filename="eclipse" relpath="delve_into/core/building">Developing Hippo CMS with Eclipse<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/core/building"><linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Building the core Hippo CMS<linkto_unchecked/></document><document ext="xml.vm-old" filename="maven" relpath="delve_into/core/building"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans<linkto_unchecked/></document></folder><folder>fundamentals
    
-   <document ext="xml.vm" filename="eclipse" relpath="delve_into/core/building">Developing Hippo CMS with Eclipse<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/core/building">Building Hippo CMS<linkto_unchecked/></document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Developing with Maven<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans<linkto_unchecked/></document></folder><folder>fundamentals
-   
-   <document ext="xml" filename="index" relpath="delve_into/core/fundamentals">Fundamentals<linkto_unchecked/>
-    <todo><span class="bad"> TODO </span></todo></document></folder><document ext="xml" filename="index" relpath="delve_into/core">Hacking the core<linkto_unchecked/></document><document ext="xml" filename="project-structure" relpath="delve_into/core">Project Structure<linkto_unchecked/>
+   <document ext="" filename="*" relpath="delve_into/core/fundamentals"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="index" relpath="delve_into/core"><linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="project-structure" relpath="delve_into/core">Project Structure<linkto_unchecked/>
     <empty_elem>&lt;p/&gt;</empty_elem>
     <empty_elem>&lt;p/&gt;</empty_elem>
     <empty_elem>&lt;p/&gt;</empty_elem>
@@ -53,7 +58,7 @@
     <rewrite>this whole document.</rewrite></document></folder><folder>howto
    
    <document ext="xml" filename="customize_editing_template" relpath="delve_into/custom/howto">Customize an Editing Template<linkto_unchecked/>
-    <todo><span class="bad"> TODO </span>: include screenshot</todo></document><document ext="xml" filename="customize_skin" relpath="delve_into/custom/howto">Frontend skin customization<linkto_unchecked/></document><folder>eclipse
+    <add>include screenshot</add></document><document ext="xml" filename="customize_skin" relpath="delve_into/custom/howto">Frontend skin customization<linkto_unchecked/></document><folder>eclipse
    
    <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/custom/howto/eclipse">Configure Workspace<linkto_unchecked/>
     <add>Explanation about installing JPOX eclipse plugin</add>
@@ -64,15 +69,18 @@
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/custom/howto">Howto<linkto_unchecked/></document><document ext="xml" filename="packaging" relpath="delve_into/custom/howto">Testing the Hello World plugin<linkto_unchecked/></document><document ext="xml" filename="workflow" relpath="delve_into/custom/howto">Developing workflows<linkto_unchecked/>
     <rewrite>http://www.hippoecm.org/nt/1.2 is out of date. There are also instances of this adres in other files.</rewrite>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="index" relpath="delve_into/custom">Hippo CMS Add-ons<linkto_unchecked/></document><document ext="xml" filename="introduction" relpath="delve_into/custom">Introduction to add-on development<linkto_unchecked/></document><folder>jcr
-   
-   <document ext="xml" filename="data_migration" relpath="delve_into/custom/jcr">Data Migration<linkto_unchecked/>
-    <todo><span class="bad"> TODO </span></todo>
-    <todo><span class="bad"> TODO </span></todo>
-    <todo><span class="bad"> TODO </span></todo></document><document ext="xml" filename="examples" relpath="delve_into/custom/jcr">JCR Examples<linkto_unchecked/>
-    <badtext>rkflow which is available in a dedicated category and then restores earliest published version as the<span class="bad"> current </span>unpublished version.</badtext></document><document ext="xml" filename="index" relpath="delve_into/custom/jcr">JCR Interface<linkto_unchecked/></document><document ext="xml.vm" filename="jcr_dropbox_example" relpath="delve_into/custom/jcr">Demo on interfacing with Hippo ECM Repository<linkto_unchecked/>
-    <empty_elem>&lt;p/&gt;</empty_elem>
+   <title>JCR Interface</title><shortdesc>Direct access to your content through the JCR API.</shortdesc><introduction>
+          The standard JCR interface exposed by Hippo CMS gives you direct access
+          to your content inside the repository, and all the content management
+          functionalities provided by Hippo CMS. This allows you to build almost
+          any imaginable application on top of Hippo CMS. This section describes how
+          to get started, and provides some examples on how you could use the
+          possibilities of the JCR interface.
+ </introduction>
+   <document ext="xml" filename="examples" relpath="delve_into/custom/jcr">JCR Examples<linkto_unchecked/>
+    <badtext>rkflow which is available in a dedicated category and then restores earliest published version as the<span class="bad"> current </span>unpublished version.</badtext></document><document ext="xml" filename="index" relpath="delve_into/custom/jcr"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <multisection>Has 2 sections.</multisection></document><document ext="xml" filename="jcr" relpath="delve_into/custom/jcr">JCR Basics<linkto_unchecked/></document><folder>reference
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="jcr" relpath="delve_into/custom/jcr">JCR Basics<linkto_unchecked/></document><folder>reference
    
    <document ext="xml" filename="derived_data" relpath="delve_into/custom/jcr/reference">Derived Data<linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/custom/jcr/reference">Change to the document title<linkto_unchecked/>
@@ -131,11 +139,7 @@ repository is;
   .../&lt;td&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem></document><folder>sysadmin
    <title>System Administration Guide</title><shortdesc>What does a sysadmin need to know and do for Hippo CMS?</shortdesc><introduction>
   These pages describe how to get Hippo ECM up and running and how to configure your running application.
- </introduction><inlist> <!-- list of <document>, as made by makeindex.xsl, e.g. .thiscontent.xml -->
-  <document ext="html" filename="supported_stacks" relpath="../..">Supported stacks
-   <shortdesc>What combinations of system software is supported by Hippo?</shortdesc>
-  </document>
- </inlist>
+ </introduction>
    <folder>configuration
    <title>Configuration</title><shortdesc>What does a sysadmin have to configure in Hippo CMS?</shortdesc><introduction>              <!-- tree -->
      <span class="review">Whole folder, and rewrite if necessary.</span>
@@ -143,22 +147,21 @@ repository is;
    <document ext="xml" filename="console" relpath="delve_into/sysadmin/configuration">Console<linkto_unchecked/></document><document ext="xml" filename="database_server" relpath="delve_into/sysadmin/configuration">Database server<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><folder>nodes
-   <title>JCR nodes</title><shortdesc>Configuration nodes in the JCR tree inside the repository</shortdesc>
+   <title>Configuration Nodes Reference</title><shortdesc>
+      Configuration of Hippo ECM functionality is stored inside Hippo Repository
+      as configuration nodes in the JCR tree, and is accessible through the standard
+      JCR interface.
+  </shortdesc>
    <document ext="xml" filename="domains" relpath="delve_into/sysadmin/configuration/nodes">Domains Configuration<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <multisection>Has 3 sections.</multisection></document><document ext="xml" filename="groups" relpath="delve_into/sysadmin/configuration/nodes">Groups Configuration<linkto_unchecked/>
+    <multisection>Has 3 sections.</multisection></document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration/nodes"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <multisection>Has 3 sections.</multisection></document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration/nodes">Configuration nodes<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="roles" relpath="delve_into/sysadmin/configuration/nodes">Roles Configuration<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="roles" relpath="delve_into/sysadmin/configuration/nodes">Roles Configuration<linkto_unchecked/>
     <multisection>Has 3 sections.</multisection></document><document ext="xml" filename="users" relpath="delve_into/sysadmin/configuration/nodes">Users Configuration<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <multisection>Has 3 sections.</multisection></document><document ext="xml" filename="workflow" relpath="delve_into/sysadmin/configuration/nodes">Workflow configuration<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="performance_tuning" relpath="delve_into/sysadmin/configuration">Performance tuning<linkto_unchecked/></document><folder>repository
-   <title>Repository</title><shortdesc>The base repository configuration through a number of XML files.</shortdesc>
+    <multisection>Has 3 sections.</multisection></document><document ext="xml" filename="workflow" relpath="delve_into/sysadmin/configuration/nodes">Workflow configuration<linkto_unchecked/></document></folder><document ext="xml" filename="performance_tuning" relpath="delve_into/sysadmin/configuration">Performance tuning<linkto_unchecked/></document><folder>repository
+   
    <document ext="xml" filename="authentication" relpath="delve_into/sysadmin/configuration/repository">Repository based authentication<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration/repository">Repository configuration<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="searchindex" relpath="delve_into/sysadmin/configuration/repository">SearchIndex configuration<linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration/repository">Repository configuration<linkto_unchecked/></document><document ext="xml" filename="searchindex" relpath="delve_into/sysadmin/configuration/repository">SearchIndex configuration<linkto_unchecked/>
     <add>New, working link to JackRabbit lucene implementation
           Also see
            href="http://jackrabbit.apache.org/doc/arch/operate/index-readers.html" JackRabbit lucene implementation.
@@ -247,35 +250,34 @@ repository is;
     <empty_elem>&lt;td/&gt;</empty_elem></document></folder><folder>tools
    <title>Development Tools</title><shortdesc>Tools used when developing upon Hippo CMS 7</shortdesc><introduction>
   This section is to describe general tools and procedures needed when developing on top of Hippo CMS 7.
-  <span xmlns="" class="expire">When tools section finished</span>
-  The intend is that the rest of the documentation
-  will link to this section where needed and thereby become cleaner.
  </introduction>
-   <folder>howto
-   <title>Development Tools Howto</title><shortdesc>Howto's for tools used when developing upon Hippo CMS 7.</shortdesc><introduction>
-    This subsection of the tools section is to describe
-    howto's of general tools and procedures needed when developing on top of Hippo CMS 7.
-    <span class="expire">When tools section finished.</span>
-    The intend is that the rest of the documentation
-    will link to the tools section where needed and thereby become cleaner.
- </introduction>
-   <document ext="xml" filename="create_pom" relpath="delve_into/tools/howto">Create a pom.xml<linkto_unchecked/></document><folder>eclipse
-   
-   <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto/eclipse">Configure Workspace<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/howto/eclipse"><linkto_unchecked/>
+   <folder>eclipse
+   <title>Eclipse</title><shortdesc>How to use eclipse for Hippo projects.</shortdesc>
+   <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/eclipse">Configure Workspace<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/eclipse"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/howto/eclipse">Start Eclipse<linkto_unchecked/></document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/howto/eclipse">War overlays in eclipse<linkto_unchecked/></document></folder><document ext="xml" filename="export_node" relpath="delve_into/tools/howto">Export node<linkto_unchecked/>
-    <dummyref>Export node from Hippo repository<span class="bad"> in X </span>ML format</dummyref></document><document ext="xml.vm" filename="get_Hippo_CMS_source" relpath="delve_into/tools/howto">Get the Hippo CMS source<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/howto"><linkto_unchecked/>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/eclipse">Start Eclipse<linkto_unchecked/></document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/eclipse">War overlays in eclipse<linkto_unchecked/></document></folder><folder>howto
+   
+   <folder>eclipse
+   
+   <document ext="" filename="*" relpath="delve_into/tools/howto/eclipse"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>maven
+   
+   <document ext="" filename="*" relpath="delve_into/tools/howto/maven"><notvalid>Document is not a valid XML document.</notvalid></document></folder></folder><document ext="xml" filename="index" relpath="delve_into/tools"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><folder>maven
-   
-   <document ext="xml.vm" filename="build_core_Hippo_CMS" relpath="delve_into/tools/howto/maven">Building the core Hippo CMS<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/howto/maven"><linkto_unchecked/>
+   <title>Maven</title><shortdesc>How to use maven for Hippo projects.</shortdesc>
+   <document ext="xml" filename="basics" relpath="delve_into/tools/maven">Maven basics<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/maven"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="install_maven" relpath="delve_into/tools/howto/maven">Install Maven<linkto_unchecked/></document><document ext="xml" filename="learning_maven" relpath="delve_into/tools/howto/maven">Learning Maven<linkto_unchecked/>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="install_maven" relpath="delve_into/tools/maven">Install Maven<linkto_unchecked/></document><document ext="xml" filename="learning_maven" relpath="delve_into/tools/maven">Tips and tricks<linkto_unchecked/>
     <add>References to Maven pages</add>
-    <badtext>Maven commands always works on the<span class="bad"> current </span>directory, so you have to cd to the directory you want Maven to work on.</badtext>
-    <todo>References to good Maven pages (<span class="bad"> TODO </span>) and some handy notes.</todo></document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/howto/maven">Run a development package<linkto_unchecked/></document></folder></folder><document ext="xml" filename="index" relpath="delve_into/tools"><linkto_unchecked/>
+    <badtext>Maven commands always works on the<span class="bad"> current </span>directory, so you have to cd to the directory you want Maven to work on.</badtext></document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/maven">Run a development package<linkto_unchecked/></document></folder><folder>svn
+   <title>SVN</title><shortdesc>How to use subversion for Hippo projects.</shortdesc><introduction>
+  Hippo projects are version controlled with <a href="http://subversion.tigris.org/">Subversion</a>.
+  They can be anonymously checked out using any subversion client.
+  Instructions on Subversion use can be found at <a href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>.
+ </introduction>
+   <document ext="xml.vm" filename="get_Hippo_CMS_source" relpath="delve_into/tools/svn">Get the Hippo CMS source<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/svn"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document></folder><folder>user
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document></folder></folder><folder>user
    
    <folder>cms_admins
    
@@ -346,19 +348,10 @@ repository is;
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="learn_meaning_of_inputfield" relpath="delve_into/user/contributors/howto">Learn meaning of inputfield<linkto_unchecked/></document><document ext="xml" filename="login" relpath="delve_into/user/contributors/howto">Login as Contributor<linkto_unchecked/></document><document ext="xml" filename="logout" relpath="delve_into/user/contributors/howto">Logout<linkto_unchecked/></document><document ext="xml" filename="request_publication" relpath="delve_into/user/contributors/howto">Request Publication of Document<linkto_unchecked/></document><document ext="xml" filename="save_document" relpath="delve_into/user/contributors/howto">Save Document<linkto_unchecked/></document><document ext="xml" filename="schedule_publication" relpath="delve_into/user/contributors/howto">Schedule publication of Document<linkto_unchecked/></document><document ext="xml" filename="set_edit_mode" relpath="delve_into/user/contributors/howto">set edit mode<linkto_unchecked/>
     <add>Screenshot set edit mode</add></document><document ext="xml" filename="start_CMS" relpath="delve_into/user/contributors/howto">Start CMS site<linkto_unchecked/>
     <badtext>ia.org/. The site is not yet visible, because the user has not clicked yet. Coincidentially, the site<span class="bad"> current </span>ly visible happens to be the Hippo CMS documentation site at</badtext></document></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide<linkto_unchecked/></document><folder>todo
-   <title>todo</title><shortdesc>This folder contains howto's that are in development.</shortdesc>
-   <document ext="xml" filename="browsing_history_of_document" relpath="delve_into/user/contributors/todo">Browsing history of a document<linkto_unchecked/>
-    <badtext>Initially the<span class="bad"> current </span>version is show. With the "Older" link you can browse back into previous versions of the document, or back again towards the most current version using the "Newer" link.</badtext>
-    <badtext>the version is shown. The name of the article is shown (which is constant over all versions, only the<span class="bad"> current </span>name is shown, renaming or moving a document is not part of the document history of the document itself but --if available-- part of the document in which a document is embedded).</badtext>
-    <badtext>on number is indicated, which counts from 1, the first version of a document created towards the most<span class="bad"> current </span>document, which does not have a version number yet. It will show the date and time, when a historic version of the document was created and until when that version of the document was the most current</badtext>
-    <badtext>Note that this is not the same as when the next<span class="bad"> current </span>document was created, as it may be that there was no current document in the document history.</badtext></document><document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/todo">Goto a Document<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/user/contributors/todo"><linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document></folder><folder>todo-concepts
-   <title>todo</title><shortdesc>This folder contains concepts that are in development.</shortdesc>
-   <document ext="xml" filename="document_card" relpath="delve_into/user/contributors/todo-concepts">Document tab page<linkto_unchecked/>
-    <add>more about cards in the image</add></document><document ext="xml" filename="index" relpath="delve_into/user/contributors/todo-concepts"><linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document></folder><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour<linkto_unchecked/></document></folder><folder>editors
+   
+   <document ext="" filename="*" relpath="delve_into/user/contributors/todo"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>todo-concepts
+   
+   <document ext="" filename="*" relpath="delve_into/user/contributors/todo-concepts"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour<linkto_unchecked/></document></folder><folder>editors
    
    <folder>concepts
    <title>CMS Editor Concepts</title><shortdesc>A collection of concepts a CMS editor may want to know.</shortdesc><afterlist>  
@@ -400,16 +393,7 @@ repository is;
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/concepts">Mandatory or optional field<linkto_unchecked/></document><document ext="xml" filename="markuped_text" relpath="delve_into/user/information_architects/concepts">Markuped text<linkto_unchecked/></document><document ext="xml" filename="namespaces_folder" relpath="delve_into/user/information_architects/concepts">Namespace folder<linkto_unchecked/></document><document ext="xml" filename="namespace" relpath="delve_into/user/information_architects/concepts">namespace<linkto_unchecked/></document><document ext="xml" filename="review_mode" relpath="delve_into/user/information_architects/concepts">Review mode<linkto_unchecked/></document><document ext="xml" filename="string" relpath="delve_into/user/information_architects/concepts">string<linkto_unchecked/></document><document ext="xml" filename="URL" relpath="delve_into/user/information_architects/concepts">URL<linkto_unchecked/></document></folder><folder>document_types
    
-   <document ext="xml" filename="editor" relpath="delve_into/user/information_architects/document_types">The Document Type Editor<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="examples" relpath="delve_into/user/information_architects/document_types">Examples of document types<linkto_unchecked/>
-    <todo><span class="bad"> TODO </span></todo>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="fieldtypes" relpath="delve_into/user/information_architects/document_types">Field Types Reference<linkto_unchecked/>
-    <todo><span class="bad"> TODO </span></todo>
-    <todo><span class="bad"> TODO </span></todo>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/document_types">Document Types<linkto_unchecked/>
-    <todo><span class="bad"> TODO </span></todo>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="tutorial" relpath="delve_into/user/information_architects/document_types">Document Type Tutorial<linkto_unchecked/>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><folder>howto
+   <document ext="" filename="*" relpath="delve_into/user/information_architects/document_types"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>howto
    <title>CMS Information Architect Howto</title><shortdesc>A collection of howto's for small tasks an information architect may want to do!</shortdesc><afterlist>
   <subsection name="Alternative">
      <p>
@@ -454,7 +438,8 @@ repository is;
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="index" relpath=".">What is Hippo CMS?<linkto_unchecked/>
     <add>Enlightning diagram?</add>
-    <review>all text: move short features list to feature document?</review></document><document ext="xml" filename="integration_testing" relpath=".">Setting up and using Selenium tests<linkto_unchecked/>
+    <review>all text: move short features list to feature document?</review>
+    <empty_elem>&lt;script src='vimeo.js'/&gt;</empty_elem></document><document ext="xml" filename="integration_testing" relpath=".">Setting up and using Selenium tests<linkto_unchecked/>
     <badtext>The<span class="bad"> current </span>trunk of Hippo ECM already contains the proper infrastructure for Selenium-based integration testing. This description will first outline how to run this integration test. Having done that, it outline</badtext>
     <badtext>, which is<span class="bad"> current </span>ly set to the glassfish instance of the deployment api:</badtext>
     <badtext>untu 8.04 (and higher) in combination with Firefox 3 this requires some extra setup (or at least with<span class="bad"> current </span>Selenium version in use) as Selenium expects the firefox binary to be called firefox-bin, which is not the case on Ubuntu 8.04. Thus we create a symlink in /usr/lib/firefox to the Firefox binary as fo</badtext>

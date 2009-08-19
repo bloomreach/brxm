@@ -118,7 +118,7 @@ xml-apis-1.3.03.jar
       <subsection name="Customizing the CMS configuration">
         <p>
           Open the console with administrative privileges, i.e. log in to <a
-          href="http://localhost:8080/console">http://localhost:8080/console</a>
+           href="http://localhost:8080/cms/console">http://localhost:8080/cms/console</a>
           as <em>admin</em> (default password <em>admin</em>).  Navigate to the
           <code>/hippo:configuration/hippo:frontend/cms/cms-static/logoutPlugin</code> node.
         </p>
@@ -134,7 +134,7 @@ xml-apis-1.3.03.jar
       <subsection name="Sending feedback">
         <p>
           Open Hippo CMS <a
-            href="http://localhost:8080/console">http://localhost:8080/</a>.
+           href="http://localhost:8080/cms/console">http://localhost:8080/cms/console</a>.
           After logging in, the result should look similar to this:
         </p>
         <img src="../../../images/cms-plus-feedback.png" alt="cms plus feedback" />

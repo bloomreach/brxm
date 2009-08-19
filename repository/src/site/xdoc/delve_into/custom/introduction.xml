@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -28,11 +28,11 @@ ________________________________________________________________________________
   <body>
     <section name="Introduction to add-on development">
       <span class="shortdesc">An introduction to Hippo CMS add-on development.</span>
-      
+
       <p>
-        Following the component based <a href="../../about/architecture.html">architecture</a>
+        Following the component based <a href="http://www.onehippo.org/about/architecture.html">architecture</a>
         of Hippo CMS, there are different flavors of add-ons. Each flavor has its own
-        purpose and characteristics. 
+        purpose and characteristics.
       </p>
 
       <subsection name="Repository add-on">
@@ -65,7 +65,7 @@ ________________________________________________________________________________
 
       <subsection name="Frontend add-on">
         <p>
-          A pure frontend add-on consists of 
+          A pure frontend add-on consists of
           <a href="reference/frontend/index.html">frontend plugins</a>
           in the form of
           Java class files, HTML markup and CSS.  It is a unit that can be used
@@ -116,7 +116,7 @@ ________________________________________________________________________________
           an AJAX interface.  Perhaps the template has to update dynamically or
           there are complex constraints on the type.  In this case, it is possible to
           <a href="howto/editing_template_plugin.html">create your own template plugin</a>.
-            You can then use the developer-friendly 
+            You can then use the developer-friendly
           <a href="http://wicket.apache.org/">Wicket</a> component framework to create
           the most advanced user interfaces.
         </p>

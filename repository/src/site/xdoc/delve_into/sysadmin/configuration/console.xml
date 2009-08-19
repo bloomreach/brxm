@@ -34,7 +34,8 @@
 
         <p>
           The console can normally be found under
-          <a href="http://localhost:8080/console">http://localhost:8080/console</a>.
+          <a href="http://localhost:8080/cms/console">http://localhost:8080/cms/console</a>.
+          It actually depends on your configuration. It might be http://localhost:8080/console.
         </p>
         <p>
           <a href="../../../images/console.png">

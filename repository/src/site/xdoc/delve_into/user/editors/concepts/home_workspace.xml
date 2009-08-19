@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">What and where is the home workspace?</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/screenshots/cms_M13/contribs/home_workspace.png" alt='home workspace'/>      
+     <img src="../../../../images/screenshots/cms_M13/contribs/home_workspace.png" alt='home workspace'/>
     <p>
       The home <a href='../../contributors/concepts/workspace.html'>workspace</a>.
      </p>

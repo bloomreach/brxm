@@ -143,9 +143,7 @@
             You can now export the template (see the <a
             href="../../web/add-ons/howto/editing_template.html">Create an editing template addon</a>
             tutorial).  Build the project with Maven and you're all set!
-          </p>
-          <p>
-            TODO: include screenshot
+            <span class='add'>include screenshot</span>
           </p>
         </subsection>
 
