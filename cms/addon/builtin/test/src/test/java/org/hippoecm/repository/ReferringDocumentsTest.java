@@ -213,7 +213,6 @@ public class ReferringDocumentsTest extends TestCase
 
     public Set<Node> getReferrers(Node document) throws RepositoryException {
         Set<Node> referrers = new TreeSet<Node>(new Comparator<Node>() {
-            @Override
             public int compare(Node node1, Node node2) {
                 try {
                     return node1.getUUID().compareTo(node2.getUUID());
