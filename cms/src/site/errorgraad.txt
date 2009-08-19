@@ -401,3 +401,39 @@ fifi is /home/rita/bin/fifi
       <span class="shortdesc">436 errors and/or todos in 241 out of 241 documents (100%).</span>
 #____________________________________________________________________________________________________________________rita_2009-w31-3-20:22
       <span class="shortdesc">442 errors and/or todos in 251 out of 251 documents (100%).</span>
+#__________________________________________________________rita_2009-w34-2-10:35
+      <span class="shortdesc">401 errors and/or todos in 240 out of 240 documents (100%).</span>
+#_____________________________________________________________________________________rita_2009-w34-2-10:42
+      <span class="shortdesc">402 errors and/or todos in 240 out of 240 documents (100%).</span>
+#_____________________________________________________________________________________rita_2009-w34-2-11:23
+      <span class="shortdesc">397 errors and/or todos in 240 out of 240 documents (100%).</span>
+#_____________________________________________________________________________________________rita_2009-w34-2-11:34
+      <span class="shortdesc">396 errors and/or todos in 240 out of 240 documents (100%).</span>
+#_____________________________________________________________________________________________rita_2009-w34-2-11:35
+      <span class="shortdesc">396 errors and/or todos in 240 out of 240 documents (100%).</span>
+#_____________________________________________________________________________________________rita_2009-w34-2-11:39
+      <span class="shortdesc">398 errors and/or todos in 242 out of 242 documents (100%).</span>
+#_____________________________________________________________________________________________rita_2009-w34-2-11:48
+      <span class="shortdesc">398 errors and/or todos in 242 out of 242 documents (100%).</span>
+#__________________________________________________________rita_2009-w34-2-12:17
+      <span class="shortdesc">399 errors and/or todos in 242 out of 242 documents (100%).</span>
+#__________________________________________________________rita_2009-w34-2-14:59
+      <span class="shortdesc">399 errors and/or todos in 242 out of 242 documents (100%).</span>
+#__________________________________________________________________________________________________rita_2009-w34-3-11:05
+      <span class="shortdesc">397 errors and/or todos in 242 out of 242 documents (100%).</span>
+#__________________________________________________________________________________________________rita_2009-w34-3-11:09
+      <span class="shortdesc">397 errors and/or todos in 242 out of 242 documents (100%).</span>
+#__________________________________________________________rita_2009-w34-3-11:23
+      <span class="shortdesc">395 errors and/or todos in 241 out of 241 documents (100%).</span>
+#__________________________________________________________________________________rita_2009-w34-3-11:35
+      <span class="shortdesc">395 errors and/or todos in 241 out of 241 documents (100%).</span>
+#__________________________________________________________________________________rita_2009-w34-3-11:38
+      <span class="shortdesc">395 errors and/or todos in 241 out of 241 documents (100%).</span>
+#_________________________________________________________________________________________________rita_2009-w34-3-12:37
+      <span class="shortdesc">396 errors and/or todos in 239 out of 239 documents (100%).</span>
+#_________________________________________________________________________________________________rita_2009-w34-3-14:39
+      <span class="shortdesc">389 errors and/or todos in 239 out of 239 documents (100%).</span>
+#_________________________________________________________________________________________________rita_2009-w34-3-14:41
+      <span class="shortdesc">396 errors and/or todos in 239 out of 239 documents (100%).</span>
+#__________________________________________________________________________________________________rita_2009-w34-3-14:50
+      <span class="shortdesc">396 errors and/or todos in 239 out of 239 documents (100%).</span>

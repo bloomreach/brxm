@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<info>
+ <title>Building Hippo CMS</title>
+ <shortdesc>Build Hippo CMS from source using your tool of choice.</shortdesc>
+ <introduction>
+    Getting the Hippo CMS source code and building it is easy. Hippo CMS
+    uses a <a href="http://maven.apache.org/">Maven</a> build environment,
+    but it is also possible to use a Java IDE like <a href="http://www.eclipse.org/">Eclipse</a>
+    or <a href="http://www.netbeans.org/">Netbeans</a>.
+ </introduction>
+</info>
+

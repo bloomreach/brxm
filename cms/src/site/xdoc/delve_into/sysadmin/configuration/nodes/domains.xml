@@ -23,14 +23,17 @@
     </properties>
     <body>
         <section name="Domains Configuration">
-            <p>
+            <span class='shortdesc'>
                 Domains define a subset of nodes from the repository and which users or groups
-                have which role on the nodes in the domain. The domain are stored in the repository
-                as childeren of the node <code>/hippo:configuration/hippo:domains</code>. The domain
-                rule nodes and facet rule subnodes define the subset of nodes from the repository. The
-                auth role nodes define who can do what in the domain.
+                have which role on the nodes in the domain.
+            </span>
+            <p>
+                The domain are stored in the repository
+                as children of the node <code>/hippo:configuration/hippo:domains</code>. The domain
+                rule nodes and facet rule subnodes define the subset of nodes from the repository.
+                The auth role nodes define who can do what in the domain.
             </p>
-                <!-- TODO: add read more link to authorizaion and workflow "concepts" -->
+                <!-- TODO: add read more link to authorization and workflow "concepts" -->
         </section>
         <section name="Structure">
 <source>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+ <properties>
+  <title>Get the Hippo CMS source</title>
+ </properties>
+ <body>
+
+  <section name="Get the Hippo CMS source">
+   <span class='shortdesc'>Get the Hippo CMS source from the Hippo subversion repository.</span>
+
+    <p class='publiek'>
+     You are always welcome to checkout and build the open source Hippo CMS project!
+     Note that if you only want to use the Hippo CMS, either as a user or as a
+     addon or website developer, there is no need to checkout and build the Hippo CMS yourself.
+     Using one of the war packages is more convenient for you then.
+    </p>
+
+   <p>
+    The Hippo CMS releases, tags, branches and trunk can be found at
+    <a href="${project_source_url}">${project_source_url}</a>.
+    The following command checks out the last release to a directory called 'cms'.
+    That directory is not supposed to exist.
+   </p>
+   <source>
+    svn checkout <a href="${project_source_url}/${last_release}">"${project_source_url}/${last_release}"</a> ~/cms
+   </source>
+   <p>The public addresses start with 'http', while the core developers addresses are the same, but
+    start with 'https'. Only the latter allow to commit on the projects.
+   </p>
+   <p>The 'checkout' argument can be abbreviated to 'co'. You can not check in (commit) your changes on this address.
+   </p>
+  </section>
+ </body>
+</document>
+

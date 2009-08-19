@@ -8,16 +8,10 @@
    
    <folder>about
    
-   <document ext="xml" filename="architecture" relpath="about">Architecture
-   <section>Architecture</section>
-  </document><document ext="xml" filename="features" relpath="about">Features
-   <section>Features</section>
-  </document><document ext="xml" filename="roadmap" relpath="about">Roadmap Hippo CMS
+   <document ext="xml" filename="roadmap" relpath="about">Roadmap Hippo CMS
    <section>Roadmap Hippo CMS</section>
    <shortdesc>What's up for the future?</shortdesc>
   </document><document ext="xml" filename="term_index" relpath="about">
-  </document><document ext="xml" filename="use_cases" relpath="about">Use cases
-   <section>Use cases</section>
   </document><document ext="xml" filename="version_numbers" relpath="about">Version numbering scheme
    <section>Version numbering scheme</section>
    <shortdesc>How are Hippo ECM versions numbered?</shortdesc>
@@ -27,13 +21,22 @@
    <section>Bin Startup Help</section>
    <subsection>Error messages</subsection>
   </document><folder>core
-   
+   <title>Hacking the core</title><shortdesc>Take a deep dive into core Hippo CMS development.</shortdesc><introduction>
+          Hippo CMS is open source software. All source code is available from our SVN repository 
+          under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache license</a>.
+          This section explains how to get the source code, how to build it, and how to set
+          up your IDE. In addition, the architecture and the conceptual ideas behind it
+          are explained in detail.
+ </introduction>
    <folder>architecture
    
-   <document ext="xml" filename="index" relpath="delve_into/core/architecture">Architecture
-   <section>Architecture</section>
-  </document></folder><folder>building
-   
+   <document ext="" filename="*" relpath="delve_into/core/architecture"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>building
+   <title>Building Hippo CMS</title><shortdesc>Build Hippo CMS from source using your tool of choice.</shortdesc><introduction>
+    Getting the Hippo CMS source code and building it is easy. Hippo CMS
+    uses a <a href="http://maven.apache.org/">Maven</a> build environment,
+    but it is also possible to use a Java IDE like <a href="http://www.eclipse.org/">Eclipse</a>
+    or <a href="http://www.netbeans.org/">Netbeans</a>.
+ </introduction>
    <document ext="xml.vm" filename="eclipse" relpath="delve_into/core/building">Developing Hippo CMS with Eclipse
    <section>Developing Hippo CMS with Eclipse</section>
    <shortdesc>How to import and work with the Hippo CMS project in the Eclipse IDE.</shortdesc>
@@ -45,12 +48,11 @@
    <subsection>Run</subsection>
    <subsection>Code formatting</subsection>
    <subsection>Keeping up</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/core/building">Building Hippo CMS
-   <section>Building Hippo CMS</section>
-   <shortdesc>Build Hippo CMS from source using your tool of choice.</shortdesc>
-  </document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Developing with Maven
-   <section>Developing with Maven</section>
-  </document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans
+  </document><document ext="xml" filename="index" relpath="delve_into/core/building">
+  </document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Building the core Hippo CMS
+   <section>Building the core Hippo CMS</section>
+   <shortdesc>How to build the core Hippo CMS package from the sources?</shortdesc>
+  </document><document ext="xml.vm-old" filename="maven" relpath="delve_into/core/building"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans
    <section>Building with Netbeans</section>
    <shortdesc>How to import and work with the Hippo CMS project in the Netbeans IDE.</shortdesc>
    <subsection>Prepare</subsection>
@@ -60,12 +62,7 @@
    <subsection>Run / Debug</subsection>
   </document></folder><folder>fundamentals
    
-   <document ext="xml" filename="index" relpath="delve_into/core/fundamentals">Fundamentals
-   <section>Fundamentals</section>
-   <shortdesc>The fundamental ideas behind the code explained.</shortdesc>
-  </document></folder><document ext="xml" filename="index" relpath="delve_into/core">Hacking the core
-   <section>Hacking the core</section>
-   <shortdesc>Take a deep dive into core Hippo CMS development.</shortdesc>
+   <document ext="" filename="*" relpath="delve_into/core/fundamentals"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="index" relpath="delve_into/core">
   </document><document ext="xml" filename="project-structure" relpath="delve_into/core">Project Structure
    <section>Project Structure</section>
    <shortdesc>Find your way in the Hippo CMS project.</shortdesc>
@@ -188,37 +185,25 @@
    <h4>Custom Perspective</h4>
    <h4>Customized namespace add-on</h4>
   </document><folder>jcr
-   
-   <document ext="xml" filename="data_migration" relpath="delve_into/custom/jcr">Data Migration
-   <section>Data Migration</section>
-   <shortdesc>Working with external data: hint, tips, best practices.</shortdesc>
-   <subsection>Exporting Content</subsection>
-   <subsection>Importing Content</subsection>
-  </document><document ext="xml" filename="examples" relpath="delve_into/custom/jcr">JCR Examples
+   <title>JCR Interface</title><shortdesc>Direct access to your content through the JCR API.</shortdesc><introduction>
+          The standard JCR interface exposed by Hippo CMS gives you direct access
+          to your content inside the repository, and all the content management
+          functionalities provided by Hippo CMS. This allows you to build almost
+          any imaginable application on top of Hippo CMS. This section describes how
+          to get started, and provides some examples on how you could use the
+          possibilities of the JCR interface.
+ </introduction>
+   <document ext="xml" filename="examples" relpath="delve_into/custom/jcr">JCR Examples
    <section>JCR Examples</section>
    <shortdesc>Examples of accessing Hippo CMS functionality directly through the JCR API</shortdesc>
    <subsection>Example 1: Get a document</subsection>
    <subsection>Example 2: Obtaining the workflow on a document</subsection>
    <subsection>Example 3: Obtaining older version of document</subsection>
    <subsection>Example 4: Get latest news articles</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/custom/jcr">JCR Interface
-   <section>JCR Interface</section>
-   <shortdesc>Direct access to your content through the JCR API.</shortdesc>
-  </document><document ext="xml.vm" filename="jcr_dropbox_example" relpath="delve_into/custom/jcr">Demo on interfacing with Hippo ECM Repository
-   <section>Demo on interfacing with Hippo ECM Repository</section>
-   <subsection>Intro</subsection>
-   <img/>
-   <section>The Demo</section>
-   <subsection>What's the demo all about</subsection>
-   <subsection>Give me the code!</subsection>
-   <subsection>How to run</subsection>
-   <img/>
-   <subsection>Applying Your Own Hippo Facets</subsection>
-   <img/>
-   <subsection>Try out yourself</subsection>
+  </document><document ext="xml" filename="index" relpath="delve_into/custom/jcr">
   </document><document ext="xml" filename="jcr" relpath="delve_into/custom/jcr">JCR Basics
    <section>JCR Basics</section>
-   <shortdesc>Get access to your content.</shortdesc>
+   <shortdesc>Get low level access to your content.</shortdesc>
    <subsection>Connecting with Hippo Repository</subsection>
    <subsection>Working with JCR</subsection>
    <subsection>Dependencies</subsection>
@@ -353,11 +338,7 @@
   </document><folder>sysadmin
    <title>System Administration Guide</title><shortdesc>What does a sysadmin need to know and do for Hippo CMS?</shortdesc><introduction>
   These pages describe how to get Hippo ECM up and running and how to configure your running application.
- </introduction><inlist> <!-- list of <document>, as made by makeindex.xsl, e.g. .thiscontent.xml -->
-  <document ext="html" filename="supported_stacks" relpath="../..">Supported stacks
-   <shortdesc>What combinations of system software is supported by Hippo?</shortdesc>
-  </document>
- </inlist>
+ </introduction>
    <folder>configuration
    <title>Configuration</title><shortdesc>What does a sysadmin have to configure in Hippo CMS?</shortdesc><introduction>              <!-- tree -->
      <span class="review">Whole folder, and rewrite if necessary.</span>
@@ -373,9 +354,17 @@
    <index>max_allowed_packet</index>
   </document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration">
   </document><folder>nodes
-   <title>JCR nodes</title><shortdesc>Configuration nodes in the JCR tree inside the repository</shortdesc>
+   <title>Configuration Nodes Reference</title><shortdesc>
+      Configuration of Hippo ECM functionality is stored inside Hippo Repository
+      as configuration nodes in the JCR tree, and is accessible through the standard
+      JCR interface.
+  </shortdesc>
    <document ext="xml" filename="domains" relpath="delve_into/sysadmin/configuration/nodes">Domains Configuration
    <section>Domains Configuration</section>
+   <shortdesc>
+                Domains define a subset of nodes from the repository and which users or groups
+                have which role on the nodes in the domain.
+            </shortdesc>
    <section>Structure</section>
    <section>Nodes</section>
    <subsection>hippo:domain</subsection>
@@ -384,33 +373,48 @@
    <subsection>hipposys:authrole</subsection>
   </document><document ext="xml" filename="groups" relpath="delve_into/sysadmin/configuration/nodes">Groups Configuration
    <section>Groups Configuration</section>
+   <shortdesc>
+             Permissions are assigned to groups and groups have users as members. The members
+             have the permissions of their groups.
+            </shortdesc>
    <section>Structure</section>
    <section>Nodes</section>
    <subsection>hipposys:group</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration/nodes">Configuration nodes
-   <section>Configuration nodes</section>
+  </document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration/nodes">
   </document><document ext="xml" filename="roles" relpath="delve_into/sysadmin/configuration/nodes">Roles Configuration
    <section>Roles Configuration</section>
+   <shortdesc>The roles define which JCR
+                permissions each role has.</shortdesc>
    <section>Structure</section>
    <section>Nodes</section>
    <subsection>hipposys:role</subsection>
   </document><document ext="xml" filename="users" relpath="delve_into/sysadmin/configuration/nodes">Users Configuration
    <section>Users Configuration</section>
+   <shortdesc>A user in the configuration is an account for a real, living user.
+          A user is member of one or more groups and is granted
+          all the permissions defined for his groups.
+         </shortdesc>
    <section>Structure</section>
    <section>Nodes</section>
    <subsection>hipposys:user</subsection>
   </document><document ext="xml" filename="workflow" relpath="delve_into/sysadmin/configuration/nodes">Workflow configuration
    <section>Workflow configuration</section>
+   <shortdesc>
+Workflows are configured by specifying how the workflow can be accessed and
+how the workflow is applicable.  This definition is stored in the
+repository itself.
+</shortdesc>
   </document></folder><document ext="xml" filename="performance_tuning" relpath="delve_into/sysadmin/configuration">Performance tuning
    <section>Performance tuning</section>
    <shortdesc>How to improve performance of Hippo CMS by site specific tuning.</shortdesc>
    <subsection>Do not allow very large assets</subsection>
   </document><folder>repository
-   <title>Repository</title><shortdesc>The base repository configuration through a number of XML files.</shortdesc>
+   
    <document ext="xml" filename="authentication" relpath="delve_into/sysadmin/configuration/repository">Repository based authentication
    <section>Repository based authentication</section>
   </document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration/repository">Repository configuration
    <section>Repository configuration</section>
+   <shortdesc>The base repository configuration through a number of XML files.</shortdesc>
    <subsection>FileSystem element</subsection>
    <subsection>Security element</subsection>
    <subsection>Workspaces element</subsection>
@@ -574,58 +578,53 @@
   </document></folder><folder>tools
    <title>Development Tools</title><shortdesc>Tools used when developing upon Hippo CMS 7</shortdesc><introduction>
   This section is to describe general tools and procedures needed when developing on top of Hippo CMS 7.
-  <span xmlns="" class="expire">When tools section finished</span>
-  The intend is that the rest of the documentation
-  will link to this section where needed and thereby become cleaner.
  </introduction>
-   <folder>howto
-   <title>Development Tools Howto</title><shortdesc>Howto's for tools used when developing upon Hippo CMS 7.</shortdesc><introduction>
-    This subsection of the tools section is to describe
-    howto's of general tools and procedures needed when developing on top of Hippo CMS 7.
-    <span class="expire">When tools section finished.</span>
-    The intend is that the rest of the documentation
-    will link to the tools section where needed and thereby become cleaner.
- </introduction>
-   <document ext="xml" filename="create_pom" relpath="delve_into/tools/howto">Create a pom.xml
-   <section>Create a pom.xml</section>
-   <shortdesc>Learn how to create a project object model file for maven.</shortdesc>
-  </document><folder>eclipse
-   
-   <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/howto/eclipse">Configure Workspace
+   <folder>eclipse
+   <title>Eclipse</title><shortdesc>How to use eclipse for Hippo projects.</shortdesc>
+   <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/eclipse">Configure Workspace
    <section>Configure Workspace</section>
    <shortdesc>Configure Eclipse Workspace for Hippo projects.</shortdesc>
    <subsection>Identify Maven local repository</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/tools/howto/eclipse">
-  </document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/howto/eclipse">Start Eclipse
+  </document><document ext="xml" filename="index" relpath="delve_into/tools/eclipse">
+  </document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/eclipse">Start Eclipse
    <section>Start Eclipse</section>
    <shortdesc>Start Eclipse to work on Hippo projects.</shortdesc>
-  </document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/howto/eclipse">War overlays in eclipse
+  </document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/eclipse">War overlays in eclipse
    <section>War overlays in eclipse</section>
    <shortdesc>How to use War overlays in eclipse</shortdesc>
-  </document></folder><document ext="xml" filename="export_node" relpath="delve_into/tools/howto">Export node
-   <section>Export node</section>
-   <shortdesc>Export node from Hippo repository in XML format</shortdesc>
-  </document><document ext="xml.vm" filename="get_Hippo_CMS_source" relpath="delve_into/tools/howto">Get the Hippo CMS source
-   <section>Get the Hippo CMS source</section>
-   <shortdesc>Get the Hippo CMS source from the Hippo subversion repository.</shortdesc>
-  </document><document ext="xml" filename="index" relpath="delve_into/tools/howto">
-  </document><folder>maven
+  </document></folder><folder>howto
    
-   <document ext="xml.vm" filename="build_core_Hippo_CMS" relpath="delve_into/tools/howto/maven">Building the core Hippo CMS
-   <section>Building the core Hippo CMS</section>
-   <shortdesc>How to build the core Hippo CMS package from the sources?</shortdesc>
-  </document><document ext="xml" filename="index" relpath="delve_into/tools/howto/maven">
-  </document><document ext="xml" filename="install_maven" relpath="delve_into/tools/howto/maven">Install Maven
+   <folder>eclipse
+   
+   <document ext="" filename="*" relpath="delve_into/tools/howto/eclipse"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>maven
+   
+   <document ext="" filename="*" relpath="delve_into/tools/howto/maven"><notvalid>Document is not a valid XML document.</notvalid></document></folder></folder><document ext="xml" filename="index" relpath="delve_into/tools">
+  </document><folder>maven
+   <title>Maven</title><shortdesc>How to use maven for Hippo projects.</shortdesc>
+   <document ext="xml" filename="basics" relpath="delve_into/tools/maven">Maven basics
+   <section>Maven basics</section>
+   <shortdesc>Learn to basics of maven: pom.xml and mvn clean install.</shortdesc>
+  </document><document ext="xml" filename="index" relpath="delve_into/tools/maven">
+  </document><document ext="xml" filename="install_maven" relpath="delve_into/tools/maven">Install Maven
    <section>Install Maven</section>
    <shortdesc>Howto install Maven.</shortdesc>
-  </document><document ext="xml" filename="learning_maven" relpath="delve_into/tools/howto/maven">Learning Maven
-   <section>Learning Maven</section>
-   <shortdesc>References to good Maven pages (TODO) and some handy notes.</shortdesc>
-  </document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/howto/maven">Run a development package
+  </document><document ext="xml" filename="learning_maven" relpath="delve_into/tools/maven">Tips and tricks
+   <section>Tips and tricks</section>
+   <shortdesc>Some handy notes about using maven for Hippo projects.</shortdesc>
+  </document><document ext="xml" filename="run_development_package" relpath="delve_into/tools/maven">Run a development package
    <section>Run a development package</section>
    <shortdesc>How to build the package of a project and run it, all on the fly?</shortdesc>
-  </document></folder></folder><document ext="xml" filename="index" relpath="delve_into/tools">
-  </document></folder><folder>user
+  </document></folder><folder>svn
+   <title>SVN</title><shortdesc>How to use subversion for Hippo projects.</shortdesc><introduction>
+  Hippo projects are version controlled with <a href="http://subversion.tigris.org/">Subversion</a>.
+  They can be anonymously checked out using any subversion client.
+  Instructions on Subversion use can be found at <a href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>.
+ </introduction>
+   <document ext="xml.vm" filename="get_Hippo_CMS_source" relpath="delve_into/tools/svn">Get the Hippo CMS source
+   <section>Get the Hippo CMS source</section>
+   <shortdesc>Get the Hippo CMS source from the Hippo subversion repository.</shortdesc>
+  </document><document ext="xml" filename="index" relpath="delve_into/tools/svn">
+  </document></folder></folder><folder>user
    
    <folder>cms_admins
    
@@ -1024,26 +1023,10 @@
    <shortdesc>Guide for Hippo CMS users to perform the role of contributor.</shortdesc>
    <subsection>General introduction for contributors</subsection>
   </document><folder>todo
-   <title>todo</title><shortdesc>This folder contains howto's that are in development.</shortdesc>
-   <document ext="xml" filename="browsing_history_of_document" relpath="delve_into/user/contributors/todo">Browsing history of a document
-   <section>Browsing history of a document</section>
-   <shortdesc>How to browse the history of a document, i.e. to see the changes to the document over time?</shortdesc>
-   <img>Versioning display screenshot</img>
-   <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="goto_document_tab" relpath="delve_into/user/contributors/todo">Goto a Document
-   <section>Goto a Document</section>
-   <shortdesc>How to get to a screen to manipulate a particular document.</shortdesc>
-   <img>document tab screenshot</img>
-   <subsection>Next</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/todo">
-  </document></folder><folder>todo-concepts
-   <title>todo</title><shortdesc>This folder contains concepts that are in development.</shortdesc>
-   <document ext="xml" filename="document_card" relpath="delve_into/user/contributors/todo-concepts">Document tab page
-   <section>Document tab page</section>
-   <shortdesc>What and where are document cards?</shortdesc>
-   <img>document cards</img>
-  </document><document ext="xml" filename="index" relpath="delve_into/user/contributors/todo-concepts">
-  </document></folder><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour
+   
+   <document ext="" filename="*" relpath="delve_into/user/contributors/todo"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>todo-concepts
+   
+   <document ext="" filename="*" relpath="delve_into/user/contributors/todo-concepts"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour
    <section>Hippo CMS Contributor Tour</section>
    <shortdesc>A CMS contributor writes documents and/or adds images and/or assets.
     To get introduced to the role of CMS Contributor, take the following tour.</shortdesc>
@@ -1245,44 +1228,7 @@
    <subsection>Alternative</subsection>
   </document></folder><folder>document_types
    
-   <document ext="xml" filename="editor" relpath="delve_into/user/information_architects/document_types">The Document Type Editor
-   <section>The Document Type Editor</section>
-   <img>Screenshot of the document type editor</img>
-   <subsection>Using the editor</subsection>
-   <img>Screenshot detail of new field type selector</img>
-   <img>Screenshot detail of field preview</img>
-   <img>Screenshot detail of field properties editor</img>
-   <img>Screenshot detail of save options</img>
-   <subsection>Applying your changes</subsection>
-   <img>Screenshot detail of update content action</img>
-   <subsection>Advanced</subsection>
-  </document><document ext="xml" filename="examples" relpath="delve_into/user/information_architects/document_types">Examples of document types
-   <section>Examples of document types</section>
-  </document><document ext="xml" filename="fieldtypes" relpath="delve_into/user/information_architects/document_types">Field Types Reference
-   <section>Field Types Reference</section>
-   <subsection>String</subsection>
-   <img>screenshot detail of string widget</img>
-   <subsection>Html</subsection>
-   <img>screenshot detail of html widget</img>
-   <subsection>Text</subsection>
-   <img>screenshot detail of text widget</img>
-   <subsection>Date</subsection>
-   <img>screenshot detail of date widget</img>
-   <img>screenshot detail of date widget with popup calendar</img>
-   <subsection>Boolean</subsection>
-   <img>screenshot detail of boolean widget</img>
-   <subsection>hippo:resource</subsection>
-   <img>screenshot detail of hippo:resource widget</img>
-   <subsection>hippo:query</subsection>
-   <subsection>hippo:facetselect</subsection>
-  </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/document_types">Document Types
-   <section>Document Types</section>
-  </document><document ext="xml" filename="tutorial" relpath="delve_into/user/information_architects/document_types">Document Type Tutorial
-   <section>Document Type Tutorial</section>
-   <subsection>Creating your first document type</subsection>
-   <img>screenshot detail of 'create new type' action</img>
-   <img>screenshot detail of 'create new type' dialog</img>
-  </document></folder><folder>howto
+   <document ext="" filename="*" relpath="delve_into/user/information_architects/document_types"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>howto
    <title>CMS Information Architect Howto</title><shortdesc>A collection of howto's for small tasks an information architect may want to do!</shortdesc><afterlist>
   <subsection name="Alternative">
      <p>
@@ -1300,6 +1246,7 @@
    <section>Add custom compound</section>
    <shortdesc>How to add a custom compound to a document type or other
      custom compound?</shortdesc>
+   <img>Add custom compound</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="add_date_to_documenttype" relpath="delve_into/user/information_architects/howto">Add date to document type

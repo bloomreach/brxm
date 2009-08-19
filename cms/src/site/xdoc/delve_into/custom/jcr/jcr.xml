@@ -23,7 +23,7 @@
     </properties>
     <body>
       <section name="JCR Basics">
-          <span class="shortdesc">Get access to your content.</span>
+          <span class="shortdesc">Get low level access to your content.</span>
           <p>
             Hippo Repository provides a standard Java Content Repository (JCR) interface that is also known
             as <a href="http://www.jcp.org/en/jsr/detail?id=170" target="_blank">Java Specification Request 170</a>.

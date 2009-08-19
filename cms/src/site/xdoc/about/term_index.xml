@@ -24,12 +24,40 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 1044 terms</span>
+      <span class="shortdesc">Term index, 987 terms</span>
       <div class="eventable">
         <table>
           <tr>
             <th>Term</th>
             <th>(Type:) Section Title</th>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/nodes/domains.html#&#10;________________Domains_define_a_subset_of_nodes_from_the_repository_and_which_users_or_groups&#10;________________have_which_role_on_the_nodes_in_the_domain_&#10;____________">
+                Domains define a subset of nodes from the repository and which users or groups
+                have which role on the nodes in the domain.
+            </a>
+            </td>
+            <td>Domains Configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/nodes/groups.html#&#10;_____________Permissions_are_assigned_to_groups_and_groups_have_users_as_members__The_members&#10;_____________have_the_permissions_of_their_groups_&#10;____________">
+             Permissions are assigned to groups and groups have users as members. The members
+             have the permissions of their groups.
+            </a>
+            </td>
+            <td>Groups Configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/nodes/workflow.html#&#10;Workflows_are_configured_by_specifying_how_the_workflow_can_be_accessed_and&#10;how_the_workflow_is_applicable___This_definition_is_stored_in_the&#10;repository_itself_&#10;">
+Workflows are configured by specifying how the workflow can be accessed and
+how the workflow is applicable.  This definition is stored in the
+repository itself.
+</a>
+            </td>
+            <td>Workflow configuration</td>
           </tr>
           <tr>
             <td>
@@ -52,6 +80,15 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/configuration/nodes/users.html#A_user_in_the_configuration_is_an_account_for_a_real,_living_user_&#10;__________A_user_is_member_of_one_or_more_groups_and_is_granted&#10;__________all_the_permissions_defined_for_his_groups_&#10;_________">A user in the configuration is an account for a real, living user.
+          A user is member of one or more groups and is granted
+          all the permissions defined for his groups.
+         </a>
+            </td>
+            <td>Users Configuration</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/project_export/add_project.html#Add_a_new_project">Add a new project</a>
             </td>
             <td>Add a new project</td>
@@ -67,6 +104,12 @@
               <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#Add_boolean_to_document_type_screenshot">Add boolean to document type screenshot</a>
             </td>
             <td>Howto: Add boolean to document type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/add_custom_compound.html#Add_custom_compound">Add custom compound</a>
+            </td>
+            <td>Howto: Add custom compound</td>
           </tr>
           <tr>
             <td>
@@ -181,12 +224,6 @@
               <a href="../delve_into/core/project-structure.html#Addon">Addon</a>
             </td>
             <td>Project Structure</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/editor.html#Advanced">Advanced</a>
-            </td>
-            <td>The Document Type Editor</td>
           </tr>
           <tr>
             <td>
@@ -616,12 +653,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/todo/browsing_history_of_document.html#Alternative">Alternative</a>
-            </td>
-            <td>Browsing history of a document</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/editors/concepts/editor.html#Alternative">Alternative</a>
             </td>
             <td>Concept: CMS editor</td>
@@ -1006,33 +1037,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/document_types/editor.html#Applying_your_changes">Applying your changes</a>
-            </td>
-            <td>The Document Type Editor</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#Applying_Your_Own_Hippo_Facets">Applying Your Own Hippo Facets</a>
-            </td>
-            <td>Demo on interfacing with Hippo ECM Repository</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/core/project-structure.html#Archetypes">Archetypes</a>
             </td>
             <td>Project Structure</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../about/architecture.html#Architecture">Architecture</a>
-            </td>
-            <td>Architecture</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/core/architecture/index.html#Architecture">Architecture</a>
-            </td>
-            <td>Welcome: Architecture</td>
           </tr>
           <tr>
             <td>
@@ -1090,12 +1097,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#Boolean">Boolean</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/reference/repository/repository_bootstrap.html#Bootstrapping_the_repository">Bootstrapping the repository</a>
             </td>
             <td>Bootstrapping the repository</td>
@@ -1108,27 +1109,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/todo/browsing_history_of_document.html#Browsing_history_of_a_document">Browsing history of a document</a>
-            </td>
-            <td>Browsing history of a document</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/web/add-ons/howto/editing_template.html#Build_and_deploy">Build and deploy</a>
             </td>
             <td>Howto: Create an Editing Template Add-on</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/core/building/index.html#Build_Hippo_CMS_from_source_using_your_tool_of_choice_">Build Hippo CMS from source using your tool of choice.</a>
-            </td>
-            <td>Welcome: Building Hippo CMS</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/core/building/index.html#Building_Hippo_CMS">Building Hippo CMS</a>
-            </td>
-            <td>Welcome: Building Hippo CMS</td>
           </tr>
           <tr>
             <td>
@@ -1138,7 +1121,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/maven/build_core_Hippo_CMS.html#Building_the_core_Hippo_CMS">Building the core Hippo CMS</a>
+              <a href="../delve_into/core/building/maven.html#Building_the_core_Hippo_CMS">Building the core Hippo CMS</a>
             </td>
             <td>Building the core Hippo CMS</td>
           </tr>
@@ -1324,12 +1307,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/nodes/index.html#Configuration_nodes">Configuration nodes</a>
-            </td>
-            <td>Welcome: Configuration nodes</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/configuration/database_server.html#Configuration_of_the_database_server_">Configuration of the database server.</a>
             </td>
             <td>Database server</td>
@@ -1348,7 +1325,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Configure_Eclipse_Workspace_for_Hippo_projects_">Configure Eclipse Workspace for Hippo projects.</a>
+              <a href="../delve_into/tools/eclipse/configure_workspace.html#Configure_Eclipse_Workspace_for_Hippo_projects_">Configure Eclipse Workspace for Hippo projects.</a>
             </td>
             <td>Configure Workspace</td>
           </tr>
@@ -1378,7 +1355,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Configure_Workspace">Configure Workspace</a>
+              <a href="../delve_into/tools/eclipse/configure_workspace.html#Configure_Workspace">Configure Workspace</a>
             </td>
             <td>Configure Workspace</td>
           </tr>
@@ -1499,12 +1476,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/create_pom.html#Create_a_pom_xml">Create a pom.xml</a>
-            </td>
-            <td>Howto: Create a pom.xml</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/howto/editing_template_plugin.html#Create_a_template_plugin_that_edits_a_custom_type">Create a template plugin that edits a custom type</a>
             </td>
             <td>Howto: Create an Editing Template Plugin</td>
@@ -1601,12 +1572,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/document_types/tutorial.html#Creating_your_first_document_type">Creating your first document type</a>
-            </td>
-            <td>Document Type Tutorial</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/web/add-ons/howto/packaging.html#Creating_your_own_WAR_package">Creating your own WAR package</a>
             </td>
             <td>Howto: Creating your own WAR package</td>
@@ -1673,21 +1638,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/jcr/data_migration.html#Data_Migration">Data Migration</a>
-            </td>
-            <td>Data Migration</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/configuration/database_server.html#Database_server">Database server</a>
             </td>
             <td>Database server</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#Date">Date</a>
-            </td>
-            <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
@@ -1724,12 +1677,6 @@
               <a href="../delve_into/overview.html#Delve_into_Hippo_CMS">Delve into Hippo CMS</a>
             </td>
             <td>Delve into Hippo CMS</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#Demo_on_interfacing_with_Hippo_ECM_Repository">Demo on interfacing with Hippo ECM Repository</a>
-            </td>
-            <td>Demo on interfacing with Hippo ECM Repository</td>
           </tr>
           <tr>
             <td>
@@ -1823,12 +1770,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/building/maven.html#Developing_with_Maven">Developing with Maven</a>
-            </td>
-            <td>Developing with Maven</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/howto/workflow.html#Developing_workflows">Developing workflows</a>
             </td>
             <td>Howto: Developing workflows</td>
@@ -1838,12 +1779,6 @@
               <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Dialogs_/_Page_Serialization">Dialogs / Page Serialization</a>
             </td>
             <td>Frontend Plugin Communication</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/index.html#Direct_access_to_your_content_through_the_JCR_API_">Direct access to your content through the JCR API.</a>
-            </td>
-            <td>Welcome: JCR Interface</td>
           </tr>
           <tr>
             <td>
@@ -1865,9 +1800,51 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/todo-concepts/document_card.html#document_cards">document cards</a>
+              <a href="../delve_into/core/architecture/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
             </td>
-            <td>Document tab page</td>
+            <td/>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/core/building/maven.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td/>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/core/fundamentals/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td/>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/eclipse/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td/>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/howto/maven/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td/>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/todo/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td/>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/todo-concepts/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td/>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/document_types/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td/>
           </tr>
           <tr>
             <td>
@@ -1877,21 +1854,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/todo-concepts/document_card.html#Document_tab_page">Document tab page</a>
-            </td>
-            <td>Document tab page</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/concepts/tab_page.html#document_tab_pages">document tab pages</a>
             </td>
             <td>Concept: Tab page</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/todo/goto_document_tab.html#document_tab_screenshot">document tab screenshot</a>
-            </td>
-            <td>Goto a Document</td>
           </tr>
           <tr>
             <td>
@@ -1910,18 +1875,6 @@
               <a href="../delve_into/user/information_architects/concepts/documenttype.html#Document_type">Document type</a>
             </td>
             <td>Concept: Document type</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/tutorial.html#Document_Type_Tutorial">Document Type Tutorial</a>
-            </td>
-            <td>Document Type Tutorial</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/index.html#Document_Types">Document Types</a>
-            </td>
-            <td>Welcome: Document Types</td>
           </tr>
           <tr>
             <td>
@@ -2123,12 +2076,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/document_types/examples.html#Examples_of_document_types">Examples of document types</a>
-            </td>
-            <td>Examples of document types</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/project_export/excludes.html#Excludes">Excludes</a>
             </td>
             <td>Excludes</td>
@@ -2165,27 +2112,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/export_node.html#Export_node">Export node</a>
-            </td>
-            <td>Howto: Export node</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/tools/howto/export_node.html#Export_node_from_Hippo_repository_in_XML_format">Export node from Hippo repository in XML format</a>
-            </td>
-            <td>Howto: Export node</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/project_export/export_project.html#Export_project">Export project</a>
             </td>
             <td>Export a sub project</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/data_migration.html#Exporting_Content">Exporting Content</a>
-            </td>
-            <td>Data Migration</td>
           </tr>
           <tr>
             <td>
@@ -2231,12 +2160,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../about/features.html#Features">Features</a>
-            </td>
-            <td>Features</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/howto/fieldcaption.html#Field_caption">Field caption</a>
             </td>
             <td>Howto: Field caption</td>
@@ -2264,12 +2187,6 @@
               <a href="../delve_into/user/information_architects/concepts/field_type_menu.html#field_type_menu_screenshot">field type menu screenshot</a>
             </td>
             <td>Concept: field type menu</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#Field_Types_Reference">Field Types Reference</a>
-            </td>
-            <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
@@ -2549,12 +2466,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/fundamentals/index.html#Fundamentals">Fundamentals</a>
-            </td>
-            <td>Welcome: Fundamentals</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/howto/editing_template_plugin.html#Further_reading">Further reading</a>
             </td>
             <td>Howto: Create an Editing Template Plugin</td>
@@ -2579,12 +2490,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/jcr/jcr.html#Get_access_to_your_content_">Get access to your content.</a>
-            </td>
-            <td>JCR Basics</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Get_Hippo_CMS_up_and_running&#10;_______in_a_Java_servlet_container_">Get Hippo CMS up and running
        in a Java servlet container.</a>
             </td>
@@ -2595,6 +2500,12 @@
               <a href="../delve_into/sysadmin/installation/in_application_server.html#Get_Hippo_CMS_up_and_running_in_a_Java_application_server_">Get Hippo CMS up and running in a Java application server.</a>
             </td>
             <td>in Application Server</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/jcr/jcr.html#Get_low_level_access_to_your_content_">Get low level access to your content.</a>
+            </td>
+            <td>JCR Basics</td>
           </tr>
           <tr>
             <td>
@@ -2610,15 +2521,15 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/get_Hippo_CMS_source.html#Get_the_Hippo_CMS_source">Get the Hippo CMS source</a>
+              <a href="../delve_into/tools/svn/get_Hippo_CMS_source.html#Get_the_Hippo_CMS_source">Get the Hippo CMS source</a>
             </td>
-            <td>Howto: Get the Hippo CMS source</td>
+            <td>Get the Hippo CMS source</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/get_Hippo_CMS_source.html#Get_the_Hippo_CMS_source_from_the_Hippo_subversion_repository_">Get the Hippo CMS source from the Hippo subversion repository.</a>
+              <a href="../delve_into/tools/svn/get_Hippo_CMS_source.html#Get_the_Hippo_CMS_source_from_the_Hippo_subversion_repository_">Get the Hippo CMS source from the Hippo subversion repository.</a>
             </td>
-            <td>Howto: Get the Hippo CMS source</td>
+            <td>Get the Hippo CMS source</td>
           </tr>
           <tr>
             <td>
@@ -2637,12 +2548,6 @@
               <a href="../integration_testing.html#Get_your_application_server">Get your application server</a>
             </td>
             <td>Setting up and using Selenium tests</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#Give_me_the_code_">Give me the code!</a>
-            </td>
-            <td>Demo on interfacing with Hippo ECM Repository</td>
           </tr>
           <tr>
             <td>
@@ -2697,12 +2602,6 @@
               <a href="../delve_into/user/information_architects/howto/goto_namespace.html#Go_to_namespace_screenshot">Go to namespace screenshot</a>
             </td>
             <td>Howto: Go to a namespace</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/todo/goto_document_tab.html#Goto_a_Document">Goto a Document</a>
-            </td>
-            <td>Goto a Document</td>
           </tr>
           <tr>
             <td>
@@ -2787,12 +2686,6 @@
               <a href="../delve_into/user/information_architects/index.html#Guide_for_Hippo_CMS_users_to_perform_the_role_of_Information_Architect_">Guide for Hippo CMS users to perform the role of Information Architect.</a>
             </td>
             <td>Welcome: Information Architects Guide</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/core/index.html#Hacking_the_core">Hacking the core</a>
-            </td>
-            <td>Welcome: Hacking the core</td>
           </tr>
           <tr>
             <td>
@@ -2958,24 +2851,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#hippo:facetselect">hippo:facetselect</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#hippo:query">hippo:query</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#hippo:resource">hippo:resource</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hipposys:authrole">hipposys:authrole</a>
             </td>
             <td>Domains Configuration</td>
@@ -3122,19 +2997,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/todo/browsing_history_of_document.html#How_to_browse_the_history_of_a_document,_i_e__to_see_the_changes_to_the_document_over_time_">How to browse the history of a document, i.e. to see the changes to the document over time?</a>
-            </td>
-            <td>Browsing history of a document</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/tools/howto/maven/build_core_Hippo_CMS.html#How_to_build_the_core_Hippo_CMS_package_from_the_sources_">How to build the core Hippo CMS package from the sources?</a>
+              <a href="../delve_into/core/building/maven.html#How_to_build_the_core_Hippo_CMS_package_from_the_sources_">How to build the core Hippo CMS package from the sources?</a>
             </td>
             <td>Building the core Hippo CMS</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/maven/run_development_package.html#How_to_build_the_package_of_a_project_and_run_it,_all_on_the_fly_">How to build the package of a project and run it, all on the fly?</a>
+              <a href="../delve_into/tools/maven/run_development_package.html#How_to_build_the_package_of_a_project_and_run_it,_all_on_the_fly_">How to build the package of a project and run it, all on the fly?</a>
             </td>
             <td>Run a development package</td>
           </tr>
@@ -3297,12 +3166,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/todo/goto_document_tab.html#How_to_get_to_a_screen_to_manipulate_a_particular_document_">How to get to a screen to manipulate a particular document.</a>
-            </td>
-            <td>Goto a Document</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/editors/old/goto_content_browse_tab.html#How_to_get_to_the_content_browse_tab_">How to get to the content browse tab.</a>
             </td>
             <td>Goto Content Browse Tab</td>
@@ -3443,12 +3306,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#How_to_run">How to run</a>
-            </td>
-            <td>Demo on interfacing with Hippo ECM Repository</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/howto/save_documenttype.html#How_to_save_a_document_type_">How to save a document type.</a>
             </td>
             <td>Howto: Save document type</td>
@@ -3533,7 +3390,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/eclipse/war_overlays_in_eclipse.html#How_to_use_War_overlays_in_eclipse">How to use War overlays in eclipse</a>
+              <a href="../delve_into/tools/eclipse/war_overlays_in_eclipse.html#How_to_use_War_overlays_in_eclipse">How to use War overlays in eclipse</a>
             </td>
             <td>War overlays in eclipse</td>
           </tr>
@@ -3575,19 +3432,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/maven/install_maven.html#Howto_install_Maven_">Howto install Maven.</a>
+              <a href="../delve_into/tools/maven/install_maven.html#Howto_install_Maven_">Howto install Maven.</a>
             </td>
             <td>Install Maven</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#Html">Html</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/tools/howto/eclipse/configure_workspace.html#Identify_Maven_local_repository">Identify Maven local repository</a>
+              <a href="../delve_into/tools/eclipse/configure_workspace.html#Identify_Maven_local_repository">Identify Maven local repository</a>
             </td>
             <td>Configure Workspace</td>
           </tr>
@@ -3596,12 +3447,6 @@
               <a href="../delve_into/custom/howto/eclipse/import_project.html#Import_java_project">Import java project</a>
             </td>
             <td>Import java project</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/data_migration.html#Importing_Content">Importing Content</a>
-            </td>
-            <td>Data Migration</td>
           </tr>
           <tr>
             <td>
@@ -3659,7 +3504,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/maven/install_maven.html#Install_Maven">Install Maven</a>
+              <a href="../delve_into/tools/maven/install_maven.html#Install_Maven">Install Maven</a>
             </td>
             <td>Install Maven</td>
           </tr>
@@ -3716,12 +3561,6 @@
               <a href="../delve_into/sysadmin/requirements.html#internet_explorer_logo">internet explorer logo</a>
             </td>
             <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#Intro">Intro</a>
-            </td>
-            <td>Demo on interfacing with Hippo ECM Repository</td>
           </tr>
           <tr>
             <td>
@@ -3791,12 +3630,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/jcr/index.html#JCR_Interface">JCR Interface</a>
-            </td>
-            <td>Welcome: JCR Interface</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/installation/index.html#jetty_logo">jetty logo</a>
             </td>
             <td>Welcome: </td>
@@ -3818,12 +3651,6 @@
               <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Learn_how_frontend_plugins_communicate_with_each_other_">Learn how frontend plugins communicate with each other.</a>
             </td>
             <td>Frontend Plugin Communication</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/tools/howto/create_pom.html#Learn_how_to_create_a_project_object_model_file_for_maven_">Learn how to create a project object model file for maven.</a>
-            </td>
-            <td>Howto: Create a pom.xml</td>
           </tr>
           <tr>
             <td>
@@ -3863,9 +3690,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/maven/learning_maven.html#Learning_Maven">Learning Maven</a>
+              <a href="../delve_into/tools/maven/basics.html#Learn_to_basics_of_maven:_pom_xml_and_mvn_clean_install_">Learn to basics of maven: pom.xml and mvn clean install.</a>
             </td>
-            <td>Learning Maven</td>
+            <td>Maven basics</td>
           </tr>
           <tr>
             <td>
@@ -3998,6 +3825,12 @@
               <a href="../delve_into/user/information_architects/concepts/markuped_text.html#Markuped_text">Markuped text</a>
             </td>
             <td>Concept: Markuped text</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/tools/maven/basics.html#Maven_basics">Maven basics</a>
+            </td>
+            <td>Maven basics</td>
           </tr>
           <tr>
             <td>
@@ -4490,12 +4323,6 @@
               <a href="../delve_into/user/contributors/howto/start_CMS.html#Next">Next</a>
             </td>
             <td>Howto: Start CMS site</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/todo/goto_document_tab.html#Next">Next</a>
-            </td>
-            <td>Goto a Document</td>
           </tr>
           <tr>
             <td>
@@ -5009,12 +4836,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/maven/learning_maven.html#References_to_good_Maven_pages_(TODO)_and_some_handy_notes_">References to good Maven pages (TODO) and some handy notes.</a>
-            </td>
-            <td>Learning Maven</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../releasing.html#Releasing_in_subversion">Releasing in subversion</a>
             </td>
             <td>Performing a release of the Hippo ECM suite</td>
@@ -5153,7 +4974,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/maven/run_development_package.html#Run_a_development_package">Run a development package</a>
+              <a href="../delve_into/tools/maven/run_development_package.html#Run_a_development_package">Run a development package</a>
             </td>
             <td>Run a development package</td>
           </tr>
@@ -5225,99 +5046,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_action">screenshot detail of 'create new type' action</a>
-            </td>
-            <td>Document Type Tutorial</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_dialog">screenshot detail of 'create new type' dialog</a>
-            </td>
-            <td>Document Type Tutorial</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_boolean_widget">screenshot detail of boolean widget</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_date_widget">screenshot detail of date widget</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_date_widget_with_popup_calendar">screenshot detail of date widget with popup calendar</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_detail_of_field_preview">Screenshot detail of field preview</a>
-            </td>
-            <td>The Document Type Editor</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_detail_of_field_properties_editor">Screenshot detail of field properties editor</a>
-            </td>
-            <td>The Document Type Editor</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_hippo:resource_widget">screenshot detail of hippo:resource widget</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_html_widget">screenshot detail of html widget</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_detail_of_new_field_type_selector">Screenshot detail of new field type selector</a>
-            </td>
-            <td>The Document Type Editor</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_detail_of_save_options">Screenshot detail of save options</a>
-            </td>
-            <td>The Document Type Editor</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_string_widget">screenshot detail of string widget</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#screenshot_detail_of_text_widget">screenshot detail of text widget</a>
-            </td>
-            <td>Field Types Reference</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_detail_of_update_content_action">Screenshot detail of update content action</a>
-            </td>
-            <td>The Document Type Editor</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/sysadmin/configuration/console.html#Screenshot_of_the_console">Screenshot of the console</a>
             </td>
             <td>Console</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/editor.html#Screenshot_of_the_document_type_editor">Screenshot of the document type editor</a>
-            </td>
-            <td>The Document Type Editor</td>
           </tr>
           <tr>
             <td>
@@ -5435,6 +5166,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/tools/maven/learning_maven.html#Some_handy_notes_about_using_maven_for_Hippo_projects_">Some handy notes about using maven for Hippo projects.</a>
+            </td>
+            <td>Tips and tricks</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/howto/specify_type_details.html#Specify_type_details">Specify type details</a>
             </td>
             <td>Howto: Specify type details</td>
@@ -5501,7 +5238,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/eclipse/start_eclipse.html#Start_Eclipse">Start Eclipse</a>
+              <a href="../delve_into/tools/eclipse/start_eclipse.html#Start_Eclipse">Start Eclipse</a>
             </td>
             <td>Start Eclipse</td>
           </tr>
@@ -5513,7 +5250,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/eclipse/start_eclipse.html#Start_Eclipse_to_work_on_Hippo_projects_">Start Eclipse to work on Hippo projects.</a>
+              <a href="../delve_into/tools/eclipse/start_eclipse.html#Start_Eclipse_to_work_on_Hippo_projects_">Start Eclipse to work on Hippo projects.</a>
             </td>
             <td>Start Eclipse</td>
           </tr>
@@ -5534,12 +5271,6 @@
               <a href="../delve_into/user/information_architects/concepts/string.html#string">string</a>
             </td>
             <td>Concept: string</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#String">String</a>
-            </td>
-            <td>Field Types Reference</td>
           </tr>
           <tr>
             <td>
@@ -5609,12 +5340,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/index.html#Take_a_deep_dive_into_core_Hippo_CMS_development_">Take a deep dive into core Hippo CMS development.</a>
-            </td>
-            <td>Welcome: Hacking the core</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/reference/index.html#Technical_documentation_on_add-on_development_">Technical documentation on add-on development.</a>
             </td>
             <td>Welcome: Add-on Reference</td>
@@ -5639,9 +5364,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/document_types/fieldtypes.html#Text">Text</a>
+              <a href="../delve_into/sysadmin/configuration/repository/index.html#The_base_repository_configuration_through_a_number_of_XML_files_">The base repository configuration through a number of XML files.</a>
             </td>
-            <td>Field Types Reference</td>
+            <td>Welcome: Repository configuration</td>
           </tr>
           <tr>
             <td>
@@ -5651,21 +5376,16 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#The_Demo">The Demo</a>
+              <a href="../delve_into/sysadmin/configuration/nodes/roles.html#The_roles_define_which_JCR&#10;________________permissions_each_role_has_">The roles define which JCR
+                permissions each role has.</a>
             </td>
-            <td>Demo on interfacing with Hippo ECM Repository</td>
+            <td>Roles Configuration</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/document_types/editor.html#The_Document_Type_Editor">The Document Type Editor</a>
+              <a href="../delve_into/tools/maven/learning_maven.html#Tips_and_tricks">Tips and tricks</a>
             </td>
-            <td>The Document Type Editor</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/core/fundamentals/index.html#The_fundamental_ideas_behind_the_code_explained_">The fundamental ideas behind the code explained.</a>
-            </td>
-            <td>Welcome: Fundamentals</td>
+            <td>Tips and tricks</td>
           </tr>
           <tr>
             <td>
@@ -5725,12 +5445,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#Try_out_yourself">Try out yourself</a>
-            </td>
-            <td>Demo on interfacing with Hippo ECM Repository</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/cms_admins/todo/type_in_editing_region.html#Type_in_editing_region">Type in editing region</a>
             </td>
             <td>Type in editing region</td>
@@ -5785,12 +5499,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../about/use_cases.html#Use_cases">Use cases</a>
-            </td>
-            <td>Use cases</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/index.html#User_Guide">User Guide</a>
             </td>
             <td>Welcome: User Guide</td>
@@ -5821,21 +5529,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/document_types/editor.html#Using_the_editor">Using the editor</a>
-            </td>
-            <td>The Document Type Editor</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../about/version_numbers.html#Version_numbering_scheme">Version numbering scheme</a>
             </td>
             <td>Version numbering scheme</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/todo/browsing_history_of_document.html#Versioning_display_screenshot">Versioning display screenshot</a>
-            </td>
-            <td>Browsing history of a document</td>
           </tr>
           <tr>
             <td>
@@ -5857,7 +5553,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/tools/howto/eclipse/war_overlays_in_eclipse.html#War_overlays_in_eclipse">War overlays in eclipse</a>
+              <a href="../delve_into/tools/eclipse/war_overlays_in_eclipse.html#War_overlays_in_eclipse">War overlays in eclipse</a>
             </td>
             <td>War overlays in eclipse</td>
           </tr>
@@ -5872,12 +5568,6 @@
               <a href="../delve_into/user/editors/concepts/scheduled_publication.html#What_about_scheduling_the_online_publication_of_documents_">What about scheduling the online publication of documents?</a>
             </td>
             <td>Concept: Scheduled publication</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/todo-concepts/document_card.html#What_and_where_are_document_cards_">What and where are document cards?</a>
-            </td>
-            <td>Document tab page</td>
           </tr>
           <tr>
             <td>
@@ -5956,12 +5646,6 @@
               <a href="../delve_into/user/contributors/concepts/workspace_navigation_panel.html#What_and_where_is_the_workspace_navigation_panel_">What and where is the workspace navigation panel?</a>
             </td>
             <td>Concept: Workspace Navigation Panel</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../../../supported_stacks.html#What_combinations_of_system_software_is_supported_by_Hippo_">What combinations of system software is supported by Hippo?</a>
-            </td>
-            <td>Supported stacks</td>
           </tr>
           <tr>
             <td>
@@ -6175,12 +5859,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#What's_the_demo_all_about">What's the demo all about</a>
-            </td>
-            <td>Demo on interfacing with Hippo ECM Repository</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../about/roadmap.html#What's_up_for_the_future_">What's up for the future?</a>
             </td>
             <td>Roadmap Hippo CMS</td>
@@ -6239,12 +5917,6 @@
               <a href="../delve_into/custom/reference/repository/workflow.html#Workflow_model">Workflow model</a>
             </td>
             <td>Workflow functionality</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/data_migration.html#Working_with_external_data:_hint,_tips,_best_practices_">Working with external data: hint, tips, best practices.</a>
-            </td>
-            <td>Data Migration</td>
           </tr>
           <tr>
             <td>

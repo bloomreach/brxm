@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Run a development package</title>
+  </properties>
+  <body>
+
+   <section name="Run a development package">
+    <span class='shortdesc'>How to build the package of a project and run it, all on the fly?</span>
+
+        <p>
+         In production, the Hippo CMS and any addons are run by <a href="../../sysadmin/installation/in_servlet_container.html">
+         deploying the application wars in an application server</a>, but during development you will
+         want to have a faster way, testing and improving your application often during your
+         development cycle.
+        </p>
+        <p>
+         To facilitate development it is possible to run Hippo CMS together with any
+         addons using maven commands and kill the running CMS using Ctrl-C.
+         Assuming that the project directory is '~/cms'
+         (after you have <a href='../svn/get_Hippo_CMS_source.html'>checked out the Hippo CMS source</a> to it):
+        </p>
+        <source>
+&gt; cd ~/cms
+~/cms&gt; mvn install
+~/cms&gt; cd quickstart/war
+~/cms/quickstart/war&gt; mvn clean jetty:run-war
+        </source>
+        <p>
+         Maven uses the application server Jetty, which is included with Maven.
+         <code>mvn install</code> does the same as <code>mvn package</code> (i.e. building the packages)
+         and in addition puts all project artifacts
+         (jars, wars) in your local maven repository, as required by the maven-jetty-plugin.
+        </p>
+        <p>
+         Jetty and the Hippo CMS have now started and the CMS can be accessed via
+         your web browser at <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>,
+         logging in as admin/admin.
+        </p>
+    <p>
+      Note that in the sample application started from the command line is a quickstart version of
+      the Hippo CMS suite.  If you require a production build, want to extend Hippo CMS or just
+      want a clean start you should use the cms/package/war of cms/package/ear project.
+    </p>
+  </section>
+ </body>
+</document>
+

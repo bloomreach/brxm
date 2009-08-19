@@ -24,9 +24,9 @@
   <body>
 
     <section name="Project Structure">
-      
+
       <span class='shortdesc'>Find your way in the Hippo CMS project.</span>
-      
+
       <p>
         Hippo ECM is a <a href="http://maven.apache.org/">Maven 2</a> project consisting of
         <a href="http://maven.apache.org/guides/getting-started/index.html#How_do_I_build_more_than_one_project_at_once">
@@ -156,8 +156,8 @@ hippo-ecm                    Pom       hippo-ecm
           implement reporting functionality for the CMS. Usage examples of this addon are the
           activity and todo views on the cms-dashboard</li>
 
-        <li><b>reviewed-action</b> is a <a href="../../about/architecture.html#Workflow_API">
-          workflow</a> addon, it implements all business and GUI logic around the document lifecycle:
+        <li><b>reviewed-action</b> is a
+          workflow addon, it implements all business and GUI logic around the document lifecycle:
           reviewing, (un)publishing etc. It is a bundling of three addons: a repository
           addon implementing the business logic, a frontend addon bundling some frontend plugins for user
           interaction and a common addon for the interface between the two. It also contains a separate

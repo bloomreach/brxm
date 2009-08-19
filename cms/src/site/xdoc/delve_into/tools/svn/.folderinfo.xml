@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<info>
+ <title>SVN</title>
+ <shortdesc>How to use subversion for Hippo projects.</shortdesc>
+ <introduction>
+  Hippo projects are version controlled with <a href="http://subversion.tigris.org/">Subversion</a>.
+  They can be anonymously checked out using any subversion client.
+  Instructions on Subversion use can be found at <a href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>.
+ </introduction>
+</info>

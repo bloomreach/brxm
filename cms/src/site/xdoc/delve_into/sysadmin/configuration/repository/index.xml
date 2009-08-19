@@ -19,10 +19,11 @@
 -->
 <document>
     <properties>
-        <title>Configuration</title>
+        <title>Repository Configuration</title>
     </properties>
     <body>
         <section name="Repository configuration">
+         <span class='shortdesc'>The base repository configuration through a number of XML files.</span>     <!-- string -->
             <p>
                 The repository configuration file is an XML file that specifies the components
                 and configuration of the content repository. Hippo Repository by default ships

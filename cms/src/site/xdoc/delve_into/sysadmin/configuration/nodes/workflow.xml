@@ -25,11 +25,11 @@
 
 <section name="Workflow configuration">
 
-<p>
+<span class='shortdesc'>
 Workflows are configured by specifying how the workflow can be accessed and
 how the workflow is applicable.  This definition is stored in the
 repository itself.
-</p>
+</span>
 
 <p>
 All available workflows are stored in the JCR repository in the tree

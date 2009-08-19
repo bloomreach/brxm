@@ -19,23 +19,65 @@
 -->
 <document>
   <properties>
-    <title>Developing with Maven</title>
+    <title>Building the core Hippo CMS</title>
   </properties>
   <body>
-   <section name='Developing with Maven'>
 
-   <div class='warn'>
-    The contents of this page has been split up and the components have
-    been moved to <a href='../../tools/howto/maven/index.html'>maven howto</a>.
-    in <a href='../../tools/howto/index.html'>Tools howto</a>.
+   <section name="Building the core Hippo CMS">
+    <span class='shortdesc'>How to build the core Hippo CMS package from the sources?</span>
 
-    If you read the upper level documents:
-    <a href='../../tools/howto/maven/build_core_Hippo_CMS.html'>build core Hippo CMS</a>
-    and
-    <a href='../../tools/howto/maven/run_development_package.html'>Run development package</a>
-    you will be referred to all the content that was previously here.
-   </div>
-  </section>
+    <p class='publiek'>
+     You are always welcome to checkout and build the open source Hippo CMS project!
+     However, if you only want to use the Hippo CMS, either as a user or as a
+     addon or website developer, there is no need to build the Hippo CMS yourself:
+     using one of the 2 war packages of the Hippo CMS is more convenient for you then.
+     As a user you are all set with
+     the <a href="../../quickstart.html">quickstart war package</a>
+     and as a developer you can use the Hippo CMS as war overlay within your own
+     project (the war overlay can be seen as a kind of complex dependency, if you take 'dependency' not
+     too strict).
+     If you use a Hippo maven archetype for your own project, the war overlay is already taken care of.
+     See <a href='http://www.onehippo.org/site-toolkit/getting+started/generate+project'>generate project</a>.
+    </p>
 
-  </body>
-</document>
+   <p class='publiek'>
+     Some people build their own project against the Hippo CMS trunk,
+     which is not recommended, as this means they have a snapshot
+     dependency, for which no package can be found in our maven repository.
+     Those people need to build the Hippo CMS trunk to create the snapshot of the Hippo CMS
+     locally.
+    </p>
+
+    <p>
+     <a href='../../tools/maven/install_maven.html'>Install Maven ensuring spaceless pathnames</a>,
+     ensure that you know the <a href='../../tools/maven/basics.html'>maven basics</a> and
+     <a href='../../tools/svn/get_Hippo_CMS_source.html'>check out the Hippo CMS source</a> in the
+     directory <code>~/cms</code>.
+     Then build the package with:
+     </p>
+        <source>
+         &gt; cd ~/cms
+         ~/cms&gt; mvn install
+        </source>
+        <p>This will build the package:</p>
+        <code>~/cms/package/ear/target/${package_ear}</code>
+        <p>
+         <code>mvn install</code> does the more than <code>mvn package</code>.
+         <code>mvn package</code> builds the packages
+         in a <code>target/</code> descendant directory of your /cms directory. For instance,
+         if a project is configured to produce an EAR package, the produced EAR
+         package is put in the directory:</p>
+         <code>~/cms/package/ear/target/</code>
+         <p>While a WAR package would be put in the directory:</p>
+         <code>~/cms/package/war/target/</code>
+         <p>WAR and EAR packages can <em>not</em> be build simultaneously.</p>
+         <p><code>mvn install</code> in addition puts all project artifacts
+          (jars, wars) in your local maven repository. This is in principle not
+          required here, but due to a maven problem with resolving dependencies
+          on self, we recommend to use mvn install.
+         </p>
+
+        </section>
+       </body>
+      </document>
+
