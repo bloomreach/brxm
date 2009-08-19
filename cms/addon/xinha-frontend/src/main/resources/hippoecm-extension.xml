@@ -74,7 +74,7 @@
       <sv:value>html-cleaner-service.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-static</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-services</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>1903.0</sv:value>
