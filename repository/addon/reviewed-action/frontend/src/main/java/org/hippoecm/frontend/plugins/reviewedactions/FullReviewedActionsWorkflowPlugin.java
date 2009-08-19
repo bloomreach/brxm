@@ -28,7 +28,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -40,6 +39,9 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DeleteDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DepublishDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.WhereUsedDialog;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -77,6 +79,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
     WorkflowAction moveAction;
     WorkflowAction schedulePublishAction;
     WorkflowAction scheduleDepublishAction;
+    WorkflowAction whereUsedAction;
 
     public FullReviewedActionsWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -97,8 +100,10 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         add(infoEditAction = new StdWorkflow("infoEdit", "infoEdit") {
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("in-use-by", this, null, new Object[] { new PropertyModel(FullReviewedActionsWorkflowPlugin.this, "inUseBy") });
+                return new StringResourceModel("in-use-by", this, null, new Object[] { new PropertyModel(
+                        FullReviewedActionsWorkflowPlugin.this, "inUseBy") });
             }
+
             @Override
             protected void invoke() {
             }
@@ -154,13 +159,19 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
 
             @Override
+            protected Dialog createRequestDialog() {
+                IModel message = new StringResourceModel("depublish-message", FullReviewedActionsWorkflowPlugin.this,
+                        null, new Object[] { getDocumentName() });
+                return new DepublishDialog(message, this, getEditorManager());
+            }
+
+            @Override
             protected String execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 workflow.depublish();
                 return null;
             }
         });
-
 
         add(schedulePublishAction = new WorkflowAction("schedulePublish", new StringResourceModel(
                 "schedule-publish-label", this, null).getString(), null) {
@@ -227,7 +238,6 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 return null;
             }
         });
-
 
         add(renameAction = new WorkflowAction("rename", new StringResourceModel("rename-label", this, null)) {
             public String name;
@@ -327,37 +337,11 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
-                IModel documentName;
-                try {
-                    documentName = (new NodeTranslator(new JcrNodeModel(
-                            ((WorkflowDescriptorModel) FullReviewedActionsWorkflowPlugin.this.getModel()).getNode())))
-                            .getNodeName();
-                } catch (RepositoryException ex) {
-                    try {
-                        documentName = new Model(((WorkflowDescriptorModel) FullReviewedActionsWorkflowPlugin.this
-                                .getModel()).getNode().getName());
-                    } catch (RepositoryException e) {
-                        documentName = new StringResourceModel("unknown", FullReviewedActionsWorkflowPlugin.this, null);
-                    }
-                }
-                return new WorkflowAction.WorkflowDialog(new StringResourceModel("delete-message",
-                        FullReviewedActionsWorkflowPlugin.this, null, new Object[] { documentName })) {
-
-                    @Override
-                    public IModel getTitle() {
-                        return new StringResourceModel("delete-label", FullReviewedActionsWorkflowPlugin.this, null);
-                    }
-
-                    @Override
-                    public IValueMap getProperties() {
-                        return SMALL;
-                    }
-
-                    @Override
-                    protected void init() {
-                        setFocusOnCancel();
-                    }
-                };
+                IModel message = new StringResourceModel("delete-message", FullReviewedActionsWorkflowPlugin.this,
+                        null, new Object[] { getDocumentName() });
+                IModel title = new StringResourceModel("delete-title", FullReviewedActionsWorkflowPlugin.this,
+                        null, new Object[] { getDocumentName() });
+                return new DeleteDialog(title, message, this, getEditorManager());
             }
 
             @Override
@@ -368,7 +352,30 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
         });
 
+        add(whereUsedAction = new WorkflowAction("where-used", new StringResourceModel("where-used-label", this, null)
+                .getString(), null) {
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "where-used-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getModel();
+                return new WhereUsedDialog(wdm, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                return null;
+            }
+        });
+
         onModelChanged();
+    }
+
+    private IEditorManager getEditorManager() {
+        return getPluginContext().getService(getPluginConfig().getString("editor.id"), IEditorManager.class);
     }
 
     @Override
@@ -390,27 +397,34 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                         && !((Boolean) info.get("obtainEditableInstanceobtainEditableInstance")).booleanValue()) {
                     editAction.setVisible(false);
                 }
-                if (info.containsKey("publish") && info.get("publish") instanceof Boolean && !((Boolean) info.get("publish")).booleanValue()) {
+                if (info.containsKey("publish") && info.get("publish") instanceof Boolean
+                        && !((Boolean) info.get("publish")).booleanValue()) {
                     publishAction.setVisible(false);
                     schedulePublishAction.setVisible(false);
                 }
-                if (info.containsKey("depublish") && info.get("depublish") instanceof Boolean && !((Boolean) info.get("depublish")).booleanValue()) {
+                if (info.containsKey("depublish") && info.get("depublish") instanceof Boolean
+                        && !((Boolean) info.get("depublish")).booleanValue()) {
                     depublishAction.setVisible(false);
                     scheduleDepublishAction.setVisible(false);
                 }
-                if (info.containsKey("delete") && info.get("delete") instanceof Boolean && !((Boolean) info.get("delete")).booleanValue()) {
+                if (info.containsKey("delete") && info.get("delete") instanceof Boolean
+                        && !((Boolean) info.get("delete")).booleanValue()) {
                     deleteAction.setVisible(false);
                 }
-                if (info.containsKey("rename") && info.get("rename") instanceof Boolean && !((Boolean) info.get("rename")).booleanValue()) {
+                if (info.containsKey("rename") && info.get("rename") instanceof Boolean
+                        && !((Boolean) info.get("rename")).booleanValue()) {
                     renameAction.setVisible(false);
                 }
-                if (info.containsKey("move") && info.get("move") instanceof Boolean && !((Boolean) info.get("move")).booleanValue()) {
+                if (info.containsKey("move") && info.get("move") instanceof Boolean
+                        && !((Boolean) info.get("move")).booleanValue()) {
                     moveAction.setVisible(false);
                 }
-                if (info.containsKey("copy") && info.get("copy") instanceof Boolean && !((Boolean) info.get("copy")).booleanValue()) {
+                if (info.containsKey("copy") && info.get("copy") instanceof Boolean
+                        && !((Boolean) info.get("copy")).booleanValue()) {
                     copyAction.setVisible(false);
                 }
-                if (info.containsKey("status") && info.get("status") instanceof Boolean && !((Boolean) info.get("status")).booleanValue()) {
+                if (info.containsKey("status") && info.get("status") instanceof Boolean
+                        && !((Boolean) info.get("status")).booleanValue()) {
                     infoAction.setVisible(false);
                 }
                 if (info.containsKey("inUseBy") && info.get("inUseBy") instanceof String) {
@@ -456,6 +470,19 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
         getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class)
                 .browse(nodeModel);
+    }
+
+    IModel getDocumentName() {
+        try {
+            return (new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel) getModel()).getNode())))
+                    .getNodeName();
+        } catch (RepositoryException ex) {
+            try {
+                return new Model(((WorkflowDescriptorModel) getModel()).getNode().getName());
+            } catch (RepositoryException e) {
+                return new StringResourceModel("unknown", this, null);
+            }
+        }
     }
 
 }
