@@ -32,12 +32,6 @@
           are explained in detail.
  </introduction>
 </info>
-    <folder>architecture
-     <file ext='' note='empty'
-   fullname='delve_into/core/architecture/*'
-   relpath='delve_into/core/architecture'
-  >*</file>
-    </folder>
     <folder>building
 <info>
  <title>Building Hippo CMS</title>
@@ -69,12 +63,6 @@
    fullname='delve_into/core/building/netbeans.xml'
    relpath='delve_into/core/building'
   >netbeans</file>
-    </folder>
-    <folder>fundamentals
-     <file ext='' note='empty'
-   fullname='delve_into/core/fundamentals/*'
-   relpath='delve_into/core/fundamentals'
-  >*</file>
     </folder>
     <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/core/index.xml'
@@ -108,6 +96,10 @@
      <folder>eclipse
       <file ext='xml.vm' mimetype='application/xml' valid='yes' note='todo'
    fullname='delve_into/custom/howto/eclipse/configure_workspace.xml.vm'
+   relpath='delve_into/custom/howto/eclipse'
+  >configure_workspace</file>
+      <file ext='xml.vm~' mimetype='application/xml' note='todo'
+   fullname='delve_into/custom/howto/eclipse/configure_workspace.xml.vm~'
    relpath='delve_into/custom/howto/eclipse'
   >configure_workspace</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -304,10 +296,6 @@
    fullname='delve_into/sysadmin/configuration/console.xml'
    relpath='delve_into/sysadmin/configuration'
   >console</file>
-     <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/sysadmin/configuration/console.xml~'
-   relpath='delve_into/sysadmin/configuration'
-  >console</file>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/sysadmin/configuration/database_server.xml'
    relpath='delve_into/sysadmin/configuration'
@@ -486,10 +474,6 @@
    fullname='delve_into/sysadmin/installation/plugins.xml'
    relpath='delve_into/sysadmin/installation'
   >plugins</file>
-     <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/sysadmin/installation/plugins.xml~'
-   relpath='delve_into/sysadmin/installation'
-  >plugins</file>
     </folder>
     <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/sysadmin/requirements.xml'
@@ -525,20 +509,6 @@
    fullname='delve_into/tools/eclipse/war_overlays_in_eclipse.xml.vm'
    relpath='delve_into/tools/eclipse'
   >war_overlays_in_eclipse</file>
-    </folder>
-    <folder>howto
-     <folder>eclipse
-      <file ext='' note='empty'
-   fullname='delve_into/tools/howto/eclipse/*'
-   relpath='delve_into/tools/howto/eclipse'
-  >*</file>
-     </folder>
-     <folder>maven
-      <file ext='' note='empty'
-   fullname='delve_into/tools/howto/maven/*'
-   relpath='delve_into/tools/howto/maven'
-  >*</file>
-     </folder>
     </folder>
     <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/tools/index.xml'
@@ -908,18 +878,6 @@
    fullname='delve_into/user/contributors/index.xml'
    relpath='delve_into/user/contributors'
   >index</file>
-     <folder>todo
-      <file ext='' note='empty'
-   fullname='delve_into/user/contributors/todo/*'
-   relpath='delve_into/user/contributors/todo'
-  >*</file>
-     </folder>
-     <folder>todo-concepts
-      <file ext='' note='empty'
-   fullname='delve_into/user/contributors/todo-concepts/*'
-   relpath='delve_into/user/contributors/todo-concepts'
-  >*</file>
-     </folder>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/tour.xml'
    relpath='delve_into/user/contributors'
@@ -1096,12 +1054,6 @@
    fullname='delve_into/user/information_architects/concepts/URL.xml'
    relpath='delve_into/user/information_architects/concepts'
   >URL</file>
-     </folder>
-     <folder>document_types
-      <file ext='' note='empty'
-   fullname='delve_into/user/information_architects/document_types/*'
-   relpath='delve_into/user/information_architects/document_types'
-  >*</file>
      </folder>
      <folder>howto
 <info>

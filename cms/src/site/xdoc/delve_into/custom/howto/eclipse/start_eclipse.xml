@@ -28,7 +28,7 @@
 
     <p>General information about starting Eclipse
       for Hippo projects can be found
-      <a href='../../../tools/howto/eclipse/start_eclipse.html'>here</a>.
+      <a href='../../../tools/eclipse/start_eclipse.html'>here</a>.
       For Hippo CMS addon projects, you need to checkout the Hippo CMS 7 and have
       it as a subproject. As the Hippo CMS 7 is very large, eclipse has to be configured
       to allow for large sizes:
