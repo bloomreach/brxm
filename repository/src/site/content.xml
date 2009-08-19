@@ -28,9 +28,7 @@
           up your IDE. In addition, the architecture and the conceptual ideas behind it
           are explained in detail.
  </introduction>
-   <folder>architecture
-   
-   <document ext="" filename="*" relpath="delve_into/core/architecture"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>building
+   <folder>building
    <title>Building Hippo CMS</title><shortdesc>Build Hippo CMS from source using your tool of choice.</shortdesc><introduction>
     Getting the Hippo CMS source code and building it is easy. Hippo CMS
     uses a <a href="http://maven.apache.org/">Maven</a> build environment,
@@ -60,9 +58,7 @@
    <h4>Install the Subversion Plugin</h4>
    <h4>Install the Mevenide2 Plugin</h4>
    <subsection>Run / Debug</subsection>
-  </document></folder><folder>fundamentals
-   
-   <document ext="" filename="*" relpath="delve_into/core/fundamentals"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="index" relpath="delve_into/core">
+  </document></folder><document ext="xml" filename="index" relpath="delve_into/core">
   </document><document ext="xml" filename="project-structure" relpath="delve_into/core">Project Structure
    <section>Project Structure</section>
    <shortdesc>Find your way in the Hippo CMS project.</shortdesc>
@@ -592,13 +588,7 @@ repository itself.
   </document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/eclipse">War overlays in eclipse
    <section>War overlays in eclipse</section>
    <shortdesc>How to use War overlays in eclipse</shortdesc>
-  </document></folder><folder>howto
-   
-   <folder>eclipse
-   
-   <document ext="" filename="*" relpath="delve_into/tools/howto/eclipse"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>maven
-   
-   <document ext="" filename="*" relpath="delve_into/tools/howto/maven"><notvalid>Document is not a valid XML document.</notvalid></document></folder></folder><document ext="xml" filename="index" relpath="delve_into/tools">
+  </document></folder><document ext="xml" filename="index" relpath="delve_into/tools">
   </document><folder>maven
    <title>Maven</title><shortdesc>How to use maven for Hippo projects.</shortdesc>
    <document ext="xml" filename="basics" relpath="delve_into/tools/maven">Maven basics
@@ -1022,11 +1012,7 @@ repository itself.
    <section>Contributors Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of contributor.</shortdesc>
    <subsection>General introduction for contributors</subsection>
-  </document><folder>todo
-   
-   <document ext="" filename="*" relpath="delve_into/user/contributors/todo"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>todo-concepts
-   
-   <document ext="" filename="*" relpath="delve_into/user/contributors/todo-concepts"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour
+  </document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour
    <section>Hippo CMS Contributor Tour</section>
    <shortdesc>A CMS contributor writes documents and/or adds images and/or assets.
     To get introduced to the role of CMS Contributor, take the following tour.</shortdesc>
@@ -1226,9 +1212,7 @@ repository itself.
    <shortdesc>URL</shortdesc>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document></folder><folder>document_types
-   
-   <document ext="" filename="*" relpath="delve_into/user/information_architects/document_types"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>howto
+  </document></folder><folder>howto
    <title>CMS Information Architect Howto</title><shortdesc>A collection of howto's for small tasks an information architect may want to do!</shortdesc><afterlist>
   <subsection name="Alternative">
      <p>

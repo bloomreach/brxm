@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 987 terms</span>
+      <span class="shortdesc">Term index, 980 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -1800,49 +1800,7 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/architecture/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
-            </td>
-            <td/>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/core/building/maven.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
-            </td>
-            <td/>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/core/fundamentals/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
-            </td>
-            <td/>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/tools/howto/eclipse/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
-            </td>
-            <td/>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/tools/howto/maven/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
-            </td>
-            <td/>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/todo/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
-            </td>
-            <td/>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/todo-concepts/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
-            </td>
-            <td/>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/document_types/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
             </td>
             <td/>
           </tr>

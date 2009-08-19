@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">396 errors and/or todos in 239 out of 239 documents (100%).</span>
+      <span class="shortdesc">388 errors and/or todos in 232 out of 232 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -35,7 +35,7 @@
        </li>
         <li>0 documents out of date (needing update).
      </li>
-        <li>3 documents with typo's.
+        <li>2 documents with typo's.
      </li>
         <li>2 documents to review.
      </li>
@@ -49,21 +49,15 @@
      </li>
         <li>0 documents with unidentified TODO strings.
      </li>
-        <li>9 not valid XML documents.
+        <li>2 not valid XML documents.
      </li>
         <li>15 documents with bad text.
      </li>
         <li>9 multisection documents.
      </li>
       </ul>
-      <subsection name="Documents with standard typos: 3">
+      <subsection name="Documents with standard typos: 2">
         <ol>
-          <li>
-            <a href="./delve_into/custom/howto/eclipse/configure_workspace.html">configure_workspace: Configure Workspace</a>
-            <ul>
-              <li>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field.</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/user/contributors/howto/discard_changes.html">discard_changes: Discard changes</a>
             <ul>
@@ -763,52 +757,10 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="notvalid documents: 9">
+      <subsection name="notvalid documents: 2">
         <ol>
           <li>
-            <a href="./delve_into/core/architecture/*.html">*: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/core/building/maven.html">maven: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/core/fundamentals/*.html">*: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/tools/howto/eclipse/*.html">*: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/tools/howto/maven/*.html">*: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/todo/*.html">*: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/todo-concepts/*.html">*: </a>
-            <ul>
-              <li>Document is not a valid XML document.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/document_types/*.html">*: </a>
             <ul>
               <li>Document is not a valid XML document.</li>
             </ul>

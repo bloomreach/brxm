@@ -21,9 +21,7 @@
           up your IDE. In addition, the architecture and the conceptual ideas behind it
           are explained in detail.
  </introduction>
-   <folder>architecture
-   
-   <document ext="" filename="*" relpath="delve_into/core/architecture"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>building
+   <folder>building
    <title>Building Hippo CMS</title><shortdesc>Build Hippo CMS from source using your tool of choice.</shortdesc><introduction>
     Getting the Hippo CMS source code and building it is easy. Hippo CMS
     uses a <a href="http://maven.apache.org/">Maven</a> build environment,
@@ -32,9 +30,7 @@
  </introduction>
    <document ext="xml.vm" filename="eclipse" relpath="delve_into/core/building">Developing Hippo CMS with Eclipse<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/core/building"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Building the core Hippo CMS<linkto_unchecked/></document><document ext="xml.vm-old" filename="maven" relpath="delve_into/core/building"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans<linkto_unchecked/></document></folder><folder>fundamentals
-   
-   <document ext="" filename="*" relpath="delve_into/core/fundamentals"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="index" relpath="delve_into/core"><linkto_unchecked/>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Building the core Hippo CMS<linkto_unchecked/></document><document ext="xml.vm-old" filename="maven" relpath="delve_into/core/building"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans<linkto_unchecked/></document></folder><document ext="xml" filename="index" relpath="delve_into/core"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="project-structure" relpath="delve_into/core">Project Structure<linkto_unchecked/>
     <empty_elem>&lt;p/&gt;</empty_elem>
@@ -61,8 +57,7 @@
     <add>include screenshot</add></document><document ext="xml" filename="customize_skin" relpath="delve_into/custom/howto">Frontend skin customization<linkto_unchecked/></document><folder>eclipse
    
    <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/custom/howto/eclipse">Configure Workspace<linkto_unchecked/>
-    <add>Explanation about installing JPOX eclipse plugin</add>
-    <typo>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span class="bad"> the the </span>'Class Enhancer' field.</typo></document><document ext="xml" filename="import_project" relpath="delve_into/custom/howto/eclipse">Import java project<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/custom/howto/eclipse"><linkto_unchecked/>
+    <add>Explanation about installing JPOX eclipse plugin</add></document><document ext="xml" filename="import_project" relpath="delve_into/custom/howto/eclipse">Import java project<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/custom/howto/eclipse"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="start_eclipse" relpath="delve_into/custom/howto/eclipse">Start Eclipse<linkto_unchecked/></document></folder><document ext="xml" filename="editing_template_plugin" relpath="delve_into/custom/howto">Create an Editing Template Plugin<linkto_unchecked/></document><document ext="xml" filename="extend_dashboard" relpath="delve_into/custom/howto">Giving our plugin a place on the dashboard<linkto_unchecked/>
     <badtext>. Under wicket.extensions you will see the<span class="bad"> current </span>plugins shown on the dashboard. Add an entry "extension.helloworld". Next add a property called "extension.helloworld" and give it the value "service.helloworld". Now the dashboard knows where to find</badtext></document><document ext="xml" filename="gui_plugin" relpath="delve_into/custom/howto">Hello World<linkto_unchecked/></document><document ext="xml" filename="hello_model" relpath="delve_into/custom/howto">Making the Hello World plugin context sensitive<linkto_unchecked/>
@@ -255,13 +250,7 @@ repository is;
    <title>Eclipse</title><shortdesc>How to use eclipse for Hippo projects.</shortdesc>
    <document ext="xml.vm" filename="configure_workspace" relpath="delve_into/tools/eclipse">Configure Workspace<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/tools/eclipse"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/eclipse">Start Eclipse<linkto_unchecked/></document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/eclipse">War overlays in eclipse<linkto_unchecked/></document></folder><folder>howto
-   
-   <folder>eclipse
-   
-   <document ext="" filename="*" relpath="delve_into/tools/howto/eclipse"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>maven
-   
-   <document ext="" filename="*" relpath="delve_into/tools/howto/maven"><notvalid>Document is not a valid XML document.</notvalid></document></folder></folder><document ext="xml" filename="index" relpath="delve_into/tools"><linkto_unchecked/>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="start_eclipse" relpath="delve_into/tools/eclipse">Start Eclipse<linkto_unchecked/></document><document ext="xml.vm" filename="war_overlays_in_eclipse" relpath="delve_into/tools/eclipse">War overlays in eclipse<linkto_unchecked/></document></folder><document ext="xml" filename="index" relpath="delve_into/tools"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><folder>maven
    <title>Maven</title><shortdesc>How to use maven for Hippo projects.</shortdesc>
@@ -347,11 +336,7 @@ repository is;
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="learn_meaning_of_inputfield" relpath="delve_into/user/contributors/howto">Learn meaning of inputfield<linkto_unchecked/></document><document ext="xml" filename="login" relpath="delve_into/user/contributors/howto">Login as Contributor<linkto_unchecked/></document><document ext="xml" filename="logout" relpath="delve_into/user/contributors/howto">Logout<linkto_unchecked/></document><document ext="xml" filename="request_publication" relpath="delve_into/user/contributors/howto">Request Publication of Document<linkto_unchecked/></document><document ext="xml" filename="save_document" relpath="delve_into/user/contributors/howto">Save Document<linkto_unchecked/></document><document ext="xml" filename="schedule_publication" relpath="delve_into/user/contributors/howto">Schedule publication of Document<linkto_unchecked/></document><document ext="xml" filename="set_edit_mode" relpath="delve_into/user/contributors/howto">set edit mode<linkto_unchecked/>
     <add>Screenshot set edit mode</add></document><document ext="xml" filename="start_CMS" relpath="delve_into/user/contributors/howto">Start CMS site<linkto_unchecked/>
-    <badtext>ia.org/. The site is not yet visible, because the user has not clicked yet. Coincidentially, the site<span class="bad"> current </span>ly visible happens to be the Hippo CMS documentation site at</badtext></document></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide<linkto_unchecked/></document><folder>todo
-   
-   <document ext="" filename="*" relpath="delve_into/user/contributors/todo"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>todo-concepts
-   
-   <document ext="" filename="*" relpath="delve_into/user/contributors/todo-concepts"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour<linkto_unchecked/></document></folder><folder>editors
+    <badtext>ia.org/. The site is not yet visible, because the user has not clicked yet. Coincidentially, the site<span class="bad"> current </span>ly visible happens to be the Hippo CMS documentation site at</badtext></document></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide<linkto_unchecked/></document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour<linkto_unchecked/></document></folder><folder>editors
    
    <folder>concepts
    <title>CMS Editor Concepts</title><shortdesc>A collection of concepts a CMS editor may want to know.</shortdesc><afterlist>  
@@ -391,9 +376,7 @@ repository is;
  </afterlist>
    <document ext="xml" filename="boolean" relpath="delve_into/user/information_architects/concepts">Boolean<linkto_unchecked/></document><document ext="xml" filename="compoundtype" relpath="delve_into/user/information_architects/concepts">Compound type<linkto_unchecked/></document><document ext="xml" filename="documenttype" relpath="delve_into/user/information_architects/concepts">Document type<linkto_unchecked/></document><document ext="xml" filename="editing" relpath="delve_into/user/information_architects/concepts">Editing<linkto_unchecked/></document><document ext="xml" filename="edit_mode" relpath="delve_into/user/information_architects/concepts">Edit mode<linkto_unchecked/></document><document ext="xml" filename="field_properties_overview" relpath="delve_into/user/information_architects/concepts">Field properties overview<linkto_unchecked/></document><document ext="xml" filename="field_type_menu" relpath="delve_into/user/information_architects/concepts">field type menu<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/concepts"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/concepts">Mandatory or optional field<linkto_unchecked/></document><document ext="xml" filename="markuped_text" relpath="delve_into/user/information_architects/concepts">Markuped text<linkto_unchecked/></document><document ext="xml" filename="namespaces_folder" relpath="delve_into/user/information_architects/concepts">Namespace folder<linkto_unchecked/></document><document ext="xml" filename="namespace" relpath="delve_into/user/information_architects/concepts">namespace<linkto_unchecked/></document><document ext="xml" filename="review_mode" relpath="delve_into/user/information_architects/concepts">Review mode<linkto_unchecked/></document><document ext="xml" filename="string" relpath="delve_into/user/information_architects/concepts">string<linkto_unchecked/></document><document ext="xml" filename="URL" relpath="delve_into/user/information_architects/concepts">URL<linkto_unchecked/></document></folder><folder>document_types
-   
-   <document ext="" filename="*" relpath="delve_into/user/information_architects/document_types"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>howto
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/concepts">Mandatory or optional field<linkto_unchecked/></document><document ext="xml" filename="markuped_text" relpath="delve_into/user/information_architects/concepts">Markuped text<linkto_unchecked/></document><document ext="xml" filename="namespaces_folder" relpath="delve_into/user/information_architects/concepts">Namespace folder<linkto_unchecked/></document><document ext="xml" filename="namespace" relpath="delve_into/user/information_architects/concepts">namespace<linkto_unchecked/></document><document ext="xml" filename="review_mode" relpath="delve_into/user/information_architects/concepts">Review mode<linkto_unchecked/></document><document ext="xml" filename="string" relpath="delve_into/user/information_architects/concepts">string<linkto_unchecked/></document><document ext="xml" filename="URL" relpath="delve_into/user/information_architects/concepts">URL<linkto_unchecked/></document></folder><folder>howto
    <title>CMS Information Architect Howto</title><shortdesc>A collection of howto's for small tasks an information architect may want to do!</shortdesc><afterlist>
   <subsection name="Alternative">
      <p>
