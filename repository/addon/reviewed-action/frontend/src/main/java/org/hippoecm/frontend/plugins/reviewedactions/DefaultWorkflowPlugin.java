@@ -115,7 +115,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
                     @Override
                     public IModel getTitle() {
-                        return new StringResourceModel("delete-label", DefaultWorkflowPlugin.this, null);
+                        return new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null);
                     }
 
                     @Override
