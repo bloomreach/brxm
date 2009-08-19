@@ -34,12 +34,14 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.WhereUsedDialog;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
@@ -70,6 +72,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
     WorkflowAction deleteAction;
     WorkflowAction schedulePublishAction;
     WorkflowAction scheduleDepublishAction;
+    WorkflowAction whereUsedAction;
 
     public BasicReviewedActionsWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -212,7 +215,31 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
         });
 
+
+        add(whereUsedAction = new WorkflowAction("where-used", new StringResourceModel("where-used-label", this, null)
+                .getString(), null) {
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "where-used-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getModel();
+                return new WhereUsedDialog(wdm, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                return null;
+            }
+        });
+
         onModelChanged();
+    }
+
+    private IEditorManager getEditorManager() {
+        return getPluginContext().getService(getPluginConfig().getString("editor.id"), IEditorManager.class);
     }
 
     @Override
