@@ -573,6 +573,9 @@ line-height: 18px;}
 body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; line-height: 16px; background: url("images/hippo-window-input-back.png") no-repeat; width: 660px}
 .hippo-picker-list-details table tr th{padding: 1px; padding-left: 4px; padding-bottom: 2px; border: 1px solid #afafaf; border-right: 0px; border-bottom: none;}
 
+/* Referring documents */
+.hippo-referring-documents {height: 260px; position: relative;}
+.hippo-delete .hippo-referring-documents {height: 196px;}
 
 /* Wizard */
 /* ================================================ */
