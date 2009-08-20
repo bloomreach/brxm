@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
-import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -73,9 +72,14 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 String methodName = invocation.getMethod().getName();
                 
                 if ("logout".equals(methodName)) {
-                    // when logout(), it acturally returns the session to the pool
-                    this.alreadyReturned = true;
-                    poolingRepository.returnSession(pooledSessionProxy);
+                    /*
+                     * Do nothing. Sessions are cleaned up (returned to the pool) by the PooledSessionDecoratorFactory#disposeAllResources() at the 
+                     * end of the request.
+                     * A call to poolingRepository.returnSession(pooledSessionProxy); would end up in a double call in 
+                     * GenericObjectPool returnObject(session) for one and the same session, resulting in negative numActives and 
+                     * a broken pool, retaining in the end far more open sessions then configured in the pool config
+                     */ 
+                    
                 } else if ("logoutSession".equals(methodName)) {
                     Session session = (Session) invocation.getProxy();
                     // temporary, in fact unneeded fix, to reduce memory kept by repo. This is fixed in repo trunk already, not in the ecm 2.06.07 and 2.07.00 versions
@@ -85,18 +89,19 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 } else if ("getRepository".equals(methodName)) {
                     // when getRepository(), it actually returns the session pooling repository
                     ret = poolingRepository;
-                } else if ("impersonate".equals(methodName)) {
-                    // when impersonate(), it actually returns a session which is borrowed 
-                    // from another session pool repository based on the credentials.
-                    Credentials credentials = (Credentials) invocation.getArguments()[0];
-                    ret = poolingRepository.impersonate(credentials);
-                    // if the poolingRepository returns null, it means the poolingRepository cannot retrieve
-                    // a pooled session with the credentials.
-                    // in this case, just proceeed to allow impersonation by underlying JCR session.
-                    if (ret == null) {
-                        ret = invocation.proceed();
-                    }
-                } else if ("refresh".equals(methodName)) {
+                } 
+                else if ("impersonate".equals(methodName)) {
+                    /*
+                     * An impersonated session should not be retrieved through the pooling repository. This possibly leads to exhausted session
+                     * pools because through the poolingRepository, sessions are returned at the end of the request in 
+                     * PooledSessionDecoratorFactory#disposeAllResources(). If the request would open in a loop more sessions in the pool then allowed,
+                     * the application is stuck. 
+                     * 
+                     * Developers *always* have to make sure to logout an impersonated session themselves.
+                     */  
+                    ret = invocation.proceed();
+                } 
+                else if ("refresh".equals(methodName)) {
                     ret = invocation.proceed();
                     lastRefreshed = System.currentTimeMillis();
                 } else if ("lastRefreshed".equals(methodName)) {
