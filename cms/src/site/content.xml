@@ -47,10 +47,10 @@
    <subsection>Code formatting</subsection>
    <subsection>Keeping up</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/core/building">
-  </document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Building the core Hippo CMS
-   <section>Building the core Hippo CMS</section>
-   <shortdesc>How to build the core Hippo CMS package from the sources?</shortdesc>
-  </document><document ext="xml.vm-old" filename="maven" relpath="delve_into/core/building"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans
+  </document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Building the Hippo CMS with maven
+   <section>Building the Hippo CMS with maven</section>
+   <shortdesc>How to build the core Hippo CMS package from the sources using Maven?</shortdesc>
+  </document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans
    <section>Building with Netbeans</section>
    <shortdesc>How to import and work with the Hippo CMS project in the Netbeans IDE.</shortdesc>
    <subsection>Prepare</subsection>

@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -34,9 +34,9 @@ ________________________________________________________________________________
     toppx=200;
     bottompx=600;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/inars/update_content.png" alt='update content screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/inars/update_content.png" alt='update content screenshot'/>
     </div></div>
     <p>
      After choosing 'Update all content' from the
@@ -52,6 +52,13 @@ ________________________________________________________________________________
     update all content will change all existing documents of that type to conform to the new
     definition. Therefor, you will always be asked if you really want to perform 'update all content'.
    </p>
+   <p class='warn'>
+     Before update all content is performed,
+     a new document type will not be in the list of document types to choose from while
+     creating a new document. Note that in a folder that is configured to allow only some document types,
+     other document types will never get in that list.
+   </p>
+
    <p class='warn'>
     Be warned that users may loose content if you use 'update all content' while users are
     already using the document type you changed, i.e. they created documents of it.
