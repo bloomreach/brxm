@@ -38,7 +38,7 @@
     <junit.version>4.5</junit.version>
     
     <hippoecm.version>2.07.01</hippoecm.version>
-    <hst.version>2.03.11-SNAPSHOT</hst.version>
+    <hst.version>2.03.11</hst.version>
     
     <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
     <javax.jcr.version>1.0</javax.jcr.version>
