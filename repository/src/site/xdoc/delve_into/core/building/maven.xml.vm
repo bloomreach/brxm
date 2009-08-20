@@ -19,12 +19,12 @@
 -->
 <document>
   <properties>
-    <title>Building the core Hippo CMS</title>
+    <title>Building with maven</title>
   </properties>
   <body>
 
-   <section name="Building the core Hippo CMS">
-    <span class='shortdesc'>How to build the core Hippo CMS package from the sources?</span>
+   <section name="Building the Hippo CMS with maven">
+    <span class='shortdesc'>How to build the core Hippo CMS package from the sources using Maven?</span>
 
     <p class='publiek'>
      You are always welcome to checkout and build the open source Hippo CMS project!

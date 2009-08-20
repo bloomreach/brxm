@@ -30,7 +30,7 @@
  </introduction>
    <document ext="xml.vm" filename="eclipse" relpath="delve_into/core/building">Developing Hippo CMS with Eclipse<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/core/building"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Building the core Hippo CMS<linkto_unchecked/></document><document ext="xml.vm-old" filename="maven" relpath="delve_into/core/building"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans<linkto_unchecked/></document></folder><document ext="xml" filename="index" relpath="delve_into/core"><linkto_unchecked/>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml.vm" filename="maven" relpath="delve_into/core/building">Building the Hippo CMS with maven<linkto_unchecked/></document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans<linkto_unchecked/></document></folder><document ext="xml" filename="index" relpath="delve_into/core"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="project-structure" relpath="delve_into/core">Project Structure<linkto_unchecked/>
     <empty_elem>&lt;p/&gt;</empty_elem>

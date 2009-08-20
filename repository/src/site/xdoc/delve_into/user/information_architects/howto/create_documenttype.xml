@@ -37,7 +37,7 @@ ________________________________________________________________________________
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_T07/inars/create_documenttype.png" alt='Create document type screenshot'/> 
+     <img src="../../../../images/screenshots/cms_T07/inars/create_documenttype.png" alt='Create document type screenshot'/>
     </div></div>
     <p>
      The <a href='../../contributors/concepts/folder_action_menu.html'>folder action menu</a> for
@@ -50,6 +50,11 @@ ________________________________________________________________________________
      The new document type will be added to the document types in the snp namespace,
      which are now 'myhobby' and 'upcoming'.
     </p>
+    <p>Note that after you added or changed fields and saved the document type, you have to click
+     <a href='update_all_content.html'>Update all content</a> for the document type or the changes in it
+     to become available.
+    </p>
+
    </div>
 
   <subsection name='Next'>

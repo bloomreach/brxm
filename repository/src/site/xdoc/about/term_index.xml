@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 980 terms</span>
+      <span class="shortdesc">Term index, 979 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -1121,9 +1121,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/building/maven.html#Building_the_core_Hippo_CMS">Building the core Hippo CMS</a>
+              <a href="../delve_into/core/building/maven.html#Building_the_Hippo_CMS_with_maven">Building the Hippo CMS with maven</a>
             </td>
-            <td>Building the core Hippo CMS</td>
+            <td>Building the Hippo CMS with maven</td>
           </tr>
           <tr>
             <td>
@@ -1797,12 +1797,6 @@ repository itself.
               <a href="../delve_into/user/contributors/concepts/document.html#Document">Document</a>
             </td>
             <td>Concept: Document</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/core/building/maven.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
-            </td>
-            <td/>
           </tr>
           <tr>
             <td>
@@ -2955,9 +2949,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/core/building/maven.html#How_to_build_the_core_Hippo_CMS_package_from_the_sources_">How to build the core Hippo CMS package from the sources?</a>
+              <a href="../delve_into/core/building/maven.html#How_to_build_the_core_Hippo_CMS_package_from_the_sources_using_Maven_">How to build the core Hippo CMS package from the sources using Maven?</a>
             </td>
-            <td>Building the core Hippo CMS</td>
+            <td>Building the Hippo CMS with maven</td>
           </tr>
           <tr>
             <td>

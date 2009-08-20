@@ -51,12 +51,16 @@
    fullname='delve_into/core/building/index.xml'
    relpath='delve_into/core/building'
   >index</file>
+     <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/core/building/index.xml~'
+   relpath='delve_into/core/building'
+  >index</file>
      <file ext='xml.vm' mimetype='application/xml' valid='yes'
    fullname='delve_into/core/building/maven.xml.vm'
    relpath='delve_into/core/building'
   >maven</file>
-     <file ext='xml.vm-old' mimetype='application/xml'
-   fullname='delve_into/core/building/maven.xml.vm-old'
+     <file ext='xml.vm~' mimetype='application/xml'
+   fullname='delve_into/core/building/maven.xml.vm~'
    relpath='delve_into/core/building'
   >maven</file>
      <file ext='xml' mimetype='application/xml' valid='yes'
@@ -96,10 +100,6 @@
      <folder>eclipse
       <file ext='xml.vm' mimetype='application/xml' valid='yes' note='todo'
    fullname='delve_into/custom/howto/eclipse/configure_workspace.xml.vm'
-   relpath='delve_into/custom/howto/eclipse'
-  >configure_workspace</file>
-      <file ext='xml.vm~' mimetype='application/xml' note='todo'
-   fullname='delve_into/custom/howto/eclipse/configure_workspace.xml.vm~'
    relpath='delve_into/custom/howto/eclipse'
   >configure_workspace</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -367,6 +367,10 @@
   >debugging</file>
     <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/sysadmin/index.xml'
+   relpath='delve_into/sysadmin'
+  >index</file>
+    <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/sysadmin/index.xml~'
    relpath='delve_into/sysadmin'
   >index</file>
     <folder>installation
