@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Update content</title>
+    <title>Update all content</title>
   </properties>
 
   <body>
-    <section name="Update content">
-      <span class="shortdesc">How to update content</span>
+    <section name="Update all content">
+      <span class="shortdesc">How to update all content</span>
 
    <script type="text/javascript">
     leftpx=0;
