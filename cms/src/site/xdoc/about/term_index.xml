@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 979 terms</span>
+      <span class="shortdesc">Term index, 976 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -48,6 +48,15 @@
             </a>
             </td>
             <td>Groups Configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/jcr/reference/derived_data.html#&#10;Derived_data_is_the_concept_where_additional_information_for_a_document&#10;generated,_based_upon_the_information_of_the_document_itself_&#10;">
+Derived data is the concept where additional information for a document
+generated, based upon the information of the document itself.
+</a>
+            </td>
+            <td>Derived Data</td>
           </tr>
           <tr>
             <td>
@@ -971,7 +980,7 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/update_content.html#Alternative">Alternative</a>
+              <a href="../delve_into/user/information_architects/howto/update_all_content.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Update content</td>
           </tr>
@@ -1058,6 +1067,12 @@ repository itself.
               <a href="../delve_into/user/cms_admins/howto/assign_user_to_group.html#Assign_user_to_group_screenshot">Assign user to group screenshot</a>
             </td>
             <td>Howto: Assign user to group</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/repository/authentication.html#Authentication_with_The_Repository_Login_Module">Authentication with The Repository Login Module</a>
+            </td>
+            <td>Repository based authentication</td>
           </tr>
           <tr>
             <td>
@@ -1199,12 +1214,6 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/jcr/reference/index.html#Change_to_document_short_description_">Change to document short description.</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/concepts/index.html#Change_to_the_document_title">Change to the document title</a>
             </td>
             <td>Welcome: Change to the document title</td>
@@ -1214,12 +1223,6 @@ repository itself.
               <a href="../delve_into/custom/concepts/repository_plugins.html#Change_to_the_document_title">Change to the document title</a>
             </td>
             <td>Concept: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/reference/index.html#Change_to_the_document_title">Change to the document title</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
           </tr>
           <tr>
             <td>
@@ -2154,9 +2157,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/repository/index.html#FileSystem_element">FileSystem element</a>
+              <a href="../delve_into/sysadmin/configuration/repository/overview.html#FileSystem_element">FileSystem element</a>
             </td>
-            <td>Welcome: Repository configuration</td>
+            <td>Repository Configuration</td>
           </tr>
           <tr>
             <td>
@@ -2250,12 +2253,6 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/jcr/reference/index.html#First_subsection_title">First subsection title</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/concepts/index.html#First_subsubsection_title">First subsubsection title</a>
             </td>
             <td>Welcome: Change to the document title</td>
@@ -2277,18 +2274,6 @@ repository itself.
               <a href="../delve_into/custom/concepts/repository_plugins.html#First_subsubsection_title">First subsubsection title</a>
             </td>
             <td>Concept: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/reference/index.html#First_subsubsection_title">First subsubsection title</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/reference/index.html#First_subsubsection_title">First subsubsection title</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
           </tr>
           <tr>
             <td>
@@ -3330,7 +3315,7 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/update_content.html#How_to_update_content">How to update content</a>
+              <a href="../delve_into/user/information_architects/howto/update_all_content.html#How_to_update_content">How to update content</a>
             </td>
             <td>Howto: Update content</td>
           </tr>
@@ -3435,12 +3420,6 @@ repository itself.
               <a href="../delve_into/custom/concepts/repository_plugins.html#index_word">index word</a>
             </td>
             <td>Concept: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/jcr/reference/index.html#index_word">index word</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
           </tr>
           <tr>
             <td>
@@ -4566,7 +4545,7 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/update_content.html#Next">Next</a>
+              <a href="../delve_into/user/information_architects/howto/update_all_content.html#Next">Next</a>
             </td>
             <td>Howto: Update content</td>
           </tr>
@@ -4824,9 +4803,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/repository/index.html#Repository_configuration">Repository configuration</a>
+              <a href="../delve_into/sysadmin/configuration/repository/overview.html#Repository_Configuration">Repository Configuration</a>
             </td>
-            <td>Welcome: Repository configuration</td>
+            <td>Repository Configuration</td>
           </tr>
           <tr>
             <td>
@@ -5010,15 +4989,21 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/configuration/repository/searchindex.html#Search_index_for_content_that_is_shared_repository_wide_(/jcr:system_tree,_contains_mainly_versions)_">Search index for content that is shared repository wide (/jcr:system tree, contains mainly versions).</a>
+            </td>
+            <td>SearchIndex configuration</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/configuration/repository/searchindex.html#SearchIndex_configuration">SearchIndex configuration</a>
             </td>
             <td>SearchIndex configuration</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/repository/index.html#SearchIndex_element">SearchIndex element</a>
+              <a href="../delve_into/sysadmin/configuration/repository/overview.html#SearchIndex_element">SearchIndex element</a>
             </td>
-            <td>Welcome: Repository configuration</td>
+            <td>Repository Configuration</td>
           </tr>
           <tr>
             <td>
@@ -5034,15 +5019,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/jcr/reference/index.html#Second_subsection_title">Second subsection title</a>
+              <a href="../delve_into/sysadmin/configuration/repository/overview.html#Security_element">Security element</a>
             </td>
-            <td>Welcome: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/configuration/repository/index.html#Security_element">Security element</a>
-            </td>
-            <td>Welcome: Repository configuration</td>
+            <td>Repository Configuration</td>
           </tr>
           <tr>
             <td>
@@ -5316,9 +5295,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/repository/index.html#The_base_repository_configuration_through_a_number_of_XML_files_">The base repository configuration through a number of XML files.</a>
+              <a href="../delve_into/sysadmin/configuration/repository/overview.html#The_base_repository_configuration_through_a_number_of_XML_files_">The base repository configuration through a number of XML files.</a>
             </td>
-            <td>Welcome: Repository configuration</td>
+            <td>Repository Configuration</td>
           </tr>
           <tr>
             <td>
@@ -5332,6 +5311,12 @@ repository itself.
                 permissions each role has.</a>
             </td>
             <td>Roles Configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/configuration/repository/workspace.html#The_workspace_element_is_used_as_a_template_for_separate_workspace_configuration_files_created_for_each_new_workspace_">The workspace element is used as a template for separate workspace configuration files created for each new workspace.</a>
+            </td>
+            <td>Workspace configuration</td>
           </tr>
           <tr>
             <td>
@@ -5403,13 +5388,13 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/update_content.html#Update_content">Update content</a>
+              <a href="../delve_into/user/information_architects/howto/update_all_content.html#Update_content">Update content</a>
             </td>
             <td>Howto: Update content</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/update_content.html#update_content_screenshot">update content screenshot</a>
+              <a href="../delve_into/user/information_architects/howto/update_all_content.html#update_content_screenshot">update content screenshot</a>
             </td>
             <td>Howto: Update content</td>
           </tr>
@@ -5487,9 +5472,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/repository/index.html#Versioning_element">Versioning element</a>
+              <a href="../delve_into/sysadmin/configuration/repository/overview.html#Versioning_element">Versioning element</a>
             </td>
-            <td>Welcome: Repository configuration</td>
+            <td>Repository Configuration</td>
           </tr>
           <tr>
             <td>
@@ -5890,9 +5875,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/repository/index.html#Workspace_element">Workspace element</a>
+              <a href="../delve_into/sysadmin/configuration/repository/overview.html#Workspace_element">Workspace element</a>
             </td>
-            <td>Welcome: Repository configuration</td>
+            <td>Repository Configuration</td>
           </tr>
           <tr>
             <td>
@@ -5908,9 +5893,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/configuration/repository/index.html#Workspaces_element">Workspaces element</a>
+              <a href="../delve_into/sysadmin/configuration/repository/overview.html#Workspaces_element">Workspaces element</a>
             </td>
-            <td>Welcome: Repository configuration</td>
+            <td>Repository Configuration</td>
           </tr>
           <tr>
             <td>

@@ -22,7 +22,8 @@
         <title>Configuration</title>
     </properties>
     <body>
-        <section name="Workspace configuration">
+     <section name="Workspace configuration">
+     <span class='shortdesc'>The workspace element is used as a template for separate workspace configuration files created for each new workspace.</span>
             <p>
                 The Workspace element is used as a template for separate workspace configuration files created
                 for each new workspace.
