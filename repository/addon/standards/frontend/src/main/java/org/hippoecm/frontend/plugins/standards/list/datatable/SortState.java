@@ -24,7 +24,7 @@ public class SortState implements ISortState, IClusterable {
     private static final long serialVersionUID = 1L;
 
     private String property;
-    private int sortState;
+    private int sortState = ISortState.NONE;
 
     public void setPropertySortOrder(String property, int sortState) {
         this.property = property;

@@ -55,20 +55,15 @@ public class DeleteDialog extends WorkflowAction.WorkflowDialog implements ITitl
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void onOpen() {
-                    closeDialog();
-                }
-
-                @Override
                 public int getPageSize() {
                     return 5;
                 }
             };
-            rdv.add(new CssClassAppender(new Model("hippo-delete")));
             add(rdv);
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
+        add(new CssClassAppender(new Model("hippo-delete-dialog")));
     }
 
     @Override

@@ -44,15 +44,8 @@ public class WhereUsedDialog extends AbstractDialog implements ITitleDecorator {
         setCancelLabel(new StringResourceModel("close", this, null));
 
         try {
-            ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(model.getNode()));
-            add(new ReferringDocumentsView("links", provider, editorMgr) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void onOpen() {
-                    closeDialog();
-                }
-            });
+            ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(model.getNode()), true);
+            add(new ReferringDocumentsView("links", provider, editorMgr));
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }

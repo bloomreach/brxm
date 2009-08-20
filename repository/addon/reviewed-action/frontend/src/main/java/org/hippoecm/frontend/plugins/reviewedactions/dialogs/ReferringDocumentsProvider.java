@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -48,6 +48,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
 
     private boolean retrieveUnpublished;
     private SortState state = new SortState();
+    private transient int numResults;
     private transient List<JcrNodeModel> entries;
 
     public ReferringDocumentsProvider(JcrNodeModel nodeModel) {
@@ -68,6 +69,15 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         return (IModel) object;
     }
 
+    public int getNumResults() {
+        load();
+        return numResults;
+    }
+    
+    public int getLimit() {
+        return 20;
+    }
+    
     public int size() {
         load();
         return entries.size();
@@ -90,15 +100,36 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
     protected void load() {
         if (entries == null) {
             try {
-                entries = new LinkedList<JcrNodeModel>();
+                entries = new ArrayList<JcrNodeModel>();
+                numResults = 0;
                 Set<Node> nodes = getReferrers(getNodeModel().getNode());
                 if (nodes != null) {
-                    for (Node node : nodes) {
+                    Set<Node> referrers = new TreeSet<Node>(new Comparator<Node>() {
+                        public int compare(Node node1, Node node2) {
+                            try {
+                                int result = node1.getName().compareTo(node2.getName());
+                                if (result != 0) {
+                                    return result;
+                                }
+                                return node1.getUUID().compareTo(node2.getUUID());
+                            } catch (UnsupportedRepositoryOperationException ex) {
+                                // cannot happen
+                                return 0;
+                            } catch (RepositoryException ex) {
+                                return 0;
+                            }
+                        }
+                    });
+                    referrers.addAll(nodes);
+                    for(Node node : referrers) {
                         entries.add(new JcrNodeModel(node));
                     }
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
+            }
+            if (numResults < 0) {
+                numResults = entries.size();
             }
         }
     }
@@ -129,6 +160,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         String statement = "//*[@hippo:docbase='" + uuid + "']";
         Query query = queryManager.createQuery(statement, Query.XPATH);
         QueryResult result = query.execute();
+        numResults = (int) result.getNodes().getSize();
         for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
             Node node = iter.nextNode();
             while (node != null && !node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
@@ -139,6 +171,9 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
                     String state = node.getProperty("hippostd:state").getString();
                     if ("published".equals(state) || (retrieveUnpublished && "unpublished".equals(state))) {
                         referrers.add(node);
+                        if (referrers.size() >= getLimit()) {
+                            break;
+                        }
                     }
                 }
             }

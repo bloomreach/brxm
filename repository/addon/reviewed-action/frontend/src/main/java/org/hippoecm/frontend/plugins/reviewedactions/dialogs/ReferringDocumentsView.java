@@ -71,9 +71,14 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
 
             public Object getObject() {
                 ReferringDocumentsProvider provider = ReferringDocumentsView.this.provider;
-                if (provider.size() > 0) {
+                if (provider.getNumResults() > provider.getLimit()) {
+                    return new StringResourceModel("message-many", ReferringDocumentsView.this, new Model(provider))
+                        .getObject();
+                } else if (provider.size() > 1) {
                     return new StringResourceModel("message", ReferringDocumentsView.this, new Model(provider))
                             .getObject();
+                } else if (provider.size() == 1) {
+                    return new StringResourceModel("message-single", ReferringDocumentsView.this, null).getObject();
                 } else {
                     return new StringResourceModel("message-empty", ReferringDocumentsView.this, null).getObject();
                 }
@@ -91,7 +96,7 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
             public void selectionChanged(IModel model) {
             }
 
-        }, false, this);
+        }, true, this);
         add(dataTable);
 
         add(actionContainer = new WebMarkupContainer("actions"));
@@ -169,6 +174,8 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
             open.setEnabled(false);
         }
         actionContainer.add(open);
+
+        add(new CssClassAppender(new Model("hippo-referring-documents")));
     }
 
     @Override
@@ -185,15 +192,15 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
     protected TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
 
-        ListColumn column = new ListColumn(new Model(""), "icon");
+        ListColumn column = new ListColumn(new Model(""), null);
         column.setRenderer(new DocumentSelector(selectedDocuments));
         columns.add(column);
 
-        column = new ListColumn(new StringResourceModel("doclisting-name", this, null), "name");
+        column = new ListColumn(new StringResourceModel("doclisting-name", this, null), null);
         column.setAttributeModifier(new DocumentAttributeModifier());
         columns.add(column);
 
-        column = new ListColumn(new StringResourceModel("doclisting-state", this, null), "state");
+        column = new ListColumn(new StringResourceModel("doclisting-state", this, null), null);
         column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new StateIconAttributeModifier());
         columns.add(column);

@@ -160,9 +160,11 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
+                IModel title = new StringResourceModel("depublish-title", FullReviewedActionsWorkflowPlugin.this,
+                        null, new Object[] { getDocumentName() });
                 IModel message = new StringResourceModel("depublish-message", FullReviewedActionsWorkflowPlugin.this,
                         null, new Object[] { getDocumentName() });
-                return new DepublishDialog(message, this, getEditorManager());
+                return new DepublishDialog(title, message, this, getEditorManager());
             }
 
             @Override
