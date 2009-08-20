@@ -15,17 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
-import java.util.Iterator;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
-import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
@@ -43,7 +38,6 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
 
     private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
 
-    private IObserver handleObserver;
     private JcrNodeModel editorModel;
 
     HippostdPublishableEditor(final EditorManagerPlugin manager, IPluginContext context, IPluginConfig config,
@@ -65,60 +59,26 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
     @Override
     protected void start() throws CmsEditorException {
         super.start();
-        try {
-            final JcrNodeModel handle = getModel();
-            editorModel = getEditorModel();
-            if (handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                getPluginContext().registerService(handleObserver = new IObserver() {
-                    private static final long serialVersionUID = 1L;
-
-                    public IObservable getObservable() {
-                        return handle;
-                    }
-
-                    public void onEvent(Iterator<? extends IEvent> event) {
-                        try {
-                            setMode(getMode(handle));
-                            JcrNodeModel newModel = getEditorModel();
-                            if (!newModel.equals(editorModel)) {
-                                stop();
-                                start();
-                            }
-                            return;
-                        } catch (EditorException ex) {
-                            log.warn("Could not update editor", ex);
-                        } catch (CmsEditorException ex) {
-                            log.warn("Could not update editor", ex);
-                        }
-
-                        try {
-                            close();
-                        } catch (EditorException ex) {
-                            log.error("Could not close editor for empty handle");
-                        }
-                    }
-
-                }, IObserver.class.getName());
-            }
-        } catch (RepositoryException ex) {
-            log.error("Could not subscribe to parent model");
-        }
-    }
-
-    @Override
-    protected void stop() {
-        if (handleObserver != null) {
-            getPluginContext().unregisterService(handleObserver, IObserver.class.getName());
-            handleObserver = null;
-        }
-        super.stop();
+        editorModel = getEditorModel();
     }
 
     @Override
     void refresh() {
+        final JcrNodeModel handle = getModel();
         // verify that a document exists, i.e. the document has not been deleted
         try {
-            getMode(getModel());
+            Mode newMode = getMode(handle);
+            if (newMode != super.getMode()) {
+                setMode(newMode);
+            } else {
+                JcrNodeModel newModel = getEditorModel();
+                if (!newModel.equals(editorModel)) {
+                    stop();
+                    start();
+                }
+            }
+        } catch (EditorException ex) {
+            log.error("Could not close editor for empty handle");
         } catch (CmsEditorException ex) {
             try {
                 close();
