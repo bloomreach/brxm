@@ -44,7 +44,7 @@
         used to create the initial workspace if there's no workspace yet
       -->
       <Workspace name="${wsp.name}">
-
+        <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
         <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
           <param name="path" value="${wsp.home}"/>
         </FileSystem>
@@ -139,6 +139,7 @@
       </Workspace>
 
       <Versioning rootPath="${rep.home}/version">
+        <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
         <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
           <param name="path" value="${rep.home}/version"/>
         </FileSystem>
