@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">384 errors and/or todos in 232 out of 232 documents (100%).</span>
+      <span class="shortdesc">390 errors and/or todos in 246 out of 246 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -41,15 +41,15 @@
      </li>
         <li>33 documents missing required info.
      </li>
-        <li>2 empty documents.
+        <li>0 empty documents.
      </li>
-        <li>8 documents to rewrite.
+        <li>6 documents to rewrite.
      </li>
         <li>11 documents requiring additions.
      </li>
         <li>0 documents with unidentified TODO strings.
      </li>
-        <li>1 not valid XML documents.
+        <li>17 not valid XML documents.
      </li>
         <li>15 documents with bad text.
      </li>
@@ -406,40 +406,8 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="empty documents: 2">
+      <subsection name="rewrite documents: 6">
         <ol>
-          <li>
-            <a href="./delve_into/custom/concepts/index.html">index: Change to the document title</a>
-            <ul>
-              <li>Document has template content: 'Change to the browser title'.</li>
-              <li>Document has template content: 'Change to the document title'.</li>
-              <li>Document has template content: 'Change to document short description'.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/custom/concepts/repository_plugins.html">repository_plugins: Change to the document title</a>
-            <ul>
-              <li>Document has template content: 'Change to the browser title'.</li>
-              <li>Document has template content: 'Change to the document title'.</li>
-              <li>Document has template content: 'Change to document short description'.</li>
-            </ul>
-          </li>
-        </ol>
-      </subsection>
-      <subsection name="rewrite documents: 8">
-        <ol>
-          <li>
-            <a href="./delve_into/custom/concepts/index.html">index: Change to the document title</a>
-            <ul>
-              <li>this whole document.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/custom/concepts/repository_plugins.html">repository_plugins: Change to the document title</a>
-            <ul>
-              <li>this whole document.</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/custom/howto/workflow.html">workflow: Developing workflows</a>
             <ul>
@@ -733,8 +701,104 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="notvalid documents: 1">
+      <subsection name="notvalid documents: 17">
         <ol>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/add_boolean_to_documenttype.html">add_boolean_to_documenttype: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/add_date_to_documenttype.html">add_date_to_documenttype: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.html">add_markuped_text_to_documenttype: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/create_documenttype.html">create_documenttype: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/create_namespace.html">create_namespace: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/fieldsize.html">fieldsize: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/goto_documenttype_card.html">goto_documenttype_card: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/goto_namespace.html">goto_namespace: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/index.html">index: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/login.html">login: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/logout.html">logout: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/mandatory_or_optional.html">mandatory_or_optional: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/naming_a_field.html">naming_a_field: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/save_documenttype.html">save_documenttype: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/howto/specify_type_details.html">specify_type_details: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/tour.html">tour: </a>
+            <ul>
+              <li>Document is not a valid XML document.</li>
+            </ul>
+          </li>
           <li>
             <a href="./delve_into/web/jcr/*.html">*: </a>
             <ul>

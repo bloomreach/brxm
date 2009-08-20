@@ -61,8 +61,8 @@ ________________________________________________________________________________
    <p>
     The prefix name for the namespace will probably not be unique in the whole world.
     Associate a long, unique name with the namespace,
-    that has the form of a <a href='../concepts/URL.html'>URL</a> and that ends in a versionnumber.
-    This is important, as the versionnumber will be automatically increased by the CMS when
+    that has the form of a <a href='../concepts/URL.html'>URL</a> and that ends in a version number.
+    This is important, as the version number will be automatically increased by the CMS when
     changes are made to the namespace, like changing its
     <a href='../concepts/documenttype.html'>document types</a>.
     The URL does not have to exist, but if your organization owns a website,

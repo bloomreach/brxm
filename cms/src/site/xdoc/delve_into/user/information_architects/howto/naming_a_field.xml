@@ -57,7 +57,7 @@ ________________________________________________________________________________
     the following errormessage will occur when trying to save the
     changes to the document type:
     <samp>
-     <span class='index' id='ambigues_fieldnames'>Path sar:title is used in multiple fields</span> 
+     <span class='index' id='ambiguous_fieldnames'>Path sar:title is used in multiple fields</span> 
     </samp>
    </div>
 

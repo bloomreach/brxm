@@ -119,7 +119,7 @@
       </td>
       <td> 
          <a href="./howto/add_string_to_documenttype.html">Add string to document type</a>. 
-         Of course, the articles about upcoming happings should always have a title.
+         Of course, the articles about upcoming happenings should always have a title.
          Titles should be short and to the point.
          So Alice adds string field, which she makes mandatory and having 
          a size of 60 characters.
@@ -140,8 +140,8 @@
          with happenings they are not interested in.
          So Alice adds a mandatory boolean field called 'Indoors?'.
          <p>Alice also wants authors to answer the question if the happening is a
-            recurring happening, a happening that has occured before.
-            Some people only want to go to happenings that have been a succes before, while
+            recurring happening, a happening that has occurred before.
+            Some people only want to go to happenings that have been a success before, while
             others may only want to go to happenings that are the first of their kind.
             So Alice adds a mandatory boolean field called 'Recurring?'.
          </p>

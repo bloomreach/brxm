@@ -36,7 +36,7 @@ ________________________________________________________________________________
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-      <img src="../../../../images/screenshots/cms_M9/inars/fieldsize.png" alt='Fieldsize screenshot'/>
+      <img src="../../../../images/screenshots/cms_M9/inars/fieldsize.png" alt='Field size screenshot'/>
     </div></div>
      <p>
       In the document type 'upcoming', titles may be no more than 60 characters.
@@ -51,7 +51,7 @@ ________________________________________________________________________________
     For string fields, click below the size title to type the maximal number of characters
     (far right, in the middle).
     Fields that may consist of several lines, do not have a single size property, but two, a width
-    and a height (number of characters wide and number of lines heigh). They are set in the
+    and a height (number of characters wide and number of lines high). They are set in the
     same way.
    </p>
 

@@ -102,7 +102,7 @@ what kind of information they are supposed to provide.
     The CMS can delete obsolete parts from all documents of a particular document type.
     This only requires deleting the field from the document type and
     allowing the CMS to
-    <a href="./howto/update_content.html">update all content</a>.
+    <a href="./howto/update_all_content.html">update all content</a>.
     The CMS will then check all content
     and makes it conform to the new state of the document types.
     The time this procedure takes increases with the number of document

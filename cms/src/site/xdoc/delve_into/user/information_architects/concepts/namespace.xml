@@ -39,7 +39,7 @@ ________________________________________________________________________________
      Documents and folders in the repository are not part of any namespace.
      However, documents always are of a particular document type and that
      document type is part of some namespace. If you perform the action
-     '<a href='../howto/update_content.html'>update all content</a>'
+     '<a href='../howto/update_all_content.html'>update all content</a>'
      on a namespace, the contents may change of all documents that are of a document type in that namespace.
     </p>
 

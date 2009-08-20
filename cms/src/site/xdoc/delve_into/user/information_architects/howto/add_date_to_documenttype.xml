@@ -38,7 +38,7 @@ ________________________________________________________________________________
      <img src="../../../../images/screenshots/cms_M9/inars/add_date_to_documenttype.png" alt='Add date to documenttype screenshot'/> 
     </div></div>
     <p>
-      Adding mandatory datefield snp:upcoming_date with caption 'Upcoming date'
+      Adding mandatory date field snp:upcoming_date with caption 'Upcoming date'
       to document type `upcoming'.
      </p>
    </div>

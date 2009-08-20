@@ -46,7 +46,7 @@ ________________________________________________________________________________
    <p>
     Ensure that you have the document type in <a href='../concepts/edit_mode.html'>edit mode</a>.
     In the <a href='../concepts/field_type_menu.html'>field type menu</a>,
-    choose 'Html'. A new <a href='../../contributors/concepts/markuped_text.html'>markedup text</a> field
+    choose 'Html'. A new <a href='../../contributors/concepts/markuped_text.html'>marked up text</a> field
     appears as part of the document type.
     The <a href='../concepts/field_properties_overview.html'>field properties overview</a>
     of the new field also appears. Define at least the following properties:
@@ -62,7 +62,7 @@ ________________________________________________________________________________
       Decide if it should be <a href='./mandatory_or_optional.html'>mandatory or optional</a>.
     </li>
     <li>
-     Decide the <a href='./fieldsize.html'>number of characters wide and the number of lines heigh</a> 
+     Decide the <a href='./fieldsize.html'>number of characters wide and the number of lines high</a> 
      the marked-up text may maximally be.
     </li>
    </ul>
