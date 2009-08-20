@@ -55,8 +55,6 @@
   -->
   <Workspace name="${wsp.name}">
 
-    <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
-
     <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem">
     </FileSystem>
 
@@ -147,10 +145,10 @@
       <param name="supportHighlighting" value="true"/>
       <param name="spellCheckerClass" value="org.hippoecm.repository.query.lucene.LuceneSpellChecker$OneHourRefreshInterval"/>
     </SearchIndex>
+    <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
   </Workspace>
 
   <Versioning rootPath="${rep.home}/version">
-    <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
     <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem">
     </FileSystem>
 
@@ -158,6 +156,7 @@
     <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemPersistenceManager">
       <param name="persistent" value="false" />
     </PersistenceManager>
+    <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
   </Versioning>
 
 
