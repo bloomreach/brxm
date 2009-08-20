@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">387 errors and/or todos in 231 out of 231 documents (100%).</span>
+      <span class="shortdesc">384 errors and/or todos in 232 out of 232 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -39,11 +39,11 @@
      </li>
         <li>2 documents to review.
      </li>
-        <li>35 documents missing required info.
+        <li>33 documents missing required info.
      </li>
-        <li>3 empty documents.
+        <li>2 empty documents.
      </li>
-        <li>9 documents to rewrite.
+        <li>8 documents to rewrite.
      </li>
         <li>11 documents requiring additions.
      </li>
@@ -179,7 +179,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 35">
+      <subsection name="Documents lacking some information: 33">
         <ol>
           <li>
             <a href="./about/term_index.html">term_index: </a>
@@ -235,9 +235,10 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/custom/jcr/reference/derived_data.html">derived_data: Derived Data</a>
+            <a href="./delve_into/custom/jcr/reference/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
             </ul>
           </li>
           <li>
@@ -274,21 +275,10 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/sysadmin/configuration/repository/authentication.html">authentication: Repository based authentication</a>
+            <a href="./delve_into/sysadmin/configuration/repository/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/sysadmin/configuration/repository/searchindex.html">searchindex: SearchIndex configuration</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/sysadmin/configuration/repository/workspace.html">workspace: Workspace configuration</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
             </ul>
           </li>
           <li>
@@ -416,7 +406,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="empty documents: 3">
+      <subsection name="empty documents: 2">
         <ol>
           <li>
             <a href="./delve_into/custom/concepts/index.html">index: Change to the document title</a>
@@ -434,17 +424,9 @@ repository is;
               <li>Document has template content: 'Change to document short description'.</li>
             </ul>
           </li>
-          <li>
-            <a href="./delve_into/custom/jcr/reference/index.html">index: Change to the document title</a>
-            <ul>
-              <li>Document has template content: 'Change to the browser title'.</li>
-              <li>Document has template content: 'Change to the document title'.</li>
-              <li>Document has template content: 'Change to document short description'.</li>
-            </ul>
-          </li>
         </ol>
       </subsection>
-      <subsection name="rewrite documents: 9">
+      <subsection name="rewrite documents: 8">
         <ol>
           <li>
             <a href="./delve_into/custom/concepts/index.html">index: Change to the document title</a>
@@ -462,12 +444,6 @@ repository is;
             <a href="./delve_into/custom/howto/workflow.html">workflow: Developing workflows</a>
             <ul>
               <li>http://www.hippoecm.org/nt/1.2 is out of date. There are also instances of this adres in other files.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/custom/jcr/reference/index.html">index: Change to the document title</a>
-            <ul>
-              <li>this whole document.</li>
             </ul>
           </li>
           <li>

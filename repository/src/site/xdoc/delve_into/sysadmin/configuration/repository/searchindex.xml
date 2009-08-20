@@ -22,7 +22,8 @@
     <title>Configuration</title>
   </properties>
   <body>
-    <section name="SearchIndex configuration">
+   <section name="SearchIndex configuration">
+      <span class='shortdesc'>Search index for content that is shared repository wide (/jcr:system tree, contains mainly versions).</span>
       <p>
         The SearchIndex element is part of the <a href="workspace.html">Workspace configuration</a>.
         Also see the Jackrabbit Wiki about <a href="http://wiki.apache.org/jackrabbit/Search">Search</a>

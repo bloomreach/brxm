@@ -51,16 +51,8 @@
    fullname='delve_into/core/building/index.xml'
    relpath='delve_into/core/building'
   >index</file>
-     <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/core/building/index.xml~'
-   relpath='delve_into/core/building'
-  >index</file>
      <file ext='xml.vm' mimetype='application/xml' valid='yes'
    fullname='delve_into/core/building/maven.xml.vm'
-   relpath='delve_into/core/building'
-  >maven</file>
-     <file ext='xml.vm~' mimetype='application/xml'
-   fullname='delve_into/core/building/maven.xml.vm~'
    relpath='delve_into/core/building'
   >maven</file>
      <file ext='xml' mimetype='application/xml' valid='yes'
@@ -178,11 +170,19 @@
    relpath='delve_into/custom/jcr'
   >jcr</file>
      <folder>reference
+<info>
+ <title>JCR reference guide</title>
+ <shortdesc>Deeper explanations of the JCR interface</shortdesc>
+</info>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/custom/jcr/reference/derived_data.xml'
    relpath='delve_into/custom/jcr/reference'
   >derived_data</file>
-      <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/custom/jcr/reference/derived_data.xml~'
+   relpath='delve_into/custom/jcr/reference'
+  >derived_data</file>
+      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/custom/jcr/reference/index.xml'
    relpath='delve_into/custom/jcr/reference'
   >index</file>
@@ -343,6 +343,10 @@
    relpath='delve_into/sysadmin/configuration'
   >performance_tuning</file>
      <folder>repository
+<info>
+ <title>Repository Configuration</title>             <!-- string -->
+ <shortdesc>The base repository configuration through a number of XML files.</shortdesc>     <!-- string -->
+</info>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/sysadmin/configuration/repository/authentication.xml'
    relpath='delve_into/sysadmin/configuration/repository'
@@ -351,6 +355,14 @@
    fullname='delve_into/sysadmin/configuration/repository/index.xml'
    relpath='delve_into/sysadmin/configuration/repository'
   >index</file>
+      <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='delve_into/sysadmin/configuration/repository/overview.xml'
+   relpath='delve_into/sysadmin/configuration/repository'
+  >overview</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/sysadmin/configuration/repository/overview.xml~'
+   relpath='delve_into/sysadmin/configuration/repository'
+  >overview</file>
       <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
    fullname='delve_into/sysadmin/configuration/repository/searchindex.xml'
    relpath='delve_into/sysadmin/configuration/repository'
@@ -367,10 +379,6 @@
   >debugging</file>
     <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/sysadmin/index.xml'
-   relpath='delve_into/sysadmin'
-  >index</file>
-    <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/sysadmin/index.xml~'
    relpath='delve_into/sysadmin'
   >index</file>
     <folder>installation
@@ -1168,9 +1176,9 @@
    relpath='delve_into/user/information_architects/howto'
   >start_CMS</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
-   fullname='delve_into/user/information_architects/howto/update_content.xml'
+   fullname='delve_into/user/information_architects/howto/update_all_content.xml'
    relpath='delve_into/user/information_architects/howto'
-  >update_content</file>
+  >update_all_content</file>
      </folder>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/information_architects/index.xml'

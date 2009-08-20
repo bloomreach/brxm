@@ -157,11 +157,13 @@
       </item>
 
       <item name="Sysadmin Guide" href="delve_into/sysadmin/index.html" collapse="true">
-        <item name="Requirements" collapse="true" href="/delve_into/sysadmin/requirements.html">
+       <item name="Requirements" collapse="true" href="/delve_into/sysadmin/requirements.html">
+         <!--
           <item name="OS" collapse="true" href="/delve_into/sysadmin/requirements.html#Operating_System"/>
           <item name="Java" collapse="true" href="/delve_into/sysadmin/requirements.html#Java"/>
           <item name="Servlet Container" collapse="true" href="/delve_into/sysadmin/requirements.html#Java_Servlet_Container"/>
           <item name="Relational Database" collapse="true" href="/delve_into/sysadmin/requirements.html#Relational_Database"/>
+         -->
         </item>
         <item name="Installation" href="/delve_into/sysadmin/installation/index.html" collapse="true">
           <item name="in Servlet Container" collapse="true" href="/delve_into/sysadmin/installation/in_servlet_container.html">
@@ -185,6 +187,7 @@
           <item name="Performance tuning" href="/delve_into/sysadmin/configuration/performance_tuning.html" collapse="false"/>
           <item name="Database server" href="/delve_into/sysadmin/configuration/database_server.html" collapse="false"/>
           <item name="Repository" href="/delve_into/sysadmin/configuration/repository/index.html" collapse="true">
+            <item name="Overview" href="/delve_into/sysadmin/configuration/repository/overview.html"/>
             <item name="Workspace" href="/delve_into/sysadmin/configuration/repository/workspace.html"/>
             <item name="Search Index" href="/delve_into/sysadmin/configuration/repository/searchindex.html"/>
             <item name="Authentication" href="/delve_into/sysadmin/configuration/repository/authentication.html"/>
@@ -251,12 +254,12 @@
             <item name="Derived Data" href="/delve_into/custom/jcr/reference/derived_data.html"/>
           </item>
         </item>
-        <item name="List of Concepts" href="/delve_into/custom/concepts/index.html" collapse="true">
+        <!--
+         <item name="List of Concepts" href="/delve_into/custom/concepts/index.html" collapse="true">
           <item name="Repository Plugins" href="/delve_into/custom/concepts/repository_plugins.html"/>
-       <!--
          <item name="Versioning" href="/delve_into/custom/concepts/versioning.html"/>
-       -->
         </item>
+        -->
         <!--<item name="Dropbox Example" href="/delve_into/implementation/advanced/jcr-dropbox-example.html"/>-->
       </item>
 

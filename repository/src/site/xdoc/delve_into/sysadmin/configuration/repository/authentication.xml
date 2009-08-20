@@ -19,10 +19,11 @@
 -->
 <document>
     <properties>
-        <title>Authentication with The Repository Login Module</title>
+        <title>Authentication</title>
     </properties>
     <body>
         <section name="Repository based authentication">
+        <span class='shortdesc'>Authentication with The Repository Login Module</span>
         <p>
             The repository stores the users and groups as nodes inside the repository itself.
             The HippoLoginModule is configured in

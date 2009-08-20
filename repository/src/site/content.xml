@@ -206,23 +206,20 @@
    <subsection>Complete Example Class</subsection>
    <subsection>Next</subsection>
   </document><folder>reference
-   
+   <title>JCR reference guide</title><shortdesc>Deeper explanations of the JCR interface</shortdesc>
    <document ext="xml" filename="derived_data" relpath="delve_into/custom/jcr/reference">Derived Data
    <section>Derived Data</section>
+   <shortdesc>
+Derived data is the concept where additional information for a document
+generated, based upon the information of the document itself.
+</shortdesc>
    <subsection>Description of the problem</subsection>
    <subsection>Facility offered</subsection>
    <subsection>How to define</subsection>
    <h4>Defining the data for which to compute properties</h4>
    <h4>Configuring the repository to compute derived properties for this data</h4>
    <h4>Supplying the method that computes the derived property</h4>
-  </document><document ext="xml" filename="index" relpath="delve_into/custom/jcr/reference">Change to the document title
-   <section>Change to the document title</section>
-   <shortdesc>Change to document short description.</shortdesc>
-   <subsection>First subsection title</subsection>
-   <index>index word</index>
-   <h4>First subsubsection title</h4>
-   <h4>First subsubsection title</h4>
-   <subsection>Second subsection title</subsection>
+  </document><document ext="xml" filename="index" relpath="delve_into/custom/jcr/reference">
   </document></folder></folder><folder>project_export
    
    <document ext="xml" filename="add_project" relpath="delve_into/custom/project_export">Add a new project
@@ -405,11 +402,13 @@ repository itself.
    <shortdesc>How to improve performance of Hippo CMS by site specific tuning.</shortdesc>
    <subsection>Do not allow very large assets</subsection>
   </document><folder>repository
-   
+   <title>Repository Configuration</title><shortdesc>The base repository configuration through a number of XML files.</shortdesc>
    <document ext="xml" filename="authentication" relpath="delve_into/sysadmin/configuration/repository">Repository based authentication
    <section>Repository based authentication</section>
-  </document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration/repository">Repository configuration
-   <section>Repository configuration</section>
+   <shortdesc>Authentication with The Repository Login Module</shortdesc>
+  </document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration/repository">
+  </document><document ext="xml" filename="overview" relpath="delve_into/sysadmin/configuration/repository">Repository Configuration
+   <section>Repository Configuration</section>
    <shortdesc>The base repository configuration through a number of XML files.</shortdesc>
    <subsection>FileSystem element</subsection>
    <subsection>Security element</subsection>
@@ -419,12 +418,14 @@ repository itself.
    <subsection>Versioning element</subsection>
   </document><document ext="xml" filename="searchindex" relpath="delve_into/sysadmin/configuration/repository">SearchIndex configuration
    <section>SearchIndex configuration</section>
+   <shortdesc>Search index for content that is shared repository wide (/jcr:system tree, contains mainly versions).</shortdesc>
    <subsection>Minimal configuration</subsection>
    <subsection>Best practice</subsection>
    <subsection>ServicingSearchIndex</subsection>
    <subsection>ServicingIndexingConfigurationImpl</subsection>
   </document><document ext="xml" filename="workspace" relpath="delve_into/sysadmin/configuration/repository">Workspace configuration
    <section>Workspace configuration</section>
+   <shortdesc>The workspace element is used as a template for separate workspace configuration files created for each new workspace.</shortdesc>
    <subsection>Sample</subsection>
   </document></folder></folder><document ext="xml" filename="debugging" relpath="delve_into/sysadmin">Debugging
    <section>Debugging</section>
@@ -1363,7 +1364,7 @@ repository itself.
    <shortdesc>How to start a CMS session in your browser</shortdesc>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="update_content" relpath="delve_into/user/information_architects/howto">Update content
+  </document><document ext="xml" filename="update_all_content" relpath="delve_into/user/information_architects/howto">Update content
    <section>Update content</section>
    <shortdesc>How to update content</shortdesc>
    <img>update content screenshot</img>

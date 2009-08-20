@@ -24,12 +24,15 @@
 <body>
 
 <section name="Derived Data">
+<span class='shortdesc'>
+Derived data is the concept where additional information for a document
+generated, based upon the information of the document itself.
+</span>
+
 
 <subsection name="Description of the problem">
 
 <p>
-Derived data is the concept where additional information for a document
-generated, based upon the information of the document itself.
 For example, if you store some (binary) content in a document, you can add a
 property to the document that indicates the size of the content stored.
 </p>
