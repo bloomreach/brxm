@@ -1209,7 +1209,7 @@ repository itself.
    <img>Add boolean to document type screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="add_boolean_to_documenttype" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="add_custom_compound" relpath="delve_into/user/information_architects/howto">Add custom compound
+  </document><document ext="xml" filename="add_custom_compound" relpath="delve_into/user/information_architects/howto">Add custom compound
    <section>Add custom compound</section>
    <shortdesc>How to add a custom compound to a document type or other
      custom compound?</shortdesc>
@@ -1222,13 +1222,13 @@ repository itself.
    <img>Add date to documenttype screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="add_date_to_documenttype" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="add_markuped_text_to_documenttype" relpath="delve_into/user/information_architects/howto">Add marked-up text field to document type
+  </document><document ext="xml" filename="add_markuped_text_to_documenttype" relpath="delve_into/user/information_architects/howto">Add marked-up text field to document type
    <section>Add marked-up text field to document type</section>
    <shortdesc>How to add a marked-up text field to a document type.</shortdesc>
    <img>Add markuped text to document type screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="add_markuped_text_to_documenttype" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="add_number_to_documenttype" relpath="delve_into/user/information_architects/howto">Add number to document type
+  </document><document ext="xml" filename="add_number_to_documenttype" relpath="delve_into/user/information_architects/howto">Add number to document type
    <section>Add number to document type</section>
    <shortdesc>How to add a number field to a document type.</shortdesc>
    <subsection>Next</subsection>
@@ -1258,13 +1258,13 @@ repository itself.
    <img>Create document type screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="create_documenttype" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="create_namespace" relpath="delve_into/user/information_architects/howto">Create namespace
+  </document><document ext="xml" filename="create_namespace" relpath="delve_into/user/information_architects/howto">Create namespace
    <section>Create namespace</section>
    <shortdesc>How to create a namespace to gather document types in.</shortdesc>
    <img>Create namespace screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="create_namespace" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="fieldcaption" relpath="delve_into/user/information_architects/howto">Field caption
+  </document><document ext="xml" filename="fieldcaption" relpath="delve_into/user/information_architects/howto">Field caption
    <section>Field caption</section>
    <shortdesc>How to define a caption for a field in a document type.</shortdesc>
    <img>Fieldcaption screenshot</img>
@@ -1276,46 +1276,46 @@ repository itself.
    <img>Field size screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="fieldsize" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="goto_documenttype_card" relpath="delve_into/user/information_architects/howto">Go to a Document type
+  </document><document ext="xml" filename="goto_documenttype_card" relpath="delve_into/user/information_architects/howto">Go to a Document type
    <section>Go to a Document type</section>
    <shortdesc>How to get to a screen to manipulate a particular document type.</shortdesc>
    <img>documenttype tab page screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="goto_documenttype_card" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="goto_namespace" relpath="delve_into/user/information_architects/howto">Go to a namespace
+  </document><document ext="xml" filename="goto_namespace" relpath="delve_into/user/information_architects/howto">Go to a namespace
    <section>Go to a namespace</section>
    <shortdesc>How to get to a namespace, to view the document types in it.</shortdesc>
    <img>Go to namespace screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="goto_namespace" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/howto">
+  </document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/howto">
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="index" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="login" relpath="delve_into/user/information_architects/howto">Login
+  </document><document ext="xml" filename="login" relpath="delve_into/user/information_architects/howto">Login
    <section>Login</section>
    <shortdesc>How to login to Hippo CMS.</shortdesc>
    <img>Hippo login screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="login" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="logout" relpath="delve_into/user/information_architects/howto">Logout
+  </document><document ext="xml" filename="logout" relpath="delve_into/user/information_architects/howto">Logout
    <section>Logout</section>
    <shortdesc>How to logout</shortdesc>
    <img>logout screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="logout" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/howto">Mandatory or optional field
+  </document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/howto">Mandatory or optional field
    <section>Mandatory or optional field</section>
    <shortdesc>How to define a field as mandatory or as optional.</shortdesc>
    <img>Mandatory or optional screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="naming_a_field" relpath="delve_into/user/information_architects/howto">Naming a field
+  </document><document ext="xml" filename="naming_a_field" relpath="delve_into/user/information_architects/howto">Naming a field
    <section>Naming a field</section>
    <shortdesc>How to name a field of a document type.</shortdesc>
    <img>Naming a field screenshot</img>
    <index>Path sar:title is used in multiple fields</index>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="naming_a_field" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="remove_field_from_documenttype" relpath="delve_into/user/information_architects/howto">Remove field from document type
+  </document><document ext="xml" filename="remove_field_from_documenttype" relpath="delve_into/user/information_architects/howto">Remove field from document type
    <section>Remove field from document type</section>
    <shortdesc>How to remove a field from a document type.</shortdesc>
    <img>remove field screenshot</img>
@@ -1327,14 +1327,14 @@ repository itself.
    <img>save document type screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="save_documenttype" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="specify_type_details" relpath="delve_into/user/information_architects/howto">Specify type details
+  </document><document ext="xml" filename="specify_type_details" relpath="delve_into/user/information_architects/howto">Specify type details
    <section>Specify type details</section>
    <shortdesc>How to specify type details</shortdesc>
    <img>Specify type details</img>
    <subsection>Taggable</subsection>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml.bak" filename="specify_type_details" relpath="delve_into/user/information_architects/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="specify_type_layout" relpath="delve_into/user/information_architects/howto">Specify type layout
+  </document><document ext="xml" filename="specify_type_layout" relpath="delve_into/user/information_architects/howto">Specify type layout
    <section>Specify type layout</section>
    <shortdesc>How to specify the elemental layout for a document type or compound type?</shortdesc>
    <img>Specify type layout</img>
@@ -1378,7 +1378,7 @@ repository itself.
    <section>Hippo CMS Tour for Information Architects</section>
    <shortdesc>To get introduced to the role of CMS information architect, 
       take the following tour.</shortdesc>
-  </document><document ext="xml.bak" filename="tour" relpath="delve_into/user/information_architects"><notvalid>Document is not a valid XML document.</notvalid></document></folder><document ext="xml" filename="screenshots" relpath="delve_into/user">Screenshots
+  </document></folder><document ext="xml" filename="screenshots" relpath="delve_into/user">Screenshots
    <section>Screenshots</section>
    <shortdesc>How to view screenshots in the userguide.</shortdesc>
    <img>Start CMS screenshot</img>
