@@ -349,11 +349,12 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
      * @throws ContentPersistenceException
      */
     public void update(Object content, ContentNodeBinder customContentNodeBinder) throws ContentPersistenceException {
+        String path = null; 
         if (content instanceof HippoBean) {
             try {
                 HippoBean contentBean = (HippoBean) content;
                 Node contentNode = contentBean.getNode();
-                
+                path = contentNode.getPath();
                 if (contentNode instanceof HippoNode) {
                     Node canonical = ((HippoNode) contentNode).getCanonicalNode();
                     if(canonical == null) {
@@ -413,7 +414,11 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                     }
                 }
             } catch (Exception e) {
-                throw new ContentPersistenceException(e);
+                if(path != null) {
+                    throw new ContentPersistenceException("Exception while trying to update '"+path+"'" ,e);
+                } else {
+                    throw new ContentPersistenceException(e);
+                }
             }
         } else {
             throw new ContentPersistenceException("The content object parameter should be an instance of HippoBean.");
