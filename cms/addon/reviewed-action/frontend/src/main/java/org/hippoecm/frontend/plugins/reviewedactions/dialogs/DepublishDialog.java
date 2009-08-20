@@ -17,13 +17,16 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
@@ -38,26 +41,29 @@ public class DepublishDialog extends WorkflowAction.WorkflowDialog implements IT
     static final Logger log = LoggerFactory.getLogger(DepublishDialog.class);
 
     private IModel title;
-    
-    public DepublishDialog(IModel/*<String>*/ title, CompatibilityWorkflowPlugin.WorkflowAction action, IEditorManager editorMgr) {
-        action.super();
+
+    public DepublishDialog(IModel/*<String>*/title, IModel/*<String>*/ message,CompatibilityWorkflowPlugin.WorkflowAction action,
+            IEditorManager editorMgr) {
+        action.super(message);
 
         this.title = title;
-        
+
         try {
             WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) action.getModel();
             ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(wdm.getNode()));
-            add(new ReferringDocumentsView("links", provider, editorMgr) {
+            MarkupContainer rdv = new ReferringDocumentsView("links", provider, editorMgr) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void onOpen() {
-                    closeDialog();
+                public int getPageSize() {
+                    return 5;
                 }
-            });
+            };
+            add(rdv);
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
+        add(new CssClassAppender(new Model("hippo-depublish-dialog")));
     }
 
     @Override
@@ -74,5 +80,5 @@ public class DepublishDialog extends WorkflowAction.WorkflowDialog implements IT
     public IModel getTitle() {
         return title;
     }
-    
+
 }
