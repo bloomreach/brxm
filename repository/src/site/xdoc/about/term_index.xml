@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 976 terms</span>
+      <span class="shortdesc">Term index, 978 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -1202,30 +1202,6 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/custom/concepts/index.html#Change_to_document_short_description_">Change to document short description.</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/repository_plugins.html#Change_to_document_short_description_">Change to document short description.</a>
-            </td>
-            <td>Concept: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/index.html#Change_to_the_document_title">Change to the document title</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/repository_plugins.html#Change_to_the_document_title">Change to the document title</a>
-            </td>
-            <td>Concept: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/editors/howto/check_for_requests.html#Check_for_requests">Check for requests</a>
             </td>
             <td>Howto: Check for requests</td>
@@ -1803,6 +1779,102 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/howto/add_boolean_to_documenttype.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/add_date_to_documenttype.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/create_documenttype.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/create_namespace.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/fieldsize.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/goto_documenttype_card.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/goto_namespace.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/index.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Welcome: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/login.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/logout.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/mandatory_or_optional.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/naming_a_field.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/save_documenttype.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/howto/specify_type_details.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td>Howto: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/information_architects/tour.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
+            </td>
+            <td/>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/web/jcr/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
             </td>
             <td/>
@@ -2133,6 +2205,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/information_architects/howto/fieldsize.html#Field_size_screenshot">Field size screenshot</a>
+            </td>
+            <td>Howto: Field size</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/information_architects/concepts/field_type_menu.html#field_type_menu">field type menu</a>
             </td>
             <td>Concept: field type menu</td>
@@ -2148,12 +2226,6 @@ repository itself.
               <a href="../delve_into/user/information_architects/howto/fieldcaption.html#Fieldcaption_screenshot">Fieldcaption screenshot</a>
             </td>
             <td>Howto: Field caption</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/howto/fieldsize.html#Fieldsize_screenshot">Fieldsize screenshot</a>
-            </td>
-            <td>Howto: Field size</td>
           </tr>
           <tr>
             <td>
@@ -2238,42 +2310,6 @@ repository itself.
               <a href="../delve_into/sysadmin/requirements.html#Firefox_logo">Firefox logo</a>
             </td>
             <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/index.html#First_subsection_title">First subsection title</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/repository_plugins.html#First_subsection_title">First subsection title</a>
-            </td>
-            <td>Concept: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/index.html#First_subsubsection_title">First subsubsection title</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/index.html#First_subsubsection_title">First subsubsection title</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/repository_plugins.html#First_subsubsection_title">First subsubsection title</a>
-            </td>
-            <td>Concept: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/repository_plugins.html#First_subsubsection_title">First subsubsection title</a>
-            </td>
-            <td>Concept: Change to the document title</td>
           </tr>
           <tr>
             <td>
@@ -2970,7 +3006,7 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/create_custom_compound.html#How_to_create_a_custom_compund">How to create a custom compund</a>
+              <a href="../delve_into/user/information_architects/howto/create_custom_compound.html#How_to_create_a_custom_compound">How to create a custom compound</a>
             </td>
             <td>Howto: Create custom compound</td>
           </tr>
@@ -3408,18 +3444,6 @@ repository itself.
               <a href="../delve_into/sysadmin/configuration/database_server.html#Increase_the_maximum_allowed_asset_size">Increase the maximum allowed asset size</a>
             </td>
             <td>Database server</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/index.html#index_word">index word</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/repository_plugins.html#index_word">index word</a>
-            </td>
-            <td>Concept: Change to the document title</td>
           </tr>
           <tr>
             <td>
@@ -5004,18 +5028,6 @@ repository itself.
               <a href="../delve_into/sysadmin/configuration/repository/overview.html#SearchIndex_element">SearchIndex element</a>
             </td>
             <td>Repository Configuration</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/index.html#Second_subsection_title">Second subsection title</a>
-            </td>
-            <td>Welcome: Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/custom/concepts/repository_plugins.html#Second_subsection_title">Second subsection title</a>
-            </td>
-            <td>Concept: Change to the document title</td>
           </tr>
           <tr>
             <td>

@@ -27,7 +27,7 @@ ________________________________________________________________________________
 
   <body>
     <section name="Create custom compound">
-     <span class="shortdesc">How to create a custom compund</span>
+     <span class="shortdesc">How to create a custom compound</span>
 
    <script type="text/javascript">
     leftpx=450;
@@ -45,7 +45,7 @@ ________________________________________________________________________________
    </div>
 
    <p>Make your custom compound available for use in document types or other custom compounds
-      by <a href='update_content.html'>update all content</a>.
+      by <a href='update_all_content.html'>update all content</a>.
   </p>
 
   <subsection name='Next'>

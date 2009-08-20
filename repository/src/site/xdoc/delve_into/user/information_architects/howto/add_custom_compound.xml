@@ -47,7 +47,7 @@ ________________________________________________________________________________
 
  <p>Note that after you
     <a href='create_custom_compound.html'>create a custom compound</a>
-      you have to run <a href='update_content.html'>update all content</a>
+      you have to run <a href='update_all_content.html'>update all content</a>
       to make it available for use in document types or other custom compounds.
   </p>
 
