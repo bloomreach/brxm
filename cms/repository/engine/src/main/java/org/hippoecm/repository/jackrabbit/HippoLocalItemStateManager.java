@@ -34,6 +34,7 @@ import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.state.ChangeLog;
+import org.apache.jackrabbit.core.state.ForkedXAItemStateManager;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -45,7 +46,6 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
-import org.apache.jackrabbit.core.state.XAItemStateManager;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
@@ -59,7 +59,7 @@ import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.hippoecm.repository.Modules;
 
-public class HippoLocalItemStateManager extends XAItemStateManager implements DataProviderContext {
+public class HippoLocalItemStateManager extends ForkedXAItemStateManager implements DataProviderContext {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -95,9 +95,9 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
     private boolean virtualLayerEnabled = false;
 
     public HippoLocalItemStateManager(SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory,
-                                      ItemStateCacheFactory cacheFactory, NodeTypeRegistry ntReg, boolean enabled,
+                                      ItemStateCacheFactory cacheFactory, String attributeName, NodeTypeRegistry ntReg, boolean enabled,
                                       NodeId rootNodeId) {
-        super(sharedStateMgr, factory, cacheFactory);
+        super(sharedStateMgr, factory, attributeName, cacheFactory);
         this.ntReg = ntReg;
         this.virtualLayerEnabled = enabled;
         this.rootNodeId = rootNodeId;
@@ -362,7 +362,6 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
     public PropertyState getPropertyState(PropertyId id) throws NoSuchItemStateException, ItemStateException {
         return super.getPropertyState(id);
     }
-
     
     private NodeState populate(HippoNodeId nodeId) throws NoSuchItemStateException, ItemStateException {
         NodeState dereference = getNodeState(rootNodeId);

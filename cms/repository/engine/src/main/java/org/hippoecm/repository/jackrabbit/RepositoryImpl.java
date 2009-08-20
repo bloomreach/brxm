@@ -15,11 +15,9 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.io.File;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -32,15 +30,10 @@ import org.slf4j.LoggerFactory;
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.SearchManager;
-import org.apache.jackrabbit.core.config.PersistenceManagerConfig;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
-import org.apache.jackrabbit.core.config.VersioningConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
-import org.apache.jackrabbit.core.data.DataStore;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-import org.apache.jackrabbit.core.observation.DelegatingObservationDispatcher;
-import org.apache.jackrabbit.core.persistence.PMContext;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.ISMLocking;
@@ -153,22 +146,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     @Override
     protected WorkspaceInfo createWorkspaceInfo(WorkspaceConfig wspConfig) {
         return new WorkspaceInfo(wspConfig);
-    }
-
-    private static PersistenceManager createPersistenceManager(File homeDir,
-                                                               FileSystem fs,
-                                                               PersistenceManagerConfig pmConfig,
-                                                               NodeId rootNodeId,
-                                                               NamespaceRegistry nsReg,
-                                                               NodeTypeRegistry ntReg,
-                                                               DataStore dataStore)             throws RepositoryException {
-        try {
-            PersistenceManager pm = (PersistenceManager) pmConfig.newInstance();            pm.init(new PMContext(homeDir, fs, rootNodeId, nsReg, ntReg, dataStore));
-            return pm;
-        } catch (Exception e) {
-            String msg = "Cannot instantiate persistence manager " + pmConfig.getClassName();
-            throw new RepositoryException(msg, e);
-        }
     }
 
     protected class WorkspaceInfo extends org.apache.jackrabbit.core.RepositoryImpl.WorkspaceInfo {
