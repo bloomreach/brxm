@@ -748,7 +748,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
-
     private void removeNodecontent(Session session, String absPath) {
         if ("".equals(absPath) || "/".equals(absPath)) {
             log.warn("Not allowed to delete rootNode from initialization.");

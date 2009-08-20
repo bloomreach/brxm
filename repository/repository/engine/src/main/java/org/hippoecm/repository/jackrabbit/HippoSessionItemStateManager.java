@@ -54,6 +54,7 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
         }
     }
 
+    @Override
     public void disposeAllTransientItemStates() {
         /* It is imperative that the stateMgr.refresh() method is ONLY called after a
          * super.disposeAllTransientItemStates().  This is the only way to guarantee

@@ -37,21 +37,13 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
 
     private static Logger log = LoggerFactory.getLogger(ItemManager.class);
 
-    private NodeDefinition rootNodeDef;
     private NodeId rootNodeId;
-    private HierarchyManager hierMgr;
-    private ItemStateManager itemStateProvider;
-    Set<ItemId> itemIdCache;
 
     protected ItemManager(SessionItemStateManager itemStateProvider, HierarchyManager hierMgr,
                           SessionImpl session, NodeDefinition rootNodeDef,
                           NodeId rootNodeId) {
         super(itemStateProvider, hierMgr, session, rootNodeDef, rootNodeId);
-        this.rootNodeDef = rootNodeDef;
         this.rootNodeId = rootNodeId;
-        this.hierMgr = hierMgr;
-        this.itemStateProvider = itemStateProvider;
-        itemIdCache = new HashSet<ItemId>();
     }
 
     org.apache.jackrabbit.core.NodeImpl getRootNode() throws RepositoryException {

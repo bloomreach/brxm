@@ -53,7 +53,7 @@ import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
 
-public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
+public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImpl {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
