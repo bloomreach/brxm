@@ -260,6 +260,35 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         assertEquals(1, getEditors().size());
     }
 
+
+    @Test
+    public void testEditPublished() throws Exception {
+        createDocument("document");
+
+        Node unpublished = session.getRootNode().getNode("test/content/document/document");
+        unpublished.setProperty(HippoStdNodeType.HIPPOSTD_STATE, "published");
+        session.save();
+
+        IPluginContext pluginContext = start(config);
+        modelReference.setModel(new JcrNodeModel("/test/content/document"));
+        assertEquals(1, getPreviews().size());
+
+        // simulate workflow step "obtainEditableInstance"
+        Node draft = ((HippoSession) session).copy(unpublished, unpublished.getPath());
+        draft.setProperty(HippoStdNodeType.HIPPOSTD_STATE, "draft");
+        draft.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, CREDENTIALS.getString("username"));
+        session.save();
+        home.processEvents();
+        assertEquals(1, getEditors().size());
+
+        // simulate "commitEditableInstance"
+        draft.setProperty(HippoStdNodeType.HIPPOSTD_STATE, "unpublished");
+        session.save();
+        home.processEvents();
+        assertEquals(1, getPreviews().size());
+        assertEquals(0, getEditors().size());
+    }
+
     @Test
     public void browserFollowsActiveEditor() throws Exception {
         createDocument("doc1");
