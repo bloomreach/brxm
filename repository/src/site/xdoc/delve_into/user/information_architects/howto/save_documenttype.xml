@@ -47,7 +47,7 @@ ________________________________________________________________________________
    <p>
     The effect of saving a documenttype will not be the same as for a normal document,
     as there will be no preview of a documenttype on any site.
-    After saving, <a href='./update_content.html'>update all content</a>
+    After saving, <a href='./update_all_content.html'>update all content</a>
     to make the documenttype available to
     <a href='../../contributors/concepts/contributor.html'>contributors</a>, to write
     documents of that type.
@@ -55,7 +55,7 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./update_content.html'>Update all content</a>.</li>
+    <li><a href='./update_all_content.html'>Update all content</a>.</li>
     <li><a href='create_custom_compound.html'>Create custom compound</a> (continue <a href='../tour.html'>tour</a>).</li>
     <li><a href='./logout.html'>Logout</a>.</li>
     <li><a href='./create_documenttype.html'>Create a document type</a>.</li>
