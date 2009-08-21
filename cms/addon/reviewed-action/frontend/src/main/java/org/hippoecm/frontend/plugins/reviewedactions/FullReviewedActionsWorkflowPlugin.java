@@ -428,6 +428,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 if (info.containsKey("status") && info.get("status") instanceof Boolean
                         && !((Boolean) info.get("status")).booleanValue()) {
                     infoAction.setVisible(false);
+                    whereUsedAction.setVisible(false);
                 }
                 if (info.containsKey("inUseBy") && info.get("inUseBy") instanceof String) {
                     inUseBy = (String) info.get("inUseBy");
