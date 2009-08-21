@@ -144,9 +144,9 @@ public class FolderWorkflowTest extends TestCase {
         assertNotNull(workflow);
         Map<String,Set<String>> types = workflow.list();
         assertNotNull(types);
-        assertTrue(types.containsKey("new-folder"));
-        assertTrue(types.get("new-folder").contains("hippostd:directory"));
-        String path = workflow.add("new-folder", "hippostd:directory", "d");
+        assertTrue(types.containsKey("new-collection"));
+        assertTrue(types.get("new-collection").contains("hippostd:directory"));
+        String path = workflow.add("new-collection", "hippostd:directory", "d");
         assertNotNull(path);
         node = session.getRootNode().getNode(path.substring(1));
         assertEquals("/test/f/d",node.getPath());
