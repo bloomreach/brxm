@@ -1179,3 +1179,10 @@ table.hippo-defaultcontent td {
   top: -2000px;
   position: absolute;
 }
+
+table.hippo-list-documents > tbody {
+  overflow-x: hidden;
+  overflow-y: auto;
+  -ms-overflow-x: hidden;
+  -ms-overflow-y: auto;
+}
