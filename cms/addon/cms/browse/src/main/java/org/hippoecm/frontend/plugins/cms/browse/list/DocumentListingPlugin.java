@@ -42,6 +42,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttribute
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
+import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,15 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        
+        add(new TableHelperBehavior(YuiPluginHelper.getManager(context)) {
+            private static final long serialVersionUID = 1L;
+            
+            @Override
+            public String getMarkupId() {
+                return DocumentListingPlugin.this.getMarkupId(true);
+            }
+        });
     }
 
     @Override
