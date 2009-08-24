@@ -71,6 +71,7 @@ public class NodeNameCodecTest extends TestCase {
         simpleNames.put("abc/", "abc_x002f_");
         simpleNames.put(":", "_x003a_");
         simpleNames.put("a:", "a_x003a_");
+        simpleNames.put("abc:", "abc_x003a_");
         simpleNames.put(":a", "_x003a_a");
         simpleNames.put("a:b", "a_x003a_b");
         simpleNames.put("::", "_x003a__x003a_");

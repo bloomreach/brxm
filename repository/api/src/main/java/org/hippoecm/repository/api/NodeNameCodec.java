@@ -139,7 +139,7 @@ public final class NodeNameCodec {
         // length > 2, it could be "a:b"
         int pos = name.indexOf(':');
         if (!forceSimpleName && pos > 0) {
-            // just return prefix as-is.
+            // just return refix as-is.
             return name.substring(0, pos) + ':' + encodeLocalName(name.substring(pos + 1));
         } else {
             return encodeThreeOrMoreCharName(name);
@@ -224,7 +224,9 @@ public final class NodeNameCodec {
     }
 
     private static final String encodeLocalName(final String localName) {
-        if (localName.length() == 1) {
+        if (localName.length() == 0) {
+            throw new IllegalArgumentException("Local name part cannot be empty.");
+        } else if (localName.length() == 1) {
             if (isNonSpace(localName.charAt(0))) {
                 return localName;
             } else {
