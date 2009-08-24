@@ -40,5 +40,6 @@
     <module>dropbox</module>
     <module>eclipse</module>
     <module>projectexport</module>
+    <module>development-content</module>
   </modules>
 </project>
