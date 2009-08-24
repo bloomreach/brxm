@@ -31,9 +31,7 @@ YAHOO.namespace("hippo");
     YAHOO.hippo.HippoTree = function(id, config) {
         var args = [2];
         args[0] = id;
-        console.dir(config);
         args[1] = [config.treeData]; 
-        console.dir(config.treeData);
         
         this.callbackUrl = config.callbackUrl; //used for getting search results, currently uses YUI to do callbacks
         this.callbackMethod = config.callbackFunction; //used for handling clicks
