@@ -34,6 +34,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.groups.CreateGroupPanel;
 import org.hippoecm.frontend.plugins.cms.admin.validators.PasswordStrengthValidator;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -92,6 +93,11 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
                     Session.get().warn(getString("user-save-failed", model));
                     log.error("Unable to set password for user '" + username + "' : ", e);
                 }
+            }
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                // make sure the feedback panel is shown
+                target.addComponent(SetPasswordPanel.this);
             }
         });
 

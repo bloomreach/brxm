@@ -88,6 +88,11 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
                     log.error("Unable to create group '" + groupname + "' : ", e);
                 }
             }
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                // make sure the feedback panel is shown
+                target.addComponent(CreateGroupPanel.this);
+            }
         });
 
         // add a button that can be used to submit the form via ajax

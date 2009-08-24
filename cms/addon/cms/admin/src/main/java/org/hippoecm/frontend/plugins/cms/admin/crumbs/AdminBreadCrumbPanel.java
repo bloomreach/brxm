@@ -23,14 +23,27 @@ public abstract class AdminBreadCrumbPanel extends BreadCrumbPanel implements IA
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    
+
     private FeedbackPanel feedback;
-    
+
     public AdminBreadCrumbPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
+
+        // add feedback panel to show errors
+        final FeedbackPanel feedback = new FeedbackPanel("feedback");
+        feedback.setOutputMarkupId(true);
+        add(feedback);
     }
 
     public String getTitle() {
         return (String) getTitle(this).getObject();
+    }
+
+    /**
+     * get the feedback panel, might be null
+     * @return the feedback panel or null if not set
+     */
+    public FeedbackPanel getFeedbackPanel() {
+        return feedback;
     }
 }
