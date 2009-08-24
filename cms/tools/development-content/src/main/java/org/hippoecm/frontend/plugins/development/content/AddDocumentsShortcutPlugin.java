@@ -23,12 +23,11 @@ import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Check;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.CheckGroup;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -46,10 +45,10 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AddContentShortcutPlugin extends RenderPlugin {
+public class AddDocumentsShortcutPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(AddContentShortcutPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(AddDocumentsShortcutPlugin.class);
 
     private static final List<String> TEST_TYPES = new ArrayList<String>();
     {
@@ -59,7 +58,7 @@ public class AddContentShortcutPlugin extends RenderPlugin {
 
     ContentBuilder builder;
 
-    public AddContentShortcutPlugin(IPluginContext context, IPluginConfig config) {
+    public AddDocumentsShortcutPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         builder = new ContentBuilder();
@@ -70,7 +69,7 @@ public class AddContentShortcutPlugin extends RenderPlugin {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
-                dialogService.show(new AddContentShortcutPlugin.Dialog());
+                dialogService.show(new AddDocumentsShortcutPlugin.Dialog());
             }
 
         });
@@ -89,9 +88,14 @@ public class AddContentShortcutPlugin extends RenderPlugin {
         CheckGroup group;
 
         public Dialog() {
-            setOkLabel(new StringResourceModel("start-add-content-label", AddContentShortcutPlugin.this, null));
+            setOkLabel(new StringResourceModel("start-add-content-label", AddDocumentsShortcutPlugin.this, null));
 
-            final WebMarkupContainer container = new WebMarkupContainer("typesContainer");
+            final WebMarkupContainer container = new WebMarkupContainer("typesContainer") {
+                private static final long serialVersionUID = 1L;
+
+            };
+            container.setOutputMarkupId(true);
+            add(container);
 
             RequiredTextField tf;
             add(tf = new RequiredTextField("folder", new PropertyModel(this, "folder")));
@@ -104,14 +108,17 @@ public class AddContentShortcutPlugin extends RenderPlugin {
                 }
             });
 
+            group = new CheckGroup("typesGroup", selectedTypes) {
+                private static final long serialVersionUID = 1L;
 
-            group = new CheckGroup("typesGroup", selectedTypes);
-            group.setOutputMarkupId(true);
+                @Override
+                public boolean isVisible() {
+                    return !randomDocuments;
+                }
 
-            container.setOutputMarkupId(true);
+            };
             container.add(group);
-            
-            add(container);
+
             //group.add(new CheckGroupSelector("groupselector"));
             final ListView typesListView = new ListView("types", getTypes()) {
                 private static final long serialVersionUID = 1L;
@@ -123,23 +130,18 @@ public class AddContentShortcutPlugin extends RenderPlugin {
                     item.add(new Label("name", m));
                 }
             };
-            typesListView.setOutputMarkupId(true);
-            
             group.add(typesListView);
 
-            CheckBox randomDocs = new CheckBox("randomDocs", new PropertyModel(this, "randomDocuments"));
-            randomDocs.setOutputMarkupId(true);
-            randomDocs.add(new OnChangeAjaxBehavior() {
+            AjaxCheckBox randomDocs = new AjaxCheckBox("randomDocs", new PropertyModel(this, "randomDocuments")) {
                 private static final long serialVersionUID = 1L;
-                
+
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-                    container.setVisible(!randomDocuments);
-                    typesListView.setEnabled(!randomDocuments);
-                    typesListView.setVisible(!randomDocuments);
                     target.addComponent(container);
                 }
-            });
+            };
+
+            randomDocs.setOutputMarkupId(true);
             add(randomDocs);
 
             add(tf = new RequiredTextField("minLength", new PropertyModel(this, "minLength"), Integer.class));
@@ -154,7 +156,7 @@ public class AddContentShortcutPlugin extends RenderPlugin {
         }
 
         public IModel getTitle() {
-            return new StringResourceModel("add-content-label", AddContentShortcutPlugin.this, null);
+            return new StringResourceModel("add-content-label", AddDocumentsShortcutPlugin.this, null);
         }
 
         @Override

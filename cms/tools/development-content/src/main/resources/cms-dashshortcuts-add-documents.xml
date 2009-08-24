@@ -22,7 +22,7 @@
     <sv:value>frontend:plugin</sv:value>
   </sv:property>
   <sv:property sv:name="plugin.class" sv:type="String">
-    <sv:value>org.hippoecm.frontend.plugins.development.content.AddContentShortcutPlugin</sv:value>
+    <sv:value>org.hippoecm.frontend.plugins.development.content.AddDocumentsShortcutPlugin</sv:value>
   </sv:property>
   <sv:property sv:name="wicket.id" sv:type="String">
     <sv:value>shortcut</sv:value>
