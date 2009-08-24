@@ -36,12 +36,12 @@
     </sv:property>
   </sv:node>
   
-  <sv:node sv:name="cms-dashshortcuts-add-content">
+  <sv:node sv:name="cms-dashshortcuts-add-documents">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>cms-dashshortcuts-add-content.xml</sv:value>
+      <sv:value>cms-dashshortcuts-add-documents.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts</sv:value>
