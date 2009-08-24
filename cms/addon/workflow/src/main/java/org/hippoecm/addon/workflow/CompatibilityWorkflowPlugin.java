@@ -294,6 +294,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                             destination.setChainedModel(model);
                         }
                         super.setModel(model);
+                        DestinationDialog.this.setOkEnabled(true);
                     }
                 };
                 modelService.init(context);
@@ -304,6 +305,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 dialogRenderer.bind(null, "picker");
                 add(dialogRenderer.getComponent());
                 setFocusOnCancel();
+                setOkEnabled(false);
             }
 
             @Override
