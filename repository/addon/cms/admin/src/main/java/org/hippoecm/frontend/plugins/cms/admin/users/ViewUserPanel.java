@@ -62,6 +62,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
         
+        
         this.model = model;
         final User user = (User) model.getObject();
 

@@ -30,10 +30,11 @@ public class AdminPerspective extends Perspective {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
- 
+
     public AdminPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
         setOutputMarkupId(true);
+
 
         final BreadCrumbBar breadCrumbBar = new AdminBreadCrumbBar("breadCrumbBar");
         add(breadCrumbBar);
@@ -64,5 +65,5 @@ public class AdminPerspective extends Perspective {
     public void showDialog(IDialogService.Dialog dialog) {
         getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
     }
-    
+
 }

@@ -104,6 +104,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
+                
                 User user = userModel.getUser();
                 String username = user.getUsername();
                 try {
@@ -120,6 +121,11 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
                     Session.get().warn(getString("user-create-failed", userModel));
                     log.error("Unable to create user '" + username + "' : ", e);
                 }
+            }
+            @Override
+            protected void onError(AjaxRequestTarget target, Form form) {
+                // make sure the feedback panel is shown
+                target.addComponent(CreateUserPanel.this);
             }
         });
         
