@@ -35,7 +35,7 @@ public class EventStoppingBehavior extends AbstractBehavior {
     public void onComponentTag(Component component, ComponentTag tag) {
         super.onComponentTag(component, tag);
 
-        tag.put(event, "Wicket.stopEvent();");
+        tag.put(event, "Wicket.stopEvent(event);");
     }
 
 }
