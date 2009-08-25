@@ -391,7 +391,6 @@ class RandomWalkRunner implements Runnable {
         }
     };
 
-    @Override
     public void run() {
         int count = 0;
         nsuccess = 0;
