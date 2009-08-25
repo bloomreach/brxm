@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.yui.tree;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
+import org.hippoecm.frontend.plugins.yui.javascript.BooleanSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 
@@ -32,8 +33,11 @@ public final class TreeSettings extends AjaxSettings {
     private static final long serialVersionUID = 1L;
 
     private static final StringSetting TREE = new StringSetting("treeData", false);
+    private static final StringSetting ROOT = new StringSetting("root", "/");
+    private static final BooleanSetting REGISTER_ONCLICK = new BooleanSetting("registerOnclick", false);
+    private static final BooleanSetting REGISTER_ONDBLCLICK = new BooleanSetting("registerOnDoubleclick", false);
 
-    protected static final YuiType TYPE = new YuiType(AjaxSettings.TYPE, TREE);
+    protected static final YuiType TYPE = new YuiType(AjaxSettings.TYPE, TREE, ROOT, REGISTER_ONCLICK, REGISTER_ONDBLCLICK);
 
     public TreeSettings(IPluginConfig config) {
         super(TYPE, config);
@@ -42,4 +46,21 @@ public final class TreeSettings extends AjaxSettings {
     public void setTreeData(String data) {
         TREE.set(data, this);
     }
+    
+    public void setRegisterOnClick(boolean set) {
+        REGISTER_ONCLICK.set(set, this);
+    }
+    
+    public void setRegisterOnDoubleClick(boolean set) {
+        REGISTER_ONDBLCLICK.set(set, this);
+    }
+    
+    public void setRoot(String root) {
+        ROOT.set(root, this);
+    }
+    
+    public String getRoot() {
+        return ROOT.get(this);
+    }
+
 }

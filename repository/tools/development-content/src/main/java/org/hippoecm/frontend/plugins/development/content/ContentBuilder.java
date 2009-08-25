@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -48,6 +49,23 @@ public class ContentBuilder implements IClusterable {
     private static final long serialVersionUID = 1L;
     
     static final Logger log = LoggerFactory.getLogger(ContentBuilder.class);
+    
+    public static class NameSettings implements IClusterable {
+        private static final long serialVersionUID = 1L;
+        
+        int minLength = 20;
+        int maxLength = 35;
+        int amount = 5;
+        
+        public NameSettings() {
+        }
+        
+        public NameSettings(int min, int max, int amount) {
+            this.minLength = min;
+            this.maxLength = max;
+            this.amount = amount;
+        }
+    }
 
     private static final String DEFAULT_WORKFLOW_CATEGORY = "threepane";
     private static final String NEW_FOLDER_CATEGORY = "new-folder";
@@ -56,7 +74,7 @@ public class ContentBuilder implements IClusterable {
     String folderPath;
     FolderWorkflow folderWorkflow;
     Names names;
-    
+       
     Collection<String> docTypes;
     Collection<String> folderTypes;
 
@@ -70,27 +88,25 @@ public class ContentBuilder implements IClusterable {
         this.workflowCategory = workflowCategory;
     }
 
-    public void createRandomDocuments(String folder, int minLength, int maxLength, int amount) {
+    public void createRandomDocuments(String folder, NameSettings nameSettings) {
         Collection<String> types = getDocumentTypes(folder);
-        createDocuments(folder, types, minLength, maxLength, amount, true);
+        createDocuments(folder, types, nameSettings, true);
     }
 
-    public void createDocuments(String folder, Collection<String> selectedTypes, int minLength, int maxLength,
-            int amount) {
+    public void createDocuments(String folder, Collection<String> selectedTypes, NameSettings nameSettings) {
         updateFolder(folder);
-        createDocuments(folder, selectedTypes, minLength, maxLength, amount, false);
+        createDocuments(folder, selectedTypes, nameSettings, false);
     }
 
-    private void createDocuments(String folder, Collection<String> types, int minLength, int maxLength,
-            int amount, boolean random) {
+    private void createDocuments(String folder, Collection<String> types, NameSettings nameSettings, boolean random) {
 
         if (folderWorkflow != null) {
             String[] typeAr = types.toArray(new String[types.size()]);
-            for(int i=0; i<amount; i++) {
+            for(int i=0; i<nameSettings.amount; i++) {
                 Random generator = new Random();
                 int index = generator.nextInt(types.size());   
                 String prototype = typeAr[index];
-                String targetName = generateName(minLength, maxLength);
+                String targetName = generateName(nameSettings.minLength, nameSettings.maxLength);
                 try {
                     folderWorkflow.add(NEW_DOCUMENT_CATEGORY, prototype, NodeNameCodec.encode(targetName, true));
                 } catch (MappingException e) {
@@ -209,6 +225,19 @@ public class ContentBuilder implements IClusterable {
             }
         }
         return newName;
+    }
+
+    public String uuid2path(String uuid) {
+        Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        try {
+            Node node = jcrSession.getNodeByUUID(uuid);
+            return node.getPath();
+        } catch (ItemNotFoundException e) {
+            log.error("Node node found for uuid " + uuid, e);
+        } catch (RepositoryException e) {
+            log.error("Error while retrieving node path for uuid " + uuid, e);
+        }
+        return null;
     }
 
     
