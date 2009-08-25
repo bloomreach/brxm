@@ -23,6 +23,8 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 import org.hippoecm.frontend.plugins.yui.header.templates.FinalTextTemplate;
 import org.onehippo.yui.YahooNamespace;
@@ -36,19 +38,31 @@ public class YuiContext implements IYuiContext {
 
     Set<IHeaderContributor> templates;
     Set<IHeaderContributor> refs;
-    Set<OnLoad> onloads;
+    Set<Onload> onloads;
     Set<IHeaderContributor> modules;
     YuiHeaderCache cache;
 
-    class OnLoad implements IClusterable {
+    static class Onload implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        String str;
-        boolean win;
+        public enum Type {
+            DOM, WINDOW
+        }
 
-        public OnLoad(String str, boolean onWindowLoad) {
-            this.str = str;
-            this.win = onWindowLoad;
+        IModel jsModel;
+        Type type;
+
+        public Onload(IModel jsModel) {
+            this(jsModel, Type.WINDOW);
+        }
+
+        public Onload(IModel jsModel, Type type) {
+            this.jsModel = jsModel;
+            this.type = type;
+        }
+
+        public String getJsString() {
+            return (String) jsModel.getObject();
         }
     }
 
@@ -57,7 +71,7 @@ public class YuiContext implements IYuiContext {
         modules = new LinkedHashSet<IHeaderContributor>();
         refs = new LinkedHashSet<IHeaderContributor>();
         templates = new LinkedHashSet<IHeaderContributor>();
-        onloads = new LinkedHashSet<OnLoad>();
+        onloads = new LinkedHashSet<Onload>();
     }
 
     public void addModule(String module) {
@@ -89,11 +103,19 @@ public class YuiContext implements IYuiContext {
     }
 
     public void addOnDomLoad(String string) {
-        onloads.add(new OnLoad(string, false));
+        addOnDomLoad(new Model(string));
+    }
+
+    public void addOnDomLoad(IModel model) {
+        onloads.add(new Onload(model, Onload.Type.DOM));
     }
 
     public void addOnWinLoad(String string) {
-        onloads.add(new OnLoad(string, true));
+        addOnWinLoad(new Model(string));
+    }
+
+    public void addOnWinLoad(IModel model) {
+        onloads.add(new Onload(model, Onload.Type.WINDOW));
     }
 
     public void renderHead(IHeaderResponse response) {
@@ -129,13 +151,19 @@ public class YuiContext implements IYuiContext {
         }
     }
 
-    public void renderOnloads(Set<OnLoad> _onloads, IHeaderResponse response) {
-        for (OnLoad onload : _onloads) {
-            if (onload.win) {
-                response.renderOnLoadJavascript(onload.str);
-            } else {
-                response.renderOnDomReadyJavascript(onload.str);
+    public void renderOnloads(Set<Onload> _onloads, IHeaderResponse response) {
+        for (Onload onload : _onloads) {
+            switch (onload.type) {
+            case WINDOW:
+                response.renderOnLoadJavascript(onload.getJsString());
+                break;
+            case DOM:
+                response.renderOnDomReadyJavascript(onload.getJsString());
+                break;
+            default:
+                break;
             }
         }
     }
+
 }
