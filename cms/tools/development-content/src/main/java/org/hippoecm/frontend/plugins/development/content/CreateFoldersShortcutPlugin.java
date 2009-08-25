@@ -16,12 +16,10 @@
 
 package org.hippoecm.frontend.plugins.development.content;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.RequiredTextField;
+import org.apache.wicket.behavior.HeaderContributor;
+import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -29,17 +27,12 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.development.content.wizard.DevelopmentContentWizard;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class CreateFoldersShortcutPlugin extends RenderPlugin{
     private static final long serialVersionUID = 1L;
 
-    String folder = "/content/documents/news";
-    Collection<String> selectedTypes = new LinkedList<String>();
-    int minLength = 20;
-    int maxLength = 35;
-    int amount = 5;
-    
     public CreateFoldersShortcutPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
         
@@ -57,13 +50,30 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin{
     public class Dialog extends AbstractDialog {
         private static final long serialVersionUID = 1L;
 
-        String folder = "/";
-
         public Dialog() {
+            add(HeaderContributor.forCss(CreateFoldersShortcutPlugin.class, "style.css"));
+            
             setOkLabel(new StringResourceModel("start-create-folders-label", CreateFoldersShortcutPlugin.this, null));
 
-            add(new RequiredTextField("folder", new PropertyModel(this, "folder")));
-
+            add(new DevelopmentContentWizard("wizard", getPluginContext(), getPluginConfig()) {
+                private static final long serialVersionUID = 1L;
+                
+                String folderUUID;
+                
+                @Override
+                protected IDynamicWizardStep createFirstStep() {
+                    IModel folderModel = new PropertyModel(this, "folderUUID");
+                    return new ChooseFolderStep(null, folderModel) {
+                        private static final long serialVersionUID = 1L;
+                        
+                        public IDynamicWizardStep next() {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+                    };
+                }
+                
+            });
         }
 
         public IModel getTitle() {

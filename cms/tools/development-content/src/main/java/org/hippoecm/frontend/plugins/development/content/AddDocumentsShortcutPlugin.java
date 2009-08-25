@@ -16,31 +16,22 @@
 
 package org.hippoecm.frontend.plugins.development.content;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Check;
-import org.apache.wicket.markup.html.form.CheckGroup;
-import org.apache.wicket.markup.html.form.RequiredTextField;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.behavior.HeaderContributor;
+import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.validation.validator.NumberValidator;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.development.content.ContentBuilder.NameSettings;
+import org.hippoecm.frontend.plugins.development.content.wizard.DevelopmentContentWizard;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,12 +40,6 @@ public class AddDocumentsShortcutPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(AddDocumentsShortcutPlugin.class);
-
-    private static final List<String> TEST_TYPES = new ArrayList<String>();
-    {
-        TEST_TYPES.add(new String("news"));
-        TEST_TYPES.add(new String("article"));
-    }
 
     ContentBuilder builder;
 
@@ -78,105 +63,79 @@ public class AddDocumentsShortcutPlugin extends RenderPlugin {
     public class Dialog extends AbstractDialog {
         private static final long serialVersionUID = 1L;
 
-        String folder = "/content/documents/news";
-        Collection<String> selectedTypes = new LinkedList<String>();
-        int minLength = 20;
-        int maxLength = 35;
-        int amount = 5;
-        boolean randomDocuments = true;
-
-        CheckGroup group;
-
         public Dialog() {
+            add(HeaderContributor.forCss(AddDocumentsShortcutPlugin.class, "style.css"));
+
             setOkLabel(new StringResourceModel("start-add-content-label", AddDocumentsShortcutPlugin.this, null));
 
-            final WebMarkupContainer container = new WebMarkupContainer("typesContainer") {
+            add(new DevelopmentContentWizard("wizard", getPluginContext(), getPluginConfig()) {
                 private static final long serialVersionUID = 1L;
 
-            };
-            container.setOutputMarkupId(true);
-            add(container);
-
-            RequiredTextField tf;
-            add(tf = new RequiredTextField("folder", new PropertyModel(this, "folder")));
-            tf.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                private static final long serialVersionUID = 1L;
-
+                String folderUUID;
+                NameSettings nameSettings = new NameSettings();
+                SelectedTypesSettings typesSettings = new SelectedTypesSettings();        
+                
                 @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-                    target.addComponent(container);
+                protected IDynamicWizardStep createFirstStep() {
+                    IModel folderModel = new PropertyModel(this, "folderUUID");
+                    
+                    return new ChooseFolderStep(null, folderModel) {
+                        private static final long serialVersionUID = 1L;
+                        
+                        public IDynamicWizardStep next() {
+                            return createSecondStep(this);
+                        }
+                    };
                 }
+                
+                private IDynamicWizardStep createSecondStep(IDynamicWizardStep previousStep) {
+                    return new SelectTypesStep(previousStep, typesSettings) {
+                        private static final long serialVersionUID = 1L;
+
+                        public IDynamicWizardStep next() {
+                            return createThirdStep(this);
+                        }
+
+                        @Override
+                        protected Collection<String> getTypes() {
+                            return builder.getDocumentTypes(folderUUID);
+                        }
+                        
+                    };
+                }
+                
+                private IDynamicWizardStep createThirdStep(IDynamicWizardStep previousStep) {
+                    return new NameSettingsStep(previousStep, nameSettings) {
+                        private static final long serialVersionUID = 1L;
+                        
+                        public boolean isLastStep() {
+                            return true;
+                        }
+
+                        public IDynamicWizardStep next() {
+                            return null;
+                        }
+                        
+                    };
+                }
+                
+                @Override
+                public void onFinish() {
+                    String folderPath = builder.uuid2path(folderUUID);
+                    if (typesSettings.isRandom()) {
+                        builder.createRandomDocuments(folderPath, nameSettings);
+                    } else {
+                        builder.createDocuments(folderPath, typesSettings.getSelectedTypes(), nameSettings);
+                    }
+                    closeDialog();
+                }
+
             });
-
-            group = new CheckGroup("typesGroup", selectedTypes) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public boolean isVisible() {
-                    return !randomDocuments;
-                }
-
-            };
-            container.add(group);
-
-            //group.add(new CheckGroupSelector("groupselector"));
-            final ListView typesListView = new ListView("types", getTypes()) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void populateItem(ListItem item) {
-                    IModel m = item.getModel();
-                    item.add(new Check("check", m));
-                    item.add(new Label("name", m));
-                }
-            };
-            group.add(typesListView);
-
-            AjaxCheckBox randomDocs = new AjaxCheckBox("randomDocs", new PropertyModel(this, "randomDocuments")) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-                    target.addComponent(container);
-                }
-            };
-
-            randomDocs.setOutputMarkupId(true);
-            add(randomDocs);
-
-            add(tf = new RequiredTextField("minLength", new PropertyModel(this, "minLength"), Integer.class));
-            tf.add(NumberValidator.range(1, 256));
-
-            add(tf = new RequiredTextField("maxLength", new PropertyModel(this, "maxLength"), Integer.class));
-            tf.add(NumberValidator.range(1, 256));
-
-            add(tf = new RequiredTextField("amount", new PropertyModel(this, "amount"), Integer.class));
-            tf.add(NumberValidator.range(1, 256));
 
         }
 
         public IModel getTitle() {
             return new StringResourceModel("add-content-label", AddDocumentsShortcutPlugin.this, null);
-        }
-
-        @Override
-        protected void onOk() {
-            if (randomDocuments) {
-                builder.createRandomDocuments(folder, minLength, maxLength, amount);
-            } else {
-                builder.createDocuments(folder, selectedTypes, minLength, maxLength, amount);
-            }
-        }
-
-        public IModel getTypes() {
-            return new AbstractReadOnlyModel() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public Object getObject() {
-                    return builder.getDocumentTypes(folder);
-                }
-            };
         }
     }
 
