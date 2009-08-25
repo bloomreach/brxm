@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -55,6 +56,8 @@ public class ResourceUploadPlugin extends RenderPlugin {
         form = new FileUploadForm("form");
         add(form);
 
+        add(new EventStoppingBehavior("onclick"));
+
         String mode = config.getString("mode", "edit");
         if (!"edit".equals(mode)) {
             form.setVisible(false);
@@ -70,6 +73,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
             super(name);
 
             add(fileUploadField = new FileUploadField("fileInput"));
+
             add(new Button("submit", new StringResourceModel("upload", ResourceUploadPlugin.this, null)) {
                 private static final long serialVersionUID = 1L;
 
