@@ -16,7 +16,7 @@
 
 package org.hippoecm.frontend.plugins.yui.tables;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
@@ -35,14 +35,15 @@ public abstract class TableHelperBehavior extends AbstractYuiBehavior {
     @Override
     public void addHeaderContribution(IYuiContext helper) {
         helper.addModule(HippoNamespace.NS, "tables");
-        //helper.addJavascriptReference(new ResourceReference(TableHelperBehavior.this.getClass(), "fix_height.js"));
+        helper.addOnWinLoad(new AbstractReadOnlyModel() {
+            private static final long serialVersionUID = 1L;
+            
+            @Override
+            public Object getObject() {
+                return "YAHOO.hippo.TableHelper.setHeight('" + getMarkupId() + "')";
+            }
+        });
     }
     
-    @Override
-    public void renderHead(IHeaderResponse response) {
-        super.renderHead(response);
-        response.renderOnLoadJavascript("YAHOO.hippo.TableHelper.fixHeight('" + getMarkupId() + "')");
-    }
-
     public abstract String getMarkupId();
 }

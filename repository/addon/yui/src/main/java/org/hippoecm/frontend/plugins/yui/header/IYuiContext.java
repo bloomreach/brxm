@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 import org.hippoecm.frontend.plugins.yui.header.templates.FinalTextTemplate;
 import org.onehippo.yui.YuiNamespace;
@@ -49,7 +50,7 @@ public interface IYuiContext extends IHeaderContributor {
     void addTemplate(Class<?> clazz, String filename, Map<String, Object> parameters);
 
     /**
-     *
+     * 
      * @param template
      */
     void addTemplate(FinalTextTemplate template);
@@ -61,15 +62,39 @@ public interface IYuiContext extends IHeaderContributor {
     void addTemplate(DynamicTextTemplate template);
 
     /**
-     * Add javascript that get's executed on pageLoad
-     * @param string String of javascript code that is evaluated on the client
+     * Add static javascript String that get's executed on pageLoad
+     * @param string String of javascript code which is evaluated on the client
      */
     void addOnWinLoad(String string);
 
+    /**
+     * Add dynamic javascript that get's executed on pageLoad
+     * @param string IModel that returns javascript code which is evaluated on the client
+     */
+    void addOnWinLoad(IModel model);
+
+    /**
+     * Add static javascript String that get's executed on browsers DOM-ready-event
+     * @param string String of javascript code which is evaluated on the client
+     */
     void addOnDomLoad(String string);
 
+    /**
+     * Add dynamic javascript that get's executed on browsers DOM-ready-event
+     * @param string IModel that returns javascript code which is evaluated on the client
+     */
+    void addOnDomLoad(IModel model);
+    
+    /**
+     * Helper method for adding a javascript reference
+     * @param reference
+     */
     void addJavascriptReference(ResourceReference reference);
 
+    /**
+     * Helper method for adding css reference
+     * @param reference
+     */
     void addCssReference(ResourceReference reference);
 
 }

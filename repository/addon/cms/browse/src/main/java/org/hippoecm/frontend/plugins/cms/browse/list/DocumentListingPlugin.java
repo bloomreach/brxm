@@ -54,15 +54,6 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
-        add(new TableHelperBehavior(YuiPluginHelper.getManager(context)) {
-            private static final long serialVersionUID = 1L;
-            
-            @Override
-            public String getMarkupId() {
-                return DocumentListingPlugin.this.getMarkupId(true);
-            }
-        });
     }
 
     @Override
@@ -103,6 +94,15 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
         public DraggebleListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
                 TableSelectionListener selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
             super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+            
+            add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())) {
+                private static final long serialVersionUID = 1L;
+                
+                @Override
+                public String getMarkupId() {
+                    return DraggebleListDataTable.this.getMarkupId();
+                }
+            });
         }
 
         @Override

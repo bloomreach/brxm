@@ -23,10 +23,10 @@ if (!YAHOO.hippo.TableHelper) {
         	prevParentId: null,
         	
         	updateHeight: function() {
-        		this.fixHeight(this.prevParentId);
+        		this.setHeight(this.prevParentId);
         	},	
         		
-    		fixHeight: function(parentId) {
+    		setHeight: function(parentId) {
 	        	var parentEl = Dom.get(parentId);
 	        	var layoutContainer = Dom.getAncestorByClassName(parentId, 'yui-layout-bd');
 	        	var parentRegion = Dom.getRegion(layoutContainer);
