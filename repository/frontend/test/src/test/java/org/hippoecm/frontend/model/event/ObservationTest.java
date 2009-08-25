@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 
 import org.apache.wicket.Session;
@@ -36,8 +37,8 @@ import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
+import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.api.HippoNode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ObservationTest extends PluginTest {
@@ -391,7 +392,6 @@ public class ObservationTest extends PluginTest {
         assertEquals(1, copy.count);
     }
 
-    @Ignore
     @Test
     /**
      * test whether events are received on facet search nodes
@@ -437,10 +437,8 @@ public class ObservationTest extends PluginTest {
         Node xyz = source.addNode("xyz", "frontendtest:document");
         xyz.addMixin("hippo:harddocument");
         xyz.setProperty("facet", "xyz");
-        session.refresh(true);
         session.save();
-        session.refresh(false);
-
+        
         // basic facetsearch assertion
         Node result = sink.getNode("search/xyz/hippo:resultset/xyz");
         assertTrue(((HippoNode) result).getCanonicalNode().isSame(xyz));
@@ -493,5 +491,27 @@ public class ObservationTest extends PluginTest {
         JcrEvent jcrEvent = (JcrEvent) events.get(0);
         assertEquals(Event.PROPERTY_ADDED, jcrEvent.getEvent().getType());
     }
-    
+ 
+    @Test
+    public void testReordering() throws Exception {
+        Node testNode = session.getRootNode().addNode("test", "frontendtest:ordered");
+        Node childOne = testNode.addNode("frontendtest:childnode");
+        Node childTwo = testNode.addNode("frontendtest:childnode");
+        session.save();
+        
+        List<IEvent> events = new LinkedList<IEvent>();
+        JcrNodeModel model = new JcrNodeModel(testNode);
+        IObserver observer = new TestObserver(model, events);
+        context.registerService(observer, IObserver.class.getName());
+
+        home.processEvents();
+        assertEquals(0, events.size());
+
+        testNode.orderBefore("frontendtest:childnode[2]", "frontendtest:childnode[1]");
+        session.save();
+        
+        home.processEvents();
+        assertEquals(1, events.size());
+    }
+
 }
