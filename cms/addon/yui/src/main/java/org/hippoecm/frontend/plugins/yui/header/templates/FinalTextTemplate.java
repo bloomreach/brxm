@@ -19,7 +19,6 @@ package org.hippoecm.frontend.plugins.yui.header.templates;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.AbstractReadOnlyModel;
