@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.editor.tools.JcrTypeDescriptor;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -127,6 +128,7 @@ public class TemplateBuilderTest extends PluginTest {
         final List<String> added = new LinkedList<String>();
         final List<String> removed = new LinkedList<String>();
         context.registerService(new IObserver() {
+            private static final long serialVersionUID = 1L;
 
             public IObservable getObservable() {
                 return type;
@@ -160,6 +162,34 @@ public class TemplateBuilderTest extends PluginTest {
         assertEquals(1, removed.size());
     }
 
+    @Test
+    public void testAddRemoveCycle() throws Exception {
+        TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());
+
+        // initialize type descriptor and template
+        final ITypeDescriptor type = builder.getTypeDescriptor();
+        IClusterConfig config = builder.getTemplate();
+        Node node = builder.getPrototype().getNode();
+
+        // add a field to the type: a plugin should be added
+        List<IPluginConfig> plugins = config.getPlugins();
+        type.addField(new JavaFieldDescriptor("test", "nt:unstructured"));
+        home.processEvents();
+        assertEquals(4, plugins.size());
+
+        // add a child node to the prototype; it should be cleared up later
+        node.addNode("test:nt_unstructured", "nt:unstructured");
+
+        // remove the field plugin
+        plugins.remove(3);
+        home.processEvents();
+
+        // the field should be removed from the type, the child node should have
+        // been removed from the prototype.
+        assertEquals(2, type.getFields().size());
+        assertFalse(node.hasNode("test:nt_unstructured"));
+    }
+    
     @Test
     public void testChangePath() throws Exception {
         TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());

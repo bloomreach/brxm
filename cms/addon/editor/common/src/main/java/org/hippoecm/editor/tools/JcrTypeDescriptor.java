@@ -405,6 +405,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         obContext.unregisterObserver(observer);
     }
 
+    @Override
+    protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
+        // do our own event generation, ignoring the JCR events
+        updateFields();
+    }
+
     protected void processEvents(EventCollection collection) {
         IObservationContext obContext = getObservationContext();
         Map<String, IFieldDescriptor> oldFields = fields;

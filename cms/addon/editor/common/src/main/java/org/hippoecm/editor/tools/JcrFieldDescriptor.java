@@ -20,8 +20,6 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -116,23 +114,6 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     public boolean isProtected() {
         // TODO Auto-generated method stub
         return false;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof JcrFieldDescriptor) {
-            if (object != null) {
-                JcrFieldDescriptor otherModel = (JcrFieldDescriptor) object;
-                return new EqualsBuilder().append(getName(), otherModel.getName()).append(getPath(),
-                        otherModel.getPath()).isEquals();
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getName()).append(getPath()).toHashCode();
     }
 
     @Override
