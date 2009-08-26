@@ -36,6 +36,10 @@
 - frontendtest:string (string)
 - frontendtest:strings (string) multiple
 
+[frontendtest:ordered] orderable
+- frontendtest:property (string) multiple
++ frontendtest:childnode (nt:unstructured) multiple
+
 [frontendtest:document] > hippo:document
 - *
 + *
