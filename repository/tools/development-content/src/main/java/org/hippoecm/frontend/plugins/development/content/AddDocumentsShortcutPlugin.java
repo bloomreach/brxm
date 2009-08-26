@@ -67,10 +67,10 @@ public class AddDocumentsShortcutPlugin extends RenderPlugin {
 
             setOkLabel(new StringResourceModel("start-add-content-label", AddDocumentsShortcutPlugin.this, null));
 
+            final DocumentSettings settings = new DocumentSettings();
+            
             add(new DevelopmentContentWizard("wizard", getPluginContext(), getPluginConfig()) {
                 private static final long serialVersionUID = 1L;
-
-                DocumentSettings settings = new DocumentSettings();
 
                 @Override
                 protected IDynamicWizardStep createFirstStep() {

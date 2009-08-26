@@ -216,7 +216,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
             RequiredTextField tf;
             add(tf = new RequiredTextField("amount", new PropertyModel(documentSettings, "amount"), Integer.class));
-            tf.add(NumberValidator.range(1, 35));
+            tf.add(NumberValidator.range(1, 100));
         }
 
         public boolean isLastStep() {
