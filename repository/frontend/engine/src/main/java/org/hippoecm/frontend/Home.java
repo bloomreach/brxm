@@ -27,7 +27,7 @@ import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.behaviors.ContextMenuBehavior;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
-import org.hippoecm.frontend.dialog.DialogService;
+import org.hippoecm.frontend.dialog.DialogServiceFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
@@ -57,7 +57,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     private PluginManager mgr;
     private PluginContext context;
     private IRenderService root;
-    private DialogService dialogService;
+    private DialogServiceFactory dialogService;
     private ObservableRegistry obRegistry;
     private IPluginConfigService pluginConfigService;
     private IContextMenu activeContextMenu;
@@ -83,9 +83,9 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         obRegistry = new ObservableRegistry(context, null);
         obRegistry.startObservation();
 
-        dialogService = new DialogService();
-        dialogService.init(context, IDialogService.class.getName(), "dialog");
-        add(dialogService);
+        dialogService = new DialogServiceFactory("dialog");
+        dialogService.init(context, IDialogService.class.getName());
+        add(dialogService.getComponent());
 
         context.registerService(this, Home.class.getName());
         String serviceId = context.getReference(this).getServiceId();
