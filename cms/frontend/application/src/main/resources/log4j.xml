@@ -40,6 +40,11 @@
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
 
+  <category additivity="true" name="org.hippoecm.frontend.plugins.standardworkflow.ExtendedFolderWorkflowPlugin">
+    <level value="info"/>
+    <appender-ref ref="root"/>
+  </category>
+
   <category additivity="false" name="org.apache.wicket">
     <level value="info"/>
     <appender-ref ref="console"/>
