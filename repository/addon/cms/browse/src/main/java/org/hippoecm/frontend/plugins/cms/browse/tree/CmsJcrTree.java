@@ -19,13 +19,14 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
-import org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin.TreeNodeTranslator;
 import org.hippoecm.frontend.widgets.JcrTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +37,35 @@ public abstract class CmsJcrTree extends JcrTree {
     static final Logger log = LoggerFactory.getLogger(CmsJcrTree.class);
     private static final long serialVersionUID = 1L;
 
-    private TreeNodeTranslator treeNodeTranslator;
+    public static interface ITreeNodeTranslator extends IClusterable {
+        String getName(TreeNode treeNode, int level);
+        String getTitleName(TreeNode treeNode);
+        boolean hasTitle(TreeNode treeNode, int level);
+    }
+    
+    public static class TreeNodeTranslator implements ITreeNodeTranslator {
+        private static final long serialVersionUID = 1L;
 
-    public CmsJcrTree(String id, TreeModel treeModel, TreeNodeTranslator treeNodeTranslator) {
+        public String getName(TreeNode treeNode, int level) {
+            return getTitleName(treeNode);
+        }
+
+        private NodeTranslator newTranslator(TreeNode treeNode) {
+            return new NodeTranslator(((IJcrTreeNode) treeNode).getNodeModel());
+        }
+
+        public String getTitleName(TreeNode treeNode) {
+            return (String) newTranslator(treeNode).getNodeName().getObject();
+        }
+
+        public boolean hasTitle(TreeNode treeNode, int level) {
+            return true;
+        }
+    }
+
+    private ITreeNodeTranslator treeNodeTranslator;
+
+    public CmsJcrTree(String id, TreeModel treeModel, ITreeNodeTranslator treeNodeTranslator) {
         super(id, treeModel);
         this.treeNodeTranslator = treeNodeTranslator;
     }
@@ -88,13 +115,15 @@ public abstract class CmsJcrTree extends JcrTree {
 
     @Override
     public String renderNode(TreeNode treeNode, int level) {
-        return treeNodeTranslator.getMaxLengthName(treeNode, level);
+        return treeNodeTranslator.getName(treeNode, level);
     }
 
     @Override
     protected void decorateNodeLink(MarkupContainer nodeLink, TreeNode node, int level) {
-        if (treeNodeTranslator.isTooLong(node, level)) {
-            nodeLink.add(new AttributeAppender("title", true, new Model(treeNodeTranslator.getName(node)), " "));
+        if (treeNodeTranslator.hasTitle(node, level)) {
+            nodeLink.add(new AttributeAppender("title", true, new Model(treeNodeTranslator.getTitleName(node)), " "));
         }
     }
+    
+    
 }
