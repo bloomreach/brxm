@@ -56,6 +56,23 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
+/**
+ * Workflow plugin which adds non-application programmer accessible
+ * functionality to the CMS, allowing all documents in a folder or directory
+ * and recursively below the folder or directory to be published or
+ * unpublished.
+ *
+ * This class is NOT part of any API provided and should not be extended by
+ * other projects despite having public signature.
+ *
+ * Errors immenating from bad configuration, unable to query or mid-air
+ * conflicts when gathering documents are reported as errors in the log, while
+ * non-fatal errors that are caused by documents which can currently not be
+ * (un)published are logged as warnings.  This even though they are not really
+ * serious, but you do want to keep track of them.
+ *
+ * @author (Berry) A.W. van Halderen
+ */
 public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
