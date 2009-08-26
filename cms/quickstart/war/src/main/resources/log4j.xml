@@ -93,6 +93,10 @@
     <appender-ref ref="console"/>
   </category>
   <category additivity="true" name="org.hippoecm.tools.projectexport">
+    <level value="debug"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="true" name="org.hippoecm.frontend.plugins.standardworkflow.ExtendedFolderWorkflowPlugin">
     <level value="info"/>
     <appender-ref ref="root"/>
   </category>
