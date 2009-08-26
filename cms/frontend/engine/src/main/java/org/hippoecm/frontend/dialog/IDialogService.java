@@ -26,7 +26,7 @@ public interface IDialogService extends IClusterable {
 
     final static String DIALOG_WICKET_ID = "content";
 
-    interface Dialog {
+    interface Dialog extends IClusterable {
 
         void setDialogService(IDialogService service);
 

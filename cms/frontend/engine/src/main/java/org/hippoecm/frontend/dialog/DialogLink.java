@@ -16,10 +16,12 @@
 package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 
 public class DialogLink extends Panel {
     @SuppressWarnings("unused")
@@ -42,7 +44,15 @@ public class DialogLink extends Panel {
             public void onClick(AjaxRequestTarget target) {
                 action.execute();
             }
+
+            @Override
+            protected IAjaxCallDecorator getAjaxCallDecorator() {
+                // don't let event propagate any further; the original page is invalid
+                // when the dialog is opened.
+                return new EventStoppingDecorator(super.getAjaxCallDecorator());
+            }
         };
+
         add(link);
         link.add(new Label("dialog-link-text", linktext));
     }

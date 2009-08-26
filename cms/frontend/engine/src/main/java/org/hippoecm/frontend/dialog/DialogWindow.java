@@ -69,6 +69,23 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         }
     }
 
+    /**
+     * Hides the dialog, if it is currently shown, or removes it from the list of
+     * to-be-shown dialogs.  The onClose() method is not invoked on the dialog.
+     * @param dialog
+     */
+    public void hide(Dialog dialog) {
+        if (dialog == shown) {
+            close();
+        }
+        if (pending.contains(dialog)) {
+            pending.remove(dialog);
+        }
+        if (pending.size() > 0) {
+            show(pending.remove(0));
+        }
+    }
+    
     public void close() {
         shown = null;
         IRequestTarget target = RequestCycle.get().getRequestTarget();
