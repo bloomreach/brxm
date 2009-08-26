@@ -405,11 +405,13 @@ public class TemplateBuilder implements IDetachable, IObservable {
                             IPluginConfig config = cce.getPlugin();
                             switch (cce.getType()) {
                             case PLUGIN_ADDED:
-                                if (removedFields != null && config.getString("field") != null) {
+                                if (config.getString("field") != null) {
                                     String field = config.getString("field");
-                                    IFieldDescriptor descriptor = removedFields.remove(field);
-                                    if (descriptor != null) {
-                                        typeDescriptor.addField(descriptor);
+                                    if (removedFields != null) {
+                                        IFieldDescriptor descriptor = removedFields.remove(field);
+                                        if (descriptor != null) {
+                                            typeDescriptor.addField(descriptor);
+                                        }
                                     }
                                     fields.put(config.getName(), field);
                                 }
@@ -429,6 +431,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                                     }
                                     removedFields.put(field, new JavaFieldDescriptor(typeDescriptor.getField(field)));
                                     typeDescriptor.removeField(field);
+                                    updatePrototype();
                                 }
                                 notifyObservers();
                                 break;

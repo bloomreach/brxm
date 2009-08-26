@@ -29,7 +29,17 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrObject implements IDetachable, IObservable {
+/**
+ * A base class for implementing object content mapping.  It wraps a JcrNodeModel,
+ * and provides an observable on top of JCR.  Subclasses can override the processEvents
+ * method to translate these events to object-type specific events.
+ * <p>
+ * All instances of a type that correspond to the same node are equivalent with respect
+ * to the hashCode and equals methods.
+ * <p>
+ * Direct use of this class is discouraged; it may be abstract in the future.
+ */
+abstract public class JcrObject implements IDetachable, IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -52,7 +62,7 @@ public class JcrObject implements IDetachable, IObservable {
     protected JcrNodeModel getNodeModel() {
         return nodeModel;
     }
-    
+
     public void save() {
         if (nodeModel.getNode() != null) {
             try {
@@ -78,10 +88,15 @@ public class JcrObject implements IDetachable, IObservable {
     protected IObservationContext getObservationContext() {
         return obContext;
     }
-    
-    protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
-    }
-    
+
+    /**
+     * Process the JCR events.  Implementations should create higher-level events that are
+     * meaningful for the subtype.  These must be broadcast to the observation context.
+     * @param context subtype specific observation context
+     * @param events received JCR events
+     */
+    abstract protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events);
+
     public void startObservation() {
         obContext.registerObserver(observer = new IObserver() {
             private static final long serialVersionUID = 1L;
@@ -99,6 +114,16 @@ public class JcrObject implements IDetachable, IObservable {
 
     public void stopObservation() {
         obContext.unregisterObserver(observer);
+    }
+
+    @Override
+    public int hashCode() {
+        return 345791 ^ nodeModel.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return ((obj instanceof JcrObject) && ((JcrObject) obj).nodeModel.equals(nodeModel));
     }
 
 }
