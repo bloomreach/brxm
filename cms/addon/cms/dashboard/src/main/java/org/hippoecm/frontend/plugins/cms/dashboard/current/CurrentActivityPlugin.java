@@ -20,6 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -41,6 +43,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,24 +166,36 @@ public class CurrentActivityPlugin extends RenderPlugin {
                 boolean targetVariantExists = false;
                 if (node.hasProperty("hippolog:eventReturnValue")) {
                     targetVariant = node.getProperty("hippolog:eventReturnValue").getValue().getString();
-                    String uuid = StringUtils.substringBetween(targetVariant, "[uuid=", "]");
-                    if (uuid != null && !uuid.equals("")) {
-                        //The Workflow step has returned a Document instance, look up the
-                        //document it refers to.
-                        String path = uuid2Path(uuid);
-                        if (path != null && !path.equals("")) {
-                            targetVariantExists = session.itemExists(path);
-                            if (targetVariantExists) {
-                                targetVariant = path;
+                    Pattern pattern = Pattern.compile("document\\[(?:(?:(?:uuid=([0-9a-fA-F-]+))|(?:path='(/[^']*)')),?)*\\]");
+                    Matcher matcher = pattern.matcher(targetVariant);
+                    if (matcher.matches()) {
+                        for (int i = 1; i <= matcher.groupCount(); i++) {
+                            String patternElement = matcher.group(i);
+                            if (patternElement.startsWith("/")) {
+                                targetVariant = patternElement;
+                            } else {
+                                String path = uuid2Path(patternElement);
+                                if (path != null && !path.equals("")) {
+                                    targetVariantExists = session.itemExists(path);
+                                    if (targetVariantExists) {
+                                        targetVariant = path;
+                                    }
+                                }
                             }
                         }
-                    } else {
+                    } else if(targetVariant.startsWith("/")) {
                         try {
                             targetVariantExists = session.itemExists(targetVariant);
                         } catch (RepositoryException e) {
                             targetVariantExists = false;
                         }
+                    } else {
+                        targetVariant = null;
+                        targetVariantExists = false;
                     }
+                } else if(node.getProperty("hippolog:eventMethod").getString().equals("delete") && node.hasProperty("hippolog:eventArguments") && node.getProperty("hippolog:eventArguments").getValues().length > 0) {
+                    targetVariant = node.getProperty("hippolog:eventArguments").getValues()[0].getString();
+                    targetVariantExists = false;
                 }
 
                 //Try to create a link to the document variant
@@ -202,11 +217,33 @@ public class CurrentActivityPlugin extends RenderPlugin {
                     item.add(link);
                     return;
                 } else {
-                    //Maybe both variants have been deleted, try to create a link to the handle
-                    if (sourceVariant != null) {
-                        String handle = StringUtils.substringBeforeLast(sourceVariant, "/");
-                        if (session.itemExists(handle)) {
-
+                    // Maybe both variants have been deleted, try to create a link to the handle
+                    String name, handle;
+                    if (targetVariant != null) {
+                        handle = StringUtils.substringBeforeLast(targetVariant, "/");
+                        name = targetVariant;
+                    } else if (sourceVariant != null) {
+                        handle = StringUtils.substringBeforeLast(sourceVariant, "/");
+                        name = sourceVariant;
+                    } else {
+                        handle = null;
+                        name = "";
+                    }
+                    if (name.contains("[")) {
+                        name = name.substring(0, name.lastIndexOf("["));
+                    }
+                    if(name.contains("/")) {
+                        if(name.endsWith("/hippo:request")) {
+                            name = StringUtils.substringBeforeLast(name, "/");
+                            if(name.contains("/")) {
+                                name = StringUtils.substringAfterLast(name, "/");
+                            }
+                        } else {
+                            name = StringUtils.substringAfterLast(name, "/");
+                        }
+                    }
+                    if(handle != null) {
+                        if (handle.startsWith("/") && session.itemExists(handle) && session.getItem(handle).isNode() && ((Node)session.getItem(handle)).isNodeType(HippoNodeType.NT_HANDLE)) {
                             String label = new StringResourceModel(timestamp, this, null, "").getString()
                                     + new StringResourceModel(node.getProperty("hippolog:eventMethod").getString(), this,
                                             null, new Object[] {
@@ -218,7 +255,6 @@ public class CurrentActivityPlugin extends RenderPlugin {
                             item.add(link);
                             return;
                         } else {
-                            String name = StringUtils.substringAfterLast(sourceVariant, "/");
                             // No path, so we're just rendering a label without a link
                             String label = new StringResourceModel(timestamp, this, null, "").getString()
                                     + new StringResourceModel(node.getProperty("hippolog:eventMethod").getString(), this,

@@ -44,6 +44,12 @@
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
       <version>2.08.00-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-tools-testutils</artifactId>
+      <version>2.08.00-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

@@ -30,6 +30,7 @@ import javax.jcr.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.ext.InternalWorkflow;
@@ -96,7 +97,17 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
                     logNode.setProperty("hippolog:eventArguments", arguments);
                 }
 
-                if (returnObject != null) {
+                if (returnObject instanceof Document) {
+                    StringBuffer sb = new StringBuffer();
+                    Document document = (Document) returnObject;
+                    sb.append("document[uuid=");
+                    sb.append(document.getIdentity());
+                    sb.append(",path='");
+                    sb.append(logFolder.getSession().getNodeByUUID(document.getIdentity()).getPath());
+                    sb.append("']");
+                    logNode.setProperty("hippolog:eventReturnType", "document");
+                    logNode.setProperty("hippolog:eventReturnValue", new String(sb));
+                } else if (returnObject != null) {
                     logNode.setProperty("hippolog:eventReturnType", returnObject.getClass().getName());
                     logNode.setProperty("hippolog:eventReturnValue", returnObject.toString());
                 }
