@@ -637,8 +637,9 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 /* make the rows expand so it will activate the scrolling of the .hippotree div */
 .hippo-tree div.wicket-tree,
 .hippo-tree div.wicket-tree div.row, 
-.hippo-tree div.wicket-tree div.row-selected{overflow: visible; /*width: auto;*/ white-space: nowrap}
+.hippo-tree div.wicket-tree div.row-selected{overflow: visible; white-space: nowrap}
 
+.hippo-console-tree .hippo-tree div.wicket-tree {width: auto;}
 
 /* set row height to a little higher for better clickability */
 .hippo-tree div.wicket-tree div.row, 
