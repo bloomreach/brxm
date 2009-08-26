@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Request to take off line a document</title>
+  </properties>
+
+  <body>
+    <section name="Request to take off line a document">
+     <span class="shortdesc">How to ask the editor to take a document off line, i.e.
+      to unpublish a published document?</span>
+
+   <script type="text/javascript">
+    leftpx=300;
+    bottompx=400;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
+      <img src="../../../../images/screenshots/cms_T07/contribs/take_offline.png" alt='screenshot for request take offline'/>
+    </div></div>
+    <p>
+      About to request to take off line the document 'multibazaar2009'.
+    </p>
+   </div>
+
+   <p>
+    When you have a published document and you want it taken offline,
+    go to the <a href='../concepts/review_mode.html'>review mode</a> of the document and
+    select the 'take offline (request)' action at the top.
+    The editor will receive your request and if he accepts your request, the document will
+    be taken offline.
+   </p>
+   <p>You can not change a document after you did a request for it for publication or taking
+     offline: your document actions menu will not show any action for it.
+     As soon as the editor handled your request, you can change the document again.
+   </p>
+
+   <p>
+     If you just request taking the document offline it will be done as soon as the
+     editor accepts your request. You may want it postponed to some particular moment.
+     Then request scheduling it. A scheduling window will popup just as when
+     <a href='./schedule_publication.html'>scheduling a publication</a>.
+   </p>
+
+   <p>Note that the editor can publish or take offline documents without your request.
+      See <a href='./editor_actions.html'>editor actions</a>.
+   </p>
+
+   <subsection name='Next'>
+    <ul>
+     <li><a href='./goto_folder.html'>goto another folder (list its contents)</a>.</li>
+     <li><a href='./logout.html'>Logout</a>.</li>
+    </ul>
+   </subsection>
+
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='./schedule_publication.html'>Schedule publication</a>.</li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
+
+  </section>
+ </body>
+</document>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Count published documents</title>
+  </properties>
+
+  <body>
+    <section name="Count published documents">
+     <span class="shortdesc">How to get a count of all published documents in a folder?</span>
+
+   <script type="text/javascript">
+    leftpx=0;
+    bottompx=700;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
+      <img src="../../../../images/screenshots/cms_T07/editors/documents_to_take_offline.png" alt='Screenshot of count published documents'/>
+    </div></div>
+     <p>
+      After you perform the action take offline all in folder
+      (just like <a href='publish_all_in_folder.html'>publish all in folder</a>)
+      a count is presented of all documents in the folder tree that are currently published.
+     </p>
+     <p>In the <a href='../contributors/concepts/folder_tabulation_panel.html'>folder tabulation panel</a>
+        in the screenshot the state icons show that:
+     </p>
+     <ol>
+      <li>The document artificial intelligence is published, so this document is counted.</li>
+      <li>The document panflute is published, so it is counted. A newer variant exists,
+           but that makes no difference.</li>
+      <li>The document multibazaar2009 is currently published, so it is counted.
+          The document is being edited, but that makes no difference.
+      </li>
+     </ol>
+     <p>
+      Click cancel if you do not actually want documents to be taken offline.
+     </p>
+   </div>
+
+  <subsection name='Next'>
+   <ul>
+    <li><a href='count_modified_at_take_offline.html'>Count modified at take offline</a>.</li>
+    <li><a href='take_offline_all_in_folder.html'>Take offline all in folder</a>.</li>
+   </ul>
+  </subsection>
+
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='count_unpublished.html'>Count unpublished documents</a>.</li>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
+
+   </section>
+  </body>
+</document>

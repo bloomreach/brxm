@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Count modified document at publish</title>
+  </properties>
+
+  <body>
+    <section name="Count modified document at publish">
+     <span class="shortdesc">Count modified document at publish</span>
+
+   <script type="text/javascript">
+    leftpx=0;
+    bottompx=500;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
+      <img src="../../../../images/screenshots/cms_T07/editors/documents_modified.png" alt='Screenshot of count documents modified'/>
+    </div></div>
+     <p>
+      After the action <a href='publish_all_in_folder.html'>publish all in folder</a>
+      is completed, the dialog shows you how many documents are actually modified by the action,
+      which means that they are published.
+     </p>
+     <p>
+      Documents that are being edited are not affected by the action.
+      Note that this includes not only documents that you are editing, but also
+      documents that authors are editing.
+    </p>
+    <p>In the screenshot the editor Janine is working on the document multibazar2009. This document
+     is not affected by the action. This is the only document someone is working on, so
+     the count of documents modified is one less than the count of documents to publish.
+    </p>
+
+   </div>
+
+  <subsection name='Next'>
+   <ul>
+    <li><a href='logout.html'>Logout</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='publish_all_in_folder.html'>Publish all in folder</a>.</li>
+   </ul>
+  </subsection>
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='count_modified_at_take_offline.html'>Count documents modified at take offline</a>.</li>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
+
+   </section>
+  </body>
+</document>

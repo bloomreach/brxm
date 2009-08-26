@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -32,15 +32,16 @@ ________________________________________________________________________________
 
    <script type="text/javascript">
     leftpx=0;
+    bottompx=400;
    </script>
     <div class='group'>
      <div id='screenshot'><div>
-      <img src="../../../../images/screenshots/cms_M13/contribs/folder_tabulation_panel.png" 
+      <img src="../../../../images/screenshots/cms_T07/contribs/folder_tabulation_panel.png"
        alt='folder tabulation panel screenshot'/>
      </div></div>
      <p>
       About to click the document 'multibazar2009' in the folder tabulation panel.
-      This document is one of the two documents in folder 'newspaper', which
+      This document is one of the three documents in folder 'newspaper', which
       is the <a href='current_folder.html'>current folder</a>, being selected in the
       <a href='folder_navigation_panel.html'>folder navigation panel</a>.
       <!-- Note that the left part of the content tabulation panel
@@ -58,9 +59,18 @@ ________________________________________________________________________________
      In the first column an icon indicates the type of the item
      and in the third column an icon indicates the state of the item:
      if it is published on the web or not.
-
-     <span class='add'>more on publish states</span>
     </p>
+    <ol>
+     <li>The newest variant of the document 'artificial intelligence' is published on the web.</li>
+     <li>An older variant of the document 'pan flute' is published on the web. I.e. after
+         the document was published it has been changed and saved, but not again published.
+     </li>
+     <li>The document 'multibazar2009' is not currently published on the web. It may never have been
+      published or been taken off line.
+      <p>If you like the details: All documents that are not currently published on the web
+         have an unpublished saved variant, even if just created and you never saved it yourself.</p>
+     </li>
+    </ol>
 
    <subsection name='Next'>
     <ul>

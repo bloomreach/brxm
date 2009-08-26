@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 962 terms</span>
+      <span class="shortdesc">Term index, 1005 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -572,6 +572,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/editor_actions.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Editor actions</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/fill_boolean_field_in_document.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Fill boolean field in Document</td>
@@ -635,6 +641,12 @@ repository itself.
               <a href="../delve_into/user/contributors/howto/request_publication.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Request Publication of Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/request_take_offline.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Request to take off line a document</td>
           </tr>
           <tr>
             <td>
@@ -710,6 +722,30 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/editors/howto/count_modified_at_publish.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Count modified document at publish</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_modified_at_take_offline.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Count modified document at take offline</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_published.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Count published documents</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_unpublished.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Count unpublished documents</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/editors/howto/create_folder.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Create Folder</td>
@@ -740,9 +776,21 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/editors/howto/publish_all_in_folder.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Publish all in folder</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/editors/howto/start_CMS.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Start CMS site</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/take_offline_all_in_folder.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Take offline all in folder</td>
           </tr>
           <tr>
             <td>
@@ -982,7 +1030,7 @@ repository itself.
             <td>
               <a href="../delve_into/user/information_architects/howto/update_all_content.html#Alternative">Alternative</a>
             </td>
-            <td>Howto: Update content</td>
+            <td>Howto: Update all content</td>
           </tr>
           <tr>
             <td>
@@ -1428,6 +1476,42 @@ repository itself.
               <a href="../delve_into/user/contributors/index.html#Contributors_Guide">Contributors Guide</a>
             </td>
             <td>Welcome: Contributors Guide</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_modified_at_publish.html#Count_modified_document_at_publish">Count modified document at publish</a>
+            </td>
+            <td>Howto: Count modified document at publish</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_modified_at_publish.html#Count_modified_document_at_publish">Count modified document at publish</a>
+            </td>
+            <td>Howto: Count modified document at publish</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_modified_at_take_offline.html#Count_modified_document_at_take_offline">Count modified document at take offline</a>
+            </td>
+            <td>Howto: Count modified document at take offline</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_modified_at_take_offline.html#Count_modified_document_at_take_offline">Count modified document at take offline</a>
+            </td>
+            <td>Howto: Count modified document at take offline</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_published.html#Count_published_documents">Count published documents</a>
+            </td>
+            <td>Howto: Count published documents</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_unpublished.html#Count_unpublished_documents">Count unpublished documents</a>
+            </td>
+            <td>Howto: Count unpublished documents</td>
           </tr>
           <tr>
             <td>
@@ -1944,6 +2028,12 @@ repository itself.
               <a href="../delve_into/web/add-ons/introduction.html#Editing_Template_add-on">Editing Template add-on</a>
             </td>
             <td>Introduction to content add-on development</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/editor_actions.html#Editor_actions">Editor actions</a>
+            </td>
+            <td>Howto: Editor actions</td>
           </tr>
           <tr>
             <td>
@@ -2758,6 +2848,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/editor_actions.html#History">History</a>
+            </td>
+            <td>Howto: Editor actions</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/cms_admins/concepts/home_workspace.html#Home_Workspace">Home Workspace</a>
             </td>
             <td>Concept: Home Workspace</td>
@@ -2871,6 +2967,13 @@ repository itself.
               <a href="../delve_into/user/contributors/howto/request_publication.html#How_to_ask_the_editor_to_publish_a_document_">How to ask the editor to publish a document?</a>
             </td>
             <td>Howto: Request Publication of Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/request_take_offline.html#How_to_ask_the_editor_to_take_a_document_off_line,_i_e_&#10;______to_unpublish_a_published_document_">How to ask the editor to take a document off line, i.e.
+      to unpublish a published document?</a>
+            </td>
+            <td>Howto: Request to take off line a document</td>
           </tr>
           <tr>
             <td>
@@ -3025,6 +3128,18 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/editors/howto/count_published.html#How_to_get_a_count_of_all_published_documents_in_a_folder_">How to get a count of all published documents in a folder?</a>
+            </td>
+            <td>Howto: Count published documents</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_unpublished.html#How_to_get_a_count_of_all_unpublished_documents_in_a_folder_">How to get a count of all unpublished documents in a folder?</a>
+            </td>
+            <td>Howto: Count unpublished documents</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/goto_folder.html#How_to_get_to_a_folder,_to_add_or_change_content_in_it_">How to get to a folder, to add or change content in it.</a>
             </td>
             <td>Howto: Goto a Folder</td>
@@ -3122,7 +3237,7 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/editors/howto/login.html#How_to_login_to_Hippo_CMS_as_editor_&#10;______________________________to_decide_about_publication_of_documents,_images_and/or_files_">How to login to Hippo CMS as editor 
+              <a href="../delve_into/user/editors/howto/login.html#How_to_login_to_Hippo_CMS_as_editor&#10;______________________________to_decide_about_publication_of_documents,_images_and/or_files_">How to login to Hippo CMS as editor
                               to decide about publication of documents, images and/or files.</a>
             </td>
             <td>Howto: Login as Editor</td>
@@ -3168,6 +3283,12 @@ repository itself.
               <a href="../delve_into/user/information_architects/howto/naming_a_field.html#How_to_name_a_field_of_a_document_type_">How to name a field of a document type.</a>
             </td>
             <td>Howto: Naming a field</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/publish_all_in_folder.html#How_to_publish_all_documents_in_a_folder_">How to publish all documents in a folder?</a>
+            </td>
+            <td>Howto: Publish all in folder</td>
           </tr>
           <tr>
             <td>
@@ -3249,15 +3370,21 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/editors/howto/take_offline_all_in_folder.html#How_to_take_offline_all_documents_in_a_folder_">How to take offline all documents in a folder?</a>
+            </td>
+            <td>Howto: Take offline all in folder</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/cms_admins/todo/type_in_editing_region.html#How_to_type_in_an_editing_regin,_creating_markuped_text_">How to type in an editing regin, creating markuped text.</a>
             </td>
             <td>Type in editing region</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/update_all_content.html#How_to_update_content">How to update content</a>
+              <a href="../delve_into/user/information_architects/howto/update_all_content.html#How_to_update_all_content">How to update all content</a>
             </td>
-            <td>Howto: Update content</td>
+            <td>Howto: Update all content</td>
           </tr>
           <tr>
             <td>
@@ -4101,6 +4228,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/editor_actions.html#Next">Next</a>
+            </td>
+            <td>Howto: Editor actions</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/fill_boolean_field_in_document.html#Next">Next</a>
             </td>
             <td>Howto: Fill boolean field in Document</td>
@@ -4158,6 +4291,12 @@ repository itself.
               <a href="../delve_into/user/contributors/howto/request_publication.html#Next">Next</a>
             </td>
             <td>Howto: Request Publication of Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/request_take_offline.html#Next">Next</a>
+            </td>
+            <td>Howto: Request to take off line a document</td>
           </tr>
           <tr>
             <td>
@@ -4221,6 +4360,30 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/editors/howto/count_modified_at_publish.html#Next">Next</a>
+            </td>
+            <td>Howto: Count modified document at publish</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_modified_at_take_offline.html#Next">Next</a>
+            </td>
+            <td>Howto: Count modified document at take offline</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_published.html#Next">Next</a>
+            </td>
+            <td>Howto: Count published documents</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_unpublished.html#Next">Next</a>
+            </td>
+            <td>Howto: Count unpublished documents</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/editors/howto/create_folder.html#Next">Next</a>
             </td>
             <td>Howto: Create Folder</td>
@@ -4245,9 +4408,21 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/editors/howto/publish_all_in_folder.html#Next">Next</a>
+            </td>
+            <td>Howto: Publish all in folder</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/editors/howto/start_CMS.html#Next">Next</a>
             </td>
             <td>Howto: Start CMS site</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/take_offline_all_in_folder.html#Next">Next</a>
+            </td>
+            <td>Howto: Take offline all in folder</td>
           </tr>
           <tr>
             <td>
@@ -4475,7 +4650,7 @@ repository itself.
             <td>
               <a href="../delve_into/user/information_architects/howto/update_all_content.html#Next">Next</a>
             </td>
-            <td>Howto: Update content</td>
+            <td>Howto: Update all content</td>
           </tr>
           <tr>
             <td>
@@ -4665,9 +4840,21 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/editors/howto/publish_all_in_folder.html#Publish_all_in_folder">Publish all in folder</a>
+            </td>
+            <td>Howto: Publish all in folder</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/web/index.html#Publish_your_Hippo_CMS_managed_content_on_the_web_">Publish your Hippo CMS managed content on the web.</a>
             </td>
             <td>Welcome: Website Development</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/editor_actions.html#Publishing">Publishing</a>
+            </td>
+            <td>Howto: Editor actions</td>
           </tr>
           <tr>
             <td>
@@ -4770,6 +4957,12 @@ repository itself.
               <a href="../delve_into/user/contributors/howto/schedule_publication.html#request_schedule_publication_screenshot">request schedule publication screenshot</a>
             </td>
             <td>Howto: Schedule publication of Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/request_take_offline.html#Request_to_take_off_line_a_document">Request to take off line a document</a>
+            </td>
+            <td>Howto: Request to take off line a document</td>
           </tr>
           <tr>
             <td>
@@ -4902,6 +5095,48 @@ repository itself.
               <a href="../delve_into/user/editors/concepts/scheduled_publication.html#Scheduled_publication">Scheduled publication</a>
             </td>
             <td>Concept: Scheduled publication</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/publish_all_in_folder.html#Screenshot_for_publish_all_in_folder">Screenshot for publish all in folder</a>
+            </td>
+            <td>Howto: Publish all in folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/request_take_offline.html#screenshot_for_request_take_offline">screenshot for request take offline</a>
+            </td>
+            <td>Howto: Request to take off line a document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_modified_at_publish.html#Screenshot_of_count_documents_modified">Screenshot of count documents modified</a>
+            </td>
+            <td>Howto: Count modified document at publish</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_modified_at_take_offline.html#Screenshot_of_count_documents_modified_at_take_offline">Screenshot of count documents modified at take offline</a>
+            </td>
+            <td>Howto: Count modified document at take offline</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_published.html#Screenshot_of_count_published_documents">Screenshot of count published documents</a>
+            </td>
+            <td>Howto: Count published documents</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/count_unpublished.html#Screenshot_of_documents_to_publish">Screenshot of documents to publish</a>
+            </td>
+            <td>Howto: Count unpublished documents</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/editor_actions.html#Screenshot_of_history">Screenshot of history</a>
+            </td>
+            <td>Howto: Editor actions</td>
           </tr>
           <tr>
             <td>
@@ -5187,6 +5422,18 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/editors/howto/take_offline_all_in_folder.html#Take_offline_all_in_folder">Take offline all in folder</a>
+            </td>
+            <td>Howto: Take offline all in folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/editor_actions.html#Taking_offline">Taking offline</a>
+            </td>
+            <td>Howto: Editor actions</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/reference/index.html#Technical_documentation_on_add-on_development_">Technical documentation on add-on development.</a>
             </td>
             <td>Welcome: Add-on Reference</td>
@@ -5304,15 +5551,15 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/information_architects/howto/update_all_content.html#Update_content">Update content</a>
+              <a href="../delve_into/user/information_architects/howto/update_all_content.html#Update_all_content">Update all content</a>
             </td>
-            <td>Howto: Update content</td>
+            <td>Howto: Update all content</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/howto/update_all_content.html#update_content_screenshot">update content screenshot</a>
             </td>
-            <td>Howto: Update content</td>
+            <td>Howto: Update all content</td>
           </tr>
           <tr>
             <td>
@@ -5511,6 +5758,18 @@ repository itself.
               <a href="../delve_into/user/contributors/concepts/contributor.html#What_does_it_mean_to_be_a_CMS_contributor_">What does it mean to be a CMS contributor?</a>
             </td>
             <td>Concept: Contributor</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/editor_actions.html#What_editor_actions_to_expect_">What editor actions to expect?</a>
+            </td>
+            <td>Howto: Editor actions</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/editor_actions.html#What_happens_to_your_documents_when_the_editor____">What happens to your documents when the editor ...</a>
+            </td>
+            <td>Howto: Editor actions</td>
           </tr>
           <tr>
             <td>

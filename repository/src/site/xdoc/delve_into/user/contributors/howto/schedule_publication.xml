@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -33,7 +33,7 @@ ________________________________________________________________________________
     leftpx=300;
     bottompx=570;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
      <img src="../../../../images/screenshots/cms_M9/contribs/request_schedule_publication.png" alt='request schedule publication screenshot'/> 
     </div></div> 
