@@ -32,7 +32,7 @@ if (!YAHOO.hippo.TableHelper) {
 	        	var parentRegion = Dom.getRegion(layoutContainer);
 	        	var minHeight = 25; //topMargin
 	        	var tfoot = Dom.getElementBy(function(el) { return true; }, 'tfoot', parentEl);
-	        	if(tfoot != null) {
+	        	if(tfoot.length > 0) {
 	        		minHeight += 65;
 	        	}
 	        	var thead = Dom.getElementBy(function(el) { return true; }, 'thead', parentEl);
