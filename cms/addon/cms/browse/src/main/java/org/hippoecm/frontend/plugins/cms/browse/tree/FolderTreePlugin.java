@@ -32,6 +32,8 @@ import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree.ITreeNodeTranslator;
+import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree.TreeNodeTranslator;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -115,8 +117,8 @@ public class FolderTreePlugin extends RenderPlugin {
         add(new ScrollBehavior());
     }
 
-    protected TreeNodeTranslator newTreeNodeTranslator(IPluginConfig config) {
-        return new TreeNodeTranslator(config);
+    protected ITreeNodeTranslator newTreeNodeTranslator(IPluginConfig config) {
+        return new TreeNodeTranslator();
     }
 
     @Override
@@ -151,25 +153,26 @@ public class FolderTreePlugin extends RenderPlugin {
             redraw();
         }
     }
-
-    public class TreeNodeTranslator extends MaxLengthNodeNameFormatter {
+    
+    public class FormattedTreeNodeTranslator extends MaxLengthNodeNameFormatter implements ITreeNodeTranslator {
         private static final long serialVersionUID = 1L;
 
-        public TreeNodeTranslator(IPluginConfig config) {
+        public FormattedTreeNodeTranslator(IPluginConfig config) {
             super(config.getInt("nodename.max.length", -1), config.getString("nodename.splitter", ".."), config.getInt(
                     "nodename.indent.length", 3));
         }
 
-        public String getName(TreeNode treeNode) {
+        public String getTitleName(TreeNode treeNode) {
             return getName(((IJcrTreeNode) treeNode).getNodeModel());
         }
 
-        public boolean isTooLong(TreeNode treeNode, int indent) {
-            return isTooLong(getName(treeNode), indent);
+        public String getName(TreeNode treeNode, int indent) {
+            return parse(getTitleName(treeNode), indent);
         }
 
-        public String getMaxLengthName(TreeNode treeNode, int indent) {
-            return parse(getName(treeNode), indent);
+        public boolean hasTitle(TreeNode treeNode, int level) {
+            return isTooLong(getTitleName(treeNode), level);
         }
     }
+
 }
