@@ -41,6 +41,8 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
 import org.hippoecm.repository.Utilities;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TemplateBuilderTest extends PluginTest {
@@ -60,7 +62,18 @@ public class TemplateBuilderTest extends PluginTest {
         }
         
     }
-    
+
+    // the tests will modify templates, so reinitialize for each test
+    @Before
+    public void setUp() throws Exception {
+        super.setUp(true);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown(true);
+    }
+
     @Test
     /**
      * verify that a plugin is added to the cluster when a field is added to the type

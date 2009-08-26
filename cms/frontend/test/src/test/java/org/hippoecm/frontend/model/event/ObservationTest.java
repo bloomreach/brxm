@@ -495,8 +495,8 @@ public class ObservationTest extends PluginTest {
     @Test
     public void testReordering() throws Exception {
         Node testNode = session.getRootNode().addNode("test", "frontendtest:ordered");
-        Node childOne = testNode.addNode("frontendtest:childnode");
-        Node childTwo = testNode.addNode("frontendtest:childnode");
+        Node childOne = testNode.addNode("frontendtest:childnode", "nt:unstructured");
+        Node childTwo = testNode.addNode("frontendtest:childnode", "nt:unstructured");
         session.save();
         
         List<IEvent> events = new LinkedList<IEvent>();
@@ -511,7 +511,7 @@ public class ObservationTest extends PluginTest {
         session.save();
         
         home.processEvents();
-        assertEquals(1, events.size());
+        assertEquals(2, events.size());
     }
 
 }
