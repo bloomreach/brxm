@@ -23,14 +23,13 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.development.content.ContentBuilder.NameSettings;
+import org.hippoecm.frontend.plugins.development.content.ContentBuilder.DocumentSettings;
 import org.hippoecm.frontend.plugins.development.content.wizard.DevelopmentContentWizard;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
@@ -71,25 +70,22 @@ public class AddDocumentsShortcutPlugin extends RenderPlugin {
             add(new DevelopmentContentWizard("wizard", getPluginContext(), getPluginConfig()) {
                 private static final long serialVersionUID = 1L;
 
-                String folderUUID;
-                NameSettings nameSettings = new NameSettings();
-                SelectedTypesSettings typesSettings = new SelectedTypesSettings();        
-                
+                DocumentSettings settings = new DocumentSettings();
+
                 @Override
                 protected IDynamicWizardStep createFirstStep() {
-                    IModel folderModel = new PropertyModel(this, "folderUUID");
-                    
-                    return new ChooseFolderStep(null, folderModel) {
+
+                    return new ChooseFolderStep(null, new PropertyModel(settings, "folderUUID")) {
                         private static final long serialVersionUID = 1L;
-                        
+
                         public IDynamicWizardStep next() {
                             return createSecondStep(this);
                         }
                     };
                 }
-                
+
                 private IDynamicWizardStep createSecondStep(IDynamicWizardStep previousStep) {
-                    return new SelectTypesStep(previousStep, typesSettings) {
+                    return new SelectTypesStep(previousStep, settings.nodeTypes) {
                         private static final long serialVersionUID = 1L;
 
                         public IDynamicWizardStep next() {
@@ -98,16 +94,27 @@ public class AddDocumentsShortcutPlugin extends RenderPlugin {
 
                         @Override
                         protected Collection<String> getTypes() {
-                            return builder.getDocumentTypes(folderUUID);
+                            return builder.getDocumentTypes(settings.folderUUID);
                         }
-                        
+
                     };
                 }
-                
+
                 private IDynamicWizardStep createThirdStep(IDynamicWizardStep previousStep) {
-                    return new NameSettingsStep(previousStep, nameSettings) {
+                    return new DocumentSettingsStep(previousStep, settings) {
                         private static final long serialVersionUID = 1L;
-                        
+
+                        public IDynamicWizardStep next() {
+                            return createFourthStep(this);
+                        }
+
+                    };
+                }
+
+                private IDynamicWizardStep createFourthStep(IDynamicWizardStep previousStep) {
+                    return new NameSettingsStep(previousStep, settings.naming) {
+                        private static final long serialVersionUID = 1L;
+
                         public boolean isLastStep() {
                             return true;
                         }
@@ -115,18 +122,13 @@ public class AddDocumentsShortcutPlugin extends RenderPlugin {
                         public IDynamicWizardStep next() {
                             return null;
                         }
-                        
+
                     };
                 }
-                
+
                 @Override
                 public void onFinish() {
-                    String folderPath = builder.uuid2path(folderUUID);
-                    if (typesSettings.isRandom()) {
-                        builder.createRandomDocuments(folderPath, nameSettings);
-                    } else {
-                        builder.createDocuments(folderPath, typesSettings.getSelectedTypes(), nameSettings);
-                    }
+                    builder.createDocuments(settings);
                     closeDialog();
                 }
 

@@ -16,6 +16,8 @@
 
 package org.hippoecm.frontend.plugins.development.content;
 
+import java.util.Collection;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.HeaderContributor;
@@ -27,15 +29,20 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.development.content.ContentBuilder.FolderSettings;
 import org.hippoecm.frontend.plugins.development.content.wizard.DevelopmentContentWizard;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
-public class CreateFoldersShortcutPlugin extends RenderPlugin{
+public class CreateFoldersShortcutPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
+
+    ContentBuilder builder;
 
     public CreateFoldersShortcutPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
+        builder = new ContentBuilder();
+
         add(new AjaxLink("link") {
             private static final long serialVersionUID = 1L;
 
@@ -46,41 +53,92 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin{
             }
         });
     }
-    
+
     public class Dialog extends AbstractDialog {
         private static final long serialVersionUID = 1L;
 
         public Dialog() {
             add(HeaderContributor.forCss(CreateFoldersShortcutPlugin.class, "style.css"));
-            
+
             setOkLabel(new StringResourceModel("start-create-folders-label", CreateFoldersShortcutPlugin.this, null));
 
-            add(new DevelopmentContentWizard("wizard", getPluginContext(), getPluginConfig()) {
-                private static final long serialVersionUID = 1L;
-                
-                String folderUUID;
-                
-                @Override
-                protected IDynamicWizardStep createFirstStep() {
-                    IModel folderModel = new PropertyModel(this, "folderUUID");
-                    return new ChooseFolderStep(null, folderModel) {
-                        private static final long serialVersionUID = 1L;
-                        
-                        public IDynamicWizardStep next() {
-                            // TODO Auto-generated method stub
-                            return null;
-                        }
-                    };
-                }
-                
-            });
+            add(new CreateFoldersWizard("wizard", getPluginContext(), getPluginConfig()));
         }
 
         public IModel getTitle() {
             return new StringResourceModel("create-folders-label", CreateFoldersShortcutPlugin.this, null);
         }
 
+        class CreateFoldersWizard extends DevelopmentContentWizard {
+            private static final long serialVersionUID = 1L;
+
+            FolderSettings settings;
+
+            public CreateFoldersWizard(String id, IPluginContext context, IPluginConfig config) {
+                super(id, context, config);
+            }
+
+            @Override
+            public void onFinish() {
+                builder.createFolders(settings, 0);
+                closeDialog();
+            }
+
+            @Override
+            protected IDynamicWizardStep createFirstStep() {
+                settings = new FolderSettings();
+
+                IModel folderModel = new PropertyModel(settings, "folderUUID");
+                return new ChooseFolderStep(null, folderModel) {
+                    private static final long serialVersionUID = 1L;
+
+                    public IDynamicWizardStep next() {
+                        return createSecondStep(this);
+                    }
+                };
+            }
+
+            private IDynamicWizardStep createSecondStep(IDynamicWizardStep previousStep) {
+                return new SelectTypesStep(previousStep, settings.nodeTypes) {
+                    private static final long serialVersionUID = 1L;
+
+                    public IDynamicWizardStep next() {
+                        return createThirdStep(this);
+                    }
+
+                    @Override
+                    protected Collection<String> getTypes() {
+                        return builder.getFolderTypes(settings.folderUUID);
+                    }
+                };
+            }
+
+            private IDynamicWizardStep createThirdStep(IDynamicWizardStep previousStep) {
+                return new FolderSettingsStep(previousStep, settings) {
+                    private static final long serialVersionUID = 1L;
+
+                    public IDynamicWizardStep next() {
+                        return createFourthStep(this);
+                    }
+                };
+            }
+
+            private IDynamicWizardStep createFourthStep(IDynamicWizardStep previousStep) {
+                return new NameSettingsStep(previousStep, settings.naming) {
+                    private static final long serialVersionUID = 1L;
+
+                    public boolean isLastStep() {
+                        return true;
+                    }
+
+                    public IDynamicWizardStep next() {
+                        return null;
+                    }
+
+                };
+            }
+        }
+
     }
 
-    
 }

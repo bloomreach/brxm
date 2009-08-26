@@ -17,9 +17,7 @@
 package org.hippoecm.frontend.plugins.development.content.wizard;
 
 import java.util.Collection;
-import java.util.LinkedList;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.extensions.wizard.dynamic.DynamicWizardModel;
@@ -38,7 +36,10 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.validation.validator.NumberValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.development.content.ContentBuilder.DocumentSettings;
+import org.hippoecm.frontend.plugins.development.content.ContentBuilder.FolderSettings;
 import org.hippoecm.frontend.plugins.development.content.ContentBuilder.NameSettings;
+import org.hippoecm.frontend.plugins.development.content.ContentBuilder.NodeTypeSettings;
 import org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard;
 import org.hippoecm.frontend.plugins.yui.tree.YuiJcrTree;
 
@@ -65,12 +66,12 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
     protected abstract class ChooseFolderStep extends DynamicWizardStep {
         private static final long serialVersionUID = 1L;
-        
+
         IModel model;
 
         public ChooseFolderStep(IDynamicWizardStep previousStep, IModel model) {
             super(previousStep);
-            
+
             this.model = model;
 
             add(new YuiJcrTree("mytree", context, config) {
@@ -100,35 +101,12 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
         }
     }
 
-    public static class SelectedTypesSettings implements IClusterable {
-        private static final long serialVersionUID = 1L;
-
-        Collection<String> selectedTypes = new LinkedList<String>();
-        boolean random = true;
-
-        public void setSelectedTypes(Collection<String> selectedTypes) {
-            this.selectedTypes = selectedTypes;
-        }
-
-        public void setRandom(boolean random) {
-            this.random = random;
-        }
-
-        public Collection getSelectedTypes() {
-            return selectedTypes;
-        }
-
-        public boolean isRandom() {
-            return random;
-        }
-    }
-
     protected abstract class SelectTypesStep extends DynamicWizardStep {
         private static final long serialVersionUID = 1L;
 
-        SelectedTypesSettings settings;
+        NodeTypeSettings settings;
 
-        public SelectTypesStep(IDynamicWizardStep previousStep, final SelectedTypesSettings settings) {
+        public SelectTypesStep(IDynamicWizardStep previousStep, final NodeTypeSettings settings) {
             super(previousStep);
             this.settings = settings;
 
@@ -136,7 +114,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             container.setOutputMarkupId(true);
             add(container);
 
-            CheckGroup group = new CheckGroup("typesGroup", new PropertyModel(settings, "selectedTypes")) {
+            CheckGroup group = new CheckGroup("typesGroup", new PropertyModel(settings, "types")) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -203,11 +181,46 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
             add(tf = new RequiredTextField("maxLength", new PropertyModel(nameSettings, "maxLength"), Integer.class));
             tf.add(NumberValidator.range(1, 256));
+        }
+    }
 
-            add(tf = new RequiredTextField("amount", new PropertyModel(nameSettings, "amount"), Integer.class));
+    protected abstract class FolderSettingsStep extends DynamicWizardStep {
+        private static final long serialVersionUID = 1L;
+
+        public FolderSettingsStep(IDynamicWizardStep previousStep, FolderSettings folderSettings) {
+            super(previousStep);
+
+            RequiredTextField tf;
+            add(tf = new RequiredTextField("depth", new PropertyModel(folderSettings, "depth"), Integer.class));
+            tf.add(NumberValidator.range(0, 35));
+
+            add(tf = new RequiredTextField("minimumChildNodes", new PropertyModel(folderSettings, "minimumChildNodes"),
+                    Integer.class));
             tf.add(NumberValidator.range(1, 256));
 
+            add(tf = new RequiredTextField("maximumChildNodes", new PropertyModel(folderSettings, "maximumChildNodes"),
+                    Integer.class));
+            tf.add(NumberValidator.range(1, 256));
         }
 
+        public boolean isLastStep() {
+            return false;
+        }
+    }
+
+    protected abstract class DocumentSettingsStep extends DynamicWizardStep {
+        private static final long serialVersionUID = 1L;
+
+        public DocumentSettingsStep(IDynamicWizardStep previousStep, DocumentSettings documentSettings) {
+            super(previousStep);
+
+            RequiredTextField tf;
+            add(tf = new RequiredTextField("amount", new PropertyModel(documentSettings, "amount"), Integer.class));
+            tf.add(NumberValidator.range(1, 35));
+        }
+
+        public boolean isLastStep() {
+            return false;
+        }
     }
 }
