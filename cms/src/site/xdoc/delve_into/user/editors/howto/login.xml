@@ -27,7 +27,7 @@ ________________________________________________________________________________
 
   <body>
     <section name="Login as Editor">
-      <span class="shortdesc">How to login to Hippo CMS as editor 
+      <span class="shortdesc">How to login to Hippo CMS as editor
                               to decide about publication of documents, images and/or files.</span>
 
    <script type="text/javascript">
@@ -46,13 +46,13 @@ ________________________________________________________________________________
    </div>
 
         <p>Each time one starts working with Hippo CMS one has to login
-           to it, identifying oneselve. This ensures that no unauthorized
+           to it, identifying oneself. This ensures that no unauthorized
            persons can get access to Hippo CMS.
         </p>
 
     <p>
      After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
+     Type your Hippo CMS username and password.
      These must been
      given to you by your Hippo CMS administrator. That you will
      use Hippo CMS as a editor must have been defined by your
@@ -69,6 +69,7 @@ ________________________________________________________________________________
    <ul>
     <li><a href='./create_folder.html'>Create a folder (continue tour, first week)</a>.</li>
     <li><a href='./check_for_requests.html'>Check for requests (continue tour, a week later)</a>.</li>
+    <li><a href='./publish_all_in_folder.html'>Publish all documents in a folder (continue tour, even later)</a>.</li>
    </ul>
   </subsection>
    <subsection name='Alternative'>

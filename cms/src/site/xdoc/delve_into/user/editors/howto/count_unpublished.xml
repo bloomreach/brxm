@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Count unpublished documents</title>
+  </properties>
+
+  <body>
+    <section name="Count unpublished documents">
+     <span class="shortdesc">How to get a count of all unpublished documents in a folder?</span>
+
+   <script type="text/javascript">
+    leftpx=0;
+    bottompx=700;
+   </script>
+   <div class='group'>
+    <div id='screenshot'><div>
+      <img src="../../../../images/screenshots/cms_T07/editors/documents_to_publish.png" alt='Screenshot of documents to publish'/>
+    </div></div>
+     <p>
+      After you perform the action <a href='publish_all_in_folder.html'>publish all in folder</a>
+      a count is presented of all documents in the folder tree that are not currently published
+      or that are changed and saved after being published.
+      These documents all have an unpublished saved variant.
+     </p>
+     <p>In the <a href='../contributors/concepts/folder_tabulation_panel.html'>folder tabulation panel</a>
+        in the screenshot the state icons show that:
+     </p>
+     <ol>
+      <li>The document artificial intelligence is already published and no
+          newer saved variant exists, so this document is not counted.</li>
+      <li>The document panflute is already published, but a newer saved variant exists, so it is counted.</li>
+      <li>The document multibazaar2009 is not currently published, so it is counted.</li>
+     </ol>
+     <p>
+      Click cancel if you do not actually want documents to be published.
+     </p>
+   </div>
+
+  <subsection name='Next'>
+   <ul>
+    <li><a href='count_modified_at_publish.html'>Count modified at publish</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='publish_all_in_folder.html'>Publish all in folder</a>.</li>
+   </ul>
+  </subsection>
+
+   <subsection name='Alternative'>
+    <ul>
+     <li><a href='count_published.html'>Count published documents</a>.</li>
+     <li><a href='../tour.html'>tour page.</a></li>
+     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='../concepts/index.html'>Glossary.</a></li>
+    </ul>
+   </subsection>
+
+   </section>
+  </body>
+</document>

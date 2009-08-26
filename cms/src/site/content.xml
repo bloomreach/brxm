@@ -905,6 +905,16 @@ repository itself.
    <img>save document screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="editor_actions" relpath="delve_into/user/contributors/howto">Editor actions
+   <section>Editor actions</section>
+   <shortdesc>What editor actions to expect?</shortdesc>
+   <img>Screenshot of history</img>
+   <subsection>History</subsection>
+   <subsection>What happens to your documents when the editor ...</subsection>
+   <subsection>Publishing</subsection>
+   <subsection>Taking offline</subsection>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="fill_boolean_field_in_document" relpath="delve_into/user/contributors/howto">Fill boolean field in Document
    <section>Fill boolean field in Document</section>
    <shortdesc>How to answer a yes/no question in a document.</shortdesc>
@@ -966,6 +976,13 @@ repository itself.
    <section>Request Publication of Document</section>
    <shortdesc>How to ask the editor to publish a document?</shortdesc>
    <img>request schedule publication screenshot</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="request_take_offline" relpath="delve_into/user/contributors/howto">Request to take off line a document
+   <section>Request to take off line a document</section>
+   <shortdesc>How to ask the editor to take a document off line, i.e.
+      to unpublish a published document?</shortdesc>
+   <img>screenshot for request take offline</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="save_document" relpath="delve_into/user/contributors/howto">Save Document
@@ -1053,6 +1070,30 @@ repository itself.
    <img>Check for requests screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="count_modified_at_publish" relpath="delve_into/user/editors/howto">Count modified document at publish
+   <section>Count modified document at publish</section>
+   <shortdesc>Count modified document at publish</shortdesc>
+   <img>Screenshot of count documents modified</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="count_modified_at_take_offline" relpath="delve_into/user/editors/howto">Count modified document at take offline
+   <section>Count modified document at take offline</section>
+   <shortdesc>Count modified document at take offline</shortdesc>
+   <img>Screenshot of count documents modified at take offline</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="count_published" relpath="delve_into/user/editors/howto">Count published documents
+   <section>Count published documents</section>
+   <shortdesc>How to get a count of all published documents in a folder?</shortdesc>
+   <img>Screenshot of count published documents</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="count_unpublished" relpath="delve_into/user/editors/howto">Count unpublished documents
+   <section>Count unpublished documents</section>
+   <shortdesc>How to get a count of all unpublished documents in a folder?</shortdesc>
+   <img>Screenshot of documents to publish</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="create_folder" relpath="delve_into/user/editors/howto">Create Folder
    <section>Create Folder</section>
    <shortdesc>How to create a folder for contributors to put content in.</shortdesc>
@@ -1069,7 +1110,7 @@ repository itself.
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="login" relpath="delve_into/user/editors/howto">Login as Editor
    <section>Login as Editor</section>
-   <shortdesc>How to login to Hippo CMS as editor 
+   <shortdesc>How to login to Hippo CMS as editor
                               to decide about publication of documents, images and/or files.</shortdesc>
    <img>Hippo login screenshot</img>
    <subsection>Next</subsection>
@@ -1080,10 +1121,21 @@ repository itself.
    <img>logout screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="publish_all_in_folder" relpath="delve_into/user/editors/howto">Publish all in folder
+   <section>Publish all in folder</section>
+   <shortdesc>How to publish all documents in a folder?</shortdesc>
+   <img>Screenshot for publish all in folder</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/editors/howto">Start CMS site
    <section>Start CMS site</section>
    <shortdesc>How to go to the CMS site, i.e. start a CMS session, in your browser.</shortdesc>
    <img>goto CMS site</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="take_offline_all_in_folder" relpath="delve_into/user/editors/howto">Take offline all in folder
+   <section>Take offline all in folder</section>
+   <shortdesc>How to take offline all documents in a folder?</shortdesc>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document></folder><document ext="xml" filename="index" relpath="delve_into/user/editors">Editors Guide
@@ -1346,9 +1398,9 @@ repository itself.
    <shortdesc>How to start a CMS session in your browser</shortdesc>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="update_all_content" relpath="delve_into/user/information_architects/howto">Update content
-   <section>Update content</section>
-   <shortdesc>How to update content</shortdesc>
+  </document><document ext="xml" filename="update_all_content" relpath="delve_into/user/information_architects/howto">Update all content
+   <section>Update all content</section>
+   <shortdesc>How to update all content</shortdesc>
    <img>update content screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>

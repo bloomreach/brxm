@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -35,17 +35,17 @@ ________________________________________________________________________________
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/editors/hippo_logout_Janine.png" alt='logout screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/editors/hippo_logout_Janine.png" alt='logout screenshot'/>
     </div></div>
      <p>
-       Click the logout button to logout. The <a href='./login.html'>login</a> dialog will reapear.
+       Click the logout button to logout. The <a href='./login.html'>login</a> dialog will reappear.
      </p>
    </div>
 
 
   <subsection name='Next'>
    <ul>
-    <li><a href='login.html'>Login (continue <a href='../tour.html'>tour</a>, first week)</a>.</li>
+    <li><a href='login.html'>Login</a> (continue <a href='../tour.html'>tour</a>).</li>
    </ul>
   </subsection>
    <subsection name='Alternative'>

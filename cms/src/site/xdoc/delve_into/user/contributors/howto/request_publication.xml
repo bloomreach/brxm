@@ -53,10 +53,14 @@ ________________________________________________________________________________
    <p>
     The editor will be notified and accept or reject your request.
    </p>
+   <p>Note that the editor can publish or take offline documents without your request.
+      See <a href='./editor_actions.html'>editor actions</a>.
+   </p>
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./schedule_publication.html'>Schedule publication (continue</a> <a href='../tour.html'>tour</a>).</li>
+     <li><a href='schedule_publication.html'>Schedule publication</a> (continue <a href='../tour.html'>tour</a>).</li>
+     <li><a href='request_take_offline.html'>Request take offline.</a></li>
      <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
      <li><a href='./goto_folder.html'>goto another folder (list its contents)</a>.</li>
     </ul>
@@ -64,7 +68,7 @@ ________________________________________________________________________________
 
    <subsection name='Alternative'>
     <ul>
-     <li><a href='./index.html'>Howto list.</a></li>
+     <li><a href='index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
     </ul>
    </subsection>

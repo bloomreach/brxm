@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">374 errors and/or todos in 230 out of 230 documents (100%).</span>
+      <span class="shortdesc">387 errors and/or todos in 238 out of 238 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -45,13 +45,13 @@
      </li>
         <li>6 documents to rewrite.
      </li>
-        <li>11 documents requiring additions.
+        <li>10 documents requiring additions.
      </li>
         <li>0 documents with unidentified TODO strings.
      </li>
         <li>1 not valid XML documents.
      </li>
-        <li>15 documents with bad text.
+        <li>18 documents with bad text.
      </li>
         <li>9 multisection documents.
      </li>
@@ -450,7 +450,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Add something to documents: 11">
+      <subsection name="Add something to documents: 10">
         <ol>
           <li>
             <a href="./delve_into/custom/howto/customize_editing_template.html">customize_editing_template: Customize an Editing Template</a>
@@ -483,12 +483,6 @@ repository is;
             <a href="./delve_into/tools/maven/learning_maven.html">learning_maven: Tips and tricks</a>
             <ul>
               <li>References to Maven pages</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/concepts/folder_tabulation_panel.html">folder_tabulation_panel: Folder tabulation panel</a>
-            <ul>
-              <li>more on publish states</li>
             </ul>
           </li>
           <li>
@@ -581,7 +575,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 15">
+      <subsection name="badtext documents: 18">
         <ol>
           <li>
             <a href="./delve_into/custom/howto/extend_dashboard.html">extend_dashboard: Giving our plugin a place on the dashboard</a>
@@ -632,6 +626,13 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./delve_into/user/contributors/concepts/folder_tabulation_panel.html">folder_tabulation_panel: Folder tabulation panel</a>
+            <ul>
+              <li>The document 'multibazar2009' is not<span xmlns="" class="bad"> current </span>ly published on the web. It may never have been published or been taken off line.</li>
+              <li>If you like the details: All documents that are not<span xmlns="" class="bad"> current </span>ly published on the web have an unpublished saved variant, even if just created and you never saved it yourself.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/user/contributors/howto/goto_folder.html">goto_folder: Goto a Folder</a>
             <ul>
               <li>. The contents of the<span xmlns="" class="bad"> current </span>folder will appear in the</li>
@@ -641,6 +642,20 @@ repository is;
             <a href="./delve_into/user/contributors/howto/start_CMS.html">start_CMS: Start CMS site</a>
             <ul>
               <li>ia.org/. The site is not yet visible, because the user has not clicked yet. Coincidentially, the site<span xmlns="" class="bad"> current </span>ly visible happens to be the Hippo CMS documentation site at</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/editors/howto/count_published.html">count_published: Count published documents</a>
+            <ul>
+              <li>) a count is presented of all documents in the folder tree that are<span xmlns="" class="bad"> current </span>ly published.</li>
+              <li>The document multibazaar2009 is<span xmlns="" class="bad"> current </span>ly published, so it is counted. The document is being edited, but that makes no difference.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/editors/howto/count_unpublished.html">count_unpublished: Count unpublished documents</a>
+            <ul>
+              <li>a count is presented of all documents in the folder tree that are not<span xmlns="" class="bad"> current </span>ly published or that are changed and saved after being published. These documents all have an unpublished saved variant.</li>
+              <li>The document multibazaar2009 is not<span xmlns="" class="bad"> current </span>ly published, so it is counted.</li>
             </ul>
           </li>
           <li>
