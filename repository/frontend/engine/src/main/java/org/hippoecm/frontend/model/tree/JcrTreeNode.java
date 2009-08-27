@@ -87,10 +87,10 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
 
     public TreeNode getChildAt(int i) {
         ensureChildrenLoaded();
-        if (i < children.size()) {
+        if (i >= 0 && i < children.size()) {
             return children.get(i);
         }
-        log.error("Index too large: " + i + " of " + children.size() + " children [node "
+        log.error("Invalid index: " + i + " of " + children.size() + " children [node "
                 + nodeModel.getItemModel().getPath() + "]");
         return new LabelTreeNode(this, "invalid tree node");
     }
