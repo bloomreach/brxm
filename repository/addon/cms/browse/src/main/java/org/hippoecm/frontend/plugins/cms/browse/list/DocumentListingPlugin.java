@@ -40,8 +40,6 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
-import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
-import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +77,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
         return new TableDefinition(columns);
     }
-    
+
     @Override
     protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
             ISortableDataProvider dataProvider, TableSelectionListener selectionListener, boolean triState,
@@ -94,26 +92,26 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
         public DraggebleListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
                 TableSelectionListener selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
             super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
-            
+
+            //Don't use drag&drop on documents because 300+ documents in a folder on IE* is slow
+            //            add(new DragBehavior(YuiPluginHelper.getManager(getPluginContext()), new DragSettings(YuiPluginHelper
+            //                    .getConfig(getPluginConfig()))) {
+            //                private static final long serialVersionUID = 1L;
+            //
+            //                @Override
+            //                protected IModel getDragModel() {
+            //                    return null;
+            //                }
+            //            });
+
             add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())) {
                 private static final long serialVersionUID = 1L;
-                
+
                 @Override
                 public String getMarkupId() {
                     return DraggebleListDataTable.this.getMarkupId();
                 }
             });
-        }
-
-        @Override
-        protected Item newRowItem(final String id, int index, final IModel model) {
-            Item item = super.newRowItem(id, index, model);
-            if (model instanceof JcrNodeModel) {
-                JcrNodeModel nodeModel = (JcrNodeModel) model;
-                item.add(new NodeDragBehavior(YuiPluginHelper.getManager(getPluginContext()), new DragSettings(
-                        YuiPluginHelper.getConfig(getPluginConfig())), nodeModel));
-            }
-            return item;
         }
     }
 

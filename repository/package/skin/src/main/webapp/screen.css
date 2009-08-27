@@ -1181,9 +1181,8 @@ table.hippo-defaultcontent td {
   position: absolute;
 }
 
+/* Apply scrollbars to modern browsers */
 table.hippo-list-documents > tbody {
   overflow-x: hidden;
   overflow-y: auto;
-  -ms-overflow-x: hidden;
-  -ms-overflow-y: auto;
 }

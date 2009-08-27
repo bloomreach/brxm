@@ -40,7 +40,7 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>10</sv:value>
+      <sv:value>500</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
       <sv:value>3</sv:value>
@@ -178,7 +178,7 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>20</sv:value>
+      <sv:value>500</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
       <sv:value>3</sv:value>
@@ -475,7 +475,7 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>20</sv:value>
+      <sv:value>500</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
       <sv:value>3</sv:value>
@@ -591,7 +591,7 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>20</sv:value>
+      <sv:value>500</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
       <sv:value>3</sv:value>
@@ -715,7 +715,7 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>20</sv:value>
+      <sv:value>500</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
       <sv:value>3</sv:value>
@@ -795,7 +795,7 @@
       <sv:value>wicket.id</sv:value>
     </sv:property>
     <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>20</sv:value>
+      <sv:value>500</sv:value>
     </sv:property>
     <sv:property sv:name="list.view.size" sv:type="String">
       <sv:value>3</sv:value>

@@ -66,6 +66,36 @@ if (!YAHOO.hippo.DragDropManager) {
                         + clazz, "info", "DragDropManager");
                 this._add(id, clazz, config, this.draggables);
             },
+            
+            /**
+             * Do smarter registration of draggables.
+             * Not in use for now because IE is slow
+             */
+            registerDraggable : function(id, modelClass, config) {
+                if (YAHOO.env.ua.ie > 0) {
+                    return; 
+                } 
+                
+                var me = this;
+                var func = function() {
+                    var tbody = Dom.getElementBy(function(el) { return true; }, 'tbody', id);
+                    var children = Dom.getChildren(tbody);
+                    for(var i=0; i<children.length; i++) {
+                        var child = children[i];
+                        var c = null;
+                        if (Lang.isArray(config.groups)) {
+                            c = new modelClass(child.id, config.groups.shift(), config);
+                        } else {
+                            c = new modelClass(child.id, null, config);
+                        }
+                        child.dd = c;
+                    }
+                };
+                var func2 = function() {
+                    window.setTimeout(func, 10);
+                }
+                this.loader.registerFunction(func2);
+            },
 
             addDroppable : function(id, modelClass, config) {
                 var clazz = this.getClass(modelClass, YAHOO.util.DDTarget);
@@ -90,11 +120,12 @@ if (!YAHOO.hippo.DragDropManager) {
             },
 
             getClass : function(clazz, defaultClazz) {
-                if (!Lang.isUndefined(clazz) && !Lang.isNull(clazz)) { // TODO:
-            return clazz;
-        }
-        return defaultClazz;
-    }
+                if (!Lang.isUndefined(clazz) && !Lang.isNull(clazz)) {
+                    return clazz;
+                }
+                return defaultClazz;
+            }
+            
         };
     })();
 
