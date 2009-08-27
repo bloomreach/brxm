@@ -181,7 +181,11 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
     public void delete(IClusterConfig object) {
     }
 
-    protected Node getTemplateNode(ITypeDescriptor type, boolean create) throws RepositoryException {
+    /**
+     * Retrieve the node that contains the template cluster.  Throws an exception when no such
+     * node can be found.
+     */
+    protected Node getTemplateNode(ITypeDescriptor type, boolean create) throws RepositoryException, StoreException {
         String typeName = type.getName();
         String path = "/hippo:namespaces/";
         if (typeName.indexOf(':') > 0) {
@@ -189,7 +193,12 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
         } else {
             path += "system/" + typeName;
         }
-        Node typeNode = (Node) ((UserSession) Session.get()).getJcrSession().getItem(path);
+
+        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        if (!session.itemExists(path)) {
+            throw new StoreException("No template type node exists");
+        }
+        Node typeNode = (Node) session.getItem(path);
 
         boolean save = false;
         try {
@@ -216,9 +225,13 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
                     break;
                 }
             }
-            if (templateNode == null && create) {
-                templateNode = templateSetNode.addNode("_default_", FrontendNodeType.NT_PLUGINCLUSTER);
-                save = true;
+            if (templateNode == null) {
+                if (create) {
+                    templateNode = templateSetNode.addNode("_default_", FrontendNodeType.NT_PLUGINCLUSTER);
+                    save = true;
+                } else {
+                    throw new StoreException("No template found for " + type);
+                }
             }
             return templateNode;
         } finally {
@@ -231,11 +244,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
     protected IClusterConfig getTemplate(ITypeDescriptor type) throws StoreException {
         try {
             Node node = getTemplateNode(type, false);
-            if (node == null) {
-                throw new StoreException("No template found for " + type);
-            } else {
-                return new JcrClusterConfig(new JcrNodeModel(node));
-            }
+            return new JcrClusterConfig(new JcrNodeModel(node));
         } catch (RepositoryException ex) {
             log.error("Error while fetching template for type: " + type, ex);
         }
