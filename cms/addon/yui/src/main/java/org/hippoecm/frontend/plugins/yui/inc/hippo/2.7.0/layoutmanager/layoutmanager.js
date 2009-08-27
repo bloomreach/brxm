@@ -77,6 +77,17 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     o.render();
                 })
                 this._w.clear();
+                
+                //Workaround for HREPTWO-3035
+                //Set width of all resize handlers in IE to 20px, else they will be blocked
+                //by the scrollbars
+                if (YAHOO.env.ua.ie > 0) {
+                    var re = Dom.getElementsByClassName('yui-resize-handle', 'div');
+                    for(var i=0; i<re.length; i++) {
+                        var handle = re[i]; 
+                        Dom.setStyle(handle, 'width', '20px');
+                    }
+                }
             },
             
             addRoot : function(id, clazz, config) {

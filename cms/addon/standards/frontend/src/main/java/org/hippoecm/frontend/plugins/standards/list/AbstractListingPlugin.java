@@ -67,7 +67,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Tabl
                     public void onEvent(Iterator<? extends IEvent> event) {
                         updateSelection(documentReference.getModel());
                     }
-                    
+
                 }, IObserver.class.getName());
             }
         } else {
@@ -114,14 +114,14 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Tabl
                     public void onEvent(Iterator<? extends IEvent> event) {
                         redraw();
                     }
-                    
+
                 };
                 getPluginContext().registerService(providerObserver, IObserver.class.getName());
             }
         }
         return provider;
     }
-    
+
     private void dumpDataProvider() {
         if (provider != null) {
             if (providerObserver != null) {
@@ -131,7 +131,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Tabl
             provider = null;
         }
     }
-    
+
     protected ISortableDataProvider newDataProvider() {
         return new DocumentsProvider((JcrNodeModel) getModel(), new DocumentListFilter(getPluginConfig()),
                 getTableDefinition().getComparators());
@@ -163,7 +163,6 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements Tabl
     private void updateSelection(IModel model) {
         dataTable.setModel(model);
         onSelectionChanged(model);
-        redraw();
     }
 
     protected void onSelectionChanged(IModel model) {

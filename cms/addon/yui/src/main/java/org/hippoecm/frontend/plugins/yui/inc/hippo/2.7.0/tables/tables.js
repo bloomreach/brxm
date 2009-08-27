@@ -25,14 +25,14 @@ if (!YAHOO.hippo.TableHelper) {
         	updateHeight: function() {
         		this.setHeight(this.prevParentId);
         	},	
-        		
+
     		setHeight: function(parentId) {
 	        	var parentEl = Dom.get(parentId);
 	        	var layoutContainer = Dom.getAncestorByClassName(parentId, 'yui-layout-bd');
 	        	var parentRegion = Dom.getRegion(layoutContainer);
 	        	var minHeight = 25; //topMargin
 	        	var tfoot = Dom.getElementBy(function(el) { return true; }, 'tfoot', parentEl);
-	        	if(tfoot.length > 0) {
+	        	if(typeof(tfoot.length) == 'undefined' ) {
 	        		minHeight += 65;
 	        	}
 	        	var thead = Dom.getElementBy(function(el) { return true; }, 'thead', parentEl);
@@ -43,7 +43,16 @@ if (!YAHOO.hippo.TableHelper) {
 	        	var tbodyRegion = Dom.getRegion(tbody);
 	        	var theHeight = parentRegion.height - minHeight;
 	        	if(tbodyRegion.height > theHeight) {
-	        		Dom.setStyle(tbody, 'height', (parentRegion.height - minHeight) + 'px');
+	                if (YAHOO.env.ua.ie > 0) {
+	                    //Couldn't really get the scrolling of a tbody working in IE so set the whole
+	                    //unit to scrolling
+	                    var firstDiv = Dom.getAncestorByTagName(parentId, 'div');
+	                    var unEl = YAHOO.hippo.LayoutManager.findLayoutUnit(firstDiv);
+	                    var un = YAHOO.widget.LayoutUnit.getLayoutUnitById(unEl.id);
+	                    un.set('scroll', true);
+	                } else {
+	                    Dom.setStyle(tbody, 'height', theHeight + 'px');
+	                }
 	        	} else {
 	        		Dom.setStyle(tbody, 'height', '');
 	        	}

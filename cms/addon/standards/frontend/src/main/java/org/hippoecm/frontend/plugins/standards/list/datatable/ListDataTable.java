@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -86,6 +87,20 @@ public class ListDataTable extends DataTable {
                 ListDataTable.this.destroyItem(item);
             }
         });
+    }
+
+    @Override
+    public Component setModel(IModel model) {
+        IModel currentModel = getModel();
+        if (currentModel != null && model != null && !model.equals(currentModel)) {
+            for (Item it : observers.keySet()) {
+                IModel checkModel = it.getModel();
+                if (currentModel.equals(checkModel) || model.equals(checkModel)) {
+                    dirty.add(it);
+                }
+            }
+        }
+        return super.setModel(model);
     }
 
     public void init(IPluginContext context) {
