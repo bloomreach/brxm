@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.validation.validator.NumberValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -64,7 +65,39 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
     protected abstract IDynamicWizardStep createFirstStep();
 
-    protected abstract class ChooseFolderStep extends DynamicWizardStep {
+    protected abstract class Step extends DynamicWizardStep {
+        private static final long serialVersionUID = 1L;
+
+        public Step(IDynamicWizardStep previousStep) {
+            super(previousStep);
+            
+            String title = getStepTitle();
+            if (title != null) {
+                setTitleModel(new Model(title));
+
+            }
+
+            String sum = getStepSummary();
+            if (sum != null) {
+                setSummaryModel(new Model(sum));
+
+            }
+        }
+        
+        protected String getStepTitle() {
+            return null;
+        }
+
+        protected String getStepSummary() {
+            return null;
+        }
+
+        public boolean isLastStep() {
+            return false;
+        }
+    }
+    
+    protected abstract class ChooseFolderStep extends Step {
         private static final long serialVersionUID = 1L;
 
         IModel model;
@@ -74,7 +107,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
             this.model = model;
 
-            add(new YuiJcrTree("mytree", context, config) {
+            add(new YuiJcrTree("mytree", context, config, model) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -101,7 +134,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
         }
     }
 
-    protected abstract class SelectTypesStep extends DynamicWizardStep {
+    protected abstract class SelectTypesStep extends Step {
         private static final long serialVersionUID = 1L;
 
         NodeTypeSettings settings;
@@ -169,11 +202,12 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
         protected abstract Collection<String> getTypes();
     }
 
-    protected abstract class NameSettingsStep extends DynamicWizardStep {
+    protected abstract class NameSettingsStep extends Step {
         private static final long serialVersionUID = 1L;
 
         public NameSettingsStep(IDynamicWizardStep previousStep, NameSettings nameSettings) {
             super(previousStep);
+
 
             RequiredTextField tf;
             add(tf = new RequiredTextField("minLength", new PropertyModel(nameSettings, "minLength"), Integer.class));
@@ -184,7 +218,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
         }
     }
 
-    protected abstract class FolderSettingsStep extends DynamicWizardStep {
+    protected abstract class FolderSettingsStep extends Step {
         private static final long serialVersionUID = 1L;
 
         public FolderSettingsStep(IDynamicWizardStep previousStep, FolderSettings folderSettings) {
@@ -203,12 +237,9 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             tf.add(NumberValidator.range(1, 256));
         }
 
-        public boolean isLastStep() {
-            return false;
-        }
     }
 
-    protected abstract class DocumentSettingsStep extends DynamicWizardStep {
+    protected abstract class DocumentSettingsStep extends Step {
         private static final long serialVersionUID = 1L;
 
         public DocumentSettingsStep(IDynamicWizardStep previousStep, DocumentSettings documentSettings) {
@@ -217,10 +248,6 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             RequiredTextField tf;
             add(tf = new RequiredTextField("amount", new PropertyModel(documentSettings, "amount"), Integer.class));
             tf.add(NumberValidator.range(1, 100));
-        }
-
-        public boolean isLastStep() {
-            return false;
         }
     }
 }

@@ -25,6 +25,8 @@ import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -59,8 +61,9 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
 
         public Dialog() {
             add(HeaderContributor.forCss(CreateFoldersShortcutPlugin.class, "style.css"));
-
-            setOkLabel(new StringResourceModel("start-create-folders-label", CreateFoldersShortcutPlugin.this, null));
+            
+            setOkVisible(false);
+            setCancelVisible(false);
 
             add(new CreateFoldersWizard("wizard", getPluginContext(), getPluginConfig()));
         }
@@ -83,6 +86,11 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
                 builder.createFolders(settings, 0);
                 closeDialog();
             }
+            
+            @Override
+            public void onCancel() {
+                closeDialog();
+            }
 
             @Override
             protected IDynamicWizardStep createFirstStep() {
@@ -91,6 +99,11 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
                 IModel folderModel = new PropertyModel(settings, "folderUUID");
                 return new ChooseFolderStep(null, folderModel) {
                     private static final long serialVersionUID = 1L;
+                    
+                    @Override
+                    protected String getStepTitle() {
+                        return new StringResourceModel("wizard.step.1.title", CreateFoldersShortcutPlugin.this, null).getString();
+                    }
 
                     public IDynamicWizardStep next() {
                         return createSecondStep(this);
@@ -101,6 +114,11 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
             private IDynamicWizardStep createSecondStep(IDynamicWizardStep previousStep) {
                 return new SelectTypesStep(previousStep, settings.nodeTypes) {
                     private static final long serialVersionUID = 1L;
+                    
+                    @Override
+                    protected String getStepTitle() {
+                        return new StringResourceModel("wizard.step.2.title", CreateFoldersShortcutPlugin.this, null).getString();
+                    }
 
                     public IDynamicWizardStep next() {
                         return createThirdStep(this);
@@ -116,6 +134,12 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
             private IDynamicWizardStep createThirdStep(IDynamicWizardStep previousStep) {
                 return new FolderSettingsStep(previousStep, settings) {
                     private static final long serialVersionUID = 1L;
+                    
+                    @Override
+                    protected String getStepTitle() {
+                        return new StringResourceModel("wizard.step.3.title", CreateFoldersShortcutPlugin.this, null).getString();
+                    }
+
 
                     public IDynamicWizardStep next() {
                         return createFourthStep(this);
@@ -126,19 +150,62 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
             private IDynamicWizardStep createFourthStep(IDynamicWizardStep previousStep) {
                 return new NameSettingsStep(previousStep, settings.naming) {
                     private static final long serialVersionUID = 1L;
-
-                    public boolean isLastStep() {
-                        return true;
+                    
+                    @Override
+                    protected String getStepTitle() {
+                        return new StringResourceModel("wizard.step.4.title", CreateFoldersShortcutPlugin.this, null).getString();
                     }
 
                     public IDynamicWizardStep next() {
+                        return createFifthStep(this);
+                    }
+
+                };
+            }
+            
+            private IDynamicWizardStep createFifthStep(IDynamicWizardStep previousStep) {
+                return new DocumentSettingsStep(previousStep, settings.document) {
+                    private static final long serialVersionUID = 1L;
+                    
+                    @Override
+                    protected String getStepTitle() {
+                        return new StringResourceModel("wizard.step.5.title", CreateFoldersShortcutPlugin.this, null).getString();
+                    }
+
+                    public IDynamicWizardStep next() {
+                        return createSixthStep(this);
+                    }
+                };
+            }
+            
+            private IDynamicWizardStep createSixthStep(IDynamicWizardStep previousStep) {
+                return new NameSettingsStep(previousStep, settings.document.naming) {
+                    private static final long serialVersionUID = 1L;
+                    
+                    @Override
+                    protected String getStepTitle() {
+                        return new StringResourceModel("wizard.step.6.title", CreateFoldersShortcutPlugin.this, null).getString();
+                    }
+                    
+                    public IDynamicWizardStep next() {
                         return null;
+                    }
+                    
+                    @Override
+                    public boolean isLastStep() {
+                        return true;
                     }
 
                 };
             }
         }
+        
+        @Override
+        public IValueMap getProperties() {
+            return new ValueMap("width=500,height=355");
+        }
 
     }
+    
 
 }

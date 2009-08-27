@@ -109,6 +109,8 @@ public class ContentBuilder implements IClusterable {
         int minimumChildNodes = 2;
         int maximumChildNodes = 2;
 
+        DocumentSettings document = new DocumentSettings();
+
         public FolderSettings() {
         }
 
@@ -213,13 +215,22 @@ public class ContentBuilder implements IClusterable {
             for (int i = 0; i < amount; i++) {
                 newNodes.add(createNode(NEW_FOLDER_CATEGORY, nodeTypes, settings.naming));
             }
-            if (depth < settings.depth) {
-                depth++;
-                String thisPath = folderPath;
-                for (String newNode : newNodes) {
-                    settings.folderUUID = path2uuid(thisPath + "/" + newNode);
+            
+            String rootPath = folderPath;
+            for (String newNode : newNodes) {
+                settings.folderUUID = path2uuid(rootPath + "/" + newNode);
+
+                if (settings.document.amount > 0) {
+                    settings.document.folderUUID = settings.folderUUID;
+                    createDocuments(settings.document);
+                }
+
+                if (depth < settings.depth) {
+                    depth++;
                     createFolders(settings, depth);
                 }
+
+
             }
         }
     }

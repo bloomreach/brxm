@@ -1,5 +1,32 @@
 .wicket-modal .hippo-yui-tree {
-  width: 300px;
-  height:250px;
-  overflow:auto;
+	padding-top: 10px;
+	overflow:auto;
+	height:220px;
+}
+
+.modal-contents {
+  margin-left: 10px;
+  margin-top: 5px; 
+}
+
+.modal-contents .development-content-wizard {
+  width: 450px;
+  height:350px;
+}
+.development-content-wizard .wicketExtensionsWizardOuterTable , .modal-contents .development-content-wizard .wicketExtensionsWizardInnerTable{
+  width: 100%;
+}
+
+.development-content-wizard .wicketExtensionsWizardViewInner {
+  height:240px;
+  padding-top: 10px;
+}
+
+.development-content-wizard .wicketExtensionsWizardHeaderTitle {
+  padding-top: 10px;
+}
+
+.development-content-wizard fieldset {
+  border-top: 1px solid #e3e3e3;
+  font-size: 1.1em;
 }

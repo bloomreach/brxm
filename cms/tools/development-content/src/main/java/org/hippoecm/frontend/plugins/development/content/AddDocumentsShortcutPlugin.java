@@ -25,6 +25,8 @@ import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -65,79 +67,117 @@ public class AddDocumentsShortcutPlugin extends RenderPlugin {
         public Dialog() {
             add(HeaderContributor.forCss(AddDocumentsShortcutPlugin.class, "style.css"));
 
-            setOkLabel(new StringResourceModel("start-add-content-label", AddDocumentsShortcutPlugin.this, null));
+            setOkVisible(false);
+            setCancelVisible(false);
 
-            final DocumentSettings settings = new DocumentSettings();
-            
-            add(new DevelopmentContentWizard("wizard", getPluginContext(), getPluginConfig()) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected IDynamicWizardStep createFirstStep() {
-
-                    return new ChooseFolderStep(null, new PropertyModel(settings, "folderUUID")) {
-                        private static final long serialVersionUID = 1L;
-
-                        public IDynamicWizardStep next() {
-                            return createSecondStep(this);
-                        }
-                    };
-                }
-
-                private IDynamicWizardStep createSecondStep(IDynamicWizardStep previousStep) {
-                    return new SelectTypesStep(previousStep, settings.nodeTypes) {
-                        private static final long serialVersionUID = 1L;
-
-                        public IDynamicWizardStep next() {
-                            return createThirdStep(this);
-                        }
-
-                        @Override
-                        protected Collection<String> getTypes() {
-                            return builder.getDocumentTypes(settings.folderUUID);
-                        }
-
-                    };
-                }
-
-                private IDynamicWizardStep createThirdStep(IDynamicWizardStep previousStep) {
-                    return new DocumentSettingsStep(previousStep, settings) {
-                        private static final long serialVersionUID = 1L;
-
-                        public IDynamicWizardStep next() {
-                            return createFourthStep(this);
-                        }
-
-                    };
-                }
-
-                private IDynamicWizardStep createFourthStep(IDynamicWizardStep previousStep) {
-                    return new NameSettingsStep(previousStep, settings.naming) {
-                        private static final long serialVersionUID = 1L;
-
-                        public boolean isLastStep() {
-                            return true;
-                        }
-
-                        public IDynamicWizardStep next() {
-                            return null;
-                        }
-
-                    };
-                }
-
-                @Override
-                public void onFinish() {
-                    builder.createDocuments(settings);
-                    closeDialog();
-                }
-
-            });
+            add(new AddDocumentsWizard("wizard", getPluginContext(), getPluginConfig()));
 
         }
 
         public IModel getTitle() {
             return new StringResourceModel("add-content-label", AddDocumentsShortcutPlugin.this, null);
+        }
+
+        @Override
+        public IValueMap getProperties() {
+            return new ValueMap("width=500,height=355");
+        }
+        
+        class AddDocumentsWizard extends DevelopmentContentWizard {
+            private static final long serialVersionUID = 1L;
+            
+            DocumentSettings settings;
+
+            public AddDocumentsWizard(String id, IPluginContext context, IPluginConfig config) {
+                super(id, context, config);
+            }
+
+            @Override
+            protected IDynamicWizardStep createFirstStep() {
+                settings = new DocumentSettings();
+                
+                return new ChooseFolderStep(null, new PropertyModel(settings, "folderUUID")) {
+                    private static final long serialVersionUID = 1L;
+                    
+                    @Override
+                    protected String getStepTitle() {
+                        return new StringResourceModel("wizard.step.1.title", AddDocumentsShortcutPlugin.this, null).getString();
+                    }
+
+                    public IDynamicWizardStep next() {
+                        return createSecondStep(this);
+                    }
+                };
+            }
+
+            private IDynamicWizardStep createSecondStep(IDynamicWizardStep previousStep) {
+                return new SelectTypesStep(previousStep, settings.nodeTypes) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected String getStepTitle() {
+                        return new StringResourceModel("wizard.step.2.title", AddDocumentsShortcutPlugin.this, null).getString();
+                    }
+
+                    public IDynamicWizardStep next() {
+                        return createThirdStep(this);
+                    }
+
+                    @Override
+                    protected Collection<String> getTypes() {
+                        return builder.getDocumentTypes(settings.folderUUID);
+                    }
+
+                };
+            }
+
+            private IDynamicWizardStep createThirdStep(IDynamicWizardStep previousStep) {
+                return new DocumentSettingsStep(previousStep, settings) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected String getStepTitle() {
+                        return new StringResourceModel("wizard.step.3.title", AddDocumentsShortcutPlugin.this, null).getString();
+                    }
+
+                    public IDynamicWizardStep next() {
+                        return createFourthStep(this);
+                    }
+
+                };
+            }
+
+            private IDynamicWizardStep createFourthStep(IDynamicWizardStep previousStep) {
+                return new NameSettingsStep(previousStep, settings.naming) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected String getStepTitle() {
+                        return new StringResourceModel("wizard.step.4.title", AddDocumentsShortcutPlugin.this, null).getString();
+                    }
+
+                    public boolean isLastStep() {
+                        return true;
+                    }
+
+                    public IDynamicWizardStep next() {
+                        return null;
+                    }
+
+                };
+            }
+
+            @Override
+            public void onFinish() {
+                builder.createDocuments(settings);
+                closeDialog();
+            }
+
+            @Override
+            public void onCancel() {
+                closeDialog();
+            }
+
         }
     }
 
