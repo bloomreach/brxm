@@ -84,8 +84,7 @@
     <org.apache.geronimo.specs.jta.version>1.1</org.apache.geronimo.specs.jta.version>
     <org.apache.derby.version>10.2.1.6</org.apache.derby.version>
     <org.slf4j.version>1.4.3</org.slf4j.version>
-    <poi.version>2.5.1-final-20040804</poi.version>
-    <pdfbox.version>0.6.4</pdfbox.version>
+    <poi.version>3.0.2-FINAL</poi.version>
     <org.textmining.version>0.4</org.textmining.version>
     <javax.servlet.version>2.3</javax.servlet.version>
     <xerces.version>2.8.1</xerces.version>
@@ -672,19 +671,26 @@
         <version>${org.apache.derby.version}</version>
       </dependency>
       <dependency>
-        <groupId>poi</groupId>
+        <groupId>org.apache.poi</groupId>
         <artifactId>poi</artifactId>
         <version>${poi.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
-        <groupId>pdfbox</groupId>
-        <artifactId>pdfbox</artifactId>
-        <version>${pdfbox.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.textmining</groupId>
-        <artifactId>tm-extractors</artifactId>
-        <version>${org.textmining.version}</version>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-scratchpad</artifactId>
+        <version>${poi.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
