@@ -26,6 +26,7 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -34,45 +35,47 @@ import org.hippoecm.frontend.plugins.yui.tree.TreeBehavior.DefaultTreeItem;
 
 public class YuiJcrTree extends Panel {
     private static final long serialVersionUID = 1L;
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
-    public YuiJcrTree(String id, IPluginContext context, IPluginConfig config) {
+
+    public YuiJcrTree(String id, IPluginContext context, IPluginConfig config, final IModel model) {
         super(id);
-        
+
         TreeSettings settings = new TreeSettings(config);
 
         add(new TreeBehavior(YuiPluginHelper.getManager(context), settings) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             protected TreeItem getRootNode() {
                 JcrNodeModel rootModel = new JcrNodeModel(settings.getRoot());
                 Node root = rootModel.getNode();
-                if(root != null) {
+                if (root != null) {
                     try {
-                        return new JcrTreeItem(root);
+                        String selected = model != null && model.getObject() != null ? (String) model.getObject()
+                                : root.getUUID();
+                        return new JcrTreeItem(root, selected);
                     } catch (RepositoryException e) {
                         log.error("Error creating root node for JcrYuiTree on root[" + settings.getRoot() + "]", e);
                     }
                 }
                 return null;
             }
-            
+
             @Override
             protected void onClick(AjaxRequestTarget target, String uuid) {
                 YuiJcrTree.this.onClick(target, uuid);
             }
-            
+
             @Override
             protected void onDblClick(AjaxRequestTarget target, String uuid) {
                 YuiJcrTree.this.onDblClick(target, uuid);
             }
-            
+
         });
     }
-    
+
     protected void onDblClick(AjaxRequestTarget target, String uuid) {
     }
 
@@ -81,19 +84,25 @@ public class YuiJcrTree extends Panel {
 
     public static class JcrTreeItem extends DefaultTreeItem {
         private static final long serialVersionUID = 1L;
-        
-        public JcrTreeItem(Node node) throws RepositoryException {
+
+        public JcrTreeItem(Node node, String selectedUUID) throws RepositoryException {
             super(getLabel(node), getUUID(node), 0);
 
-            if(node.hasNodes()) {
+            if (selectedUUID != null && selectedUUID.equals(uuid)) {
+                setExpanded(true);
+            }
+            if (node.hasNodes()) {
                 NodeIterator it = node.getNodes();
                 List<JcrTreeItem> items = new LinkedList<JcrTreeItem>();
-                while(it.hasNext()) {
+                while (it.hasNext()) {
                     //add filter
-                    items.add(new JcrTreeItem(it.nextNode()));
+                    Node childNode = it.nextNode();
+                    if (childNode.isNodeType("hippostd:folder")) {
+                        items.add(new JcrTreeItem(childNode, selectedUUID));
+                    }
                 }
                 children = new JcrTreeItem[items.size()];
-                for(JcrTreeItem item : items) {
+                for (JcrTreeItem item : items) {
                     addChild(item);
                 }
             }
@@ -110,7 +119,7 @@ public class YuiJcrTree extends Panel {
         private static String getLabel(Node node) throws RepositoryException {
             return node.getName();
         }
-        
+
     }
 
 }
