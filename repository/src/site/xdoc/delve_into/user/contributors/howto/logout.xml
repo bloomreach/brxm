@@ -33,19 +33,19 @@ ________________________________________________________________________________
     leftpx=500;
     bottompx=300;
    </script>
-   <div class='group'> 
+   <div class='group'>
     <div id='screenshot'><div>
       <img src="../../../../images/screenshots/cms_M9/contribs/logout.png" alt='logout screenshot'/> 
      </div></div>
      <p>
       Click the logout button to logout.
-      The <a href='./login.html'>login</a> dialog will reapear.
+      The <a href='./login.html'>login</a> dialog will reappear.
      </p>
    </div>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./login.html'>Login</a>.</li>
+     <li><a href='./login.html'>Login (continue</a> <a href='../tour.html'>tour).</a></li>
    </ul>
   </subsection>
 

@@ -62,6 +62,15 @@ ________________________________________________________________________________
      <a href='./schedule_publication.html'>scheduling a publication</a>.
    </p>
 
+   <p>
+    It is a good idea to first check if a document is referred to before you request
+    it to be taken offline. Taking offline a document that is referred to by published documents will
+    result in broken links. Readers of your site will not like that.
+    Get the list <a href='show_referring_documents.html'>showing all referring documents</a>.
+    Note that you will not receive a warning if you request to take offline a document that
+    is referred to and neither will the editor handling your request.
+   </p>
+
    <p>Note that the editor can publish or take offline documents without your request.
       See <a href='./editor_actions.html'>editor actions</a>.
    </p>
@@ -75,6 +84,7 @@ ________________________________________________________________________________
 
    <subsection name='Alternative'>
     <ul>
+     <li><a href='show_referring_documents.html'>Showing all referring documents</a>.</li>
      <li><a href='./schedule_publication.html'>Schedule publication</a>.</li>
      <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>

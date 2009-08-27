@@ -703,6 +703,10 @@
    relpath='delve_into/user/contributors/concepts'
   >current_folder</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='delve_into/user/contributors/concepts/document_actions_menu.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >document_actions_menu</file>
+      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/document_type.xml'
    relpath='delve_into/user/contributors/concepts'
   >document_type</file>
@@ -734,10 +738,6 @@
    fullname='delve_into/user/contributors/concepts/folder_tabulation_panel.xml'
    relpath='delve_into/user/contributors/concepts'
   >folder_tabulation_panel</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/contributors/concepts/folder_tabulation_panel.xml~'
-   relpath='delve_into/user/contributors/concepts'
-  >folder_tabulation_panel</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/folder.xml'
    relpath='delve_into/user/contributors/concepts'
@@ -760,6 +760,10 @@
   >markuped_text</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/review_mode.xml'
+   relpath='delve_into/user/contributors/concepts'
+  >review_mode</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/contributors/concepts/review_mode.xml~'
    relpath='delve_into/user/contributors/concepts'
   >review_mode</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -815,14 +819,6 @@
    fullname='delve_into/user/contributors/howto/editor_actions.xml'
    relpath='delve_into/user/contributors/howto'
   >editor_actions</file>
-      <file ext='xml~' mimetype='application/xml' note='todo'
-   fullname='delve_into/user/contributors/howto/editor_actions.xml~'
-   relpath='delve_into/user/contributors/howto'
-  >editor_actions</file>
-      <file ext='xml~' mimetype='application/xml' note='todo'
-   fullname='delve_into/user/contributors/howto/editors_actions.xml~'
-   relpath='delve_into/user/contributors/howto'
-  >editors_actions</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/howto/fill_boolean_field_in_document.xml'
    relpath='delve_into/user/contributors/howto'
@@ -867,16 +863,8 @@
    fullname='delve_into/user/contributors/howto/request_publication.xml'
    relpath='delve_into/user/contributors/howto'
   >request_publication</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/contributors/howto/request_publication.xml~'
-   relpath='delve_into/user/contributors/howto'
-  >request_publication</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/howto/request_take_offline.xml'
-   relpath='delve_into/user/contributors/howto'
-  >request_take_offline</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/contributors/howto/request_take_offline.xml~'
    relpath='delve_into/user/contributors/howto'
   >request_take_offline</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -887,14 +875,14 @@
    fullname='delve_into/user/contributors/howto/schedule_publication.xml'
    relpath='delve_into/user/contributors/howto'
   >schedule_publication</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/contributors/howto/schedule_publication.xml~'
-   relpath='delve_into/user/contributors/howto'
-  >schedule_publication</file>
       <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
    fullname='delve_into/user/contributors/howto/set_edit_mode.xml'
    relpath='delve_into/user/contributors/howto'
   >set_edit_mode</file>
+      <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='delve_into/user/contributors/howto/show_referring_documents.xml'
+   relpath='delve_into/user/contributors/howto'
+  >show_referring_documents</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/howto/start_CMS.xml'
    relpath='delve_into/user/contributors/howto'
@@ -906,6 +894,10 @@
   >index</file>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/tour.xml'
+   relpath='delve_into/user/contributors'
+  >tour</file>
+     <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/contributors/tour.xml~'
    relpath='delve_into/user/contributors'
   >tour</file>
     </folder>
@@ -967,16 +959,8 @@
    fullname='delve_into/user/editors/howto/count_modified_at_publish.xml'
    relpath='delve_into/user/editors/howto'
   >count_modified_at_publish</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/editors/howto/count_modified_at_publish.xml~'
-   relpath='delve_into/user/editors/howto'
-  >count_modified_at_publish</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/editors/howto/count_modified_at_take_offline.xml'
-   relpath='delve_into/user/editors/howto'
-  >count_modified_at_take_offline</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/editors/howto/count_modified_at_take_offline.xml~'
    relpath='delve_into/user/editors/howto'
   >count_modified_at_take_offline</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -1011,16 +995,8 @@
    fullname='delve_into/user/editors/howto/login.xml'
    relpath='delve_into/user/editors/howto'
   >login</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/editors/howto/login.xml~'
-   relpath='delve_into/user/editors/howto'
-  >login</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/editors/howto/logout.xml'
-   relpath='delve_into/user/editors/howto'
-  >logout</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/editors/howto/logout.xml~'
    relpath='delve_into/user/editors/howto'
   >logout</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -1031,6 +1007,14 @@
    fullname='delve_into/user/editors/howto/publish_all_in_folder.xml~'
    relpath='delve_into/user/editors/howto'
   >publish_all_in_folder</file>
+      <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='delve_into/user/editors/howto/referring_documents.xml'
+   relpath='delve_into/user/editors/howto'
+  >referring_documents</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/editors/howto/referring_documents.xml~'
+   relpath='delve_into/user/editors/howto'
+  >referring_documents</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/editors/howto/start_CMS.xml'
    relpath='delve_into/user/editors/howto'
@@ -1056,10 +1040,6 @@
      </folder>
      <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/editors/tour.xml'
-   relpath='delve_into/user/editors'
-  >tour</file>
-     <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/editors/tour.xml~'
    relpath='delve_into/user/editors'
   >tour</file>
     </folder>

@@ -44,7 +44,7 @@
        <span class='web-48 icon-48'/>
       </td>
       <td>
-       <a href='./howto/start_CMS.html'>Janine starts the Hippo CMS site of Swatia.</a>
+       <a href='howto/start_CMS.html'>Janine starts the Hippo CMS site of Swatia.</a>
       </td>
      </tr>
      <tr>
@@ -53,7 +53,7 @@
        <span class='login-48 icon-48'/>
       </td>
       <td>
-         <a href="./howto/login.html">Login to Hippo CMS</a> in the CMS account given to you by your
+         <a href="howto/login.html">Login to Hippo CMS</a> in the CMS account given to you by your
           CMS administrator. Janine logs in with her name. Her password is only known to her, so you do
           not get to see it.
       </td>
@@ -65,7 +65,7 @@
        <span class='admin-48 icon-48'/>
       </td>
       <td> 
-         <a href="./howto/create_folder.html">Create folder for authors to add their documents in</a>.
+         <a href="howto/create_folder.html">Create folder for authors to add their documents in</a>.
          Janine wants all content for the Sar newspaper to be collected in one folder and
          she creates the 'newspaper' document folder for this.
       </td>
@@ -77,7 +77,7 @@
        <span class='logout-48 icon-48'/>
       </td>
       <td>
-         <a href="./howto/logout.html">Logout</a>.
+         <a href="howto/logout.html">Logout</a>.
          Janine quits for this day.
       </td>
      </tr>
@@ -100,7 +100,7 @@
        <span class='login-48 icon-48'/>
       </td>
       <td>
-         <a href="./howto/login.html">Janine logs in</a> a week later.
+         <a href="howto/login.html">Janine logs in</a> a week later.
       </td>
      </tr>
 
@@ -122,7 +122,7 @@
        <span class='admin-48 icon-48'/>
       </td>
       <td>
-         <a href="./howto/handle_request.html">Handle requests</a>.
+         <a href="howto/handle_request.html">Handle requests</a>.
          Janine handles the request from Marc. She reviews his document and decides to
          accept his request.
       </td>
@@ -134,7 +134,7 @@
        <span class='logout-48 icon-48'/>
       </td>
       <td>
-         <a href="./howto/logout.html">Logout</a>.
+         <a href="howto/logout.html">Logout</a>.
          Janine quits for this day.
       </td>
      </tr>
@@ -146,7 +146,7 @@
       </td>
       <td>
          At some other day Janine
-         <a href="./howto/login.html">Logs in again</a>.
+         <a href="howto/login.html">Logs in again</a>.
       </td>
      </tr>
 
@@ -157,7 +157,18 @@
       </td>
       <td>
          Janine
-         <a href="./howto/publish_all_in_folder.html">publishes all documents at once</a>.
+         <a href="howto/publish_all_in_folder.html">publishes all documents at once</a>.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Referring documents</td>
+      <td>
+       <span class='admin-48 icon-48'/>
+      </td>
+      <td>
+       Janine wants to take offline a document, but is
+       <a href="howto/referring_documents.html">warned about documents that refer to it</a>.
       </td>
      </tr>
 

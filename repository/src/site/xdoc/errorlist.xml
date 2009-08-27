@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">387 errors and/or todos in 238 out of 238 documents (100%).</span>
+      <span class="shortdesc">393 errors and/or todos in 241 out of 241 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -51,7 +51,7 @@
      </li>
         <li>1 not valid XML documents.
      </li>
-        <li>18 documents with bad text.
+        <li>21 documents with bad text.
      </li>
         <li>9 multisection documents.
      </li>
@@ -575,7 +575,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 18">
+      <subsection name="badtext documents: 21">
         <ol>
           <li>
             <a href="./delve_into/custom/howto/extend_dashboard.html">extend_dashboard: Giving our plugin a place on the dashboard</a>
@@ -626,6 +626,12 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./delve_into/user/contributors/concepts/document_actions_menu.html">document_actions_menu: Document actions menu</a>
+            <ul>
+              <li>to get a list of all documents referring to the<span xmlns="" class="bad"> current </span>document.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/user/contributors/concepts/folder_tabulation_panel.html">folder_tabulation_panel: Folder tabulation panel</a>
             <ul>
               <li>The document 'multibazar2009' is not<span xmlns="" class="bad"> current </span>ly published on the web. It may never have been published or been taken off line.</li>
@@ -636,6 +642,12 @@ repository is;
             <a href="./delve_into/user/contributors/howto/goto_folder.html">goto_folder: Goto a Folder</a>
             <ul>
               <li>. The contents of the<span xmlns="" class="bad"> current </span>folder will appear in the</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/show_referring_documents.html">show_referring_documents: Show referring documents</a>
+            <ul>
+              <li>How to get a list of where the<span xmlns="" class="bad"> current </span>document is used, i.e. which documents refer the current document?</li>
             </ul>
           </li>
           <li>
@@ -656,6 +668,12 @@ repository is;
             <ul>
               <li>a count is presented of all documents in the folder tree that are not<span xmlns="" class="bad"> current </span>ly published or that are changed and saved after being published. These documents all have an unpublished saved variant.</li>
               <li>The document multibazaar2009 is not<span xmlns="" class="bad"> current </span>ly published, so it is counted.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/editors/howto/referring_documents.html">referring_documents: Referring documents (where used)</a>
+            <ul>
+              <li>How to get a list of where the<span xmlns="" class="bad"> current </span>document is used, i.e. which documents refer the current document? When are you warned about referring documents?</li>
             </ul>
           </li>
           <li>

@@ -47,7 +47,7 @@ ________________________________________________________________________________
    </div>
 
     <p>Each time one starts working with Hippo CMS one has to login
-       to it, identifying oneselve. This ensures that no unauthorized
+       to it, identifying oneself. This ensures that no unauthorized
        persons can get access to Hippo CMS.
     </p>
 
@@ -66,9 +66,9 @@ ________________________________________________________________________________
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./change_own_password.html'>Change your password (continue</a> <a href='../tour.html'>tour).</a></li>
-     <li><a href='./goto_content_workspace.html'>Go to the
-       content workspace</a></li>
+     <li><a href='./change_own_password.html'>Change your password (continue</a> <a href='../tour.html'>tour, first day).</a></li>
+     <li><a href='./show_referring_documents.html'>Show referring documents (continue</a> <a href='../tour.html'>tour, later).</a></li>
+     <li><a href='./goto_content_workspace.html'>Go to the content workspace</a></li>
     </ul>
    </subsection>
 

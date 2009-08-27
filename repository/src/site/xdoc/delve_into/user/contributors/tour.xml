@@ -37,12 +37,12 @@
      Screenshot of the online word-processor of the Hippo CMS.
      In the <a href='../screenshots.html'>screenshots in the guide</a>,
      you may double click to make it as large
-     as possible and single click to show the relevant part. 
+     as possible and single click to show the relevant part.
      This is useful if the relevant part is small.
     </p>
    </div>
 
-     <p>To get introduced to the role of CMS <a href='./concepts/contributor.html'>contributor</a>, 
+     <p>To get introduced to the role of CMS <a href='./concepts/contributor.html'>contributor</a>,
         you will look over the shoulder of Marc,
         who is a member of the imaginary organization Swatia,
         an organization of people very interested in music, art and knowledge. We did not imagine an
@@ -59,12 +59,12 @@
      <tr>
       <td><a href="./howto/start_CMS.html">Browser</a></td>
       <td>
-       <span class='web-48 icon-48'/> 
+       <span class='web-48 icon-48'/>
       </td>
       <td>
-         Marc opens the Hippo CMS site of Swatia. He needed to know the 
-         site's web address and he got it from the CMS administrator, 
-         who got it from the system administrator 
+         Marc opens the Hippo CMS site of Swatia. He needed to know the
+         site's web address and he got it from the CMS administrator,
+         who got it from the system administrator
          who installed the Hippo CMS at Swatia.
       </td>
      </tr>
@@ -72,7 +72,7 @@
      <tr>
       <td><a href="./howto/login.html">Login CMS</a></td>
       <td>
-       <span class='login-48 icon-48'/> 
+       <span class='login-48 icon-48'/>
       </td>
       <td>
        Marc received a username and
@@ -80,7 +80,7 @@
        i.e. to get access to the CMS.
        <br/>
         To login to the CMS,
-        Marc types his username and password in the appropiate inputfields.
+        Marc types his username and password in the appropriate inputfields.
         His password is supposed to be only known to him, so you do not get to see it.
       </td>
      </tr>
@@ -91,7 +91,7 @@
        <span class='user-48 icon-48'/>
       </td>
       <td>
-         The CSM administrator told Marc that the password he gave him is not
+         The CMS administrator told Marc that the password he gave him is not
          unique and that Marc should change it to a word nobody else knows.
          So Marc <a href='./howto/change_own_password.html'>Changes his password</a>.
       </td>
@@ -104,7 +104,7 @@
       </td>
       <td>
          Because Marc wants to work on
-         <span href='./concepts/content.html'>content</span>, 
+         <span href='./concepts/content.html'>content</span>,
          he goes to the <a href='./concepts/content_workspace.html'>content workspace</a>.
       </td>
     </tr>
@@ -112,7 +112,7 @@
     <tr>
       <td><a href="./howto/goto_folder.html">Goto Folder</a></td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
       <td>
          Marc learned that all articles for Swatia's online newspaper are supposed to
@@ -124,7 +124,7 @@
      <tr>
       <td><a href="./howto/create_document.html">Create document</a></td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
       <td>
          For the article about the upcoming multicultural bazaar, Marc creates a
@@ -134,24 +134,24 @@
          for upcoming happenings, like the bazaar.
       </td>
      </tr>
- 
+
      <tr>
       <td><a href="./howto/fill_date_field_in_document.html">fill date</a></td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
-      <td> 
-         Marc sees that he is supposed to fill in on what date the happening, which
-         in his case is the bazaar, will be. So he looks up the date and fills it in the document.
+      <td>
+         Marc sees that he is supposed to specify on what date the happening, which
+         in his case is the bazaar, will be. So he looks up the date and specifies it in the document.
       </td>
      </tr>
 
      <tr>
       <td><a href="./howto/fill_string_field_in_document.html">fill string</a></td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
-      <td> 
+      <td>
          Marc sees that he is supposed to type a title for the happening, which
          in his case is the bazaar, and he types 'Multicultural Bazaar 2009' as the title.
       </td>
@@ -160,24 +160,24 @@
      <tr>
       <td><a href="./howto/fill_date_field_in_document.html">fill boolean</a></td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
-      <td> 
+      <td>
          Marc sees that he is supposed to answer the question whether the happening is
          indoors. Marc knows that the bazaar is not indoors and he adds that information
          in the document.
          He also is supposed to answer the question whether the happening is
-         a recurring happening, i.e. a happening that has occurred before. 
-         This is the case, so Marc also adds that information to the document. 
+         a recurring happening, i.e. a happening that has occurred before.
+         This is the case, so Marc also adds that information to the document.
       </td>
      </tr>
 
      <tr>
       <td><a href="./howto/fill_markuped_text_in_document.html">fill markuped text</a></td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
-      <td> 
+      <td>
          Marc sees that he can also write a description of the happening and he
          writes an informative text about the upcoming multicultural bazaar.
          He includes the place where the bazaar will be in this description,
@@ -188,9 +188,9 @@
      <tr>
       <td><a href="./howto/save_document.html">save document</a></td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
-      <td> 
+      <td>
          Marc finished his article about the upcoming multicultural bazaar, so
          he saves the document.
       </td>
@@ -199,7 +199,7 @@
      <tr>
       <td><a href="./howto/request_publication.html">request publication</a></td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
       <td>
          Marc now requests publication of his article. Janine is the editor and she
@@ -210,7 +210,7 @@
      <tr>
       <td><a href="./howto/schedule_publication.html">schedule publication</a></td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
       <td>
          As part of requesting publication of his article, Marc schedules when
@@ -221,10 +221,29 @@
      <tr>
       <td><a href="./howto/logout.html">Logout</a></td>
       <td>
-       <span class='logout-48 icon-48'/> 
+       <span class='logout-48 icon-48'/>
       </td>
-      <td> 
+      <td>
          Marc quits for today.
+      </td>
+     </tr>
+
+     <tr>
+      <td><a href="./howto/login.html">Login CMS</a></td>
+      <td>
+       <span class='login-48 icon-48'/>
+      </td>
+      <td>On some other day, Mark logs in again.
+      </td>
+     </tr>
+
+     <tr>
+      <td><a href="./howto/show_referring_documents.html">Referring documents</a></td>
+      <td>
+       <span class='user-48 icon-48'/>
+      </td>
+      <td>
+        Marc wants to know which documents refer to the panflute document.
       </td>
      </tr>
 
