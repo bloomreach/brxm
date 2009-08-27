@@ -158,10 +158,25 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
         String label;
         String type;
         String uuid;
+        boolean expanded;
 
         TreeItem[] children;
-
         int index;
+        
+        public TreeItem(String label, String type, int numOfChilds) {
+            this.label = label;
+            this.type = type;
+            children = new TreeItem[numOfChilds];
+            index = 0;
+        }
+
+        public TreeItem(String label, String uuid, String type, int numOfChilds) {
+            this.label = label;
+            this.type = type;
+            this.uuid = uuid;
+            children = new TreeItem[numOfChilds];
+            index = 0;
+        }
 
         public String getUuid() {
             return uuid;
@@ -195,21 +210,14 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
             this.children = children;
         }
 
-        public TreeItem(String label, String type, int numOfChilds) {
-            this.label = label;
-            this.type = type;
-            children = new TreeItem[numOfChilds];
-            index = 0;
+        public boolean isExpanded() {
+            return expanded;
         }
 
-        public TreeItem(String label, String uuid, String type, int numOfChilds) {
-            this.label = label;
-            this.type = type;
-            this.uuid = uuid;
-            children = new TreeItem[numOfChilds];
-            index = 0;
+        public void setExpanded(boolean expanded) {
+            this.expanded = expanded;
         }
-
+        
         public void addChild(TreeItem item) {
             children[index++] = item;
         }
