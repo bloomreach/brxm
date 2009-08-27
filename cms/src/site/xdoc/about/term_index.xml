@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 1005 terms</span>
+      <span class="shortdesc">Term index, 1019 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -434,6 +434,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/document_actions_menu.html#Alternative">Alternative</a>
+            </td>
+            <td>Concept: Document actions menu</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/document_type.html#Alternative">Alternative</a>
             </td>
             <td>Concept: Document type</td>
@@ -668,6 +674,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/show_referring_documents.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Show referring documents</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/start_CMS.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Start CMS site</td>
@@ -779,6 +791,12 @@ repository itself.
               <a href="../delve_into/user/editors/howto/publish_all_in_folder.html#Alternative">Alternative</a>
             </td>
             <td>Howto: Publish all in folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/referring_documents.html#Alternative">Alternative</a>
+            </td>
+            <td>Howto: Referring documents (where used)</td>
           </tr>
           <tr>
             <td>
@@ -1860,6 +1878,12 @@ repository itself.
               <a href="../delve_into/user/contributors/concepts/document.html#Document">Document</a>
             </td>
             <td>Concept: Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/document_actions_menu.html#Document_actions_menu">Document actions menu</a>
+            </td>
+            <td>Concept: Document actions menu</td>
           </tr>
           <tr>
             <td>
@@ -3140,6 +3164,22 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/show_referring_documents.html#How_to_get_a_list_of_where_the_current&#10;_______document_is_used,_i_e__which_documents_refer_the_current_document_">How to get a list of where the current
+       document is used, i.e. which documents refer the current document?</a>
+            </td>
+            <td>Howto: Show referring documents</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/referring_documents.html#How_to_get_a_list_of_where_the_current&#10;______document_is_used,_i_e__which_documents_refer_the_current_document_&#10;______When_are_you_warned_about_referring_documents_&#10;_____">How to get a list of where the current
+      document is used, i.e. which documents refer the current document?
+      When are you warned about referring documents?
+     </a>
+            </td>
+            <td>Howto: Referring documents (where used)</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/goto_folder.html#How_to_get_to_a_folder,_to_add_or_change_content_in_it_">How to get to a folder, to add or change content in it.</a>
             </td>
             <td>Howto: Goto a Folder</td>
@@ -4096,6 +4136,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/document_actions_menu.html#Next">Next</a>
+            </td>
+            <td>Concept: Document actions menu</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/concepts/document_type.html#Next">Next</a>
             </td>
             <td>Concept: Document type</td>
@@ -4318,6 +4364,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/howto/show_referring_documents.html#Next">Next</a>
+            </td>
+            <td>Howto: Show referring documents</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/contributors/howto/start_CMS.html#Next">Next</a>
             </td>
             <td>Howto: Start CMS site</td>
@@ -4411,6 +4463,12 @@ repository itself.
               <a href="../delve_into/user/editors/howto/publish_all_in_folder.html#Next">Next</a>
             </td>
             <td>Howto: Publish all in folder</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/editors/howto/referring_documents.html#Next">Next</a>
+            </td>
+            <td>Howto: Referring documents (where used)</td>
           </tr>
           <tr>
             <td>
@@ -4882,6 +4940,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/editors/howto/referring_documents.html#Referring_documents_(where_used)">Referring documents (where used)</a>
+            </td>
+            <td>Howto: Referring documents (where used)</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../releasing.html#Releasing_in_subversion">Releasing in subversion</a>
             </td>
             <td>Performing a release of the Hippo ECM suite</td>
@@ -5146,6 +5210,18 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/editors/howto/referring_documents.html#Screenshot_of_where_used_at_take_offline_">Screenshot of where used at take offline.</a>
+            </td>
+            <td>Howto: Referring documents (where used)</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/show_referring_documents.html#Screenshot_of_where_used_">Screenshot of where used.</a>
+            </td>
+            <td>Howto: Show referring documents</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/user/screenshots.html#Screenshots">Screenshots</a>
             </td>
             <td>Screenshots</td>
@@ -5233,6 +5309,12 @@ repository itself.
               <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Sharing_Models">Sharing Models</a>
             </td>
             <td>Frontend Plugin Communication</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/howto/show_referring_documents.html#Show_referring_documents">Show referring documents</a>
+            </td>
+            <td>Howto: Show referring documents</td>
           </tr>
           <tr>
             <td>
@@ -5467,6 +5549,13 @@ repository itself.
               <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#The_browser_window_of_the_CMS_is_an_empty_page">The browser window of the CMS is an empty page</a>
             </td>
             <td>Help startup in Servlet Container</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/concepts/document_actions_menu.html#The_document_actions_menu_is_a_menu_of_actions_that_can_be_performed&#10;______on_a_specific_document_">The document actions menu is a menu of actions that can be performed
+      on a specific document.</a>
+            </td>
+            <td>Concept: Document actions menu</td>
           </tr>
           <tr>
             <td>

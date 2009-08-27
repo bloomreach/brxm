@@ -770,6 +770,12 @@ repository itself.
    <img>current folder screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="document_actions_menu" relpath="delve_into/user/contributors/concepts">Document actions menu
+   <section>Document actions menu</section>
+   <shortdesc>The document actions menu is a menu of actions that can be performed
+      on a specific document.</shortdesc>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="document_type" relpath="delve_into/user/contributors/concepts">Document type
    <section>Document type</section>
    <shortdesc>What is a document type?</shortdesc>
@@ -1002,6 +1008,13 @@ repository itself.
    <shortdesc>How to set a document in edit mode?</shortdesc>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="show_referring_documents" relpath="delve_into/user/contributors/howto">Show referring documents
+   <section>Show referring documents</section>
+   <shortdesc>How to get a list of where the current
+       document is used, i.e. which documents refer the current document?</shortdesc>
+   <img>Screenshot of where used.</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
   </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/contributors/howto">Start CMS site
    <section>Start CMS site</section>
    <shortdesc>How to go to the CMS site, i.e. start a CMS session, in your browser.</shortdesc>
@@ -1125,6 +1138,15 @@ repository itself.
    <section>Publish all in folder</section>
    <shortdesc>How to publish all documents in a folder?</shortdesc>
    <img>Screenshot for publish all in folder</img>
+   <subsection>Next</subsection>
+   <subsection>Alternative</subsection>
+  </document><document ext="xml" filename="referring_documents" relpath="delve_into/user/editors/howto">Referring documents (where used)
+   <section>Referring documents (where used)</section>
+   <shortdesc>How to get a list of where the current
+      document is used, i.e. which documents refer the current document?
+      When are you warned about referring documents?
+     </shortdesc>
+   <img>Screenshot of where used at take offline.</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="start_CMS" relpath="delve_into/user/editors/howto">Start CMS site
