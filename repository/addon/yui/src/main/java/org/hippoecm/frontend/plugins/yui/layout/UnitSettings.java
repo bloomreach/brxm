@@ -43,13 +43,16 @@ public class UnitSettings extends YuiObject {
     private static final StringSetting WIDTH = new StringSetting("width");
     private static final StringSetting HEIGHT = new StringSetting("height");
 
+    private static final StringSetting MIN_WIDTH = new StringSetting("minWidth");
+    private static final StringSetting MIN_HEIGHT = new StringSetting("minHeight");
+
     private static final StringSetting GUTTER = new StringSetting("gutter");
     private static final BooleanSetting SCROLL = new BooleanSetting("scroll");
     private static final BooleanSetting RESIZE = new BooleanSetting("resize");
 
     private static final IntSetting Z_INDEX = new IntSetting("zindex");
 
-    protected final static YuiType TYPE = new YuiType(POSITION, ID, BODY, WIDTH, HEIGHT, GUTTER, SCROLL, RESIZE, Z_INDEX);
+    protected final static YuiType TYPE = new YuiType(POSITION, ID, BODY, WIDTH, HEIGHT, MIN_WIDTH, MIN_HEIGHT, GUTTER, SCROLL, RESIZE, Z_INDEX);
 
     public static final String TOP = "top";
     public static final String RIGHT = "right";
@@ -91,6 +94,14 @@ public class UnitSettings extends YuiObject {
         HEIGHT.set(height, this);
     }
 
+    public void setMinWidth(String minWidth) {
+        MIN_WIDTH.set(minWidth, this);
+    }
+
+    public void setMinHeight(String minHeight) {
+        MIN_HEIGHT.set(minHeight, this);
+    }
+    
     public void setWrapperId(String id) {
         wrapperId = id;
         notifyListeners();
