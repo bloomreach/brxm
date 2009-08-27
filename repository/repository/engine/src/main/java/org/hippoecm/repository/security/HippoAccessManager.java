@@ -614,7 +614,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             boolean match = false;
             if (facetRule.getType() == PropertyType.NAME) {
                 log.trace("Checking node : {} for nodename: {}", nodeState.getNodeId(), facetRule);
-                Name nodeName = hierMgr.getName(nodeState.getId());
+                Name nodeName = getNodeName(nodeState);
                 if (nodeName == null) {
                     log.warn("Failed to resolve name of {}", nodeState.getNodeId());
                 } else {
@@ -646,6 +646,29 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         return false;
     }
 
+    /**
+     * Helper function to resolve the name of the node of the nodestate. It tries to lookup the name
+     * first in the normal hierarchy manager and second in the zombie hierarchy manager.
+     * @param nodeState
+     * @return
+     * @throws ItemNotFoundException
+     * @throws RepositoryException
+     */
+    private Name getNodeName(NodeState nodeState) throws ItemNotFoundException, RepositoryException {
+        Name nodeName = null;
+        try {
+            nodeName = hierMgr.getName(nodeState.getId());
+        } catch (ItemNotFoundException e) {
+            try {
+                nodeName = zombieHierMgr.getName(nodeState.getId());
+            } catch (ItemNotFoundException ex) {
+                log.warn("Status of id " + nodeState.getId() + " with status [" + nodeState.getStatus() + "] not found in normal and zombie hierarchy manager.");
+                throw new ItemNotFoundException(ex);
+            }
+        }
+        return nodeName;
+    }
+    
     /**
      * Helper function to check if a nodeState is of a node type or a
      * instance of the node type (sub class)
