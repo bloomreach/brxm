@@ -70,7 +70,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
         public Step(IDynamicWizardStep previousStep) {
             super(previousStep);
-            
+
             String title = getStepTitle();
             if (title != null) {
                 setTitleModel(new Model(title));
@@ -83,7 +83,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
             }
         }
-        
+
         protected String getStepTitle() {
             return null;
         }
@@ -96,7 +96,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
             return false;
         }
     }
-    
+
     protected abstract class ChooseFolderStep extends Step {
         private static final long serialVersionUID = 1L;
 
@@ -208,7 +208,6 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
         public NameSettingsStep(IDynamicWizardStep previousStep, NameSettings nameSettings) {
             super(previousStep);
 
-
             RequiredTextField tf;
             add(tf = new RequiredTextField("minLength", new PropertyModel(nameSettings, "minLength"), Integer.class));
             tf.add(NumberValidator.range(1, 256));
@@ -247,7 +246,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
             RequiredTextField tf;
             add(tf = new RequiredTextField("amount", new PropertyModel(documentSettings, "amount"), Integer.class));
-            tf.add(NumberValidator.range(1, 100));
+            tf.add(NumberValidator.range(0, 500));
         }
     }
 }
