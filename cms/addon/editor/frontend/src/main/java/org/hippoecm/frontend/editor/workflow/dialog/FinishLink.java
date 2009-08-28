@@ -15,15 +15,24 @@
  */
 package org.hippoecm.frontend.editor.workflow.dialog;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.wizard.IWizardModel;
+import org.apache.wicket.markup.html.link.Link;
 
-public final class FinishLink extends AbstractWizardLink {
+public final class FinishLink extends Link {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
+    private final RemodelWizard wizard;
+
     public FinishLink(String id, RemodelWizard wizard) {
-        super(id, wizard);
+        super(id);
+        this.wizard = wizard;
+        setOutputMarkupId(true);
+    }
+
+    protected final IWizardModel getWizardModel() {
+        return wizard.getWizardModel();
     }
 
     @Override
@@ -32,7 +41,8 @@ public final class FinishLink extends AbstractWizardLink {
     }
 
     @Override
-    public void onClick(AjaxRequestTarget target) {
+    public void onClick() {
         getWizardModel().finish();
     }
+
 }
