@@ -99,7 +99,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
                 }
 
                 public void onEvent(Iterator<? extends IEvent> events) {
-                    if (propertyModel.size() != nrValues) { //Only redraw if number of properties has changed.
+                    if (propertyModel.size() != nrValues || field.isOrdered()) { //Only redraw if number of properties has changed.
                         nrValues = propertyModel.size();
                         updateProvider();
                         redraw();
@@ -177,14 +177,29 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
                 onMoveItemUp(model, target);
             }
         };
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isMultiple() || !field.isOrdered()
-                || model.getIndex() == 0) {
+        boolean isFirst = (model.getIndex() == 0);
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isMultiple() || !field.isOrdered()) {
             upLink.setVisible(false);
         }
-        if (item.getIndex() == 0) {
-            upLink.setEnabled(false);
-        }
+        upLink.setEnabled(!isFirst);
         item.add(upLink);
+
+        MarkupContainer downLink = new AjaxLink("down") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                JcrPropertyValueModel nextModel = new JcrPropertyValueModel(model.getIndex() + 1, model
+                        .getJcrPropertymodel());
+                onMoveItemUp(nextModel, target);
+            }
+        };
+        boolean isLast = (model.getIndex() == provider.size() - 1);
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isMultiple() || !field.isOrdered()) {
+            downLink.setVisible(false);
+        }
+        downLink.setEnabled(!isLast);
+        item.add(downLink);
     }
 
     // privates

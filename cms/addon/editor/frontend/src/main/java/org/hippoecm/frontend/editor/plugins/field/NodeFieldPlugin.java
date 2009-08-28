@@ -17,7 +17,6 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.Iterator;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
@@ -33,7 +32,6 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.model.AbstractProvider;
 import org.hippoecm.frontend.editor.model.NodeTemplateProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -66,10 +64,10 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
         add(required);
 
         add(createAddLink());
-        
+
         updateProvider();
     }
-    
+
     @Override
     protected AbstractProvider<JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             JcrNodeModel nodeModel) {
@@ -103,7 +101,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
             modelChanged();
             return;
         }
-        
+
         while (events.hasNext()) {
             JcrEvent jcrEvent = (JcrEvent) events.next();
             Event event = jcrEvent.getEvent();
@@ -133,6 +131,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     @Override
     protected void onAddRenderService(Item item, IRenderService renderer) {
         final JcrNodeModel model = findModel(renderer);
+        final int index = item.getIndex();
 
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
@@ -157,24 +156,32 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
         };
         if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || !field.isMultiple() || !field.isOrdered()) {
             upLink.setVisible(false);
-        } else if (model != null) {
-            Node node = model.getNode();
-            if (node != null) {
-                try {
-                    int index = node.getIndex();
-                    if (index == 1) {
-                        upLink.setVisible(false);
-                    }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
-                }
-            }
         }
-
-        if (item.getIndex() == 0) {
+        if (index == 0) {
             upLink.setEnabled(false);
         }
         item.add(upLink);
+
+        MarkupContainer downLink = new AjaxLink("down") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                String name = field.getPath();
+                JcrNodeModel parent = model.getParentModel();
+                if (parent != null) {
+                    JcrNodeModel nextModel = new JcrNodeModel(parent.getItemModel().getPath() + "/" + name + "["
+                            + (index + 2) + "]");
+                    onMoveItemUp(nextModel, target);
+                }
+            }
+        };
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isMultiple() || !field.isOrdered()) {
+            downLink.setVisible(false);
+        }
+        boolean isLast = (index == provider.size() - 1);
+        downLink.setEnabled(!isLast);
+        item.add(downLink);
     }
 
     protected Component createAddLink() {

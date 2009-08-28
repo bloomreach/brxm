@@ -144,6 +144,9 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
 
     public void onMoveItemUp(C model, AjaxRequestTarget target) {
         provider.moveUp(model);
+        // reorderings are not detected by the observation manager, so do a hard refresh
+        updateProvider();
+        redraw();
     }
 
     protected ITemplateEngine getTemplateEngine() {
@@ -170,13 +173,13 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     private static class Renderer implements IClusterable {
         IClusterControl clusterControl;
         ModelReference modelRef;
-        
+
         Renderer(ModelReference model, IClusterControl control) {
             this.clusterControl = control;
             this.modelRef = model;
         }
     }
-    
+
     private class TemplateController implements IClusterable {
         private static final long serialVersionUID = 1L;
 

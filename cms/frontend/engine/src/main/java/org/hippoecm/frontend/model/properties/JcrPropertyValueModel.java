@@ -37,6 +37,15 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Model of a property value.  Retrieves the value of a single valued property, or an indexed
+ * value of a multi-valued property.  The type of the value returned depends on the JCR type
+ * of the property.  I.e. JCR type string maps to {@link String}, date maps to {@link Data}.
+ * <p>
+ * One can also set and retrieve the underlying {@link Value}.
+ * 
+ * @author Frank van Lankvelt
+ */
 public class JcrPropertyValueModel extends Model {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
@@ -65,6 +74,16 @@ public class JcrPropertyValueModel extends Model {
      */
     public JcrPropertyValueModel(JcrPropertyModel propertyModel) {
         this.propertyModel = propertyModel;
+    }
+
+    /**
+     * Indexed value of a multi-valued property.
+     * 
+     * @param index
+     * @param propertyModel
+     */
+    public JcrPropertyValueModel(int index, JcrPropertyModel propertyModel) {
+        this(index, null, propertyModel);
     }
 
     /**
@@ -122,6 +141,10 @@ public class JcrPropertyValueModel extends Model {
         return type;
     }
 
+    /**
+     * The index of a value in a multi-valued property.  NO_INDEX (-1) is returned
+     * for a single-valued property.
+     */
     public int getIndex() {
         return index;
     }

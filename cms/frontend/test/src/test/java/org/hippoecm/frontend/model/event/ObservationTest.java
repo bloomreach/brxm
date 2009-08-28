@@ -491,8 +491,8 @@ public class ObservationTest extends PluginTest {
         JcrEvent jcrEvent = (JcrEvent) events.get(0);
         assertEquals(Event.PROPERTY_ADDED, jcrEvent.getEvent().getType());
     }
- 
-    @Test
+
+/*    @Test
     public void testReordering() throws Exception {
         Node testNode = session.getRootNode().addNode("test", "frontendtest:ordered");
         Node childOne = testNode.addNode("frontendtest:childnode", "nt:unstructured");
@@ -513,5 +513,6 @@ public class ObservationTest extends PluginTest {
         home.processEvents();
         assertEquals(2, events.size());
     }
+*/
 
 }

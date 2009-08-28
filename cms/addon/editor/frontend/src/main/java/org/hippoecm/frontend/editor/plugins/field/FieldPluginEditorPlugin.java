@@ -115,7 +115,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                             IFieldDescriptor field = tde.getField();
                             switch (tde.getType()) {
                             case FIELD_CHANGED:
-                                if (field.equals(PropertyEditor.this.edited.getString("field"))) {
+                                if (PropertyEditor.this.edited.getString("field").equals(field.getName())) {
                                     PropertyEditor.this.redraw();
                                     FieldPluginEditorPlugin.this.updatePreview();
                                     break;
