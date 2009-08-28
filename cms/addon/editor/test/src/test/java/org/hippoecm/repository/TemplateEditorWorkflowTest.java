@@ -284,4 +284,31 @@ public class TemplateEditorWorkflowTest extends TestCase {
         assertEquals("test:mixin", mixins[0].getName());
     }
 
+    @Test
+    public void superMixinsAreCopiedToDraft() throws RepositoryException, WorkflowException, RemoteException {
+        Node root = session.getRootNode();
+
+        Node typeNode = root.getNode("hippo:namespaces/test/superMixinTest");
+
+        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Workflow workflow = workflowManager.getWorkflow("test", typeNode);
+        assertTrue(workflow instanceof EditmodelWorkflow);
+
+        ((EditmodelWorkflow) workflow).edit();
+        session.refresh(false);
+
+        NodeIterator nodes = typeNode.getNode("hipposysedit:prototypes").getNodes("hipposysedit:prototype");
+        assertEquals(2, nodes.getSize());
+
+        Node draft = null;
+        while (nodes.hasNext()) {
+            Node node = nodes.nextNode();
+            if (node.isNodeType("nt:unstructured")) {
+                draft = node;
+            }
+        }
+        assertNotNull(draft);
+        assertTrue(draft.isNodeType("test:mixin"));
+    }
+
 }

@@ -246,9 +246,22 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                             + ", current version was not found for type " + subject.getPath());
                 }
                 draft = current.getParent().addNode(HippoNodeType.HIPPO_PROTOTYPE, "nt:unstructured");
-                // add mixins
+                // add dynamic mixins
                 for (NodeType mixin : current.getMixinNodeTypes()) {
                     draft.addMixin(mixin.getName());
+                }
+                // add static mixins from supertype
+                NodeType primarySuperType = current.getPrimaryNodeType();
+                while (primarySuperType != null && !primarySuperType.getName().equals("nt:base")) {
+                    NodeType newSuper = null;
+                    for (NodeType superType : primarySuperType.getDeclaredSupertypes()) {
+                        if (superType.isMixin()) {
+                            draft.addMixin(superType.getName());
+                        } else {
+                            newSuper = superType;
+                        }
+                    }
+                    primarySuperType = newSuper;
                 }
 
                 PropertyIterator propIter = current.getProperties();
