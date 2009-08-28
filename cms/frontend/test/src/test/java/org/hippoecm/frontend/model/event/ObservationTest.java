@@ -210,6 +210,21 @@ public class ObservationTest extends PluginTest {
     }
 
     @Test
+    public void testReferenceableNodeObservation() throws Exception {
+        Node test = root.addNode("test", "nt:unstructured");
+        test.addMixin("mix:referenceable");
+        session.save();
+
+        List<IEvent> events = new LinkedList<IEvent>();
+        IObserver observer = new TestObserver(new JcrNodeModel(test), events);
+        context.registerService(observer, IObserver.class.getName());
+
+        test.setProperty("a", "b");
+        home.processEvents();
+        assertEquals(1, events.size());
+    }
+
+    @Test
     public void testInSessionEventSuppression() throws Exception {
         Node root = session.getRootNode();
         List<IEvent> events = new LinkedList<IEvent>();
@@ -332,7 +347,7 @@ public class ObservationTest extends PluginTest {
         home = tester.startPluginPage();
         context = new PluginContext(home.getPluginManager(), new JavaPluginConfig("test"));
         System.gc();
-        
+
         root.addNode("test", "nt:unstructured");
         session.save();
 
@@ -355,7 +370,7 @@ public class ObservationTest extends PluginTest {
 
             public void registerObserver(IObserver observer) {
                 // TODO Auto-generated method stub
-                
+
             }
 
             public void unregisterObserver(IObserver observer) {
@@ -438,7 +453,7 @@ public class ObservationTest extends PluginTest {
         xyz.addMixin("hippo:harddocument");
         xyz.setProperty("facet", "xyz");
         session.save();
-        
+
         // basic facetsearch assertion
         Node result = sink.getNode("search/xyz/hippo:resultset/xyz");
         assertTrue(((HippoNode) result).getCanonicalNode().isSame(xyz));
@@ -485,34 +500,34 @@ public class ObservationTest extends PluginTest {
 
         home.processEvents();
         testNode.setProperty("a", "b");
-        
+
         home.processEvents();
         assertEquals(1, events.size());
         JcrEvent jcrEvent = (JcrEvent) events.get(0);
         assertEquals(Event.PROPERTY_ADDED, jcrEvent.getEvent().getType());
     }
 
-/*    @Test
-    public void testReordering() throws Exception {
-        Node testNode = session.getRootNode().addNode("test", "frontendtest:ordered");
-        Node childOne = testNode.addNode("frontendtest:childnode", "nt:unstructured");
-        Node childTwo = testNode.addNode("frontendtest:childnode", "nt:unstructured");
-        session.save();
-        
-        List<IEvent> events = new LinkedList<IEvent>();
-        JcrNodeModel model = new JcrNodeModel(testNode);
-        IObserver observer = new TestObserver(model, events);
-        context.registerService(observer, IObserver.class.getName());
+    /*    @Test
+        public void testReordering() throws Exception {
+            Node testNode = session.getRootNode().addNode("test", "frontendtest:ordered");
+            Node childOne = testNode.addNode("frontendtest:childnode", "nt:unstructured");
+            Node childTwo = testNode.addNode("frontendtest:childnode", "nt:unstructured");
+            session.save();
+            
+            List<IEvent> events = new LinkedList<IEvent>();
+            JcrNodeModel model = new JcrNodeModel(testNode);
+            IObserver observer = new TestObserver(model, events);
+            context.registerService(observer, IObserver.class.getName());
 
-        home.processEvents();
-        assertEquals(0, events.size());
+            home.processEvents();
+            assertEquals(0, events.size());
 
-        testNode.orderBefore("frontendtest:childnode[2]", "frontendtest:childnode[1]");
-        session.save();
-        
-        home.processEvents();
-        assertEquals(2, events.size());
-    }
-*/
+            testNode.orderBefore("frontendtest:childnode[2]", "frontendtest:childnode[1]");
+            session.save();
+            
+            home.processEvents();
+            assertEquals(2, events.size());
+        }
+    */
 
 }
