@@ -42,18 +42,20 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             wireframes      : new YAHOO.hippo.HashMap(),
             _w              : new YAHOO.hippo.HashMap(),
             renderQueue     : new YAHOO.hippo.FunctionQueue('render'),
-            throttle        : new Wicket.Throttler(true),
+            throttler       : new Wicket.Throttler(true),
             throttleDelay   : 2000,
         
             init : function() {
                 //Handle the resizing of the window
                 var me = this;
-                Event.on(window, 'resize', me.resize, me, true);
+                //Event.on(window, 'resize', me.resize, me, true);
             },
             
             resize : function() {
                 if(this.root != null) {// && YAHOO.env.ua.ie) {
                     try {
+                        //seems not needed, maybe only IE?
+                        //me.throttler.throttle('resize-root', 1000, this.root.resize);
                         this.root.resize(); //IE is not auto-bound to the body, so bind window-resize
                     } catch(e) {
                         YAHOO.log('Error resizing root', 'error');
@@ -117,7 +119,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                    return this.root;
                return this.wireframes.get(id);
             },
-            
+
             cleanupWireframes : function() {
                 var remove = [];
                 this.wireframes.forEach(this, function(key, value){
@@ -145,42 +147,68 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
             },
             
-            registerResizeListener : function(el, obj, func, executeNow, calculateSizes) {
-                var layoutUnitEl = this.findLayoutUnit(el);
-                if (layoutUnitEl) {
-                    var layoutUnit = YAHOO.widget.LayoutUnit
-                            .getLayoutUnitById(layoutUnitEl.id);
-                    if (Lang.isUndefined(layoutUnit.customEvent)
-                            || Lang.isNull(layoutUnit.customEvent)) {
-                        layoutUnit.customEvent = new YAHOO.util.CustomEvent(
-                                "resizeEvent" + layoutUnitEl, this);
-                    }
-                    layoutUnit.customEvent.subscribe(func, obj);
-                    var func = function() {
-                        var sizes = null;
-                        if(calculateSizes) {
-                            sizes = layoutUnit.getSizes();
-                            var scrollBottom = layoutUnit.body.scrollHeight - (layoutUnit.body.scrollTop + layoutUnit.body.clientHeight); // height of element scroll
-                            var scroll = layoutUnit.body.scrollTop + scrollBottom > 0;
+            registerResizeListener : function(el, obj, func, executeNow, calculateScroll) {
+                var layoutUnit = this.findLayoutUnit(el);
+                if(layoutUnit == null) {
+                    YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ']', 'error');
+                    return;
+                }
+                this.registerEventListener(layoutUnit, layoutUnit, 'resize', obj, func, executeNow, calculateScroll);
+            },
+
+            registerRenderListener : function(el, obj, func, executeNow, calculateScroll) {
+                var layoutUnit = this.findLayoutUnit(el);
+                if(layoutUnit == null) {
+                    YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ', can not register render event', 'error');
+                    return;
+                }
+
+                this.registerEventListener(layoutUnit.get('parent'), layoutUnit, 'render', obj, func, executeNow, calculateScroll);
+            },
+            
+            registerEventListener : function(target, unit, evt, obj, func, executeNow, calculateScroll) {
+                var eventName = evt + 'CustomEvent';
+                if (Lang.isUndefined(target[eventName]) 
+                        || Lang.isNull(target[eventName])) {
+                    target[eventName] = new YAHOO.util.CustomEvent(eventName, this);
+                    
+                    var callback = function() {
+                        var sizes = unit.getSizes();
+                        if(calculateScroll) {
+                            var scrollBottom = unit.body.scrollHeight - (unit.body.scrollTop + unit.body.clientHeight); // height of element scroll
+                            var scroll = unit.body.scrollTop + scrollBottom > 0;
                             sizes['scroll'] = scroll;
                         }
-                        layoutUnit.customEvent.fire(sizes);
+                        target[eventName].fire(sizes);
                     };
-                    layoutUnit.on('resize', func);
-                    if(executeNow) {
-                        func();
-                    }
+                    target.on(evt, callback);
+
+                }
+                target[eventName].subscribe(func, obj);
+                if(executeNow) {
+                    func();
                 }
             },
 
             findLayoutUnit : function(el) {
+                el = this._findUnitElement(el);
+                if(el != null) {
+                    return YAHOO.widget.LayoutUnit.getLayoutUnitById(el.id);
+                }
+                return null;
+            },
+            
+            /**
+             * Dom.getAncestorByClassName didn't work
+             */
+            _findUnitElement : function(el) {
                 while (el != null && el != document.body && el.id != this.root.id) {
                     if (Dom.hasClass(el, 'yui-layout-unit')) {
                         return el;
                     }
                     el = el.parentNode;
                 }
-                return false;
+                return null;
             }
         };
         
@@ -225,7 +253,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 this.layout.on('resize', function() {
                     me.storeDimensions();
                 });
-
             },
 
             resize : function() {

@@ -47,8 +47,7 @@ if (!YAHOO.hippo.TableHelper) {
 	                    //Couldn't really get the scrolling of a tbody working in IE so set the whole
 	                    //unit to scrolling
 	                    var firstDiv = Dom.getAncestorByTagName(parentId, 'div');
-	                    var unEl = YAHOO.hippo.LayoutManager.findLayoutUnit(firstDiv);
-	                    var un = YAHOO.widget.LayoutUnit.getLayoutUnitById(unEl.id);
+	                    var un = YAHOO.hippo.LayoutManager.findLayoutUnit(firstDiv);
 	                    un.set('scroll', true);
 	                } else {
 	                    Dom.setStyle(tbody, 'height', theHeight + 'px');
