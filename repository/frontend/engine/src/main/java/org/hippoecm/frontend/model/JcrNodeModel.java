@@ -114,7 +114,7 @@ public class JcrNodeModel extends ItemModelWrapper implements IObservable {
         }
         if (itemModel.getRelativePath() == null) {
             listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
-                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, "/", false,
+                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, "/", true,
                     new String[] { itemModel.getUuid() }, null);
         } else {
             listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
