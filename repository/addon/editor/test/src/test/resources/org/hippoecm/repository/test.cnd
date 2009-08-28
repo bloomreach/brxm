@@ -34,3 +34,5 @@
 [test:mixin] mixin
 
 [test:mixinTest]
+
+[test:superMixinTest] > test:mixinTest, test:mixin
