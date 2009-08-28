@@ -199,9 +199,9 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
                             Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getModel()).getNode();
                             final int index = ((Integer) item.getModelObject()).intValue();
                             try {
-                                item.add(new TextFieldWidget("facet", new JcrPropertyValueModel(index, null, new JcrPropertyModel(node.getProperty("hippo:facets")))));
-                                item.add(new TextFieldWidget("mode", new JcrPropertyValueModel(index, null, new JcrPropertyModel(node.getProperty("hippo:modes")))));
-                                item.add(new TextFieldWidget("value", new JcrPropertyValueModel(index, null, new JcrPropertyModel(node.getProperty("hippo:values")))));
+                                item.add(new TextFieldWidget("facet", new JcrPropertyValueModel(index, new JcrPropertyModel(node.getProperty("hippo:facets")))));
+                                item.add(new TextFieldWidget("mode", new JcrPropertyValueModel(index, new JcrPropertyModel(node.getProperty("hippo:modes")))));
+                                item.add(new TextFieldWidget("value", new JcrPropertyValueModel(index, new JcrPropertyModel(node.getProperty("hippo:values")))));
                                 AjaxLink removeButton;
                                 item.add(removeButton = new AjaxLink("remove") {
                                     public void onClick(AjaxRequestTarget target) {

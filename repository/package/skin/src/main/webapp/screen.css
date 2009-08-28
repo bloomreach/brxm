@@ -54,6 +54,7 @@ font-size: 11px;
 }
 /* default Link colour */
 .hippo-root a {color: #333333;}
+.wicket-modal a {color: #000066;}
 
 /* default buttons */
 .hippo-root button, .hippo-root input[type="button"], .hippo-root input[type="submit"] {
@@ -477,10 +478,7 @@ table.hippo-window-form{width: 100%;}
 .hippo-window-form td{padding: 5px;}
 .hippo-window-form .hippo-form-select{width: 300px;}
 
-.hippo-window .notification {
- display: block;
- padding: 25px;
-}
+.hippo-window .notification {display: block; margin: 11px; padding: 12px; text-align: center; background: #ffccaa; border: 1px solid #ff9900;}
 
 .hippo-window .hippo-dialog-container {padding:10px;}
 
@@ -574,8 +572,12 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 .hippo-picker-list-details table tr th{padding: 1px; padding-left: 4px; padding-bottom: 2px; border: 1px solid #afafaf; border-right: 0px; border-bottom: none;}
 
 /* Referring documents */
-.hippo-referring-documents {height: 260px; position: relative;}
-.hippo-delete .hippo-referring-documents {height: 196px;}
+.hippo-referring-documents {margin: 5px; height: 365px;}
+.hippo-referring-documents-list {height: 245px; position: relative; margin-top: 8px;}
+.hippo-delete-dialog .hippo-referring-documents {height: 240px;}
+.hippo-delete-dialog .hippo-referring-documents-list {height: 181px;}
+.hippo-depublish-dialog .hippo-referring-documents {height: 240px;}
+.hippo-depublish-dialog .hippo-referring-documents-list {height: 181px;}
 
 /* Wizard */
 /* ================================================ */
@@ -1109,8 +1111,10 @@ div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top:
 .delete-inline-48{background-image:url("images/icons/delete-inline-48.png")}
 .delete-inline-128{background-image:url("images/icons/delete-inline-128.png")}
 
-.up-16{background-image:url("images/icons/go-up-16.png")}
-.down-16{background-image:url("images/icons/go-down-16.png")}
+a.up-16{background-image:url("images/icons/go-up-16.png")}
+span.up-16{background-image:url("images/icons/go-up-disabled-16.png")}
+a.down-16{background-image:url("images/icons/go-down-16.png")}
+span.down-16{background-image:url("images/icons/go-down-disabled-16.png")}
 
 /* temp quick hack */
 .revert_ico{background-image:url("images/icons/document-revert-16.png")} 

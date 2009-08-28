@@ -78,12 +78,12 @@ public class BuilderContext implements IClusterable {
                 }
 
                 public void onEvent(Iterator<? extends IEvent> event) {
-                    if (isFocussed()) {
+                    if (isFocussed() && !focussed) {
                         focussed = true;
                         for (IBuilderListener listener : new ArrayList<IBuilderListener>(BuilderContext.this.listeners)) {
                             listener.onFocus();
                         }
-                    } else if (focussed) {
+                    } else if (!isFocussed() && focussed) {
                         focussed = false;
                         for (IBuilderListener listener : new ArrayList<IBuilderListener>(BuilderContext.this.listeners)) {
                             listener.onBlur();
@@ -125,7 +125,7 @@ public class BuilderContext implements IClusterable {
 
     public void focus() {
         IModelReference pluginRef = context.getService(config.getString(SELECTED_PLUGIN), IModelReference.class);
-        pluginRef.setModel(new Model(getPluginId()));
+        pluginRef.setModel(new StringModel(getPluginId()));
     }
 
     public boolean hasFocus() {
@@ -158,7 +158,7 @@ public class BuilderContext implements IClusterable {
             throw new RuntimeException("Invalid value null for selected extension point");
         }
         IModelReference extPtService = context.getService(config.getString(SELECTED_EXTENSION_POINT), IModelReference.class);
-        extPtService.setModel(new Model(value));
+        extPtService.setModel(new StringModel(value));
     }
     
     public String getPluginId() {
@@ -178,4 +178,22 @@ public class BuilderContext implements IClusterable {
         listeners.remove(listener);
     }
 
+    private static class StringModel extends Model {
+        private static final long serialVersionUID = 1L;
+
+        public StringModel(String string) {
+            super(string);
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            return (obj instanceof StringModel && ((StringModel) obj).getObject().equals(getObject()));
+        }
+
+        @Override
+        public int hashCode() {
+            return 234893 ^ getObject().hashCode();
+        }
+    }
+    
 }

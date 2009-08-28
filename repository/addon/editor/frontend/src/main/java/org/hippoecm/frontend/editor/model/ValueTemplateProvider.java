@@ -62,40 +62,38 @@ public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueMode
             Value value = type.createValue();
             Node node = (Node) getItemModel().getParentModel().getObject();
             String relPath = getItemModel().getPath().substring(node.getPath().length() + 1);
-            if (!node.hasProperty(relPath)) {
-                if (descriptor.isMultiple()) {
-                    node.setProperty(relPath, new Value[] { value });
-                    index = 0;
+            if (descriptor.isMultiple()) {
+                Value[] oldValues;
+                if (node.hasProperty(relPath)) {
+                    Property property = node.getProperty(relPath);
+                    if (property.getDefinition().isMultiple()) {
+                        oldValues = property.getValues();
+                    } else {
+                        oldValues = new Value[1];
+                        oldValues[0] = property.getValue();
+                        getItemModel().detach();
+                    }
+                } else {
+                    oldValues = new Value[0];
+                }
+                index = oldValues.length;
+
+                Value[] newValues = new Value[oldValues.length + 1];
+                System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+                newValues[oldValues.length] = value;
+
+                node.setProperty(relPath, newValues);
+            } else {
+                if (node.hasProperty(relPath)) {
+                    log.error("cannot add more than one value to single-valued property");
+                    return;
                 } else {
                     node.setProperty(relPath, value);
                     index = JcrPropertyValueModel.NO_INDEX;
                 }
-                getItemModel().detach();
-            } else {
-                if (!descriptor.isMultiple()) {
-                    log.error("cannot add more than one value to single-valued property");
-                    return;
-                }
-
-                Property property = node.getProperty(relPath);
-                if (property.getDefinition().isMultiple()) {
-                    Value[] oldValues = property.getValues();
-                    Value[] newValues = new Value[oldValues.length + 1];
-                    for (int i = 0; i < oldValues.length; i++) {
-                        newValues[i] = oldValues[i];
-                    }
-                    newValues[oldValues.length] = value;
-                    node.setProperty(relPath, newValues);
-                    index = oldValues.length;
-                } else {
-                    Value old = property.getValue();
-                    Value[] newValues = new Value[2];
-                    newValues[0] = old;
-                    newValues[1] = value;
-                    property.setValue(newValues);
-                    index = 1;
-                }
+                node.setProperty(relPath, value);
             }
+
             elements.addLast(new JcrPropertyValueModel(index, value, new JcrPropertyModel(getItemModel())));
         } catch (RepositoryException ex) {
             log.error(ex.getMessage(), ex);

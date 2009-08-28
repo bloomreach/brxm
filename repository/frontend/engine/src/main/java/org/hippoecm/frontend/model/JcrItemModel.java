@@ -18,6 +18,7 @@ package org.hippoecm.frontend.model;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -79,6 +80,9 @@ public class JcrItemModel extends LoadableDetachableModel {
         if (item != null) {
             try {
                 return item.getPath();
+            } catch (InvalidItemStateException e) {
+                // ignore, item has been removed
+                log.debug("Item " + absPath + " no longer exists", e);
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);
             }
@@ -143,7 +147,7 @@ public class JcrItemModel extends LoadableDetachableModel {
                         uuid = null;
                         relPath = null;
                         return session.getItem(absPath);
-                    } else { 
+                    } else {
                         throw ex;
                     }
                 }
@@ -161,7 +165,7 @@ public class JcrItemModel extends LoadableDetachableModel {
         }
         return null;
     }
-    
+
     @Override
     public void detach() {
         save();
@@ -175,37 +179,47 @@ public class JcrItemModel extends LoadableDetachableModel {
                 Node node = null;
                 PrependingStringBuffer spb = new PrependingStringBuffer();
 
+                // if we have an item, use it to update the path
                 Item item = (Item) getObject();
-                // determine uuid + relative path for attached item
                 if (item != null) {
-                    absPath = item.getPath();
-                    if (item.isNode()) {
-                        node = (Node) item;
-                    } else {
-                        node = item.getParent();
-                        spb.prepend(item.getName());
-                        spb.prepend('/');
-                    }
-                } else if (absPath != null) {
-                    javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-                    String path = absPath;
-                    while (path.lastIndexOf('/') > 0) {
-                        spb.prepend(path.substring(path.lastIndexOf('/')));
-                        path = path.substring(0, path.lastIndexOf('/'));
-                        try {
-                            node = (Node) session.getItem(path);
-                            break;
-                        } catch (PathNotFoundException ex) {
-                            continue;
+                    try {
+                        absPath = item.getPath();
+                        if (item.isNode()) {
+                            node = (Node) item;
+                        } else {
+                            node = item.getParent();
+                            spb.prepend(item.getName());
+                            spb.prepend('/');
                         }
+                    } catch (InvalidItemStateException ex) {
+                        // ignore; item doesn't exist anymore
+                        super.detach();
                     }
-                } else {
-                    log.debug("Neither path nor uuid present");
-                    return;
+                }
+
+                // no node was found, use path to resolve an ancestor
+                if (node == null) {
+                    if (absPath != null) {
+                        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                        String path = absPath;
+                        while (path.lastIndexOf('/') > 0) {
+                            spb.prepend(path.substring(path.lastIndexOf('/')));
+                            path = path.substring(0, path.lastIndexOf('/'));
+                            try {
+                                node = (Node) session.getItem(path);
+                                break;
+                            } catch (PathNotFoundException ex) {
+                                continue;
+                            }
+                        }
+                    } else {
+                        log.debug("Neither path nor uuid present");
+                        return;
+                    }
                 }
 
                 while (node != null && !node.isNodeType("mix:referenceable")) {
-                    if(node.getIndex() > 1) {
+                    if (node.getIndex() > 1) {
                         spb.prepend(']');
                         spb.prepend(new Integer(node.getIndex()).toString());
                         spb.prepend('[');
