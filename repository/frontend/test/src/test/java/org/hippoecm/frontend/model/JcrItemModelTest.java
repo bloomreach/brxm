@@ -18,6 +18,7 @@ package org.hippoecm.frontend.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import javax.jcr.Node;
@@ -101,6 +102,15 @@ public class JcrItemModelTest extends PluginTest {
 
         JcrItemModel itemModel = new JcrItemModel("/test/bla");
         assertTrue(((Node) itemModel.getParentModel().getObject()).isSame(test));
+    }
+
+    @Test
+    public void testNullNode() throws Exception {
+        JcrItemModel itemModel = new JcrItemModel((Node) null);
+        itemModel.detach();
+        assertNull(itemModel.getObject());
+        assertFalse(itemModel.exists());
+        assertNull(itemModel.getPath());
     }
 
     @Test
