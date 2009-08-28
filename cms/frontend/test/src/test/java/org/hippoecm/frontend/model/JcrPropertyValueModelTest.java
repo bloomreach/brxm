@@ -50,6 +50,10 @@ public class JcrPropertyValueModelTest extends PluginTest {
         valueModel = new JcrPropertyValueModel(0, value, propModel);
         assertEquals("x", valueModel.getObject());
 
+        // create model by hand
+        valueModel = new JcrPropertyValueModel(0, propModel);
+        assertEquals("x", valueModel.getObject());
+
         // single-valued prop
         prop = test.setProperty("frontendtest:string", createValue("y"));
         propModel = new JcrPropertyModel(prop);
