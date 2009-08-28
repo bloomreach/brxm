@@ -209,7 +209,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
                     templateSetNode = typeNode.addNode(EditorNodeType.EDITOR_TEMPLATES, EditorNodeType.NT_TEMPLATESET);
                     save = true;
                 } else {
-                    return null;
+                    throw new StoreException("Type " + type + " is not editable");
                 }
             } else {
                 templateSetNode = typeNode.getNode(EditorNodeType.EDITOR_TEMPLATES);
