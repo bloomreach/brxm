@@ -193,17 +193,7 @@ public class ListDataTable extends DataTable {
         });
 
         if (context != null && model instanceof IObservable) {
-            IObserver observer = new IObserver() {
-                private static final long serialVersionUID = 1L;
-
-                public IObservable getObservable() {
-                    return (IObservable) model;
-                }
-
-                public void onEvent(Iterator<? extends IEvent> event) {
-                    dirty.add(item);
-                }
-            };
+            IObserver observer = newObserver(item, model);
             observers.put(item, observer);
             context.registerService(observer, IObserver.class.getName());
         }
@@ -211,6 +201,24 @@ public class ListDataTable extends DataTable {
         return item;
     }
 
+    protected final void redrawItem(Item item) {
+        dirty.add(item);
+    }
+
+    protected IObserver newObserver(final Item item, final IModel model) {
+        return new IObserver() {
+            private static final long serialVersionUID = 1L;
+
+            public IObservable getObservable() {
+                return (IObservable) model;
+            }
+
+            public void onEvent(Iterator<? extends IEvent> event) {
+                redrawItem(item);
+            }
+        };
+    }
+    
     protected void destroyItem(Item item) {
         if (context != null) {
             if (observers.containsKey(item)) {
