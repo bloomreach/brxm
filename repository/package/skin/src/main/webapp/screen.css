@@ -726,7 +726,18 @@ font-weight: bold;
 .hippo-accordion-unit h2 a.focus:active{background-position: 0px -72px}
 
 /* Show add-root button in tree*/
-.hippo-accordion-unit-add { display: block; background-image: url("images/addfolder.png"); background-repeat: no-repeat; background-position: 0px 0px; text-align: left; padding-left: 30px; padding-top: 3px; margin-left: 5px; margin-bottom: 5px; margin-top: 3px; height: 20px;}
+.hippo-accordion-unit-add { 
+	display: block; 
+	background-image: url("images/list-add-16.png"); 
+	background-repeat: no-repeat; 
+	background-position: 0px 6px; 
+	text-align: left; 
+	padding-left: 21px; 
+	padding-top: 6px; 
+	margin-left: 5px;
+	height: 20px;
+	color: #333; 
+}
 
 /* But hide it in pickers */
 .wicket-modal .hippo-accordion-unit-add { display: none; }
@@ -1189,4 +1200,13 @@ table.hippo-defaultcontent td {
 table.hippo-list-documents > tbody {
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.hippo-accordion-unit-bottom {
+  background-color: #ebebeb;
+  cursor: pointer;
+  height: 26px;
+  margin: 0;
+  padding:0;
+  border:0;
 }
