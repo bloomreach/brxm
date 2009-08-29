@@ -1209,4 +1209,5 @@ table.hippo-list-documents > tbody {
   margin: 0;
   padding:0;
   border:0;
+  white-space: nowrap;
 }
