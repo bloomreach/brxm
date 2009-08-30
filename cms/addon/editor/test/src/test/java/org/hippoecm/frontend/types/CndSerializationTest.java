@@ -20,6 +20,8 @@ import static junit.framework.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.jackrabbit.core.nodetype.NodeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
@@ -49,12 +51,14 @@ public class CndSerializationTest extends PluginTest {
         assertEquals("http://www.hippoecm.org/frontend/test/nt/0.2", mapping.getURI("test"));
         assertTrue(mapping.getPrefixToURIMapping().containsKey("nt"));
         
-        List<NodeTypeDef> ntDefs = cndReader.getNodeTypeDefs();
-        assertEquals(3, ntDefs.size());
-        
+        Map<String, NodeTypeDef> nodeTypes = new TreeMap<String, NodeTypeDef>();
+        for (NodeTypeDef def : (List<NodeTypeDef>) cndReader.getNodeTypeDefs()) {
+            nodeTypes.put(def.getName().getLocalName(), def);
+        }
+
         // test:test
         {
-            NodeTypeDef ntd = ntDefs.get(0);
+            NodeTypeDef ntd = nodeTypes.get("test");
             NodeDef childNodes[] = ntd.getChildNodeDefs();
             assertEquals(1, childNodes.length);
     
@@ -72,7 +76,7 @@ public class CndSerializationTest extends PluginTest {
 
         // test:inheriting
         {
-            NodeTypeDef ntd = ntDefs.get(1);
+            NodeTypeDef ntd = nodeTypes.get("inheriting");
             PropDef[] pds = ntd.getPropertyDefs();
             assertEquals(1, pds.length);
     
