@@ -196,8 +196,8 @@
           <sv:value>http://www.hippoecm.org/frontend/test/nt/0.1</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>hipposysedit:mixinTest</sv:value>
-          <sv:value>hipposysedit:mixin</sv:value>
+          <sv:value>test:mixinTest</sv:value>
+          <sv:value>test:mixin</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
