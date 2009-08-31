@@ -288,7 +288,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             public void setObject(Object value) {
                 try {
                     String cleanedValue = clean((String) value);
-                    removeLinks(cleanedValue);
+                    if (cleanedValue != null) {
+                        removeLinks(cleanedValue);
+                    }
                     valueModel.setObject(cleanedValue);
                 } catch (Exception e) {
                     error(new ResourceModel("error-while-cleaning-conent",
