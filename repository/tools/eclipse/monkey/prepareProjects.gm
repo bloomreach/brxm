@@ -7,85 +7,87 @@
  * Exec-Mode: Foreground
  * DOM: http://groovy-monkey.sourceforge.net/update/plugins/net.sf.groovyMonkey.dom
  */
-import org.eclipse.jdt.internal.core.SetClasspathOperation;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.internal.core.ClasspathEntry;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IClasspathAttribute;
-import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.jdt.internal.core.SetClasspathOperation
+import org.eclipse.jdt.core.IClasspathEntry
+import org.eclipse.jdt.internal.core.ClasspathEntry
+import org.eclipse.jdt.core.IPackageFragmentRoot
+import org.eclipse.jdt.core.IClasspathAttribute
+import org.eclipse.core.internal.resources.Workspace
 
-out.clear();
-println "$metadata.menuName started\n";
+out.clear()
+println "$metadata.menuName started\n"
 
-addProjectDependency('hippo-ecm-quickstart-war', 'hippo-ecm-repository-application');
-addProjectDependency('hippo-ecm-quickstart-war', 'hippo-ecm-frontend-application');
-addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-repository-application');
-addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-frontend-application');
+addProjectDependency('hippo-ecm-quickstart-war', 'hippo-ecm-repository-application')
+addProjectDependency('hippo-ecm-quickstart-war', 'hippo-ecm-frontend-application')
+addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-repository-application')
+addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-frontend-application')
 
-removeClasspathEntry('hippo-ecm-repository-engine', 'src/test/resources');
-removeClasspathEntry('hippo-ecm-addon-standards-frontend', 'src/test/java');
-removeClasspathEntry('hippo-ecm-addon-standards-frontend', 'src/test/resources');
-removeClasspathEntry('hippo-ecm-addon-editor', 'src/test/resources');
-removeClasspathEntry('hippo-ecm-addon-cms-edit', 'src/test/java');
-removeClasspathEntry('hippo-ecm-addon-cms-edit', 'src/test/resources');
-removeClasspathEntry('hippo-ecm-addon-yui', 'src/test/resources');
-removeClasspathEntry('hippo-ecm-addon-xinha-frontend', 'src/test/resources');
-removeClasspathEntry('hippo-ecm-addon-xinha-frontend', 'src/test/java');
-removeClasspathEntry('hippo-ecm-addon-eavesdrop', 'src/test/resources');
-removeClasspathEntry('hippo-ecm-addon-faceteddate-repository', 'src/test/resources');
-removeClasspathEntry('hippo-ecm-tools-projectexport', 'src/test/resources');
+cleanupSharedResources()
+cleanupTestResourcesInDependencies('hippo-ecm-quickstart-war')
+cleanupTestResourcesInDependencies('hippo-ecm-repository-application')
+cleanupTestResourcesInDependencies('hippo-ecm-frontend-application')
 
-removeProjectDependency('hippo-ecm-addon-xinha-frontend', 'hippo-ecm-frontend-engine-test');
-removeProjectDependency('hippo-ecm-addon-cms-edit', 'hippo-ecm-frontend-engine-test');
-removeProjectDependency('hippo-ecm-addon-standards-frontend', 'hippo-ecm-frontend-engine-test');
-removeProjectDependency('hippo-ecm-tools-projectexport', 'hippo-ecm-addon-builtin-test');
-
-cleanupSharedResources();
-
-println "\n$metadata.menuName finished";
+println "\n$metadata.menuName finished"
 
 /////////////
+
+def cleanupTestResourcesInDependencies(projectName) {
+    removeClasspathEntry(projectName, 'src/test/java')
+    removeClasspathEntry(projectName, 'src/test/resources')
+    def project = workspace.root.getProject(projectName)
+    if (project.isOpen()) {
+        def javaProject = project.getNature('org.eclipse.jdt.core.javanature')
+        def classpath = javaProject.rawClasspath
+        classpath.each() {
+            if (it.entryKind == IClasspathEntry.CPE_PROJECT) {
+                def name = it.path.lastSegment()
+                removeProjectDependency(name, 'hippo-ecm-frontend-engine-test')
+                removeProjectDependency(name, 'hippo-ecm-addon-builtin-test')
+                removeClasspathEntry(name, 'src/test/java')
+                removeClasspathEntry(name, 'src/test/resources')
+            }
+        }
+    }
+}
 
 def cleanupSharedResources() {
     workspace.root.projects.each() {
         if (it.hasNature('org.eclipse.jdt.core.javanature')) {
-            removeClasspathEntry(it.name, 'target/maven-shared-archive-resources');
+            removeClasspathEntry(it.name, 'target/maven-shared-archive-resources')
         }
     }
 }
 
 def removeClasspathEntry(projectName, pathPattern) {
-    def project = workspace.root.getProject(projectName);
+    def project = workspace.root.getProject(projectName)
     if (project.isOpen()) {
-	    def javaProject = project.getNature('org.eclipse.jdt.core.javanature');
-        def classpath = javaProject.getRawClasspath();
-        def toBeRemoved = null;
+	    def javaProject = project.getNature('org.eclipse.jdt.core.javanature')
+        def classpath = javaProject.getRawClasspath()
+        def toBeRemoved = null
         classpath.each() {
             if (it.getPath().toString().contains(pathPattern)) {
-                toBeRemoved = it;
+                toBeRemoved = it
             }
-        };
+        }
         if (toBeRemoved != null) {
-            println "  Removing classpath entry $pathPattern for $projectName";
-            def classpathSet = new LinkedHashSet(Arrays.asList(classpath));
-            classpathSet.remove(toBeRemoved);
-            classpath = (IClasspathEntry[])classpathSet.toArray();
-            def op = new SetClasspathOperation(javaProject, classpath, javaProject.getOutputLocation(), true);
-            op.runOperation(monitor);
-	    } else {
-	        println "  $projectName has no classpath entry $pathPattern, leaving as is..";
+            println "  Removing classpath entry $pathPattern for $projectName"
+            def classpathSet = new LinkedHashSet(Arrays.asList(classpath))
+            classpathSet.remove(toBeRemoved)
+            classpath = (IClasspathEntry[])classpathSet.toArray()
+            def op = new SetClasspathOperation(javaProject, classpath, javaProject.getOutputLocation(), true)
+            op.runOperation(monitor)
 	    }
 	}
 }
 
 
 def addProjectDependency(fromName, toName) {
-    def from = workspace.root.getProject(fromName);
-    def to = workspace.root.getProject(toName);
+    def from = workspace.root.getProject(fromName)
+    def to = workspace.root.getProject(toName)
     if (from.isOpen() && to.isOpen()) {   
-	    def fromProject = from.getNature('org.eclipse.jdt.core.javanature');
-	    def classpath = fromProject.getRawClasspath();
-	    def classpathSet = new LinkedHashSet(Arrays.asList(classpath));
+	    def fromProject = from.getNature('org.eclipse.jdt.core.javanature')
+	    def classpath = fromProject.getRawClasspath()
+	    def classpathSet = new LinkedHashSet(Arrays.asList(classpath))
 	    def dependency = new ClasspathEntry(
 	        IPackageFragmentRoot.K_SOURCE,     // indicates this classpath entry contains source files.
 	        IClasspathEntry.CPE_PROJECT,       // indicates a required project.
@@ -100,41 +102,37 @@ def addProjectDependency(fromName, toName) {
 	        true,                              // combineAccessRules
 	        (IClasspathAttribute[])[]          // extraAttributes
 	    );        
-	    classpathSet.add(dependency);
+	    classpathSet.add(dependency)
 	    
 	    if (classpathSet.size() > classpath.length) {
-	        println "  Adding project dependency from $fromName to $toName";
-	    	classpath = (IClasspathEntry[])classpathSet.toArray();
-	    	def op = new SetClasspathOperation(fromProject, classpath, fromProject.getOutputLocation(), true);
-	    	op.runOperation(monitor);
-	    } else {
-            println "  Project dependency from $fromName to $toName already exists, leaving as is..";
+	        println "  Adding project dependency from $fromName to $toName"
+	    	classpath = (IClasspathEntry[])classpathSet.toArray()
+	    	def op = new SetClasspathOperation(fromProject, classpath, fromProject.getOutputLocation(), true)
+	    	op.runOperation(monitor)
         }
     }
 }
 
 def removeProjectDependency(fromName, toName) {
-    def from = workspace.root.getProject(fromName);
-    def to = workspace.root.getProject(toName);
+    def from = workspace.root.getProject(fromName)
+    def to = workspace.root.getProject(toName)
     if (from.isOpen() && to.isOpen()) {   
-        def fromProject = from.getNature('org.eclipse.jdt.core.javanature');
-        def classpath = fromProject.getRawClasspath();
-        def path = to.getFullPath();
-        def toBeRemoved = null;
+        def fromProject = from.getNature('org.eclipse.jdt.core.javanature')
+        def classpath = fromProject.getRawClasspath()
+        def path = to.getFullPath()
+        def toBeRemoved = null
         classpath.each() {
             if (it.getPath().toString().contains(toName)) {
-                toBeRemoved = it;
+                toBeRemoved = it
             }
-        };
+        }
         if (toBeRemoved != null) {
-            println "  Removing project dependency from $fromName to $toName";
-            def classpathSet = new LinkedHashSet(Arrays.asList(classpath));
-            classpathSet.remove(toBeRemoved);
-            classpath = (IClasspathEntry[])classpathSet.toArray();
-            def op = new SetClasspathOperation(fromProject, classpath, fromProject.getOutputLocation(), true);
-            op.runOperation(monitor);
-        } else {
-            println "  $fromName has no project dependency to $toName, leaving as is..";
+            println "  Removing project dependency from $fromName to $toName"
+            def classpathSet = new LinkedHashSet(Arrays.asList(classpath))
+            classpathSet.remove(toBeRemoved)
+            classpath = (IClasspathEntry[])classpathSet.toArray()
+            def op = new SetClasspathOperation(fromProject, classpath, fromProject.getOutputLocation(), true)
+            op.runOperation(monitor)
         }
     }
 }
