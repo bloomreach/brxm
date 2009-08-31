@@ -27,6 +27,10 @@ public class XinhaHtmlProcessor {
     private static Pattern IMG_PATTERN = Pattern.compile("<img[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern SRC_PATTERN = Pattern.compile("src=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
 
+    /**
+     * Prefix the targets of relative image links in a text.  Text and prefix may
+     * neither be null.
+     */
     public static String prefixImageLinks(String text, String prefix) {
         StringBuffer processed = new StringBuffer();
         Matcher m = IMG_PATTERN.matcher(text);
@@ -59,6 +63,10 @@ public class XinhaHtmlProcessor {
         return processed.toString();
     }
 
+    /**
+     * Return the internal links, i.e. the links to other documents / images / assets
+     * in the text.  The text may not be null.
+     */
     public static Set<String> getInternalLinks(String text) {
         Set<String> links = new TreeSet<String>();
         Matcher m = LINK_PATTERN.matcher(text);
