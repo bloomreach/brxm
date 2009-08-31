@@ -146,10 +146,10 @@ if (!YAHOO.hippo.AccordionManager) {
                 if (this.cfg.addScrollbar) {
                     //Dom.setStyle(id, 'overflow', 'scroll');
                     if(YAHOO.env.ua.ie > 0 && YAHOO.env.ua.ie < 7) {
-                        Dom.setStyle(centerEl, '-ms-overflow-x', 'hidden');
+                        Dom.setStyle(centerEl, '-ms-overflow-x', 'auto');
                         Dom.setStyle(centerEl, '-ms-overflow-y', 'auto');
                     } else {
-                        Dom.setStyle(centerEl, 'overflow-x', 'hidden');
+                        Dom.setStyle(centerEl, 'overflow-x', 'auto');
                         Dom.setStyle(centerEl, 'overflow-y', 'auto');
                     }
                 }
