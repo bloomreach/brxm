@@ -20,7 +20,7 @@
          xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
          xmlns:hipposysedit="http://www.onehippo.org/jcr/hipposysedit/nt/1.0"
          xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="text">
+         sv:name="address">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:templatetype</sv:value>
   </sv:property>
@@ -57,13 +57,27 @@
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:name" sv:type="String">
-          <sv:value>content</sv:value>
+          <sv:value>street</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>defaultcontent:content</sv:value>
+          <sv:value>defaultcontent:street</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:type" sv:type="String">
-          <sv:value>Text</sv:value>
+          <sv:value>String</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="hipposysedit:field">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposysedit:field</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:name" sv:type="String">
+          <sv:value>number</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:path" sv:type="String">
+          <sv:value>defaultcontent:number</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:type" sv:type="String">
+          <sv:value>Long</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -99,8 +113,11 @@
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>${wicket.id}</sv:value>
         </sv:property>
+        <sv:property sv:name="wicket.variant" sv:type="String">
+          <sv:value>row</sv:value>
+        </sv:property>
       </sv:node>
-      <sv:node sv:name="title">
+      <sv:node sv:name="street">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
@@ -111,7 +128,7 @@
           <sv:value>${engine}</sv:value>
         </sv:property>
         <sv:property sv:name="field" sv:type="String">
-          <sv:value>content</sv:value>
+          <sv:value>street</sv:value>
         </sv:property>
         <sv:property sv:name="mode" sv:type="String">
           <sv:value>${mode}</sv:value>
@@ -129,6 +146,32 @@
           <sv:value>${wicket.model}</sv:value>
         </sv:property>
       </sv:node>
+      <sv:node sv:name="number">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="caption" sv:type="String">
+          <sv:value></sv:value>
+        </sv:property>
+        <sv:property sv:name="engine" sv:type="String">
+          <sv:value>${engine}</sv:value>
+        </sv:property>
+        <sv:property sv:name="field" sv:type="String">
+          <sv:value>number</sv:value>
+        </sv:property>
+        <sv:property sv:name="mode" sv:type="String">
+          <sv:value>${mode}</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${cluster.id}.field</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>${wicket.model}</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
   </sv:node>
   <sv:node sv:name="hipposysedit:prototypes">
@@ -137,10 +180,13 @@
     </sv:property>
     <sv:node sv:name="hipposysedit:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>defaultcontent:text</sv:value>
+        <sv:value>defaultcontent:address</sv:value>
       </sv:property>
-      <sv:property sv:name="defaultcontent:content" sv:type="String">
-        <sv:value>content</sv:value>
+      <sv:property sv:name="defaultcontent:street" sv:type="String">
+        <sv:value>street</sv:value>
+      </sv:property>
+      <sv:property sv:name="defaultcontent:number" sv:type="Long">
+        <sv:value>0</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
