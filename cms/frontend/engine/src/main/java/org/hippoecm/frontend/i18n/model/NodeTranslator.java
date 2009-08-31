@@ -40,6 +40,11 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Translator of node names, property names and values.  When a node has the mixin
+ * hippo:translated set, it is used to lookup the translated strings.  When no such mixin
+ * is present or the node doesn't exist, the last element of the node path is returned.
+ */
 public class NodeTranslator extends NodeModelWrapper {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -117,6 +122,15 @@ public class NodeTranslator extends NodeModelWrapper {
                     }
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
+                }
+            } else {
+                String path = nodeModel.getItemModel().getPath();
+                if (path != null) {
+                    name = path.substring(path.lastIndexOf('/') + 1);
+                    if (name.indexOf('[') > 0) {
+                        name = name.substring(0, name.indexOf('['));
+                    }
+                    name = NodeNameCodec.decode(name);
                 }
             }
             return name;

@@ -15,24 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,27 +38,17 @@ public class BrowseLink extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(BrowseLink.class);
 
-    private String label = null;
-    
-    public BrowseLink(final IPluginContext context, final IPluginConfig config, String id, String docPath) {
-        super(id, new Model(docPath));
-        this.label = null;
-        addLink(context, config, id, docPath);        
-    }
+    public BrowseLink(final IPluginContext context, final IPluginConfig config, String id,
+            IModel/*<BrowseTarget>*/model, IModel/*<String>*/labelModel) {
+        super(id, model);
 
-    public BrowseLink(final IPluginContext context, final IPluginConfig config, String id, String docPath, String label) {
-        super(id, new Model(docPath));
-        this.label = label;
-        addLink(context, config, id, docPath);        
-    }
-
-    private void addLink(final IPluginContext context, final IPluginConfig config, String id, String docPath) {
-        final JcrNodeModel nodeModel = new JcrNodeModel(docPath);
-        AjaxLink link = new AjaxLink("link", nodeModel) {
+        AjaxLink link = new AjaxLink("link") {
             private static final long serialVersionUID = 1L;
 
+            @SuppressWarnings("unchecked")
             @Override
             public void onClick(AjaxRequestTarget target) {
+                final JcrNodeModel nodeModel = ((BrowseLinkTarget) BrowseLink.this.getModelObject()).getBrowseModel();
                 String browserId = config.getString("browser.id");
                 IBrowseService browseService = context.getService(browserId, IBrowseService.class);
                 if (browseService != null) {
@@ -82,32 +66,12 @@ public class BrowseLink extends Panel {
             }
         };
         add(link);
-    
-        try {
-            Node node = nodeModel.getNode();
-            while (!node.isNodeType(HippoNodeType.NT_HANDLE) &&
-                   !node.isNodeType("hippostd:folder") &&
-                   !node.getPath().equals("/")) {
-                node = node.getParent();
-            }
-            String[] elements = StringUtils.split(node.getPath(), '/');
-            for (int i = 0; i < elements.length; i++) {
-                elements[i] = NodeNameCodec.decode(elements[i]);
-            }
-            String path = StringUtils.join(elements, '/');
-    
-            if (label == null) {
-                label = (String) new NodeTranslator(new JcrNodeModel(node)).getNodeName().getObject();
-            }
-            
-            Label linkLabel = new Label("label", label);
-            linkLabel.setEscapeModelStrings(false);
-            link.add(linkLabel);
-            link.add(new SimpleAttributeModifier("title", path));
-    
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
-            link.add(new Label("label", e.getMessage()));
-        }
+
+        Label linkLabel = new Label("label", labelModel);
+        linkLabel.setEscapeModelStrings(false);
+        link.add(linkLabel);
+
+        link.add(new AttributeModifier("title", true, new PropertyModel(getModel(), "displayPath")));
     }
+
 }

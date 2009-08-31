@@ -27,9 +27,12 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
+import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLinkTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +101,9 @@ public class TodoPlugin extends RenderPlugin {
             try {
                 Node node = (Node) item.getModelObject();
                 String path = node.getPath();
-                item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", path));
+                BrowseLinkTarget target = new BrowseLinkTarget(path);
+                item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", new Model(target),
+                        new PropertyModel(target, "name")));
                 item.add(new Label("request-description", node.getProperty("type").getString()));
                 item.add(new Label("request-owner", node.getProperty("username").getString()));
             } catch (RepositoryException e) {
