@@ -24,13 +24,14 @@
 
 [defaultcontent:basedocument] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 
-[defaultcontent:text]
-- defaultcontent:content (string)
+[defaultcontent:address]
+- defaultcontent:street (string)
+- defaultcontent:number (long)
 
 [defaultcontent:article] > defaultcontent:basedocument
 - defaultcontent:title (string)
 - defaultcontent:introduction (string)
-+ defaultcontent:text (defaultcontent:text) multiple
++ defaultcontent:body (hippostd:html)
 
 [defaultcontent:news] > defaultcontent:basedocument
 - defaultcontent:title (string)
@@ -43,6 +44,7 @@
 - defaultcontent:title (string)
 - defaultcontent:introduction (string)
 + defaultcontent:date (hippostd:date)
++ defaultcontent:address (defaultcontent:address)
 + defaultcontent:body (hippostd:html)
 
 [defaultcontent:overview] > defaultcontent:basedocument

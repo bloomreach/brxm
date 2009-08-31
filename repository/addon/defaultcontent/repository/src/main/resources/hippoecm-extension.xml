@@ -66,8 +66,8 @@
     </sv:property>
   </sv:node>
 
-  <!-- text type -->
-  <sv:node sv:name="defaultcontent-type-text">
+  <!-- address type -->
+  <sv:node sv:name="defaultcontent-type-address">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -75,7 +75,7 @@
       <sv:value>3001.2</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>types/defaultcontent-type-text.xml</sv:value>
+      <sv:value>types/defaultcontent-type-address.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces/defaultcontent</sv:value>

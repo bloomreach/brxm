@@ -111,17 +111,14 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
-        <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
         <sv:property sv:name="hipposysedit:name" sv:type="String">
-          <sv:value>content</sv:value>
+          <sv:value>body</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>defaultcontent:text</sv:value>
+          <sv:value>defaultcontent:body</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:type" sv:type="String">
-          <sv:value>defaultcontent:text</sv:value>
+          <sv:value>hippostd:html</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -249,18 +246,18 @@
           </sv:property>
         </sv:node>
       </sv:node>
-      <sv:node sv:name="content">
+      <sv:node sv:name="body">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="caption" sv:type="String">
-          <sv:value>Text</sv:value>
+          <sv:value>Body</sv:value>
         </sv:property>
         <sv:property sv:name="engine" sv:type="String">
           <sv:value>${engine}</sv:value>
         </sv:property>
         <sv:property sv:name="field" sv:type="String">
-          <sv:value>content</sv:value>
+          <sv:value>body</sv:value>
         </sv:property>
         <sv:property sv:name="mode" sv:type="String">
           <sv:value>${mode}</sv:value>
@@ -274,6 +271,14 @@
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
         </sv:property>
+        <sv:node sv:name="cluster.options">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:name="width" sv:type="String">
+            <sv:value>90%</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
       <sv:node sv:name="mixinPicker">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -344,36 +349,6 @@
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>1aa56ada-a72a-4865-adfb-9d1f18211856</sv:value>
-      </sv:property>
-      <sv:property sv:name="defaultcontent:introduction" sv:type="String">
-        <sv:value>introduction</sv:value>
-      </sv:property>
-      <sv:property sv:name="defaultcontent:title" sv:type="String">
-        <sv:value>title</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:paths" sv:type="String">
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-      </sv:property>
-      <sv:property sv:name="hippostd:state" sv:type="String">
-        <sv:value>unpublished</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-        <sv:value>new</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>8e675d20-91e6-4a2f-952d-e05f5c765169</sv:value>
-      </sv:property>
-      <sv:property sv:name="defaultcontent:body" sv:type="String">
-        <sv:value>body</sv:value>
       </sv:property>
       <sv:property sv:name="defaultcontent:introduction" sv:type="String">
         <sv:value>introduction</sv:value>
