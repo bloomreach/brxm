@@ -22,6 +22,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
+import org.hippoecm.frontend.editor.workflow.NamespaceValidator;
 import org.hippoecm.frontend.editor.workflow.action.NewCompoundTypeAction;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
@@ -34,16 +35,34 @@ public class CreateCompoundTypeDialog extends CreateTypeDialog {
     class TypeDetailStep extends WizardStep {
         private static final long serialVersionUID = 1L;
 
+        TextFieldWidget nameComponent;
+
         TypeDetailStep(NewCompoundTypeAction action) {
             super(new ResourceModel("type-detail-title"), new ResourceModel("type-detail-summary"));
-            add(new TextFieldWidget("name", new PropertyModel(action, "name")));
+            add(nameComponent = new TextFieldWidget("name", new PropertyModel(action, "name")));
+        }
+
+        @Override
+        public void applyState() {
+            try {
+                // NamespaceValidator only allows programming by exception
+                NamespaceValidator.checkName((String)((PropertyModel)nameComponent.getModel()).getObject());
+                setComplete(true);
+            } catch (Exception ex) {
+                setComplete(false);
+            }
         }
     }
 
     public CreateCompoundTypeDialog(NewCompoundTypeAction action, ILayoutProvider layouts) {
         super(action, layouts);
 
-        WizardModel wizardModel = new WizardModel();
+        WizardModel wizardModel = new WizardModel() {
+            @Override
+            public boolean isNextAvailable() {
+                return !isLastStep(getActiveStep());
+            }
+        };
         wizardModel.add(new TypeDetailStep(action));
         wizardModel.add(new SelectLayoutStep(new PropertyModel(action, "layout"), layouts));
         init(wizardModel);
@@ -52,5 +71,4 @@ public class CreateCompoundTypeDialog extends CreateTypeDialog {
     public IModel getTitle() {
         return new StringResourceModel("new-compound-type", this, null);
     }
-
 }

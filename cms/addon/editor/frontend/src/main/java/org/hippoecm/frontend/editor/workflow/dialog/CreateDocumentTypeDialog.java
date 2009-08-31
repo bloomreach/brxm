@@ -30,6 +30,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
+import org.hippoecm.frontend.editor.workflow.NamespaceValidator;
 import org.hippoecm.frontend.editor.workflow.action.NewDocumentTypeAction;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
@@ -44,9 +45,11 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
     class TypeDetailStep extends WizardStep {
         private static final long serialVersionUID = 1L;
 
+        TextFieldWidget nameComponent;
+
         TypeDetailStep(NewDocumentTypeAction action) {
             super(new ResourceModel("type-detail-title"), new ResourceModel("type-detail-summary"));
-            add(new TextFieldWidget("name", new PropertyModel(action, "name")));
+            add(nameComponent = new TextFieldWidget("name", new PropertyModel(action, "name")));
 
             CheckGroup cg = new CheckGroup("checkgroup", new PropertyModel(action, "mixins"));
             add(cg);
@@ -66,12 +69,28 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
 
             });
         }
+        
+        @Override
+        public void applyState() {
+            try {
+                // NamespaceValidator only allows programming by exception
+                NamespaceValidator.checkName((String) ((PropertyModel) nameComponent.getModel()).getObject());
+                setComplete(true);
+            } catch (Exception ex) {
+                setComplete(false);
+            }
+        }
     }
 
     public CreateDocumentTypeDialog(NewDocumentTypeAction action, ILayoutProvider layouts) {
         super(action, layouts);
 
-        WizardModel wizardModel = new WizardModel();
+        WizardModel wizardModel = new WizardModel() {
+            @Override
+            public boolean isNextAvailable() {
+                return !isLastStep(getActiveStep());
+            }
+        };
         wizardModel.add(new TypeDetailStep(action));
         wizardModel.add(new SelectLayoutStep(new PropertyModel(action, "layout"), layouts));
         init(wizardModel);
