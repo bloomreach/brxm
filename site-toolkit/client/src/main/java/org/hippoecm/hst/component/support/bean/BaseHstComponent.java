@@ -394,7 +394,9 @@ public class BaseHstComponent extends GenericHstComponent {
             if(builtinType) {
                 log.debug("Builtin annotated class for primary type '{}' is overridden. Builtin version is ignored", jcrPrimaryNodeType);
             } else {
-                throw new HstComponentFatalException("Annotated class for primarytype '"+jcrPrimaryNodeType+"' is duplicate. Correct your beans");
+                throw new HstComponentFatalException("Annotated class for primarytype '"+jcrPrimaryNodeType+"' is duplicate. " +
+                		"You might have configured a bean in 'beans-annotated-classes.xml' that does not have a annotation for the jcrType and" +
+                		"inherits the jcrType from the bean it extends, resulting in 2 beans with the same jcrType. Correct your beans.");
             }
             return;
         }
