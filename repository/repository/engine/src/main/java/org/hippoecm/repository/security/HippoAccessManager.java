@@ -330,9 +330,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         // fast track common read check
         if (permissions == Permission.READ) {
             try {
-                if (canRead((NodeId) id)) {
-                    return true;
-                }
+                return canRead((NodeId) id);
             } catch (NoSuchItemStateException e) {
                 // shouldn't happen, the id was already found
                 log.error("No item id found", e);
@@ -358,7 +356,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             return true;
         }
         if (log.isInfoEnabled()) {
-            log.info("Checking [{}] for absPath: {}", permsString(permissions), npRes.getJCRPath(absPath));
+            log.info("Checking [{}] for user {} absPath: {}", new Object[] { permsString(permissions), userId,
+                    npRes.getJCRPath(absPath) });
         }
 
         // fasttrack read permissions check
@@ -1261,6 +1260,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                             if (log.isInfoEnabled()) {
                                 log.info("GRANT: " + priv.getName() + " to user " + userId + " in domain " + fap + " for " + absPath);
                             }
+                            if (priv.getName().equals("jcr:setProperties")) {
+                                readAccessCache.remove(id);
+                            }
                             break;
                         }
                     } catch (NoSuchItemStateException e) {
@@ -1275,10 +1277,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                 return false;
             }
         }
-
-        // not a read, remove node from cache
-        readAccessCache.remove(id);
-        
         return true;
     }
     
