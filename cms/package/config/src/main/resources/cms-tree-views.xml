@@ -36,26 +36,29 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="extension.addfolder" sv:type="String">
-        <sv:value>${cluster.id}.addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="nodename.max.length" sv:type="Long">
-        <sv:value>23</sv:value>
-      </sv:property>
-      <sv:property sv:name="path" sv:type="String">
-        <sv:value>/content/documents</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="rootless" sv:type="String">
-        <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${wicket.model}</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.addfolder" sv:type="String">
+        <sv:value>${cluster.id}.addfolder</sv:value>
+      </sv:property>
+      <sv:property sv:name="path" sv:type="String">
+        <sv:value>/content/documents</sv:value>
+      </sv:property>
+      <sv:property sv:name="rootless" sv:type="String">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="tree.autowidth" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="add.contextmenu.link" sv:type="Boolean">
+        <sv:value>true</sv:value>
       </sv:property>
       <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

@@ -632,7 +632,7 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 */
 
 /* remove margins */
-.hippo-tree div.wicket-tree{margin: 0px; border: none;}
+.hippo-tree div.wicket-tree{margin: 0px; border: none;width: auto;}
 /* make sure the first folder level in the tree doens't have a left padding */
 .hippo-tree div.wicket-tree div.a_{padding-left: 0px}
 .hippo-tree div.wicket-tree div.a_ div.a_{padding-left: 1em}
@@ -647,6 +647,7 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 .hippo-tree div.wicket-tree div.row, 
 .hippo-tree div.wicket-tree div.row-selected{padding-top: 2px; padding-bottom: 2px;}
 
+.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown {visibility: hidden};
 .hippo-tree div.wicket-tree div.row .hippo-tree-dropdown-icon-container {background: transparent;}
 .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container, 
 .hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
@@ -747,10 +748,21 @@ font-weight: bold;
 
 /* Hippo tree addition */
 
-.hippo-tree-dropdown-icon-container{float: right; display: block; background: transparent;}
-.hippo-tree-dropdown-icon {display: block; width: 18px; height: 18px; float: right; margin-right: 4px; background: transparent;}
-.hippo-tree-dropdown-icon:hover {background-position: 0px 18px;}
+.hippo-tree-dropdown-icon-container {
+  display: none;
+  position: absolute;
+  left: -100px;
+  top: -100px;
+}
 
+.container-selected {
+	display: block;
+  background-color:#F4F4F4;
+  width:20px;
+  height:20px;
+}
+
+.hippo-tree-dropdown-icon {display: block; width: 18px; height: 18px; }
 
 /* Document Preview Plugin */
 /* ================================================ */
@@ -1200,6 +1212,15 @@ table.hippo-defaultcontent td {
 table.hippo-list-documents > tbody {
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.hippo-accordion-unit-center {
+  -ms-overflow: auto;
+  overflow:auto;
+}
+
+.wicket-modal .hippo-accordion-unit-center {
+  height: 281px;
 }
 
 .hippo-accordion-unit-bottom {

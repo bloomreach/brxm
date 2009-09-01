@@ -18,8 +18,15 @@ package org.hippoecm.frontend.behaviors;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
+/**
+ * Class that implements this interface should be able to do one thing: close a visible contextmenu
+ */
 public interface IContextMenu extends IClusterable {
     final static String SVN_ID = "$Id$";
-
+    
+    /**
+     * Close the contextmenu  
+     * @param target  
+     */
     void collapse(AjaxRequestTarget target);
 }

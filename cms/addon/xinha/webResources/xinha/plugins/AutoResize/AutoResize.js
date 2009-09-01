@@ -30,9 +30,9 @@ function AutoResize(editor) {
             viewWidth: 0,
             viewHeight: this.DOM.getViewportHeight()
     }
-    
+    var me = this;
     YAHOO.hippo.LayoutManager.registerResizeListener(this.editor._textArea,
-            this, function(type, args, me) {
+            this, function(type, args) {
         me.checkResize(editor);
     }, true, false);
 }

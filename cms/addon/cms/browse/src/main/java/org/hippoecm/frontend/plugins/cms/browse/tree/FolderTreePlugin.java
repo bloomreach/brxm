@@ -19,11 +19,15 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -34,8 +38,12 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree.ITreeNodeTranslator;
 import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree.TreeNodeTranslator;
+import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperBehavior;
+import org.hippoecm.frontend.plugins.cms.browse.tree.yui.WicketTreeHelperSettings;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.util.MaxLengthNodeNameFormatter;
 import org.hippoecm.frontend.widgets.JcrTree;
@@ -52,6 +60,8 @@ public class FolderTreePlugin extends RenderPlugin {
     protected CachedTreeModel treeModel;
     protected JcrTreeNode rootNode;
     private JcrNodeModel rootModel;
+
+    private WicketTreeHelperBehavior treeHelperBehavior;
 
     public FolderTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -91,6 +101,55 @@ public class FolderTreePlugin extends RenderPlugin {
             }
 
             @Override
+            protected MarkupContainer newContextLink(final MarkupContainer parent, String id, final TreeNode node,
+                    final MarkupContainer content) {
+                parent.add(new AbstractBehavior() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void renderHead(IHeaderResponse response) {
+                        response.renderOnLoadJavascript(treeHelperBehavior.getRenderString());
+                        response.renderOnLoadJavascript(treeHelperBehavior.getUpdateString());
+                    }
+                });
+
+                if (getPluginConfig().getBoolean("contextmenu.rightclick.enabled")) {
+                    parent.add(new RightClickBehavior(content, parent) {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        protected void respond(AjaxRequestTarget target) {
+                            updateTree(target);
+                            getContextmenu().setVisible(true);
+                            target.addComponent(getComponentToUpdate());
+                            IContextMenuManager menuManager = (IContextMenuManager) findParent(IContextMenuManager.class);
+                            if (menuManager != null) {
+                                menuManager.collapse(this, target);
+                                menuManager.addContextMenu(this, target);
+                                String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
+                                String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
+                                if (x != null && y != null) {
+                                    target.appendJavascript("Hippo.ContextMenu.renderAtPosition('"
+                                            + content.getMarkupId() + "', " + x + ", " + y + ");");
+                                } else {
+                                    target.appendJavascript("Hippo.ContextMenu.renderInTree('" + content.getMarkupId()
+                                            + "');");
+                                }
+                            }
+                        }
+                    });
+                    return null;
+                } else {
+                    return super.newContextLink(parent, id, node, content);
+                }
+            };
+
+            @Override
+            protected void onContextLinkClicked(MarkupContainer content, AjaxRequestTarget target) {
+                target.appendJavascript("Hippo.ContextMenu.renderInTree('" + content.getMarkupId() + "');");
+            }
+
+            @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
                 IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
                 FolderTreePlugin.this.setModel(treeNodeModel.getNodeModel());
@@ -103,10 +162,26 @@ public class FolderTreePlugin extends RenderPlugin {
                 } else {
                     state.expandNode(clickedNode);
                 }
-                redraw();
+                updateTree(target);
+            }
+
+            @Override
+            protected void onJunctionLinkClicked(AjaxRequestTarget target, TreeNode node) {
+                updateTree(target);
             }
         };
         add(tree);
+
+        tree.add(treeHelperBehavior = new WicketTreeHelperBehavior(YuiPluginHelper.getManager(context),
+                new WicketTreeHelperSettings(config)) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String getWicketId() {
+                return tree.getMarkupId();
+            }
+
+        });
 
         tree.setRootLess(config.getBoolean("rootless"));
 
@@ -153,7 +228,7 @@ public class FolderTreePlugin extends RenderPlugin {
             redraw();
         }
     }
-    
+
     public class FormattedTreeNodeTranslator extends MaxLengthNodeNameFormatter implements ITreeNodeTranslator {
         private static final long serialVersionUID = 1L;
 

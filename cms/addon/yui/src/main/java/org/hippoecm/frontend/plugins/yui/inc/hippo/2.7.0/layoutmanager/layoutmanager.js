@@ -42,13 +42,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             wireframes      : new YAHOO.hippo.HashMap(),
             _w              : new YAHOO.hippo.HashMap(),
             renderQueue     : new YAHOO.hippo.FunctionQueue('render'),
-            throttle        : new Wicket.Throttler(true),
+            throttler       : new Wicket.Throttler(true),
             throttleDelay   : 2000,
         
             init : function() {
                 //Handle the resizing of the window
-                var me = this;
-                Event.on(window, 'resize', me.resize, me, true);
+                //var me = this;
+                //Event.on(window, 'resize', me.resize, me, true);
             },
             
             resize : function() {
@@ -77,7 +77,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     o.render();
                 })
                 this._w.clear();
-                
+
                 //Workaround for HREPTWO-3035
                 //Set width of all resize handlers in IE to 20px, else they will be blocked
                 //by the scrollbars
@@ -117,7 +117,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                    return this.root;
                return this.wireframes.get(id);
             },
-            
+
             cleanupWireframes : function() {
                 var remove = [];
                 this.wireframes.forEach(this, function(key, value){
@@ -165,26 +165,37 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             registerEventListener : function(target, unit, evt, obj, func, executeNow, calculateScroll) {
+                if(executeNow) {
+                    func();
+                }
+
                 var eventName = evt + 'CustomEvent';
-                var callback = function() {
-                	var sizes = unit.getSizes();
-                	if(calculateScroll) {
-                		var scrollBottom = unit.body.scrollHeight - (unit.body.scrollTop + unit.body.clientHeight); // height of element scroll
-                		var scroll = unit.body.scrollTop + scrollBottom > 0;
-                		sizes['scroll'] = scroll;
-                	}
-                	target[eventName].fire(sizes);
-                };
                 if (Lang.isUndefined(target[eventName]) 
                         || Lang.isNull(target[eventName])) {
                     target[eventName] = new YAHOO.util.CustomEvent(eventName, this);
+                    
+                    var callback = function() {
+                        var sizes = unit.getSizes();
+                        if(calculateScroll) {
+                            var scrollBottom = unit.body.scrollHeight - (unit.body.scrollTop + unit.body.clientHeight); // height of element scroll
+                            var scroll = unit.body.scrollTop + scrollBottom > 0;
+                            sizes['scroll'] = scroll;
+                        }
+                        target[eventName].fire(sizes);
+                    };
                     target.on(evt, callback);
 
                 }
-                target[eventName].subscribe(func, obj);
-                if(executeNow) {
-                    callback();
+                var subs = target[eventName].subscribers; 
+                for(var i=0; i<subs.length; i++) {
+                    if(subs[i].obj == obj) {
+                        return;
+                    }
+                    if(subs[i].obj.id == obj.id) {
+                        return;
+                    }
                 }
+                target[eventName].subscribe(func, obj);
             },
 
             findLayoutUnit : function(el) {
@@ -250,7 +261,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 this.layout.on('resize', function() {
                     me.storeDimensions();
                 });
-
             },
 
             resize : function() {
@@ -307,7 +317,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             storeDimensions : function() {
-                YAHOO.log('Store sizes for: ' + this.name);
                 var sizes = this.layout.getSizes();
                 this.storeDimension(sizes, 'doc');
                 this.storeDimension(sizes, 'top');
@@ -319,7 +328,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             
             storeDimension : function(sizes, pos) {
                 if(this.hasPosition(pos)) {
-                    YAHOO.log('Sizes changed for ' + this.name);
                     var date = new Date();
                     date.setDate(date.getDate() + 31);
                     var opts = { expires: date };
