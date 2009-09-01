@@ -16,7 +16,6 @@
 package org.hippoecm.frontend;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.WicketAjaxReference;
 import org.apache.wicket.behavior.HeaderContributor;
@@ -108,7 +107,6 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         add(contextMenuBehavior);
 
         add(HeaderContributor.forJavaScript(WicketAjaxReference.INSTANCE));
-        add(HeaderContributor.forJavaScript(new ResourceReference(ContextMenuBehavior.class, "onchangetrigger.js")));
 
         IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
         IClusterControl clusterControl = context.newCluster(pluginCluster, null);
