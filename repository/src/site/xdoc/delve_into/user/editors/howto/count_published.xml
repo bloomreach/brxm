@@ -46,8 +46,10 @@ ________________________________________________________________________________
         in the screenshot the state icons show that:
      </p>
      <ol>
-      <li>The document artificial intelligence is published, so this document is counted.</li>
-      <li>The document panflute is published, so it is counted. A newer variant exists,
+      <li>The document artificial intelligence is currently published,
+          so this document is counted.</li>
+         <li>The document panflute is currently published,
+          so it is counted. A newer variant exists,
            but that makes no difference.</li>
       <li>The document multibazaar2009 is currently published, so it is counted.
           The document is being edited, but that makes no difference.

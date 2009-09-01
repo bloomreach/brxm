@@ -80,7 +80,7 @@ ________________________________________________________________________________
    <p>If a document has no referring documents, you will see the message:
    </p>
    <blockquote>This document is not being referred to by other documents.</blockquote>
-   <p>Note that this message is exactly what you want if you want to take offline or delete a document.
+   <p>Note that this message is exactly what you want if you are about to take offline or delete a document.
       It is not an error message, even if it occurs after the question:
    </p>
    <blockquote>Are you sure you want to take document xxx offline?</blockquote>
