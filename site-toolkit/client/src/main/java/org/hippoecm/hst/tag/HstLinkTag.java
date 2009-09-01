@@ -93,7 +93,7 @@ public class HstLinkTag extends TagSupport {
         }
         
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        // if hst request/esponse is retrieved, then this servlet has been dispatched by hst component.
+        // if hst request/response is retrieved, then this servlet has been dispatched by hst component.
         HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
         HstResponse hstResponse = (HstResponse) request.getAttribute(ContainerConstants.HST_RESPONSE);
         
@@ -101,10 +101,16 @@ public class HstLinkTag extends TagSupport {
             hstRequest = (HstRequest) pageContext.getRequest();
         }
 
+        if(hstRequest == null) {
+            log.warn("The request is not an HstRequest. Cannot create an HstLink outside the hst request processing. Return");
+            return EVAL_PAGE;
+        }
+        
         if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
             hstResponse = (HstResponse) pageContext.getResponse();
         }
 
+        
         HstRequestContext reqContext = hstRequest.getRequestContext();
         if(this.hippoBean != null) {
             if(hippoBean.getNode() == null) {
