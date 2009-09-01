@@ -40,7 +40,7 @@
          <img src='../../images/firefox_logo_tiny.png' alt='Firefox logo'/>
         </td>
         <td>
-         <a href='http://www.mozilla.com/en-US/firefox/'>Firefox 3</a>
+         <a href='http://www.mozilla.com/en-US/firefox/'>Firefox 3.5</a>
         </td>
        </tr>
        <tr>
@@ -48,8 +48,7 @@
          <img src='../../images/internet_explorer_logo_tiny.png' alt='internet explorer logo'/>
         </td>
         <td>
-          <a href='http://www.microsoft.com'>Internet Explorer 6 and 7</a>
-          <p>Internet Explorer 7 is a faster browser, and generally renders better than 6. If possible, it's advisable to upgrade.</p>
+          <a href='http://www.microsoft.com'>Internet Explorer 7 (IE 7) or Internet Explorer 8 in compatibility mode.</a>
         </td>
        </tr>
       </table>
