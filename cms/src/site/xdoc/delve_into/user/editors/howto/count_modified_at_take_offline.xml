@@ -49,7 +49,9 @@ ________________________________________________________________________________
       This is the only document someone is working on.
      </p>
      <p>The document panflute was a document with an published and an unpublished variant. So
-      the published variant was deleted. This does not count as a modification of the document.
+      the published variant was deleted (as described in
+      <a href='take_offline_all_in_folder.html'>take offline all in folder</a>).
+      This does not count as a modification of the document.
      </p>
      <p>
       Therefor the count of documents modified is two less than the count of documents to publish.

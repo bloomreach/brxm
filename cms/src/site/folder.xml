@@ -883,6 +883,10 @@
    fullname='delve_into/user/contributors/howto/show_referring_documents.xml'
    relpath='delve_into/user/contributors/howto'
   >show_referring_documents</file>
+      <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/contributors/howto/show_referring_documents.xml~'
+   relpath='delve_into/user/contributors/howto'
+  >show_referring_documents</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/howto/start_CMS.xml'
    relpath='delve_into/user/contributors/howto'
@@ -967,16 +971,8 @@
    fullname='delve_into/user/editors/howto/count_published.xml'
    relpath='delve_into/user/editors/howto'
   >count_published</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/editors/howto/count_published.xml~'
-   relpath='delve_into/user/editors/howto'
-  >count_published</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/editors/howto/count_unpublished.xml'
-   relpath='delve_into/user/editors/howto'
-  >count_unpublished</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/editors/howto/count_unpublished.xml~'
    relpath='delve_into/user/editors/howto'
   >count_unpublished</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -1003,10 +999,6 @@
    fullname='delve_into/user/editors/howto/publish_all_in_folder.xml'
    relpath='delve_into/user/editors/howto'
   >publish_all_in_folder</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/editors/howto/publish_all_in_folder.xml~'
-   relpath='delve_into/user/editors/howto'
-  >publish_all_in_folder</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/editors/howto/referring_documents.xml'
    relpath='delve_into/user/editors/howto'
@@ -1021,10 +1013,6 @@
   >start_CMS</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/editors/howto/take_offline_all_in_folder.xml'
-   relpath='delve_into/user/editors/howto'
-  >take_offline_all_in_folder</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/editors/howto/take_offline_all_in_folder.xml~'
    relpath='delve_into/user/editors/howto'
   >take_offline_all_in_folder</file>
      </folder>
