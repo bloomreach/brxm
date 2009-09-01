@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-tools</artifactId>
-    <version>2.08.00-SNAPSHOT</version>
+    <version>2.08.00</version>
   </parent>
 
   <name>Test utilities</name>
@@ -29,9 +29,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/testutils</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/testutils</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/testutils</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00/tools/testutils</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00/tools/testutils</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00/tools/testutils</url>
   </scm>
 
   <dependencies>

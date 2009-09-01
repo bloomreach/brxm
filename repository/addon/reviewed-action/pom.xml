@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon</artifactId>
-    <version>2.08.00-SNAPSHOT</version>
+    <version>2.08.00</version>
   </parent>
 
   <name>Reviewed action addon</name>
@@ -28,9 +28,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/reviewed-action</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00/addon/reviewed-action</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00/addon/reviewed-action</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00/addon/reviewed-action</url>
   </scm>
 
   <modules>
