@@ -73,17 +73,19 @@
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-configuration-editor-frontend</artifactId>
+      <groupId>org.onehippo.ecm.hst-addon-configuration-editor</groupId>
+      <artifactId>frontend</artifactId>
+      <version>${dollar}{hst-configuration-editor.version}</version>
       <type>jar</type>
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-configuration-editor-repository</artifactId>
+      <groupId>org.onehippo.ecm.hst-addon-configuration-editor</groupId>
+      <artifactId>repository</artifactId>
+      <version>${dollar}{hst-configuration-editor.version}</version>
       <type>jar</type>
     </dependency>
-  
+    
     <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>${rootArtifactId}-content</artifactId>

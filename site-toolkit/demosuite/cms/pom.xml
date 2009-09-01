@@ -66,7 +66,7 @@
       <type>jar</type>
     </dependency>
     
-    <dependency>
+     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
       <artifactId>hst-addon-repository</artifactId>
       <version>${pom.version}</version>
@@ -74,16 +74,16 @@
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-configuration-editor-frontend</artifactId>
-      <version>${pom.version}</version>
+      <groupId>org.onehippo.ecm.hst-addon-configuration-editor</groupId>
+      <artifactId>frontend</artifactId>
+      <version>${hst-configuration-editor.version}</version>
       <type>jar</type>
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-configuration-editor-repository</artifactId>
-      <version>${pom.version}</version>
+      <groupId>org.onehippo.ecm.hst-addon-configuration-editor</groupId>
+      <artifactId>repository</artifactId>
+      <version>${hst-configuration-editor.version}</version>
       <type>jar</type>
     </dependency>
   
@@ -93,13 +93,6 @@
       <version>${pom.version}</version>
       <type>jar</type>
     </dependency>
-    
-    <!--<dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-democontents</artifactId>
-      <version>${pom.version}</version>
-      <type>jar</type>
-    </dependency>-->
     
     <!-- workaround for HSTTWO-554 -->
     <dependency>

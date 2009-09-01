@@ -38,6 +38,7 @@
     <junit.version>4.5</junit.version>
     
     <hippoecm.version>2.06.09</hippoecm.version>
+    <hst-configuration-editor.version>1.01.00</hst-configuration-editor.version>
     <hst.version>2.03.12-SNAPSHOT</hst.version>
     
     <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
@@ -265,20 +266,21 @@
         <type>jar</type>
       </dependency>
       
+      
       <dependency>
-        <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-        <artifactId>hst-addon-configuration-editor-frontend</artifactId>
-        <version>${dollar}{hst.version}</version>
+        <groupId>org.onehippo.ecm.hst-addon-configuration-editor</groupId>
+        <artifactId>frontend</artifactId>
+        <version>${dollar}{hst-configuration-editor.version}</version>
         <type>jar</type>
       </dependency>
       
       <dependency>
-        <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-        <artifactId>hst-addon-configuration-editor-repository</artifactId>
-        <version>${dollar}{hst.version}</version>
+        <groupId>org.onehippo.ecm.hst-addon-configuration-editor</groupId>
+        <artifactId>repository</artifactId>
+        <version>${dollar}{hst-configuration-editor.version}</version>
         <type>jar</type>
       </dependency>
-      
+  
       <!-- SpringFramework WebFlow SpringFramework JS -->
       <dependency>
         <groupId>org.springframework.webflow</groupId>
