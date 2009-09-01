@@ -17,7 +17,7 @@
 
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm</artifactId>
-  <version>2.08.00</version>
+  <version>2.09.00-SNAPSHOT</version>
 
   <name>Hippo ECM</name>
   <description>The core of Hippo ECM, i.e. repository 2, plus an advanced webbased userinterface for content management: CMS, 
@@ -109,9 +109,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html 
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk</url>
   </scm>
 
   <!-- Where to publish the project data, especially the documentation site -->
@@ -428,7 +428,7 @@
       <plugin>
         <inherited>true</inherited>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.0-beta-9</version>
+        <version>2.0-beta-8</version>
           <configuration>
           <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
           <autoVersionSubmodules>true</autoVersionSubmodules>
