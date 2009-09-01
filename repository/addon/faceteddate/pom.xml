@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon</artifactId>
-    <version>2.08.00</version>
+    <version>2.09.00-SNAPSHOT</version>
   </parent>
 
   <name>Faceted date addon</name>
@@ -28,9 +28,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00/addon/faceteddate</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00/addon/faceteddate</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_00/addon/faceteddate</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/faceteddate</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/faceteddate</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/faceteddate</url>
   </scm>
 
   <modules>
