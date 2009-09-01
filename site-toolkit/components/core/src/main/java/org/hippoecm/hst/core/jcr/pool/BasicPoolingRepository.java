@@ -30,6 +30,8 @@ import org.apache.commons.pool.PoolUtils;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** 
  * <p>Basic implementation of <code>javax.jcr.Repository</code> that is
@@ -39,6 +41,8 @@ import org.hippoecm.hst.core.ResourceLifecycleManagement;
  * @version $Id$
  */
 public class BasicPoolingRepository implements PoolingRepository, MultipleRepositoryAware {
+    
+    private static Logger log = LoggerFactory.getLogger(BasicPoolingRepository.class);
     
     protected Repository repository;
     protected Credentials defaultCredentials;
@@ -239,6 +243,15 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         try {
             this.sessionPool.returnObject(session);
         } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to return session to the pool.", e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Failed to return session to the pool. {}", e.toString());
+            }
+        }
+        
+        if (this.sessionPool.getNumActive() < 0) {
+            log.error("SEVERE: The session pool is broken with negative active session count. {}", this.sessionPool.getNumActive());
         }
     }
     
@@ -350,13 +363,13 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * <strong>MUST</strong> be a valid statement.
      */
     protected String validationQuery = null;
-
+    
     public synchronized void initialize() throws Exception {
-        
-        close();
-        
-        // Initialize possible missing properties
-        
+        doClose();
+        doInitialize();
+    }
+    
+    private void doInitialize() throws Exception {
         if (getRepository() == null && getRepositoryProviderClassName() != null && getRepositoryAddress() != null) {
             try {
                 this.jcrRepositoryProvider = (JcrRepositoryProvider) Class.forName(getRepositoryProviderClassName()).newInstance();
@@ -408,7 +421,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             PoolUtils.prefill(sessionPool, initialSize);
         }
     }
-
+    
     /**
      * Close and release all sessions that are currently stored in the
      * session pool associated with our data source.  All open (active)
@@ -417,11 +430,21 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      * @throws Exception 
      */
     public synchronized void close() throws Exception {
+        doClose();
+    }
+    
+    private void doClose() throws Exception {
         if (this.sessionPool != null) {
             try {
                 this.sessionPool.close();
             } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to close session pool.", e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Failed to close session pool. {}", e.toString());
+                }
             }
+            
             this.sessionPool = null;
         }
         
@@ -429,12 +452,18 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             try {
                 this.jcrRepositoryProvider.returnRepository(this.repository);
             } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to return repository.", e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Failed to return repository. {}", e.toString());
+                }
             }
+            
             this.repository = null;
             this.jcrRepositoryProvider = null;
         }
     }
-
+    
     /**
      * <p>Returns the maximum number of active connections that can be
      * allocated at the same time.
@@ -733,7 +762,6 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
      */
     public synchronized int getNumActive() {
         if (sessionPool != null) {
-            System.out.println("!!!! --> " + sessionPool.getNumActive());
             return sessionPool.getNumActive();
         } else {
             return 0;
@@ -837,6 +865,11 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
                     session.logout();
                 }
             } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to log out session.", e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Failed to log out session. {}", e.toString());
+                }
             }
         }
 
@@ -881,6 +914,11 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
                         nodeFound = session.getRootNode().getNode(validationQuery);
                     }
                 } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to find validation query node.", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Failed to find validation query node. {}", e.toString());
+                    }
                 }
 
                 if (nodeFound == null) {

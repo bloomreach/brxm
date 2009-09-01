@@ -164,25 +164,29 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
     public void testSessionLifeCycleManagementPerThread() throws Exception {
 
         final Repository repository = poolingRepository;
-        int maxActive = poolingRepository.getMaxActive();
+        int jobCount = 100;
+        int workerCount = 20;
         
         LinkedList<Runnable> jobQueue = new LinkedList<Runnable>();
         
-        for (int i = 0; i < 1000 * maxActive; i++) {
+        for (int i = 0; i < jobCount; i++) {
             jobQueue.add(new UncautiousJob(repository));
         }
         
         assertTrue("Active session count is not zero.", 0 == poolingRepository.getNumActive());
 
-        Thread[] workers = new Thread[maxActive * 2];
+        Thread [] workers = new Thread[workerCount];
 
-        for (int i = 0; i < maxActive; i++) {
+        for (int i = 0; i < workerCount; i++) {
             workers[i] = new Worker(jobQueue);
         }
 
-        for (int i = 0; i < maxActive; i++) {
-            workers[i].start();
-            workers[i].join();
+        for (Thread worker : workers) {
+            worker.start();
+        }
+        
+        for (Thread worker : workers) {
+            worker.join();
         }
         
         assertTrue("The job queue is not empty.", jobQueue.isEmpty());

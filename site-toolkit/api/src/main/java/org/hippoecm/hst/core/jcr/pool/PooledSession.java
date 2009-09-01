@@ -23,6 +23,8 @@ import javax.jcr.Session;
  * for internal use.
  * For example, if a pooled session is needed to refresh just before borrowing from the pool,
  * the pool implementation can set a specific attribute to check it later.
+ * <P><EM>Note: If a pooled session is already returned to the pool, then any method invocation on this
+ * pooled session will throw <CODE>java.lang.IllegalStateException</CODE>.</EM></P>
  * 
  * @version $Id$
  */

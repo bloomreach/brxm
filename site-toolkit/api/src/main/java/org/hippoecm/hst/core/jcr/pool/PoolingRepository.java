@@ -75,6 +75,13 @@ public interface PoolingRepository extends Repository {
 
     /**
      * Returns the session to the pool.
+     * <p><strong>Note: </strong> There is no guard to prevent an object
+     * being returned to the pool multiple times. Clients are expected to
+     * discard references to returned objects and ensure that an object is not
+     * returned to the pool multiple times in sequence (i.e., without being
+     * borrowed again between returns). Violating this contract will result in
+     * the same object appearing multiple times in the pool and pool counters
+     * (numActive, numIdle) returning incorrect values.</p>
      * 
      * @param session
      */

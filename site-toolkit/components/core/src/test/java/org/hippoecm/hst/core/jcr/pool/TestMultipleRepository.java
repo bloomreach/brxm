@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.jcr.pool;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.jcr.Credentials;
@@ -55,8 +54,6 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
         Repository defaultRepository = this.multipleRepository.getRepositoryByCredentials(this.defaultCredentials);
         Repository writableRepository = this.multipleRepository.getRepositoryByCredentials(this.writableCredentials);
         
-        Map<Credentials, Repository> repoMap = this.multipleRepository.getRepositoryMap();
-        
         Session sessionFromDefaultRepository = this.repository.login(this.defaultCredentials);
         assertTrue("Current session's repository is not the expected repository", 
                 defaultRepository == ((MultipleRepositoryImpl) this.multipleRepository).getCurrentThreadRepository());
@@ -69,32 +66,86 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
     }
     
     @Test
+    public void testNumActives() throws LoginException, RepositoryException {
+        PoolingRepository defaultRepository = (PoolingRepository) this.multipleRepository.getRepositoryByCredentials(this.defaultCredentials);
+        PoolingRepository writableRepository = (PoolingRepository) this.multipleRepository.getRepositoryByCredentials(this.writableCredentials);
+        
+        assertTrue("Active sessions of default repository is negative! " + defaultRepository.getNumActive(), 
+                defaultRepository.getNumActive() >= 0);
+        Session sessionFromDefaultRepository = this.repository.login(this.defaultCredentials);
+        assertTrue("The active sessions of default repository should be greater than zero. " + defaultRepository.getNumActive(), 
+                defaultRepository.getNumActive() > 0);
+
+        // try to return session (by logout() method of session) many times to check if the numActive shrinks to negative value...
+        boolean alreadyReturned = false;
+        try {
+            for (int i = 0; i < 2; i++) { 
+                sessionFromDefaultRepository.logout();
+            }
+        } catch (IllegalStateException e) {
+            alreadyReturned = true;
+            // just ignore on pooled session which is already returned to the pool.
+        }
+        assertTrue("The pooled session should be already returned", alreadyReturned);
+        
+        assertTrue("Active sessions of default repository is negative! " + defaultRepository.getNumActive(), 
+                defaultRepository.getNumActive() >= 0);
+        
+        sessionFromDefaultRepository = this.repository.login(this.defaultCredentials);
+        Session sessionFromWritableRepository = sessionFromDefaultRepository.impersonate(this.writableCredentials);
+        
+        assertTrue("The active sessions of default repository should be greater than zero. " + writableRepository.getNumActive(), 
+                writableRepository.getNumActive() > 0);
+
+        // try to return session (by logout() method of session) many times to check if the numActive shrinks to negative value...
+        alreadyReturned = false;
+        try {
+            for (int i = 0; i < 2; i++) {
+                sessionFromWritableRepository.logout();
+            }
+        } catch (IllegalStateException e) {
+            alreadyReturned = true;
+            // just ignore on pooled session which is already returned to the pool.
+        }
+        assertTrue("The pooled session should be already returned", alreadyReturned);
+        
+        assertTrue("Active sessions of default repository is negative! " + writableRepository.getNumActive(), 
+                writableRepository.getNumActive() >= 0);
+        
+        sessionFromDefaultRepository.logout();
+    }
+    
+    @Test
     public void testSessionLifeCycleManagementPerThread() throws Exception {
 
         final Repository repository = multipleRepository;
         BasicPoolingRepository defaultRepository = (BasicPoolingRepository) this.multipleRepository.getRepositoryByCredentials(this.defaultCredentials);
         BasicPoolingRepository writableRepository = (BasicPoolingRepository) this.multipleRepository.getRepositoryByCredentials(this.writableCredentials);
         
-        int maxActive = Math.max(defaultRepository.getMaxActive(), writableRepository.getMaxActive());
+        int jobCount = 100;
+        int workerCount = 20;
         
         LinkedList<Runnable> jobQueue = new LinkedList<Runnable>();
         
-        for (int i = 0; i < 1000 * maxActive; i++) {
+        for (int i = 0; i < jobCount; i++) {
             jobQueue.add(new UncautiousJob(repository, (i % 2 == 0 ? this.defaultCredentials : this.writableCredentials)));
         }
         
         assertTrue("Active session count is not zero.", 0 == defaultRepository.getNumActive());
         assertTrue("Active session count is not zero.", 0 == writableRepository.getNumActive());
 
-        Thread[] workers = new Thread[maxActive * 2];
+        Thread [] workers = new Thread[workerCount];
 
-        for (int i = 0; i < maxActive; i++) {
+        for (int i = 0; i < workerCount; i++) {
             workers[i] = new Worker(jobQueue);
         }
 
-        for (int i = 0; i < maxActive; i++) {
-            workers[i].start();
-            workers[i].join();
+        for (Thread worker : workers) {
+            worker.start();
+        }
+        
+        for (Thread worker : workers) {
+            worker.join();
         }
         
         assertTrue("The job queue is not empty.", jobQueue.isEmpty());

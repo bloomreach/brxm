@@ -18,21 +18,13 @@ package org.hippoecm.hst.core.jcr.pool;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.jcr.Session;
-
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 
-public class PooledSessionResourceManagement implements ResourceLifecycleManagement, PoolingRepositoryAware {
+public class PooledSessionResourceManagement implements ResourceLifecycleManagement {
     
     private ThreadLocal<Boolean> tlActiveState = new ThreadLocal<Boolean>();
-    private ThreadLocal<Set<Session>> tlPooledSessions = new ThreadLocal<Set<Session>>();
+    private ThreadLocal<Set<PooledSession>> tlPooledSessions = new ThreadLocal<Set<PooledSession>>();
 
-    protected PoolingRepository poolingRepository;
-    
-    public void setPoolingRepository(PoolingRepository poolingRepository) {
-        this.poolingRepository = poolingRepository;
-    }
-    
     public boolean isActive() {
         Boolean activeState = tlActiveState.get();
         return (activeState != null && activeState.booleanValue());
@@ -48,38 +40,48 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
     }
 
     public void registerResource(Object session) {
-        Set<Session> sessions = tlPooledSessions.get();
+        Set<PooledSession> sessions = tlPooledSessions.get();
         
         if (sessions == null) {
-            sessions = new HashSet<Session>();
-            sessions.add((Session) session);
+            sessions = new HashSet<PooledSession>();
+            sessions.add((PooledSession) session);
             tlPooledSessions.set(sessions);
         } else {
-            sessions.add((Session) session);
+            sessions.add((PooledSession) session);
         }
     }
     
     public void unregisterResource(Object session) {
-        Set<Session> sessions = tlPooledSessions.get();
+        Set<PooledSession> sessions = tlPooledSessions.get();
         
         if (sessions != null) {
-            sessions.remove((Session) session);
+            sessions.remove((PooledSession) session);
         }
     }
     
     public void disposeResource(Object session) {
-        this.poolingRepository.returnSession((Session) session);
+        try {
+            ((PooledSession) session).logout();
+        } catch (IllegalStateException e) {
+            // just ignore on pooled session which is already returned to the pool.
+        }
+        
         unregisterResource(session);
     }
     
     public void disposeAllResources() {
-        Set<Session> sessions = tlPooledSessions.get();
+        Set<PooledSession> sessions = tlPooledSessions.get();
+        
         if (sessions != null) {
             // do not iterate through the Set because this will lead to concurrent modification exceptions
-            Session[] sessionArray = sessions.toArray(new Session[sessions.size()]);
+            PooledSession [] sessionArray = sessions.toArray(new PooledSession[sessions.size()]);
             
-            for (Session session : sessionArray) {
-                this.poolingRepository.returnSession((Session) session);
+            for (PooledSession session : sessionArray) {
+                try {
+                    session.logout();
+                } catch (IllegalStateException e) {
+                    // just ignore on pooled session which is already returned to the pool.
+                }
             }
             
             sessions.clear();
