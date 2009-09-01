@@ -45,8 +45,12 @@ if (!YAHOO.hippo.AccordionManager) {
 
             renderUnit : function(id, unitId) {
                 var el = Dom.get(id);
-                if(el != null && Lang.isUndefined(el.accordion)) {
-                    el.accordion = new YAHOO.hippo.Accordion(id, unitId, this.configurations.get(id));
+                if(el != null) {
+                    if (Lang.isUndefined(el.accordion)) {
+                        el.accordion = new YAHOO.hippo.Accordion(id, unitId, this.configurations.get(id));
+                    } else {
+                        el.accordion.update();
+                    }
                 } else {
                     YAHOO.log("Failed to render accordion, element[" + id + "] not found", "error");
                 }
@@ -66,13 +70,13 @@ if (!YAHOO.hippo.AccordionManager) {
 
             id: null,
             cfg: {
-                timeoutLength: 300,
+                timeoutLength: 200,
                 ancestorClassName: 'yui-layout-bd',
                 unitClassName: 'hippo-accordion-unit',
                 unitHeaderHeight: 25,
                 calculateTotalHeight: false,
-                throttleUpdate: true, 
-                addScrollbar: true
+                setHeightToClassname: null,
+                throttleUpdate: true 
             },
             current: null,
             region: null,
@@ -134,28 +138,20 @@ if (!YAHOO.hippo.AccordionManager) {
             render : function(id) {
                 this.init();
                 this.calculate();
-                
+
                 var height = (this.region.bottom - this.region.top) - this.totalHeight;
-                var centerEl = this.findElement(id, 'center');
-                var bottomEl = this.findElement(id, 'bottom');
                 
-                if(bottomEl != null && this.findElement(bottomEl, 'add', 'span') != null) {
+                var centerEl = this.findElement(id, this.cfg.unitClassName + '-center');
+                var bottomEl = this.findElement(id, this.cfg.unitClassName + '-bottom');
+                
+                if(bottomEl != null && this.findElement(bottomEl, this.cfg.unitClassName + '-add', 'span') != null) {
                     height -= 26; //temp workaround
                 }
 
-                if (this.cfg.addScrollbar) {
-                    //Dom.setStyle(id, 'overflow', 'scroll');
-                    if(YAHOO.env.ua.ie > 0 && YAHOO.env.ua.ie < 7) {
-                        Dom.setStyle(centerEl, '-ms-overflow-x', 'auto');
-                        Dom.setStyle(centerEl, '-ms-overflow-y', 'auto');
-                    } else {
-                        Dom.setStyle(centerEl, 'overflow-x', 'auto');
-                        Dom.setStyle(centerEl, 'overflow-y', 'auto');
-                    }
-                }
                 if(height > 0) {
                     Dom.setStyle(centerEl, 'height', height + 'px');
                 }
+                
                 Dom.setStyle(bottomEl, 'display', 'block');
                 
                 this.current = id;
@@ -180,11 +176,11 @@ if (!YAHOO.hippo.AccordionManager) {
                 }
             },
             
-            findElement : function(parent, pos, tag) {
+            findElement : function(parent, cls, tag) {
                 if(Lang.isUndefined(tag)) {
                     tag = 'div';
                 }
-                var ar = Dom.getElementsByClassName('hippo-accordion-unit-' + pos, tag, parent);
+                var ar = Dom.getElementsByClassName(cls, tag, parent);
                 if(!Lang.isUndefined(ar.length) && ar.length > 0) {
                     return ar[0];
                 }

@@ -587,7 +587,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
                                 if (menuManager != null) {
                                         menuManager.collapse(this, target);
                                         menuManager.addContextMenu(this, target);
-					target.appendJavascript("Hippo.ContextMenu.renderInTree('" + content.getMarkupId() + "');");
+                                        onContextLinkClicked(content, target);
                                 }																
 			}
                 };
@@ -596,6 +596,9 @@ public abstract class DefaultAbstractTree extends AbstractTree
                 content.setVisible(false);
                 link.add(newMenuIcon(link, "menuimage", node));
                 return link;
+        }
+        
+        protected void onContextLinkClicked(MarkupContainer content, AjaxRequestTarget target) {
         }
 
         public static abstract class ContextLink extends AjaxLink implements IContextMenu {

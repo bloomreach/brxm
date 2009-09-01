@@ -167,26 +167,37 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             registerEventListener : function(target, unit, evt, obj, func, executeNow, calculateScroll) {
+                if(executeNow) {
+                    func();
+                }
+
                 var eventName = evt + 'CustomEvent';
-                var callback = function() {
-                	var sizes = unit.getSizes();
-                	if(calculateScroll) {
-                		var scrollBottom = unit.body.scrollHeight - (unit.body.scrollTop + unit.body.clientHeight); // height of element scroll
-                		var scroll = unit.body.scrollTop + scrollBottom > 0;
-                		sizes['scroll'] = scroll;
-                	}
-                	target[eventName].fire(sizes);
-                };
                 if (Lang.isUndefined(target[eventName]) 
                         || Lang.isNull(target[eventName])) {
                     target[eventName] = new YAHOO.util.CustomEvent(eventName, this);
+                    
+                    var callback = function() {
+                        var sizes = unit.getSizes();
+                        if(calculateScroll) {
+                            var scrollBottom = unit.body.scrollHeight - (unit.body.scrollTop + unit.body.clientHeight); // height of element scroll
+                            var scroll = unit.body.scrollTop + scrollBottom > 0;
+                            sizes['scroll'] = scroll;
+                        }
+                        target[eventName].fire(sizes);
+                    };
                     target.on(evt, callback);
 
                 }
-                target[eventName].subscribe(func, obj);
-                if(executeNow) {
-                    callback();
+                var subs = target[eventName].subscribers; 
+                for(var i=0; i<subs.length; i++) {
+                    if(subs[i].obj == obj) {
+                        return;
+                    }
+                    if(subs[i].obj.id == obj.id) {
+                        return;
+                    }
                 }
+                target[eventName].subscribe(func, obj);
             },
 
             findLayoutUnit : function(el) {

@@ -88,34 +88,99 @@
 	}
 	
 	Hippo.ContextMenu.renderInTree = function(id) {
+	    var xy = this.getContextPosition(id);
+	    this.renderAtPosition(id, xy[0] + 12, xy[1] + 5);
+	}
+	
+	Hippo.ContextMenu.renderAtPosition = function(id, posX, posY) {
         var YUID = YAHOO.util.Dom;
         var container = YUID.get('context-menu-container');
 
         //reset container
         container.innerHTML = '';
         
-        var clickPoint = YUID.getPreviousSibling(id);
-        var region  = YUID.getRegion(clickPoint);
-        var x = region.right - 12;
-        var y = region.top + 5;
-        
         var menuHeight = 120; //middle ground fallback
         var uls = YUID.getElementsByClassName('hippo-toolbar-menu-item', 'ul', YUID.get(id));
         if(uls.length > 0) {
             var r = YUID.getRegion(uls[0]);
-            menuHeight = r.bottom - r.top;
+            menuHeight = r.height + 5;
         }
-
+        
         var viewHeight = YUID.getViewportHeight();
-        var middle = region.bottom - ((region.bottom - region.top)/2);
-        if(middle + menuHeight > viewHeight) {
-            y -= menuHeight - 10;
+        if(posY + menuHeight > viewHeight) {
+            posY -= (menuHeight - 10);
         }
         container.appendChild(YUID.get(id));
-        
-        YUID.setXY(container, [x,y]);
+        YUID.setXY(container, [posX,posY]);
         YUID.setStyle(id, 'visibility', 'visible');
-        	    
-	}
+    }
+    
+    Hippo.ContextMenu.currentContentLink = null;
+    Hippo.ContextMenu.isShowing = false;
+    
+    Hippo.ContextMenu.showContextLink = function(id) {
+        var YUID = YAHOO.util.Dom;
+        if(this.isShowing) {
+            return;
+        }
+        
+        var _ar = YUID.getElementsByClassName('hippo-tree-dropdown-icon-container', 'span', id);
+        if(typeof(_ar.length) != 'undefined' && _ar.length > 0) {
+            var el = _ar[0];
+            YUID.addClass(el, 'container-selected');
+            var pos = this.getContextPosition(id);
+            YUID.setXY(el, pos);
+            
+            var layout = YUID.getAncestorByClassName(el, 'hippo-accordion-unit-center');
+            var layoutDim = YUID.getRegion(layout);
+            this.currentContentLink = el;
+        }
+        this.isShowing = true;
+    }
+    
+    Hippo.ContextMenu.getContextPosition = function(id) {
+        var YUID = YAHOO.util.Dom;
+        var el = YUID.get(id);
+        
+        var unit  = this.getLayoutUnit(el); 
+        if(unit != null) {
+            var layoutRegion = YUID.getRegion(unit.get('element'));
+            var myY = YUID.getRegion(el).top +2;
+            var myX = layoutRegion.right - 20;
+            if(YAHOO.env.ua.ie > 0 && YAHOO.env.ua.ie < 8) {
+                //IE needs more whitespace @ the right of this widget
+                //because else it will interfere with the resize handler
+                myX -= 10; 
+                
+            }
+            
+            var layout = YUID.getAncestorByClassName(el, 'hippo-accordion-unit-center');
+            var layoutDim = YUID.getRegion(layout);
+            var treeDim = YUID.getRegion(YUID.getAncestorByClassName(el, 'hippo-tree'));
+            if (treeDim.height > layoutDim.height) {
+                myX -= 15;
+            }
+            return [myX, myY];
+        }
+    }
+    
+    Hippo.ContextMenu.hideContextLink = function(id) {
+        var YUID = YAHOO.util.Dom;
+        var el = this.currentContentLink;
+        if(el == null) {
+            var _ar = YUID.getElementsByClassName('hippo-tree-dropdown-icon-container', 'span', id);
+            if(typeof(_ar.length) == 'undefined' && _ar.length > 0) {
+              el = _ar[0];
+            }
+        }
+        if(el != null) {
+            YUID.removeClass(el, 'container-selected');
+        }
+        this.isShowing = false;
+    }
+    
+    Hippo.ContextMenu.getLayoutUnit = function(el) {
+        return YAHOO.hippo.LayoutManager.findLayoutUnit(el);
+    }
 
 })();

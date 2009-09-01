@@ -124,6 +124,5 @@ public abstract class CmsJcrTree extends JcrTree {
             nodeLink.add(new AttributeAppender("title", true, new Model(treeNodeTranslator.getTitleName(node)), " "));
         }
     }
-    
-    
+
 }
