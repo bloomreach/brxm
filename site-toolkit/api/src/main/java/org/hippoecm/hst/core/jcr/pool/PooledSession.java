@@ -31,6 +31,16 @@ import javax.jcr.Session;
 public interface PooledSession extends Session {
     
     /**
+     * Marks this pooled session as activated.
+     */
+    void activate();
+    
+    /**
+     * Marks this pooled session as passivated.
+     */
+    void passivate();
+    
+    /**
      * Invokes logout() of the underlying session.
      */
     void logoutSession();

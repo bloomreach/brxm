@@ -841,11 +841,14 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         public void activateObject(Object object) throws Exception {
             // If sessionRefreshPendingAfter is set to specific time millis,
             // each session should be refreshed if it is not refreshed after the time millis.
-            if (sessionsRefreshPendingTimeMillis > 0L && object instanceof PooledSession) {
+            if (object instanceof PooledSession) {
                 PooledSession session = (PooledSession) object;
-                
-                if (session.lastRefreshed() < sessionsRefreshPendingTimeMillis) {  
-                    session.refresh(keepChangesOnRefresh);
+                session.activate();
+            
+                if (sessionsRefreshPendingTimeMillis > 0L) { 
+                    if (session.lastRefreshed() < sessionsRefreshPendingTimeMillis) {  
+                        session.refresh(keepChangesOnRefresh);
+                    }
                 }
             }
             
@@ -884,9 +887,13 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         }
 
         public void passivateObject(Object object) throws Exception {
+            PooledSession session = (PooledSession) object;
+            
             if (refreshOnPassivate) {
-                ((Session) object).refresh(keepChangesOnRefresh);
+                session.refresh(keepChangesOnRefresh);
             }
+            
+            session.passivate();
             
             // If client returns the session he used, then unregister it 
             if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
