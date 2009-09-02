@@ -79,6 +79,13 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 session.logout();
             } else if ("lastRefreshed".equals(methodName)) {
                 ret = new Long(lastRefreshed);
+            } else if ("refresh".equals(methodName)) {
+                ret = invocation.proceed();
+                lastRefreshed = System.currentTimeMillis();
+            } else if ("toString".equals(methodName)) {
+                ret = "PooledSessionInterceptor:" + invocation.proceed().toString();
+            } else if ("hashCode".equals(methodName)) {
+                ret = invocation.proceed();
             } else {
                 if (this.passivated) {
                     throw new IllegalStateException("Invalid session which is already returned to the pool!");
@@ -93,10 +100,9 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                          * GenericObjectPool returnObject(session) for one and the same session, resulting in negative numActives and 
                          * a broken pool, retaining in the end far more open sessions then configured in the pool config
                          */ 
-                        if (!this.passivated) {
-                            this.passivated = true;
-                            poolingRepository.returnSession(pooledSessionProxy);
-                        }
+                        
+                         poolingRepository.returnSession(pooledSessionProxy);
+                        
                     } else if ("getRepository".equals(methodName)) {
                         // when getRepository(), it actually returns the session pooling repository
                         ret = poolingRepository;
@@ -111,10 +117,6 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                         if (ret == null) {
                             ret = invocation.proceed();
                         }
-                    } else if ("refresh".equals(methodName)) {
-                        ret = invocation.proceed();
-                        lastRefreshed = System.currentTimeMillis();
-
                     } else {
                         ret = invocation.proceed();
                     }
