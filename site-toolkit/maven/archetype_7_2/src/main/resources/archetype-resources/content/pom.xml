@@ -23,14 +23,28 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <name>My Hippo Site Toolkit Project Content</name>
-  <description>My Hippo Site Toolkit Project Content</description>
+  <name>${rootArtifactId} content</name>
+  <description>${rootArtifactId} Project Content</description>
   <groupId>${groupId}</groupId>
   <artifactId>${artifactId}</artifactId>
   <packaging>jar</packaging>
 
   <build>
     <defaultGoal>package</defaultGoal>  
+    <plugins>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin> 
+    </plugins> 
   </build>
 
 </project>
