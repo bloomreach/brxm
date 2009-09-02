@@ -265,21 +265,7 @@
         <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>
-      
-      <!--<dependency>
-        <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-        <artifactId>hst-addon-configuration-editor-frontend</artifactId>
-        <version>${dollar}{hst.version}</version>
-        <type>jar</type>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-        <artifactId>hst-addon-configuration-editor-repository</artifactId>
-        <version>${dollar}{hst.version}</version>
-        <type>jar</type>
-      </dependency>-->
-      
+   
       <!-- SpringFramework WebFlow SpringFramework JS -->
       <dependency>
         <groupId>org.springframework.webflow</groupId>
