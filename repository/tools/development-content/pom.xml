@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-tools</artifactId>
-    <version>2.09.00-SNAPSHOT</version>
+    <version>2.08.01</version>
   </parent>
 
   <name>Development content</name>
@@ -30,51 +30,51 @@
   <artifactId>hippo-ecm-tools-development-content</artifactId>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/development-content</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/development-content</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/development-content</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_01/tools/development-content</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_01/tools/development-content</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_08_01/tools/development-content</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.09.00-SNAPSHOT</version>		
+      <version>2.08.01</version>		
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.09.00-SNAPSHOT</version>                        
+      <version>2.08.01</version>                        
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-plugins</artifactId>
-      <version>2.09.00-SNAPSHOT</version>			
+      <version>2.08.01</version>			
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.09.00-SNAPSHOT</version>			
+      <version>2.08.01</version>			
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-frontend</artifactId>
-      <version>2.09.00-SNAPSHOT</version>			
+      <version>2.08.01</version>			
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-editor-frontend</artifactId>
-      <version>2.09.00-SNAPSHOT</version>			
+      <version>2.08.01</version>			
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-cms-browse</artifactId>
-      <version>2.09.00-SNAPSHOT</version>			
+      <version>2.08.01</version>			
       <scope>provided</scope>
     </dependency>
 
