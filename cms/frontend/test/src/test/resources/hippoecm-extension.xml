@@ -29,7 +29,7 @@
       <sv:value>http://www.hippoecm.org/test/nt/1.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
-      <sv:value>test.cnd</sv:value>
+      <sv:value>frontendtest.cnd</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>105.0</sv:value>
