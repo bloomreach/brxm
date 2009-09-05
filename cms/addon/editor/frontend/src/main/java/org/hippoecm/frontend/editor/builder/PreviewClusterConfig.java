@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
+import java.util.Map;
+
 import org.apache.wicket.Application;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -30,6 +32,12 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A cluster configuration to preview another cluster configuration.  It adds builder
+ * plugins for the plugins in the decorated configuration.  The only builder plugins
+ * that are currently supported are the render plugin editor plugin and the field plugin
+ * editor plugin.
+ */
 public class PreviewClusterConfig extends AbstractClusterDecorator {
 
     @SuppressWarnings("unused")
@@ -58,21 +66,13 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
         }
     }
 
-    private String clusterConfigModel;
-    private String selectedPluginModel;
-    private String selectedExtPtModel;
-    private String helperId;
-
+    private Map<String, String> parameters;
     private Boolean editable;
 
-    public PreviewClusterConfig(IClusterConfig template, String clusterConfigModel, String selectedPluginModel,
-            String selectedExtPt, String helperId, boolean editable) {
+    public PreviewClusterConfig(IClusterConfig template, Map<String, String> parameters, boolean editable) {
         super(template);
 
-        this.clusterConfigModel = clusterConfigModel;
-        this.selectedPluginModel = selectedPluginModel;
-        this.selectedExtPtModel = selectedExtPt;
-        this.helperId = helperId;
+        this.parameters = parameters;
         this.editable = editable;
     }
 
@@ -108,12 +108,9 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
         previewWrapper.put("plugin.class", clazz);
         previewWrapper.put("model.effective", config);
 
-        previewWrapper.put("wicket.helper.id", helperId);
-        previewWrapper.put("wicket.model", clusterConfigModel);
-        previewWrapper.put("model.plugin", selectedPluginModel);
-        previewWrapper.put("model.extensionpoint", selectedExtPtModel);
         previewWrapper.put("plugin.id", config.getName());
         previewWrapper.put("builder.mode", editable ? "edit" : "view");
+        previewWrapper.putAll(parameters);
 
         if (config.get("wicket.id") != null) {
             previewWrapper.put("wicket.id", config.get("wicket.id"));

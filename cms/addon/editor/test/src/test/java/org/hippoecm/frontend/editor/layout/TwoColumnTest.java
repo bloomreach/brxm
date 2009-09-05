@@ -18,6 +18,8 @@ package org.hippoecm.frontend.editor.layout;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginTest;
@@ -95,8 +97,12 @@ public class TwoColumnTest extends PluginTest {
 
         context.getService(clusterModelId, IModelReference.class).setModel(new Model(editedCluster));
 
-        PreviewClusterConfig template = new PreviewClusterConfig(editedCluster, clusterModelId, selectedPluginId,
-                selectedExtPtId, "service.helpers", true);
+        Map<String, String> builderPluginParameters = new TreeMap<String, String>();
+        builderPluginParameters.put("wicket.helper.id", "service.helpers");
+        builderPluginParameters.put("wicket.model", clusterModelId);
+        builderPluginParameters.put("model.plugin", selectedPluginId);
+        builderPluginParameters.put("model.extensionpoint", selectedExtPtId);
+        PreviewClusterConfig template = new PreviewClusterConfig(editedCluster, builderPluginParameters, true);
 
         IPluginConfig parameters = new JavaPluginConfig();
         parameters.put("wicket.id", "service.root");
@@ -111,8 +117,12 @@ public class TwoColumnTest extends PluginTest {
         // restart cluster
         builderControl.stop();
 
-        PreviewClusterConfig template = new PreviewClusterConfig(editedCluster, clusterModelId, selectedPluginId,
-                selectedExtPtId, "service.helpers", true);
+        Map<String, String> builderPluginParameters = new TreeMap<String, String>();
+        builderPluginParameters.put("wicket.helper.id", "service.helpers");
+        builderPluginParameters.put("wicket.model", clusterModelId);
+        builderPluginParameters.put("model.plugin", selectedPluginId);
+        builderPluginParameters.put("model.extensionpoint", selectedExtPtId);
+        PreviewClusterConfig template = new PreviewClusterConfig(editedCluster, builderPluginParameters, true);
 
         IPluginConfig parameters = new JavaPluginConfig();
         parameters.put("wicket.id", "service.root");

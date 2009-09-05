@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.editor.builder;
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -69,6 +71,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
     private IClusterControl child;
     private IObserver templateObserver;
     private String clusterModelId;
+    private String typeModelId;
     private String selectedPluginId;
     private String selectedExtPtId;
 
@@ -80,6 +83,10 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
         clusterModelId = context.getReference(this).getServiceId() + ".model.cluster";
         ModelReference clusterModelService = new ModelReference(clusterModelId, null);
         clusterModelService.init(getPluginContext());
+
+        typeModelId = context.getReference(this).getServiceId() + ".model.type";
+        ModelReference typeModelService = new ModelReference(typeModelId, null);
+        typeModelService.init(getPluginContext());
 
         selectedPluginId = context.getReference(this).getServiceId() + ".model.selected_plugin";
         ModelReference selectedPluginService = new ModelReference(selectedPluginId, null);
@@ -148,10 +155,17 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
         try {
             String mode = config.getString("mode");
 
-            PreviewClusterConfig template = new PreviewClusterConfig(builder.getTemplate(), clusterModelId,
-                    selectedPluginId, selectedExtPtId, config.getString("wicket.helper.id"), "edit".equals(mode));
+            Map<String, String> builderParameters = new TreeMap<String, String>();
+            builderParameters.put("wicket.helper.id", config.getString("wicket.helper.id"));
+            builderParameters.put("wicket.model", clusterModelId);
+            builderParameters.put("model.type", typeModelId);
+            builderParameters.put("model.plugin", selectedPluginId);
+            builderParameters.put("model.extensionpoint", selectedExtPtId);
+            PreviewClusterConfig template = new PreviewClusterConfig(builder.getTemplate(), builderParameters, "edit"
+                    .equals(mode));
 
             context.getService(clusterModelId, IModelReference.class).setModel(new Model(builder.getTemplate()));
+            context.getService(typeModelId, IModelReference.class).setModel(new Model(builder.getTypeDescriptor()));
             context.getService(selectedPluginId, IModelReference.class).setModel(selectedPlugin);
             // selectedExtPt ?
 
