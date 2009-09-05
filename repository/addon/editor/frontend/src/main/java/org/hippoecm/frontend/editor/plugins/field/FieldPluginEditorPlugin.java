@@ -183,7 +183,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
         edit = (getBuilderContext().getMode() == EditorContext.Mode.EDIT);
 
         try {
-            ITypeDescriptor type = getTypeModel();
+            ITypeDescriptor type = getBuilderContext().getType();
             IPluginConfig helperConfig = new JavaPluginConfig(config.getName() + ".helper");
             helperConfig.putAll(config);
             helperConfig.put("wicket.id", config.getString("wicket.helper.id"));
@@ -208,18 +208,6 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
     private ITemplateEngine getTemplateEngine() {
         return getPluginContext().getService(getEffectivePluginConfig().getString("engine"), ITemplateEngine.class);
-    }
-
-    private ITypeDescriptor getTypeModel() throws TemplateEngineException {
-        IPluginConfig config = getEffectivePluginConfig();
-        ITemplateEngine engine = getTemplateEngine();
-        if (config.getString("type") == null) {
-            IPluginContext context = getPluginContext();
-            IModelReference reference = context.getService(config.getString("wicket.model"), IModelReference.class);
-            return engine.getType(reference.getModel());
-        } else {
-            return engine.getType(config.getString("type"));
-        }
     }
 
 }

@@ -31,6 +31,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 
 /**
  * Helper class for plugin config editor plugins.  It provides a number of utilities 
@@ -136,7 +137,7 @@ public class BuilderContext implements IClusterable {
             return false;
         }
     }
-    
+
     public Mode getMode() {
         if ("view".equals(config.getString("builder.mode", "view"))) {
             return EditorContext.Mode.VIEW;
@@ -145,7 +146,8 @@ public class BuilderContext implements IClusterable {
     }
 
     public String getSelectedExtensionPoint() {
-        IModelReference extPtService = context.getService(config.getString(SELECTED_EXTENSION_POINT), IModelReference.class);
+        IModelReference extPtService = context.getService(config.getString(SELECTED_EXTENSION_POINT),
+                IModelReference.class);
         IModel model = extPtService.getModel();
         if (model != null) {
             return (String) model.getObject();
@@ -157,12 +159,18 @@ public class BuilderContext implements IClusterable {
         if (value == null) {
             throw new RuntimeException("Invalid value null for selected extension point");
         }
-        IModelReference extPtService = context.getService(config.getString(SELECTED_EXTENSION_POINT), IModelReference.class);
+        IModelReference extPtService = context.getService(config.getString(SELECTED_EXTENSION_POINT),
+                IModelReference.class);
         extPtService.setModel(new StringModel(value));
     }
-    
+
     public String getPluginId() {
         return pluginId;
+    }
+
+    public ITypeDescriptor getType() {
+        IModelReference typeModelService = context.getService(config.getString("model.type"), IModelReference.class);
+        return (ITypeDescriptor) typeModelService.getModel().getObject();
     }
 
     public IClusterConfig getTemplate() {
@@ -184,7 +192,7 @@ public class BuilderContext implements IClusterable {
         public StringModel(String string) {
             super(string);
         }
-        
+
         @Override
         public boolean equals(Object obj) {
             return (obj instanceof StringModel && ((StringModel) obj).getObject().equals(getObject()));
@@ -195,5 +203,5 @@ public class BuilderContext implements IClusterable {
             return 234893 ^ getObject().hashCode();
         }
     }
-    
+
 }
