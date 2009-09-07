@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.component.support.portlet;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.portlet.PortletMode;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
@@ -36,38 +33,55 @@ import org.slf4j.LoggerFactory;
 
 public class GenericPortletPrefsEditor extends GenericHstComponent {
     
+    private static final String HST_PREFS_EDITOR_PAGE = "hstPrefsEditorPage";
+
+    private static final String HST_SITE_MENU_ATTR_NAME = "hstSiteMenu";
+
+    private static final String HST_SITE_MENU_NAME_PREF = "hstSiteMenuName";
+
+    private static final String PREF_VALUES_ATTR_NAME = "prefValues";
+
+    private static final String HST_EDIT_PREFERENCES = "hstEditPreferences";
+    
+    private static final String HST_DEFAULT_EDIT_PREF_NAMES = "hstServletPath,hstPathInfo,hstPortletTitle";
+
     static Logger logger = LoggerFactory.getLogger(GenericPortletPrefsEditor.class);
     
     protected String defaultSiteMenuName = "main";
     
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        String hstPortletTitle = request.getParameter("hstPortletTitle");
-        String hstServletPath = request.getParameter("hstServletPath");
-        String hstPathInfo = request.getParameter("hstPathInfo");
-        
-        if (hstPathInfo == null) {
-            hstPathInfo = request.getParameter("hstPathInfo2");
-        }
-        
         PortletRequest portletRequest = HstContainerPortletContext.getCurrentRequest();
         PortletResponse portletResponse = HstContainerPortletContext.getCurrentResponse();
         
         PortletPreferences prefs = portletRequest.getPreferences();
         
         try {
-            if (hstPortletTitle != null) {
-                prefs.setValue("hstPortletTitle", hstPortletTitle);
+            boolean updated = false;
+            
+            String editPreferences = prefs.getValue(HST_EDIT_PREFERENCES, HST_DEFAULT_EDIT_PREF_NAMES);
+            String [] editPrefNames = editPreferences.split(",");
+            
+            for (String editPrefName : editPrefNames) {
+                String prefName = editPrefName.trim();
+                
+                if (!"".equals(prefName)) {
+                    String [] prefValues = request.getParameterValues(prefName);
+                    
+                    if (prefValues != null) {
+                        if (prefValues.length == 1) {
+                            prefs.setValue(prefName, prefValues[0]);
+                        } else {
+                            prefs.setValues(prefName, prefValues);
+                        }
+                    }
+                    
+                    updated = true;
+                }
             }
             
-            if (hstServletPath != null) {
-                prefs.setValue("hstServletPath", hstServletPath);
+            if (updated) {
+                prefs.store();
             }
-            
-            if (hstPathInfo != null) {
-                prefs.setValue("hstPathInfo", hstPathInfo);
-            }
-            
-            prefs.store();
             
             ((StateAwareResponse) portletResponse).setPortletMode(PortletMode.VIEW);
         } catch (Exception e) {
@@ -80,15 +94,11 @@ public class GenericPortletPrefsEditor extends GenericHstComponent {
     }
     
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-        Map<String, Object> prefValues = new HashMap<String, Object>();
         PortletRequest portletRequest = HstContainerPortletContext.getCurrentRequest();
-        
         PortletPreferences prefs = portletRequest.getPreferences();
         
         try {
-            prefValues.put("hstPortletTitle", prefs.getValue("hstPortletTitle", ""));
-            prefValues.put("hstServletPath", prefs.getValue("hstServletPath", ""));
-            prefValues.put("hstPathInfo", prefs.getValue("hstPathInfo", ""));            
+            request.setAttribute(PREF_VALUES_ATTR_NAME, portletRequest.getPreferences().getMap());
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {
                 logger.warn("Failed to retrieve preferences.", e);
@@ -97,9 +107,7 @@ public class GenericPortletPrefsEditor extends GenericHstComponent {
             }
         }
         
-        request.setAttribute("prefValues", prefValues);
-        
-        String hstSiteMenuName = prefs.getValue("hstSiteMenuName", null);
+        String hstSiteMenuName = prefs.getValue(HST_SITE_MENU_NAME_PREF, null);
         
         if (hstSiteMenuName == null) {  
             hstSiteMenuName = getComponentConfiguration().getParameter("hstsitemenuname", request.getRequestContext().getResolvedSiteMapItem());
@@ -115,8 +123,14 @@ public class GenericPortletPrefsEditor extends GenericHstComponent {
             EditableMenu editableMenu = menu.getEditableMenu();
             
             if (editableMenu != null) {
-                request.setAttribute("hstSiteMenu", editableMenu);
+                request.setAttribute(HST_SITE_MENU_ATTR_NAME, editableMenu);
             }
+        }
+        
+        String hstPrefsEditorPage = prefs.getValue(HST_PREFS_EDITOR_PAGE, null);
+        
+        if (hstPrefsEditorPage != null) {
+            response.setRenderPath(hstPrefsEditorPage);
         }
     }
     

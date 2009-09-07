@@ -27,13 +27,13 @@ String hstPathInfo = "/news";
 Map prefValues = (Map) request.getAttribute("prefValues");
 
 if (prefValues.containsKey("hstPortletTitle")) {
-    hstPortletTitle = (String) prefValues.get("hstPortletTitle");
+    hstPortletTitle = ((String []) prefValues.get("hstPortletTitle"))[0];
 }
 if (prefValues.containsKey("hstServletPath")) {
-    hstServletPath = (String) prefValues.get("hstServletPath");
+    hstServletPath = ((String []) prefValues.get("hstServletPath"))[0];
 }
 if (prefValues.containsKey("hstPathInfo")) {
-    hstPathInfo = (String) prefValues.get("hstPathInfo");
+    hstPathInfo = ((String []) prefValues.get("hstPathInfo"))[0];
 }
 %>
 
@@ -57,10 +57,8 @@ if (prefValues.containsKey("hstPathInfo")) {
               <option value="/${menuItem.hstLink.path}">${menuItem.name}</option>
             </c:forEach>
           </select>
-          <input type="text" name="hstPathInfo" value="<%=hstPathInfo%>" disabled="true" />
-          <input type="checkbox" id="<portlet:namespace/>manualHstUrl" 
-                 onclick="this.form.hstPathInfo.disabled = !this.checked; return true;">
-          <label for="<portlet:namespace/>manualHstUrl">Manual Configuration</label>
+          &nbsp;
+          Manual Configuration: <input type="text" name="hstPathInfo" value="<%=hstPathInfo%>" />
         </td>
       </tr>
       <tr>
