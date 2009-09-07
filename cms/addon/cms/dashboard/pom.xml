@@ -184,23 +184,52 @@
       <dependencies>
         <dependency>
           <groupId>org.hippoecm</groupId>
-          <artifactId>hippo-ecm-frontend-engine-test</artifactId>
-          <version>${project.version}</version>
-          <type>jar</type>
-          <classifier>tests</classifier>
-          <scope>test</scope>
-          <optional>true</optional>
-        </dependency>
-        <dependency>
-          <groupId>org.hippoecm</groupId>
           <artifactId>hippo-ecm-repository-engine</artifactId>
           <version>${project.version}</version>
           <type>jar</type>
           <classifier>tests</classifier>
           <scope>test</scope>
-          <optional>true</optional>
+        </dependency>
+        <dependency>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-frontend-engine-test</artifactId>
+          <version>${project.version}</version>
+          <type>jar</type>
+          <classifier>tests</classifier>
+          <scope>test</scope>
         </dependency>
       </dependencies>
+    </profile>
+    <profile>
+      <id>skip-tests</id>
+      <activation>
+        <property>
+          <name>maven.test.skip</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.hippoecm</groupId>
+            <artifactId>hippo-ecm-repository-engine</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+            <optional>true</optional>
+          </dependency>
+          <dependency>
+            <groupId>org.hippoecm</groupId>
+            <artifactId>hippo-ecm-frontend-engine-test</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+            <optional>true</optional>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
     </profile>
   </profiles>
 
