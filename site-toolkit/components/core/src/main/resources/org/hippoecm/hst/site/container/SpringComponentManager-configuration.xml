@@ -26,13 +26,13 @@
 
   <bean id="org.hippoecm.hst.configuration.HstSitesManager.preview" class="org.hippoecm.hst.configuration.HstSitesManagerImpl">
     <property name="repository" ref="javax.jcr.Repository" />
-    <property name="credentials" ref="javax.jcr.Credentials.default" />
+    <property name="credentials" ref="javax.jcr.Credentials.hstglobal" />
     <property name="sitesContentPath" value="${preview.repository.entry.path}" />
   </bean>
   
   <bean id="org.hippoecm.hst.configuration.HstSitesManager.live" class="org.hippoecm.hst.configuration.HstSitesManagerImpl">
     <property name="repository" ref="javax.jcr.Repository" />
-    <property name="credentials" ref="javax.jcr.Credentials.default" />
+    <property name="credentials" ref="javax.jcr.Credentials.hstglobal" />
     <property name="sitesContentPath" value="${live.repository.entry.path}" />
   </bean>
   

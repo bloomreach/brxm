@@ -20,15 +20,17 @@
   xmlns:util="http://www.springframework.org/schema/util"
   xmlns:aop="http://www.springframework.org/schema/aop"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                           http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
-                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+  http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
+  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+  http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
+  >
 
   <bean id="org.hippoecm.hst.core.jcr.EventListenersContainer"
     class="org.hippoecm.hst.core.jcr.EventListenersContainerImpl" init-method="start"
     destroy-method="stop">
     <property name="repository" ref="javax.jcr.Repository"/>
     <property name="sessionLiveCheck" value="true"/>
+    <property name="credentials" ref="javax.jcr.Credentials.hstglobal"/>
     <property name="sessionLiveCheckInterval" value="60000"/>
     <property name="eventListenerItems">
       <list>
@@ -89,14 +91,15 @@
         </bean>
 
         <!-- PoolingRepository's sessions refresh event listener -->
-
-       <!-- <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
           <property name="nodeAddedEnabled" value="true"/>
           <property name="nodeRemovedEnabled" value="true"/>
           <property name="propertyAddedEnabled" value="true"/>
           <property name="propertyChangedEnabled" value="true"/>
           <property name="propertyRemovedEnabled" value="true"/>
-          <property name="absolutePath" value="${event.based.repository.path}"/>
+          <!-- only nodes below '/content' in the repository triggers sessions to be refreshed. Sessions needed to load configuration
+          outside the /content scope must be refreshed within the java code building configuration -->
+          <property name="absolutePath" value="/content"/>
           <property name="deep" value="true"/>
           <property name="uuids">
             <null/>
@@ -110,6 +113,15 @@
               class="org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionsRefreshEventListener">
               <property name="poolingRepositoris">
                 <list>
+                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.hstglobal"/>
+                      </list>
+                    </property>
+                  </bean>
                   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
@@ -133,11 +145,8 @@
             </bean>
           </property>
         </bean>
--->
-
-
+        
       </list>
     </property>
   </bean>
-
 </beans>
