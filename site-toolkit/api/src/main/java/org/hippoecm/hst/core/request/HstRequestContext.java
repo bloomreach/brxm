@@ -158,4 +158,19 @@ public interface HstRequestContext {
      */
     ContainerConfiguration getContainerConfiguration();
     
+    /**
+     * Returns true if this request is embedded and context resolving and link rewriting needs to be delegated to the HstEmbeddedRequestContext
+     */
+    boolean isEmbeddedRequest();
+    
+    /**
+     * Returns the embedded HST context if isEmbeddedRequest == true, otherwise null
+     */
+    HstEmbeddedRequestContext getEmbeddedRequestContext();
+    
+    /**
+     * Returns true if invoked from a Portlet.
+     * If true, this instance will also implement HstPortletRequestContext.
+     */
+    boolean isPortletContext();
 }

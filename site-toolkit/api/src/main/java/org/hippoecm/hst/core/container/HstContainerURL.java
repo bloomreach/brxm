@@ -170,5 +170,14 @@ public interface HstContainerURL {
      * @return
      */
     boolean isViaPortlet();
+
+    /**
+     * Return true if this URL represents a site navigation.
+     */
+    boolean isNavigational();
     
+    /**
+     * Sets the navigational flag.
+     */
+    void setNavigational(boolean navigational);
 }

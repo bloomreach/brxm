@@ -30,6 +30,7 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
     protected Map<String, String[]> parameterMap;
     protected Map<String, String[]> actionParameterMap;
     protected boolean viaPortlet;
+    protected boolean navigational;
     
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
@@ -153,6 +154,14 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
         return this.viaPortlet;
     }
     
+    public boolean isNavigational() {
+        return navigational;
+    }
+
+    public void setNavigational(boolean navigational) {
+        this.navigational = navigational;
+    }
+
     @Override
     public Object clone() {
         HstContainerURLImpl cloned = new HstContainerURLImpl();

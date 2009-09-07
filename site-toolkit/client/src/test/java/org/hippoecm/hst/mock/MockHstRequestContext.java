@@ -28,6 +28,7 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.MatchedMapping;
@@ -164,5 +165,16 @@ public class MockHstRequestContext implements HstRequestContext {
         
         return null;
     }
-    
+
+    public HstEmbeddedRequestContext getEmbeddedRequestContext() {
+        return null;
+    }
+
+    public boolean isEmbeddedRequest() {
+        return false;
+    }
+
+    public boolean isPortletContext() {
+        return false;
+    }
 }

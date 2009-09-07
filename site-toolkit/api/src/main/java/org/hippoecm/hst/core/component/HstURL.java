@@ -61,6 +61,12 @@ public interface HstURL {
     String getType();
     
     /**
+     * Return true if this URL represents a site navigation.
+     * This can only be the case with type RENDER_TYPE.
+     */
+    boolean isNavigational();
+    
+    /**
      * Returns the reference namespace
      * @return String
      */

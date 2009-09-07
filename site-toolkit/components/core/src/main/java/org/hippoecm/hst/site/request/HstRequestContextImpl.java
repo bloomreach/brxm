@@ -34,6 +34,7 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.MatchedMapping;
@@ -58,6 +59,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     protected HstQueryManagerFactory hstQueryManagerFactory;
     protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
+    protected HstEmbeddedRequestContext embeddedRequestContext;
     
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
@@ -226,4 +228,19 @@ public class HstRequestContextImpl implements HstRequestContext {
         return null;
     }
     
+    public HstEmbeddedRequestContext getEmbeddedRequestContext() {
+        return embeddedRequestContext;
+    }
+
+    public void setEmbeddedRequestContext(HstEmbeddedRequestContext embeddedRequestContext) {
+        this.embeddedRequestContext = embeddedRequestContext;
+    }
+
+    public boolean isEmbeddedRequest() {
+        return embeddedRequestContext != null;
+    }
+
+    public boolean isPortletContext() {
+        return false;
+    }    
 }

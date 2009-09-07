@@ -67,8 +67,8 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     public HstURL createNavigationalURL(String pathInfo) {
         HstContainerURL navURL = this.requestContext.getURLFactory().getServletUrlProvider().parseURL(this.request, this.response, this.requestContext, pathInfo);
         navURL.setParameters(null);
-        HstURL navRenderURL = this.requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, this.requestContext);
-        return navRenderURL;
+        navURL.setNavigational(true);
+        return this.requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, this.requestContext);
     }
     
     public HstURL createActionURL() {
