@@ -77,6 +77,9 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
                 session = this.repository.login(this.credentials);
             }
             
+            // session can come from a pooled event based pool so always refresh before building configuration:
+            session.refresh(false);
+            
             if(virtualHostsPath != null && virtualHostsPath.startsWith("/") && session.itemExists(virtualHostsPath)) {
                 Item item = session.getItem(virtualHostsPath);
                 if(!item.isNode()) {

@@ -98,7 +98,11 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         doDeinit();
 
         try {
-            this.session = this.repository.login();
+            if (this.credentials == null) {
+                session = this.repository.login();
+            } else {
+                session = this.repository.login(this.credentials);
+            }
             this.workspace = this.session.getWorkspace();
             this.observationManager = this.workspace.getObservationManager();
 

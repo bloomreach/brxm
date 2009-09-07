@@ -79,6 +79,9 @@ public class HstSitesManagerImpl implements HstSitesManager {
                 session = this.repository.login(this.credentials);
             }
             
+            // session can come from a pooled event based pool so always refresh before building configuration:
+            session.refresh(false);
+            
             Node siteContentNode = session.getRootNode().getNode(this.sitesContentPath);
             this.sites = new HstSitesService(siteContentNode);
         } catch (Exception e) {
