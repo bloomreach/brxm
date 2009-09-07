@@ -42,8 +42,9 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         
         ClassLoader containerClassLoader = requestContainerConfig.getContextClassLoader();
         ClassLoader processorClassLoader = getClass().getClassLoader();
-
-        Pipeline pipeline = this.pipelines.getDefaultPipeline();
+        
+        String namedPipeline = (String)servletRequest.getAttribute(Pipeline.class.getName());
+        Pipeline pipeline = namedPipeline != null ? pipelines.getPipeline(namedPipeline) : pipelines.getDefaultPipeline();
         
         try {
             if (processorClassLoader != containerClassLoader) {
