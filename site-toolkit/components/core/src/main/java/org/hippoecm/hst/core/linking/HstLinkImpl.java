@@ -64,6 +64,9 @@ public class HstLinkImpl implements HstLink{
     }
     
     public String[] getPathElements() {
+        if(this.path == null) {
+            return null;
+        }
         return this.path.split("/");
     }
 
