@@ -37,6 +37,12 @@
     </dependency>
     
     <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+        
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
@@ -63,11 +69,6 @@
       <artifactId>commons-proxy</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-connector</artifactId>
-    </dependency>
-    
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-ocm</artifactId>
