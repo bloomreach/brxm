@@ -116,7 +116,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         }
         Mapping mapping = null;
         if(hostName == null || "".equals(hostName)) {
-            log.warn("Cannot get a mapping for hostName '{}' which is empty");
+            log.warn("Cannot get a mapping for hostName '{}' which is empty", hostName);
             return null;
         }
         
@@ -145,7 +145,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
                 }
             }
         }
-        log.warn("The host hostName '{}' and pathInfo '{}' cannot be matched for the configured virtual hosts");
+        log.warn("The host hostName '{}' and pathInfo '{}' cannot be matched for the configured virtual hosts", hostName, pathInfo);
         return null;
     }
     
@@ -196,7 +196,7 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
                VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null);
                this.rootVirtualHosts.put(virtualHost.getId(), virtualHost);
            } catch (ServiceException e) {
-               log.warn("Unable to initialize VirtualHost for '{}'. Skipping. {}", virtualHostNode.getPath(), e);
+               log.warn("Unable to initialize VirtualHost for '{}'. Skipping. {}", virtualHostNode.getPath(), e.getMessage());
            }
        }
        
