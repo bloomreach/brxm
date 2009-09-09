@@ -57,7 +57,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
     private int autocreatedCounter = 0;
 
     public HstComponentsConfigurationService(Node configurationNode, Map<String, String> templateRenderMap)
-            throws RepositoryException {
+            throws RepositoryException, ServiceException {
         super(null);
         this.rootComponentConfigurations = new LinkedHashMap<String, HstComponentConfiguration>();
         this.childComponents = new ArrayList<HstComponentConfiguration>();
@@ -89,7 +89,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
 
     }
 
-    private void enhanceComponentTree(Map<String, String> templateRenderMap) {
+    private void enhanceComponentTree(Map<String, String> templateRenderMap) throws ServiceException{
         // merging referenced components:  to avoid circular population, hold a list of already populated configs
         List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
         for (HstComponentConfiguration child : rootComponentConfigurations.values()) {

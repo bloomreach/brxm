@@ -74,7 +74,8 @@ public class HstSitesService extends AbstractJCRService implements HstSites, Ser
                HstSite hstSite = new HstSiteService(site, this);
                hstSites.put(hstSite.getName(), hstSite);
            } catch (ServiceException e){
-               log.warn("Skipping subsite: {}" ,e.toString());
+               
+               log.error("Skipping subsite: {}", site.getName() ,e );
            }
        }
     }

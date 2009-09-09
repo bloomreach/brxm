@@ -227,7 +227,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
 
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
             HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
-            Map<String, HstComponentConfiguration> rootComponentConfigurations) {
+            Map<String, HstComponentConfiguration> rootComponentConfigurations) throws ServiceException {
         if (child.getReferenceComponent() != null) {
             // populate child component if not yet happened
             child.populateComponentReferences(rootComponentConfigurations, populated);
@@ -259,7 +259,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     }
 
     protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations,
-            List<HstComponentConfiguration> populated) {
+            List<HstComponentConfiguration> populated) throws ServiceException{
         if (populated.contains(this)) {
             return;
         }
@@ -270,6 +270,9 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             HstComponentConfigurationService referencedComp = (HstComponentConfigurationService) rootComponentConfigurations
                     .get(this.getReferenceComponent());
             if (referencedComp != null) {
+                if(referencedComp == this) {
+                    throw new ServiceException("There is a component referencing itself: this is not allowed. The site configuration cannot be loaded. ComponentId = "+this.getId());
+                }
                 if (referencedComp.getReferenceComponent() != null) {
                     // populate referenced comp first:
                     referencedComp.populateComponentReferences(rootComponentConfigurations, populated);
@@ -334,7 +337,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                 }
 
             } else {
-                log.warn("Cannot lookup referenced component '{}' for this component ['{}']", this
+                log.warn("Cannot lookup referenced component '{}' for this component ['{}']. We skip this reference", this
                         .getReferenceComponent(), this.getId());
             }
         }
@@ -342,7 +345,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
 
     private void combine(HstComponentConfigurationService childToMerge,
             Map<String, HstComponentConfiguration> rootComponentConfigurations,
-            List<HstComponentConfiguration> populated) {
+            List<HstComponentConfiguration> populated) throws ServiceException {
         if (!this.hasClassNameConfigured)
             this.componentClassName = childToMerge.componentClassName;
         if (this.configurationRootNodePath == null)
@@ -386,7 +389,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     }
 
     private void addDeepCopy(HstComponentConfigurationService childToMerge, List<HstComponentConfiguration> populated,
-            Map<String, HstComponentConfiguration> rootComponentConfigurations) {
+            Map<String, HstComponentConfiguration> rootComponentConfigurations) throws ServiceException {
 
         String newId = this.id + "-" + childToMerge.id;
         HstComponentConfigurationService copy = this.deepCopy(this, newId, childToMerge, populated,
