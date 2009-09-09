@@ -64,6 +64,7 @@ public class TabbedPanel extends WebMarkupContainer {
         final IModel tabCount = new AbstractReadOnlyModel() {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public Object getObject() {
                 return Integer.valueOf(TabbedPanel.this.tabs.size());
             }
@@ -72,6 +73,7 @@ public class TabbedPanel extends WebMarkupContainer {
         WebMarkupContainer tabsContainer = new WebMarkupContainer("tabs-container") {
             private static final long serialVersionUID = 1L;
 
+            @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
                 tag.put("class", "tab-row");
@@ -84,6 +86,7 @@ public class TabbedPanel extends WebMarkupContainer {
         tabsContainer.add(new Loop("tabs", tabCount) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             protected void populateItem(LoopItem item) {
                 final int index = item.getIteration();
 
@@ -92,6 +95,7 @@ public class TabbedPanel extends WebMarkupContainer {
                 item.add(newBehavior(index));
             }
 
+            @Override
             protected LoopItem newItem(int iteration) {
                 return newTabContainer(iteration);
             }
@@ -103,6 +107,7 @@ public class TabbedPanel extends WebMarkupContainer {
         LoopItem item = new LoopItem(tabIndex) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
                 String cssClass = (String) tag.getString("class");
@@ -156,16 +161,19 @@ public class TabbedPanel extends WebMarkupContainer {
         return new AjaxEventBehavior("onclick") {
             private static final long serialVersionUID = 1L;
 
+            @Override
             protected void onEvent(AjaxRequestTarget target) {
                 plugin.onSelect(tabs.get(tabIndex), target);
             }
 
+            @Override
             protected IAjaxCallDecorator getAjaxCallDecorator() {
                 return new CancelEventIfNoAjaxDecorator(null);
             }
         };
     }
 
+    @Override
     public boolean isTransparentResolver() {
         return true;
     }
@@ -184,6 +192,7 @@ public class TabbedPanel extends WebMarkupContainer {
     }
     
     // @see org.apache.wicket.Component#onAttach()
+    @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
         if (!hasBeenRendered() && getSelectedTab() == -1) {
