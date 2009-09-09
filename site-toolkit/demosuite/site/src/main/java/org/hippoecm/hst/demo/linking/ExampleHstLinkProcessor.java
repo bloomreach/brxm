@@ -17,14 +17,13 @@
 package org.hippoecm.hst.demo.linking;
 
 import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkProcessorTemplate;
+import org.hippoecm.hst.linking.HstLinkProcessorTemplate;
 
 
 public class ExampleHstLinkProcessor extends HstLinkProcessorTemplate{
 
     @Override
     protected HstLink doPostProcess(HstLink link) {
-        System.out.println("!!!!");
         // do nothing
         return link;
     }
