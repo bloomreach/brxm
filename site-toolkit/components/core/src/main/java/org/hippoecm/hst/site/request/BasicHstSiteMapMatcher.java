@@ -84,50 +84,75 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         
         String[] elements = pathInfo.split("/"); 
         
-        /*
-         * The catch all sitemap item in case none matches (might be the sitemap item that delivers a 404)
-         */
-        HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem(ANY);
-        
+       
         
         HstSiteMapItem hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(elements[0]);
         
-        if(hstSiteMapItem == null) {
-            // check for a wildcard matcher first:
-            log.debug("Did not find a 'root sitemap item' for '{}'. Try to find a wildcard matching sitemap", elements[0]);
-            hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(WILDCARD);
-            if(hstSiteMapItem == null) {
-                if(hstSiteMapItemAny == null) {
-                    log.warn("Did not find a matching sitemap item and there is no catch all sitemap item configured (the ** matcher directly under the sitemap node). Return null");
-                    cache.put(key, new NullResolvedSiteMapItem());
-                    return null;
-                } else {
-                    // The ** has the value of the entire pathInfo
-                    params.put(String.valueOf(params.size()+1), pathInfo);
-                    ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(hstSiteMapItemAny, params, pathInfo);
-                    cache.put(key, r);
-                    return r;
+        HstSiteMapItem matchedSiteMapItem = null;
+        if(hstSiteMapItem != null) {
+            matchedSiteMapItem =  resolveMatchingSiteMap(hstSiteMapItem, params, 1, elements);
+        }
+        
+        // still no match, try if there are root components like *.xxx that match
+        if(matchedSiteMapItem == null) {
+            params.clear();
+            // check for partial wildcard (*.xxx) matcher first
+            for(HstSiteMapItem item : hstSite.getSiteMap().getSiteMapItems()) {
+                HstSiteMapItemService service = (HstSiteMapItemService)item;
+                if(service.containsWildCard() && service.patternMatch(elements[0], service.getPrefix(), service.getPostfix())) {
+                    String parameter = getStrippedParameter((HstSiteMapItemService)service, elements[0]);
+                    params.put(String.valueOf(params.size()+1), parameter);
+                    matchedSiteMapItem =  resolveMatchingSiteMap(service, params, 1, elements);
+                    if(matchedSiteMapItem != null) {
+                        // we have a matching sitemap item.
+                        break;
+                    }
                 }
-            } else {
-                params.put(String.valueOf(params.size()+1), elements[0]);
             }
         }
         
-        HstSiteMapItem matchedSiteMapItem =  resolveMatchingSiteMap(hstSiteMapItem, params, 1, elements);
-      
+        // still no match, try if there is root components that is *
         if(matchedSiteMapItem == null) {
-            if(hstSiteMapItemAny != null) {
-                // There is a ** catch all sitemap item: use this one
-                params = new Properties();
-                params.put(String.valueOf(params.size()+1), pathInfo);
-                ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(hstSiteMapItemAny, params, pathInfo);
-                cache.put(key, r);
-                return r;
-            } else {
-                log.warn("No matching sitemap item found for path '{}'. Cannot return ResolvedSiteMapItem. Return null", pathInfo);
+            params.clear();
+            // check for a wildcard (*) matcher :
+            hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(WILDCARD);
+            if(hstSiteMapItem != null) {
+                params.put(String.valueOf(params.size()+1), elements[0]);
+                matchedSiteMapItem =  resolveMatchingSiteMap(hstSiteMapItem, params, 1, elements);
+            }
+        }
+        
+        // still no match, try if there are root components like **.xxx that match
+        if(matchedSiteMapItem == null) {
+            params.clear();
+         // check for partial wildcard (**.xxx) matcher first
+            for(HstSiteMapItem item : hstSite.getSiteMap().getSiteMapItems()) {
+                HstSiteMapItemService service = (HstSiteMapItemService)item;
+                if(service.containsAny() && service.patternMatch(pathInfo, service.getPrefix(), service.getPostfix())) {
+                    String parameter = getStrippedParameter((HstSiteMapItemService)service, pathInfo);
+                    params.put(String.valueOf(params.size()+1), parameter);
+                    matchedSiteMapItem = item;
+                    // we have a matching sitemap item.
+                    break;
+                }
+            }
+        }
+        
+        // still no match, try if there is root components that is **
+        if(matchedSiteMapItem == null) {
+            params.clear();
+            // check for a wildcard (**) matcher :
+            HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem(ANY);
+            if(hstSiteMapItemAny == null) {
+                log.warn("Did not find a matching sitemap item and there is no catch all sitemap item configured (the ** matcher directly under the sitemap node). Return null");
                 cache.put(key, new NullResolvedSiteMapItem());
                 return null;
+            } else {
+                // The ** has the value of the entire pathInfo
+                params.put(String.valueOf(params.size()+1), pathInfo);
+                matchedSiteMapItem = hstSiteMapItemAny;
             }
+            
         }
         
         if(log.isInfoEnabled()){

@@ -165,14 +165,18 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         if(hstSite.getLocationMapTree() instanceof BasicLocationMapTree) {
             if(path.startsWith(((BasicLocationMapTree)hstSite.getLocationMapTree()).getCanonicalSiteContentPath())) {
                 ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite, representsDocument);
-                if(resolvedLocation != null) {
+                if(resolvedLocation != null && resolvedLocation.getPath() != null) {
                     if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
                     if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, resolvedLocation.getPath());
                     return postProcess(new HstLinkImpl(resolvedLocation.getPath(), hstSite));
                 } else {
-                     // TODO what to return??
                      if (log.isWarnEnabled()) {
-                        log.warn("Unable to create a link for '{}' for HstSite '{}'. Return null", path, hstSite.getName());
+                        String msg = "";
+                        if(resolvedLocation != null) {
+                            msg = " We cannot create a pathInfo for resolved sitemap item : '" +resolvedLocation.getHstSiteMapItemId() +"'."   ;
+                        }
+                         
+                        log.warn("Unable to create a link for '{}' for HstSite '{}'. " +msg+ "  Return null", path, hstSite.getName());
                     }
                 }
             } else {

@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.configuration.Configuration;
@@ -32,12 +34,13 @@ import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
 
 public class BasicLocationMapTree implements LocationMapTree{
 
     private final static Logger log = LoggerFactory.getLogger(BasicLocationMapTree.class);
-    private final static int DEFAULT_CACHE_SIZE = 500;
+    private final static int DEFAULT_CACHE_SIZE = 5000;
     
     private Map<String, LocationMapTreeItem> children = new HashMap<String, LocationMapTreeItem>();
     private String canonicalSiteContentPath;
@@ -51,6 +54,9 @@ public class BasicLocationMapTree implements LocationMapTree{
     }
     
     public void add(String unresolvedPath, HstSiteMapItem hstSiteMapItem){
+        if(unresolvedPath == null) {
+            return;
+        }
         Properties params = new Properties();
         // see if there are any SiteMapItems which are wildcard or any matchers and set these as properties.
         
@@ -99,10 +105,28 @@ public class BasicLocationMapTree implements LocationMapTree{
         }
         
         PropertyParser pp = new PropertyParser(params);
-        String resolvedPath = (String)pp.resolveProperty("relative contentpah", unresolvedPath);
         
+        /*
+         * If and only IF all property placeholders do occur in the 'unresolvedPath' it is possible to use this 
+         * sitemapItem plus relative contentpath in the LocationMapTree: think about it: If my sitemap path would be 
+         * '_default_/home' (_default_ = * ) and the relative content path would be /common/home, than obviously, we cannot
+         * create a link to this sitemap item: namely, what would we take for _default_ ? If the relative content path would be 
+         * ${1}/home, then we can use it. Therfor, we now check whether all 
+         */
+        
+        for(Object param : params.keySet()) {
+            String propertyPlaceHolder = PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + ((String)param) + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX;
+            if(!unresolvedPath.contains(propertyPlaceHolder)) {
+                log.warn("Skipping relative content path '{}' for linkrewriting map for sitemap item '{}' because we can never write a correct link to it: There are " +
+                		"more wildcards in the sitemap item path than in the relative content path, hence we cannot use it for linkrewriting. ", unresolvedPath, hstSiteMapItem.getId());
+                return;
+            }
+        }
+        
+        String resolvedPath = (String)pp.resolveProperty("relative contentpah", unresolvedPath);
+       
         if(resolvedPath == null) {
-            log.warn("Unable to resolve relative content path : '{}'. We skip this path for linkrewriting", unresolvedPath);
+            log.warn("Unable to translate relative content path : '{}' because the wildcards in sitemap item path ('{}') does not match the property placeholders in the relative content path. We skip this path for linkrewriting", unresolvedPath, hstSiteMapItem.getId());
             return;
         } 
         log.debug("Translated relative contentpath '{}' --> '{}'", unresolvedPath, resolvedPath);
@@ -141,6 +165,10 @@ public class BasicLocationMapTree implements LocationMapTree{
         
         ResolvedLocationMapTreeItem o = this.cache.get(path);
         
+        // TODO remove this
+        if(true) {
+            o = null;
+        }
         if(o != null) {
             if(o instanceof NullResolvedLocationMapTreeItem) {
                 return null;
@@ -150,57 +178,44 @@ public class BasicLocationMapTree implements LocationMapTree{
         
         String[] elements = path.split("/"); 
         
-        /*
-         * The catch all sitemap item in case none matches (might be the sitemap item that delivers a 404)
-         */
-        LocationMapTreeItem locationSiteMapTreeItemAny = this.getTreeItem(Configuration.ANY);
         
-        LocationMapTreeItem locationMapTreeItem = this.getTreeItem(elements[0]);
+        LocationMapTreeItem matchedLocationMapTreeItem = null;
+       
         Properties params = new Properties();
-        
         PropertyParser pp = new PropertyParser(params);
         
-        if(locationMapTreeItem == null) {
-            // check for a wildcard matcher first:
-            log.debug("Did not find a 'root location' for '{}'. Try to find a wildcard matching location item", elements[0]);
+
+        LocationMapTreeItem locationMapTreeItem = this.getTreeItem(elements[0]);
+        if(locationMapTreeItem != null) {
+            matchedLocationMapTreeItem =  resolveMatchingSiteMap(locationMapTreeItem, params, 1, elements);
+        }
+        
+       // test for * matcher because we did not yet be able to resolve to a matching sitemap
+        if(matchedLocationMapTreeItem == null) {
+            params.clear();
             locationMapTreeItem = this.getTreeItem(Configuration.WILDCARD);
-            if(locationMapTreeItem == null) {
-                if(locationSiteMapTreeItemAny == null) {
-                    log.warn("Did not find a matching sitemap item and there is no catch all sitemap item configured (the ** matcher directly under the sitemap node). Return null");
-                    cache.put(path, new NullResolvedLocationMapTreeItem());
-                    return null;
-                } else {
-                    log.warn("Did not find a matching sitemap item at all. Return the catch all sitemap item (the ** matcher) ");
-                    // The ** has the value of the entire pathInfo
-                    
-                    params.put(String.valueOf(params.size()+1), path);
-                    if(locationSiteMapTreeItemAny.getHstSiteMapItems().size() > 0) {
-                        // take the first one if there are more matching sitemap items
-                        if(locationSiteMapTreeItemAny.getHstSiteMapItems().size() > 1) {
-                            log.debug("Multiple sitemap items are suited equally for linkrewrite of '{}'. We Take the first.", path);
-                        }
-                        HstSiteMapItem hstSiteMapItem = locationSiteMapTreeItemAny.getHstSiteMapItems().get(0);
-                        String resolvedPath = (String)pp.resolveProperty("parameterizedPath", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
-                        if(resolvedPath == null) {
-                            log.warn("Unable to resolve '{}'", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
-                        }
-                        ResolvedLocationMapTreeItem r = new ResolvedLocationMapTreeItemImpl(resolvedPath, hstSiteMapItem.getId());
-                        this.cache.put(path, r);
-                        return r;
-                    }
-                }
-            } else {
-                    params.put(String.valueOf(params.size()+1), elements[0]);
+            if(locationMapTreeItem != null) {
+                params.put(String.valueOf(params.size()+1), elements[0]);
+                matchedLocationMapTreeItem =  resolveMatchingSiteMap(locationMapTreeItem, params, 1, elements);
             }
         }
         
-        
-        LocationMapTreeItem matchedLocationMapTreeItem =  resolveMatchingSiteMap(locationMapTreeItem, params, 1, elements);
+       // test for ** matcher because we did not yet be able to resolve to a matching sitemap
+        if(matchedLocationMapTreeItem == null) {
+            params.clear();
+            locationMapTreeItem = this.getTreeItem(Configuration.ANY);
+            if(locationMapTreeItem != null) {
+                params.put(String.valueOf(params.size()+1), path);
+                matchedLocationMapTreeItem =  locationMapTreeItem;
+            }
+        }
+
         if(matchedLocationMapTreeItem == null || matchedLocationMapTreeItem.getHstSiteMapItems().size() == 0) {
             log.warn("Unable to linkrewrite '{}' to any sitemap item", origPath);
             cache.put(path, new NullResolvedLocationMapTreeItem());
             return null;
         }
+        
         HstSiteMapItem hstSiteMapItem = null;
       
         if(matchedLocationMapTreeItem.getHstSiteMapItems().size() > 1) {
@@ -236,7 +251,9 @@ public class BasicLocationMapTree implements LocationMapTree{
         
         String resolvedPath = (String)pp.resolveProperty("parameterizedPath", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
         if(resolvedPath == null) {
-            log.warn("Unable to resolve '{}'", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
+            log.warn("Unable to resolve '{}'. Return null", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
+            cache.put(path, new NullResolvedLocationMapTreeItem());
+            return null;
         }
         
         log.info("Succesfully rewrote path '{}' into new sitemap path '{}'", origPath, resolvedPath);

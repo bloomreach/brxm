@@ -319,7 +319,6 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         this.containsAnyChildSiteMapItems.add(hstSiteMapItem);
     }
     
-    
     public HstSiteMapItem getWildCardPatternChild(String value, List<HstSiteMapItem> excludeList){
         if(value == null || containsWildCardChildSiteMapItems.isEmpty()) {
             return null;
@@ -339,6 +338,32 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     }
     
     
+    public boolean patternMatch(String value, String prefix, String postfix ) {
+     // postFix must match
+        if(prefix != null && !"".equals(prefix)){
+            if(prefix.length() >= value.length()) {
+                // can never match
+                return false;
+            }
+            if(!value.substring(0, prefix.length()).equals(prefix)){
+                // wildcard prefixed sitemap does not match the prefix. we can stop
+                return false;
+            }
+        }
+        if(postfix != null && !"".equals(postfix)){
+            if(postfix.length() >= value.length()) {
+                // can never match
+                return false;
+            }
+            if(!value.substring(value.length() - postfix.length()).equals(postfix)){
+                // wildcard prefixed sitemap does not match the postfix . we can stop
+                return false;
+            }
+        }
+        // if we get here, the pattern matched
+        return true;
+    }
+    
     private HstSiteMapItem match(String value, List<HstSiteMapItemService> patternSiteMapItems, List<HstSiteMapItem> excludeList) {
         
         for(HstSiteMapItemService item : patternSiteMapItems){
@@ -346,32 +371,11 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             if(excludeList.contains(item)) {
                 continue;
             }
-            // postFix must match
-            String itemPrefix = item.getPrefix();
-            if(itemPrefix != null && !"".equals(itemPrefix)){
-                if(itemPrefix.length() >= value.length()) {
-                    // can never match
-                    continue;
-                }
-                if(!value.substring(0, itemPrefix.length()).equals(itemPrefix)){
-                    // wildcard prefixed sitemap does not match the prefix. we can stop
-                    continue;
-                }
+            
+            if(patternMatch(value, item.getPrefix(),  item.getPostfix())) {
+                return item;
             }
             
-            String itemPostfix = item.getPostfix();
-            if(itemPostfix != null && !"".equals(itemPostfix)){
-                if(itemPostfix.length() >= value.length()) {
-                    // can never match
-                    continue;
-                }
-                if(!value.substring(value.length() - itemPostfix.length()).equals(itemPostfix)){
-                    // wildcard prefixed sitemap does not match the postfix . we can stop
-                    continue;
-                }
-            }
-            // if we got here, we passed the prefix and postfix test: return this item
-            return item;
         }
         return null;
     }
