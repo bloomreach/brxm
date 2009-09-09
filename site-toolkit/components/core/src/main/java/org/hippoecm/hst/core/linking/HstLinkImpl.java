@@ -22,6 +22,7 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.MatchedMapping;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,13 +33,14 @@ public class HstLinkImpl implements HstLink{
     private String path;
     private HstSite hstSite;
     private boolean containerResource;
+    private boolean notFound = false;
     
     public HstLinkImpl(String path, HstSite hstSite){
          this(path, hstSite,false);
     }
     
     public HstLinkImpl(String path, HstSite hstSite, boolean containerResource) {
-        this.path = path;
+        this.path = PathUtils.normalizePath(path);
         this.hstSite = hstSite;
         this.containerResource = containerResource;
     }
@@ -52,7 +54,7 @@ public class HstLinkImpl implements HstLink{
     }
     
     public void setPath(String path) {
-        this.path = path;
+        this.path = PathUtils.normalizePath(path);
     }
     
     public boolean getContainerResource() {
@@ -141,6 +143,14 @@ public class HstLinkImpl implements HstLink{
         }
         
         return urlString;
+    }
+
+    public boolean isNotFound() {
+        return notFound;
+    }
+
+    public void setNotFound(boolean notFound) {
+        this.notFound = notFound;
     }
 
     

@@ -27,6 +27,7 @@
 
  <bean id="org.hippoecm.hst.core.linking.HstLinkCreator"
   class="org.hippoecm.hst.core.linking.BasicHstLinkCreator">
+  <property name="pageNotFoundPath" value="${linkrewriting.failed.path}"/>
   <property name="binariesPrefix" value="${binaries.prefix.path}"/>
   <property name="binaryLocations">
    <list>
@@ -39,6 +40,7 @@
 
  <bean id="org.hippoecm.hst.core.linking.HstLinkProcessor"
       class="org.hippoecm.hst.core.linking.HstLinkProcessorImpl">
+      
   </bean>
   
  </beans>

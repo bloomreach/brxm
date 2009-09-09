@@ -72,4 +72,16 @@ public interface HstLink {
      */
     HstSite getHstSite();
     
+    /**
+     * When for example for some bean the (real) link cannot be created through the HstLinkCreator, a HstLink can be returned
+     * with a path that is for example from some configured property like '/pagenotfound'. If this method returns <code>true</code> 
+     * it indicates that the link is some hardcoded path for beans that cannot be linked to
+     * @return <code>true</code> when this HstLink indicates to be a link that is actually a notFound link
+     */
+    boolean isNotFound();
+    
+    /**
+     * @param notFound true whether this HstLink is actually a notFound link
+     */
+    void setNotFound(boolean notFound);
 }

@@ -39,8 +39,10 @@ public class BasicHstLinkCreator implements HstLinkCreator {
 
     private static final Logger log = LoggerFactory.getLogger(BasicHstLinkCreator.class);
 
+    private final static String DEFAULT_PAGE_NOT_FOUND_PATH = "pagenotfound";
     private String[] binaryLocations;
     private String binariesPrefix;
+    private String pageNotFoundPath = DEFAULT_PAGE_NOT_FOUND_PATH;
     private HstLinkProcessor linkProcessor;
    
     public void setBinariesPrefix(String binariesPrefix){
@@ -53,6 +55,10 @@ public class BasicHstLinkCreator implements HstLinkCreator {
     
     public void setlinkProcessor(HstLinkProcessor linkProcessor) {
         this.linkProcessor = linkProcessor;
+    }
+    
+    public void setPageNotFoundPath(String pageNotFoundPath){
+        this.pageNotFoundPath = PathUtils.normalizePath(pageNotFoundPath);
     }
     
     /**
@@ -175,8 +181,10 @@ public class BasicHstLinkCreator implements HstLinkCreator {
                         if(resolvedLocation != null) {
                             msg = " We cannot create a pathInfo for resolved sitemap item : '" +resolvedLocation.getHstSiteMapItemId() +"'."   ;
                         }
-                         
-                        log.warn("Unable to create a link for '{}' for HstSite '{}'. " +msg+ "  Return null", path, hstSite.getName());
+                        log.warn("Unable to create a link for '{}' for HstSite '{}'. " +msg+ "  Return page not found HstLink to '"+this.pageNotFoundPath+"'", path, hstSite.getName());
+                        HstLink link =  new HstLinkImpl(pageNotFoundPath, hstSite);
+                        link.setNotFound(true);
+                        return link;
                     }
                 }
             } else {
