@@ -18,12 +18,14 @@ package org.hippoecm.frontend.plugins.cms.edit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
@@ -41,6 +43,7 @@ import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -54,7 +57,7 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     static final String EDITORS = "editors";
     static final String PREVIEWS = "previews";
     static final String FILTERS = "filters";
@@ -92,7 +95,7 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         private static final long serialVersionUID = 1L;
 
         boolean closed = false;
-        
+
         public CloseFilter(IPluginContext context, IPluginConfig config) {
             IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
             context.registerService(this, context.getReference(editor).getServiceId());
@@ -164,14 +167,10 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                     "editor.id", "${editor.id}"
     };
 
-    final static String[] testdocument = new String[] {
-            "/${name}", "hippo:handle",
-                "jcr:mixinTypes", "hippo:hardhandle",
-                "/${name}/${name}", "cmstest:document",
-                    "jcr:mixinTypes", "hippo:harddocument",
-                    HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED,
-                    HippoStdNodeType.HIPPOSTD_STATESUMMARY, HippoStdNodeType.NEW,
-    };
+    final static String[] testdocument = new String[] { "/${name}", "hippo:handle", "jcr:mixinTypes",
+            "hippo:hardhandle", "/${name}/${name}", "cmstest:document", "jcr:mixinTypes", "hippo:harddocument",
+            HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED, HippoStdNodeType.HIPPOSTD_STATESUMMARY,
+            HippoStdNodeType.NEW, };
 
     protected static String[] instantiate(String[] content, Map<String, String> parameters) {
         String[] result = new String[content.length];
@@ -259,7 +258,6 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         home.processEvents();
         assertEquals(1, getEditors().size());
     }
-
 
     @Test
     public void testEditPublished() throws Exception {
@@ -419,6 +417,23 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         ITitleDecorator decorator = context.getService(serviceId, ITitleDecorator.class);
         assertNotNull(decorator);
         assertEquals("document", decorator.getTitle().getObject());
+    }
+
+    @Test
+    public void testVersionedDocument() throws Exception {
+        createDocument("document");
+        session.save();
+        start(config);
+
+        Version version = root.getNode("test/content/document").checkin();
+        IEditorManager mgr = context.getService("editor.manager", IEditorManager.class);
+        try {
+            mgr.openEditor(new JcrNodeModel(version));
+            fail("Could open editor for Version");
+        } catch (ServiceException e) {
+            // ignore, this is OK
+        }
+        IEditor editor = mgr.openPreview(new JcrNodeModel(version));
     }
 
 }

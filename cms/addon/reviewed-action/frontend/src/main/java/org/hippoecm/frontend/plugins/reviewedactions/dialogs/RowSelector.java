@@ -17,60 +17,54 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
 import java.util.List;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 
-public class DocumentSelector extends AbstractNodeRenderer {
+public class RowSelector<T extends IModel> implements IListCellRenderer<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private final List<JcrNodeModel> selectedDocuments;
+    private final List<T> selectedDocuments;
 
-    public DocumentSelector(List<JcrNodeModel> selectedDocuments) {
+    public RowSelector(List<T> selectedDocuments) {
         this.selectedDocuments = selectedDocuments;
     }
 
-    @Override
-    protected Component getViewer(String id, Node node) throws RepositoryException {
-        return new CheckBoxWrapper(id, node);
+    public Component getRenderer(String id, T model) {
+        return new CheckBoxWrapper(id, model);
     }
 
     private class CheckBoxWrapper extends Panel {
         private static final long serialVersionUID = 1L;
 
-        public CheckBoxWrapper(String id, Node node) {
-            super(id);
-            final JcrNodeModel nodeModel = new JcrNodeModel(node);
+        public CheckBoxWrapper(String id, T model) {
+            super(id, model);
             CheckBox check;
             add(check = new CheckBox("check", new IModel() {
                 private static final long serialVersionUID = 1L;
 
                 public Object getObject() {
-                    return selectedDocuments.contains(nodeModel);
+                    return selectedDocuments.contains(CheckBoxWrapper.this.getModel());
                 }
 
+                @SuppressWarnings("unchecked")
                 public void setObject(Object object) {
                     Boolean value = (Boolean) object;
                     if (value.booleanValue()) {
-                        selectedDocuments.add(nodeModel);
+                        selectedDocuments.add((T) CheckBoxWrapper.this.getModel());
                     } else {
-                        selectedDocuments.remove(nodeModel);
+                        selectedDocuments.remove(CheckBoxWrapper.this.getModel());
                     }
                 }
 
                 public void detach() {
-                    nodeModel.detach();
                 }
 
             }));

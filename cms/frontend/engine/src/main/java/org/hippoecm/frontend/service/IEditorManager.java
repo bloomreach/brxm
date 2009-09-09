@@ -26,4 +26,7 @@ public interface IEditorManager extends IClusterable {
     IEditor getEditor(IModel model);
 
     IEditor openEditor(IModel model) throws ServiceException;
+
+    IEditor openPreview(IModel model) throws ServiceException;
+
 }

@@ -50,6 +50,11 @@
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
       <version>2.09.00-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-workflow</artifactId>
+      <version>2.09.00-SNAPSHOT</version>
+    </dependency>
     <!-- FIXME: to be removed after testing -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -86,33 +91,6 @@
           <source>1.5</source>
           <target>1.5</target>
         </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>1.0.1</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <promoteTransitiveDependencies>false</promoteTransitiveDependencies>
-              <shadedArtifactAttached>true</shadedArtifactAttached>
-              <shadedClassifierName>bundle</shadedClassifierName>
-              <artifactSet>
-                <excludes>
-                  <exclude>org.hippoecm:hippo-ecm-api</exclude>
-                  <exclude>org.hippoecm:hippo-ecm-frontend-engine</exclude>
-                </excludes>
-              </artifactSet>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-archetype-plugin</artifactId>
-        <version>2.0-alpha-3</version>
       </plugin>
     </plugins>
   </build>

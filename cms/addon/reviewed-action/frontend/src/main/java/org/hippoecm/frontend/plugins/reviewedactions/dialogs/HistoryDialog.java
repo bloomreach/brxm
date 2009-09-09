@@ -24,39 +24,39 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.reviewedactions.model.ReferringDocumentsProvider;
+import org.hippoecm.frontend.plugins.reviewedactions.model.RevisionHistory;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A dialog that shows where a document is used, i.e. what other documents refer to it.
+ * A dialog that shows the revision history of a document.
  */
-public class WhereUsedDialog extends AbstractDialog implements ITitleDecorator {
+public class HistoryDialog extends AbstractDialog implements ITitleDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(WhereUsedDialog.class);
+    static final Logger log = LoggerFactory.getLogger(HistoryDialog.class);
 
-    public WhereUsedDialog(WorkflowDescriptorModel<?> model, IEditorManager editorMgr) {
+    public HistoryDialog(WorkflowDescriptorModel<?> model, IEditorManager editorMgr) {
         super(model);
 
         setOkVisible(false);
         setCancelLabel(new StringResourceModel("close", this, null));
 
         try {
-            ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(model.getNode()), true);
-            add(new ReferringDocumentsView("links", provider, editorMgr));
+            RevisionHistory history = new RevisionHistory(new JcrNodeModel(model.getNode()));
+            add(new RevisionHistoryView("links", history, editorMgr));
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
     }
 
     public IModel getTitle() {
-        return new StringResourceModel("where-used", this, null);
+        return new StringResourceModel("history", this, null);
     }
 
     @Override

@@ -121,8 +121,12 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
         }
     }
 
+    /**
+     * Use the supplied model of a Node (or Version) to set folder and document models.
+     * When a Version is supplied from the version storage, the physical node is used.
+     */
     public void browse(JcrNodeModel model) {
-        JcrNodeModel document = findDocument((JcrNodeModel) model);
+        JcrNodeModel document = findDocument(getPhysicalNode((JcrNodeModel) model));
         if (folder != null) {
             documentService.updateModel(document);
             folderService.updateModel(folder);
@@ -182,6 +186,21 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
         return document;
     }
 
+    private JcrNodeModel getPhysicalNode(JcrNodeModel model) {
+        Node node = model.getNode();
+        if (node != null) {
+            try {
+                if (node.isNodeType("nt:version")) {
+                    String uuid = node.getNode("jcr:frozenNode").getProperty("jcr:frozenUuid").getString();;
+                    return new JcrNodeModel(node.getSession().getNodeByUUID(uuid));
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        }
+        return model;
+    }
+    
     private JcrNodeModel getParent(JcrNodeModel model) {
         JcrNodeModel parentModel = model.getParentModel();
         if (parentModel == null) {

@@ -37,6 +37,17 @@ class DefaultCmsEditor extends AbstractCmsEditor<JcrNodeModel> {
     DefaultCmsEditor(EditorManagerPlugin manager, IPluginContext context, IPluginConfig config, JcrNodeModel model,
             Mode mode) throws CmsEditorException {
         super(manager, context, config, model, mode);
+
+        Node node = model.getNode();
+        if (node != null) {
+            try {
+                if (node.isNodeType("nt:version") && Mode.EDIT == mode) {
+                    throw new CmsEditorException("Cannot edit version");
+                }
+            } catch (RepositoryException e) {
+                throw new CmsEditorException("Error determining node type", e);
+            }
+        }
     }
 
     @Override
@@ -50,6 +61,8 @@ class DefaultCmsEditor extends AbstractCmsEditor<JcrNodeModel> {
                 } else {
                     return null;
                 }
+            } else if (node.isNodeType("nt:version")) {
+                return new JcrNodeModel(node.getNode("jcr:frozenNode"));
             } else {
                 return model;
             }

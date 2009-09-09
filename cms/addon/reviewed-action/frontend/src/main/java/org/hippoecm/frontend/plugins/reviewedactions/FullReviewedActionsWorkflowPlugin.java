@@ -41,6 +41,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DeleteDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DepublishDialog;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.WhereUsedDialog;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
@@ -80,6 +81,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
     WorkflowAction schedulePublishAction;
     WorkflowAction scheduleDepublishAction;
     WorkflowAction whereUsedAction;
+    WorkflowAction historyAction;
 
     public FullReviewedActionsWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -373,6 +375,25 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             }
         });
 
+        add(historyAction = new WorkflowAction("history", new StringResourceModel("history-label", this, null)
+                .getString(), null) {
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "history-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getModel();
+                return new HistoryDialog(wdm, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                return null;
+            }
+        });
+
         onModelChanged();
     }
 
@@ -429,6 +450,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                         && !((Boolean) info.get("status")).booleanValue()) {
                     infoAction.setVisible(false);
                     whereUsedAction.setVisible(false);
+                    historyAction.setVisible(false);
                 }
                 if (info.containsKey("inUseBy") && info.get("inUseBy") instanceof String) {
                     inUseBy = (String) info.get("inUseBy");

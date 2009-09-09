@@ -17,7 +17,13 @@ package org.hippoecm.frontend.plugins.standards.browse;
 
 import static org.junit.Assert.assertEquals;
 
+import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.IModelReference;
@@ -86,6 +92,40 @@ public class BrowseServiceTest extends PluginTest {
 
         IModelReference<JcrNodeModel> docService = getDocumentService();
         docService.setModel(new JcrNodeModel((Node) null));
+        assertEquals(new JcrNodeModel("/test/content"), getFolderService().getModel());
+    }
+
+    @Test
+    public void selectCurrentFolderForVersionedNode() throws Exception {
+        build(session, content);
+
+        root.getNode("test").accept(new ItemVisitor() {
+            public void visit(Property property) throws RepositoryException {
+            }
+
+            public void visit(Node node) throws RepositoryException {
+                if (node.isNodeType("hippo:document")) {
+                    node.addMixin("hippo:harddocument");
+                } else if (node.isNodeType("hippo:handle")) {
+                    node.addMixin("hippo:hardhandle");
+                }
+
+                NodeIterator nodeIter = node.getNodes();
+                while (nodeIter.hasNext()) {
+                    nodeIter.nextNode().accept(this);
+                }
+            }
+        });
+        session.save();
+
+        BrowseService service = new BrowseService(context, new JcrPluginConfig(new JcrNodeModel("/test/config")),
+                new JcrNodeModel("/test"));
+
+        Node handle = root.getNode("test/content/document");
+        handle.checkin();
+        Version base = handle.getBaseVersion();
+        IModelReference<JcrNodeModel> docService = getDocumentService();
+        docService.setModel(new JcrNodeModel(base));
         assertEquals(new JcrNodeModel("/test/content"), getFolderService().getModel());
     }
 

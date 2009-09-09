@@ -22,7 +22,7 @@
   </sv:property>
   <sv:node sv:name="version">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:workflow</sv:value>
+      <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.VersionWorkflowImpl</sv:value>
@@ -52,13 +52,24 @@
         </sv:property>
       </sv:node>
     </sv:node>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="editor.id" sv:type="String">
+        <sv:value>${editor.id}</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
-  <sv:node sv:name="revert">
+  <sv:node sv:name="restore">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:workflow</sv:value>
+      <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.api.Document</sv:value>
+      <sv:value>org.hippoecm.repository.standardworkflow.VersionWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Versioning workflow</sv:value>
@@ -84,6 +95,17 @@
           <sv:value>hippo:document</sv:value>
         </sv:property>
       </sv:node>
+    </sv:node>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="editor.id" sv:type="String">
+        <sv:value>${editor.id}</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.versioning.VersionWorkflowPlugin</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>

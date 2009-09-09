@@ -20,9 +20,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -30,70 +33,80 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.reviewedactions.model.ReferringDocumentsProvider;
+import org.hippoecm.frontend.plugins.reviewedactions.model.Revision;
+import org.hippoecm.frontend.plugins.reviewedactions.model.RevisionHistory;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
+import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReferringDocumentsView extends Panel implements IPagingDefinition {
-    private static final long serialVersionUID = 1L;
+/**
+ * A panel that displays the revision history of a document as a list.  Revisions
+ * can be selected and opened.
+ */
+public class RevisionHistoryView extends Panel implements IPagingDefinition {
+    private static final long serialVersionUID = -6072417388871990194L;
 
-    static final Logger log = LoggerFactory.getLogger(ReferringDocumentsView.class);
+    static final Logger log = LoggerFactory.getLogger(RevisionHistoryView.class);
 
-    private ReferringDocumentsProvider provider;
+    private RevisionHistory history;
+    private ISortableDataProvider provider;
     private IEditorManager editorMgr;
     private ListDataTable dataTable;
     private WebMarkupContainer actionContainer;
-    private List<JcrNodeModel> selectedDocuments = new LinkedList<JcrNodeModel>();
+    private List<IModel/*<Revision>*/> selectedRevisions = new LinkedList<IModel/*<Revision>*/>();
 
-    public ReferringDocumentsView(String id, ReferringDocumentsProvider provider, IEditorManager mgr) {
+    public RevisionHistoryView(String id, RevisionHistory history, IEditorManager mgr) {
         super(id);
 
-        this.provider = provider;
+        this.history = history;
         this.editorMgr = mgr;
 
-        setOutputMarkupId(true);
-
-        add(new Label("message", new IModel() {
+        final SortState state = new SortState();
+        this.provider = new ISortableDataProvider() {
             private static final long serialVersionUID = 1L;
 
-            public Object getObject() {
-                ReferringDocumentsProvider provider = ReferringDocumentsView.this.provider;
-                if (provider.getNumResults() > provider.getLimit()) {
-                    return new StringResourceModel("message-many", ReferringDocumentsView.this, new Model(provider))
-                            .getObject();
-                } else if (provider.size() > 1) {
-                    return new StringResourceModel("message", ReferringDocumentsView.this, new Model(provider))
-                            .getObject();
-                } else if (provider.size() == 1) {
-                    return new StringResourceModel("message-single", ReferringDocumentsView.this, null).getObject();
-                } else {
-                    return new StringResourceModel("message-empty", ReferringDocumentsView.this, null).getObject();
-                }
+            public void setSortState(ISortState arg0) {
+                throw new UnsupportedOperationException();
             }
 
-            public void setObject(Object object) {
+            public ISortState getSortState() {
+                return state;
             }
 
             public void detach() {
+                // TODO Auto-generated method stub
             }
 
-        }));
+            public int size() {
+                return getRevisions().size();
+            }
+
+            public IModel model(Object object) {
+                return new Model((Revision) object);
+            }
+
+            public Iterator<Revision> iterator(int first, int count) {
+                return getRevisions().subList(first, first + count).iterator();
+            }
+        };
 
         dataTable = new ListDataTable("datatable", getTableDefinition(), provider, new TableSelectionListener() {
+            private static final long serialVersionUID = 1L;
+
             public void selectionChanged(IModel model) {
             }
 
@@ -103,9 +116,10 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
         add(actionContainer = new WebMarkupContainer("actions"));
 
         add(new CssClassAppender(new IModel() {
+            private static final long serialVersionUID = 1L;
 
             public Object getObject() {
-                if (ReferringDocumentsView.this.provider.size() == 0) {
+                if (getRevisions().size() == 0) {
                     return "hippo-empty";
                 }
                 return "";
@@ -128,13 +142,12 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                selectedDocuments.clear();
-                ReferringDocumentsProvider provider = ReferringDocumentsView.this.provider;
+                selectedRevisions.clear();
                 Iterator<?> iter = provider.iterator(0, provider.size());
                 while (iter.hasNext()) {
-                    selectedDocuments.add((JcrNodeModel) provider.model(iter.next()));
+                    selectedRevisions.add(provider.model(iter.next()));
                 }
-                target.addComponent(ReferringDocumentsView.this);
+                target.addComponent(RevisionHistoryView.this);
             }
         };
         actionContainer.add(selectAll);
@@ -144,8 +157,8 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                selectedDocuments.clear();
-                target.addComponent(ReferringDocumentsView.this);
+                selectedRevisions.clear();
+                target.addComponent(RevisionHistoryView.this);
             }
         };
         actionContainer.add(selectNone);
@@ -156,13 +169,17 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 if (editorMgr != null) {
-                    for (JcrNodeModel model : selectedDocuments) {
-                        IEditor editor = editorMgr.getEditor(model);
+                    for (IModel/*<Revision>*/model : selectedRevisions) {
+                        Revision revision = (Revision) model.getObject();
+                        JcrNodeModel versionModel = revision.getRevisionNodeModel();
+                        // get nt:version node
+                        versionModel = versionModel.getParentModel();
+                        IEditor editor = editorMgr.getEditor(versionModel);
                         if (editor == null) {
                             try {
-                                editorMgr.openEditor(model);
+                                editorMgr.openPreview(versionModel);
                             } catch (ServiceException ex) {
-                                log.error("Could not open editor for " + model.getItemModel().getPath(), ex);
+                                log.error("Could not open editor for " + versionModel.getItemModel().getPath(), ex);
                             }
                         }
                     }
@@ -176,12 +193,25 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
         }
         actionContainer.add(open);
 
-        add(new CssClassAppender(new Model("hippo-referring-documents")));
+        add(new CssClassAppender(new Model("hippo-history-documents")));
+    }
+
+    protected List<Revision> getRevisions() {
+        return history.getRevisions();
+    }
+
+    public void onSelect(IModel/*<Revision>*/revision) {
     }
 
     @Override
+    protected void detachModel() {
+        history.detach();
+        super.detachModel();
+    };
+
+    @Override
     protected void onBeforeRender() {
-        boolean hasLinks = (provider.size() > 0);
+        boolean hasLinks = (getRevisions().size() > 0);
         dataTable.setVisible(hasLinks);
         actionContainer.setVisible(hasLinks);
         super.onBeforeRender();
@@ -194,16 +224,19 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
         List<ListColumn> columns = new ArrayList<ListColumn>();
 
         ListColumn column = new ListColumn(new Model(""), null);
-        column.setRenderer(new RowSelector(selectedDocuments));
+        column.setRenderer(new RowSelector(selectedRevisions));
         columns.add(column);
 
-        column = new ListColumn(new StringResourceModel("doclisting-name", this, null), null);
+        column = new ListColumn(new StringResourceModel("history-name", this, null), null);
+        column.setRenderer(new IListCellRenderer() {
+            private static final long serialVersionUID = 1L;
+
+            public Component getRenderer(String id, IModel model) {
+                return new Label(id, new PropertyModel(model, "creationDate"));
+            }
+
+        });
         column.setAttributeModifier(new DocumentAttributeModifier());
-        columns.add(column);
-
-        column = new ListColumn(new StringResourceModel("doclisting-state", this, null), null);
-        column.setRenderer(new EmptyRenderer());
-        column.setAttributeModifier(new StateIconAttributeModifier());
         columns.add(column);
 
         return new TableDefinition(columns);
