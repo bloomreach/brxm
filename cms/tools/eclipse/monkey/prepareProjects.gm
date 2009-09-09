@@ -52,7 +52,7 @@ def cleanupTestResourcesInDependencies(projectName) {
 
 def cleanupSharedResources() {
     workspace.root.projects.each() {
-        if (it.hasNature('org.eclipse.jdt.core.javanature')) {
+        if (it.isOpen() && it.hasNature('org.eclipse.jdt.core.javanature')) {
             removeClasspathEntry(it.name, 'target/maven-shared-archive-resources')
         }
     }
