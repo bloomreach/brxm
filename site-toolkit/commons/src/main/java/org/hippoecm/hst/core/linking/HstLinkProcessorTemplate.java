@@ -16,23 +16,26 @@
 package org.hippoecm.hst.core.linking;
 
 /**
- * After linkcreation by HstLinkCreator all HstLinkProcessor's postProcess are called, 
- * and before a path is matched in HstSiteMapMatcher all HstLinkProcessor's preProcess are called.
+ * An abstract HstLinkProcessor template
  *
  */
-public interface HstLinkProcessor {
+public abstract class HstLinkProcessorTemplate implements HstLinkProcessor {
+    public HstLink postProcess(HstLink link) {
+        if (link == null) {
+            return link;
+        }
+        return doPostProcess(link);
+    }
 
-    /**
-     * The postProcess of the HstLink
-     * @param link
-     * @return the postProcessed HstLink
-     */
-    HstLink postProcess(HstLink link);
-    
-    /**
-     * The preProcess of the HstLink
-     * @param link
-     * @return the preProcessed HstLink
-     */
-    HstLink preProcess(HstLink link);
+    public HstLink preProcess(HstLink link) {
+        if (link == null) {
+            return link;
+        }
+        return doPreProcess(link);
+    }
+
+    protected abstract HstLink doPostProcess(HstLink link);
+
+    protected abstract HstLink doPreProcess(HstLink link);
+
 }

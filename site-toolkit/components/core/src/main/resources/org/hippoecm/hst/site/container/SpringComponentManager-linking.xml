@@ -39,7 +39,7 @@
  </bean>
 
  <bean id="org.hippoecm.hst.core.linking.HstLinkProcessor"
-      class="org.hippoecm.hst.core.linking.HstLinkProcessorImpl">
+      class="org.hippoecm.hst.core.linking.HstLinkProcessorChain">
       
   </bean>
   

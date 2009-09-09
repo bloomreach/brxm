@@ -17,19 +17,22 @@
 package org.hippoecm.hst.demo.linking;
 
 import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkProcessorChain;
+import org.hippoecm.hst.core.linking.HstLinkProcessorTemplate;
 
 
-public class ExampleHstLinkProcessorChain implements HstLinkProcessorChain{
+public class ExampleHstLinkProcessor extends HstLinkProcessorTemplate{
 
-    public HstLink doHstLinkPostProcess(HstLink hstLink) {
+    @Override
+    protected HstLink doPostProcess(HstLink link) {
+        System.out.println("!!!!");
         // do nothing
-        return hstLink;
+        return link;
     }
 
-    public HstLink doHstLinkPreProcess(HstLink hstLink) {
+    @Override
+    protected HstLink doPreProcess(HstLink link) {
         // do nothing
-        return hstLink;
+        return link;
     }
 
 }

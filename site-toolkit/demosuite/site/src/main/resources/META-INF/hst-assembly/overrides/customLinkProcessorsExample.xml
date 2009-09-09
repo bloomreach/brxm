@@ -28,10 +28,10 @@
  <!-- override the default bean and add a chain of link rewriter -->
  
  <bean id="org.hippoecm.hst.core.linking.HstLinkProcessor"
-      class="org.hippoecm.hst.core.linking.HstLinkProcessorImpl">
-      <property name="processorChain">
+      class="org.hippoecm.hst.core.linking.HstLinkProcessorChain">
+      <property name="processorsInChain">
 	   <list>
-	 	   <bean class="org.hippoecm.hst.demo.linking.ExampleHstLinkProcessorChain"/>
+	 	   <bean class="org.hippoecm.hst.demo.linking.ExampleHstLinkProcessor"/>
 	   </list>
 	  </property>
       
