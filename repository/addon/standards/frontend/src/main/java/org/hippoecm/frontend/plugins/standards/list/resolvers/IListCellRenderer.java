@@ -19,9 +19,9 @@ import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
-public interface IListCellRenderer extends IClusterable {
+public interface IListCellRenderer<T extends IModel> extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    public Component getRenderer(String id, IModel model);
+    public Component getRenderer(String id, T model);
 
 }

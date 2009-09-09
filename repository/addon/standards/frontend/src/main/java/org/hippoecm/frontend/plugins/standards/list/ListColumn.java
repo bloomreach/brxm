@@ -25,6 +25,12 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 
+/**
+ * Definition of a column in a {@link ListDataTable}.  Can be used to define sorting,
+ * cell renderers and attribute modifiers that will be applied to the repeater {@link Item}.
+ * By default, the renderer used is the {@link NameRenderer}, that renders the (translated)
+ * name of a JCR node.
+ */
 public class ListColumn extends AbstractColumn {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

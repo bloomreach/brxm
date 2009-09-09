@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -42,6 +43,11 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.widgets.ManagedReuseStrategy;
 
+/**
+ * A datatable with sorting, pagination, selection notification.  Its columns can be defined 
+ * with a {@link TableDefinition}.  This component can be used with any data type, i.e. it is
+ * not bound to JcrNodeModels.
+ */
 public class ListDataTable extends DataTable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -53,8 +59,9 @@ public class ListDataTable extends DataTable {
     private TableSelectionListener selectionListener;
     private final IDataProvider provider;
 
-    public interface TableSelectionListener {
-        public void selectionChanged(IModel model);
+    public interface TableSelectionListener extends IClusterable {
+
+        void selectionChanged(IModel model);
     }
 
     public ListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
@@ -148,7 +155,7 @@ public class ListDataTable extends DataTable {
         if (offset + count > provider.size()) {
             count = provider.size() - offset;
         }
-        Iterator iter = provider.iterator(offset, count);
+        Iterator<?> iter = provider.iterator(offset, count);
         while (iter.hasNext()) {
             IModel model = provider.model(iter.next());
             if (model.equals(selected)) {
@@ -213,12 +220,13 @@ public class ListDataTable extends DataTable {
                 return (IObservable) model;
             }
 
+            @SuppressWarnings("unchecked")
             public void onEvent(Iterator<? extends IEvent> event) {
                 redrawItem(item);
             }
         };
     }
-    
+
     protected void destroyItem(Item item) {
         if (context != null) {
             if (observers.containsKey(item)) {
