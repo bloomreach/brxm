@@ -136,6 +136,7 @@ public class TabsPlugin extends RenderPlugin {
         Tab tabbie = findTabbie(child);
         if (tabbie != null) {
             tabbie.select();
+            onSelectTab(tabs.indexOf(tabbie));
         }
         super.focus(child);
     }
@@ -156,8 +157,16 @@ public class TabsPlugin extends RenderPlugin {
 
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
         tabbie.renderer.focus(null);
+        onSelectTab(tabs.indexOf(tabbie));
     }
 
+    /**
+     * Template method for subclasses.  Called when a tab is selected, either
+     * explicitly (user clicks tab) or implicitly (tabbie requests focus).
+     */
+    protected void onSelectTab(int index) {
+    }
+    
     void onClose(Tab tabbie, AjaxRequestTarget target) {
         IServiceReference<IRenderService> reference = getPluginContext().getReference(tabbie.renderer);
         IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
@@ -249,6 +258,7 @@ public class TabsPlugin extends RenderPlugin {
             return (IObservable) titleModel;
         }
 
+        @SuppressWarnings("unchecked")
         public void onEvent(Iterator<? extends IEvent> events) {
             tabbedPanel.redraw();
         }
