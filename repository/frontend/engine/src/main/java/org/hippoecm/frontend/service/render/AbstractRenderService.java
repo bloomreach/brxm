@@ -247,13 +247,14 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
     protected void addExtensionPoint(final String extension) {
         ExtensionPoint extPt = createExtensionPoint(extension);
         children.put(extension, extPt);
-        context.registerTracker(extPt, config.getString(extension));
+        extPt.register();
     }
 
     protected abstract ExtensionPoint createExtensionPoint(String extension);
 
     protected void removeExtensionPoint(String name) {
-        context.unregisterTracker(children.get(name), config.getString(name));
+        ExtensionPoint extPt = children.get(name);
+        extPt.unregister();
         children.remove(name);
     }
 
@@ -368,6 +369,14 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
             this.list = new LinkedList<IRenderService>();
         }
 
+        protected void register() {
+            context.registerTracker(this, config.getString(extension));
+        }
+
+        protected void unregister() {
+            context.registerTracker(this, config.getString(extension));
+        }
+        
         public List<IRenderService> getChildren() {
             return list;
         }

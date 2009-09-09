@@ -15,13 +15,13 @@
  */
 package org.hippoecm.frontend.service.render;
 
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class RenderService extends AbstractRenderService {
     @SuppressWarnings("unused")
@@ -31,46 +31,69 @@ public class RenderService extends AbstractRenderService {
 
     private static final Logger log = LoggerFactory.getLogger(RenderService.class);
 
-
     public RenderService(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
     }
 
     @Override
-    protected void addExtensionPoint(final String extension) {
-        super.addExtensionPoint(extension);
-        add(new EmptyPanel(extension));
-    }
-
-    @Override
     protected ExtensionPoint createExtensionPoint(String extension) {
-        return new ExtensionPoint(extension);
+        ExtensionPoint extPt = new ExtensionPoint(extension);
+        extPt.addPanel();
+        return extPt;
     }
 
-    @Override
-    protected void removeExtensionPoint(String name) {
-        super.removeExtensionPoint(name);
-        replace(new EmptyPanel(name));
-    }
-
+    /**
+     * Extension point that can add the extension to a child component.  The name
+     * of the extension will be the full (relative) path of the extension.  The last
+     * part of the path, i.e. the id, is used to get the service id from the plugin
+     * configuration.
+     */
     protected class ExtensionPoint extends AbstractRenderService.ExtensionPoint {
         private static final long serialVersionUID = 1L;
 
+        private String path;
+        private String id;
+
         protected ExtensionPoint(String extension) {
             super(extension);
+
+            path = "";
+            id = extension;
+            if (extension.indexOf(':') > 0) {
+                path = extension.substring(0, extension.lastIndexOf(':'));
+                id = extension.substring(extension.lastIndexOf(':') + 1);
+            }
+        }
+
+        void addPanel() {
+            if (get(path) == null) {
+                log.debug("Not adding empty panel to future child component");
+                return;
+            }
+            ((MarkupContainer) get(path)).add(new EmptyPanel(id));
         }
 
         @Override
+        protected void register() {
+            getPluginContext().registerTracker(this, getPluginConfig().getString(id));
+        }
+        
+        @Override
+        protected void unregister() {
+            getPluginContext().unregisterTracker(this, getPluginConfig().getString(id));
+        }
+        
+        @Override
         public void onServiceAdded(IRenderService service, String name) {
-            service.bind(RenderService.this, extension);
-            replace(service.getComponent());
+            service.bind(RenderService.this, id);
+            ((MarkupContainer) get(path)).addOrReplace(service.getComponent());
             redraw();
             super.onServiceAdded(service, name);
         }
 
         @Override
         public void onRemoveService(IRenderService service, String name) {
-            replace(new EmptyPanel(extension));
+            ((MarkupContainer) get(path)).replace(new EmptyPanel(id));
             service.unbind();
             redraw();
             super.onRemoveService(service, name);
