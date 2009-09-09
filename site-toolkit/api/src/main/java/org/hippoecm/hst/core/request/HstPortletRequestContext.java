@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.request;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * HstPortletRequestContext extends HstRequestContext to support porlet specific configuration and context.
@@ -24,6 +26,14 @@ import javax.portlet.PortletResponse;
  * @version $Id$
  */
 public interface HstPortletRequestContext extends HstRequestContext {
+    
+    /**
+     * Initializes the Portlet specific context
+     * @param request
+     * @param response
+     */
+    void initPortletContext(HttpServletRequest request, HttpServletResponse response);
+    
     /**
      * Returns the PortletRequest serving the HstRequest.
      */

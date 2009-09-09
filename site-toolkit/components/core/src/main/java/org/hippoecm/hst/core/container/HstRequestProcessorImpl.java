@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class HstRequestProcessorImpl implements HstRequestProcessor {
     
@@ -26,11 +26,11 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         this.pipelines = pipelines;
     }
 
-    public void processRequest(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException {
+    public void processRequest(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
         processRequest(requestContainerConfig, servletRequest, servletResponse, null);
     }
     
-    public void processRequest(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, String pathInfo) throws ContainerException {
+    public void processRequest(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse, String pathInfo) throws ContainerException {
         // this request processor's classloader could be different from the above classloader
         // because this request processor and other components could be loaded from another web application context
         // such as a portal web application.
@@ -45,6 +45,11 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         
         String namedPipeline = (String)servletRequest.getAttribute(Pipeline.class.getName());
         Pipeline pipeline = namedPipeline != null ? pipelines.getPipeline(namedPipeline) : pipelines.getDefaultPipeline();
+        
+        if (namedPipeline != null && pipeline == null)
+        {
+            pipeline = pipelines.getDefaultPipeline();
+        }
         
         try {
             if (processorClassLoader != containerClassLoader) {
@@ -73,5 +78,4 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
             }
         }
     }
-    
 }

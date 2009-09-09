@@ -17,12 +17,9 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
@@ -33,108 +30,114 @@ public class ContextResolvingValve extends AbstractValve
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
-        HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
-        HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+        HstComponentConfiguration rootComponentConfig = null;
+        
+        HstRequestContextImpl requestContext = (HstRequestContextImpl) context.getServletRequest().getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         HstContainerURL baseURL = requestContext.getBaseURL();
-        
-        MatchedMapping matchedMapping;
-        if(requestContext.getMatchedMapping() != null) {
-            matchedMapping = requestContext.getMatchedMapping();
-        } else {
-            String hostName = servletRequest.getServerName();
-            if(this.virtualHostsManager.getVirtualHosts() == null) {
-                throw new ContainerException("Hosts are not properly initialized");
+        HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
+
+        if (erc != null) {
+            requestContext.setMatchedMapping(erc.getMatchedMapping());
+            requestContext.setResolvedSiteMapItem(erc.getResolvedSiteMapItem());
+            rootComponentConfig = (HstComponentConfiguration)context.getServletRequest().getAttribute(ContainerConstants.HST_EMBEDDED_REQUEST_CONTEXT_TARGET);
+        }
+        else {
+            
+            MatchedMapping matchedMapping;
+            if(requestContext.getMatchedMapping() != null) {
+                matchedMapping = requestContext.getMatchedMapping();
+            } else {
+                String hostName = context.getServletRequest().getServerName();
+                if(this.virtualHostsManager.getVirtualHosts() == null) {
+                    throw new ContainerException("Hosts are not properly initialized");
+                }
+                matchedMapping = this.virtualHostsManager.getVirtualHosts().findMapping(hostName, baseURL.getServletPath() + baseURL.getPathInfo());   
+                if (matchedMapping == null) {
+                    throw new ContainerException("No proper configuration found for host : " + hostName);
+                }
+                requestContext.setMatchedMapping(matchedMapping);
             }
-            matchedMapping = this.virtualHostsManager.getVirtualHosts().findMapping(hostName, baseURL.getServletPath() + baseURL.getPathInfo());   
-            ((HstRequestContextImpl)requestContext).setMatchedMapping(matchedMapping);
-            if (matchedMapping == null) {
-                throw new ContainerException("No proper configuration found for host : " + hostName);
+            
+            String siteName = matchedMapping.getSiteName();
+            if(siteName == null || "".equals(siteName)) {
+                throw new ContainerException("No siteName found for matchedMapping. Configure one in your virtual hosting.");
+            }
+            
+            HstSite hstSite = getSitesManager(context.getServletRequest().getServletPath()).getSites().getSite(siteName);
+            
+            if (hstSite == null) {
+                throw new ContainerException("No site found for " + siteName);
+            }
+            
+            String pathInfo = baseURL.getPathInfo();
+            
+            ResolvedSiteMapItem resolvedSiteMapItem = null;
+            
+            try {
+                resolvedSiteMapItem = this.siteMapMatcher.match(pathInfo, hstSite);
+            } catch (Exception e) {
+                throw new ContainerNotFoundException("No match for " + pathInfo, e);
+            }
+            
+            if (resolvedSiteMapItem == null) {
+                throw new ContainerNotFoundException("No match for " + pathInfo);
+            }
+            if (resolvedSiteMapItem.getErrorCode() > 0) {
+                
+                try {
+                    if (log.isDebugEnabled()) {
+                        log.debug("The resolved sitemap item for {} has error status: {}", pathInfo, Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
+                    }           
+                    context.getServletResponse().sendError(resolvedSiteMapItem.getErrorCode());
+                    
+                } catch (IOException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Exception invocation on sendError().", e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Exception invocation on sendError().");
+                    }
+                }
+                // we're done: jump out pipeline processing
+                return;
+                
+            } else {
+                
+                requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+                
+                if (!requestContext.isPortletContext()) {
+                    rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
+                } else {
+                    rootComponentConfig = resolvedSiteMapItem.getPortletHstComponentConfiguration();
+                    
+                    if (rootComponentConfig == null) {
+                        rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
+                    }
+                }
             }
         }
-        
-        String siteName = matchedMapping.getSiteName();
-        if(siteName == null || "".equals(siteName)) {
-            throw new ContainerException("No siteName found for matchedMapping. Configure one in your virtual hosting.");
+            
+        if(rootComponentConfig == null) {
+            throw new ContainerNotFoundException("Resolved siteMapItem does not contain a ComponentConfiguration that can be resolved." + baseURL.getPathInfo());
         }
         
-        HstSite hstSite = getSitesManager(servletRequest.getServletPath()).getSites().getSite(siteName);
-        
-        if (hstSite == null) {
-            throw new ContainerException("No site found for " + siteName);
+        if (log.isDebugEnabled()) {
+            log.debug("Matched root component config for {}: {}", baseURL.getPathInfo(), rootComponentConfig.getId());
         }
-        
-        String pathInfo = baseURL.getPathInfo();
-        
-        ResolvedSiteMapItem resolvedSiteMapItem = null;
         
         try {
-            resolvedSiteMapItem = this.siteMapMatcher.match(pathInfo, hstSite);
+            HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, rootComponentConfig, getComponentFactory());
+            context.setRootComponentWindow(rootComponentWindow);
         } catch (Exception e) {
-            throw new ContainerNotFoundException("No match for " + pathInfo, e);
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to create component windows: {}", e.toString(), e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Failed to create component windows: {}", e.toString());
+            }
+            
+            throw new ContainerException("Failed to create component window for the configuration: " + rootComponentConfig.getId(), e);
         }
         
-        if (resolvedSiteMapItem == null) {
-            throw new ContainerNotFoundException("No match for " + pathInfo);
-        }
-        if (resolvedSiteMapItem.getErrorCode() > 0) {
-            
-            try {
-                if (log.isDebugEnabled()) {
-                    log.debug("The resolved sitemap item for {} has error status: {}", pathInfo, resolvedSiteMapItem.getErrorCode());
-                }           
-                servletResponse.sendError(resolvedSiteMapItem.getErrorCode());
-                
-            } catch (IOException e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Exception invocation on sendError().", e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Exception invocation on sendError().");
-                }
-            }
-            
-        } else {
-            
-            ((HstRequestContextImpl) requestContext).setResolvedSiteMapItem(resolvedSiteMapItem);
-            
-            HstComponentConfiguration rootComponentConfig = null;
-            
-            if (!baseURL.isViaPortlet()) {
-                rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
-            } else {
-                rootComponentConfig = resolvedSiteMapItem.getPortletHstComponentConfiguration();
-                
-                if (rootComponentConfig == null) {
-                    rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
-                }
-            }
-            
-            if(rootComponentConfig == null) {
-                throw new ContainerNotFoundException("Resolved siteMapItem does not contain a ComponentConfiguration that can be resolved." + pathInfo);
-            }
-            
-            if (log.isDebugEnabled()) {
-                log.debug("Matched root component config for {}: {}", pathInfo, rootComponentConfig.getId());
-            }
-            
-            try {
-                HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, rootComponentConfig, getComponentFactory());
-                context.setRootComponentWindow(rootComponentWindow);
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Failed to create component windows: {}", e.toString(), e);
-                } else if (log.isWarnEnabled()) {
-                    log.warn("Failed to create component windows: {}", e.toString());
-                }
-                
-                throw new ContainerException("Failed to create component window for the configuration: " + 
-                        (rootComponentConfig != null ? rootComponentConfig.getId() : "rootComponentConfig is null."), e);
-            }
-            
-            // continue
-            context.invokeNext();
-            
-        }
-    }
-    
+        // continue
+        context.invokeNext();
+    }    
 }

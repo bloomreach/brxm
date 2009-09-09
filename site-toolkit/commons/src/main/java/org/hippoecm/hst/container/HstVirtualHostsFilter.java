@@ -25,6 +25,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.hosting.VirtualHosts;
 import org.hippoecm.hst.core.hosting.VirtualHostsManager;
@@ -122,7 +123,7 @@ public class HstVirtualHostsFilter implements Filter {
                      * put the matched Mapping temporarily on the request, as we do not yet have a HstRequestContext. When the
                      * HstRequestContext is created, and there is a Mapping on the request, we put it on the HstRequestContext.
                      */  
-                    request.setAttribute(MatchedMapping.class.getName(), matchedMapping);
+                    request.setAttribute(ContainerConstants.MATCHED_MAPPING, matchedMapping);
                     String mappedPath = matchedMapping.mapToInternalURI(pathInfo);
                     filterConfig.getServletContext().getRequestDispatcher(mappedPath).forward(request, response);
                    

@@ -42,6 +42,21 @@ public interface ContainerConstants {
     String HST_REQUEST_CONTEXT = "org.hippoecm.hst.core.request.HstRequestContext";
     
     /**
+     * The attribute name used to set the embedded request context object into the servlet request.
+     */
+    String HST_EMBEDDED_REQUEST_CONTEXT = "org.hippoecm.hst.core.request.HstEmbeddedRequestContext";
+    
+    /**
+     * The attribute name used to set the embedded request context target component configuration object into the servlet request.
+     */
+    String HST_EMBEDDED_REQUEST_CONTEXT_TARGET = "org.hippoecm.hst.core.request.HstEmbeddedRequestContext.target";
+    
+    /**
+     * The attribute name used to set a pre-determined Matched Mapping object into the servlet request.
+     */
+    String MATCHED_MAPPING = "org.hippoecm.hst.core.request.MatchedMapping";
+    
+    /**
      * The reference namespace for container managed resource url.
      */
     String CONTAINER_REFERENCE_NAMESPACE = "org.hippoecm.hst.container.reference.namespace";

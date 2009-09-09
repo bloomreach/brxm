@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Pipeline interface.
@@ -41,7 +41,7 @@ public interface Pipeline
      * @param servletResponse
      * @throws ContainerException
      */
-    void beforeInvoke(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void beforeInvoke(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
 
     /**
      * Invokes the request processing
@@ -51,7 +51,7 @@ public interface Pipeline
      * @param servletResponse
      * @throws ContainerException
      */
-    void invoke(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void invoke(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
     
     /**
      * Does post-processing step for the request processing.
@@ -61,7 +61,7 @@ public interface Pipeline
      * @param servletResponse
      * @throws ContainerException
      */
-    void afterInvoke(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void afterInvoke(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
 
     /**
      * Destroys the pipeline.

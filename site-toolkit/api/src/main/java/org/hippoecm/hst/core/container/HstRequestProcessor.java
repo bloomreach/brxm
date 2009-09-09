@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Request processor. This request processor is called by HstComponent container servlet.
@@ -34,7 +34,7 @@ public interface HstRequestProcessor {
      * @param servletResponse the servletResponse of the HST response
      * @throws ContainerException
      */
-    void processRequest(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+    void processRequest(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
     
     /**
      * processes request
@@ -45,6 +45,6 @@ public interface HstRequestProcessor {
      * @param pathInfo the forced path info for the HST request processing
      * @throws ContainerException
      */
-    void processRequest(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse, String pathInfo) throws ContainerException;
+    void processRequest(HstContainerConfig requestContainerConfig, HttpServletRequest servletRequest, HttpServletResponse servletResponse, String pathInfo) throws ContainerException;
     
 }

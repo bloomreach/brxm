@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.site.HstServices;
 
@@ -25,14 +25,14 @@ public class ForwardValve extends AbstractValve {
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         
-        ServletRequest servletRequest = context.getServletRequest();
+        HttpServletRequest servletRequest = context.getServletRequest();
         String forwardPathInfo = (String) servletRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
         
         if (forwardPathInfo != null) {
             servletRequest.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
             
             HstContainerConfig containerConfig = context.getRequestContainerConfig();
-            ServletResponse servletResponse = context.getServletResponse();
+            HttpServletResponse servletResponse = context.getServletResponse();
     
             HstServices.getRequestProcessor().processRequest(containerConfig, servletRequest, servletResponse, forwardPathInfo);
         }

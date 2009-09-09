@@ -114,7 +114,7 @@ public class ActionValve extends AbstractValve
                         }
                         baseURL.setActionWindowReferenceNamespace(null);
                         
-                        if (baseURL.isViaPortlet()) {
+                        if (requestContext.isPortletContext()) {
                             HstContainerURLProvider urlProvider = urlFactory.getPortletUrlProvider();
                             responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL));
                         } else {
@@ -129,7 +129,7 @@ public class ActionValve extends AbstractValve
                 }
                 
                 try {
-                    if (!baseURL.isViaPortlet()) {
+                    if (!requestContext.isPortletContext()) {
                         responseState.flush();
                         servletResponse.sendRedirect(responseState.getRedirectLocation());
                     }

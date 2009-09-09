@@ -17,7 +17,10 @@ package org.hippoecm.hst.site.request;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
@@ -31,10 +34,23 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         this.defaultCredentials = defaultCredentials;
     }
 
-    public HstRequestContext create() {
-        return new HstRequestContextImpl(this.repository, this.defaultCredentials);
+    public HstRequestContext create(HttpServletRequest req, HttpServletResponse resp, ContainerConfiguration config) {
+        HstRequestContextImpl rc = null;
+        if (req.getAttribute("javax.portlet.request") != null) {
+            // portlet invoked request context
+            HstPortletRequestContextImpl prc = new HstPortletRequestContextImpl(this.repository, this.defaultCredentials);
+            prc.initPortletContext(req, resp);
+            rc = prc;
+        }
+        else {
+            // servlet invoked request context
+            rc = new HstRequestContextImpl(this.repository, this.defaultCredentials);
+        }
+            
+        rc.setContainerConfiguration(config);
+        return rc;
     }
-
+    
     public void release(HstRequestContext context) {
     }
 }

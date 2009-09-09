@@ -29,7 +29,6 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
     protected String resourceId;
     protected Map<String, String[]> parameterMap;
     protected Map<String, String[]> actionParameterMap;
-    protected boolean viaPortlet;
     protected boolean navigational;
     
     public void setContextPath(String contextPath) {
@@ -144,14 +143,6 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
     
     public String getCharacterEncoding() {
         return this.characterEncoding;
-    }
-    
-    public void setViaPortlet(boolean viaPortlet) {
-        this.viaPortlet = viaPortlet;
-    }
-    
-    public boolean isViaPortlet() {
-        return this.viaPortlet;
     }
     
     public boolean isNavigational() {

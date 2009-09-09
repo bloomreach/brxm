@@ -17,15 +17,13 @@ package org.hippoecm.hst.component.support.portlet;
 
 import javax.portlet.PortletMode;
 import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import javax.portlet.StateAwareResponse;
 
-import org.hippoecm.hst.container.HstContainerPortletContext;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstPortletRequestContext;
 import org.hippoecm.hst.core.sitemenu.EditableMenu;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
 import org.slf4j.Logger;
@@ -50,10 +48,9 @@ public class GenericPortletPrefsEditor extends GenericHstComponent {
     protected String defaultSiteMenuName = "main";
     
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        PortletRequest portletRequest = HstContainerPortletContext.getCurrentRequest();
-        PortletResponse portletResponse = HstContainerPortletContext.getCurrentResponse();
+        HstPortletRequestContext prc = (HstPortletRequestContext)request.getRequestContext();
         
-        PortletPreferences prefs = portletRequest.getPreferences();
+        PortletPreferences prefs = prc.getPortletRequest().getPreferences();
         
         try {
             boolean updated = false;
@@ -83,7 +80,7 @@ public class GenericPortletPrefsEditor extends GenericHstComponent {
                 prefs.store();
             }
             
-            ((StateAwareResponse) portletResponse).setPortletMode(PortletMode.VIEW);
+            ((StateAwareResponse) prc.getPortletResponse()).setPortletMode(PortletMode.VIEW);
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {
                 logger.warn("Failed to store preferences.", e);
@@ -94,11 +91,11 @@ public class GenericPortletPrefsEditor extends GenericHstComponent {
     }
     
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-        PortletRequest portletRequest = HstContainerPortletContext.getCurrentRequest();
-        PortletPreferences prefs = portletRequest.getPreferences();
+        HstPortletRequestContext prc = (HstPortletRequestContext)request.getRequestContext();
+        PortletPreferences prefs = prc.getPortletRequest().getPreferences();
         
         try {
-            request.setAttribute(PREF_VALUES_ATTR_NAME, portletRequest.getPreferences().getMap());
+            request.setAttribute(PREF_VALUES_ATTR_NAME, prc.getPortletRequest().getPreferences().getMap());
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {
                 logger.warn("Failed to retrieve preferences.", e);

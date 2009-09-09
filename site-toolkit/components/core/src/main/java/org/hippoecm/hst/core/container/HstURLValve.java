@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.container;
 
 import javax.servlet.ServletRequest;
 
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
 public class HstURLValve extends AbstractValve {
@@ -26,31 +25,31 @@ public class HstURLValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException {
 
         ServletRequest servletRequest = context.getServletRequest();
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+        HstRequestContextImpl requestContext = (HstRequestContextImpl) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
 
         String contextNamespace = (String) servletRequest.getAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE);
         
         if (contextNamespace != null) {
-            ((HstRequestContextImpl) requestContext).setContextNamespace(contextNamespace);
+            requestContext.setContextNamespace(contextNamespace);
         }
         
         String containerPathInfo = (String) servletRequest.getAttribute(ContainerConstants.HST_CONTAINER_PATH_INFO);
         HstContainerURL baseURL = null;
 
+        // TODO: if requestContext.getBaseURL() != null, is there a reason or condition why we need to parse again?
         if (containerPathInfo != null) {
-            baseURL = getUrlFactory().getServletUrlProvider().parseURL(context.getServletRequest(), context.getServletResponse(), containerPathInfo);
+            baseURL = getUrlFactory().getServletUrlProvider().parseURL(context.getServletRequest(), context.getServletResponse(), requestContext, containerPathInfo);
         } else {
-            baseURL = getUrlFactory().getServletUrlProvider().parseURL(context.getServletRequest(), context.getServletResponse());
+            baseURL = getUrlFactory().getServletUrlProvider().parseURL(context.getServletRequest(), context.getServletResponse(), requestContext);
         }
         
-        ((HstRequestContextImpl) requestContext).setBaseURL(baseURL);
-        ((HstRequestContextImpl) requestContext).setURLFactory(getUrlFactory());
-        ((HstRequestContextImpl) requestContext).setLinkCreator(getLinkCreator());
-        ((HstRequestContextImpl) requestContext).setSiteMapMatcher(getSiteMapMatcher());
-        ((HstRequestContextImpl) requestContext).setHstQueryManagerFactory(getHstQueryManagerFactory());
+        requestContext.setBaseURL(baseURL);
+        requestContext.setURLFactory(getUrlFactory());
+        requestContext.setLinkCreator(getLinkCreator());
+        requestContext.setSiteMapMatcher(getSiteMapMatcher());
+        requestContext.setHstQueryManagerFactory(getHstQueryManagerFactory());
         
         // continue
         context.invokeNext();
     }
-
 }

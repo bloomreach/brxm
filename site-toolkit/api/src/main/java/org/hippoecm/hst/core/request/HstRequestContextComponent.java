@@ -15,6 +15,11 @@
  */
 package org.hippoecm.hst.core.request;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.hippoecm.hst.core.container.ContainerConfiguration;
+
 /**
  * Factory component to create HstRequestContext object.
  * 
@@ -30,7 +35,7 @@ public interface HstRequestContextComponent
      * @param config
      * @return
      */
-    HstRequestContext create();
+    HstRequestContext create(HttpServletRequest req, HttpServletResponse resp, ContainerConfiguration config);
 
     /**
      * Release a request context back to the context pool.

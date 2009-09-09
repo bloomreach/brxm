@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -46,14 +46,14 @@ public interface ValveContext
      * 
      * @return
      */
-    ServletRequest getServletRequest();
+    HttpServletRequest getServletRequest();
 
     /**
      * Returns the current servlet response.
      * 
      * @return
      */
-    ServletResponse getServletResponse();
+    HttpServletResponse getServletResponse();
     
     /**
      * Sets the root {@link HstComponentWindow} instance to serve the current request.

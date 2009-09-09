@@ -86,32 +86,26 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         return this.navigationalStateCodec;
     }
 
-    public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse) {
-        return parseURL(servletRequest, servletResponse, null, null);
-    }
-    
-    public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, String pathInfo) {
-        return parseURL(servletRequest, servletResponse, null, pathInfo);
+    public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext) {
+        return parseURL(servletRequest, servletResponse, requestContext, null);
     }
     
     public HstContainerURL parseURL(ServletRequest servletRequest, ServletResponse servletResponse, HstRequestContext requestContext, String pathInfo) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        
-        String contextPath = request.getContextPath();
-        String servletPath = request.getServletPath();
-        
-        if (requestContext != null) {
-            HstContainerURL baseURL = requestContext.getBaseURL();
 
-            if (baseURL != null) {
-                contextPath = baseURL.getContextPath();
-                servletPath = baseURL.getServletPath();
-            }
-        }
-        
         HstContainerURLImpl url = new HstContainerURLImpl();
         
-        url.setViaPortlet(request.getAttribute("javax.portlet.request") != null);
+        // requestContext now is a required parameter...
+        HstContainerURL baseURL = requestContext.getBaseURL();
+
+        if (baseURL != null) {
+            url.setContextPath(baseURL.getContextPath());
+            url.setServletPath(baseURL.getServletPath());
+        }
+        else {
+            url.setContextPath(request.getContextPath());
+            url.setServletPath(request.getServletPath());
+        }
         
         String characterEncoding = request.getCharacterEncoding();
         
@@ -120,8 +114,6 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         }
         
         url.setCharacterEncoding(characterEncoding);
-        url.setContextPath(contextPath);
-        url.setServletPath(servletPath);
         
         if (pathInfo == null) {
             pathInfo = request.getPathInfo();
@@ -137,7 +129,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         url.setPathInfo(pathInfo);
         
         try {
-            if (pathInfo.startsWith(this.urlNamespacePrefixedPath)) {
+            if (pathInfo != null && pathInfo.startsWith(this.urlNamespacePrefixedPath)) {
                 Path path = new Path(pathInfo);
                 String urlInfo = path.getSegment(0);
                 String encodedInfo = urlInfo.substring(this.urlNamespacePrefix.length());
@@ -213,6 +205,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
             containerURL.setResourceWindowReferenceNamespace(hstUrl.getReferenceNamespace());
             containerURL.setResourceId(hstUrl.getResourceID());
         } else {
+            containerURL.setNavigational(hstUrl.isNavigational());
             mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
         }
         

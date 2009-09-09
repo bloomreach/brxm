@@ -82,7 +82,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         ((MockHttpServletRequest) request).setParameter("param1", "value1");
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
-        HstContainerURL containerURL = this.urlProvider.parseURL(request, response);
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
 
         assertNull("action window reference namespace is not null.", containerURL.getActionWindowReferenceNamespace());
         assertNull("resource window reference namespace is not null.", containerURL.getResourceWindowReferenceNamespace());
@@ -94,10 +94,10 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 
-        HstContainerURL containerURL = this.urlProvider.parseURL(request, response);
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
         ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
 
-        HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL);
+        HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL, requestContext);
         url.setParameter("param1", "value1");
         url.setParameter("param2", "value2");
         
@@ -111,7 +111,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertEquals("The parameter value is wrong: param1", "value1", hstRequest.getParameter("param1"));
         assertEquals("The parameter value is wrong: param2", "value2", hstRequest.getParameter("param2"));
         
-        url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "", containerURL);
+        url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "", containerURL, requestContext);
         url.setParameter("param1", "value1");
         url.setParameter("param2", "value2");
         
@@ -134,12 +134,12 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 
-        HstContainerURL containerURL = this.urlProvider.parseURL(request, response);
+        HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
         ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
 
         ((HstURLFactoryImpl) this.urlFactory).setReferenceNamespaceIgnored(true);
         
-        HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL);
+        HstURL url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "r1", containerURL, requestContext);
         url.setParameter("param1", "value1");
         url.setParameter("param2", "value2");
         
@@ -155,7 +155,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertEquals("The parameter value is wrong: param1", "value1", hstRequest.getParameter("param1"));
         assertEquals("The parameter value is wrong: param2", "value2", hstRequest.getParameter("param2"));
         
-        url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "", containerURL);
+        url = this.urlFactory.createURL(HstURL.RENDER_TYPE, "", containerURL, requestContext);
         url.setParameter("param1", "value1");
         url.setParameter("param2", "value2");
         
@@ -181,7 +181,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         ((MockHttpServletRequest) request).setParameter("param1", "value1");
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
-        HstContainerURL actionURL = this.urlProvider.parseURL(request, response);
+        HstContainerURL actionURL = this.urlProvider.parseURL(request, response, requestContext);
         actionURL.setActionWindowReferenceNamespace("b");
         actionURL.setActionParameter("ap1", "one");
         actionURL.setActionParameter("ap2", "two");
@@ -207,7 +207,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         ((MockHttpServletRequest) request).setParameter("param1", "value1");
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
-        HstContainerURL resourceURL = this.urlProvider.parseURL(request, response);
+        HstContainerURL resourceURL = this.urlProvider.parseURL(request, response, requestContext);
         resourceURL.setResourceWindowReferenceNamespace("b");
         resourceURL.setResourceId("myresource001");
         String resourceURLPathInfo = this.urlProvider.toURLString(resourceURL, null);

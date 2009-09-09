@@ -164,14 +164,6 @@ public interface HstContainerURL {
     Map<String, String []> getActionParameterMap();
     
     /**
-     * Returns true if the current request was originated from the portlet.
-     * Otherwise, it returns false.
-     * 
-     * @return
-     */
-    boolean isViaPortlet();
-
-    /**
      * Return true if this URL represents a site navigation.
      */
     boolean isNavigational();
