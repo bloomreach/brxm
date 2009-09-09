@@ -48,8 +48,12 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
     private Session userSession;
     private Node subject;
 
-    public VersionWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
-        this.subject = subject;
+    public VersionWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException, RepositoryException {
+        if (subject.isNodeType("nt:frozenNode")) {
+            this.subject = userSession.getNodeByUUID(subject.getProperty("jcr:frozenUuid").getString());
+        } else {
+            this.subject = subject;
+        }
         this.userSession = userSession;
     }
 

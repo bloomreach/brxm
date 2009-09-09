@@ -41,6 +41,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.WhereUsedDialog;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -73,6 +74,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
     WorkflowAction schedulePublishAction;
     WorkflowAction scheduleDepublishAction;
     WorkflowAction whereUsedAction;
+    WorkflowAction historyAction;
 
     public BasicReviewedActionsWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -227,6 +229,25 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             protected Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getModel();
                 return new WhereUsedDialog(wdm, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                return null;
+            }
+        });
+
+        add(historyAction = new WorkflowAction("history", new StringResourceModel("history-label", this, null)
+                .getString(), null) {
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "history-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getModel();
+                return new HistoryDialog(wdm, getEditorManager());
             }
 
             @Override

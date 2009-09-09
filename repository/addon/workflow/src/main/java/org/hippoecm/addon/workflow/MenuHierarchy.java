@@ -67,6 +67,8 @@ class MenuHierarchy {
                     put(new String[] { "document" }, action);
                 } else if(action.getId().equals("where-used")) {
                     put(new String[] { "document" }, action);
+                } else if(action.getId().equals("history")) {
+                    put(new String[] { "document" }, action);
                 } else if(action.getId().toLowerCase().contains("publi")) {
                     put(new String[] { "publication" }, action);
                 } else if(action.getId().equals("cancel") || action.getId().equals("accept") || action.getId().equals("reject")) {
@@ -88,9 +90,15 @@ class MenuHierarchy {
                 put(action);
             }
         }
+        if(submenus.containsKey("versioning")) {
+            MenuHierarchy submenu = submenus.get("versioning");
+            for(ActionDescription action : submenu.items) {
+                put(action);
+            }
+        }
         if(submenus.containsKey("default")) {
             MenuHierarchy submenu = submenus.get("default");
-            /* [AC] skipping spacer - not used anywhere yet and it causes esthetical problems with the workflow toolbar
+            /* [AC] skipping spacer - not used anywhere yet and it causes esthetics problems with the workflow toolbar
             put(new ActionDescription("spacer") {
                 @Override
                 public void invoke() {
