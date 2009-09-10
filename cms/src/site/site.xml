@@ -65,7 +65,7 @@
       -->
       <item name="Roadmap" href="/about/roadmap.html"/>
       <item name="Version numbers" href="/about/version_numbers.html"/>
-      <item name="Term Index" href="/about/term_index.html"/>
+      <!-- <item name="Term Index" href="/about/term_index.html"/> -->
     </menu>
 
     <menu name="Hippo CMS 7 Support">
@@ -75,13 +75,13 @@
       <item name="Contributing" href="/support/contributing.html"/>
     </menu>
 
-    <menu name="Delve into Hippo CMS 7">
+    <menu name="Learning Hippo CMS 7">
 
       <item name="Overview" href="/delve_into/overview.html" collapse="false" inherit="top"/>
       <item name="Quickstart" href="/delve_into/quickstart.html" collapse="false" inherit="top"/>
 
       <item name="User Guide" href="/delve_into/user/index.html" collapse="true">
-        <item name="Contributors" collapse="true" href="/delve_into/user/contributors/index.html">
+        <item name="Authors" collapse="true" href="/delve_into/user/contributors/index.html">
           <item name="Tour" href="/delve_into/user/contributors/tour.html"/>
           <item name="Howto" collapse="false" href="/delve_into/user/contributors/howto/index.html"> 
             <!-- 
@@ -148,7 +148,7 @@
         <item name="Roadmap" href="/delve_into/user/roadmap.html" collapse="true"/>
         -->
 
-        <item name="CMS 7 Admins" collapse="true" href="/delve_into/user/cms_admins/index.html">
+        <item name="Administrators" collapse="true" href="/delve_into/user/cms_admins/index.html">
           <item name="Tour" collapse="false" href="/delve_into/user/cms_admins/tour.html"/> 
           <item name="Howto" collapse="true" href="/delve_into/user/cms_admins/howto/index.html"> 
           </item>
@@ -156,7 +156,7 @@
         </item>
       </item>
 
-      <item name="Sysadmin Guide" href="delve_into/sysadmin/index.html" collapse="true">
+      <item name="Installation &amp; Configuration" href="delve_into/sysadmin/index.html" collapse="true">
        <item name="Requirements" collapse="true" href="/delve_into/sysadmin/requirements.html">
          <!--
           <item name="OS" collapse="true" href="/delve_into/sysadmin/requirements.html#Operating_System"/>
@@ -184,8 +184,8 @@
           <item name="of Plugins" href="/delve_into/sysadmin/installation/plugins.html"/>
         </item>
         <item name="Configuration" href="/delve_into/sysadmin/configuration/index.html" collapse="true">
-          <item name="Performance tuning" href="/delve_into/sysadmin/configuration/performance_tuning.html" collapse="false"/>
-          <item name="Database server" href="/delve_into/sysadmin/configuration/database_server.html" collapse="false"/>
+          <!-- <item name="Performance tuning" href="/delve_into/sysadmin/configuration/performance_tuning.html" collapse="false"/> -->
+          <item name="Database" href="/delve_into/sysadmin/configuration/database_server.html" collapse="false"/>
           <item name="Repository" href="/delve_into/sysadmin/configuration/repository/index.html" collapse="true">
             <item name="Overview" href="/delve_into/sysadmin/configuration/repository/overview.html"/>
             <item name="Workspace" href="/delve_into/sysadmin/configuration/repository/workspace.html"/>
@@ -201,13 +201,7 @@
           </item>
           <item name="Console" href="/delve_into/sysadmin/configuration/console.html"/>
         </item>
-        <item name="Debugging" href="/delve_into/sysadmin/debugging.html"/>
-      </item>
-
-      <item name="Development Tools" href="/delve_into/tools/index.html" collapse="true">
-       <item name="Maven" href="/delve_into/tools/maven/index.html" collapse="false"/>
-       <item name="Eclipse" href="/delve_into/tools/eclipse/index.html" collapse="false"/>
-       <item name="Svn" href="/delve_into/tools/svn/index.html" collapse="false"/>
+        <item name="Known issues" href="/delve_into/sysadmin/debugging.html"/>
       </item>
 
       <item name="Website Development" href="/delve_into/web/index.html" collapse="true">
@@ -221,7 +215,7 @@
         </item>
       </item>
 
-      <item name="CMS 7 Customization" href="/delve_into/custom/index.html" collapse="true">
+      <item name="Extending CMS 7" href="/delve_into/custom/index.html" collapse="true">
         <item name="Introduction" href="/delve_into/custom/introduction.html" />
         <item name="Howto" href="/delve_into/custom/howto/index.html" collapse="true">
           <item name="GUI Plugin" href="/delve_into/custom/howto/gui_plugin.html"/>
@@ -263,12 +257,18 @@
         <!--<item name="Dropbox Example" href="/delve_into/implementation/advanced/jcr-dropbox-example.html"/>-->
       </item>
 
-      <item name="Hacking the core" href="/delve_into/core/index.html" collapse="true">
+      <item name="Development Tools" href="/delve_into/tools/index.html" collapse="true">
+       <item name="Maven" href="/delve_into/tools/maven/index.html" collapse="false"/>
+       <item name="Eclipse" href="/delve_into/tools/eclipse/index.html" collapse="false"/>
+       <item name="Svn" href="/delve_into/tools/svn/index.html" collapse="false"/>
+      </item>
+
+      <item name="Core Development" href="/delve_into/core/index.html" collapse="true">
         <item name="Project Structure" href="/delve_into/core/project-structure.html"/>
-        <item name="Building from source" href="/delve_into/core/building/index.html">
-          <item name="Building with Maven" href="/delve_into/core/building/maven.html"/>
-          <item name="Building with Eclipse" href="/delve_into/core/building/eclipse.html"/>
-          <item name="Building with Netbeans" href="/delve_into/core/building/netbeans.html"/>
+        <item name="Compile and build" href="/delve_into/core/building/index.html">
+          <item name="Build with Maven" href="/delve_into/core/building/maven.html"/>
+          <item name="Build with Eclipse" href="/delve_into/core/building/eclipse.html"/>
+          <item name="Build with Netbeans" href="/delve_into/core/building/netbeans.html"/>
         </item>
       <!--
         <item name="Fundamentals" href="/delve_into/core/fundamentals/index.html"/>

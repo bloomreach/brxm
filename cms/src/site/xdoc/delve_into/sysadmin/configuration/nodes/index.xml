@@ -34,37 +34,11 @@
       JCR interface.
   </span>
       <table>
-        <tr>
-          <td>
-            <a href="./domains.html">Domains Configuration</a>
-          </td>
-          <td>Domains define a subset of nodes from the repository and which users or groups have which role on the nodes in the domain.: <a href="./domains.html#hippo:domain">hippo:domain</a>, <a href="./domains.html#hipposys:domainrule">hipposys:domainrule</a>, <a href="./domains.html#hippo:facetrule">hippo:facetrule</a>, <a href="./domains.html#hipposys:authrole">hipposys:authrole</a>.</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./groups.html">Groups Configuration</a>
-          </td>
-          <td>Permissions are assigned to groups and groups have users as members. The members have the permissions of their groups.: <a href="./groups.html#hipposys:group">hipposys:group</a>.</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./roles.html">Roles Configuration</a>
-          </td>
-          <td>The roles define which JCR permissions each role has: <a href="./roles.html#hipposys:role">hipposys:role</a>.</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./users.html">Users Configuration</a>
-          </td>
-          <td>A user in the configuration is an account for a real, living user. A user is member of one or more groups and is granted all the permissions defined for his groups.: <a href="./users.html#hipposys:user">hipposys:user</a>.</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./workflow.html">Workflow configuration</a>
-          </td>
-          <td>Workflows are configured by specifying how the workflow can be accessed and how the workflow is applicable. This definition is stored in the repository itself.</td>
-        </tr>
-      </table>
+<tr><td><a href="./domains.html">Domains Configuration</a></td><td>Domains define a subset of nodes from the repository and which users or groups have which role on the nodes in the domain.: <a href="./domains.html#hippo:domain">hippo:domain</a>, <a href="./domains.html#hipposys:domainrule">hipposys:domainrule</a>, <a href="./domains.html#hippo:facetrule">hippo:facetrule</a>, <a href="./domains.html#hipposys:authrole">hipposys:authrole</a>.</td></tr>
+<tr><td><a href="./groups.html">Groups Configuration</a></td><td>Permissions are assigned to groups and groups have users as members. The members have the permissions of their groups.: <a href="./groups.html#hipposys:group">hipposys:group</a>.</td></tr>
+<tr><td><a href="./roles.html">Roles Configuration</a></td><td>The roles define which JCR permissions each role has: <a href="./roles.html#hipposys:role">hipposys:role</a>.</td></tr>
+<tr><td><a href="./users.html">Users Configuration</a></td><td>A user in the configuration is an account for a real, living user. A user is member of one or more groups and is granted all the permissions defined for his groups.: <a href="./users.html#hipposys:user">hipposys:user</a>.</td></tr>
+<tr><td><a href="./workflow.html">Workflow configuration</a></td><td>Workflows are configured by specifying how the workflow can be accessed and how the workflow is applicable. This definition is stored in the repository itself.</td></tr></table>
     </section>
   </body>
 </document>

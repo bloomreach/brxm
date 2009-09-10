@@ -31,6 +31,7 @@
   Hippo projects are version controlled with <a xmlns="" href="http://subversion.tigris.org/">Subversion</a>.
   They can be anonymously checked out using any subversion client.
   Instructions on Subversion use can be found at <a xmlns="" href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>.
- <table><tr><td><a href="./get_Hippo_CMS_source.html">Get the Hippo CMS source</a></td><td>Get the Hippo CMS source from the Hippo subversion repository.</td></tr></table></section>
+ <table>
+<tr><td><a href="./get_Hippo_CMS_source.html">Get the Hippo CMS source</a></td><td>Get the Hippo CMS source from the Hippo subversion repository.</td></tr></table></section>
   </body>
 </document>

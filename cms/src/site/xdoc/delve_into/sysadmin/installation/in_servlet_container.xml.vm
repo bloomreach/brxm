@@ -28,17 +28,16 @@
 
        <p>
         To deploy Hippo CMS in a servlet container, the WAR package is used.
-        <span class='expire_event'>release</span>Hippo ECM is still under development, 
-        but you can already get a snapshot version, see below.
        </p>
 
-      <subsection name="Deploying in Tomcat">
+      <subsection name="Deploying in Tomcat 5.5 or 6">
 
       <p>
-       These deploying steps assume that you have Tomcat installed. <a href='install_tomcat.html'>I don't</a>.
+       These deploying steps assume that you have Tomcat 5.5 or 6 installed.
+       <a href='install_tomcat.html'>See here for Tomcat installation.</a>.
       </p>
       <p>
-       Below, the Tomcat folder is called $TOMCATDIR. 
+       Below, the Tomcat folder is called $TOMCATDIR.
        It may be something like /usr/local/share/apache-tomcat-6.0.18, depending of course where you
        put Tomcat and which version of Tomcat you have.
       </p>
@@ -47,16 +46,16 @@
 
       <blockquote>
        <table>
-        <tr> 
+        <tr>
          <td>
-            Download 
-     </td>
-         <td> 
+            Download
+         </td>
+         <td>
           <span class='download-48 icon-48'/>
      </td>
-        <td> 
+        <td>
          <a href="${geronimo_jar_url}">geronimo-spec-jta</a> jar file
-            to <code>$TOMCATDIR/lib</code>.
+            and put it in <code>$TOMCATDIR/lib</code>.
     </td>
 
     </tr>
@@ -64,19 +63,20 @@
       </blockquote>
 
       <h4>Deploy Hippo CMS WAR</h4>
-  
+
       <blockquote>
        <table>
           <tr>
          <td>
-            Download 
+            Download
      </td>
-         <td> 
+         <td>
           <span class='download-48 icon-48'/>
      </td>
-   <td>          
+   <td>
      Download the <a href='${quickstart_war_url}'>Hippo CMS package WAR</a>
-     to the <code>$TOMCATDIR/webapps/</code> folder with the package file <a href='help_renamed.html'>renamed to</a> <code>cms.war</code>.
+     to the <code>$TOMCATDIR/webapps/</code> folder with the
+     package file <a href='help_renamed.html'>renamed to</a> <code>cms.war</code>.
    </td>
   </tr>
   <tr>
@@ -84,9 +84,10 @@
    <td>
     <span class='commandline-48 icon-48'/>
    </td>
-   <td>          
+   <td>
        Startup Tomcat <a href='install_tomcat.html#startup'>normally</a>. Tomcat will automatically deploy the <code>cms.war</code> and create an
-       <code>cms</code> folder. <a href='help_startup_servlet_container.html'>Need help?</a>
+       <code>cms</code> folder.
+       If it fails see <a href='help_startup_servlet_container.html'>known issues</a>.
    </td>
    </tr>
   <tr>
@@ -95,7 +96,7 @@
     <span class='web-48 icon-48'/>
    </td>
   <td>
-     Users can now open the local CMS site 
+     Users can now open the local CMS site
      <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
      their browsers and login as user admin, with password admin.
      <a href='help_web_servlet_container.html'>Need help?</a>

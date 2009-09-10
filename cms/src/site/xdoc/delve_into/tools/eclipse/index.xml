@@ -30,25 +30,9 @@
     <section name="Eclipse">
       <span class="shortdesc">How to use eclipse for Hippo projects.</span>
       <table>
-        <tr>
-          <td>
-            <a href="./configure_workspace.html">Configure Workspace</a>
-          </td>
-          <td>Configure Eclipse Workspace for Hippo projects: <a href="./configure_workspace.html#Identify_Maven_local_repository">Identify Maven local repository</a>.</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./start_eclipse.html">Start Eclipse</a>
-          </td>
-          <td>Start Eclipse to work on Hippo projects.</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./war_overlays_in_eclipse.html">War overlays in eclipse</a>
-          </td>
-          <td>How to use War overlays in eclipse</td>
-        </tr>
-      </table>
+<tr><td><a href="./configure_workspace.html">Configure Workspace</a></td><td>Configure Eclipse Workspace for Hippo projects: <a href="./configure_workspace.html#Identify_Maven_local_repository">Identify Maven local repository</a>.</td></tr>
+<tr><td><a href="./start_eclipse.html">Start Eclipse</a></td><td>Start Eclipse to work on Hippo projects.</td></tr>
+<tr><td><a href="./war_overlays_in_eclipse.html">War overlays in eclipse</a></td><td>How to use War overlays in eclipse</td></tr></table>
     </section>
   </body>
 </document>

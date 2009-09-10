@@ -22,19 +22,19 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Contributor</title>
+    <title>Author</title>
   </properties>
 
   <body>
-    <section name="Contributor">
-      <span class="shortdesc">What does it mean to be a CMS contributor?</span>
+    <section name="Author">
+      <span class="shortdesc">What does it mean to be a CMS author?</span>
 
-      <p>A CMS contributor contributes content to the repository of documents,
-       images and other means of information. Thus, a contributor may create new (web) documents
+      <p>A CMS author contributes content to the repository of documents,
+       images and other means of information. Thus, an author may create new (web) documents
        and change the content of documents, using the online word-processor of the CMS,
        upload images and other files in the CMS repository and add meta-data to them.
-       A contributor may also create folders. Mostly, the CMS will be configured so that a
-       contributor may not delete a folder or document. He may <span href='request_deletion.html'>request</span> 
+       An author may also create folders. Mostly, the CMS will be configured so that a
+       author may not delete a folder or document. He may <span href='request_deletion.html'>request</span> 
        that the <a href='./editor.html'>editor</a> does that.
    </p>
    <subsection name='Next'>

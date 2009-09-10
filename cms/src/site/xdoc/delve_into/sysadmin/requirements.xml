@@ -221,7 +221,8 @@ Sun logo         Sun Microsystems
           <td>
           </td>
           <td>
-           <a href="http://www.mysql.com">MySQL 5.0</a> and <a href="http://www.mysql.com">5.1</a>, generally used in production.
+           <a href="http://www.mysql.com">MySQL 5.0</a> and <a href="http://www.mysql.com">5.1</a>.
+             We recommend the latest 5.1.x release. MySQL is intended for production environments.
           </td>
          </tr>
         </table>

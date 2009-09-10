@@ -22,17 +22,17 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Contributors Guide</title>
+    <title>Authors Guide</title>
   </properties>
 
   <body>
-    <section name="Contributors Guide">
-      <span class="shortdesc">Guide for Hippo CMS users to perform the role of contributor.</span>
+    <section name="Authors Guide">
+      <span class="shortdesc">Guide for Hippo CMS users to perform the role of author.</span>
 
 <p>
-When a contributor writes a document in the Hippo CMS, the CMS ensures that that
+When an author writes a document in the Hippo CMS, the CMS ensures that that
 document resembles all documents of the same document type.
-Similar documents contain similar information and contributors are expected to
+Similar documents contain similar information and authors are expected to
 provide the expected information. To make this easy, documents consist of
 inputfields. Unlike the inputfields in forms,
 the inputfields in Hippo documents may allow quite complex editing.
@@ -45,25 +45,25 @@ the inputfields in Hippo documents may allow quite complex editing.
 <table>
   <tr>
     <td>
-      <a href="./tour.html">Hippo CMS Contributor Tour</a>
+      <a href="./tour.html">Hippo CMS Authors Tour</a>
     </td>
-    <td>To get introduced to the role of CMS contributor, take the following tour.</td>
+    <td>To get introduced to the role of CMS author, take the following tour.</td>
   </tr>
   <tr>
     <td>
-      <a href="./howto/index.html">Hippo CMS Contributor Howto</a>
+      <a href="./howto/index.html">Hippo CMS Authors Howto</a>
     </td>
-    <td>A collection of howto's for small tasks a CMS contributor may want to do.</td>
+    <td>A collection of howto's for small tasks a CMS author may want to do.</td>
   </tr>
   <tr>
     <td>
-      <a href="./concepts/index.html">CMS Contributor Concepts</a>
+      <a href="./concepts/index.html">CMS Authors Concepts</a>
     </td>
-    <td>A collection of concepts a CMS contributor may want to know.</td>
+    <td>A collection of concepts a CMS author may want to know.</td>
   </tr>
 </table>
 
-<subsection name='General introduction for contributors'>
+<subsection name='General introduction for authors'>
 <p>
   Inputfields have a datatype. For example, a particular inputfield may allow only integers (round numbers) and
   we then say that the inputfield is of datatype integer.

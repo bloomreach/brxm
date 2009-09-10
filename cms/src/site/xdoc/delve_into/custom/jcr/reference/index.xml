@@ -30,13 +30,7 @@
     <section name="JCR reference guide">
       <span class="shortdesc">Deeper explanations of the JCR interface</span>
       <table>
-        <tr>
-          <td>
-            <a href="./derived_data.html">Derived Data</a>
-          </td>
-          <td>Derived data is the concept where additional information for a document generated, based upon the information of the document itself.: <a href="./derived_data.html#Description_of_the_problem">Description of the problem</a>, <a href="./derived_data.html#Facility_offered">Facility offered</a>, <a href="./derived_data.html#How_to_define">How to define</a>.</td>
-        </tr>
-      </table>
+<tr><td><a href="./derived_data.html">Derived Data</a></td><td>Derived data is the concept where additional information for a document generated, based upon the information of the document itself.: <a href="./derived_data.html#Description_of_the_problem">Description of the problem</a>, <a href="./derived_data.html#Facility_offered">Facility offered</a>, <a href="./derived_data.html#How_to_define">How to define</a>.</td></tr></table>
     </section>
   </body>
 </document>

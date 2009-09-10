@@ -19,10 +19,10 @@
 -->
 <document>
  <properties>
-  <title>Hippo CMS Admin Tour</title>
+  <title>Hippo CMS Administrator Tour</title>
  </properties>
  <body>
-  <section name="Hippo CMS Admin Tour">
+  <section name="Hippo CMS Administrator Tour">
    <span class='shortdesc'>To get introduced to the role of CMS administrator,
     take the following tour.</span>
 
@@ -76,7 +76,7 @@
          use personal accounts instead.
          <p>
           Instead, you could just change their passwords, and use them as guest accounts,
-          if all your guests are trustworthty.
+          if all your guests are trustworthy.
      </p>
 
       </td>
@@ -129,7 +129,8 @@
        <span class='user-48 icon-48'/>
       </td>
       <td>
-       Because there was already some content that needs to be published, the admin decides to
+       Because there was already some content that needs to be published, 
+       the administrator decides to
        <a href="./howto/publish_all.html">Publish them all at once</a>.
       </td>
      </tr>
@@ -139,7 +140,7 @@
       <td>
        <span class='logout-48 icon-48'/>
       </td>
-      <td> 
+      <td>
          <a href="./howto/logout.html">Logout</a>.
       </td>
      </tr>

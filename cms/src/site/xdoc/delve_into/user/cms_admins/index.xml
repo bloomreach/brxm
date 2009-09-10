@@ -16,37 +16,37 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
 <document>
   <properties>
-    <title>CMS Admin Guide</title>
+    <title>CMS Administrator Guide</title>
   </properties>
 
   <body>
-    <section name="CMS Admin Guide">
-      <span class="shortdesc">Guide for Hippo CMS users to perform the role of CMS admin</span>
+    <section name="CMS Administrator Guide">
+      <span class="shortdesc">Guide for Hippo CMS users to perform the role of CMS administrator.</span>
 
 <table>
   <tr>
     <td>
-      <a href="./tour.html">Hippo CMS Admin Tour</a>
+      <a href="./tour.html">Hippo CMS Administrator Tour</a>
     </td>
     <td>To get introduced to the role of CMS administrator, take the following tour.</td>
   </tr>
   <tr>
     <td>
-      <a href="./howto/index.html">CMS admin Howto</a>
+      <a href="./howto/index.html">CMS Administrator Howto</a>
     </td>
-    <td>A collection of howto's for small tasks a CMS admin may want to do.</td>
+    <td>A collection of howto's for small tasks a CMS administrator may want to do.</td>
   </tr>
   <tr>
     <td>
-      <a href="./concepts/index.html">CMS admin Concepts</a>
+      <a href="./concepts/index.html">CMS Administrator Concepts</a>
     </td>
-    <td>A collection of concepts a CMS admin may want to know.</td>
+    <td>A collection of concepts a CMS administrator may want to know.</td>
   </tr>
 </table>
 

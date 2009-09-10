@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Contributor</title>
+    <title>Login as author</title>
   </properties>
 
   <body>
-    <section name="Login as Contributor">
-      <span class="shortdesc">How to login to Hippo CMS as contributor 
+    <section name="Login as author">
+      <span class="shortdesc">How to login to Hippo CMS as author 
       of documents, images and/or files.</span>
 
    <script type="text/javascript">

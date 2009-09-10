@@ -27,7 +27,12 @@
     <title>CMS Editor Concepts</title>
   </properties>
   <body>
-    <section name="CMS Editor Concepts"><span class="shortdesc">A collection of concepts a CMS editor may want to know.</span><table><tr><td><a href="./editor.html">CMS editor</a></td><td>What is a CMS editor?: <a href="./editor.html#Next">Next</a>, <a href="./editor.html#Alternative">Alternative</a>.</td></tr><tr><td><a href="./folder.html">Folder</a></td><td>What is a Folder?: <a href="./folder.html#Next">Next</a>, <a href="./folder.html#Alternative">Alternative</a>.</td></tr><tr><td><a href="./home_workspace.html">Home Workspace</a></td><td>What and where is the home workspace?: <a href="./home_workspace.html#Alternative">Alternative</a>, <a href="./home_workspace.html#Next">Next</a>, <a href="./home_workspace.html#Alternative">Alternative</a>.</td></tr><tr><td><a href="./request.html">Request</a></td><td>What is a request?: <a href="./request.html#Next">Next</a>, <a href="./request.html#Alternative">Alternative</a>.</td></tr><tr><td><a href="./scheduled_publication.html">Scheduled publication</a></td><td>What about scheduling the online publication of documents?: <a href="./scheduled_publication.html#Next">Next</a>, <a href="./scheduled_publication.html#Alternative">Alternative</a>.</td></tr></table>  
+    <section name="CMS Editor Concepts"><span class="shortdesc">A collection of concepts a CMS editor may want to know.</span><table>
+<tr><td><a href="./editor.html">CMS editor</a></td><td>What is a CMS editor?: <a href="./editor.html#Next">Next</a>, <a href="./editor.html#Alternative">Alternative</a>.</td></tr>
+<tr><td><a href="./folder.html">Folder</a></td><td>What is a Folder?: <a href="./folder.html#Next">Next</a>, <a href="./folder.html#Alternative">Alternative</a>.</td></tr>
+<tr><td><a href="./home_workspace.html">Home Workspace</a></td><td>What and where is the home workspace?: <a href="./home_workspace.html#Alternative">Alternative</a>, <a href="./home_workspace.html#Next">Next</a>, <a href="./home_workspace.html#Alternative">Alternative</a>.</td></tr>
+<tr><td><a href="./request.html">Request</a></td><td>What is a request?: <a href="./request.html#Next">Next</a>, <a href="./request.html#Alternative">Alternative</a>.</td></tr>
+<tr><td><a href="./scheduled_publication.html">Scheduled publication</a></td><td>What about scheduling the online publication of documents?: <a href="./scheduled_publication.html#Next">Next</a>, <a href="./scheduled_publication.html#Alternative">Alternative</a>.</td></tr></table>  
   <subsection xmlns="" name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.

@@ -30,7 +30,7 @@ ________________________________________________________________________________
 
 <p>
  In Hippo CMS,
- <a href="../contributors/index.html">contributors</a> write documents that are of a certain
+ <a href="../contributors/index.html">authors</a> write documents that are of a certain
  <a href="./concepts/documenttype.html">document type</a>.
   The document type specifies what kind of information the document should provide.
   Documents that contain the same kind of information are in that respect similar.
@@ -83,7 +83,7 @@ what kind of information they are supposed to provide.
  <p>
   The guaranteed similarity of documents is possible by the use of document
   types. Document types have another advantage: they are a kind of
-  business rules that ensure that all contributors know what information they
+  business rules that ensure that all authors know what information they
   are supposed to supply.
  </p>
 
@@ -120,7 +120,7 @@ what kind of information they are supposed to provide.
        document of the type. This is the case if a new, independent
        kind of information is expected in the documents.
        Such new, independent information has to be supplied by external
-       sources, generally human contributors.
+       sources, generally human authors.
    </p>
 
 
@@ -139,7 +139,7 @@ in several tables and the type of the document as the set of related tables
 CMS document types not only define which fields are allowed or mandatory.
 A CMS document type may also define preset values for fields.
 Furthermore, a CMS document type defines how a document of the type is presented
-to an author: The Hippo CMS provides contributors with a document editor for writing
+to an author: The Hippo CMS provides authors with a document editor for writing
 information into a document. The layout of the document being edited is
 configurable and so is the behavior of the editor. This configuration is defined
 in the document types.

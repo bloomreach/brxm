@@ -19,19 +19,19 @@
 -->
 <document>
   <properties>
-    <title>Debugging</title>
+    <title>Known issues</title>
   </properties>
   <body>
-    <section name="Debugging">
+    <section name="Known issues">
      <span class='shortdesc'>What to do in case of errors?</span>
 
       <subsection name='Workflow error: Can not insert new record:'>
         <p><span class='index' id='Packet_for_query_is_too_large'>Packet for query is too large (4729208 &gt; 1048576)</span>.</p>
- 
-        <p>Someone tries to load an asset (binary document like .pdf or an image) that is too large.
-           You may  
+
+        <p>The above error message comes up when a CMS user tries to load an asset (binary document like .pdf or an image)
+           that is too large. You may
            <a href='./configuration/database_server.html#increase_packet_size'>configure your database server to allow for larger assets</a>.
-        </p>         
+        </p>
 
       </subsection>
 

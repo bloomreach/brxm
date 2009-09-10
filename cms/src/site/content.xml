@@ -311,11 +311,11 @@ generated, based upon the information of the document itself.
    <subsection>Alternatives</subsection>
    <subsection>Next</subsection>
   </document><folder>sysadmin
-   <title>System Administration Guide</title><shortdesc>What does a sysadmin need to know and do for Hippo CMS?</shortdesc><introduction>
+   <title>System Administration Guide</title><shortdesc>What does a system administrator need to know and do for Hippo CMS?</shortdesc><introduction>
   These pages describe how to get Hippo ECM up and running and how to configure your running application.
  </introduction>
    <folder>configuration
-   <title>Configuration</title><shortdesc>What does a sysadmin have to configure in Hippo CMS?</shortdesc><introduction>              <!-- tree -->
+   <title>Configuration</title><shortdesc>What does a system administrator have to configure in Hippo CMS?</shortdesc><introduction>              <!-- tree -->
      <span class="review">Whole folder, and rewrite if necessary.</span>
  </introduction>
    <document ext="xml" filename="console" relpath="delve_into/sysadmin/configuration">Console
@@ -409,8 +409,8 @@ repository itself.
    <section>Workspace configuration</section>
    <shortdesc>The workspace element is used as a template for separate workspace configuration files created for each new workspace.</shortdesc>
    <subsection>Sample</subsection>
-  </document></folder></folder><document ext="xml" filename="debugging" relpath="delve_into/sysadmin">Debugging
-   <section>Debugging</section>
+  </document></folder></folder><document ext="xml" filename="debugging" relpath="delve_into/sysadmin">Known issues
+   <section>Known issues</section>
    <shortdesc>What to do in case of errors?</shortdesc>
    <subsection>Workflow error: Can not insert new record:</subsection>
    <index>Packet for query is too large (4729208 &gt; 1048576)</index>
@@ -490,6 +490,7 @@ repository itself.
   </document><document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation">Help startup in Servlet Container
    <section>Help startup in Servlet Container</section>
    <shortdesc>Help for when you have problems starting up Hippo in a servlet container.</shortdesc>
+   <subsection>java.lang.IllegalStateException:...infinite loop</subsection>
    <subsection>Failed to Connect. Firefox can't establish a connection to the server at localhost:8080.</subsection>
    <subsection>The browser window of the CMS is an empty page</subsection>
    <subsection>Configuration file syntax error</subsection>
@@ -524,7 +525,7 @@ repository itself.
    <shortdesc>Get Hippo CMS up and running
        in a Java servlet container.</shortdesc>
    <index>servlet container</index>
-   <subsection>Deploying in Tomcat</subsection>
+   <subsection>Deploying in Tomcat 5.5 or 6</subsection>
    <h4>Install required libraries</h4>
    <h4>Deploy Hippo CMS WAR</h4>
   </document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat
@@ -602,7 +603,7 @@ repository itself.
    <folder>cms_admins
    
    <folder>concepts
-   <title>CMS Admins Concepts</title><shortdesc>A collection of concepts a CMS administrators may want to know.</shortdesc><afterlist>  
+   <title>CMS Administrator Concepts</title><shortdesc>A collection of concepts a CMS administrators may want to know.</shortdesc><afterlist>  
   <subsection name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.
@@ -618,7 +619,7 @@ repository itself.
   </document><document ext="xml" filename="index" relpath="delve_into/user/cms_admins/concepts">
    <subsection>Alternative</subsection>
   </document></folder><folder>howto
-   <title>CMS admin Howto</title><shortdesc>A collection of howto's for small tasks a CMS admin may want to do.</shortdesc><afterlist>
+   <title>CMS administrator Howto</title><shortdesc>A collection of howto's for small tasks a CMS administrator may want to do.</shortdesc><afterlist>
   <subsection name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.
@@ -676,8 +677,8 @@ repository itself.
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="index" relpath="delve_into/user/cms_admins/howto">
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="login" relpath="delve_into/user/cms_admins/howto">Login as Admin
-   <section>Login as Admin</section>
+  </document><document ext="xml" filename="login" relpath="delve_into/user/cms_admins/howto">Login as Administrator
+   <section>Login as Administrator</section>
    <shortdesc>How to login to Hippo CMS as administrator.</shortdesc>
    <img>Hippo login screenshot</img>
    <subsection>Next</subsection>
@@ -711,9 +712,9 @@ repository itself.
    <shortdesc>How to start a CMS session in your browser</shortdesc>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document></folder><document ext="xml" filename="index" relpath="delve_into/user/cms_admins">CMS Admin Guide
-   <section>CMS Admin Guide</section>
-   <shortdesc>Guide for Hippo CMS users to perform the role of CMS admin</shortdesc>
+  </document></folder><document ext="xml" filename="index" relpath="delve_into/user/cms_admins">CMS Administrator Guide
+   <section>CMS Administrator Guide</section>
+   <shortdesc>Guide for Hippo CMS users to perform the role of CMS administrator.</shortdesc>
   </document><folder>todo
    
    <document ext="xml" filename="goto_group_properties" relpath="delve_into/user/cms_admins/todo">Edit Group Properties
@@ -734,14 +735,14 @@ repository itself.
    <img>Editing region screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document></folder><document ext="xml" filename="tour" relpath="delve_into/user/cms_admins">Hippo CMS Admin Tour
-   <section>Hippo CMS Admin Tour</section>
+  </document></folder><document ext="xml" filename="tour" relpath="delve_into/user/cms_admins">Hippo CMS Administrator Tour
+   <section>Hippo CMS Administrator Tour</section>
    <shortdesc>To get introduced to the role of CMS administrator,
     take the following tour.</shortdesc>
   </document></folder><folder>contributors
    
    <folder>concepts
-   <title>CMS Contributor Concepts</title><shortdesc>A collection of concepts a CMS contributor may want to know.</shortdesc><afterlist>  
+   <title>CMS Author Concepts</title><shortdesc>A collection of concepts a CMS author may want to know.</shortdesc><afterlist>  
   <subsection name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.
@@ -759,9 +760,9 @@ repository itself.
    <img>content workspace</img>
    <subsection>Alternative</subsection>
    <subsection>Next</subsection>
-  </document><document ext="xml" filename="contributor" relpath="delve_into/user/contributors/concepts">Contributor
-   <section>Contributor</section>
-   <shortdesc>What does it mean to be a CMS contributor?</shortdesc>
+  </document><document ext="xml" filename="contributor" relpath="delve_into/user/contributors/concepts">Author
+   <section>Author</section>
+   <shortdesc>What does it mean to be a CMS author?</shortdesc>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="current_folder" relpath="delve_into/user/contributors/concepts">Current folder
@@ -886,7 +887,7 @@ repository itself.
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
   </document></folder><folder>howto
-   <title>CMS Contributor Howto</title><shortdesc>A collection of howto's for small tasks a contributor may want to do.</shortdesc><afterlist>  
+   <title>CMS Author Howto</title><shortdesc>A collection of howto's for small tasks an author may want to do.</shortdesc><afterlist>  
   <subsection name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.
@@ -965,9 +966,9 @@ repository itself.
    <img>Fill boolean screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document><document ext="xml" filename="login" relpath="delve_into/user/contributors/howto">Login as Contributor
-   <section>Login as Contributor</section>
-   <shortdesc>How to login to Hippo CMS as contributor 
+  </document><document ext="xml" filename="login" relpath="delve_into/user/contributors/howto">Login as author
+   <section>Login as author</section>
+   <shortdesc>How to login to Hippo CMS as author 
       of documents, images and/or files.</shortdesc>
    <img>Hippo login screenshot</img>
    <subsection>Next</subsection>
@@ -1021,14 +1022,17 @@ repository itself.
    <img>goto CMS site</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>
-  </document></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide
-   <section>Contributors Guide</section>
-   <shortdesc>Guide for Hippo CMS users to perform the role of contributor.</shortdesc>
-   <subsection>General introduction for contributors</subsection>
-  </document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour
-   <section>Hippo CMS Contributor Tour</section>
-   <shortdesc>A CMS contributor writes documents and/or adds images and/or assets.
-    To get introduced to the role of CMS Contributor, take the following tour.</shortdesc>
+  </document></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Authors Guide
+   <section>Authors Guide</section>
+   <shortdesc>Guide for Hippo CMS users to perform the role of author.</shortdesc>
+   <subsection>General introduction for authors</subsection>
+  </document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Authors Tour
+   <section>Hippo CMS Authors Tour</section>
+   <shortdesc>
+    A CMS author writes documents and can upload images and
+    other binaries (this is why they are sometimes called 'contributors').
+    To get introduced to the role of CMS author, take the following tour.
+   </shortdesc>
    <img>Fill marked-up text screenshot</img>
   </document></folder><folder>editors
    
@@ -1109,7 +1113,7 @@ repository itself.
    <subsection>Alternative</subsection>
   </document><document ext="xml" filename="create_folder" relpath="delve_into/user/editors/howto">Create Folder
    <section>Create Folder</section>
-   <shortdesc>How to create a folder for contributors to put content in.</shortdesc>
+   <shortdesc>How to create a folder for authors to put content in.</shortdesc>
    <img>Create folder screenshot</img>
    <subsection>Next</subsection>
    <subsection>Alternative</subsection>

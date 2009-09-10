@@ -33,6 +33,8 @@
           This section explains how to get the source code, how to build it, and how to set
           up your IDE. In addition, the architecture and the conceptual ideas behind it
           are explained in detail.
- <table><tr><td><a href="./building/index.html">building</a></td><td>Build Hippo CMS from source using your tool of choice: <a href="building/eclipse.html">eclipse</a>, <a href="building/maven.html">maven</a>, <a href="building/netbeans.html">netbeans</a>.</td></tr><tr><td><a href="./project-structure.html">Project Structure</a></td><td>Find your way in the Hippo CMS project: <a href="./project-structure.html#Dependencies_between_addons">Dependencies between addons</a>, <a href="./project-structure.html#Finding_your_way">Finding your way</a>.</td></tr></table></section>
+ <table>
+<tr><td><a href="./building/index.html">building</a></td><td>Build Hippo CMS from source using your tool of choice: <a href="building/eclipse.html">eclipse</a>, <a href="building/maven.html">maven</a>, <a href="building/netbeans.html">netbeans</a>.</td></tr>
+<tr><td><a href="./project-structure.html">Project Structure</a></td><td>Find your way in the Hippo CMS project: <a href="./project-structure.html#Dependencies_between_addons">Dependencies between addons</a>, <a href="./project-structure.html#Finding_your_way">Finding your way</a>.</td></tr></table></section>
   </body>
 </document>
