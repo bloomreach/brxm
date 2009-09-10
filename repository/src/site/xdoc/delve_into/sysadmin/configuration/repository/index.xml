@@ -30,31 +30,10 @@
     <section name="Repository Configuration">
       <span class="shortdesc">The base repository configuration through a number of XML files.</span>
       <table>
-        <tr>
-          <td>
-            <a href="./authentication.html">Repository based authentication</a>
-          </td>
-          <td>Authentication with The Repository Login Module</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./overview.html">Repository Configuration</a>
-          </td>
-          <td>The base repository configuration through a number of XML files: <a href="./overview.html#FileSystem_element">FileSystem element</a>, <a href="./overview.html#Security_element">Security element</a>, <a href="./overview.html#Workspaces_element">Workspaces element</a>, <a href="./overview.html#Workspace_element">Workspace element</a>, <a href="./overview.html#SearchIndex_element">SearchIndex element</a>, <a href="./overview.html#Versioning_element">Versioning element</a>.</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./searchindex.html">SearchIndex configuration</a>
-          </td>
-          <td>Search index for content that is shared repository wide (/jcr:system tree, contains mainly versions): <a href="./searchindex.html#Minimal_configuration">Minimal configuration</a>, <a href="./searchindex.html#Best_practice">Best practice</a>, <a href="./searchindex.html#ServicingSearchIndex">ServicingSearchIndex</a>, <a href="./searchindex.html#ServicingIndexingConfigurationImpl">ServicingIndexingConfigurationImpl</a>.</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./workspace.html">Workspace configuration</a>
-          </td>
-          <td>The workspace element is used as a template for separate workspace configuration files created for each new workspace: <a href="./workspace.html#Sample">Sample</a>.</td>
-        </tr>
-      </table>
+<tr><td><a href="./authentication.html">Repository based authentication</a></td><td>Authentication with The Repository Login Module</td></tr>
+<tr><td><a href="./overview.html">Repository Configuration</a></td><td>The base repository configuration through a number of XML files: <a href="./overview.html#FileSystem_element">FileSystem element</a>, <a href="./overview.html#Security_element">Security element</a>, <a href="./overview.html#Workspaces_element">Workspaces element</a>, <a href="./overview.html#Workspace_element">Workspace element</a>, <a href="./overview.html#SearchIndex_element">SearchIndex element</a>, <a href="./overview.html#Versioning_element">Versioning element</a>.</td></tr>
+<tr><td><a href="./searchindex.html">SearchIndex configuration</a></td><td>Search index for content that is shared repository wide (/jcr:system tree, contains mainly versions): <a href="./searchindex.html#Minimal_configuration">Minimal configuration</a>, <a href="./searchindex.html#Best_practice">Best practice</a>, <a href="./searchindex.html#ServicingSearchIndex">ServicingSearchIndex</a>, <a href="./searchindex.html#ServicingIndexingConfigurationImpl">ServicingIndexingConfigurationImpl</a>.</td></tr>
+<tr><td><a href="./workspace.html">Workspace configuration</a></td><td>The workspace element is used as a template for separate workspace configuration files created for each new workspace: <a href="./workspace.html#Sample">Sample</a>.</td></tr></table>
     </section>
   </body>
 </document>

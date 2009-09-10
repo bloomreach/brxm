@@ -25,6 +25,28 @@
      <section name="Help startup in Servlet Container">
       <span class='shortdesc'>Help for when you have problems starting up Hippo in a servlet container.</span>
 
+      <subsection name="java.lang.IllegalStateException:...infinite loop">
+
+      <p>
+         You get the following errormessage:
+      </p>
+
+<code>
+java.lang.IllegalStateException: Request processing executed 100 steps,
+which means it is probably in an infinite loop.
+       org.apache.wicket.RequestCycle.steps(RequestCycle.java:1348)
+       org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+       org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:355)
+
+ org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:200)
+ org.hippoecm.frontend.plugins.login.ConcurrentLoginFilter.doFilter(ConcurrentLoginFilter.java:54)
+</code>
+
+<p>After you download geronimo a simple restart of Tomcat is apparently not enough.
+The problem is known to be fixed by killing all running java processes and restarting
+Tomcat.
+</p>
+</subsection>
 
       <subsection name="Failed to Connect. Firefox can't establish a connection to the server at localhost:8080.">
 

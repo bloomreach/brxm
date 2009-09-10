@@ -52,15 +52,15 @@ ________________________________________________________________________________
    <p>
       The <a href='../concepts/document_type.html'>document types</a> used in your organization, were
       created by an information architect with the
-      intent that every <a href='contributor'>contributor</a> would
+      intent that every <a href='contributor'>author</a> would
       fill in information with the same meaning of the field in mind.
    </p>
    <p>
-      If contributors use different meanings of the same field,
+      If authors use different meanings of the same field,
       searches and statistics on that field will not be particularly useful.
    </p>
    <p>
-    So, as a contributor, make sure that you know the meanings intended.
+    So, as an author, make sure that you know the meanings intended.
     If the information architect chose a name that is unclear, ask for an explanation.
    </p>
    <subsection name='Next'>

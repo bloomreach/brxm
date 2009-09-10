@@ -141,12 +141,12 @@
     </td>
    </tr>
    <tr>
-    <td>Admin</td>  
+    <td>Administrator</td>  
     <td>
      <span class='admin-48 icon-48'/> 
     </td>
     <td>An installed quickstart package may be adapted for
-     production, see the <a href="sysadmin/index.html">Sysadmin Guide</a>.  
+     production, see the <a href="sysadmin/index.html">Installation &amp; Configuration</a>.  
     </td>
    </tr>
   </table>

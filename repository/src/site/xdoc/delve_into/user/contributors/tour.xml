@@ -19,12 +19,16 @@
 -->
 <document>
  <properties>
-  <title>Hippo CMS Contributor Tour</title>
+  <title>Hippo CMS Authors Tour</title>
  </properties>
  <body>
-  <section name="Hippo CMS Contributor Tour">
-   <span class='shortdesc'>A CMS contributor writes documents and/or adds images and/or assets.
-    To get introduced to the role of CMS Contributor, take the following tour.</span> 
+  <section name="Hippo CMS Authors Tour">
+   <span class='shortdesc'>
+    A CMS author writes documents and can upload images and
+    other binaries (this is why they are sometimes called 'contributors').
+    To get introduced to the role of CMS author, take the following tour.
+   </span>
+
 
   <script type="text/javascript">
     leftpx=450;
@@ -42,7 +46,7 @@
     </p>
    </div>
 
-     <p>To get introduced to the role of CMS <a href='./concepts/contributor.html'>contributor</a>,
+     <p>To get introduced to the role of CMS <a href='./concepts/contributor.html'>author</a>,
         you will look over the shoulder of Marc,
         who is a member of the imaginary organization Swatia,
         an organization of people very interested in music, art and knowledge. We did not imagine an
@@ -256,15 +260,15 @@
      <tr>
       <td>Open document</td>
       <td>
-       <span class='user-48 icon-48'/> 
+       <span class='user-48 icon-48'/>
       </td>
-      <td> 
+      <td>
          <a href="./howto/goto_document_tab.html">Open the document</a> to start writing.
          Marc opens the document named 'multibazar2008'.
       </td>
      </tr>
  -->
-       
+
     </section>
   </body>
 </document>

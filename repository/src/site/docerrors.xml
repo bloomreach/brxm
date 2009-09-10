@@ -107,7 +107,7 @@ repository is;
     <add>Enlighting and attractive diagram.</add></document><document ext="xml.vm" filename="quickstart_in_existing_container" relpath="delve_into">Your own Quickstart<linkto_unchecked/>
     <rewrite>
                         and leave the new version very small,
-                        mainly refering to the necessary admin documents.
+                        mainly refering to the necessary administrator documents.
  </rewrite></document><document ext="xml.vm" filename="quickstart" relpath="delve_into">Quickstart Steps<linkto_unchecked/>
     <empty_elem>...&lt;span class='to_index' id='localhost'/&gt; 
    in your (this) webbrowser.
@@ -119,11 +119,11 @@ repository is;
    A window `Sign In, Hippo CMS 7' will open.
    As username use `admin' and as password use also `admin'.
   .../&lt;td&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem></document><folder>sysadmin
-   <title>System Administration Guide</title><shortdesc>What does a sysadmin need to know and do for Hippo CMS?</shortdesc><introduction>
+   <title>System Administration Guide</title><shortdesc>What does a system administrator need to know and do for Hippo CMS?</shortdesc><introduction>
   These pages describe how to get Hippo ECM up and running and how to configure your running application.
  </introduction>
    <folder>configuration
-   <title>Configuration</title><shortdesc>What does a sysadmin have to configure in Hippo CMS?</shortdesc><introduction>              <!-- tree -->
+   <title>Configuration</title><shortdesc>What does a system administrator have to configure in Hippo CMS?</shortdesc><introduction>              <!-- tree -->
      <span class="review">Whole folder, and rewrite if necessary.</span>
  </introduction>
    <document ext="xml" filename="console" relpath="delve_into/sysadmin/configuration">Console<linkto_unchecked/></document><document ext="xml" filename="database_server" relpath="delve_into/sysadmin/configuration">Database server<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/sysadmin/configuration"><linkto_unchecked/>
@@ -149,7 +149,7 @@ repository is;
           Also see
            href="http://jackrabbit.apache.org/doc/arch/operate/index-readers.html" JackRabbit lucene implementation.
           </add>
-    <badtext>getting indexing_configuration from a jar classpath instead of the<span class="bad"> current </span>JackRabbit implementation which can only fetch an indexing_configuration from filesystem.</badtext></document><document ext="xml" filename="workspace" relpath="delve_into/sysadmin/configuration/repository">Workspace configuration<linkto_unchecked/></document></folder></folder><document ext="xml" filename="debugging" relpath="delve_into/sysadmin">Debugging<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/sysadmin"><linkto_unchecked/>
+    <badtext>getting indexing_configuration from a jar classpath instead of the<span class="bad"> current </span>JackRabbit implementation which can only fetch an indexing_configuration from filesystem.</badtext></document><document ext="xml" filename="workspace" relpath="delve_into/sysadmin/configuration/repository">Workspace configuration<linkto_unchecked/></document></folder></folder><document ext="xml" filename="debugging" relpath="delve_into/sysadmin">Known issues<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/sysadmin"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><folder>installation
    <title>Installation</title><shortdesc>How to install Hippo CMS</shortdesc><introduction>              <!-- tree -->
@@ -257,7 +257,7 @@ repository is;
    <folder>cms_admins
    
    <folder>concepts
-   <title>CMS Admins Concepts</title><shortdesc>A collection of concepts a CMS administrators may want to know.</shortdesc><afterlist>  
+   <title>CMS Administrator Concepts</title><shortdesc>A collection of concepts a CMS administrators may want to know.</shortdesc><afterlist>  
   <subsection name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.
@@ -267,7 +267,7 @@ repository is;
    <document ext="xml" filename="home_workspace" relpath="delve_into/user/cms_admins/concepts">Home Workspace<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/user/cms_admins/concepts"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document></folder><folder>howto
-   <title>CMS admin Howto</title><shortdesc>A collection of howto's for small tasks a CMS admin may want to do.</shortdesc><afterlist>
+   <title>CMS administrator Howto</title><shortdesc>A collection of howto's for small tasks a CMS administrator may want to do.</shortdesc><afterlist>
   <subsection name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.
@@ -276,19 +276,19 @@ repository is;
  </afterlist>
    <document ext="xml" filename="add_group" relpath="delve_into/user/cms_admins/howto">Add Group<linkto_unchecked/></document><document ext="xml" filename="add_user" relpath="delve_into/user/cms_admins/howto">Add User<linkto_unchecked/></document><document ext="xml" filename="assign_user_to_group" relpath="delve_into/user/cms_admins/howto">Assign user to group<linkto_unchecked/></document><document ext="xml" filename="change_group_properties" relpath="delve_into/user/cms_admins/howto">Edit group properties<linkto_unchecked/></document><document ext="xml" filename="change_password" relpath="delve_into/user/cms_admins/howto">Change own password<linkto_unchecked/></document><document ext="xml" filename="change_user_properties" relpath="delve_into/user/cms_admins/howto">Edit user properties<linkto_unchecked/></document><document ext="xml" filename="deactivate_account" relpath="delve_into/user/cms_admins/howto">Deactivate account<linkto_unchecked/></document><document ext="xml" filename="goto_user_management_workspace" relpath="delve_into/user/cms_admins/howto">Goto User Management Workspace<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/user/cms_admins/howto"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="login" relpath="delve_into/user/cms_admins/howto">Login as Admin<linkto_unchecked/></document><document ext="xml" filename="logout" relpath="delve_into/user/cms_admins/howto">Logout<linkto_unchecked/></document><document ext="xml" filename="publish_all" relpath="delve_into/user/cms_admins/howto">Publish all<linkto_unchecked/></document><document ext="xml" filename="save_settings" relpath="delve_into/user/cms_admins/howto">Save settings<linkto_unchecked/></document><document ext="xml" filename="set_permissions_for_group" relpath="delve_into/user/cms_admins/howto">Set group permissions<linkto_unchecked/></document><document ext="xml" filename="start_CMS" relpath="delve_into/user/cms_admins/howto">Start CMS<linkto_unchecked/></document></folder><document ext="xml" filename="index" relpath="delve_into/user/cms_admins">CMS Admin Guide<linkto_unchecked/></document><folder>todo
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="login" relpath="delve_into/user/cms_admins/howto">Login as Administrator<linkto_unchecked/></document><document ext="xml" filename="logout" relpath="delve_into/user/cms_admins/howto">Logout<linkto_unchecked/></document><document ext="xml" filename="publish_all" relpath="delve_into/user/cms_admins/howto">Publish all<linkto_unchecked/></document><document ext="xml" filename="save_settings" relpath="delve_into/user/cms_admins/howto">Save settings<linkto_unchecked/></document><document ext="xml" filename="set_permissions_for_group" relpath="delve_into/user/cms_admins/howto">Set group permissions<linkto_unchecked/></document><document ext="xml" filename="start_CMS" relpath="delve_into/user/cms_admins/howto">Start CMS<linkto_unchecked/></document></folder><document ext="xml" filename="index" relpath="delve_into/user/cms_admins">CMS Administrator Guide<linkto_unchecked/></document><folder>todo
    
-   <document ext="xml" filename="goto_group_properties" relpath="delve_into/user/cms_admins/todo">Edit Group Properties<linkto_unchecked/></document><document ext="xml" filename="goto_user_properties" relpath="delve_into/user/cms_admins/todo">Goto User Properties<linkto_unchecked/></document><document ext="xml" filename="type_in_editing_region" relpath="delve_into/user/cms_admins/todo">Type in editing region<linkto_unchecked/></document></folder><document ext="xml" filename="tour" relpath="delve_into/user/cms_admins">Hippo CMS Admin Tour<linkto_unchecked/></document></folder><folder>contributors
+   <document ext="xml" filename="goto_group_properties" relpath="delve_into/user/cms_admins/todo">Edit Group Properties<linkto_unchecked/></document><document ext="xml" filename="goto_user_properties" relpath="delve_into/user/cms_admins/todo">Goto User Properties<linkto_unchecked/></document><document ext="xml" filename="type_in_editing_region" relpath="delve_into/user/cms_admins/todo">Type in editing region<linkto_unchecked/></document></folder><document ext="xml" filename="tour" relpath="delve_into/user/cms_admins">Hippo CMS Administrator Tour<linkto_unchecked/></document></folder><folder>contributors
    
    <folder>concepts
-   <title>CMS Contributor Concepts</title><shortdesc>A collection of concepts a CMS contributor may want to know.</shortdesc><afterlist>  
+   <title>CMS Author Concepts</title><shortdesc>A collection of concepts a CMS author may want to know.</shortdesc><afterlist>  
   <subsection name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.
      </p>
   </subsection>
  </afterlist>
-   <document ext="xml" filename="boolean" relpath="delve_into/user/contributors/concepts">Boolean<linkto_unchecked/></document><document ext="xml" filename="content_workspace" relpath="delve_into/user/contributors/concepts">Content Workspace<linkto_unchecked/></document><document ext="xml" filename="contributor" relpath="delve_into/user/contributors/concepts">Contributor<linkto_unchecked/></document><document ext="xml" filename="current_folder" relpath="delve_into/user/contributors/concepts">Current folder<linkto_unchecked/>
+   <document ext="xml" filename="boolean" relpath="delve_into/user/contributors/concepts">Boolean<linkto_unchecked/></document><document ext="xml" filename="content_workspace" relpath="delve_into/user/contributors/concepts">Content Workspace<linkto_unchecked/></document><document ext="xml" filename="contributor" relpath="delve_into/user/contributors/concepts">Author<linkto_unchecked/></document><document ext="xml" filename="current_folder" relpath="delve_into/user/contributors/concepts">Current folder<linkto_unchecked/>
     <badtext>What is the<span class="bad"> current </span>folder?</badtext>
     <badtext>The<span class="bad"> current </span>folder 'common' is marked bright yellow in the</badtext>
     <badtext>. The<span class="bad"> current </span>folder contains a document titled 'About Us' and document titled 'homepage'.</badtext>
@@ -309,7 +309,7 @@ repository is;
     <rewrite>Is for content.
        Call it content panel, file panel, present panel?</rewrite></document><document ext="xml" filename="tab_page" relpath="delve_into/user/contributors/concepts">Tab page<linkto_unchecked/>
     <add>more about tab pages in the image</add></document><document ext="xml" filename="workspace_navigation_panel" relpath="delve_into/user/contributors/concepts">Workspace Navigation Panel<linkto_unchecked/></document><document ext="xml" filename="workspace" relpath="delve_into/user/contributors/concepts">Workspace<linkto_unchecked/></document></folder><folder>howto
-   <title>CMS Contributor Howto</title><shortdesc>A collection of howto's for small tasks a contributor may want to do.</shortdesc><afterlist>  
+   <title>CMS Author Howto</title><shortdesc>A collection of howto's for small tasks an author may want to do.</shortdesc><afterlist>  
   <subsection name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.
@@ -322,10 +322,10 @@ repository is;
     <add>Document about navigation in folder tree and reference from here.</add>
     <badtext>. The contents of the<span class="bad"> current </span>folder will appear in the</badtext></document><document ext="xml" filename="index" relpath="delve_into/user/contributors/howto"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="learn_meaning_of_inputfield" relpath="delve_into/user/contributors/howto">Learn meaning of inputfield<linkto_unchecked/></document><document ext="xml" filename="login" relpath="delve_into/user/contributors/howto">Login as Contributor<linkto_unchecked/></document><document ext="xml" filename="logout" relpath="delve_into/user/contributors/howto">Logout<linkto_unchecked/></document><document ext="xml" filename="request_publication" relpath="delve_into/user/contributors/howto">Request Publication of Document<linkto_unchecked/></document><document ext="xml" filename="request_take_offline" relpath="delve_into/user/contributors/howto">Request to take off line a document<linkto_unchecked/></document><document ext="xml" filename="save_document" relpath="delve_into/user/contributors/howto">Save Document<linkto_unchecked/></document><document ext="xml" filename="schedule_publication" relpath="delve_into/user/contributors/howto">Schedule publication of Document<linkto_unchecked/></document><document ext="xml" filename="set_edit_mode" relpath="delve_into/user/contributors/howto">set edit mode<linkto_unchecked/>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="learn_meaning_of_inputfield" relpath="delve_into/user/contributors/howto">Learn meaning of inputfield<linkto_unchecked/></document><document ext="xml" filename="login" relpath="delve_into/user/contributors/howto">Login as author<linkto_unchecked/></document><document ext="xml" filename="logout" relpath="delve_into/user/contributors/howto">Logout<linkto_unchecked/></document><document ext="xml" filename="request_publication" relpath="delve_into/user/contributors/howto">Request Publication of Document<linkto_unchecked/></document><document ext="xml" filename="request_take_offline" relpath="delve_into/user/contributors/howto">Request to take off line a document<linkto_unchecked/></document><document ext="xml" filename="save_document" relpath="delve_into/user/contributors/howto">Save Document<linkto_unchecked/></document><document ext="xml" filename="schedule_publication" relpath="delve_into/user/contributors/howto">Schedule publication of Document<linkto_unchecked/></document><document ext="xml" filename="set_edit_mode" relpath="delve_into/user/contributors/howto">set edit mode<linkto_unchecked/>
     <add>Screenshot set edit mode</add></document><document ext="xml" filename="show_referring_documents" relpath="delve_into/user/contributors/howto">Show referring documents<linkto_unchecked/>
     <badtext>How to get a list of where the<span class="bad"> current </span>document is used, i.e. which documents refer the current document?</badtext></document><document ext="xml" filename="start_CMS" relpath="delve_into/user/contributors/howto">Start CMS site<linkto_unchecked/>
-    <badtext>ia.org/. The site is not yet visible, because the user has not clicked yet. Coincidentially, the site<span class="bad"> current </span>ly visible happens to be the Hippo CMS documentation site at</badtext></document></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide<linkto_unchecked/></document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour<linkto_unchecked/></document></folder><folder>editors
+    <badtext>ia.org/. The site is not yet visible, because the user has not clicked yet. Coincidentially, the site<span class="bad"> current </span>ly visible happens to be the Hippo CMS documentation site at</badtext></document></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Authors Guide<linkto_unchecked/></document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Authors Tour<linkto_unchecked/></document></folder><folder>editors
    
    <folder>concepts
    <title>CMS Editor Concepts</title><shortdesc>A collection of concepts a CMS editor may want to know.</shortdesc><afterlist>  
@@ -347,6 +347,8 @@ repository is;
  </afterlist>
    <document ext="xml" filename="check_for_requests" relpath="delve_into/user/editors/howto">Check for requests<linkto_unchecked/></document><document ext="xml" filename="count_modified_at_publish" relpath="delve_into/user/editors/howto">Count modified document at publish<linkto_unchecked/></document><document ext="xml" filename="count_modified_at_take_offline" relpath="delve_into/user/editors/howto">Count modified document at take offline<linkto_unchecked/></document><document ext="xml" filename="count_published" relpath="delve_into/user/editors/howto">Count published documents<linkto_unchecked/>
     <badtext>) a count is presented of all documents in the folder tree that are<span class="bad"> current </span>ly published.</badtext>
+    <badtext>The document artificial intelligence is<span class="bad"> current </span>ly published, so this document is counted.</badtext>
+    <badtext>The document panflute is<span class="bad"> current </span>ly published, so it is counted. A newer variant exists, but that makes no difference.</badtext>
     <badtext>The document multibazaar2009 is<span class="bad"> current </span>ly published, so it is counted. The document is being edited, but that makes no difference.</badtext></document><document ext="xml" filename="count_unpublished" relpath="delve_into/user/editors/howto">Count unpublished documents<linkto_unchecked/>
     <badtext>a count is presented of all documents in the folder tree that are not<span class="bad"> current </span>ly published or that are changed and saved after being published. These documents all have an unpublished saved variant.</badtext>
     <badtext>The document multibazaar2009 is not<span class="bad"> current </span>ly published, so it is counted.</badtext></document><document ext="xml" filename="create_folder" relpath="delve_into/user/editors/howto">Create Folder<linkto_unchecked/></document><document ext="xml" filename="handle_request" relpath="delve_into/user/editors/howto">Handle request<linkto_unchecked/></document><document ext="xml" filename="index" relpath="delve_into/user/editors/howto"><linkto_unchecked/>

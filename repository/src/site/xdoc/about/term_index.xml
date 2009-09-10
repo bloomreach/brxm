@@ -3,19 +3,19 @@
 <document xmlns="http://www.w3.org/1999/xhtml">
   <!--
     Copyright 2008 Hippo
-  
+
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
-  
+
     http://www.apache.org/licenses/LICENSE-2.0
-  
+
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS"
     BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-  
+
     Do not edit! This html file is automatically generated from an XML file
     by index2xdoc.xsl  (written by Rita Bylsma)
    -->
@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 1019 terms</span>
+      <span class="shortdesc">Term index, 1020 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -51,6 +51,16 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/tour.html#&#10;____A_CMS_author_writes_documents_and_can_upload_images_and&#10;____other_binaries_(this_is_why_they_are_sometimes_called_'contributors')_&#10;____To_get_introduced_to_the_role_of_CMS_author,_take_the_following_tour_&#10;___">
+    A CMS author writes documents and can upload images and
+    other binaries (this is why they are sometimes called 'contributors').
+    To get introduced to the role of CMS author, take the following tour.
+   </a>
+            </td>
+            <td>Hippo CMS Authors Tour</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/jcr/reference/derived_data.html#&#10;Derived_data_is_the_concept_where_additional_information_for_a_document&#10;generated,_based_upon_the_information_of_the_document_itself_&#10;">
 Derived data is the concept where additional information for a document
 generated, based upon the information of the document itself.
@@ -73,13 +83,6 @@ repository itself.
               <a href="../delve_into/sysadmin/installation/plugins.html#/hippo:configuration/hippo:frontend/cms/cms-static/logoutPlugin">/hippo:configuration/hippo:frontend/cms/cms-static/logoutPlugin</a>
             </td>
             <td>Hippo Forge plugins</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/tour.html#A_CMS_contributor_writes_documents_and/or_adds_images_and/or_assets_&#10;____To_get_introduced_to_the_role_of_CMS_Contributor,_take_the_following_tour_">A CMS contributor writes documents and/or adds images and/or assets.
-    To get introduced to the role of CMS Contributor, take the following tour.</a>
-            </td>
-            <td>Hippo CMS Contributor Tour</td>
           </tr>
           <tr>
             <td>
@@ -352,7 +355,7 @@ repository itself.
             <td>
               <a href="../delve_into/user/cms_admins/howto/login.html#Alternative">Alternative</a>
             </td>
-            <td>Howto: Login as Admin</td>
+            <td>Howto: Login as Administrator</td>
           </tr>
           <tr>
             <td>
@@ -424,7 +427,7 @@ repository itself.
             <td>
               <a href="../delve_into/user/contributors/concepts/contributor.html#Alternative">Alternative</a>
             </td>
-            <td>Concept: Contributor</td>
+            <td>Concept: Author</td>
           </tr>
           <tr>
             <td>
@@ -634,7 +637,7 @@ repository itself.
             <td>
               <a href="../delve_into/user/contributors/howto/login.html#Alternative">Alternative</a>
             </td>
-            <td>Howto: Login as Contributor</td>
+            <td>Howto: Login as author</td>
           </tr>
           <tr>
             <td>
@@ -1142,6 +1145,18 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/user/contributors/concepts/contributor.html#Author">Author</a>
+            </td>
+            <td>Concept: Author</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/user/contributors/index.html#Authors_Guide">Authors Guide</a>
+            </td>
+            <td>Welcome: Authors Guide</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/reference/frontend/frontend_plugin_communication.html#Available_Services">Available Services</a>
             </td>
             <td>Frontend Plugin Communication</td>
@@ -1280,9 +1295,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/index.html#CMS_Admin_Guide">CMS Admin Guide</a>
+              <a href="../delve_into/user/cms_admins/index.html#CMS_Administrator_Guide">CMS Administrator Guide</a>
             </td>
-            <td>Welcome: CMS Admin Guide</td>
+            <td>Welcome: CMS Administrator Guide</td>
           </tr>
           <tr>
             <td>
@@ -1482,18 +1497,6 @@ repository itself.
               <a href="../support/contributing.html#Contributing">Contributing</a>
             </td>
             <td>Contributing</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/contributor.html#Contributor">Contributor</a>
-            </td>
-            <td>Concept: Contributor</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/index.html#Contributors_Guide">Contributors Guide</a>
-            </td>
-            <td>Welcome: Contributors Guide</td>
           </tr>
           <tr>
             <td>
@@ -1737,12 +1740,6 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/debugging.html#Debugging">Debugging</a>
-            </td>
-            <td>Debugging</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/custom/howto/customize_editing_template.html#Define_the_layout">Define the layout</a>
             </td>
             <td>Howto: Customize an Editing Template</td>
@@ -1809,7 +1806,7 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat">Deploying in Tomcat</a>
+              <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat_5_5_or_6">Deploying in Tomcat 5.5 or 6</a>
             </td>
             <td>in Servlet Container</td>
           </tr>
@@ -2297,7 +2294,7 @@ repository itself.
             <td>
               <a href="../delve_into/user/contributors/tour.html#Fill_marked-up_text_screenshot">Fill marked-up text screenshot</a>
             </td>
-            <td>Hippo CMS Contributor Tour</td>
+            <td>Hippo CMS Authors Tour</td>
           </tr>
           <tr>
             <td>
@@ -2463,9 +2460,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/index.html#General_introduction_for_contributors">General introduction for contributors</a>
+              <a href="../delve_into/user/contributors/index.html#General_introduction_for_authors">General introduction for authors</a>
             </td>
-            <td>Welcome: Contributors Guide</td>
+            <td>Welcome: Authors Guide</td>
           </tr>
           <tr>
             <td>
@@ -2656,15 +2653,15 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/index.html#Guide_for_Hippo_CMS_users_to_perform_the_role_of_CMS_admin">Guide for Hippo CMS users to perform the role of CMS admin</a>
+              <a href="../delve_into/user/contributors/index.html#Guide_for_Hippo_CMS_users_to_perform_the_role_of_author_">Guide for Hippo CMS users to perform the role of author.</a>
             </td>
-            <td>Welcome: CMS Admin Guide</td>
+            <td>Welcome: Authors Guide</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/index.html#Guide_for_Hippo_CMS_users_to_perform_the_role_of_contributor_">Guide for Hippo CMS users to perform the role of contributor.</a>
+              <a href="../delve_into/user/cms_admins/index.html#Guide_for_Hippo_CMS_users_to_perform_the_role_of_CMS_administrator_">Guide for Hippo CMS users to perform the role of CMS administrator.</a>
             </td>
-            <td>Welcome: Contributors Guide</td>
+            <td>Welcome: CMS Administrator Guide</td>
           </tr>
           <tr>
             <td>
@@ -2758,15 +2755,15 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/tour.html#Hippo_CMS_Admin_Tour">Hippo CMS Admin Tour</a>
+              <a href="../delve_into/user/cms_admins/tour.html#Hippo_CMS_Administrator_Tour">Hippo CMS Administrator Tour</a>
             </td>
-            <td>Hippo CMS Admin Tour</td>
+            <td>Hippo CMS Administrator Tour</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/tour.html#Hippo_CMS_Contributor_Tour">Hippo CMS Contributor Tour</a>
+              <a href="../delve_into/user/contributors/tour.html#Hippo_CMS_Authors_Tour">Hippo CMS Authors Tour</a>
             </td>
-            <td>Hippo CMS Contributor Tour</td>
+            <td>Hippo CMS Authors Tour</td>
           </tr>
           <tr>
             <td>
@@ -2796,13 +2793,13 @@ repository itself.
             <td>
               <a href="../delve_into/user/cms_admins/howto/login.html#Hippo_login_screenshot">Hippo login screenshot</a>
             </td>
-            <td>Howto: Login as Admin</td>
+            <td>Howto: Login as Administrator</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/contributors/howto/login.html#Hippo_login_screenshot">Hippo login screenshot</a>
             </td>
-            <td>Howto: Login as Contributor</td>
+            <td>Howto: Login as author</td>
           </tr>
           <tr>
             <td>
@@ -3056,7 +3053,7 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/editors/howto/create_folder.html#How_to_create_a_folder_for_contributors_to_put_content_in_">How to create a folder for contributors to put content in.</a>
+              <a href="../delve_into/user/editors/howto/create_folder.html#How_to_create_a_folder_for_authors_to_put_content_in_">How to create a folder for authors to put content in.</a>
             </td>
             <td>Howto: Create Folder</td>
           </tr>
@@ -3266,14 +3263,14 @@ repository itself.
             <td>
               <a href="../delve_into/user/cms_admins/howto/login.html#How_to_login_to_Hippo_CMS_as_administrator_">How to login to Hippo CMS as administrator.</a>
             </td>
-            <td>Howto: Login as Admin</td>
+            <td>Howto: Login as Administrator</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/login.html#How_to_login_to_Hippo_CMS_as_contributor_&#10;______of_documents,_images_and/or_files_">How to login to Hippo CMS as contributor 
+              <a href="../delve_into/user/contributors/howto/login.html#How_to_login_to_Hippo_CMS_as_author_&#10;______of_documents,_images_and/or_files_">How to login to Hippo CMS as author 
       of documents, images and/or files.</a>
             </td>
-            <td>Howto: Login as Contributor</td>
+            <td>Howto: Login as author</td>
           </tr>
           <tr>
             <td>
@@ -3632,6 +3629,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#java_lang_IllegalStateException:___infinite_loop">java.lang.IllegalStateException:...infinite loop</a>
+            </td>
+            <td>Help startup in Servlet Container</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#JBoss">JBoss</a>
             </td>
             <td>in Application Server</td>
@@ -3671,6 +3674,12 @@ repository itself.
               <a href="../delve_into/core/building/eclipse.html#Keeping_up">Keeping up</a>
             </td>
             <td>Developing Hippo CMS with Eclipse</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/debugging.html#Known_issues">Known issues</a>
+            </td>
+            <td>Known issues</td>
           </tr>
           <tr>
             <td>
@@ -3734,15 +3743,15 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/howto/login.html#Login_as_Admin">Login as Admin</a>
+              <a href="../delve_into/user/cms_admins/howto/login.html#Login_as_Administrator">Login as Administrator</a>
             </td>
-            <td>Howto: Login as Admin</td>
+            <td>Howto: Login as Administrator</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/howto/login.html#Login_as_Contributor">Login as Contributor</a>
+              <a href="../delve_into/user/contributors/howto/login.html#Login_as_author">Login as author</a>
             </td>
-            <td>Howto: Login as Contributor</td>
+            <td>Howto: Login as author</td>
           </tr>
           <tr>
             <td>
@@ -4060,7 +4069,7 @@ repository itself.
             <td>
               <a href="../delve_into/user/cms_admins/howto/login.html#Next">Next</a>
             </td>
-            <td>Howto: Login as Admin</td>
+            <td>Howto: Login as Administrator</td>
           </tr>
           <tr>
             <td>
@@ -4126,7 +4135,7 @@ repository itself.
             <td>
               <a href="../delve_into/user/contributors/concepts/contributor.html#Next">Next</a>
             </td>
-            <td>Concept: Contributor</td>
+            <td>Concept: Author</td>
           </tr>
           <tr>
             <td>
@@ -4324,7 +4333,7 @@ repository itself.
             <td>
               <a href="../delve_into/user/contributors/howto/login.html#Next">Next</a>
             </td>
-            <td>Howto: Login as Contributor</td>
+            <td>Howto: Login as author</td>
           </tr>
           <tr>
             <td>
@@ -4798,7 +4807,7 @@ repository itself.
             <td>
               <a href="../delve_into/sysadmin/debugging.html#Packet_for_query_is_too_large_(4729208_&gt;_1048576)">Packet for query is too large (4729208 &gt; 1048576)</a>
             </td>
-            <td>Debugging</td>
+            <td>Known issues</td>
           </tr>
           <tr>
             <td>
@@ -5581,7 +5590,7 @@ repository itself.
               <a href="../delve_into/user/cms_admins/tour.html#To_get_introduced_to_the_role_of_CMS_administrator,&#10;____take_the_following_tour_">To get introduced to the role of CMS administrator,
     take the following tour.</a>
             </td>
-            <td>Hippo CMS Admin Tour</td>
+            <td>Hippo CMS Administrator Tour</td>
           </tr>
           <tr>
             <td>
@@ -5844,9 +5853,9 @@ repository itself.
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/contributor.html#What_does_it_mean_to_be_a_CMS_contributor_">What does it mean to be a CMS contributor?</a>
+              <a href="../delve_into/user/contributors/concepts/contributor.html#What_does_it_mean_to_be_a_CMS_author_">What does it mean to be a CMS author?</a>
             </td>
-            <td>Concept: Contributor</td>
+            <td>Concept: Author</td>
           </tr>
           <tr>
             <td>
@@ -6056,7 +6065,7 @@ repository itself.
             <td>
               <a href="../delve_into/sysadmin/debugging.html#What_to_do_in_case_of_errors_">What to do in case of errors?</a>
             </td>
-            <td>Debugging</td>
+            <td>Known issues</td>
           </tr>
           <tr>
             <td>
@@ -6105,7 +6114,7 @@ repository itself.
             <td>
               <a href="../delve_into/sysadmin/debugging.html#Workflow_error:_Can_not_insert_new_record:">Workflow error: Can not insert new record:</a>
             </td>
-            <td>Debugging</td>
+            <td>Known issues</td>
           </tr>
           <tr>
             <td>

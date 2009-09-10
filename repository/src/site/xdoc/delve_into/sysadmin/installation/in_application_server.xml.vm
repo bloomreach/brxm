@@ -65,7 +65,7 @@ http://localhost:4848/
     <p>
       Login using the username and password of the administrator you had selected during
       installation (default username is <code>admin</code> and default password is
-      <code>adminadmin</code>.
+      <code>adminadmin</code> or <code>admin</code>.
     </p>
     <p>
      Select in the left pane &quot;Enterprise applications&quot;

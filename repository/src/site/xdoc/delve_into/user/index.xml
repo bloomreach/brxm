@@ -31,19 +31,19 @@ ________________________________________________________________________________
 
     <p>Hippo CMS allows to define which role(s) a user may perform.
        In day to day usage,
-       <a href="./contributors/index.html">contributors</a>
+       <a href="./contributors/index.html">authors</a>
        write and add content,
        and <a href="./editors/index.html">editors</a>
        decide about publishing
        the content.
-       The contributors write documents that each are of a certain
+       The authors write documents that each are of a certain
        <a href="./contributors/concepts/document_type.html">document type</a>.
        The document type specifies what kind of information the document should provide.
        The document types are a kind of business rules and are
        composed by <a href="./information_architects/index.html">information architects</a>,
        generally before any meaningful documents
        are written.
-       All users, contributors, editors and information architects have to
+       All users, authors, editors and information architects have to
        get an account from a
        <a href="./cms_admins/index.html">CMS administrator</a>.
        Unlike the other users, CMS administrators
@@ -68,11 +68,11 @@ ________________________________________________________________________________
 <table>
   <tr>
     <td>
-      <a href="./contributors/index.html">Guide for Contributors (Authors)</a>
+      <a href="./contributors/index.html">Guide for Authors</a>
     </td>
     <td>Guide for Hippo CMS users to perform the role
-        of <a href='./contributors/concepts/contributor.html'>contributor</a>.
-        (often called author but in addition to writing, he may also
+        of <a href='./contributors/concepts/contributor.html'>author</a>.
+        (also called contributor, because in addition to writing, he may also
         supply images and other files.)</td>
   </tr>
   <tr>
@@ -93,10 +93,10 @@ ________________________________________________________________________________
   </tr>
   <tr>
     <td>
-      <a href="./cms_admins/index.html">Guide for CMS admins</a>
+      <a href="./cms_admins/index.html">Guide for CMS administrators</a>
     </td>
     <td>Guide for Hippo CMS users to perform the role of CMS administrator (assigns rights to
-        contributors, editors and information architects according to management decisions).</td>
+        authors, editors and information architects according to management decisions).</td>
   </tr>
 </table>
 

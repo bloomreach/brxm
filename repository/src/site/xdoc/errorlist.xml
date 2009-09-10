@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">393 errors and/or todos in 241 out of 241 documents (100%).</span>
+      <span class="shortdesc">395 errors and/or todos in 241 out of 241 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -419,7 +419,7 @@ repository is;
             <ul>
               <li>
                         and leave the new version very small,
-                        mainly refering to the necessary admin documents.
+                        mainly refering to the necessary administrator documents.
  </li>
             </ul>
           </li>
@@ -660,6 +660,8 @@ repository is;
             <a href="./delve_into/user/editors/howto/count_published.html">count_published: Count published documents</a>
             <ul>
               <li>) a count is presented of all documents in the folder tree that are<span xmlns="" class="bad"> current </span>ly published.</li>
+              <li>The document artificial intelligence is<span xmlns="" class="bad"> current </span>ly published, so this document is counted.</li>
+              <li>The document panflute is<span xmlns="" class="bad"> current </span>ly published, so it is counted. A newer variant exists, but that makes no difference.</li>
               <li>The document multibazaar2009 is<span xmlns="" class="bad"> current </span>ly published, so it is counted. The document is being edited, but that makes no difference.</li>
             </ul>
           </li>

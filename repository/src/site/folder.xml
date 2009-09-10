@@ -258,7 +258,7 @@
    <folder>sysadmin
 <info>
  <title>System Administration Guide</title>
- <shortdesc>What does a sysadmin need to know and do for Hippo CMS?</shortdesc>
+ <shortdesc>What does a system administrator need to know and do for Hippo CMS?</shortdesc>
  <introduction>
   These pages describe how to get Hippo ECM up and running and how to configure your running application.
  </introduction>
@@ -273,7 +273,7 @@
     <folder>configuration
 <info>
  <title>Configuration</title>             <!-- string -->
- <shortdesc>What does a sysadmin have to configure in Hippo CMS?</shortdesc>     <!-- string -->
+ <shortdesc>What does a system administrator have to configure in Hippo CMS?</shortdesc>     <!-- string -->
  <introduction>              <!-- tree -->
      <span class='review'>Whole folder, and rewrite if necessary.</span>
  </introduction>
@@ -361,6 +361,10 @@
   >debugging</file>
     <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/sysadmin/index.xml'
+   relpath='delve_into/sysadmin'
+  >index</file>
+    <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/sysadmin/index.xml~'
    relpath='delve_into/sysadmin'
   >index</file>
     <folder>installation
@@ -458,6 +462,10 @@
   >index</file>
      <file ext='xml.vm' mimetype='application/xml' valid='yes'
    fullname='delve_into/sysadmin/installation/in_servlet_container.xml.vm'
+   relpath='delve_into/sysadmin/installation'
+  >in_servlet_container</file>
+     <file ext='xml.vm~' mimetype='application/xml'
+   fullname='delve_into/sysadmin/installation/in_servlet_container.xml.vm~'
    relpath='delve_into/sysadmin/installation'
   >in_servlet_container</file>
      <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
@@ -558,7 +566,7 @@
     <folder>cms_admins
      <folder>concepts
 <info>
- <title>CMS Admins Concepts</title>
+ <title>CMS Administrator Concepts</title>
  <shortdesc>A collection of concepts a CMS administrators may want to know.</shortdesc>
  <afterlist>  
   <subsection name='Alternative'>
@@ -579,8 +587,8 @@
      </folder>
      <folder>howto
 <info>
- <title>CMS admin Howto</title>
- <shortdesc>A collection of howto's for small tasks a CMS admin may want to do.</shortdesc>
+ <title>CMS administrator Howto</title>
+ <shortdesc>A collection of howto's for small tasks a CMS administrator may want to do.</shortdesc>
  <afterlist>
   <subsection name='Alternative'>
      <p>
@@ -676,8 +684,8 @@
     <folder>contributors
      <folder>concepts
 <info>
- <title>CMS Contributor Concepts</title>
- <shortdesc>A collection of concepts a CMS contributor may want to know.</shortdesc>
+ <title>CMS Author Concepts</title>
+ <shortdesc>A collection of concepts a CMS author may want to know.</shortdesc>
  <afterlist>  
   <subsection name='Alternative'>
      <p>
@@ -762,10 +770,6 @@
    fullname='delve_into/user/contributors/concepts/review_mode.xml'
    relpath='delve_into/user/contributors/concepts'
   >review_mode</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/contributors/concepts/review_mode.xml~'
-   relpath='delve_into/user/contributors/concepts'
-  >review_mode</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/concepts/slider.xml'
    relpath='delve_into/user/contributors/concepts'
@@ -793,8 +797,8 @@
      </folder>
      <folder>howto
 <info>
- <title>CMS Contributor Howto</title>
- <shortdesc>A collection of howto's for small tasks a contributor may want to do.</shortdesc>
+ <title>CMS Author Howto</title>
+ <shortdesc>A collection of howto's for small tasks an author may want to do.</shortdesc>
  <afterlist>  
   <subsection name='Alternative'>
      <p>
@@ -881,10 +885,6 @@
   >set_edit_mode</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/contributors/howto/show_referring_documents.xml'
-   relpath='delve_into/user/contributors/howto'
-  >show_referring_documents</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/contributors/howto/show_referring_documents.xml~'
    relpath='delve_into/user/contributors/howto'
   >show_referring_documents</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
@@ -1003,10 +1003,6 @@
    fullname='delve_into/user/editors/howto/referring_documents.xml'
    relpath='delve_into/user/editors/howto'
   >referring_documents</file>
-      <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/editors/howto/referring_documents.xml~'
-   relpath='delve_into/user/editors/howto'
-  >referring_documents</file>
       <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/editors/howto/start_CMS.xml'
    relpath='delve_into/user/editors/howto'
@@ -1033,6 +1029,10 @@
     </folder>
     <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/index.xml'
+   relpath='delve_into/user'
+  >index</file>
+    <file ext='xml~' mimetype='application/xml'
+   fullname='delve_into/user/index.xml~'
    relpath='delve_into/user'
   >index</file>
     <folder>information_architects

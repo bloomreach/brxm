@@ -27,10 +27,10 @@
 
           <p>In Hippo CMS, any request is an act of asking someone to perform an action.
              The most common request in Hippo is to request for a document to be published.
-             This is a request from a contributor to an editor. The action that is requested of the editor  
+             This is a request from an author to an editor. The action that is requested of the editor  
              is reviewing the document and pressing a button
              indicating that the document is to be published. Of course, the editor could also decide to
-             deny the request. In Hippo CMS contributors have no button to indicate that a document should
+             deny the request. In Hippo CMS authors have no button to indicate that a document should
              be published, only that it is ready to be published. 
           </p>
 

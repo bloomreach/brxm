@@ -30,31 +30,10 @@
     <section name="Maven">
       <span class="shortdesc">How to use maven for Hippo projects.</span>
       <table>
-        <tr>
-          <td>
-            <a href="./basics.html">Maven basics</a>
-          </td>
-          <td>Learn to basics of maven: pom.xml and mvn clean install.</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./install_maven.html">Install Maven</a>
-          </td>
-          <td>Howto install Maven.</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./learning_maven.html">Tips and tricks</a>
-          </td>
-          <td>Some handy notes about using maven for Hippo projects.</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="./run_development_package.html">Run a development package</a>
-          </td>
-          <td>How to build the package of a project and run it, all on the fly?</td>
-        </tr>
-      </table>
+<tr><td><a href="./basics.html">Maven basics</a></td><td>Learn to basics of maven: pom.xml and mvn clean install.</td></tr>
+<tr><td><a href="./install_maven.html">Install Maven</a></td><td>Howto install Maven.</td></tr>
+<tr><td><a href="./learning_maven.html">Tips and tricks</a></td><td>Some handy notes about using maven for Hippo projects.</td></tr>
+<tr><td><a href="./run_development_package.html">Run a development package</a></td><td>How to build the package of a project and run it, all on the fly?</td></tr></table>
     </section>
   </body>
 </document>

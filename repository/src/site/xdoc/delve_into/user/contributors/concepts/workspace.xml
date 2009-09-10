@@ -54,7 +54,7 @@ ________________________________________________________________________________
     </p>
     <p>
        It would also not be desirable to fit all in a single window (at once), 
-       because e.g. <span href='contributor'>contributors</span> are not supposed to do user administration,
+       because e.g. <span href='contributor'>authors</span> are not supposed to do user administration,
        so need not be bothered with buttons and panels for that.
     </p>
     <p>
@@ -62,7 +62,7 @@ ________________________________________________________________________________
        for a particular kind of work.
     </p>
     <p>
-       A contributor can use the <a href='./content_workspace.html'>content workspace</a>
+       An author can use the <a href='./content_workspace.html'>content workspace</a>
        and the <a href='./home_workspace.html'>home workspace</a>.
     </p>
 
