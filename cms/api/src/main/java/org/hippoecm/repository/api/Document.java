@@ -18,11 +18,14 @@ package org.hippoecm.repository.api;
 import java.io.Serializable;
 
 /**
- * A Java object representing a document in a JCR repository.  Workflows returning specific implementation of a document object will
- * notice that the caller of the workflow gets only a simple Document object back, however though the DocumentManager, more complex
- * Document based objects may be obtained.  The Document as returned by workflow calls are only usefull in subseqent calls to the
- * workflowmanager to return a new workflow, or from a document the getIdentity() method may be used to obtain the UUID of the
- * javax.jcr.Node representing the document.
+ * A plain old Java object representing a document in a JCR repository.
+ * See {@link DocumentManager} on how to obtain a document instance.
+ * </p>
+ * Workflows returning specific implementation of a document
+ * object will notice that the caller of the workflow gets only a simple Document object back, however through the
+ * DocumentManager more complex Document based objects may be obtained.  The Document as returned by workflow calls
+ * are only useful in subseqent calls to the workflowmanager to return a new workflow, or from a document the
+ * getIdentity() method may be used to obtain the UUID of the javax.jcr.Node representing the document.
  * @author (Berry) A.W. van Halderen
  */
 public class Document implements Serializable, Cloneable {
@@ -33,7 +36,8 @@ public class Document implements Serializable, Cloneable {
     private String identity = null;
 
     /** 
-     * Constructor that should be considered protected rather than public, and may be used for extending classes to create a new Document.
+     * Constructor that should be considered protected rather than public and may be used for extending classes to
+     * create a new Document.
      */
     public Document() {
     }
@@ -47,10 +51,10 @@ public class Document implements Serializable, Cloneable {
     }
 
     /**
-     * Clone a document object, which is useful to create a new copy of a repository-backed document including all its contents from
-     * the repository, rather than just the information currently mapped to the Document object.
+     * Clone a document object, which is useful to create a new copy of a repository-backed document including all its
+     * contents from the repository, rather than just the information currently mapped to the Document object.
      * @return the cloned Document object
-     * @throws java.lang.CloneNotSupportedException is never really cloned
+     * @throws java.lang.CloneNotSupportedException if never really cloned
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
