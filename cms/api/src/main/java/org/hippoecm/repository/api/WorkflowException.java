@@ -15,15 +15,28 @@
  */
 package org.hippoecm.repository.api;
 
+/**
+ * An WorkflowException is thrown when a workflow implementation disallows the workflow step to be taken for some reason. 
+ * @author (Berry) A.W. van Halderen
+ */
 public class WorkflowException extends Exception
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    /**
+     * Constructs a new workflow exception with the specified detail message and without initialized cause
+     * @param message  the detail message, for later retrieval though getMessage()
+     */
     public WorkflowException(String message) {
         super(message);
     }
 
+    /**
+     * Constructs a new workflow exception with the specified detail message and cause
+     * @param message the detail message, for later retrieval though getMessage()
+     * @param reason the cause (A null value is permitted, and indicates that the cause is nonexistent or unknown)
+     */
     public WorkflowException(String message, Exception reason) {
         super(message, reason);
     }

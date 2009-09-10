@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,30 @@ import javax.naming.NamingException;
 
 import javax.jcr.RepositoryException;
 
+/**
+ * The HippoRepositoryFactory class is a factory class for obtaining a reference to a Hippo Repository 2.
+ * Typical usage is to use:
+ * <pre>
+ * HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
+ * </pre>
+ * Which should get the default repository, configured from an external source using the default transport mechanism.
+ * 
+ * If you need to contact a specific instance of a repository, you can use:
+ * <pre>
+ * HippoRepository repository = HippoRepository.getHippoRepository(url);
+ * </pre>
+ * Where the url parameter is a string containing the location or address of the repository.  This url can take different
+ * forms to indicate the location (filesystem or hostname) and the transportation mechanism to use.  Typically you
+ * would use <code>rmi://hostname/hipporepository</code> to contact the indicated hostname using RMI transport mechanism
+ * where a named service hipporepository is the Hippo repository.  A more efficient version of the RMI transport mechanism can
+ * be used by appending <code>/spi</code> to this RMI based protocol address.  To start a new local repository, you can use the location
+ * string <code>file:/absolute/filesystem/path</code>.
+ * *
+ * The returned Repository is a JCR-based repository, but is not directly of the class javax.jcr.Repository to allow some
+ * additional operations.
+ * 
+ * @author (Berry) A.W. van Halderen
+ */
 public class HippoRepositoryFactory {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -33,6 +57,10 @@ public class HippoRepositoryFactory {
     private static String defaultLocation = null; // FIXME: should become: "java:comp/env/jcr/repository";
     private static HippoRepository defaultRepository = null;
 
+    /**
+     * Sets the default location (url) to use when obtaining a repository through subsequent static getHippoRepository() method calls.
+     * @param location the new location to use as default location for future calls to getHippoRepository()
+     */
     public static void setDefaultRepository(String location) {
         if(location == null || !location.equals(defaultLocation)) {
             defaultLocation = location;
@@ -40,6 +68,10 @@ public class HippoRepositoryFactory {
         }
     }
 
+    /**
+     * Sets the default repository to return when obtaining a repository through subsequent calls to the static getHippoRepository() method.
+     * @param repository the repository to be returned for getHippoRepository() method calls
+     */
     public static void setDefaultRepository(HippoRepository repository) {
         defaultLocation = null;
         defaultRepository = repository;
@@ -48,6 +80,11 @@ public class HippoRepositoryFactory {
     private HippoRepositoryFactory() {
     }
 
+    /**
+     * Obtains a new connection or instance (depending on protocol used) to the default HippoRepository.
+     * @return the current default repository
+     * @throws javax.jcr.RepositoryException
+     */
     public static HippoRepository getHippoRepository() throws RepositoryException {
         if (defaultRepository != null) {
             return defaultRepository;
@@ -67,6 +104,12 @@ public class HippoRepositoryFactory {
         return defaultRepository;
     }
 
+    /**
+     * Obtains a new connection or instance (depending on protocol used) for a specific indicated repository.
+     * @param location the specific location to use for the repository
+     * @return a connection or instance to the indicated HippoRepository
+     * @throws javax.jcr.RepositoryException
+     */
     public static HippoRepository getHippoRepository(String location) throws RepositoryException {
         HippoRepository repository = null;
 
@@ -189,7 +232,7 @@ public class HippoRepositoryFactory {
                 }
             }
         }
-        
+
         // embedded/local with location
         try {
             repository = (HippoRepository) Class.forName("org.hippoecm.repository.LocalHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });

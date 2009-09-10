@@ -21,6 +21,10 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
+/**
+ * Any javax.jcr.Node instance returned by any method of a Hippo Repostitory may be cast to the HippoNode interface to expose additional functionality.
+ * @author (Berry) A.W. van Halderen
+ */
 public interface HippoNode extends Node {
     final static String SVN_ID = "$Id$";
 
@@ -51,7 +55,9 @@ public interface HippoNode extends Node {
      * on the most complete version of a node, rather then on any presentation
      * of the node.
      *
-     * @returns the node with the most accurate representation of this node.
+     * @throws RepositoryException indicates a generic unspecified repository error
+     * @return the node with the most accurate representation of this node, may be bull if
+     * there is no sensible canonical version available
      */
     public Node getCanonicalNode() throws RepositoryException;
 
@@ -69,8 +75,11 @@ public interface HippoNode extends Node {
      * @param prune Wheter only to return the first matching modified node in
      *              a subtree (true), or provide a depth search for all modified
      *              nodes (false)
-     * @returns A NodeIterator instance which iterates over all modified
-     *          nodes, not including this node
+     * @throws NamespaceException indicates an invalid nodeType parameter
+     * @throws NoSuchNodeTypeException indicates an invalid nodeType parameter
+     * @throws RepositoryException indicates a generic unspecified repository error
+     * @return A NodeIterator instance which iterates over all modified
+     *         nodes, not including this node
      * @see Session.pendingChanges(Node,String,boolean)
      */
     public NodeIterator pendingChanges(String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException,
@@ -80,7 +89,10 @@ public interface HippoNode extends Node {
      *
      * @param nodeType Only nodes that are (derived) of this nodeType are
      *                 included in the result
-     * @returns A NodeIterator instance which iterates over all modified
+     * @throws NamespaceException indicates an invalid nodeType parameter
+     * @throws RepositoryException indicates a generic unspecified repository error
+     * @throws NoSuchNodeTypeException indicates an invalid nodeType parameter
+     * @return A NodeIterator instance which iterates over all modified
      *          nodes, not including the passed node
      * @see pendingChanges(String,boolean)
      */
@@ -88,7 +100,8 @@ public interface HippoNode extends Node {
 
     /** Conveniance method for <code>pendingChanges("nt:base", false)</code>
      *
-     * @returns A NodeIterator instance which iterates over all modified
+     * @throws RepositoryException indicates a generic unspecified repository error
+     * @return A NodeIterator instance which iterates over all modified
      *          nodes, not including the passed node
      * @see pendingChanges(String,boolean)
      */

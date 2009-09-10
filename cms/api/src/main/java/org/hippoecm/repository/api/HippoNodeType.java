@@ -24,7 +24,6 @@ package org.hippoecm.repository.api;
  * This interface defines the node types and item names that are in use by
  * the Hippo repository build on top of JCR.
  */
-
 public interface HippoNodeType {
     final static String SVN_ID = "$Id$";
 

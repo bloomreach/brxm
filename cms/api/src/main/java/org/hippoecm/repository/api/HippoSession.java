@@ -32,9 +32,21 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
+/**
+ * An extension of a plain javax.jcr.Session based session.  Any session as obtained from the Hippo Repository 2 can be cased to
+ * a HippoSession allowing access to the extensions.
+ * @author (Berry) A.W. van Halderen
+ */
 public interface HippoSession extends Session {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * Copy performs an in-session deep copy of the indicated node to the target destination path and returns a Node 
+     * @param original
+     * @param absPath
+     * @return
+     * @throws javax.jcr.RepositoryException
+     */
     public Node copy(Node original, String absPath) throws RepositoryException;
 
     /**
@@ -47,27 +59,33 @@ public interface HippoSession extends Session {
      * included.
      *
      * @param node The starting node for which to look for changes, will not
-     *             be included in result
+     *             be included in result, may be null to indicate to search whole tree
      * @param nodeType Only nodes that are (derived) of this nodeType are
-     *                 included in the result
+     *                 included in the result, may be null to indicate no filtering on nodeType
      * @param prune Wheter only to return the first matching modified node in
      *              a subtree (true), or provide a depth search for all modified
      *              nodes (false)
-     * @returns A NodeIterator instance which iterates over all modified
-     *          nodes, not including the passed node
+     * @throws NamespaceException an invalid nodeType was passed
+     * @throws RepositoryException a generic error while accessing the repository
+     * @throws NoSuchNodeTypeException an invalid nodeType was passed
+     * @return A NodeIterator instance which iterates over all modified
+     *         nodes, not including the passed node
      */
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
                                                                            NoSuchNodeTypeException, RepositoryException;
 
     /** Conveniance method for
-     * <code>pendingChanges(Session.getRootNode(),nodeType,false)</code>
+     * <code>pendingChanges(node,nodeType,false)</code>
      *
      * @param node The starting node for which to look for changes, will not
-     *             be included in result
+     *             be included in result, may be null to indicate to search whole tree
      * @param nodeType Only nodes that are (derived) of this nodeType are
-     *                 included in the result
-     * @returns A NodeIterator instance which iterates over all modified
-     *          nodes, not including the passed node
+     *                 included in the result, may be null to indicate no filtering on nodeType
+     * @throws NamespaceException an invalid nodeType was passed
+     * @throws RepositoryException a generic error while accessing the repository
+     * @throws NoSuchNodeTypeException an invalid nodeType was passed
+     * @return A NodeIterator instance which iterates over all modified
+     *         nodes, not including the passed node
      * @see pendingChanges(Node,String,boolean)
      */
     public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException,
@@ -78,22 +96,11 @@ public interface HippoSession extends Session {
      * <code>pendingChanges(Session.getRootNode(), "nt:base", false)</code> however
      * will also return the root node if modified.
      *
-     * @returns A NodeIterator instance which iterates over all modified nodes, including the root
+     * @return A NodeIterator instance which iterates over all modified nodes, including the root
+     * @throws RepositoryException 
      * @see pendingChanges(Node,String,boolean)
      */
     public NodeIterator pendingChanges() throws RepositoryException;
-
-    /**
-     * DO NOT USE: api of this method has not yet stabilized!
-     * Export a dereferenced view of a node. Node references will be rewritten to
-     * absolute paths and some auto generated properties will be stripped, such as
-     * versioning properties and hippo:paths. In every other way the method is
-     * similar to <link>avax.jcr.Session.exportSystemView</link>.
-     * @see org.hippoecm.repository.jackrabbit.xml.HippoSysViewSAXEventGenerator
-     * @see javax.jcr.Session.exportSystemView(String,ContentHandler,boolean,boolean)
-     */
-//    public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink,
-//            boolean noRecurse) throws PathNotFoundException, SAXException, RepositoryException;
 
     /**
      * DO NOT USE: api of this method has not yet stabilized!
@@ -117,18 +124,6 @@ public interface HippoSession extends Session {
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException;
-
-    /**
-     * DO NOT USE: api of this method has not yet stabilized!
-     * Get the content handler for a dereferenced export
-     * @see importDerereferencedXML(String,InputStream,int,int)
-     * @see javax.jcr.Session.importXML(String,ContentHandler,boolean)
-     * @see org.hippoecm.repository.api.ImportReferenceBehavior
-     * @see org.hippoecm.repository.api.ImportMergeBehavior
-     */
-//    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
-//            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
-//            VersionException, LockException, RepositoryException;
 
     /**
      * FIXME WARNING this call is not yet part of the API.
