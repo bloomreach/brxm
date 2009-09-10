@@ -27,12 +27,12 @@ import javax.naming.NamingException;
 import javax.jcr.RepositoryException;
 
 /**
- * The HippoRepositoryFactory class is a factory class for obtaining a reference to a Hippo Repository 2.
- * Typical usage is to use:
+ * The HippoRepositoryFactory class is a factory class for obtaining a reference to a Hippo Repository connection.
+ * Typical usage is:
  * <pre>
  * HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
  * </pre>
- * Which should get the default repository, configured from an external source using the default transport mechanism.
+ * Which should return the default repository, configured from an external source using the default transport mechanism.
  * 
  * If you need to contact a specific instance of a repository, you can use:
  * <pre>
@@ -42,11 +42,11 @@ import javax.jcr.RepositoryException;
  * forms to indicate the location (filesystem or hostname) and the transportation mechanism to use.  Typically you
  * would use <code>rmi://hostname/hipporepository</code> to contact the indicated hostname using RMI transport mechanism
  * where a named service hipporepository is the Hippo repository.  A more efficient version of the RMI transport mechanism can
- * be used by appending <code>/spi</code> to this RMI based protocol address.  To start a new local repository, you can use the location
- * string <code>file:/absolute/filesystem/path</code>.
+ * be used by appending <code>/spi</code> to this RMI based protocol address.  To start a new local repository, you can
+ * use the location string <code>file:/absolute/filesystem/path</code>.
  * *
- * The returned Repository is a JCR-based repository, but is not directly of the class javax.jcr.Repository to allow some
- * additional operations.
+ * The returned Repository is a JCR-based repository, but is not a direct instance of the class javax.jcr.Repository to
+ * allow some additional operations.
  * 
  * @author (Berry) A.W. van Halderen
  */
@@ -58,7 +58,8 @@ public class HippoRepositoryFactory {
     private static HippoRepository defaultRepository = null;
 
     /**
-     * Sets the default location (url) to use when obtaining a repository through subsequent static getHippoRepository() method calls.
+     * Sets the default location (url) to use when obtaining a repository through subsequent static getHippoRepository()
+     * method calls.
      * @param location the new location to use as default location for future calls to getHippoRepository()
      */
     public static void setDefaultRepository(String location) {
@@ -69,7 +70,8 @@ public class HippoRepositoryFactory {
     }
 
     /**
-     * Sets the default repository to return when obtaining a repository through subsequent calls to the static getHippoRepository() method.
+     * Sets the default repository to return when obtaining a repository through subsequent calls to the static
+     * getHippoRepository() method.
      * @param repository the repository to be returned for getHippoRepository() method calls
      */
     public static void setDefaultRepository(HippoRepository repository) {
@@ -279,6 +281,7 @@ public class HippoRepositoryFactory {
                 return new URL(classResource, new String(sb));
             }
         } catch (MalformedURLException ex) {
+            // ignore
         }
         return null;
     }

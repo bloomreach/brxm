@@ -30,20 +30,21 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.ValueMap;
 
 /**
- * Instances of this class represent a connection to the Repository.  The primary usage is to use credentials to create an
- * authenticated session which can be used to actuall retrieve and store data.  For this usage, some convenience login() methods
- * are accessible though this interface, but these are essentially the same as implemented in the JSR-170 based JCR repository,
- * as would be returned by the method getRepository().  This interface is mainly provided to add some convienience methods,
- * additional functionality and provide a basis for starting transactional access to the repository.
+ * Instances of this class represent a connection to the Repository. This interface is mainly provided to add some
+ * convienience methods, additional functionality and provide a basis for starting transactional access to the
+ * repository. The primary usage is to use create an authenticated session which can be used to retrieve
+ * and store data. For this usage, some convenience login() methods are accessible though this interface, but these
+ * are essentially the same as implemented in the JSR-170 based JCR repository, as would be returned by the method
+ * getRepository(). 
  * @author (Berry) A.W. van Halderen
  */
 public interface HippoRepository {
     final static String SVN_ID = "$Id$";
 
     /**
-     * Creates a new Session for the current user, which might involves opening an anonymous session,
-     * however if a user identity and credentials are available through the application container,
-     * then use JAAS to obtain the credentials.
+     * Creates a new Session for the current user, which might involve opening an anonymous session.
+     * If a user identity and credentials are available through the application container,
+     * then use JAAS to obtain the credentials and use login(SimpleCredentials).
      * @return 
      * @throws LoginException  indicates an authenticaion failure
      * @throws RepositoryException indicates some other failure while authenticating (such as connection error)
@@ -70,13 +71,13 @@ public interface HippoRepository {
     public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException;
 
     /**
-     * Prepares the repository for application shutdown.  When the repository is running locally,
+     * Closes the repository connection. When the repository is running locally,
      * this also involves shutting down the repository.
      */
     public void close();
 
     /**
-     * Get a UserTransaction from the JTA transaction manager through JNDI
+     * Get a UserTransaction from the JTA transaction manager through JNDI.
      * @param session the session for which the transaction support is requested
      * @return a new JTA UserTransaction object
      * @throws RepositoryException generic error such as a connection error
@@ -85,7 +86,7 @@ public interface HippoRepository {
     public UserTransaction getUserTransaction(Session session) throws RepositoryException, NotSupportedException;
 
     /**
-     * Get a UserTransaction from the JTA transaction manager through JNDI
+     * Get a UserTransaction from the JTA transaction manager through JNDI.
      * @param tm the JTA transaction manager to use
      * @param session the JCR session for which to start the transaction
      * @return a new UserTransaction object
@@ -94,8 +95,8 @@ public interface HippoRepository {
     public UserTransaction getUserTransaction(TransactionManager tm, Session session) throws NotSupportedException;
 
     /**
-     * Get the location, where the repository stores information.
-     * @return the url of direct file path which is used to store information by the repository
+     * Get the location where the repository stores information.
+     * @return the url of direct file path which is used to store information by the repository.
      */
     public String getLocation();
 

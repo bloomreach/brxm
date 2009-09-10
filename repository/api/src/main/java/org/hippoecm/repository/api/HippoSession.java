@@ -86,7 +86,7 @@ public interface HippoSession extends Session {
      * @throws NoSuchNodeTypeException an invalid nodeType was passed
      * @return A NodeIterator instance which iterates over all modified
      *         nodes, not including the passed node
-     * @see pendingChanges(Node,String,boolean)
+     * @see #pendingChanges(Node,String,boolean)
      */
     public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException,
                                                                           RepositoryException;
@@ -98,16 +98,18 @@ public interface HippoSession extends Session {
      *
      * @return A NodeIterator instance which iterates over all modified nodes, including the root
      * @throws RepositoryException 
-     * @see pendingChanges(Node,String,boolean)
+     * @see #pendingChanges(Node,String,boolean)
      */
     public NodeIterator pendingChanges() throws RepositoryException;
 
     /**
      * DO NOT USE: api of this method has not yet stabilized!
      * Export a dereferenced view of a node.
-     * @see exportDereferencedView(String,ContentHandler,boolean,boolean)
+     *
+     * TODO: fix see tags
+     * @see #exportDereferencedView(String,ContentHandler,boolean,boolean)
      * @see org.hippoecm.repository.jackrabbit.xml.HippoSysViewSAXEventGenerator
-     * @see javax.jcr.Session.exportSystemView(String,OutputStream,boolean,boolean)
+     * @see javax.jcr.Session#exportSystemView(String,OutputStream,boolean,boolean)
      */
     public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException;
@@ -115,8 +117,8 @@ public interface HippoSession extends Session {
     /**
      * DO NOT USE: api of this method has not yet stabilized!
      * Import a dereferenced export
-     * @see exportDereferencedView(String,ContentHandler,boolean,boolean)
-     * @see javax.jcr.Session.importXML(String,ContentHandler,boolean)
+     * @see #exportDereferencedView(String,OutputStream,boolean,boolean)
+     * @see javax.jcr.Session#importXML(java.lang.String, java.io.InputStream, int)
      * @see org.hippoecm.repository.api.ImportReferenceBehavior
      * @see org.hippoecm.repository.api.ImportMergeBehavior
      */

@@ -20,20 +20,24 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 /**
- * The workflow manager is a service associated with a session which provides access to a workflow associated with a document stored
- * in the repository.  A workflow is some implementation which, when executed performs some transformation on the document.
+ * The workflow manager is a service associated with a jcr session which provides access to a workflow associated with a document stored
+ * in the repository.  A workflow is an implementation that can perform some transformation on the document.
  * This implementation is represented as a Java interface, while the possible workflow steps are methods of this interface.
  * Because multiple workflows may be active, a category is used to uniquely identify a specific workflow.
  * Although a workflow manager is associated with a session, the actual transformation is commonly used by a new session, to obtain
  * higher credentials.
- * The workflow manager is obtained to casting a javax.jcr.Workspace to a HippoWorkspace, where the getWorkflowManager() method
- * returns the workflow manager for the session.  The javax.jcr.Workspace iself is obtained though the javax.jcr.Session.getWorkspace().
+ * TODO: explain how this works. Where do the higher credentiald come from? Is this configuration?
+ *
+ * </p>
+ * The workflow manager is obtained by casting a javax.jcr.Workspace to a HippoWorkspace, where the getWorkflowManager() method
+ * returns the workflow manager for the session.  The javax.jcr.Workspace itself is obtained though the javax.jcr.Session.getWorkspace().
+ * TODO: sample
  * From the workflow manager, you might directly obtain access to a workflow, or obtain a reference (a WorkflowDescriptor) to the
  * workflow, which is a cheaper operation.  This WorkflowDescriptor allows some quering to introspect the workflow available.
  * The workflow descriptor may be used to obtain the actual workflow again from the workflow manager.
  * The methods to obtain either the workflow directy or a descriptor allow you to access a workflow based on a Document object or on
  * a javax.jcr.Node.  In the latter case, the indicated node should be of a hippo:document (or derived) node type or of a hippo:request
- * (or derived) node type.  There are some internal-only exception, such as the root node, but in all cases the node must be
+ * (or derived) node type.  There are some internal-only exceptions, such as the root node, but in all cases the node must be
  * referenceable and contain no pending changes in the current session.
  * @author (Berry) A.W. van Halderen
  */
@@ -87,7 +91,7 @@ public interface WorkflowManager {
     public Workflow getWorkflow(String category, Document document) throws MappingException, RepositoryException;
 
     /**
-     * Obtains the workflow for the previously requested workflow descriptor
+     * Obtains the workflow for a workflow descriptor.
      * @param descriptor the workflow descriptor obtained from the same workflow manager earlier
      * @return the workflow associated with the document and category as descriped in the descriptor
      * @throws org.hippoecm.repository.api.MappingException
