@@ -17,6 +17,14 @@ package org.hippoecm.repository.api;
 
 import java.io.Serializable;
 
+/**
+ * A Java object representing a document in a JCR repository.  Workflows returning specific implementation of a document object will
+ * notice that the caller of the workflow gets only a simple Document object back, however though the DocumentManager, more complex
+ * Document based objects may be obtained.  The Document as returned by workflow calls are only usefull in subseqent calls to the
+ * workflowmanager to return a new workflow, or from a document the getIdentity() method may be used to obtain the UUID of the
+ * javax.jcr.Node representing the document.
+ * @author (Berry) A.W. van Halderen
+ */
 public class Document implements Serializable, Cloneable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -39,10 +47,12 @@ public class Document implements Serializable, Cloneable {
     }
 
     /**
-     * Clone a document object, which is useful to create a new copy of a repository-backed document including all its contents from the repository, rather than just the information currently mapped to the Document object.
+     * Clone a document object, which is useful to create a new copy of a repository-backed document including all its contents from
+     * the repository, rather than just the information currently mapped to the Document object.
      * @return the cloned Document object
      * @throws java.lang.CloneNotSupportedException is never really cloned
      */
+    @Override
     public Object clone() throws CloneNotSupportedException {
         Document document = (Document) super.clone();
         document.setCloned(this);
@@ -62,7 +72,7 @@ public class Document implements Serializable, Cloneable {
      * using:
      * <code>Node node = session.getNodeByUUID(document.getIdentity());</code>
      *
-     * @returns a string containing the UUID of the Node representing the Document.
+     * @return a string containing the UUID of the Node representing the Document.
      * or <code>null</code> if not available.
      */
     public final String getIdentity() {
@@ -88,6 +98,7 @@ public class Document implements Serializable, Cloneable {
     /**
      * @inheritDoc
      */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("Document[");

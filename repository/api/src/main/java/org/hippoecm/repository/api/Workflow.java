@@ -28,7 +28,6 @@ import javax.jcr.RepositoryException;
  * a subclass of a #Document, but the repository will force recreating the
  * object returned as a direct instance of an #Document.
  */
-
 public interface Workflow extends Remote, Serializable {
     final static String SVN_ID = "$Id$";
 

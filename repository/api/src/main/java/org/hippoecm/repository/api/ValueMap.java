@@ -17,6 +17,9 @@ package org.hippoecm.repository.api;
 
 import java.util.Map;
 
+/**
+ * This interface is not yet part of the public API.
+ */
 public interface ValueMap extends Map {
     public final static String SVN_ID = "$Id$";
 

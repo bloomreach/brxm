@@ -17,14 +17,28 @@ package org.hippoecm.repository.api;
 
 import javax.jcr.RepositoryException;
 
+/**
+ * An MappingException is thrown for workflow or document mapping when when a required data or configuration is not present or a
+ * representation in data could not be made.
+ * @author (Berry) A.W. van Halderen
+ */
 public class MappingException extends RepositoryException {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public MappingException(String message) {
+    /**
+     * Constructs a new mapping exception with the specified detail message and without initialized cause
+     * @param message  the detail message, for later retrieval though getMessage()
+     */
+    public MappingException(String message) {     
         super(message);
     }
 
+    /**
+     * Constructs a new mapping exception with the specified detail message and cause
+     * @param message the detail message, for later retrieval though getMessage()
+     * @param reason the cause (A null value is permitted, and indicates that the cause is nonexistent or unknown)
+     */
     public MappingException(String message, Exception reason) {
         super(message, reason);
     }
