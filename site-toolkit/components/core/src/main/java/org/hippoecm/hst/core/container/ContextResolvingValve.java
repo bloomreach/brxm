@@ -36,32 +36,36 @@ public class ContextResolvingValve extends AbstractValve
         HstContainerURL baseURL = requestContext.getBaseURL();
         HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
 
+        MatchedMapping matchedMapping;
+        if(requestContext.getMatchedMapping() != null) {
+            matchedMapping = requestContext.getMatchedMapping();
+        } else {
+            String hostName = context.getServletRequest().getServerName();
+            if(this.virtualHostsManager.getVirtualHosts() == null) {
+                throw new ContainerException("Hosts are not properly initialized");
+            }
+            matchedMapping = this.virtualHostsManager.getVirtualHosts().findMapping(hostName, baseURL.getServletPath() + baseURL.getPathInfo());   
+            if (matchedMapping == null) {
+                throw new ContainerException("No proper configuration found for host : " + hostName);
+            }
+            requestContext.setMatchedMapping(matchedMapping);
+        }
+        
+        String siteName = matchedMapping.getSiteName();
+        if(siteName == null || "".equals(siteName)) {
+            throw new ContainerException("No siteName found for matchedMapping. Configure one in your virtual hosting.");
+        }
+        
         if (erc != null) {
-            requestContext.setMatchedMapping(erc.getMatchedMapping());
+            // DEBUG check we actually have a matching site...
+            if (!siteName.equals(erc.getSiteName())) {
+                throw new ContainerException("Site doesn't match up with Embedded HST request context site");
+            }
+            // we will use the embedded request context provided ResolvedSiteMapItem and root HstComponentConfiguration
             requestContext.setResolvedSiteMapItem(erc.getResolvedSiteMapItem());
             rootComponentConfig = (HstComponentConfiguration)context.getServletRequest().getAttribute(ContainerConstants.HST_EMBEDDED_REQUEST_CONTEXT_TARGET);
         }
         else {
-            
-            MatchedMapping matchedMapping;
-            if(requestContext.getMatchedMapping() != null) {
-                matchedMapping = requestContext.getMatchedMapping();
-            } else {
-                String hostName = context.getServletRequest().getServerName();
-                if(this.virtualHostsManager.getVirtualHosts() == null) {
-                    throw new ContainerException("Hosts are not properly initialized");
-                }
-                matchedMapping = this.virtualHostsManager.getVirtualHosts().findMapping(hostName, baseURL.getServletPath() + baseURL.getPathInfo());   
-                if (matchedMapping == null) {
-                    throw new ContainerException("No proper configuration found for host : " + hostName);
-                }
-                requestContext.setMatchedMapping(matchedMapping);
-            }
-            
-            String siteName = matchedMapping.getSiteName();
-            if(siteName == null || "".equals(siteName)) {
-                throw new ContainerException("No siteName found for matchedMapping. Configure one in your virtual hosting.");
-            }
             
             HstSite hstSite = getSitesManager(context.getServletRequest().getServletPath()).getSites().getSite(siteName);
             

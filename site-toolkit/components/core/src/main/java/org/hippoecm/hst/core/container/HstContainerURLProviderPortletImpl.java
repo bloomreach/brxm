@@ -25,6 +25,7 @@ import javax.portlet.ResourceURL;
 
 import org.hippoecm.hst.container.HstContainerPortlet;
 import org.hippoecm.hst.core.hosting.VirtualHost;
+import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstPortletRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -81,7 +82,15 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
             }
             
             if (!containerResource) {
-                path.append(containerURL.getServletPath());
+                if (containerURL.isNavigational() && requestContext.isEmbeddedRequest()) {
+                    HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
+                    String uriPrefix = erc.getMatchedMapping().getMapping().getUriPrefix();
+                    // need to strip trailing /
+                    path.append(uriPrefix.substring(0, uriPrefix.length()-1));
+                }
+                else {
+                    path.append(containerURL.getServletPath());
+                }
             }
         }
         
@@ -90,10 +99,9 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
         if (containerResource) {
             path.insert(0, contextPath != null ? contextPath : getVirtualizedContextPath(containerURL, requestContext, pathInfo));
             urlString = path.toString();
-/* TODO            
+            
         } else if (containerURL.isNavigational() && requestContext.isEmbeddedRequest()) {
-        
-*/
+            urlString = path.toString();
         } else {
             urlString = path.toString();
             
