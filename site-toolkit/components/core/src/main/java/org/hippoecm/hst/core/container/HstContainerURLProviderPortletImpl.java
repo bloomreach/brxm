@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.portlet.BaseURL;
@@ -120,7 +121,21 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
                     url = mimeResponse.createRenderURL();
                 }
                 
-                url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString());
+                // Temporary hack to seed portlet render parameters directly back to the portlet when using an EmbeddedRequestContext
+                // Note: this will be replaced with a more proper solution soon
+                if ( requestContext.isEmbeddedRequest() && containerURL.getPathInfo().equals(requestContext.getBaseURL().getPathInfo())) {
+                    Map<String, String []> parameters = containerURL.getParameterMap();
+                    
+                    if (parameters != null) {
+                        for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
+                            String name = entry.getKey();
+                            url.setParameter(name, entry.getValue());
+                        }
+                    }
+                }
+                else {
+                    url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString());
+                }
                 
                 urlString = url.toString();
             }
