@@ -11,6 +11,14 @@
 			<sv:value>header</sv:value>
 		</sv:property>
 	</sv:node>
+    <sv:node sv:name="footer">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:template" sv:type="String">
+            <sv:value>footer</sv:value>
+        </sv:property>
+    </sv:node>
 	<sv:node sv:name="general_threecolumnlayout">
 		<sv:property sv:name="jcr:primaryType" sv:type="Name">
 			<sv:value>hst:component</sv:value>
