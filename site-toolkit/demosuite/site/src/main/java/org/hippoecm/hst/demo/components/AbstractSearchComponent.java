@@ -6,7 +6,6 @@ import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
-import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -65,7 +64,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             }
             
             if (query != null) {
-                Filter filter = new FilterImpl();
+                Filter filter = hstQuery.createFilter();
                 filter.addContains(".", query);
                 hstQuery.setFilter(filter);
                 request.setAttribute("query", query);

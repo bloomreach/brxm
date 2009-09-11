@@ -22,8 +22,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
 
 import org.apache.jackrabbit.value.ValueFactoryImpl;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
@@ -266,6 +264,9 @@ public class FilterImpl implements Filter{
 
     public String getJcrExpression() {
         // if we have and or filters, we'll always have expression:
+        
+        StringBuilder originalExpr = jcrExpressionBuilder == null ?  null : new StringBuilder(jcrExpressionBuilder);
+       
         if (childFilters.size() > 0) {
              processChildFilters();
         }
@@ -274,9 +275,13 @@ public class FilterImpl implements Filter{
             return null;
         }
         if(this.negated) {
-            return "not("+jcrExpressionBuilder.toString()+")";
+            String processedExpr = "not("+jcrExpressionBuilder.toString()+")";
+            jcrExpressionBuilder = originalExpr == null ? null : new StringBuilder(originalExpr);
+            return processedExpr;
         } else {
-            return jcrExpressionBuilder.toString();
+            String processedExpr = jcrExpressionBuilder.toString();
+            jcrExpressionBuilder = originalExpr == null ? null : new StringBuilder(originalExpr);
+            return processedExpr;
         }
         
     }
