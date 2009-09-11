@@ -30,7 +30,7 @@
     <h1>Search</h1>
     
     <c:choose>
-      <c:when test="${hstRequest.requestContext.baseURL.viaPortlet}">
+      <c:when test="${hstRequest.requestContext.portletContext}">
         <hst:actionURL var="searchURL" />
         <form action="${searchURL}" method="post">
           <input type="text" name="query" value="${query}"/>
