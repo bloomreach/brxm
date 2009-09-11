@@ -28,9 +28,13 @@ import org.dom4j.dom.DOMDocumentFactory;
 import org.dom4j.io.SAXReader;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HeadContributionTag extends BodyTagSupport {
 
+    static Logger logger = LoggerFactory.getLogger(HeadContributionTag.class);
+    
     private static final long serialVersionUID = 1L;
     
     protected String keyHint;
@@ -79,7 +83,12 @@ public class HeadContributionTag extends BodyTagSupport {
                 
                 element = (org.w3c.dom.Element) elem;
             } catch (DocumentException ex) {
-                throw new JspException(ex);
+                if(logger.isDebugEnabled()) {
+                    logger.warn("Skip invalid head contribution for '"+keyHint+"'. ",  ex);
+                } else {
+                    logger.warn("Skip invalid head contribution for '{}'. ",  keyHint);
+                }
+                return EVAL_PAGE;
             } catch (Exception ex) {
                 throw new JspException(ex);
             } finally {
