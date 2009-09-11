@@ -243,7 +243,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         copy.renderPath = child.renderPath;
         copy.referenceComponent = child.referenceComponent;
         copy.serveResourcePath = child.serveResourcePath;
-        copy.parameters = child.parameters;
+        copy.parameters = new HashMap<String, String>(child.parameters);
         List<String> copyToList = new ArrayList<String>();
         Collections.copy(copyToList, child.usedChildReferenceNames);
         copy.usedChildReferenceNames = copyToList;
@@ -298,7 +298,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                     this.serveResourcePath = referencedComp.serveResourcePath;
 
                 if (this.parameters == null) {
-                    this.parameters = referencedComp.parameters;
+                    this.parameters = new HashMap<String, String>(referencedComp.parameters);
                 } else if (referencedComp.parameters != null) {
                     // as we already have parameters, add only the once we do not yet have
                     for (Entry<String, String> entry : referencedComp.parameters.entrySet()) {
@@ -365,7 +365,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         if (this.serveResourcePath == null)
             this.serveResourcePath = childToMerge.serveResourcePath;
         if (this.parameters == null) {
-            this.parameters = childToMerge.parameters;
+            this.parameters = new HashMap<String, String>(childToMerge.parameters);
         } else if (childToMerge.parameters != null) {
             // as we already have parameters, add only the once we do not yet have
             for (Entry<String, String> entry : childToMerge.parameters.entrySet()) {
