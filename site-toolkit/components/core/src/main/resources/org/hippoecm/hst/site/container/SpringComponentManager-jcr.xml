@@ -34,9 +34,9 @@
     <constructor-arg value="${writable.repository.password}"/>
   </bean>
 
-  <bean id="javax.jcr.Credentials.hstglobal" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="${hstglobal.repository.user.name}"/>
-    <constructor-arg value="${hstglobal.repository.password}"/>
+  <bean id="javax.jcr.Credentials.hstconfigreader" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="${hstconfigreader.repository.user.name}"/>
+    <constructor-arg value="${hstconfigreader.repository.password}"/>
   </bean>
 
   <!--
@@ -94,13 +94,13 @@
             <property name="refreshOnPassivate" value="false"/>
           </bean>
         </entry>
-        <entry key-ref="javax.jcr.Credentials.hstglobal">
+        <entry key-ref="javax.jcr.Credentials.hstconfigreader">
           <bean class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
             init-method="initialize" destroy-method="close">
             <!-- delegated JCR repository -->
-            <property name="repositoryAddress" value="${hstglobal.repository.address}"/>
-            <property name="defaultCredentialsUserID" value="${hstglobal.repository.user.name}"/>
-            <property name="defaultCredentialsPassword" value="${hstglobal.repository.password}"/>
+            <property name="repositoryAddress" value="${hstconfigreader.repository.address}"/>
+            <property name="defaultCredentialsUserID" value="${hstconfigreader.repository.user.name}"/>
+            <property name="defaultCredentialsPassword" value="${hstconfigreader.repository.password}"/>
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
             <property name="maxActive" value="25"/>
             <property name="maxIdle" value="10"/>

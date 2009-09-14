@@ -30,7 +30,7 @@
     destroy-method="stop">
     <property name="repository" ref="javax.jcr.Repository"/>
     <property name="sessionLiveCheck" value="true"/>
-    <property name="credentials" ref="javax.jcr.Credentials.hstglobal"/>
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader"/>
     <property name="sessionLiveCheckInterval" value="60000"/>
     <property name="eventListenerItems">
       <list>
@@ -118,7 +118,7 @@
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
                       <list>
-                        <ref bean="javax.jcr.Credentials.hstglobal"/>
+                        <ref bean="javax.jcr.Credentials.hstconfigreader"/>
                       </list>
                     </property>
                   </bean>

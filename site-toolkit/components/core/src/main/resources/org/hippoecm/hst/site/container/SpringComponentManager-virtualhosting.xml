@@ -28,7 +28,7 @@
         <constructor-arg value="${default.sites.name}"/>
         <constructor-arg value="${virtualhosts.repository.path}"/>
         <property name="repository" ref="javax.jcr.Repository" />
-        <property name="credentials" ref="javax.jcr.Credentials.hstglobal" />
+        <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
     </bean>
     
 </beans>
