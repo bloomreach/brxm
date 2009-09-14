@@ -22,7 +22,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,9 +29,6 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.provider.jcr.JCRUtilities;
-import org.hippoecm.hst.util.PathUtils;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,9 +84,9 @@ public class SimpleHmlStringParser {
                     if(isExternal(documentPath)) {
                         sb.append(documentPath);
                     } else {
-                        String url = getHref(documentPath,node, reqContext, response);
-                        if(url != null) {
-                            sb.append(response.createNavigationalURL(url).toString());
+                        HstLink href = getLink(documentPath,node, reqContext, response);
+                        if(href != null && href.getPath() != null) {
+                            sb.append(href.toUrlForm((HstRequest)request, response, false));
                         } else {
                            log.warn("Skip href because url is null"); 
                         }
@@ -139,10 +135,9 @@ public class SimpleHmlStringParser {
                     if(isExternal(srcPath)) {
                         sb.append(srcPath);
                     } else {
-                        String translatedSrc = getSrcLink(srcPath, node, reqContext, response);
-                        if(translatedSrc != null) {
-                            translatedSrc = response.createNavigationalURL(translatedSrc).toString();
-                            sb.append(translatedSrc);
+                        HstLink binaryLink = getLink(srcPath, node, reqContext, response);
+                        if(binaryLink != null && binaryLink.getPath() != null) {
+                             sb.append(binaryLink.toUrlForm((HstRequest)request, response, false));
                         } else {
                             log.warn("Could not translate image src. Skip src");
                         }
@@ -166,7 +161,7 @@ public class SimpleHmlStringParser {
         }
     }
 
-    public static String getHref(String path, Node node, HstRequestContext reqContext,
+    public static HstLink getLink(String path, Node node, HstRequestContext reqContext,
             HttpServletResponse response) {
         
         try {
@@ -179,38 +174,22 @@ public class SimpleHmlStringParser {
         if (path.startsWith("/")) {
             // absolute location, try to translate directly
             log.warn("Cannot rewrite absolute path '{}'. Expected a relative path. Return '{}'", path, path);
-            return path;
+            return null;
         } else {
             // relative node, most likely a facetselect node:
             try {
-                Node facetSelectNode = node.getNode(path);
-                if (facetSelectNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    Node deref = JCRUtilities.getDeref(facetSelectNode);
-                    if(deref != null) {
-                        HstLink link = reqContext.getHstLinkCreator().create(deref, reqContext.getResolvedSiteMapItem());
-                        
-                        if(link == null) {
-                            log.warn("Unable to create a link for '{}'. Return orginal path", path);
-                        } else {
-                            StringBuffer href = new StringBuffer();
-                            for(String elem : link.getPathElements()) {
-                                String enc = response.encodeURL(elem);
-                                href.append("/").append(enc);
-                            }
-                            log.debug("Rewrote internal link '{}' to link '{}'", path, href.toString());
-                            return href.toString();
-                        }
-                    }
+                if (node.hasNode(path)) {
+                    Node facetSelectNode = node.getNode(path);
+                    return reqContext.getHstLinkCreator().create(facetSelectNode, reqContext.getResolvedSiteMapItem());
                 } else {
-                    log.warn("relative node as link, but the node is not a facetselect. Unable to rewrite this to a URL. Return '{}'", path);
-                    return path;
+                    log.warn("Missing facetselect node '{}' for internal link for document '{}'. Cannot create link", path, node.getPath());
                 }
             } catch (ItemNotFoundException e) {
-                log.warn("Unable to rewrite href '{}' to proper url : '{}'. Return null", path, e.getMessage());
+                log.warn("Unable to rewrite '{}' to proper url : '{}'. Return null", path, e.getMessage());
             } catch (PathNotFoundException e) {
-                log.warn("Unable to rewrite href '{}' to proper url : '{}'. Return null", path, e.getMessage());
+                log.warn("Unable to rewrite '{}' to proper url : '{}'. Return null", path, e.getMessage());
             } catch (RepositoryException e) {
-                log.warn("Unable to rewrite href '{}' to proper url : '{}'. Return null", path, e.getMessage());
+                log.warn("Unable to rewrite '{}' to proper url : '{}'. Return null", path, e.getMessage());
             }
         }
         return null;
@@ -223,61 +202,6 @@ public class SimpleHmlStringParser {
             }
         }
         return false;
-    }
-    
-    public static String getSrcLink(String path, Node node, HstRequestContext reqContext, HttpServletResponse response) {
-
-        try {
-            path = URLDecoder.decode(path, "utf-8");
-        } catch (UnsupportedEncodingException e1) {
-            log.warn("UnsupportedEncodingException for documentPath");
-        }
-
-        try {
-            if (path.startsWith("/")) {
-                log.warn("Cannot resolve absolute locations. Return null");
-                return null;
-            }
-
-            if (node.hasNode(path)) {
-                Node binary = node.getNode(path);
-                Node deref;
-                if(binary.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    deref = JCRUtilities.getDeref(binary);
-                } else {
-                    deref = JCRUtilities.getCanonical(binary);
-                }
-                if(deref != null) {
-                    String derefedPath  = PathUtils.normalizePath(deref.getPath());
-                    StringBuffer srcLink = new StringBuffer();
-                    String binariesPrefix = reqContext.getHstLinkCreator().getBinariesPrefix();
-                    if(binariesPrefix == null || "".equals(binariesPrefix)) {
-                       // nothing
-                    } else {
-                        srcLink.append("/").append(binariesPrefix);
-                    }
-                    
-                    
-                    for(String elem : derefedPath.split("/")) {
-                        String enc = response.encodeURL(elem);
-                        srcLink.append("/").append(enc);
-                    }
-                    return srcLink.toString();
-                } else {
-                    log.warn("Cannot find canonical node for binary. Return null");
-                    return null;
-                }
-            } 
-        } catch (PathNotFoundException e) {
-            log.warn("Unable to rewrite src '{}' to proper url : '{}'. Return null", path, e.getMessage());
-        } catch (ValueFormatException e) {
-            log.warn("Unable to rewrite src '{}' to proper url : '{}'. Return null", path, e.getMessage());
-        } catch (ItemNotFoundException e) {
-            log.warn("Unable to rewrite src '{}' to proper url : '{}'. Return null", path, e.getMessage());
-        } catch (RepositoryException e) {
-            log.warn("Unable to rewrite src '{}' to proper url : '{}'. Return null", path, e.getMessage());
-        }
-        return null;
     }
     
 }

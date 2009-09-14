@@ -110,8 +110,34 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         
         try {
             Node canonical = JCRUtilities.getCanonical(node);
+            
+            if(node.isNodeType(HippoNodeType.NT_RESOURCE)) {
+                
+                // now we test if this is a resource linked to from a document and is located below /content/gallery or /content/images
+                
+                if (canonical == null) {
+                    log.warn("Canonical cannot be null for hippo:resource. Cannot create a link for '{}'. Return null.", node.getPath());
+                    return null;
+                }
+                
+                if(!isBinaryLocation(canonical.getPath())) {
+                    /*
+                     * A hippo resource is not needed to be translated through the HstSiteMap but we create a binary link directly
+                     * Note that this is a Hippo Resource *in* a document outside /content/assets or /content/images. This means, that
+                     * you have a context aware resource: The live view is only allowed to view it when it is published for example. Therefor
+                     * we do not fallback to the canonical node, but return the link in context.
+                     *
+                     */ 
+                    // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
+                    return new HstLinkImpl(this.getBinariesPrefix()+node.getPath(), getHstSite(resolvedSiteMapItem));
+                
+                }
+                // if we get here, do normal linkrewriting for binary wrt canonical: it was linked to from /content/assets or /content/images
+                return new HstLinkImpl(this.getBinariesPrefix()+canonical.getPath(), getHstSite(resolvedSiteMapItem));
+            }
+            
             if (canonical == null) {
-                log.warn("Canonical node not found. Trying to create a link for a virtual node");
+                log.debug("Canonical node not found. Trying to create a link for a virtual node");
             } else if (!canonical.isSame(node)) {
                 log.debug("Trying to create link for the canonical equivalence of the node. ('{}' --> '{}')", node.getPath(), canonical.getPath());
                 node = canonical;
@@ -158,14 +184,12 @@ public class BasicHstLinkCreator implements HstLinkCreator {
             return null;
         }
         
-        // Try to see if we can create a link within the HstSite where this HstSiteMapItem belongs to
-        HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
-        HstSiteService hstSite = (HstSiteService)hstSiteMap.getSite(); 
-        
+        HstSiteService hstSite = getHstSite(resolvedSiteMapItem);
         
         if(isBinaryLocation(path)) {
             log.debug("Binary path, return hstLink prefixing this path with '{}'", this.getBinariesPrefix());
-            return postProcess(new HstLinkImpl(this.getBinariesPrefix()+path, hstSite));
+            // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
+            return new HstLinkImpl(this.getBinariesPrefix()+path, hstSite);
         }
         
         if(hstSite.getLocationMapTree() instanceof BasicLocationMapTree) {
@@ -197,6 +221,11 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         return null;
     }
     
+    private HstSiteService getHstSite(ResolvedSiteMapItem resolvedSiteMapItem) {
+        HstSiteMap hstSiteMap = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap();
+        return (HstSiteService)hstSiteMap.getSite(); 
+    }
+
     public HstLink create(String toSiteMapItemId, ResolvedSiteMapItem currentSiteMapItem) {
         HstSiteMap hstSiteMap = currentSiteMapItem.getHstSiteMapItem().getHstSiteMap();
         HstSiteMapItem toSiteMapItem = hstSiteMap.getSiteMapItemById(toSiteMapItemId);
