@@ -50,8 +50,12 @@ create_link $BASEDIR/addon/xinha/webResources/xinha/plugins/InsertImage         
 create_link $BASEDIR/addon/xinha/webResources/xinha/plugins/FullscreenCompatible $BASEDIR/addon/xinha/src/main/webapp/xinha/plugins/FullscreenCompatible
 echo
 
-echo "Creating link for xinha skin:"
+echo "Creating link for xinha skin 'hippo-gray':"
 create_link $BASEDIR/addon/xinha/webResources/xinha/skins/hippo-gray  $BASEDIR/addon/xinha/src/main/webapp/xinha/skins/hippo-gray
+echo
+
+echo "Creating link for xinha skin 'hippo-lite':"
+create_link $BASEDIR/addon/xinha/webResources/xinha/skins/hippo-lite  $BASEDIR/addon/xinha/src/main/webapp/xinha/skins/hippo-lite
 echo
 
 echo "Creating link for xinha iconset:"

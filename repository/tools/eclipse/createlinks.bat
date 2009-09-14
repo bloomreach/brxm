@@ -24,5 +24,7 @@ junction FullscreenCompatible ..\..\..\..\..\webResources\xinha\plugins\Fullscre
 
 cd ..\skins
 junction hippo-lite ..\..\..\..\..\webResources\xinha\skins\hippo-lite
+junction hippo-gray ..\..\..\..\..\webResources\xinha\skins\hippo-gray
+
 cd ..\iconsets 
 junction Hippo ..\..\..\..\..\webResources\xinha\iconsets\Hippo

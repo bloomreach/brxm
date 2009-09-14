@@ -87,7 +87,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                 String xinhaEditorUrl = HeaderContributorHelper.getFixedRelativePathPrefixToContextRoot() + "xinha/xinha/";
 
                 StringBuffer sb = new StringBuffer();
-                sb.append("_editor_url = '" + xinhaEditorUrl + "';\n");
+                sb.append("if(typeof(_editor_url) == 'undefined') { _editor_url = '" + xinhaEditorUrl + "'; }\n");
                 sb.append("_editor_lang = '" + page.getLocale().getLanguage() + "';\n");
                 for (AbstractXinhaPlugin.Configuration config : configurations) {
                     if (config.getSkin() != null) {
