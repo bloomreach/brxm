@@ -124,13 +124,10 @@ if (!YAHOO.hippo.AccordionManager) {
                     if(this.current != null) {
                         Dom.setStyle(this.current, 'display', 'none');
                     }
-
-                    var calculatedHeight = 0;
+                    this.totalHeight = 0;
                     for(var i=0; i<children.length; i++) {
-                        var r = Dom.getRegion(children[i]);
-                        calculatedHeight += (r.bottom - r.top);
+                        this.totalHeight += Dom.getRegion(children[i]).height;
                     }
-                    this.totalHeight = calculatedHeight;
                 } else {
                     this.totalHeight = children.length * this.cfg.unitHeaderHeight;
                 }
@@ -139,22 +136,19 @@ if (!YAHOO.hippo.AccordionManager) {
             render : function(id) {
                 this.init();
                 this.calculate();
-
-                var height = (this.region.bottom - this.region.top) - this.totalHeight;
                 
-                var centerEl = this.findElement(id, this.cfg.unitClassName + '-center');
-                var bottomEl = this.findElement(id, this.cfg.unitClassName + '-bottom');
+                var height = this.region.height - this.totalHeight; //also substract height of unit header
                 
-                if(bottomEl != null && this.findElement(bottomEl, this.cfg.unitClassName + '-add', 'span') != null) {
-                    height -= 26; //temp workaround
+                //if we find an element with className this.cfg.unitClassName + '-add'
+                //we have an active bottom element.
+                if(this.findElement(id, this.cfg.unitClassName + '-add', 'span') != null) {
+                    height -= 26;
+                    Dom.setStyle(this.findElement(id, this.cfg.unitClassName + '-bottom'), 'display', 'block');
                 }
 
                 if(height > 0) {
-                    Dom.setStyle(centerEl, 'height', height + 'px');
+                    Dom.setStyle(this.findElement(id, this.cfg.unitClassName + '-center'), 'height', height + 'px');
                 }
-                
-                Dom.setStyle(bottomEl, 'display', 'block');
-                
                 this.current = id;
             },
     

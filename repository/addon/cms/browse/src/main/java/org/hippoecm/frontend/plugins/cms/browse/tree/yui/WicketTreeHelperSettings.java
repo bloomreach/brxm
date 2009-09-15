@@ -28,7 +28,7 @@ public class WicketTreeHelperSettings extends YuiObject {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     
-    protected static final BooleanSetting TREE_AUTOWIDTH = new BooleanSetting("treeAutowidth", false);
+    protected static final BooleanSetting TREE_AUTOWIDTH = new BooleanSetting("treeAutowidth", true);
     protected static final BooleanSetting ADD_CONTEXTMENU_LINK = new BooleanSetting("addContextmenuLink", false);
     protected static final StringSetting SET_WIDTH_TO_CLASSNAME = new StringSetting("setWidthToClassname", "hippo-tree");
 
