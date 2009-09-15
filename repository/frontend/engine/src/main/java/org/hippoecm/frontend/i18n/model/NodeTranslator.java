@@ -20,14 +20,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.event.EventCollection;
@@ -106,18 +109,57 @@ public class NodeTranslator extends NodeModelWrapper {
             String name = "node name";
             if (node != null) {
                 try {
+                    // return the name specified by the hippo:translated mixin,
+                    // falling back to the decoded node name itself.
                     name = NodeNameCodec.decode(node.getName());
                     if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
                         Locale locale = Session.get().getLocale();
                         NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
                         while (nodes.hasNext()) {
                             Node child = nodes.nextNode();
-                            if (child.isNodeType(HippoNodeType.NT_TRANSLATION) && !child.hasProperty(HippoNodeType.HIPPO_PROPERTY)) {
+                            if (child.isNodeType(HippoNodeType.NT_TRANSLATION)
+                                    && !child.hasProperty(HippoNodeType.HIPPO_PROPERTY)) {
                                 String language = child.getProperty("hippo:language").getString();
                                 if (locale.getLanguage().equals(language)) {
                                     return child.getProperty("hippo:message").getString();
                                 }
                             }
+                        }
+                    }
+
+                    // when the node is not translated, return the decoded name at
+                    // the time of version creation.  Fall back to handle name if necessary.
+                    if (node.isNodeType("nt:frozenNode")) {
+                        try {
+                            String historyUuid = ((Version) node.getParent()).getContainingHistory().getUUID();
+                            Version parentVersion = JcrHelper.getVersionParent((Version) node.getParent());
+                            // locate child.  Only direct children are found.
+                            NodeIterator children = parentVersion.getNode("jcr:frozenNode").getNodes();
+                            while (children.hasNext()) {
+                                Node child = children.nextNode();
+                                if (child.isNodeType("nt:versionedChild")) {
+                                    String ref = child.getProperty("jcr:childVersionHistory").getString();
+                                    if (ref.equals(historyUuid)) {
+                                        return NodeNameCodec.decode(child.getName());
+                                    }
+                                }
+                            }
+                            Node parent = node.getSession().getNodeByUUID(
+                                    parentVersion.getContainingHistory().getVersionableUUID());
+                            if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                return NodeNameCodec.decode(parent.getName());
+                            }
+                        } catch (ItemNotFoundException ex) {
+                            // ignore, use name of node itself
+                        }
+
+                        // unable to resolve parent
+                        String uuid = node.getProperty("jcr:frozenUuid").getString();
+                        try {
+                            Node docNode = node.getSession().getNodeByUUID(uuid);
+                            return NodeNameCodec.decode(docNode.getName());
+                        } catch (ItemNotFoundException ex) {
+                            // ignore
                         }
                     }
                 } catch (RepositoryException ex) {

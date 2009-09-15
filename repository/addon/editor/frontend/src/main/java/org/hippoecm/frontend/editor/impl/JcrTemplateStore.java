@@ -32,6 +32,7 @@ import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
 import org.hippoecm.editor.EditorNodeType;
+import org.hippoecm.editor.tools.JcrNamespace;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.IStore;
@@ -186,15 +187,19 @@ public class JcrTemplateStore implements IStore<IClusterConfig> {
      * node can be found.
      */
     protected Node getTemplateNode(ITypeDescriptor type, boolean create) throws RepositoryException, StoreException {
-        String typeName = type.getName();
-        String path = "/hippo:namespaces/";
-        if (typeName.indexOf(':') > 0) {
-            path += typeName.replace(':', '/');
-        } else {
-            path += "system/" + typeName;
-        }
-
         javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+
+        String typeName = type.getName();
+        String prefix;
+        String subType;
+        if (typeName.indexOf(':') > 0) {
+            prefix = typeName.substring(0, typeName.indexOf(':'));
+            subType = typeName.substring(typeName.indexOf(':') + 1);
+        } else {
+            prefix = "system";
+            subType = typeName;
+        }
+        String path = new JcrNamespace(session, prefix).getPath() + "/" + subType;
         if (!session.itemExists(path)) {
             throw new StoreException("No template type node exists");
         }

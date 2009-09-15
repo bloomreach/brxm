@@ -48,7 +48,7 @@ public class CndSerializationTest extends PluginTest {
 
         CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new StringReader(cnd), "test");
         NamespaceMapping mapping = cndReader.getNamespaceMapping();
-        assertEquals("http://www.hippoecm.org/frontend/test/nt/0.2", mapping.getURI("test"));
+        assertEquals("http://www.hippoecm.org/editor/test/nt/0.2", mapping.getURI("test"));
         assertTrue(mapping.getPrefixToURIMapping().containsKey("nt"));
         
         Map<String, NodeTypeDef> nodeTypes = new TreeMap<String, NodeTypeDef>();

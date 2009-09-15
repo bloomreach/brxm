@@ -20,6 +20,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -109,6 +110,15 @@ public class TypeStoreTest extends PluginTest {
         JcrTypeStore typeStore = new JcrTypeStore();
         ITypeDescriptor descriptor = typeStore.load("test_0_0:test");
         assertNotNull(descriptor);
+        assertEquals("test_0_0:test", descriptor.getType());
+
+        IFieldDescriptor field = descriptor.getField("title");
+        assertEquals("test_0_0:title", field.getPath());
+
+        ITypeDescriptor inheriting = typeStore.load("test_0_0:inheriting");
+        List<String> superTypes = inheriting.getSuperTypes();
+        assertEquals(1, superTypes.size());
+        assertEquals("test_0_0:test", superTypes.get(0));
     }
-    
+
 }

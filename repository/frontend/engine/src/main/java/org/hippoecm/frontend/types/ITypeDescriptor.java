@@ -36,7 +36,11 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
     /**
      * The name of the underlying type can be different if this is a "pseudo" type.
      * This can be used to impose additional conditions on the original type, or to
-     * associate different templates with the type.  
+     * associate different templates with the type.
+     * <p>
+     * For type descriptors that do not correspond to current or draft versions of a
+     * namespace, the prefix will be the JCR prefix.  (E.g. myproject_0_0 when version
+     * 0.1 is current)
      * 
      * @return the name of the real (JCR) type
      */
