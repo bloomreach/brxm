@@ -304,9 +304,35 @@ public class ModalWindow extends Panel
 	 */
 	public void close(AjaxRequestTarget target)
 	{
-		getContent().setVisible(false);
-		target.appendJavascript(getCloseJavacript());
-		shown = false;
+	    if (target != null)
+	    {
+	        target.appendJavascript(getCloseJavacript());
+	    }
+	    else
+	    {
+	        shown = false;
+	        getContent().setVisible(false);
+
+            // should we cleanup the pagemap?
+            if (deletePageMap == true)
+            {
+                // get the pagemap
+                Session session = Session.get();
+                IPageMap pageMap = session.pageMapForName(getPageMapName(), false);
+
+                // if there is any remove it
+                if (pageMap != null)
+                {
+                    session.removePageMap(pageMap);
+                    deletePageMap = false;
+                }
+            }
+
+            if (windowClosedCallback != null)
+            {
+                windowClosedCallback.onClose(null);
+            }
+        }
 	}
 
 	/**
@@ -817,6 +843,8 @@ public class ModalWindow extends Panel
 		protected void respond(AjaxRequestTarget target)
 		{
 			shown = false;
+
+			getContent().setVisible(false);
 
 			// should we cleanup the pagemap?
 			if (deletePageMap == true)

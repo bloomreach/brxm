@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
@@ -46,6 +47,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
                 internalShow(dialog);
             } else {
                 DialogWindow.this.shown = null;
+                setContent(new EmptyPanel(getContentId()));
             }
         }
     }
@@ -87,12 +89,12 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     }
     
     public void close() {
-        shown = null;
         IRequestTarget target = RequestCycle.get().getRequestTarget();
         if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
             close((AjaxRequestTarget) target);
+        } else {
+            close(null);
         }
-        remove(getContentId());
     }
 
     public void render(PluginRequestTarget target) {
