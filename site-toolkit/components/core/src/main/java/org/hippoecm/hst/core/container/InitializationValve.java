@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 

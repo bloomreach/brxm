@@ -101,6 +101,11 @@ public interface HstComponentConfiguration {
      * @return the logical name this HstComponentConfiguration, unique amongst its siblings
      */
     String getName();
+    
+    /**
+     * Returns the parent <code>HstComponentConfiguration</code> for this this component or null if a root component.
+     */
+    HstComponentConfiguration getParent();
 
     /**
      * Return the referenceName of this <code>HstComponentConfiguration</code>. It <strong>must</strong> be unique amongst sibling <code>HstComponentConfiguration</code>'s.
@@ -158,4 +163,9 @@ public interface HstComponentConfiguration {
      */
     SortedMap<String, HstComponentConfiguration> getChildren();
 
+    /**
+     * Returns the child HstComponentConfiguration by its name, or null if it doens't exist
+     * @param name the name of the child HstComponentConfiguration
+     */
+    HstComponentConfiguration getChildByName(String name);
 }

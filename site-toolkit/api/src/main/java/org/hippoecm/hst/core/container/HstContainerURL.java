@@ -162,14 +162,4 @@ public interface HstContainerURL {
      * @return
      */
     Map<String, String []> getActionParameterMap();
-    
-    /**
-     * Return true if this URL represents a site navigation.
-     */
-    boolean isNavigational();
-    
-    /**
-     * Sets the navigational flag.
-     */
-    void setNavigational(boolean navigational);
 }

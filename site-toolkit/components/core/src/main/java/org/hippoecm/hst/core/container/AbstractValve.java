@@ -164,6 +164,7 @@ public abstract class AbstractValve implements Valve
             try {
                 HstComponentConfiguration compConfig = new HstComponentConfiguration() {
                     public SortedMap<String, HstComponentConfiguration> getChildren() { return null; }
+                    public HstComponentConfiguration getChildByName(String name) { return null; }
                     public String getComponentClassName() { return traceToolCompClassName; }
                     public String getId() { return traceCompName; }
                     public String getName() { return traceCompName; }
@@ -172,6 +173,7 @@ public abstract class AbstractValve implements Valve
                     public String getReferenceName() { return traceCompName; }
                     public String getRenderPath() { return null; }
                     public String getServeResourcePath() { return null; }
+                    public HstComponentConfiguration getParent() { return null; }
                 };
                 
                 traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);

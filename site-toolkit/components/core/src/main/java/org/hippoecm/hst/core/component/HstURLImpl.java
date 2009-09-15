@@ -52,10 +52,6 @@ public class HstURLImpl implements HstURL {
         return this.type;
     }
     
-    public boolean isNavigational() {
-        return baseContainerURL.isNavigational() && RENDER_TYPE.equals(type);
-    }
-
     public String getReferenceNamespace() {
         return this.referenceNamespace;
     }

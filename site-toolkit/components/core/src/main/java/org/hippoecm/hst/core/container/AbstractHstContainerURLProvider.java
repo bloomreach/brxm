@@ -205,7 +205,6 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
             containerURL.setResourceWindowReferenceNamespace(hstUrl.getReferenceNamespace());
             containerURL.setResourceId(hstUrl.getResourceID());
         } else {
-            containerURL.setNavigational(hstUrl.isNavigational());
             mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
         }
         

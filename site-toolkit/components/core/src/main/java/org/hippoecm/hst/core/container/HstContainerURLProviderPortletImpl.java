@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.portlet.BaseURL;
@@ -48,6 +47,8 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
         String urlString = "";
         
         String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
+        String actionWindowReferenceNamespace = containerURL.getActionWindowReferenceNamespace();
+        boolean embeddedRenderURL = requestContext.isEmbeddedRequest() && actionWindowReferenceNamespace == null && resourceWindowReferenceNamespace == null;
         boolean containerResource = false;
         
         if (!this.portletResourceURLEnabled) {
@@ -83,7 +84,7 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
             }
             
             if (!containerResource) {
-                if (containerURL.isNavigational() && requestContext.isEmbeddedRequest()) {
+                if (embeddedRenderURL) {
                     HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
                     String uriPrefix = erc.getMatchedMapping().getMapping().getUriPrefix();
                     // need to strip trailing /
@@ -100,44 +101,27 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
         if (containerResource) {
             path.insert(0, contextPath != null ? contextPath : getVirtualizedContextPath(containerURL, requestContext, pathInfo));
             urlString = path.toString();
-            
-        } else if (containerURL.isNavigational() && requestContext.isEmbeddedRequest()) {
-            urlString = path.toString();
         } else {
             urlString = path.toString();
             
-            BaseURL url = null;
-            PortletResponse response = prc.getPortletResponse();
-            
-            if (response instanceof MimeResponse) {
-                MimeResponse mimeResponse = (MimeResponse) response;
+            if (!embeddedRenderURL) {
+                BaseURL url = null;
+                PortletResponse response = prc.getPortletResponse();
                 
-                if (containerURL.getActionWindowReferenceNamespace() != null) {
-                    url = mimeResponse.createActionURL();
-                } else if (resourceWindowReferenceNamespace != null) {
-                    url = mimeResponse.createResourceURL();
-                    ((ResourceURL) url).setResourceID(containerURL.getResourceId());
-                } else {
-                    url = mimeResponse.createRenderURL();
-                }
-                
-                // Temporary hack to seed portlet render parameters directly back to the portlet when using an EmbeddedRequestContext
-                // Note: this will be replaced with a more proper solution soon
-                if ( requestContext.isEmbeddedRequest() && containerURL.getPathInfo().equals(requestContext.getBaseURL().getPathInfo())) {
-                    Map<String, String []> parameters = containerURL.getParameterMap();
+                if (response instanceof MimeResponse) {
+                    MimeResponse mimeResponse = (MimeResponse) response;
                     
-                    if (parameters != null) {
-                        for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-                            String name = entry.getKey();
-                            url.setParameter(name, entry.getValue());
-                        }
+                    if (containerURL.getActionWindowReferenceNamespace() != null) {
+                        url = mimeResponse.createActionURL();
+                    } else if (resourceWindowReferenceNamespace != null) {
+                        url = mimeResponse.createResourceURL();
+                        ((ResourceURL) url).setResourceID(containerURL.getResourceId());
+                    } else {
+                        url = mimeResponse.createRenderURL();
                     }
-                }
-                else {
                     url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString());
+                    urlString = url.toString();
                 }
-                
-                urlString = url.toString();
             }
         }
         

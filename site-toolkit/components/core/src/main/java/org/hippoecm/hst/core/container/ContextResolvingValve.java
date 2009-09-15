@@ -64,6 +64,22 @@ public class ContextResolvingValve extends AbstractValve
             // we will use the embedded request context provided ResolvedSiteMapItem and root HstComponentConfiguration
             requestContext.setResolvedSiteMapItem(erc.getResolvedSiteMapItem());
             rootComponentConfig = (HstComponentConfiguration)context.getServletRequest().getAttribute(ContainerConstants.HST_EMBEDDED_REQUEST_CONTEXT_TARGET);
+            
+            // build and set the embedded component reference contextName needed proper parameter encoding and resolving
+            StringBuilder contextNamespaceBuilder = new StringBuilder();
+            HstComponentConfiguration compConfig = rootComponentConfig;
+            String referenceNameSeparator = getComponentWindowFactory().getReferenceNameSeparator();
+            if (compConfig != erc.getRootComponentConfig()) {
+                do {
+                    contextNamespaceBuilder.insert(0, compConfig.getReferenceName());
+                    compConfig = compConfig.getParent();
+                    if (compConfig == erc.getRootComponentConfig()) {
+                        break;
+                    }
+                    contextNamespaceBuilder.insert(0, referenceNameSeparator);
+                } while (true);
+            }
+            requestContext.setContextNamespace(contextNamespaceBuilder.toString());
         }
         else {
             

@@ -46,6 +46,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
 
     private Map<String, HstComponentConfigurationService> childConfByName = new HashMap<String, HstComponentConfigurationService>();
 
+    private Map<String, HstComponentConfiguration> derivedChildrenByName = null;
+
     private List<HstComponentConfigurationService> orderedListConfigs = new ArrayList<HstComponentConfigurationService>();
 
     private HstComponentConfiguration parent;
@@ -172,6 +174,10 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         }
 
     }
+    
+    public HstComponentConfiguration getParent() {
+        return parent;
+    }
 
     public Service[] getChildServices() {
         return componentConfigurations.values().toArray(new Service[componentConfigurations.size()]);
@@ -225,6 +231,17 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         return Collections.unmodifiableSortedMap(this.componentConfigurations);
     }
 
+    public HstComponentConfiguration getChildByName(String name) {
+        if (derivedChildrenByName == null) {
+            HashMap<String, HstComponentConfiguration> children = new HashMap<String, HstComponentConfiguration>();
+            for (HstComponentConfiguration config : orderedListConfigs) {
+                children.put(config.getName(), config);
+            }
+            derivedChildrenByName = children;
+        }
+        return derivedChildrenByName.get(name);
+    }
+    
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
             HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
             Map<String, HstComponentConfiguration> rootComponentConfigurations) throws ServiceException {
@@ -434,5 +451,4 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             }
         }
     }
-
 }
