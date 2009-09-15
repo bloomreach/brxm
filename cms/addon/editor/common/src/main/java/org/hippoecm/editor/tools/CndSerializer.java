@@ -206,7 +206,7 @@ public class CndSerializer implements IClusterable {
 
         JcrNamespace jcrNamespace = new JcrNamespace(session, namespace);
         String uri = jcrNamespace.getCurrentUri();
-        Node nsNode = session.getRootNode().getNode(jcrNamespace.getPath());
+        Node nsNode = session.getRootNode().getNode(jcrNamespace.getPath().substring(1));
         NodeIterator typeIter = nsNode.getNodes();
         while (typeIter.hasNext()) {
             Node templateTypeNode = typeIter.nextNode();

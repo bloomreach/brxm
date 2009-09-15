@@ -22,7 +22,10 @@
 <test_0_0='http://www.hippoecm.org/editor/test/nt/0.0'>
 
 [test_0_0:test] > nt:base
-- test:title (string)
+- test_0_0:title (string)
+
+[test_0_0:inheriting] > test_0_0:test
+- test_0_0:extra (string)
 
 [test:test] > nt:base
 - test:title (string)

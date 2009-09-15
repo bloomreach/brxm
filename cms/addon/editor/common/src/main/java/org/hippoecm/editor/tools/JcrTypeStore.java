@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -180,7 +181,6 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
 
         TypeInfo info = new TypeInfo(type);
         String path = info.getPath();
-        String uri = info.getNamespace().getCurrentUri();
 
         if (!session.itemExists(path) || !session.getItem(path).isNode()) {
             return null;
@@ -188,10 +188,24 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         NodeIterator iter = ((Node) session.getItem(path)).getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(
                 HippoNodeType.HIPPOSYSEDIT_NODETYPE);
 
+        boolean latest = true;
+        String uri = info.getNamespace().getCurrentUri();
+        String prefix;
+        if (type.indexOf(':') > 0) {
+            prefix = type.substring(0, type.indexOf(':'));
+            String typeUri = getJcrSession().getWorkspace().getNamespaceRegistry().getURI(prefix);
+            if (!typeUri.equals(uri)) {
+                latest = false;
+                uri = typeUri;
+            }
+        } else {
+            prefix = "system";
+        }
+
         Node current = null;
         while (iter.hasNext()) {
             Node node = iter.nextNode();
-            if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {
+            if (latest && !node.isNodeType(HippoNodeType.NT_REMODEL)) {
                 return node;
             } else {
                 if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {

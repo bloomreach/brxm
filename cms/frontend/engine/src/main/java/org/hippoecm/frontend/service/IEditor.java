@@ -18,6 +18,12 @@ package org.hippoecm.frontend.service;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
+/**
+ * Interface that represents an editor for a particular document.
+ * Can be used by e.g. workflow plugins to change the visual representation of a
+ * "document".  This can be achieved by using the edit mode or setting a different
+ * (node) model.
+ */
 public interface IEditor extends IClusterable {
     final static String SVN_ID = "$Id$";
 
@@ -35,6 +41,10 @@ public interface IEditor extends IClusterable {
      */
     void close() throws EditorException;
 
+    /**
+     * The model that can be used to identify the editor.  For publishable documents,
+     * this is the parent handle.
+     */
     IModel getModel();
 
 }

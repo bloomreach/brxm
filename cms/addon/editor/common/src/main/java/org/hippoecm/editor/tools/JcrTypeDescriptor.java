@@ -65,6 +65,8 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     private String name;
     private String type;
+    private String nsName;
+    private String prefix;
     private TypeLocator locator;
     private transient Map<String, IFieldDescriptor> declaredFields;
     private transient Map<String, IFieldDescriptor> fields;
@@ -82,7 +84,18 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             templateTypeNode = templateTypeNode.getParent();
         }
 
-        String prefix = templateTypeNode.getParent().getName();
+        nsName = templateTypeNode.getParent().getName();
+        if (typeNode.hasProperty(HippoNodeType.HIPPO_URI)) {
+            String nsUri = typeNode.getProperty(HippoNodeType.HIPPO_URI).getString();
+            if ("internal".equals(nsUri)) {
+                prefix = "system";
+            } else {
+                prefix = typeNode.getSession().getWorkspace().getNamespaceRegistry().getPrefix(nsUri);
+            }
+        } else {
+            prefix = nsName;
+        }
+
         if ("system".equals(prefix)) {
             name = templateTypeNode.getName();
         } else {
@@ -90,7 +103,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         }
 
         if (typeNode.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
-            type = typeNode.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
+            type = convertName(typeNode.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString());
         } else {
             type = name;
         }
@@ -120,7 +133,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             if (node.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
                 Value[] values = node.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
                 for (Value value : values) {
-                    superTypes.add(value.getString());
+                    superTypes.add(convertName(value.getString()));
                 }
             }
             return superTypes;
@@ -371,7 +384,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         }
         super.stopObservation();
     }
-    
+
     private void subscribe(final IFieldDescriptor field) {
         final IObservationContext obContext = getObservationContext();
         IObserver observer = new IObserver() {
@@ -482,6 +495,21 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             candidates = new ArrayList<String>(todo);
         }
         return false;
+    }
+
+    /**
+     * Map a name from nsName:<any> to prefix:<any> if applicable.
+     * This is necessary to convert names that are stored as Strings
+     * to the value they would have had when stored as Names.
+     */
+    String convertName(String name) {
+        if (name.indexOf(':') > 0) {
+            String prefix = name.substring(0, name.indexOf(':'));
+            if (prefix.equals(nsName)) {
+                return this.prefix + name.substring(name.indexOf(':'));
+            }
+        }
+        return name;
     }
 
 }
