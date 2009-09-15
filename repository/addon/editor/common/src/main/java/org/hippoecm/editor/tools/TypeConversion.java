@@ -19,8 +19,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.TypeLocator;
 
 public class TypeConversion implements Serializable {
     @SuppressWarnings("unused")
@@ -30,7 +32,7 @@ public class TypeConversion implements Serializable {
 
     private TypeUpdate update;
 
-    public TypeConversion(JcrTypeStore currentConfig, ITypeDescriptor current, ITypeDescriptor draft) {
+    public TypeConversion(TypeLocator locator, ITypeDescriptor current, ITypeDescriptor draft) throws StoreException {
         update = new TypeUpdate();
 
         if (draft != null) {
@@ -44,14 +46,14 @@ public class TypeConversion implements Serializable {
             IFieldDescriptor origField = entry.getValue();
             FieldIdentifier oldId = new FieldIdentifier();
             oldId.path = origField.getPath();
-            oldId.type = currentConfig.getTypeDescriptor(origField.getType()).getType();
+            oldId.type = locator.locate(origField.getType()).getType();
 
             if (draft != null) {
                 IFieldDescriptor newField = draft.getField(entry.getKey());
                 if (newField != null) {
                     FieldIdentifier newId = new FieldIdentifier();
                     newId.path = newField.getPath();
-                    ITypeDescriptor newType = currentConfig.getTypeDescriptor(newField.getType());
+                    ITypeDescriptor newType = locator.locate(newField.getType());
                     newId.type = newType.getType();
 
                     update.renames.put(oldId, newId);

@@ -17,6 +17,7 @@ package org.hippoecm.frontend.types;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -103,4 +104,11 @@ public class TypeStoreTest extends PluginTest {
         assertEquals(titleName, title.getName());
     }
 
+    @Test
+    public void testHistoricType() throws Exception {
+        JcrTypeStore typeStore = new JcrTypeStore();
+        ITypeDescriptor descriptor = typeStore.load("test_0_0:test");
+        assertNotNull(descriptor);
+    }
+    
 }

@@ -18,7 +18,6 @@ package org.hippoecm.editor.tools;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -104,24 +103,11 @@ public class JcrPrototypeStore implements IDetachable {
 
     // Privates
 
-    private String getUri(String prefix) {
-        if ("system".equals(prefix)) {
-            return "internal";
-        }
-        try {
-            NamespaceRegistry nsReg = getJcrSession().getWorkspace().getNamespaceRegistry();
-            return nsReg.getURI(prefix);
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return null;
-    }
-
     private Session getJcrSession() {
         return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
     }
 
-    private String getLocation(String type) {
+    private String getLocation(String type) throws RepositoryException {
         String prefix = "system";
         String subType = type;
         if (type.indexOf(':') > 0) {
@@ -129,15 +115,8 @@ public class JcrPrototypeStore implements IDetachable {
             subType = type.substring(type.indexOf(':') + 1);
         }
 
-        String uri = getUri(prefix);
-        String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
-        if (prefix.length() > nsVersion.length()
-                && nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
-            prefix = prefix.substring(0, prefix.length() - nsVersion.length());
-        }
-
-        return "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/"
-                + HippoNodeType.HIPPO_PROTOTYPES;
+        JcrNamespace namespace = new JcrNamespace(getJcrSession(), prefix);
+        return namespace.getPath() + "/" + subType + "/" + HippoNodeType.HIPPO_PROTOTYPES;
     }
 
     private Node lookupConfigNode(String type, boolean draft) throws RepositoryException {
