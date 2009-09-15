@@ -15,8 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.standards.browse;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -92,7 +94,7 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
         }
 
     }
-    
+
     private JcrNodeModel folder;
     private String path;
     private FolderModelService folderService;
@@ -191,8 +193,29 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
         if (node != null) {
             try {
                 if (node.isNodeType("nt:version")) {
-                    String uuid = node.getNode("jcr:frozenNode").getProperty("jcr:frozenUuid").getString();;
-                    return new JcrNodeModel(node.getSession().getNodeByUUID(uuid));
+                    Node frozen = node.getNode("jcr:frozenNode");
+                    String uuid = frozen.getProperty("jcr:frozenUuid").getString();
+                    try {
+                        Node docNode = node.getSession().getNodeByUUID(uuid);
+                        if (docNode.getDepth() > 0) {
+                            Node parent = docNode.getParent();
+                            if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                return new JcrNodeModel(parent);
+                            }
+                        }
+                        return new JcrNodeModel(docNode);
+                    } catch (ItemNotFoundException infe) {
+                        // node doesn't exist anymore.  If it's a document, the handle
+                        // should still be available though.
+                        if (frozen.hasProperty(HippoNodeType.HIPPO_PATHS)) {
+                            Value[] ancestors = frozen.getProperty(HippoNodeType.HIPPO_PATHS).getValues();
+                            if (ancestors.length > 1) {
+                                uuid = ancestors[1].getString();
+                                return new JcrNodeModel(node.getSession().getNodeByUUID(uuid));
+                            }
+                        }
+                        throw infe;
+                    }
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
@@ -200,7 +223,7 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
         }
         return model;
     }
-    
+
     private JcrNodeModel getParent(JcrNodeModel model) {
         JcrNodeModel parentModel = model.getParentModel();
         if (parentModel == null) {
@@ -223,7 +246,8 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
             try {
                 Node node = nodeModel.getNode();
                 if (node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory")
-                        || node.isNodeType("hipposysedit:namespace") || node.isNodeType(HippoNodeType.NT_FACETBASESEARCH)) {
+                        || node.isNodeType("hipposysedit:namespace")
+                        || node.isNodeType(HippoNodeType.NT_FACETBASESEARCH)) {
                     return true;
                 }
             } catch (RepositoryException ex) {
@@ -233,5 +257,5 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
         }
         return true;
     }
-    
+
 }

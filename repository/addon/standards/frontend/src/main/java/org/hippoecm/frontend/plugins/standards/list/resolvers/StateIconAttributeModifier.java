@@ -16,20 +16,12 @@
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,67 +33,8 @@ public class StateIconAttributeModifier extends AbstractNodeAttributeModifier {
 
     static final Logger log = LoggerFactory.getLogger(StateIconAttributeModifier.class);
 
-    private static final String PREFIX = "state-";
-    private static final String SUFFIX = "-16";
-
-    private static class StateIconAttributes implements IDetachable {
-        private static final long serialVersionUID = 1L;
-
-        private JcrNodeModel nodeModel;
-        private transient String cssClass;
-        private transient String summary;
-        private transient boolean loaded = false;
-
-        StateIconAttributes(JcrNodeModel nodeModel) {
-            this.nodeModel = nodeModel;
-        }
-
-        public String getSummary() {
-            load();
-            return summary;
-        }
-
-        public String getCssClass() {
-            load();
-            return cssClass;
-        }
-
-        public void detach() {
-            loaded = false;
-            summary = null;
-            cssClass = null;
-            nodeModel.detach();
-        }
-
-        void load() {
-            if (!loaded) {
-                try {
-                    Node node = nodeModel.getNode();
-                    if (node != null) {
-                        Node document = null;
-                        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            document = node.getNode(node.getName());
-                        } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            document = node;
-                        }
-                        if (document != null) {
-                            if (document.isNodeType("hippostd:publishableSummary")) {
-                                cssClass = PREFIX + document.getProperty("hippostd:stateSummary").getString() + SUFFIX;
-                                IModel stateModel = new JcrPropertyValueModel(new JcrPropertyModel(document
-                                        .getProperty("hippostd:stateSummary")));
-                                summary = (String) new TypeTranslator(new JcrNodeTypeModel(
-                                        "hippostd:publishableSummary")).getValueName("hippostd:stateSummary",
-                                        stateModel).getObject();
-                            }
-                        }
-                    }
-                } catch (RepositoryException ex) {
-                    log.error("Unable to obtain state properties", ex);
-                }
-                loaded = true;
-            }
-        }
-    }
+    static final String PREFIX = "state-";
+    static final String SUFFIX = "-16";
 
     @Override
     public AttributeModifier getColumnAttributeModifier(Node node) {

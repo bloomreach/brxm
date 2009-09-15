@@ -15,26 +15,28 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
+import java.text.Format;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.reviewedactions.model.Revision;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RevisionHistory;
@@ -46,16 +48,15 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
-import org.hippoecm.frontend.service.IEditor;
-import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.service.ServiceException;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A panel that displays the revision history of a document as a list.  Revisions
- * can be selected and opened.
+ * A panel that displays the revision history of a document as a list.
  */
 public class RevisionHistoryView extends Panel implements IPagingDefinition {
     private static final long serialVersionUID = -6072417388871990194L;
@@ -64,16 +65,12 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
 
     private RevisionHistory history;
     private ISortableDataProvider provider;
-    private IEditorManager editorMgr;
     private ListDataTable dataTable;
-    private WebMarkupContainer actionContainer;
-    private List<IModel/*<Revision>*/> selectedRevisions = new LinkedList<IModel/*<Revision>*/>();
 
-    public RevisionHistoryView(String id, RevisionHistory history, IEditorManager mgr) {
+    public RevisionHistoryView(String id, RevisionHistory history) {
         super(id);
 
         this.history = history;
-        this.editorMgr = mgr;
 
         final SortState state = new SortState();
         this.provider = new ISortableDataProvider() {
@@ -108,12 +105,11 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
             private static final long serialVersionUID = 1L;
 
             public void selectionChanged(IModel model) {
+                onSelect(model);
             }
 
         }, true, this);
         add(dataTable);
-
-        add(actionContainer = new WebMarkupContainer("actions"));
 
         add(new CssClassAppender(new IModel() {
             private static final long serialVersionUID = 1L;
@@ -137,62 +133,6 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
 
         }));
 
-        AjaxLink selectAll = new AjaxLink("select-all") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                selectedRevisions.clear();
-                Iterator<?> iter = provider.iterator(0, provider.size());
-                while (iter.hasNext()) {
-                    selectedRevisions.add(provider.model(iter.next()));
-                }
-                target.addComponent(RevisionHistoryView.this);
-            }
-        };
-        actionContainer.add(selectAll);
-
-        AjaxLink selectNone = new AjaxLink("select-none") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                selectedRevisions.clear();
-                target.addComponent(RevisionHistoryView.this);
-            }
-        };
-        actionContainer.add(selectNone);
-
-        Button open = new AjaxButton("open") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
-                if (editorMgr != null) {
-                    for (IModel/*<Revision>*/model : selectedRevisions) {
-                        Revision revision = (Revision) model.getObject();
-                        JcrNodeModel versionModel = revision.getRevisionNodeModel();
-                        // get nt:version node
-                        versionModel = versionModel.getParentModel();
-                        IEditor editor = editorMgr.getEditor(versionModel);
-                        if (editor == null) {
-                            try {
-                                editorMgr.openPreview(versionModel);
-                            } catch (ServiceException ex) {
-                                log.error("Could not open editor for " + versionModel.getItemModel().getPath(), ex);
-                            }
-                        }
-                    }
-                }
-                onOpen();
-            }
-        };
-        open.setModel(new StringResourceModel("open", this, null));
-        if (editorMgr == null) {
-            open.setEnabled(false);
-        }
-        actionContainer.add(open);
-
         add(new CssClassAppender(new Model("hippo-history-documents")));
     }
 
@@ -200,7 +140,7 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         return history.getRevisions();
     }
 
-    public void onSelect(IModel/*<Revision>*/revision) {
+    public void onSelect(IModel/*<Revision>*/model) {
     }
 
     @Override
@@ -213,30 +153,81 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
     protected void onBeforeRender() {
         boolean hasLinks = (getRevisions().size() > 0);
         dataTable.setVisible(hasLinks);
-        actionContainer.setVisible(hasLinks);
         super.onBeforeRender();
-    }
-
-    protected void onOpen() {
     }
 
     protected TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
 
-        ListColumn column = new ListColumn(new Model(""), null);
-        column.setRenderer(new RowSelector(selectedRevisions));
-        columns.add(column);
-
-        column = new ListColumn(new StringResourceModel("history-name", this, null), null);
+        ListColumn column = new ListColumn(new StringResourceModel("history-name", this, null), null);
         column.setRenderer(new IListCellRenderer() {
             private static final long serialVersionUID = 1L;
 
             public Component getRenderer(String id, IModel model) {
-                return new Label(id, new PropertyModel(model, "creationDate"));
+                Revision revision = (Revision) model.getObject();
+                Node node = revision.getRevisionNodeModel().getNode();
+                IModel nameModel;
+                try {
+                    nameModel = new NodeTranslator(new JcrNodeModel(node.getNode("jcr:frozenNode"))).getNodeName();
+                } catch (PathNotFoundException e) {
+                    nameModel = new Model("Missing node " + e.getMessage());
+                    log.error(e.getMessage(), e);
+                } catch (RepositoryException e) {
+                    nameModel = new Model("Error " + e.getMessage());
+                    log.error(e.getMessage(), e);
+                }
+                return new Label(id, nameModel);
             }
 
         });
         column.setAttributeModifier(new DocumentAttributeModifier());
+        columns.add(column);
+
+        column = new ListColumn(new StringResourceModel("history-time", this, null), null);
+        column.setRenderer(new IListCellRenderer() {
+            private static final long serialVersionUID = 1L;
+
+            public Component getRenderer(String id, final IModel model) {
+                IModel labelModel = new IModel() {
+
+                    public Object getObject() {
+                        Format format = new MessageFormat("{0,time} {0,date}", getLocale());
+                        return format.format(new Object[] { ((Revision) model.getObject()).getCreationDate() });
+                    }
+
+                    public void setObject(Object object) {
+                        throw new UnsupportedOperationException();
+                    }
+
+                    public void detach() {
+                        model.detach();
+                    }
+                    
+                };
+                return new Label(id, labelModel);
+            }
+
+        });
+        columns.add(column);
+
+        column = new ListColumn(new StringResourceModel("history-state", this, null), "state");
+        column.setRenderer(new EmptyRenderer());
+        column.setAttributeModifier(new IListAttributeModifier() {
+            private static final long serialVersionUID = 1L;
+
+            public AttributeModifier[] getCellAttributeModifiers(IModel model) {
+                Revision revision = (Revision) model.getObject();
+                StateIconAttributes attrs = new StateIconAttributes(revision.getRevisionNodeModel());
+                AttributeModifier[] attributes = new AttributeModifier[2];
+                attributes[0] = new CssClassAppender(new PropertyModel(attrs, "cssClass"));
+                attributes[1] = new AttributeAppender("title", new PropertyModel(attrs, "summary"), " ");
+                return attributes;
+            }
+
+            public AttributeModifier[] getColumnAttributeModifiers(IModel model) {
+                return new AttributeModifier[] { new CssClassAppender(new Model("icon-16")) };
+            }
+        });
         columns.add(column);
 
         return new TableDefinition(columns);

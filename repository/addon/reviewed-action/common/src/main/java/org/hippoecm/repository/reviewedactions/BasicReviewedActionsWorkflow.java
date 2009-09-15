@@ -16,15 +16,13 @@
 package org.hippoecm.repository.reviewedactions;
 
 import java.rmi.RemoteException;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.MappingException;
-
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 
 public interface BasicReviewedActionsWorkflow extends Workflow, EditableWorkflow {
@@ -68,9 +66,4 @@ public interface BasicReviewedActionsWorkflow extends Workflow, EditableWorkflow
     public void requestPublication(Date publicationDate, Date unpublicationDate)
         throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
-    /**
-     * Restores a historic version of the document
-     */
-    public void restore(Calendar historic) 
-        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

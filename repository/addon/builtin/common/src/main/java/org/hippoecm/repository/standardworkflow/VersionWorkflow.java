@@ -37,6 +37,16 @@ public interface VersionWorkflow extends Workflow {
     public Document revert(Calendar historic)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
+    /**
+     * Restore a historic version by putting its contents in the target document.
+     * Can only be used when the workflow is used on an nt:version Node (a {@link Version}).
+     * 
+     * @param target the Document representation of the target node
+     * @return the updated target node
+     */
+    public Document restoreTo(Document target)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
     public Document restore(Calendar historic)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 

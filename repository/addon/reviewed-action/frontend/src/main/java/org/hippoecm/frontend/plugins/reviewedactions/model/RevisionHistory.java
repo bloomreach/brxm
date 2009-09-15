@@ -17,20 +17,26 @@ package org.hippoecm.frontend.plugins.reviewedactions.model;
 
 import java.rmi.RemoteException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.version.Version;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.ocm.JcrObject;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
@@ -42,6 +48,9 @@ import org.slf4j.LoggerFactory;
 /**
  * The revision history of a document.  This history is linear, i.e. JCR merging
  * is not handled.  Initialize this object with a document node.
+ * <p>
+ * True to the limitations in the current versioning implementation, the history
+ * only consists of published variants.
  */
 public class RevisionHistory extends JcrObject {
     private static final long serialVersionUID = -562404992641520380L;
@@ -90,33 +99,87 @@ public class RevisionHistory extends JcrObject {
     protected JcrNodeModel getNodeModel() {
         return super.getNodeModel();
     }
-    
+
     @Override
     public void detach() {
         list = null;
         super.detach();
     }
-    
+
     private void load() {
         if (list == null) {
             list = new LinkedList<Revision>();
-            VersionWorkflow workflow = getWorkflow();
-            if (workflow != null) {
-                try {
-                    SortedMap<Calendar, Set<String>> versions = workflow.list();
-                    int index = 0;
-                    for (Map.Entry<Calendar, Set<String>> entry : versions.entrySet()) {
-                        list.add(new Revision(this, entry.getKey(), entry.getValue(), index++));
+
+            try {
+                Node subject = getNode();
+                Node handle = null;
+                if (subject.isNodeType("nt:frozenNode")) {
+                    // use hippo:paths to find handle; then use the matching variant 
+                    if (subject.hasProperty(HippoNodeType.HIPPO_PATHS)) {
+                        Value[] paths = subject.getProperty(HippoNodeType.HIPPO_PATHS).getValues();
+                        if (paths.length > 1) {
+                            String handleUuid = paths[1].getString();
+                            handle = subject.getSession().getNodeByUUID(handleUuid);
+                        }
                     }
-                } catch (RemoteException ex) {
-                    log.error(ex.getMessage(), ex);
-                } catch (WorkflowException ex) {
-                    log.error(ex.getMessage(), ex);
-                } catch (MappingException ex) {
-                    log.error(ex.getMessage(), ex);
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage(), ex);
+                } else {
+                    handle = subject.getParent();
                 }
+
+                if (handle == null) {
+                    log.warn("Unable to find handle");
+                    return;
+                }
+
+                if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    SortedMap<Calendar, Version> versions = new TreeMap<Calendar, Version>();
+                    VariantHistoryIterator iter = new VariantHistoryIterator(handle, Collections.EMPTY_MAP);
+                    while (iter.hasNext()) {
+                        Version variant = iter.next();
+
+                        // ignore drafts, they are not a part of versioning but could be
+                        // around at the time of (de)publication.
+                        Node content = variant.getNode("jcr:frozenNode");
+                        if (content.hasProperty("hippostd:state")
+                                && "draft".equals(content.getProperty("hippostd:state").getString())) {
+                            continue;
+                        }
+
+                        versions.put(variant.getCreated(), variant);
+                    }
+                    int index = 0;
+                    for (Map.Entry<Calendar, Version> entry : versions.entrySet()) {
+                        Set<String> labels = new TreeSet<String>();
+                        Version variant = entry.getValue();
+                        String[] versionLabels = variant.getContainingHistory().getVersionLabels(variant);
+                        for (String label : versionLabels) {
+                            labels.add(label);
+                        }
+                        list.add(new Revision(this, entry.getKey(), labels, index++, new JcrNodeModel(variant)));
+                    }
+                } else {
+                    VersionWorkflow workflow = getWorkflow();
+                    if (workflow != null) {
+                        try {
+                            SortedMap<Calendar, Set<String>> versions = null;
+                            versions = workflow.list();
+                            int index = 0;
+                            for (Map.Entry<Calendar, Set<String>> entry : versions.entrySet()) {
+                                list.add(new Revision(this, entry.getKey(), entry.getValue(), index++));
+                            }
+                        } catch (RemoteException ex) {
+                            log.error(ex.getMessage(), ex);
+                        } catch (WorkflowException ex) {
+                            log.error(ex.getMessage(), ex);
+                        } catch (MappingException ex) {
+                            log.error(ex.getMessage(), ex);
+                        } catch (RepositoryException ex) {
+                            log.error(ex.getMessage(), ex);
+                        }
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage(), e);
             }
         }
     }

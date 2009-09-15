@@ -24,9 +24,12 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.reviewedactions.model.Revision;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RevisionHistory;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +44,7 @@ public class HistoryDialog extends AbstractDialog implements ITitleDecorator {
 
     static final Logger log = LoggerFactory.getLogger(HistoryDialog.class);
 
-    public HistoryDialog(WorkflowDescriptorModel<?> model, IEditorManager editorMgr) {
+    public HistoryDialog(WorkflowDescriptorModel<?> model, final IEditorManager editorMgr) {
         super(model);
 
         setOkVisible(false);
@@ -49,7 +52,26 @@ public class HistoryDialog extends AbstractDialog implements ITitleDecorator {
 
         try {
             RevisionHistory history = new RevisionHistory(new JcrNodeModel(model.getNode()));
-            add(new RevisionHistoryView("links", history, editorMgr));
+            add(new RevisionHistoryView("links", history) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onSelect(IModel model) {
+                    Revision revision = (Revision) model.getObject();
+                    JcrNodeModel versionModel = revision.getRevisionNodeModel();
+                    IEditor editor = editorMgr.getEditor(versionModel);
+                    if (editor == null) {
+                        try {
+                            editorMgr.openPreview(versionModel);
+                        } catch (ServiceException ex) {
+                            log.error("Could not open editor for " + versionModel.getItemModel().getPath(), ex);
+                            error("Could not open editor");
+                            return;  // don't close dialog
+                        }
+                    }
+                    closeDialog();
+                }
+            });
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
