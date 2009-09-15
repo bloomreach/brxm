@@ -204,8 +204,9 @@ public class CndSerializer implements IClusterable {
         types = new LinkedHashMap<String, TypeEntry>();
         Session session = jcrSession.getSession();
 
-        String uri = getCurrentUri(namespace);
-        Node nsNode = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH + "/" + namespace);
+        JcrNamespace jcrNamespace = new JcrNamespace(session, namespace);
+        String uri = jcrNamespace.getCurrentUri();
+        Node nsNode = session.getRootNode().getNode(jcrNamespace.getPath());
         NodeIterator typeIter = nsNode.getNodes();
         while (typeIter.hasNext()) {
             Node templateTypeNode = typeIter.nextNode();

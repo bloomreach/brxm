@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -96,8 +95,8 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         return result;
     }
 
-    public Map<String, TypeUpdate> getUpdate(String prefix) throws RepositoryException {
-        return new NamespaceInfo(prefix).getUpdate();
+    public Map<String, TypeUpdate> getUpdate(String prefix) throws RepositoryException, StoreException {
+        return new JcrNamespace(getJcrSession(), prefix).getUpdate(locator);
     }
 
     public void close() {
@@ -136,7 +135,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
                 if (session.itemExists(path)) {
                     throw new StoreException("type already exists");
                 }
-                Node nsNode = (Node) session.getItem(info.getNamespaceInfo().getPath());
+                Node nsNode = (Node) session.getItem(info.getNamespace().getPath());
 
                 WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 Workflow workflow = workflowManager.getWorkflow("editor", nsNode);
@@ -181,7 +180,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
 
         TypeInfo info = new TypeInfo(type);
         String path = info.getPath();
-        String uri = info.getNamespaceInfo().getUri();
+        String uri = info.getNamespace().getCurrentUri();
 
         if (!session.itemExists(path) || !session.getItem(path).isNode()) {
             return null;
@@ -214,73 +213,8 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         return null;
     }
 
-    private class NamespaceInfo {
-
-        String prefix;
-
-        NamespaceInfo(String prefix) throws RepositoryException {
-            String uri = getUri(prefix);
-            String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
-            if (prefix.length() > nsVersion.length()
-                    && nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
-                prefix = prefix.substring(0, prefix.length() - nsVersion.length());
-            }
-
-            this.prefix = prefix;
-        }
-
-        Map<String, TypeUpdate> getUpdate() throws RepositoryException {
-            HippoSession session = (HippoSession) getJcrSession();
-            Map<String, TypeUpdate> result = new HashMap<String, TypeUpdate>();
-
-            String uri = getUri();
-            NodeIterator iter = ((Node) session.getItem(getPath())).getNodes();
-            while (iter.hasNext()) {
-                Node typeNode = iter.nextNode();
-
-                Node draft = null, current = null;
-                NodeIterator versions = typeNode.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-                while (versions.hasNext()) {
-                    Node node = versions.nextNode();
-                    if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {
-                        draft = node;
-                    } else {
-                        if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                            current = node;
-                        }
-                    }
-                }
-
-                if (current != null) {
-                    ITypeDescriptor currentType = new JcrTypeDescriptor(new JcrNodeModel(current), locator);
-                    ITypeDescriptor draftType = draft == null ? null : new JcrTypeDescriptor(new JcrNodeModel(draft),
-                            locator);
-                    result.put(typeNode.getName(), new TypeConversion(JcrTypeStore.this, currentType, draftType)
-                            .getTypeUpdate());
-                }
-            }
-            return result;
-        }
-
-        String getPath() {
-            return "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix;
-        }
-
-        String getUri() throws RepositoryException {
-            return getUri(prefix);
-        }
-
-        private String getUri(String prefix) throws RepositoryException {
-            if ("system".equals(prefix)) {
-                return "internal";
-            }
-            NamespaceRegistry nsReg = getJcrSession().getWorkspace().getNamespaceRegistry();
-            return nsReg.getURI(prefix);
-        }
-    }
-
     private class TypeInfo {
-        NamespaceInfo nsInfo;
+        JcrNamespace nsInfo;
         String subType;
 
         TypeInfo(String type) throws RepositoryException {
@@ -290,10 +224,10 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
                 prefix = type.substring(0, type.indexOf(':'));
                 subType = NodeNameCodec.encode(type.substring(type.indexOf(':') + 1));
             }
-            nsInfo = new NamespaceInfo(prefix);
+            nsInfo = new JcrNamespace(getJcrSession(), prefix);
         }
 
-        NamespaceInfo getNamespaceInfo() {
+        JcrNamespace getNamespace() {
             return nsInfo;
         }
 

@@ -18,7 +18,11 @@
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
-<test='http://www.hippoecm.org/frontend/test/nt/0.1'>
+<test='http://www.hippoecm.org/editor/test/nt/0.1'>
+<test_0_0='http://www.hippoecm.org/editor/test/nt/0.0'>
+
+[test_0_0:test] > nt:base
+- test:title (string)
 
 [test:test] > nt:base
 - test:title (string)

@@ -73,12 +73,23 @@
       <sv:value>501.0</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="test_0_0">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:namespace" sv:type="String">
+      <sv:value>http://www.hippoecm.org/editor/test/nt/0.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>11004.0</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="test">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/frontend/test/nt/0.1</sv:value>
+      <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>test.cnd</sv:value>
