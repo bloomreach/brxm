@@ -30,6 +30,23 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * An editor that takes a hippo:handle for its JcrNodeModel and displays one of the variants.
+ * The variant documents must be of type hippostd:publishable.
+ * <p>
+ * Algorithm to determine what is shown:
+ * <code>
+ * when draft exists:
+ *   show draft in edit mode
+ * else:
+ *   when unpublished exists:
+ *     show unpublished in preview mode
+ *   else
+ *     show published in preview mode
+ * </code>
+ * <p>
+ * The editor model is the variant that is shown.
+ */
 class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
     private static final long serialVersionUID = 1L;
 

@@ -156,7 +156,7 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
             }
         }
 
-        /* FIXME: sometimes this test fails because of invalid earlier data in the repository
+        /* FIXME: sometimes this test fails because of invalid earlier data in the repository */
         for(int i=0; i<expected.size(); i++)
             System.err.println("expected "+expected.get(i));
         for(int i=0; i<versions.size(); i++)
@@ -170,25 +170,17 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         assertNotNull(getNode("test/versiondocument/versiondocument[@hippostd:state='published']"));
         assertNotNull(getNode("test/versiondocument/versiondocument[@hippostd:state='unpublished']"));
 
-        try {
-            restore(history.keySet().iterator().next());
-            org.hippoecm.repository.Utilities.dump(System.err, getNode("test/versiondocument"));
-            fail("should not able to restore historic version with unpublished version present");
-        } catch(WorkflowException ex) {
-            // this exception should occur
-        }
-        
-        */
+        restore(history.keySet().iterator().next());
     }
-
+    
     private void restore(Calendar historic) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node node = getNode("test/versiondocument/versiondocument");
         assertNotNull(node);
         node.getParent().checkout();
         node.checkout();
         session.save();
-        BasicReviewedActionsWorkflow publishwf = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-        publishwf.restore(historic);
+        VersionWorkflow versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
+        versionwf.restore(historic);
         session.save();
         session.refresh(false);
     }

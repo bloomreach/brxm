@@ -15,14 +15,21 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionIterator;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -33,9 +40,9 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
-
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class VersioningWorkflowTest extends TestCase {
 
@@ -53,12 +60,22 @@ public class VersioningWorkflowTest extends TestCase {
 
         node = root.getNode("hippo:configuration/hippo:workflows");
         if (!node.hasNode("versioning")) {
-            node = node.addNode("versioning", "hipposys:workflowcategory");
-            node = node.addNode("version", "hipposys:workflow");
+            Node category = node.addNode("versioning", "hipposys:workflowcategory");
+            node = category.addNode("version", "hipposys:workflow");
             node.setProperty("hipposys:nodetype", "hippo:document");
             node.setProperty("hipposys:display", "Versioning workflow");
             node.setProperty("hipposys:classname", "org.hippoecm.repository.standardworkflow.VersionWorkflowImpl");
             Node types = node.getNode("hipposys:types");
+            node = types.addNode("org.hippoecm.repository.api.Document", "hipposys:type");
+            node.setProperty("hipposys:nodetype", "hippo:document");
+            node.setProperty("hipposys:display", "Document");
+            node.setProperty("hipposys:classname", "org.hippoecm.repository.api.Document");
+
+            node = category.addNode("restore", "hipposys:workflow");
+            node.setProperty("hipposys:nodetype", "nt:frozenNode");
+            node.setProperty("hipposys:display", "Versioning workflow");
+            node.setProperty("hipposys:classname", "org.hippoecm.repository.standardworkflow.VersionWorkflowImpl");
+            types = node.getNode("hipposys:types");
             node = types.addNode("org.hippoecm.repository.api.Document", "hipposys:type");
             node.setProperty("hipposys:nodetype", "hippo:document");
             node.setProperty("hipposys:display", "Document");
@@ -242,6 +259,51 @@ public class VersioningWorkflowTest extends TestCase {
         node = getNode("test/versiondocument/versiondocument[@hippostd:state='published']");
         assertNotNull(node);
         VersionWorkflow versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
+        Map<Calendar, Set<String>> history = versionwf.list();
+        Vector<String> versions = new Vector<String>();
+        for (Map.Entry<Calendar, Set<String>> entry : history.entrySet()) {
+            document = versionwf.retrieve(entry.getKey());
+            if (document != null) {
+                Node version = session.getNodeByUUID(document.getIdentity());
+                versions.add(version.getProperty("hippostd:language").getString());
+            } else {
+                versions.add("--");
+            }
+        }
+
+        assertEquals(expected.size(), versions.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertEquals(expected.get(i), versions.get(i));
+        }
+    }
+
+    @Test
+    /**
+     * verify that, when using a frozen node to initialize the version workflow, it will
+     * resolve the corresponding physical node.
+     */
+    public void testResolution() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Node node, root = session.getRootNode();
+        Document document;
+        Vector<String> expected = new Vector<String>();
+
+        node = getNode("test/versiondocument");
+        node.setProperty(HippoNodeType.HIPPO_DISCRIMINATOR, new Value[] { session.getValueFactory().createValue("hippostd:state") });
+
+        edit();
+        version();
+        expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
+
+        node = getNode("test/versiondocument/versiondocument[@hippostd:state='published']");
+        assertNotNull(node);
+        
+        VersionHistory jcrHistory = node.getVersionHistory();
+        VersionIterator jcrIterator = jcrHistory.getAllVersions();
+        jcrIterator.nextVersion();  // skip root version
+        Version jcrVersion = jcrIterator.nextVersion();
+        assertEquals(jcrVersion.getNode("jcr:frozenNode").getProperty("hippostd:state").getString(), "published");
+
+        VersionWorkflow versionwf = (VersionWorkflow) getWorkflow(jcrVersion.getNode("jcr:frozenNode"), "versioning");
         Map<Calendar, Set<String>> history = versionwf.list();
         Vector<String> versions = new Vector<String>();
         for (Map.Entry<Calendar, Set<String>> entry : history.entrySet()) {

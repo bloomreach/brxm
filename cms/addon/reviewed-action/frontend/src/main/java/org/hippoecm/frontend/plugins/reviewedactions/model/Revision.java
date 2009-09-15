@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
@@ -32,10 +31,7 @@ import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.ocm.JcrObject;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +41,7 @@ public class Revision extends JcrObject {
 
     static final Logger log = LoggerFactory.getLogger(Revision.class);
 
+    JcrNodeModel versionModel;
     RevisionHistory history;
     Calendar date;
     Set<String> labels;
@@ -59,26 +56,41 @@ public class Revision extends JcrObject {
         this.index = index;
     }
 
+    public Revision(RevisionHistory history, Calendar date, Set<String> labels, int index, JcrNodeModel versionModel) {
+        super(history.getNodeModel());
+
+        this.history = history;
+        this.date = date;
+        this.labels = labels;
+        this.index = index;
+        this.versionModel = versionModel;
+    }
+
+    /**
+     * The node model for the nt:version node that corresponds to this revision.
+     */
     public JcrNodeModel getRevisionNodeModel() {
-        VersionWorkflow workflow = history.getWorkflow();
-        if (workflow != null) {
-            try {
-                Document doc = workflow.retrieve(date);
-                if (doc != null) {
-                    return new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(
-                            doc.getIdentity()));
+        if (versionModel == null) {
+            VersionWorkflow workflow = history.getWorkflow();
+            if (workflow != null) {
+                try {
+                    Document doc = workflow.retrieve(date);
+                    if (doc != null) {
+                        versionModel = new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(
+                                doc.getIdentity()).getParent());
+                    }
+                } catch (ItemNotFoundException e) {
+                    log.error("Could not find version", e);
+                } catch (RepositoryException e) {
+                    log.error("Repository error", e);
+                } catch (RemoteException e) {
+                    log.error("Connection error", e);
+                } catch (WorkflowException e) {
+                    log.error("Workflow error", e);
                 }
-            } catch (ItemNotFoundException e) {
-                log.error("Could not find version", e);
-            } catch (RepositoryException e) {
-                log.error("Repository error", e);
-            } catch (RemoteException e) {
-                log.error("Connection error", e);
-            } catch (WorkflowException e) {
-                log.error("Workflow error", e);
             }
         }
-        return null;
+        return versionModel;
     }
 
     public int getRevisionNumber() {
@@ -109,26 +121,6 @@ public class Revision extends JcrObject {
         return history.getRevision(index - 1);
     }
 
-    public void restore() {
-        Node document = getNode();
-        try {
-            WorkflowManager workflowManager = ((HippoWorkspace) document.getSession().getWorkspace())
-                    .getWorkflowManager();
-            VersionWorkflow workflow = (VersionWorkflow) workflowManager.getWorkflow("versioning", document);
-            if (workflow != null) {
-                BasicReviewedActionsWorkflow restoreWorkflow = (BasicReviewedActionsWorkflow) workflowManager
-                        .getWorkflow("default", document);
-                restoreWorkflow.restore(date);
-            }
-        } catch (WorkflowException ex) {
-            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-        } catch (RemoteException ex) {
-            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-        } catch (RepositoryException ex) {
-            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-        }
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
@@ -137,6 +129,9 @@ public class Revision extends JcrObject {
     @Override
     public void detach() {
         history.detach();
+        if (versionModel != null) {
+            versionModel.detach();
+        }
         super.detach();
     }
 

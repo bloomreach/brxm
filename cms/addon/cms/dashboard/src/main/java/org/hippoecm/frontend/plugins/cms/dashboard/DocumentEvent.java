@@ -79,6 +79,7 @@ public class DocumentEvent extends JcrObject {
                                 targetVariantExists = session.itemExists(path);
                                 if (targetVariantExists) {
                                     targetVariant = path;
+                                    break;
                                 }
                             }
                         }
