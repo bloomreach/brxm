@@ -15,17 +15,30 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
+import java.text.MessageFormat;
+import java.util.Calendar;
+
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditPerspective extends Perspective {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
+    
     private static final long serialVersionUID = 1L;
 
     public EditPerspective(IPluginContext context, IPluginConfig config) {
@@ -34,7 +47,36 @@ public class EditPerspective extends Perspective {
 
     @Override
     public IModel getTitle() {
-        return new NodeTranslator((JcrNodeModel) getModel()).getNodeName();
+        return new LoadableDetachableModel() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Object load() {
+                JcrNodeModel nodeModel = (JcrNodeModel) EditPerspective.this.getModel();
+                IModel nodeName = new NodeTranslator(nodeModel).getNodeName();
+                if (nodeModel != null) {
+                    Node node = nodeModel.getNode();
+                    if (node != null) {
+                        try {
+                            if (node.isNodeType("nt:frozenNode")) {
+                                Node versionNode = node.getParent();
+                                Calendar calendar = versionNode.getProperty("jcr:created").getDate();
+                                MessageFormat format = new MessageFormat("{0} {1,date} {1,time}", getLocale());
+                                return format.format(new Object[] { nodeName.getObject(), calendar.getTime() });
+                            }
+                        } catch (ValueFormatException e) {
+                            log.error("Value is not a date", e);
+                        } catch (PathNotFoundException e) {
+                            log.error("Could not find node", e);
+                        } catch (RepositoryException e) {
+                            log.error("Repository error", e);
+                        }
+                    }
+                }
+                return nodeName.getObject();
+            }
+
+        };
     }
 
 }

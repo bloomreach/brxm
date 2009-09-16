@@ -57,6 +57,11 @@ public abstract class StdWorkflow extends ActionDescription {
                     public void onClick() {
                         invoke();
                     }
+
+                    @Override
+                    public boolean isEnabled() {
+                        return StdWorkflow.this.isEnabled();
+                    }
                 });
                 link.add(new Label("label", getTitle()));
             }

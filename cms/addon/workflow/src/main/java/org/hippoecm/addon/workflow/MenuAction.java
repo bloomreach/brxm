@@ -17,8 +17,10 @@ package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 
 class MenuAction extends Panel implements IContextMenu {
@@ -32,13 +34,38 @@ class MenuAction extends Panel implements IContextMenu {
 
         MenuLink link;
         add(link = new MenuLink("link") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick() {
                 if (wf instanceof StdWorkflow) {
                     ((StdWorkflow)wf).invoke();
                 }
             }
+
+            @Override
+            public boolean isEnabled() {
+                return wf.isEnabled();
+            }
         });
+
+        link.add(new AttributeAppender("class", new IModel() {
+            private static final long serialVersionUID = 1L;
+
+            public Object getObject() {
+                if (!wf.isEnabled()) {
+                    return "disabled";
+                }
+                return "";
+            }
+
+            public void setObject(Object object) {
+            }
+
+            public void detach() {
+            }
+            
+        }, " ") );
 
         Component fragment = wf.getFragment("text");
         if (fragment instanceof ActionDescription.ActionDisplay) {
