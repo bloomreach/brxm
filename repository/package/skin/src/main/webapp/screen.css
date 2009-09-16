@@ -17,16 +17,14 @@ fieldset,img { border : 0; }
 caption,th { text-align : left; }
 /* ======================================== */
 
+body.hippo-root #doc3 { margin: 0; }
 #hd { text-align: left; }
 #bd { text-align: left; }
 .wicket-modal { text-align:left }
-#doc3 { margin: 0; }
+
 #wicketAjaxDebugWindow{ text-align: left; }
-
 .hippo-window #wicketDebugLink{ display: none; }
-
-.hippo-window #wicketDebugLink{
-display: none;}
+.hippo-window #wicketDebugLink{ display: none;}
 
 /* Hippo Global CSS tools */
 /* ================================================ */
