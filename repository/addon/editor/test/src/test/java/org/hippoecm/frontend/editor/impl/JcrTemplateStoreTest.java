@@ -44,7 +44,7 @@ public class JcrTemplateStoreTest extends PluginTest {
         Iterator<IClusterConfig> iter = templateStore.find(criteria);
         assertTrue(iter.hasNext());
         IClusterConfig config = iter.next();
-        assertEquals(2, config.getPlugins().size());
+        assertEquals(3, config.getPlugins().size());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class JcrTemplateStoreTest extends PluginTest {
         Iterator<IClusterConfig> iter = templateStore.find(criteria);
         assertTrue(iter.hasNext());
         IClusterConfig config = iter.next();
-        assertEquals(2, config.getPlugins().size());
+        assertEquals(3, config.getPlugins().size());
     }
 
 }
