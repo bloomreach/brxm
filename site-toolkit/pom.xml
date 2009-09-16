@@ -650,13 +650,15 @@
         <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
-    
+      
+      <!--
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-repository-engine</artifactId>
         <version>${hippoecm.version}</version>
         <scope>test</scope>
       </dependency>
+      -->
       
     </dependencies>
     

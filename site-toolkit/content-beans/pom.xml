@@ -137,12 +137,14 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
-
+    
+    <!--
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
       <scope>test</scope>
     </dependency>
+    -->
     
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>

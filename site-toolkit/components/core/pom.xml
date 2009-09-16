@@ -66,6 +66,11 @@
     </dependency>
     
     <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    
+    <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
     </dependency>
@@ -175,11 +180,13 @@
       <scope>test</scope>
     </dependency>
     
+    <!--
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
       <scope>test</scope>
     </dependency>
+    -->
     
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
