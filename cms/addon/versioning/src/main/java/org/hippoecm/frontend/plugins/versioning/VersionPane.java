@@ -220,7 +220,12 @@ public class VersionPane extends RenderPlugin {
                         iter.next();
                     Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>) iter.next();
                     BasicReviewedActionsWorkflow restoreWorkflow = (BasicReviewedActionsWorkflow) workflowManager.getWorkflow("default", document);
-                    restoreWorkflow.restore(entry.getKey());
+
+                    /*
+                     * Disabled, workflow method no longer exists
+                     */
+                    // restoreWorkflow.restore(entry.getKey());
+
                     redraw();
                     /* [BvH] Below is a forcefully refresh of the selected
                      * node, without the node being deselected (as with a
