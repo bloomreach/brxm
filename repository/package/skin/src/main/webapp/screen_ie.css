@@ -1,0 +1,10 @@
+/**
+ * IE-win has problems with calculating the correct size for scrollbars in our editor,
+ * resulting in the CPU going nuts (seems like an infinite-loop, props for Redmond). 
+ * See more: http://www.positioniseverything.net/explorer/unscrollable.html 
+ */
+/* Start hide from IE-Mac \*/
+div.template-type-center-body, div.editor-perspective-center-body {
+   height: 1%;
+}
+/* End Hide from IE-Mac */
