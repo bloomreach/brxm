@@ -149,13 +149,6 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         super.detachModel();
     };
 
-    @Override
-    protected void onBeforeRender() {
-        boolean hasLinks = (getRevisions().size() > 0);
-        dataTable.setVisible(hasLinks);
-        super.onBeforeRender();
-    }
-
     protected TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
 
@@ -191,7 +184,7 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                 IModel labelModel = new IModel() {
 
                     public Object getObject() {
-                        Format format = new MessageFormat("{0,time} {0,date}", getLocale());
+                        Format format = new MessageFormat("{0,date} {0,time}", getLocale());
                         return format.format(new Object[] { ((Revision) model.getObject()).getCreationDate() });
                     }
 

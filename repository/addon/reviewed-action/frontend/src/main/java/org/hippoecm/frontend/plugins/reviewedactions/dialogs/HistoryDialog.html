@@ -15,6 +15,14 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <div wicket:id="links" />
+    <div style="height: 68px; margin: 5px; position: relative;">
+      <span>
+        <wicket:message key="open-revision">Open revision</wicket:message>
+      </span>
+      <div class="hippo-revision-help" style="position: absolute; bottom: 5px;">
+        <wicket:message key="revision-help">When is a revision created</wicket:message>
+      </div>
+    </div>
+    <div wicket:id="links"/>
   </wicket:extend>
 </html>

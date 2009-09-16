@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <entry key="history">Revision History</entry>
+  <entry key="close">Close</entry>
+  <entry key="open-revision">Click a revision to preview</entry>
+  <entry key="revision-help"><![CDATA[
+    Revisions are created when a document is published, taken offline or an old revision is restored.
+]]></entry>
+</properties>

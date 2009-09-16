@@ -111,6 +111,22 @@ public class VersionWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
 
             @Override
+            public boolean isEnabled() {
+                Node frozenNode;
+                try {
+                    frozenNode = ((WorkflowDescriptorModel) getModel()).getNode();
+                    String primaryType = frozenNode.getProperty("jcr:frozenPrimaryType").getString();
+                    String prefix = primaryType.substring(0, primaryType.indexOf(':'));
+                    if (prefix.contains("_")) {
+                        return false;
+                    }
+                } catch (RepositoryException e) {
+                    log.warn("Could not determine whether to enable restore button", e);
+                }
+                return true;
+            }
+
+            @Override
             protected String execute(Workflow wf) throws Exception {
                 Node frozenNode = ((WorkflowDescriptorModel) getModel()).getNode();
                 Session session = frozenNode.getSession();
@@ -143,11 +159,13 @@ public class VersionWorkflowPlugin extends CompatibilityWorkflowPlugin {
                         "default", document);
                 Document doc = braw.obtainEditableInstance();
 
-                VersionWorkflow versionWorkflow = (VersionWorkflow) workflowManager.getWorkflow("versioning",
-                        frozenNode);
-                versionWorkflow.restoreTo(doc);
-
-                doc = braw.commitEditableInstance();
+                try {
+                    VersionWorkflow versionWorkflow = (VersionWorkflow) workflowManager.getWorkflow("versioning",
+                            frozenNode);
+                    versionWorkflow.restoreTo(doc);
+                } finally {
+                    doc = braw.commitEditableInstance();
+                }
 
                 JcrNodeModel unpubModel = new JcrNodeModel(session.getNodeByUUID(doc.getIdentity()));
                 IEditorManager editorMgr = getEditorManager();

@@ -241,7 +241,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
                 .getString(), null) {
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "history-16.png");
+                return new ResourceReference(getClass(), "revision-16.png");
             }
 
             @Override

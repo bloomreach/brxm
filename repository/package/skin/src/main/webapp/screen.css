@@ -431,6 +431,7 @@ color: black
 
 .menu-action{padding-left: 8px; padding-right: 8px; padding-top: 4px; background-image: none; border: 1px solid #e3e3e3; display: block; cursor: pointer; min-width:100px; height: 14px;}
 .menu-action:hover{border: 1px solid #000000;background-color: #fff6e0;}
+.menu-action.disabled:hover{border: 1px solid #e3e3e3;background-color: transparent;}
 .menu-action-text{width: 90px; height: 17px; vertical-align: top; padding-top: 0px; margin-top: 0px; }
 .menu-action-icon{padding-top: 0px;}
 .menu-label{padding-left: 4px; padding-right: 8px; padding-top: 3px; background-image: none; border: 0px solid #e3e3e3; display: block; min-width:100px; height: 17px; white-space: nowrap; }
@@ -1231,4 +1232,16 @@ table.hippo-list-documents > tbody {
   padding:0;
   border:0;
   white-space: nowrap;
+}
+
+.hippo-revision-help {
+  background-image: url("images/icons/dialog-information-32.png");
+  background-repeat: no-repeat;
+  background-position: 10px 5px;
+  padding-left: 70px;
+  padding-top: 8px;
+  min-height: 35px;
+  border: 1px solid #69849f; 
+  color: #69849f;
+  background-color: #fff8d5; 
 }

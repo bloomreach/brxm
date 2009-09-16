@@ -17,12 +17,14 @@ package org.hippoecm.frontend.plugins.standards.tabs;
 
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.ComponentTag;
@@ -33,6 +35,7 @@ import org.apache.wicket.markup.html.list.Loop.LoopItem;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 
@@ -46,6 +49,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
     private final TabsPlugin plugin;
 
+    private int maxTabLength = 12;
     private final List<TabsPlugin.Tab> tabs;
     private transient boolean redraw = false;
 
@@ -145,14 +149,31 @@ public class TabbedPanel extends WebMarkupContainer {
         } else {
             container.add(new Label("close").setVisible(false));
         }
-        container.add(new AjaxFallbackLink("link") {
+        Component link;
+        container.add(link = new AjaxFallbackLink("link") {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 plugin.onSelect(tabbie, target);
             }
-        }.add(new Label("title", tabbie.getTitle())));
+        }.add(new Label("title", new LoadableDetachableModel() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Object load() {
+                IModel titleModel = tabbie.getTitle();
+                if (titleModel != null) {
+                    String title = (String) titleModel.getObject();
+                    if (title.length() > maxTabLength) {
+                        title = title.substring(0, maxTabLength - 2) + ".."; // leave space for two .. then add them
+                    }
+                    return title;
+                }
+                return "title";
+            }
+        })));
+        link.add(new AttributeAppender("title", tabbie.getTitle(), ""));
 
         return container;
     }
@@ -173,6 +194,10 @@ public class TabbedPanel extends WebMarkupContainer {
         };
     }
 
+    public void setMaxTitleLength(int maxTitleLength) {
+        this.maxTabLength = maxTitleLength;
+    }
+
     @Override
     public boolean isTransparentResolver() {
         return true;
@@ -181,7 +206,7 @@ public class TabbedPanel extends WebMarkupContainer {
     public void redraw() {
         redraw = true;
     }
-    
+
     public void render(PluginRequestTarget target) {
         if (redraw) {
             if (target != null) {
@@ -190,7 +215,7 @@ public class TabbedPanel extends WebMarkupContainer {
             redraw = false;
         }
     }
-    
+
     // @see org.apache.wicket.Component#onAttach()
     @Override
     protected void onBeforeRender() {

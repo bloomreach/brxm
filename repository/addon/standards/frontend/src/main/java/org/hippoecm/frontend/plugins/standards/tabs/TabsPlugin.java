@@ -23,7 +23,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -53,7 +52,6 @@ public class TabsPlugin extends RenderPlugin {
     public static final String TAB_ID = "tabs";
     public static final String MAX_TAB_TITLE_LENGTH = "title.maxlength";
 
-    private int maxTabLength;
     private TabbedPanel tabbedPanel;
     private RenderService emptyPanel;
     private List<Tab> tabs;
@@ -64,10 +62,9 @@ public class TabsPlugin extends RenderPlugin {
     public TabsPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
 
-        maxTabLength = properties.getInt(MAX_TAB_TITLE_LENGTH, 12);
-
         tabs = new ArrayList<Tab>();
         add(tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs));
+        tabbedPanel.setMaxTitleLength(properties.getInt(MAX_TAB_TITLE_LENGTH, 12));
 
         setOutputMarkupId(true);
 
@@ -273,14 +270,7 @@ public class TabsPlugin extends RenderPlugin {
                     context.registerService(this, IObserver.class.getName());
                 }
             }
-            if (titleModel != null) {
-                String title = (String) titleModel.getObject();
-                if(title.length() > maxTabLength) {
-                    title = title.substring(0, maxTabLength-2) + ".."; // leave space for two .. then add them
-                }
-                return new Model(title);
-            }
-            return new Model("title");
+            return titleModel;
         }
 
         public Panel getPanel(String panelId) {

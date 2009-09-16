@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <entry key="history">Revisie Geschiedenis</entry>
+  <entry key="close">Sluit</entry>
+  <entry key="open-revision">Klik een revisie om te bekijken</entry>
+  <entry key="revision-help"><![CDATA[
+    Revisies worden gecre&euml;erd wanneer een document wordt gepubliceerd, publicatie wordt beëindigd of 
+    een oude revisie wordt teruggezet.
+    ]]></entry>
+</properties>
