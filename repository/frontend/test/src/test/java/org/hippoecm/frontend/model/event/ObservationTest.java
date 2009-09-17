@@ -28,8 +28,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jcr.InvalidItemStateException;
+import javax.jcr.LoginException;
 import javax.jcr.Node;
-import javax.jcr.SimpleCredentials;
+import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
 import org.apache.wicket.Session;
@@ -37,13 +39,57 @@ import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
-import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.api.HippoNode;
 import org.junit.Test;
 
 public class ObservationTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    private final class TestWriter implements Runnable {
+        volatile boolean stop = false;
+        volatile boolean running = false;
+
+        javax.jcr.Session writerSession;
+
+        TestWriter() throws LoginException, RepositoryException {
+            writerSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        }
+
+        void stop() {
+            stop = true;
+            while (running) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
+
+        public void run() {
+            running = true;
+            while (!stop) {
+                try {
+                    Node testNode = writerSession.getRootNode().getNode("test");
+                    testNode.setProperty("a", "b");
+                    writerSession.save();
+                } catch (InvalidItemStateException ex) {
+                    // this is to be expected, as there will be concurrent modifications
+                    try {
+                        writerSession.refresh(false);
+                    } catch (RepositoryException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                } catch (RepositoryException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            writerSession.logout();
+            running = false;
+        }
+    }
 
     private class TestObservable implements IObservable {
         private static final long serialVersionUID = 1L;
@@ -529,5 +575,53 @@ public class ObservationTest extends PluginTest {
             assertEquals(2, events.size());
         }
     */
+
+    @Test
+    public void testWritingListenerDoesntDeadlock() throws Exception {
+        Node testNode = session.getRootNode().addNode("test");
+        session.save();
+
+        final JcrNodeModel model = new JcrNodeModel(testNode);
+        IObserver observer = new IObserver() {
+            private static final long serialVersionUID = 1L;
+
+            public IObservable getObservable() {
+                return model;
+            }
+
+            public void onEvent(Iterator<? extends IEvent> iter) {
+                Node node = model.getNode();
+                try {
+                    Thread.sleep(10);
+                    node.setProperty("a", "c");
+                    session.save();
+                } catch (InvalidItemStateException e) {
+                    try {
+                        session.refresh(false);
+                    } catch (RepositoryException ex) {
+                        throw new RuntimeException("Unexpected repository exception", e);
+                    } 
+                } catch (RepositoryException e) {
+                    throw new RuntimeException("Unexpected repository exception", e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Thread was interrupted", e);
+                }
+            }
+        };
+
+        context.registerService(observer, IObserver.class.getName());
+        
+        TestWriter writer = new TestWriter();
+        Thread thread = new Thread(writer);
+        thread.start();
+
+        // ad-hoc maximum number of retries.
+        // Experiments revealed deadlock in the 1 - 300 number of retry range
+        for(int i = 0; i < 1000; i++) {
+            home.processEvents();
+        }
+
+        writer.stop();
+    }
 
 }
