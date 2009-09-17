@@ -229,12 +229,11 @@ public class RepositoryServlet extends HttpServlet {
 
         // force the distributed GC to fire, otherwise in tomcat with embedded
         // rmi registry the process won't end
-        // this procedure is necessary specifically for Tomcat and may leave
-        // a running thread on other systems unfortunately.
+        // this procedure is necessary specifically for Tomcat
         log.info("Repository terminated, waiting for garbage to clear");
         Thread garbageClearThread = new Thread("garbage clearer") {
             public void run() {
-                for(;;) {
+                for(int i=0; i < 5; i++) {
                     try {
                         Thread.sleep(3000);
                         System.gc();
