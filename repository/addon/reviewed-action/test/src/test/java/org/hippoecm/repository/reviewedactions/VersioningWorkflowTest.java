@@ -15,12 +15,14 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.jcr.Node;
@@ -33,11 +35,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest {
 
@@ -179,8 +179,10 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         node.getParent().checkout();
         node.checkout();
         session.save();
+        Map<String, String[]> replacements = new TreeMap<String, String[]>();
+        replacements.put("./hippostd:state", new String[] { "unpublished" });
         VersionWorkflow versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
-        versionwf.restore(historic);
+        versionwf.restore(historic, replacements);
         session.save();
         session.refresh(false);
     }
