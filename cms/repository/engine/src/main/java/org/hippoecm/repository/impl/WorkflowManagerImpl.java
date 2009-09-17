@@ -475,14 +475,14 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
                 synchronized (SessionDecorator.unwrap(rootSession)) {
                     returnObject = targetMethod.invoke(upstream, args);
-                    if (uuid!=null) {
+                    if (uuid != null && !targetMethod.getName().equals("hints")) {
                         documentManager.putObject(uuid, types, upstream);
                         rootSession.save();
                     }
                     if (returnObject instanceof Document) {
                         returnObject = new Document(((Document)returnObject).getIdentity());
                     }
-                    if(!targetMethod.getName().equals("hints")) {
+                    if (!targetMethod.getName().equals("hints")) {
                         EventLoggerImpl eventLogger = new EventLoggerImpl(rootSession);
                         eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(),
                                                     targetMethod.getName(), args, returnObject, path);
@@ -782,7 +782,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 Method targetMethod = workflow.getClass().getMethod(method.getName(), method.getParameterTypes());
                 synchronized (SessionDecorator.unwrap(manager.rootSession)) {
                     Object returnObject = targetMethod.invoke(workflow, arguments);
-                    if (uuid!=null) {
+                    if (uuid!=null && !targetMethod.getName().equals("hints")) {
                         manager.documentManager.putObject(uuid, types, workflow);
                         manager.rootSession.save();
                     }
