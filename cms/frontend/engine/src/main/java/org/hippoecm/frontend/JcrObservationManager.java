@@ -569,7 +569,7 @@ public class JcrObservationManager implements ObservationManager {
                 }
             }
         }
-        
+
         synchronized void getChanges(Set<String> paths) {
             try {
                 checkSession();
@@ -593,7 +593,7 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
-        synchronized void process(Map<String, NodeState> dirty) {
+        void process(Map<String, NodeState> dirty) {
             try {
                 checkSession();
             } catch (ObservationException ex) {
@@ -601,123 +601,7 @@ public class JcrObservationManager implements ObservationManager {
                 return;
             }
 
-            // process pending changes
-            Node root = null;
-            Set<Node> nodes = new TreeSet<Node>(new Comparator<Node>() {
-
-                public int compare(Node o1, Node o2) {
-                    try {
-                        return o1.getPath().compareTo(o2.getPath());
-                    } catch (RepositoryException ex) {
-                        return 0;
-                    }
-                }
-
-            });
-            if (!isvirtual) {
-                try {
-                    root = getRoot();
-                    if (nodeTypes == null) {
-                        if ((root.isModified() || root.isNew()) && isVisible(root)) {
-                            nodes.add(root);
-                        }
-                        // use pendingChanges to detect changes in sub-trees and properties
-                        if (!root.isNew()) {
-                            NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, false);
-                            processPending(iter, nodes);
-                        }
-                    } else {
-                        if ((root.isModified() || root.isNew()) && isVisible(root)) {
-                            for (String type : nodeTypes) {
-                                try {
-                                    if (root.isNodeType(type)) {
-                                        nodes.add(root);
-                                        break;
-                                    }
-                                } catch (RepositoryException e) {
-                                    log.debug("Unable to determine if node is of type " + type, e);
-                                }
-                            }
-                        }
-                        // use pendingChanges to detect changes in sub-trees and properties
-                        if (!root.isNew()) {
-                            for (String type : nodeTypes) {
-                                NodeIterator iter = ((HippoSession) root.getSession())
-                                        .pendingChanges(root, type, false);
-                                processPending(iter, nodes);
-                            }
-                        }
-                    }
-                } catch (PathNotFoundException ex) {
-                    log.warn("Root node no longer exists: " + ex.getMessage());
-                    dispose();
-                    return;
-                } catch (RepositoryException ex) {
-                    log.error("Failed to parse pending changes", ex);
-                    dispose();
-                    return;
-                }
-
-                for (Node node : getReferencedNodes()) {
-                    if (nodeTypes == null) {
-                        if (node.isModified() || node.isNew()) {
-                            nodes.add(node);
-                        }
-                    } else {
-                        if (node.isModified() || node.isNew()) {
-                            for (String type : nodeTypes) {
-                                try {
-                                    if (root.isNodeType(type)) {
-                                        nodes.add(root);
-                                        break;
-                                    }
-                                } catch (RepositoryException e) {
-                                    log.debug("Unable to determine if node is of type " + type, e);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                expandNew(nodes);
-
-                List<String> paths = new LinkedList<String>();
-                for (Node node : nodes) {
-                    String path;
-                    try {
-                        path = node.getPath();
-                        paths.add(path);
-
-                        NodeState newState;
-                        if (dirty.containsKey(path)) {
-                            newState = dirty.get(path);
-                        } else {
-                            newState = new NodeState(node);
-                            dirty.put(path, newState);
-                        }
-
-                        NodeState oldState = getNodeState(session, path);
-                        if (oldState != null) {
-                            Iterator<Event> iter = oldState.getEvents(newState);
-                            while (iter.hasNext()) {
-                                Event event = iter.next();
-                                if (!blocks(event)) {
-                                    events.add(event);
-                                }
-                            }
-                        } else {
-                            Event changeEvent = newState.getChangeEvent();
-                            if (!blocks(changeEvent)) {
-                                events.add(changeEvent);
-                            }
-                        }
-                    } catch (RepositoryException e) {
-                        log.warn("Failed to process node", e);
-                    }
-                }
-
-            }
-
+            List<Event> events = getEvents(dirty);
             final Iterator<Event> upstream = events.iterator();
             final long size = events.size();
             if (size > 0) {
@@ -764,8 +648,130 @@ public class JcrObservationManager implements ObservationManager {
                 } catch (RuntimeException ex) {
                     log.error("Error occured when processing event", ex);
                 }
-                events.clear();
             }
+        }
+
+        synchronized List<Event> getEvents(Map<String, NodeState> dirty) {
+            List<Event> events = new LinkedList<Event>(this.events);
+            this.events.clear();
+
+            if (isvirtual) {
+                return events;
+            }
+
+            // process pending changes
+            Node root = null;
+            Set<Node> nodes = new TreeSet<Node>(new Comparator<Node>() {
+
+                public int compare(Node o1, Node o2) {
+                    try {
+                        return o1.getPath().compareTo(o2.getPath());
+                    } catch (RepositoryException ex) {
+                        return 0;
+                    }
+                }
+
+            });
+            try {
+                root = getRoot();
+                if (nodeTypes == null) {
+                    if ((root.isModified() || root.isNew()) && isVisible(root)) {
+                        nodes.add(root);
+                    }
+                    // use pendingChanges to detect changes in sub-trees and properties
+                    if (!root.isNew()) {
+                        NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, false);
+                        processPending(iter, nodes);
+                    }
+                } else {
+                    if ((root.isModified() || root.isNew()) && isVisible(root)) {
+                        for (String type : nodeTypes) {
+                            try {
+                                if (root.isNodeType(type)) {
+                                    nodes.add(root);
+                                    break;
+                                }
+                            } catch (RepositoryException e) {
+                                log.debug("Unable to determine if node is of type " + type, e);
+                            }
+                        }
+                    }
+                    // use pendingChanges to detect changes in sub-trees and properties
+                    if (!root.isNew()) {
+                        for (String type : nodeTypes) {
+                            NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type, false);
+                            processPending(iter, nodes);
+                        }
+                    }
+                }
+            } catch (PathNotFoundException ex) {
+                log.warn("Root node no longer exists: " + ex.getMessage());
+                dispose();
+                return events;
+            } catch (RepositoryException ex) {
+                log.error("Failed to parse pending changes", ex);
+                dispose();
+                return events;
+            }
+
+            for (Node node : getReferencedNodes()) {
+                if (nodeTypes == null) {
+                    if (node.isModified() || node.isNew()) {
+                        nodes.add(node);
+                    }
+                } else {
+                    if (node.isModified() || node.isNew()) {
+                        for (String type : nodeTypes) {
+                            try {
+                                if (root.isNodeType(type)) {
+                                    nodes.add(root);
+                                    break;
+                                }
+                            } catch (RepositoryException e) {
+                                log.debug("Unable to determine if node is of type " + type, e);
+                            }
+                        }
+                    }
+                }
+            }
+
+            expandNew(nodes);
+
+            List<String> paths = new LinkedList<String>();
+            for (Node node : nodes) {
+                String path;
+                try {
+                    path = node.getPath();
+                    paths.add(path);
+
+                    NodeState newState;
+                    if (dirty.containsKey(path)) {
+                        newState = dirty.get(path);
+                    } else {
+                        newState = new NodeState(node);
+                        dirty.put(path, newState);
+                    }
+
+                    NodeState oldState = getNodeState(session, path);
+                    if (oldState != null) {
+                        Iterator<Event> iter = oldState.getEvents(newState);
+                        while (iter.hasNext()) {
+                            Event event = iter.next();
+                            if (!blocks(event)) {
+                                events.add(event);
+                            }
+                        }
+                    } else {
+                        Event changeEvent = newState.getChangeEvent();
+                        if (!blocks(changeEvent)) {
+                            events.add(changeEvent);
+                        }
+                    }
+                } catch (RepositoryException e) {
+                    log.warn("Failed to process node", e);
+                }
+            }
+            return events;
         }
 
         @Override
