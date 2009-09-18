@@ -373,7 +373,7 @@ class ExportEngine {
             ignoreProjects.add("Hippo ECM package configuration");
             ignoreProjects.add("Hippo ECM editor repository addon");
             ignoreProjects.add("Gallery Addon");
-            ignoreProjects.add("Defaultcontent repository addon");
+            //ignoreProjects.add("Defaultcontent repository addon");
             ignoreProjects.add("Builtin repository addon");
             ignoreProjects.add("Faceted date repository addon");
             ignoreProjects.add("Xinha addon frontend plugin");
