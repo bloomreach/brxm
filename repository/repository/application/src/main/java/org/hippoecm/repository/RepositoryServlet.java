@@ -39,6 +39,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -317,7 +318,7 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("          <th>UUID : </th>");
             writer.println("          <td>");
             writer.println("            <form method=\"get\" action=\"\" accept-charset=\"UTF-8\">");
-            writer.println("              <input name=\"uuid\" type=\"text\" size=\"50\" value=\"" + getRequestParameter(req,"uuid","") + "\"/>");
+            writer.println("              <input name=\"uuid\" type=\"text\" size=\"150\" value=\"" + getRequestParameter(req,"uuid","") + "\"/>");
             writer.println("              <input type=\"submit\" value=\"Fetch\"/>");
             writer.println("            </form>");
             writer.println("          </td>");
@@ -326,7 +327,7 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("          <th>XPath : </th>");
             writer.println("          <td>");
             writer.println("            <form method=\"get\" action=\"\" accept-charset=\"UTF-8\">");
-            writer.println("              <input name=\"xpath\" type=\"text\" size=\"50\" value=\"" + getRequestParameter(req,"xpath","") + "\"/>");
+            writer.println("              <input name=\"xpath\" type=\"text\" size=\"150\" value=\"" + getRequestParameter(req,"xpath","") + "\"/>");
             writer.println("              <input type=\"submit\" value=\"Search\"/>");
             writer.println("            </form>");
             writer.println("          </td>");
@@ -335,7 +336,7 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("          <th>SQL : </th>");
             writer.println("          <td>");
             writer.println("            <form method=\"get\" action=\"\" accept-charset=\"UTF-8\">");
-            writer.println("              <input name=\"sql\" type=\"text\" size=\"50\" value=\"" + getRequestParameter(req,"sql","") + "\"/>");
+            writer.println("              <input name=\"sql\" type=\"text\" size=\"150\" value=\"" + getRequestParameter(req,"sql","") + "\"/>");
             writer.println("              <input type=\"submit\" value=\"Search\"/>");
             writer.println("            </form>");
             writer.println("          </td>");
@@ -424,11 +425,19 @@ public class RepositoryServlet extends HttpServlet {
                     Value[] values = prop.getValues();
                     writer.print("[ ");
                     for (int i = 0; i < values.length; i++) {
-                        writer.print((i > 0 ? ", " : "") + values[i].getString());
+                        if(values[i].getType() == PropertyType.BINARY) {
+                            writer.print((i > 0 ? ", " : "") + prop.getLength() + " bytes.");
+                        } else {
+                            writer.print((i > 0 ? ", " : "") + values[i].getString());
+                        }
                     }
                     writer.println(" ]");
                 } else {
-                    writer.println(prop.getString());
+                    if(prop.getType() == PropertyType.BINARY) {
+                        writer.print(prop.getLength() + " bytes.");
+                    } else {
+                        writer.println(prop.getString());
+                    }
                 }
             }
 
@@ -471,7 +480,7 @@ public class RepositoryServlet extends HttpServlet {
                         if (values != null) {
                             for (int i = 0; i < values.length; i++) {
                                 writer.print("    <td>");
-                                writer.print(values[i] != null ? values[i].getString() : "");
+                                writer.print(values[i] != null && values[i].getType() != PropertyType.BINARY ? values[i].getString() : "");
                                 writer.println("</td>");
                             }
                         }
