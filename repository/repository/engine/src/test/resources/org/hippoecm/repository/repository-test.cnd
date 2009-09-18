@@ -43,3 +43,24 @@
 - hippo:x (String)
 
 [hippo:testmirror] > hippo:facetselect
+
+
+/*
+ * Node types used for nodescope free text searching and indexing
+ */
+
+[hippo:testhtml] > nt:base
+- hippo:testcontent (string) primary mandatory
++ * (hippo:facetselect)
+
+[hippo:testhtmltwo] > hippo:testhtml
+
+[hippo:testcompoundstructure] > nt:base
++ * (hippo:testhtml) = hippo:testhtml multiple
++ hippo:testresource (hippo:resource)
++ hippo:testpdfresource (hippo:resource) 
+- *
+
+[hippo:testsearchdocument] > hippo:document
++ * (hippo:testcompoundstructure) = hippo:testcompoundstructure multiple
+- * 

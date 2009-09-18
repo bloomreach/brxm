@@ -19,7 +19,6 @@
     xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.3">
     <!-- hippo aggregates -->
     <aggregates>
-        <nodetype>hippostd:html</nodetype>
         <childtype>hippostd:date</childtype>
     </aggregates>
     
