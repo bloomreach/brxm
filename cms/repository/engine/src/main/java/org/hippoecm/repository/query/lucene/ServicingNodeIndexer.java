@@ -252,7 +252,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     @Override
     protected void addStringValue(Document doc, String fieldName, Object internalValue, boolean tokenized,
-                                  boolean includeInNodeIndex, float boost) {
+                                  boolean includeInNodeIndex, float boost, boolean useInExcerpt) {
         if (!addedAllExcludeFieldNames) {
             // init only when not all excluded nodenames have been resolved before
             synchronized (this) {
@@ -292,22 +292,11 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
         if (excludeFieldNamesFromNodeScope.contains(fieldName)) {
             log.debug("Do not nodescope/tokenize fieldName : {}", fieldName);
-            super.addStringValue(doc, fieldName, internalValue, false, false, boost);
+            super.addStringValue(doc, fieldName, internalValue, false, false, boost, false);
         } else if (excludePropertiesSingleIndexTerm.contains(fieldName)) {
-            String stringValue = (String) internalValue;
-            if (stringValue.length() == 0) {
-                return;
-            }
-            // create fulltext index on property
-            int idx = fieldName.indexOf(':');
-            fieldName = fieldName.substring(0, idx + 1) + FieldNames.FULLTEXT_PREFIX + fieldName.substring(idx + 1);
-            Field f = new Field(fieldName, stringValue, Field.Store.NO, Field.Index.TOKENIZED, Field.TermVector.NO);
-            f.setBoost(boost);
-            doc.add(f);
-            // also create fulltext index of this value
-            doc.add(createFulltextField(stringValue));
+            super.addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost, false);
         } else {
-            super.addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost);
+            super.addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost, useInExcerpt);
         }
     }
 
