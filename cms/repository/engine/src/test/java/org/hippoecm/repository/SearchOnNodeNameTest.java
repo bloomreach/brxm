@@ -31,7 +31,7 @@ public class SearchOnNodeNameTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
    
-    private final static String TEST_PATH = "testnodes";
+    private final static String TEST_PATH = "test";
     private Node testPath;
 
     private final static List<String> names = new ArrayList<String>();

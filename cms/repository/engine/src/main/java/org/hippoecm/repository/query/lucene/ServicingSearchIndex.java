@@ -23,12 +23,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.jcr.RepositoryException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.NodeIdIterator;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
@@ -37,8 +40,10 @@ import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.core.state.NodeStateIterator;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.lucene.document.Document;
@@ -64,7 +69,7 @@ public class ServicingSearchIndex extends SearchIndex {
      * is no such configuration.
      */
     private Element indexingConfiguration;
-
+    
     /**
      * Simple zero argument constructor.
      */
@@ -80,7 +85,7 @@ public class ServicingSearchIndex extends SearchIndex {
     public MultiIndex getIndex() {
         return super.getIndex();
     }
-
+    
     /**
      * Returns the document element of the indexing configuration or
      * <code>null</code> if there is no indexing configuration.
@@ -143,23 +148,181 @@ public class ServicingSearchIndex extends SearchIndex {
     protected Document createDocument(NodeState node, NamespaceMappings nsMappings,
             IndexFormatVersion indexFormatVersion) throws RepositoryException {
 
+        return createDocument(node, nsMappings, indexFormatVersion, false);
+    }
+    
+    @Override 
+    public void updateNodes(NodeIdIterator remove, NodeStateIterator add) throws RepositoryException, IOException {
+        NodeStateIteratorImpl addedIt = new NodeStateIteratorImpl(add);
+        NodeIdIteratorImpl removedIt = new NodeIdIteratorImpl(remove);
+        super.updateNodes(removedIt, addedIt);
+        
+        /*
+         * now see if there are added nodestate that are childs of a hippo:document in a hippo:handle:
+         * When there are, and the hippo:document was not part of the NodeStateIterator add or remove, it means
+         * the hippo:document must be reindexed
+         */   
+
+        List<NodeState> addedStates = addedIt.processedStates;
+        List<NodeId> addedIds = addedIt.processedIds;
+        List<NodeId> removedIds = removedIt.processedIds;
+        List<NodeId> checkedIds = new ArrayList<NodeId>();
+        List<NodeState> reIndexVariantsStates = new ArrayList<NodeState>();
+        List<NodeId> reIndexVariantsIds = new ArrayList<NodeId>();
+        for(NodeState addedState : addedStates) {
+            NodeState documentVariant = getVariantDocumentIfAncestor(addedState, checkedIds);
+            if(documentVariant != null && !addedIds.contains(documentVariant.getNodeId()) && !reIndexVariantsIds.contains(documentVariant.getNodeId())) {
+                if(!removedIds.contains(documentVariant.getNodeId())) {
+                    reIndexVariantsStates.add(documentVariant);
+                    reIndexVariantsIds.add(documentVariant.getNodeId());
+                }
+            }
+        }
+        
+        if(reIndexVariantsStates.size() > 0) {
+            super.updateNodes(new NodeIdIteratorImpl(reIndexVariantsIds.iterator()), new NodeStateIteratorImpl(reIndexVariantsStates.iterator()));
+        }
+    }
+    
+    
+    protected Document createDocument(NodeState node, NamespaceMappings nsMappings,
+            IndexFormatVersion indexFormatVersion, boolean aggregateDescendants) throws RepositoryException {
+       
         if (node.getId() instanceof HippoNodeId) {
             log.warn("Indexing a virtual node should never happen, and not be possible. Return an empty lucene doc");
             Document doc = new Document();
             return doc;
         }
-
+      
         ServicingNodeIndexer indexer = new ServicingNodeIndexer(node,
                 getContext(), nsMappings, super.getTextExtractor());
 
         indexer.setSupportHighlighting(super.getSupportHighlighting());
-        // indexer.setIndexingConfiguration(indexingConfig);
         indexer.setServicingIndexingConfiguration((ServicingIndexingConfiguration) super.getIndexingConfig());
         indexer.setIndexFormatVersion(indexFormatVersion);
         Document doc = indexer.createDoc();
         mergeAggregatedNodeIndexes(node, doc);
-        mergeHippoStandardAggregates(node, doc, indexFormatVersion);
+        
+        
+        if(aggregateDescendants) {
+            aggregateDescendants(node, doc, indexFormatVersion);
+        } else if (isDocumentVariant(node)) {
+            // we have a Hippo Document state, let's aggregate child text for free text searching.
+            aggregateDescendants(node, doc, indexFormatVersion);
+        } 
         return doc;
+    }
+
+    /**
+     * @return <code>true</code> when the NodeState belongs to a hippo:document below a hippo:handle
+     */
+    private boolean isDocumentVariant(NodeState node){
+        if (this.getIndexingConfig() instanceof ServicingIndexingConfiguration) {
+            ServicingIndexingConfiguration sIndexConfig = (ServicingIndexingConfiguration) this.getIndexingConfig();
+
+            ItemStateManager ism = getContext().getItemStateManager();
+            try {
+                if(node.getParentId() == null) {
+                    return false;
+                }
+                NodeState parent = (NodeState) ism.getItemState(node.getParentId());
+                if (parent != null && parent.getNodeTypeName().equals(sIndexConfig.getHippoHandleName()) && !node.getNodeTypeName().equals(sIndexConfig.getHippoRequestName())) {
+                    return true;
+                }
+            } catch (ItemStateException e) {
+                log.warn("Unable to get parent state");
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * 
+     * @param state
+     * @param checkedStates
+     * @return the <code>NodeState</code> of the Document variant which is an ancestor of the state or <code>null</code> if this state was not a child of a document variant
+     */
+    
+    private NodeState getVariantDocumentIfAncestor(NodeState state, List<NodeId> checkedIds){
+        
+        if(checkedIds.contains(state.getNodeId())) {
+            // already checked these ancestors: no need to do it again
+            return null;
+        } 
+        checkedIds.add(state.getNodeId());
+        if(isDocumentVariant(state)) {
+            return state;
+        } 
+        ItemStateManager ism = getContext().getItemStateManager();
+        try {
+            if(state.getParentId() == null) {
+                return null;
+            }
+            NodeState parent = (NodeState) ism.getItemState(state.getParentId());
+            if(parent == null) {
+                return null;
+                
+            }
+            return getVariantDocumentIfAncestor(parent, checkedIds);
+        } catch (ItemStateException e) {
+            log.warn("Unable to get parent state '{}'", e.getMessage());
+        }
+        return null;
+    }
+    
+    /**
+     * Adds the fulltext index field of the child states to Document doc
+     * @param state
+     * @param doc
+     * @param indexFormatVersion
+     */
+    private void aggregateDescendants(NodeState state, Document doc, IndexFormatVersion indexFormatVersion) {
+        List childNodeEntries = state.getChildNodeEntries();
+        List<NodeState> nodeStates = new ArrayList<NodeState>();
+        for (Iterator it = childNodeEntries.iterator(); it.hasNext();) {
+            Object o = it.next();
+            if (o instanceof ChildNodeEntry) {
+                ChildNodeEntry childNodeEntry = (ChildNodeEntry) o;
+                if (childNodeEntry.getId() instanceof HippoNodeId) {
+                    // do not index virtual child nodes, ever
+                    continue;
+                }
+                Document aDoc;
+                try {
+                    NodeState nodeState = (NodeState) getContext().getItemStateManager().getItemState(childNodeEntry.getId());
+                    aDoc = createDocument(nodeState,
+                            getNamespaceMappings(),
+                            indexFormatVersion, true);
+                    // transfer fields to doc if there are any
+                    Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);
+                    if (fulltextFields != null) {
+                        for (int k = 0; k < fulltextFields.length; k++) {
+                            doc.add(fulltextFields[k]);
+                        }
+                    }
+                    
+                    // Really important to keep here for updating the aggregate (document variant) when a child is removed
+                    Fieldable[] aggrNodeUUID = aDoc.getFieldables(FieldNames.AGGREGATED_NODE_UUID);
+                    if(aggrNodeUUID != null) {
+                        for(Fieldable f : aggrNodeUUID) {
+                            doc.add(f);
+                        }
+                    }
+                    doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID,
+                            nodeState.getNodeId().getUUID().toString(),
+                            Field.Store.NO,
+                            Field.Index.NO_NORMS));
+                    //////////////////////////////////
+                    
+                }catch (ItemStateException e) {
+                    log.warn("ItemStateException while indexing descendants of a hippo:document for " +
+                            "node with UUID: " + state.getNodeId().getUUID(), e);
+                } catch (RepositoryException e) {
+                    log.warn("RepositoryException while indexing descendants of a hippo:document for " +
+                            "node with UUID: " + state.getNodeId().getUUID(), e);
+                }
+            }
+        }
     }
 
     // TODO remove when jackrabbit supports sorting on nodename
@@ -175,12 +338,12 @@ public class ServicingSearchIndex extends SearchIndex {
         return sortFields;
     }
 
+    @Deprecated 
     private void mergeHippoStandardAggregates(NodeState state, Document doc, IndexFormatVersion indexFormatVersion) {
         if (this.getIndexingConfig() instanceof ServicingIndexingConfiguration) {
             ServicingIndexingConfiguration servicingIndexingConfiguration = (ServicingIndexingConfiguration) this.getIndexingConfig();
-
+  
             List childNodeEntries = state.getChildNodeEntries();
-
             List<NodeState> nodeStates = new ArrayList<NodeState>();
             for (Iterator it = childNodeEntries.iterator(); it.hasNext();) {
                 Object o = it.next();
@@ -192,10 +355,10 @@ public class ServicingSearchIndex extends SearchIndex {
                     }
                     try {
                         NodeState nodeState = (NodeState) getContext().getItemStateManager().getItemState(childNodeEntry.getId());
-                        Name nodeName = nodeState.getNodeTypeName();
+                        Name nodeTypeName = nodeState.getNodeTypeName();
                         Name[] aggr = servicingIndexingConfiguration.getHippoAggregates();
                         for (int i = 0; i < aggr.length; i++) {
-                            if (nodeName.equals(aggr[i])) {
+                            if (nodeTypeName.equals(aggr[i])) {
                                 nodeStates.add(nodeState);
                                 // leave after first aggr match
                                 break;
@@ -237,4 +400,65 @@ public class ServicingSearchIndex extends SearchIndex {
             }
         }
     }
+    
+    private class NodeIdIteratorImpl implements NodeIdIterator {
+
+        private final Iterator iter;
+        List<NodeId> processedIds = new ArrayList<NodeId>();
+
+        public NodeIdIteratorImpl(Iterator iterator) {
+            this.iter = iterator;
+        }
+
+        public NodeId nextNodeId() throws NoSuchElementException {
+            NodeId id = (NodeId) iter.next();
+            processedIds.add(id);
+            return id;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        public boolean hasNext() {
+            return iter.hasNext();
+        }
+
+        public Object next() {
+            return nextNodeId();
+        }
+        
+    }
+   
+    
+    private class NodeStateIteratorImpl implements NodeStateIterator {
+        Iterator process;
+        List<NodeState> processedStates = new ArrayList<NodeState>();
+        List<NodeId> processedIds = new ArrayList<NodeId>();
+       
+        NodeStateIteratorImpl(Iterator process){
+            this.process = process;
+        }
+        
+        public NodeState nextNodeState() throws NoSuchElementException {
+            NodeState state = (NodeState)process.next();
+            processedStates.add(state);
+            processedIds.add(state.getNodeId());
+            return state;
+        }
+
+        public boolean hasNext() {
+            return process.hasNext();
+        }
+
+        public Object next() {
+            return nextNodeState();
+        }
+
+        public void remove() {
+             process.remove();
+        }
+        
+    }
+    
 }

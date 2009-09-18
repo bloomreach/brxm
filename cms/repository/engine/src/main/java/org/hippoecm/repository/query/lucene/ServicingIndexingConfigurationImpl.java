@@ -60,6 +60,17 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     private Name hippoPath;
 
     /**
+     * QName Hippo Handle qualified name
+     */
+    private Name hippoHandle;
+
+    /**
+     * QName Hippo Request qualified name
+     */
+    private Name hippoRequest;
+
+    
+    /**
      * QName's of all the child node that should be aggregated
      */
     private Name[] hippoAggregates;
@@ -148,7 +159,9 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
             }
         }
         hippoPath = resolver.getQName(HippoNodeType.HIPPO_PATHS);
-
+        hippoHandle = resolver.getQName(HippoNodeType.NT_HANDLE);
+        hippoRequest = resolver.getQName(HippoNodeType.NT_REQUEST);
+        
         hippoAggregates = (Name[]) idxHippoAggregates.toArray(
                 new Name[idxHippoAggregates.size()]);
     }
@@ -215,5 +228,13 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
 
     public Set<Name> getExcludePropertiesSingleIndexTerm() {
         return this.excludePropertiesSingleIndexTerm;
+    }
+
+    public Name getHippoHandleName() {
+        return this.hippoHandle;
+    }
+
+    public Name getHippoRequestName() {
+        return this.hippoRequest;
     }
 }

@@ -39,6 +39,18 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
      * @return all the QName's of the child nodes that must be aggregated
      */
     Name[] getHippoAggregates();
+    
+    /**
+     * Returns QName of the hippo:handle
+     * @return
+     */
+    Name getHippoHandleName();
+    
+    /**
+     * Returns QName of the hippo:request
+     * @return
+     */
+    Name getHippoRequestName();
 
     /**
      * Returns <code>true</code> if the property with the given name is a hippo path
