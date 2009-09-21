@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 public class CndSerializer implements IClusterable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: CndSerializer.java 18973 2009-07-23 10:01:26Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 

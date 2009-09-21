@@ -71,6 +71,8 @@ import org.hippoecm.repository.jackrabbit.SessionImpl;
 import org.hippoecm.repository.jackrabbit.XASessionImpl;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
+import org.hippoecm.repository.updater.UpdaterNode;
+import org.hippoecm.repository.updater.UpdaterProperty;
 
 public class SessionDecorator extends org.hippoecm.repository.decorating.SessionDecorator implements XASession, HippoSession {
 
@@ -95,7 +97,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         derivedEngine.save(node);
     }
 
-    void postMountEnabled(boolean enabled) {
+    public void postMountEnabled(boolean enabled) {
         ((HippoLocalItemStateManager)((org.apache.jackrabbit.core.WorkspaceImpl)session.getWorkspace()).getItemStateManager()).setEnabled(enabled);
     }
 
@@ -247,8 +249,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
      */
     public Node copy(Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
             LockException, VersionException, RepositoryException {
-
-        if (destAbsNodePath.startsWith(srcNode.getPath()+"/") && !destAbsNodePath.equals(srcNode.getPath())) {
+        if (destAbsNodePath.startsWith(srcNode.getPath()+"/")) {
             String msg = srcNode.getPath() + ": Invalid destination path (cannot be descendant of source path)";
             throw new RepositoryException(msg);
         }
@@ -273,10 +274,13 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         }
     }
 
-    static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
+    public static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
         try {
-            Node canonical = ((HippoNode) srcNode).getCanonicalNode();
-            boolean copyChildren = (canonical != null && canonical.isSame(srcNode));
+            Node canonical;
+            boolean copyChildren = true;
+            if (srcNode instanceof HippoNode && ((canonical = ((HippoNode) srcNode).getCanonicalNode()) == null || !canonical.isSame(srcNode))) {
+                copyChildren = false;
+            }
 
             NodeType[] mixinNodeTypes = srcNode.getMixinNodeTypes();
             for (int i = 0; i < mixinNodeTypes.length; i++) {
@@ -285,12 +289,20 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
             for (PropertyIterator iter = NodeDecorator.unwrap(srcNode).getProperties(); iter.hasNext();) {
                 Property property = iter.nextProperty();
-                PropertyDefinition definition = property.getDefinition();
-                if (!definition.isProtected()) {
-                    if (definition.isMultiple())
+                if (property instanceof UpdaterProperty) {
+                    if (((UpdaterProperty)property).isMultiple()) {
                         destNode.setProperty(property.getName(), property.getValues());
-                    else
+                    } else {
                         destNode.setProperty(property.getName(), property.getValue());
+                    }
+                } else {
+                    PropertyDefinition definition = property.getDefinition();
+                    if (!definition.isProtected()) {
+                        if (definition.isMultiple())
+                            destNode.setProperty(property.getName(), property.getValues());
+                        else
+                            destNode.setProperty(property.getName(), property.getValue());
+                    }
                 }
             }
 
@@ -303,11 +315,10 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             if (copyChildren) {
                 for (NodeIterator iter = srcNode.getNodes(); iter.hasNext();) {
                     Node node = iter.nextNode();
-                    canonical = ((HippoNode) node).getCanonicalNode();
-                    if (canonical != null && canonical.isSame(node)) {
+                    if (!(node instanceof HippoNode) || ((canonical = ((HippoNode) node).getCanonicalNode()) != null && canonical.isSame(node))) {
                         Node child;
                         // check if the subnode is autocreated
-                        if (node.getDefinition().isAutoCreated() && destNode.hasNode(node.getName())) {
+                        if (!(node instanceof UpdaterNode) && node.getDefinition().isAutoCreated() && destNode.hasNode(node.getName())) {
                             child = destNode.getNode(node.getName());
                         } else {
                             child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());

@@ -26,6 +26,7 @@ import java.util.Vector;
 import javax.jcr.Item;
 import javax.jcr.ItemVisitor;
 import javax.jcr.NamespaceException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -34,12 +35,23 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
+import javax.jcr.Workspace;
+import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
+import org.apache.jackrabbit.core.nodetype.compact.ParseException;
+import org.hippoecm.repository.impl.SessionDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.jackrabbit.core.NamespaceRegistryImpl;
+import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
+import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
+import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.ext.UpdaterContext;
@@ -55,16 +67,6 @@ public class UpdaterEngine {
     Session session;
     UpdaterSession updaterSession;
     private Vector<ModuleRegistration> modules;
-
-    private static class Converted extends UpdaterItemVisitor.Default {
-        @Override
-        public void visit(Node node) throws RepositoryException {
-            if (((UpdaterNode)node).hollow) {
-                return;
-            }
-            super.visit(node);
-        }
-    }
 
     class ModuleRegistration implements UpdaterContext {
         String name;
@@ -194,7 +196,7 @@ public class UpdaterEngine {
         updaterSession = new UpdaterSession(session);
     }
 
-    public boolean prepare() throws RepositoryException {
+    private boolean prepare() throws RepositoryException {
         // Obtain which version we are currently at
         Set<String> currentVersions = new HashSet<String>();
 
@@ -292,7 +294,34 @@ public class UpdaterEngine {
         return true;
     }
 
-    public void wrapup() throws RepositoryException {
+    private void close() throws RepositoryException {
+        UpdaterException exception = null;
+        NamespaceRegistryImpl nsreg = (NamespaceRegistryImpl) session.getWorkspace().getNamespaceRegistry();
+        for (ModuleRegistration module : modules) {
+            log.info("migration update cycle for module "+module.name);
+            for (ItemVisitor visitor : module.visitors) {
+                try {
+                    if(visitor instanceof UpdaterItemVisitor.NamespaceVisitor) {
+                        UpdaterItemVisitor.NamespaceVisitor remap = ((UpdaterItemVisitor.NamespaceVisitor)visitor);
+                        nsreg.externalRemap(remap.namespace, remap.oldPrefix, remap.oldURI);
+                        nsreg.externalRemap(remap.newPrefix, remap.namespace, remap.newURI);
+                    }
+                } catch(UpdaterException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
+                    if(exception != null) {
+                        exception = ex;
+                    }
+                    log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
+                }
+            }
+        }
+        if(exception != null) {
+            throw exception;
+        }
+    }
+
+    private void wrapup() throws RepositoryException {
         Property versionProperty = getOrCreateVersionProperty(true);
 
         Set<String> currentVersions = new HashSet<String>();
@@ -327,9 +356,6 @@ public class UpdaterEngine {
                 session.getRootNode().addMixin("mix:referenceable");
                 session.save();
             }
-            for(NodeIterator ii = session.getRootNode().getNodes(); ii.hasNext(); ) {
-                Node nn = ii.nextNode();
-            }
             try {
                 session.getWorkspace().getNamespaceRegistry().getURI("hippo");
             } catch(NamespaceException ex) {
@@ -355,6 +381,9 @@ public class UpdaterEngine {
                         log.info("migration cycle save");
                         subSession.save();
                         log.info("migration cycle saved");
+                        engine.close();
+                        subSession.save();
+                        log.info("migration cycle closed");
                         engine.wrapup();
                         log.info("migration cycle wrapup");
                     } catch(UpdaterException ex) {
@@ -374,36 +403,110 @@ public class UpdaterEngine {
         }
     }
 
-    public void update() throws RepositoryException {
+    public static void migrate(Session session, Modules<UpdaterModule> modules) throws UpdaterException, RepositoryException {
+        session.refresh(false);
+        ((SessionDecorator)session).postMountEnabled(false);
+        try {
+            UpdaterEngine engine = new UpdaterEngine(session, modules);
+            engine.update();
+            engine.commit();
+            session.save();
+            engine.close();
+            session.save();
+        } finally {
+            ((SessionDecorator)session).postMountEnabled(true);
+        }
+    }
+            
+    private void update() throws RepositoryException {
         UpdaterException exception = null;
+        for (ModuleRegistration module : modules) {
+            log.info("migration update cycle for module "+module.name);
+            for (ItemVisitor visitor : module.visitors) {
+                if (visitor instanceof UpdaterItemVisitor.NamespaceVisitor) {
+                    try {
+                        UpdaterItemVisitor.NamespaceVisitor remap = (UpdaterItemVisitor.NamespaceVisitor)visitor;
+                        Workspace workspace = session.getWorkspace();
+                        NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
+                        remap.oldURI = nsreg.getURI(remap.namespace);
+                        remap.oldPrefix = remap.namespace + "_" + remap.oldURI.substring(remap.oldURI.lastIndexOf('/') + 1).replace('.', '_');
+                        CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(remap.cndReader, remap.cndName);
+                        NamespaceMapping mapping = cndReader.getNamespaceMapping();
+                        remap.newURI = mapping.getURI(remap.namespace);
+                        remap.newPrefix = remap.namespace + "_" + remap.newURI.substring(remap.newURI.lastIndexOf('/') + 1).replace('.', '_');
+                        nsreg.registerNamespace(remap.newPrefix, remap.newURI);
+                        List ntdList = cndReader.getNodeTypeDefs();
+                        NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl)workspace.getNodeTypeManager();
+                        NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
+                        for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
+                            NodeTypeDef ntd = (NodeTypeDef)iter.next();
+                            /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
+                        }
+                    } catch (ParseException ex) {
+                        log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
+                    } catch (InvalidNodeTypeDefException ex) {
+                        log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
+                    }
+                }
+            }
+        }
         for (ModuleRegistration module : modules) {
             log.info("migration update cycle for module "+module.name);
             for (ItemVisitor visitor : module.visitors) {
                 try {
                     updaterSession.getRootNode().accept(visitor);
-                } catch(UpdaterException ex) {
-                    if(exception != null) {
+                } catch (UpdaterException ex) {
+                    if (exception != null) {
                         exception = ex;
                     }
                     log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
                 }
             }
         }
-        if(exception != null) {
+        if (exception != null) {
             throw exception;
         }
     }
 
-    public void update(ItemVisitor visitor) throws RepositoryException {
-        updaterSession.getRootNode().accept(visitor);
-    }
-
-    public void commit() throws RepositoryException {
-        //updaterSession.getRootNode().accept(new Cleaner(new ModuleRegistration(null)));
+    private void commit() throws RepositoryException {
         updaterSession.commit();
     }
 
-    private class Cleaner extends Converted {
+    public static class Converted extends UpdaterItemVisitor {
+        public Converted() {
+        }
+
+        @Override
+        public final void visit(Property property) throws RepositoryException {
+            super.visit(property);
+        }
+
+        @Override
+        public final void visit(Node node) throws RepositoryException {
+            if (((UpdaterNode)node).hollow) {
+                return;
+            }
+            super.visit(node);
+        }
+
+        protected void entering(Node node, int level)
+                throws RepositoryException {
+        }
+
+        protected void entering(Property property, int level)
+                throws RepositoryException {
+        }
+
+        protected void leaving(Node node, int level)
+                throws RepositoryException {
+        }
+
+        protected void leaving(Property property, int level)
+                throws RepositoryException {
+        }
+    }
+
+    public static class Cleaner extends Converted {
         UpdaterContext context;
 
         public Cleaner(UpdaterContext context) {
@@ -434,6 +537,26 @@ public class UpdaterEngine {
                     }
                     if (!isValid) {
                         property.remove();
+                    }
+                }
+            }
+            for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+                UpdaterNode child = (UpdaterNode)iter.nextNode();
+                if (child.origin == null || !((Node)child.origin).getDefinition().isProtected()) {
+                    boolean isValid = false;
+                    for (int i = 0; i < nodeTypes.length; i++) {
+                        NodeDefinition[] defs = nodeTypes[i].getChildNodeDefinitions();
+                        for (int j = 0; j < defs.length; j++) {
+                            if (defs[j].getName().equals("*")) {
+                                isValid = true;
+                            } else if (defs[j].getName().equals(child.getName())) {
+                                isValid = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!isValid) {
+                        child.remove();
                     }
                 }
             }

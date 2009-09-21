@@ -28,7 +28,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
+import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.repository.api.WorkflowManager;
 
 import static org.junit.Assert.assertTrue;

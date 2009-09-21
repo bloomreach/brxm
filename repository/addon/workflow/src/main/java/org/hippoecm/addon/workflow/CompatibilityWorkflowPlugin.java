@@ -153,6 +153,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             WorkflowDescriptor descriptor = (WorkflowDescriptor) model.getObject();
             WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
             javax.jcr.Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            session.refresh(true);
             session.save();
             session.refresh(true);
             Workflow workflow = manager.getWorkflow(descriptor);

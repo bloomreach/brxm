@@ -13,21 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.upgrade;
+package org.hippoecm.repository.standardworkflow;
 
-import org.hippoecm.repository.ext.UpdaterContext;
-import org.hippoecm.repository.ext.UpdaterModule;
-
-public class M13Finish implements UpdaterModule {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
-    public M13Finish() {
-    }
-
-    public void register(final UpdaterContext context) {
-        context.registerName("m13-finish");
-        context.registerStartTag("m13-pre3");
-        context.registerEndTag("m13");
-    }
-}
+public enum ChangeType { ADDITION, DROPPED, RENAMED };

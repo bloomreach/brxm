@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class TypeUpdate implements Serializable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: TypeUpdate.java 17361 2009-04-21 10:07:17Z bvanhalderen $";
 
     private static final long serialVersionUID = 1L;
 

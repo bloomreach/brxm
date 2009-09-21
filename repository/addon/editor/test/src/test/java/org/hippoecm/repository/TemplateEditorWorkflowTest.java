@@ -22,6 +22,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -29,15 +31,15 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
+import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.repository.TemplateEditorWorkflow;
-import org.hippoecm.editor.tools.FieldIdentifier;
-import org.hippoecm.editor.tools.TypeUpdate;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
+import org.hippoecm.repository.standardworkflow.Change;
+import org.hippoecm.repository.standardworkflow.ChangeType;
 import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 import org.junit.After;
 import org.junit.Before;
@@ -223,20 +225,10 @@ public class TemplateEditorWorkflowTest extends TestCase {
         }
 
         {
-            Map<String, TypeUpdate> updates = new HashMap<String, TypeUpdate>();
-
-            TypeUpdate typeUpdate = new TypeUpdate();
-            typeUpdate.newName = "hippotest4";
-            typeUpdate.prototype = "";
-            typeUpdate.renames = new HashMap<FieldIdentifier, FieldIdentifier>();
-            FieldIdentifier fieldIdentifier1 = new FieldIdentifier();
-            fieldIdentifier1.path = "hippotest4:first";
-            fieldIdentifier1.type = "String";
-            FieldIdentifier fieldIdentifier2 = new FieldIdentifier();
-            fieldIdentifier2.path = "hippotest4:seconds";
-            fieldIdentifier2.type = "String";
-            typeUpdate.renames.put(fieldIdentifier1, fieldIdentifier2);
-            updates.put("hippotest4:test", typeUpdate);
+            Map<String, List<Change>> updates = new HashMap<String, List<Change>>();
+            List<Change> changes = new LinkedList<Change>();
+            changes.add(new Change(ChangeType.RENAMED, "hippotest4:first","hippotest4:seconds"));
+            updates.put("hippotest4:test", changes);
 
             WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
             Workflow workflow = workflowManager.getWorkflow("internal", session.getRootNode().getNode(
