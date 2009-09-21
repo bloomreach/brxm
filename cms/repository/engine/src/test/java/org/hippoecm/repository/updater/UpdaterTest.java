@@ -15,15 +15,21 @@
  */
 package org.hippoecm.repository.updater;
 
+import java.util.List;
+import java.util.LinkedList;
+
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.junit.Test;
+import org.junit.Ignore;
 
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.ext.UpdaterModule;
+import org.hippoecm.repository.ext.UpdaterContext;
 
 public class UpdaterTest extends TestCase {
     @SuppressWarnings("unused")
@@ -53,20 +59,25 @@ public class UpdaterTest extends TestCase {
 
     @Test
     public void test() throws RepositoryException {
-        UpdaterEngine updater = new UpdaterEngine(session, new Modules());
-        updater.update(new UpdaterItemVisitor.Default() {
-                @Override
-                public void leaving(Node visit, int level) throws RepositoryException {
-                    if(visit.hasProperty("hippo:x")) {
-                    visit.getProperty("hippo:x").remove();
-                }
-                if (visit.getPath().equals("/test/docs/d/d")) {
-                    ((UpdaterNode) visit).setPrimaryNodeType("hippo:testdocument");
-                    visit.setProperty("hippo:y", "bla");
-                }
+        UpdaterModule module = new UpdaterModule() {
+            public void register(UpdaterContext context) {
+                context.registerVisitor(new UpdaterItemVisitor.Default() {
+                    @Override
+                    public void leaving(Node visit, int level) throws RepositoryException {
+                        if(visit.hasProperty("hippo:x")) {
+                            visit.getProperty("hippo:x").remove();
+                        }
+                        if (visit.getPath().equals("/test/docs/d/d")) {
+                            ((UpdaterNode) visit).setPrimaryNodeType("hippo:testdocument");
+                            visit.setProperty("hippo:y", "bla");
+                        }
+                    }
+                });
             }
-        });
-        updater.commit();
-        session.save();
+        };
+	List list = new LinkedList();
+	list.add(module);
+	Modules modules = new Modules(list);
+        UpdaterEngine.migrate(session, modules);
     }
 }
