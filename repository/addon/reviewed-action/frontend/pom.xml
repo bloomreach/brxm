@@ -93,6 +93,7 @@
           <include>**/*.png</include>
           <include>**/*.gif</include>
           <include>**/*.properties</include>
+          <include>**/*.xml</include>
         </includes>
         <excludes>
           <exclude>**/*.java</exclude>
