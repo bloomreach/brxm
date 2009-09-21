@@ -16,6 +16,7 @@
 
 package org.hippoecm.frontend.plugins.standards.behaviors;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -77,7 +78,9 @@ public class BrowserSpecificStylesheetsBehavior extends HeaderContributor {
         });
     }
 
-    public static class StylesheetConfiguration {
+    public static class StylesheetConfiguration implements IClusterable {
+        private static final long serialVersionUID = 1L;
+        
         Browser browser;
         String[] styleSheets;
 
@@ -92,7 +95,8 @@ public class BrowserSpecificStylesheetsBehavior extends HeaderContributor {
         IE, FIREFOX, SAFARI, OPERA, UNSUPPORTED
     };
 
-    public static class Browser {
+    public static class Browser implements IClusterable {
+        private static final long serialVersionUID = 1L;
 
         UserAgent userAgent;
         int majorVersion = -1;
