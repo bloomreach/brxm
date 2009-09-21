@@ -43,6 +43,7 @@ import javax.jcr.nodetype.PropertyDefinition;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
 import org.hippoecm.repository.impl.SessionDecorator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -405,6 +406,7 @@ public class UpdaterEngine {
 
     public static void migrate(Session session, Modules<UpdaterModule> modules) throws UpdaterException, RepositoryException {
         session.refresh(false);
+	session = org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(session);
         ((SessionDecorator)session).postMountEnabled(false);
         try {
             UpdaterEngine engine = new UpdaterEngine(session, modules);
