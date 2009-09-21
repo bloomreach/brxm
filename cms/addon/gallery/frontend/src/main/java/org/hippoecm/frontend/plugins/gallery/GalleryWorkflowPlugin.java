@@ -60,7 +60,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(GalleryWorkflowPlugin.class);
 
-    class UploadDialog extends AbstractDialog {
+    public class UploadDialog extends AbstractDialog {
         private static final long serialVersionUID = 1L;
 
         private final FileUploadField uploadField;
@@ -183,18 +183,6 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                 error(new StringResourceModel("no-file-uploaded-label", GalleryWorkflowPlugin.this, null).getString());
             }
         }
-
-        private void makeThumbnail(Node node, InputStream resourceData, String mimeType) throws RepositoryException {
-            if (mimeType.startsWith("image")) {
-                int thumbnailSize = GalleryWorkflowPlugin.this.getPluginConfig().getInt("gallery.thumbnail.size",
-                        Gallery.DEFAULT_THUMBNAIL_SIZE);
-                InputStream thumbNail = ImageUtils.createThumbnail(resourceData, thumbnailSize, mimeType);
-                node.setProperty("jcr:data", thumbNail);
-            } else {
-                node.setProperty("jcr:data", resourceData);
-            }
-            node.setProperty("jcr:mimeType", mimeType);
-        }
     }
 
     public GalleryWorkflowPlugin(IPluginContext context, IPluginConfig config) {
@@ -220,5 +208,16 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
         });
         return super.createListDataProvider(list);
     }
-
+    
+    protected void makeThumbnail(Node node, InputStream resourceData, String mimeType) throws RepositoryException {
+        if (mimeType.startsWith("image")) {
+            int thumbnailSize = GalleryWorkflowPlugin.this.getPluginConfig().getInt("gallery.thumbnail.size",
+                    Gallery.DEFAULT_THUMBNAIL_SIZE);
+            InputStream thumbNail = ImageUtils.createThumbnail(resourceData, thumbnailSize, mimeType);
+            node.setProperty("jcr:data", thumbNail);
+        } else {
+            node.setProperty("jcr:data", resourceData);
+        }
+        node.setProperty("jcr:mimeType", mimeType);
+    }
 }
