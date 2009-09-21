@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.standardworkflow;
+package org.hippoecm.editor.repository.impl;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -35,6 +35,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.editor.repository.EditmodelWorkflow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,32 +154,6 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
             }
         }
         return false;
-    }
-
-    static Node getDraftType(Node subject) throws RepositoryException {
-        if (subject.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
-            NodeIterator iter = subject.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-            while (iter.hasNext()) {
-                Node versionNode = iter.nextNode();
-                if (!versionNode.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    return versionNode;
-                }
-            }
-        }
-        return null;
-    }
-
-    static Node getDraftPrototype(Node subject) throws RepositoryException {
-        if (subject.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {
-            NodeIterator nodes = subject.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes();
-            while (nodes.hasNext()) {
-                Node child = nodes.nextNode();
-                if (child.isNodeType("nt:unstructured")) {
-                    return child;
-                }
-            }
-        }
-        return null;
     }
 
     static void checkoutType(Node subject) throws RepositoryException {

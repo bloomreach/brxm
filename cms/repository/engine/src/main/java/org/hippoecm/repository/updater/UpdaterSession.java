@@ -56,11 +56,15 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 import javax.jcr.ValueFormatException;
+import javax.transaction.xa.XAResource;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-final public class UpdaterSession implements Session {
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.impl.SessionDecorator;
+
+final public class UpdaterSession implements HippoSession {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -150,10 +154,16 @@ final public class UpdaterSession implements Session {
                         }
                     }
                     if (changed) {
+                        if (!relink.property.getParent().isCheckedOut()) {
+                            relink.property.getParent().checkout();
+                        }
                         relink.property.setValue(values);
                     }
                 } else {
                     if(relink.property.getString().equals(relink.sourceUUID)) {
+                        if (!relink.property.getParent().isCheckedOut()) {
+                            relink.property.getParent().checkout();
+                        }
                         relink.property.setValue(relink.targetUUID);
                     }
                 }
@@ -319,6 +329,68 @@ final public class UpdaterSession implements Session {
 
     @Deprecated
     public void removeLockToken(String lt) {
+        throw new UpdaterException("illegal method");
+    }
+
+    public Node copy(Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
+            LockException, VersionException, RepositoryException {
+        if (destAbsNodePath.startsWith(srcNode.getPath()+"/")) {
+            String msg = srcNode.getPath() + ": Invalid destination path (cannot be descendant of source path)";
+            throw new RepositoryException(msg);
+        }
+
+        while (destAbsNodePath.startsWith("/")) {
+            destAbsNodePath = destAbsNodePath.substring(1);
+        }
+        Node destNode = getRootNode();
+        int p = destAbsNodePath.lastIndexOf("/");
+        if (p > 0) {
+            destNode = destNode.getNode(destAbsNodePath.substring(0, p));
+            destAbsNodePath = destAbsNodePath.substring(p + 1);
+        }
+        try {
+            destNode = destNode.addNode(destAbsNodePath, srcNode.getPrimaryNodeType().getName());
+            SessionDecorator.copy(srcNode, destNode);
+            return destNode;
+        } catch (ConstraintViolationException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch (NoSuchNodeTypeException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        }
+    }
+
+    @Deprecated
+    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    @Deprecated
+    public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    @Deprecated
+    public NodeIterator pendingChanges() throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    @Deprecated
+    public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse) throws IOException, PathNotFoundException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    @Deprecated
+    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    @Deprecated
+    public ClassLoader getSessionClassLoader() throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    @Deprecated
+    public XAResource getXAResource() {
         throw new UpdaterException("illegal method");
     }
 }

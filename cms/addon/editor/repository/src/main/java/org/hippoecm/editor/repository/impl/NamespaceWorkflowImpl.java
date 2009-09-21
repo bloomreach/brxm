@@ -17,8 +17,8 @@ package org.hippoecm.editor.repository.impl;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.jcr.RepositoryException;
@@ -27,6 +27,7 @@ import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.hippoecm.repository.standardworkflow.Change;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 
@@ -46,24 +47,6 @@ public class NamespaceWorkflowImpl extends WorkflowImpl implements NamespaceWork
     public Map<String, Serializable> hints() {
         Map<String, Serializable> hints = super.hints();
         hints.put("prefix", prefix);
-        /*
-        try {
-            FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext().getWorkflow("internal");
-            Map<String, Set<String>> prototypes = (Map<String, Set<String>>) folderWorkflow.hints().get("prototypes");
-            hints.put("templates", (Serializable) prototypes.get("new-type"));
-        } catch (MappingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (WorkflowException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }*/
         return hints;
     }
 
@@ -78,9 +61,8 @@ public class NamespaceWorkflowImpl extends WorkflowImpl implements NamespaceWork
         folderWorkflow.add("new-type", template, replacements);
     }
 
-    public void updateModel(String cnd, Object updates) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void updateModel(String cnd, Map<String,List<Change>> updates) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getWorkflowContext().getWorkflow("internal", getWorkflowContext().getDocument("root","root"));
-        repositoryWorkflow.updateModel(prefix, cnd, "org.hippoecm.repository.standardworkflow.TemplateEditorWorkflowImpl", updates);
+        repositoryWorkflow.updateModel(prefix, cnd, "org.hippoecm.editor.repository.impl.TemplateConverter", updates);
     }
-
 }

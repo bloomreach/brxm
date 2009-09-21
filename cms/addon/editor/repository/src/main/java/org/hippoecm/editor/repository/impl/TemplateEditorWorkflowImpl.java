@@ -50,18 +50,4 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
         replacements.put("name", prefix);
         folderWorkflow.add("Template Editor Namespace", "namespace", replacements);
     }
-
-    public void createType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext().getWorkflow("internal");
-        Map<String,String> replacements = new TreeMap<String,String>();
-        replacements.put("./_name", name);
-        replacements.put("name", name);
-        folderWorkflow.add("Template Editor Type", "type", replacements);
-    }
-
-    public void updateModel(String prefix, String cnd, Object updates) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getWorkflowContext().getWorkflow("internal", getWorkflowContext().getDocument("root","root"));
-        repositoryWorkflow.updateModel(prefix, cnd, "org.hippoecm.repository.standardworkflow.TemplateEditorWorkflowImpl", updates);
-    }
-
 }

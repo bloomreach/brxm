@@ -26,6 +26,7 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.ocm.JcrObject;
 import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -33,14 +34,14 @@ import org.slf4j.LoggerFactory;
 
 public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: JcrFieldDescriptor.java 19407 2009-08-26 10:44:37Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(JcrFieldDescriptor.class);
 
     private Set<String> excluded;
-    private JcrTypeDescriptor type;
+    private ITypeDescriptor type;
     private String name;
 
     public JcrFieldDescriptor(JcrNodeModel model, JcrTypeDescriptor type) {
@@ -54,7 +55,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     }
 
     public String getPath() {
-        return getName(HippoNodeType.HIPPO_PATH);
+        return getString(HippoNodeType.HIPPO_PATH);
     }
 
     public void setPath(String path) {
@@ -62,7 +63,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     }
 
     public String getType() {
-        return getName(HippoNodeType.HIPPOSYSEDIT_TYPE);
+        return getString(HippoNodeType.HIPPOSYSEDIT_TYPE);
     }
 
     public void setType(String type) {
@@ -115,7 +116,6 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
         EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
@@ -154,15 +154,6 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
             log.error(ex.getMessage());
         }
         return null;
-    }
-
-    private String getName(String path) {
-        String name = getString(path);
-        if (name != null) {
-            return type.convertName(name);
-        } else {
-            return name;
-        }
     }
 
     private void setString(String path, String value) {

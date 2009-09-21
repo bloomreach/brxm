@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow;
+package org.hippoecm.frontend.editor.workflow;
 
 import java.rmi.RemoteException;
 
@@ -42,7 +42,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
+import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -88,6 +88,7 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     /**
      * {@inheritDoc}
      */
+    @Override
     public void remove() throws VersionException, LockException, RepositoryException {
         try {
             ((SessionDecorator)getSession()).postMountEnabled(false);

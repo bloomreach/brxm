@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.ext;
 
+import java.io.Reader;
 import java.util.LinkedList;
 
 import javax.jcr.Item;
@@ -25,6 +26,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
@@ -37,13 +39,13 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
     final protected boolean breadthFirst;
     private LinkedList<Item> currentQueue;
     private LinkedList<Item> nextQueue;
-    private int currentLevel;
+    public int currentLevel;
 
-    public UpdaterItemVisitor() {
+    protected UpdaterItemVisitor() {
         this(false);
     }
 
-    public UpdaterItemVisitor(boolean breadthFirst) {
+    protected UpdaterItemVisitor(boolean breadthFirst) {
         this.breadthFirst = breadthFirst;
         if (breadthFirst) {
             currentQueue = new LinkedList<Item>();
@@ -64,7 +66,7 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
     protected abstract void leaving(Node node, int level)
             throws RepositoryException;
 
-    public final void visit(Property property) throws RepositoryException {
+    public void visit(Property property) throws RepositoryException {
         entering(property, currentLevel);
         leaving(property, currentLevel);
     }
@@ -134,6 +136,14 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             super(breadthFirst);
         }
 
+        @Override
+        public void visit(Property property) throws RepositoryException {
+            super.visit(property);
+        }
+        @Override
+        public void visit(Node node) throws RepositoryException {
+            super.visit(node);
+        }
         protected void entering(Node node, int level)
                 throws RepositoryException {
         }
@@ -172,13 +182,114 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
     public static class NodeTypeVisitor extends Iterated {
         String nodeType;
         public NodeTypeVisitor(String nodeType) {
+          this.nodeType = nodeType;
         }
         public NodeIterator iterator(Session session) throws RepositoryException {
             Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM "+nodeType, javax.jcr.query.Query.SQL);
             QueryResult result = query.execute();
             return result.getNodes();
         }
+        @Override
+        public void visit(Node node) throws RepositoryException {
+            if (node.getPath().equals("/jcr:system")) {
+                return;
+            }
+            if (node instanceof HippoNode) {
+                Node canonical = ((HippoNode)node).getCanonicalNode();
+                if (canonical == null || canonical.isSame(node)) {
+                    return;
+                }
+            }
+            try {
+                // depth-first traversal
+                if (node.isNodeType(nodeType)) {
+                    entering(node, currentLevel);
+                }
+                currentLevel++;
+                PropertyIterator propIter = node.getProperties();
+                while (propIter.hasNext()) {
+                    Property prop = propIter.nextProperty();
+                    if (node.isNodeType(nodeType))
+                        prop.accept(this);
+                }
+                NodeIterator nodeIter = node.getNodes();
+                while (nodeIter.hasNext()) {
+                    Node child = nodeIter.nextNode();
+                    child.accept(this);
+                }
+                currentLevel--;
+                if (node.isNodeType(nodeType))
+                    leaving(node, currentLevel);
+            } catch (RepositoryException ex) {
+                currentLevel = 0;
+                throw ex;
+            }
+        }
     }
 
-}
+    public final static class NamespaceVisitor extends UpdaterItemVisitor {
+        public String namespace;
+        public String oldURI;
+        public String newURI;
+        public String oldPrefix;
+        public String newPrefix;
+        public Reader cndReader;
+        public String cndName;
+        UpdaterContext context;
+        public NamespaceVisitor(UpdaterContext context, String prefix, String cndName, Reader cndReader) {
+            this.namespace = prefix;
+            this.cndName = cndName;
+            this.cndReader = cndReader;
+            this.context = context;
+        }
+        @Override
+        public final void visit(Node node) throws RepositoryException {
+            super.visit(node); // FIXME
+        }
+        @Override
+        protected final void entering(Node node, int level)
+                throws RepositoryException {
+            NodeType[] nodeTypes = context.getNodeTypes(node);
+            if (nodeTypes.length > 0 && nodeTypes[0].getName().startsWith(namespace + ":")) {
+                context.setPrimaryNodeType(node, newPrefix + ":" + nodeTypes[0].getName().substring(namespace.length() + 1));
+            }
+            if (nodeTypes.length > 1) {
+                boolean mixinsChanged = false;
+                String[] mixins = new String[nodeTypes.length - 1];
+                for (int i = 1; i < nodeTypes.length; i++) {
+                    if (nodeTypes[i].getName().startsWith(namespace + ":")) {
+                        mixins[i - 1] = newPrefix + ":" + nodeTypes[i].getName().substring(namespace.length() + 1);
+                        mixinsChanged = true;
+                    } else {
+                        mixins[i - 1] = nodeTypes[i].getName();
+                    }
+                }
+                if (mixinsChanged) {
+                    node.setProperty("jcr:mixinTypes", mixins);
+                }
+            }
+        }
 
+        @Override
+        protected final void entering(Property property, int level)
+                throws RepositoryException {
+       }
+        @Override
+        protected final void leaving(Node node, int level)
+                throws RepositoryException {
+          for (NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
+            Node child = iter.nextNode();
+            if (child.getName().startsWith(namespace + ":")) {
+              context.setName(child, newPrefix + ":" + child.getName().substring(child.getName().indexOf(":") + 1));
+            }
+          }
+        }
+        @Override
+        protected final void leaving(Property property, int level)
+                throws RepositoryException {
+          if(property.getName().startsWith(namespace+":")) {
+            context.setName(property, newPrefix+":"+property.getName().substring(property.getName().indexOf(":")+1));
+          }
+         }
+    }
+}

@@ -74,6 +74,9 @@ public abstract class UpdaterItem implements Item {
                 siblings.add(this);
                 parent.children.put(name, siblings);
                 parent.reverse.remove(this);
+                if(name.contains("[")) {
+                    name = name.substring(0, name.indexOf("["));
+                }
                 parent.reverse.put(this, name);
                 return;
             }
@@ -85,8 +88,8 @@ public abstract class UpdaterItem implements Item {
 
     public String getPath() throws RepositoryException {
         if (getParent() != null) {
-            String path = getParent().getPath();
             String name = getName();
+            String path = getParent().getPath();
             int index = isNode() ? ((Node) this).getIndex() : 1;
             if (index > 1)
                 name += "[" + index + "]";

@@ -50,6 +50,6 @@ public class FieldIdentifier implements Serializable {
 
     @Override
     public int hashCode() {
-        return (path.hashCode() * type.hashCode()) % 1001;
+        return (path.hashCode() * (type != null ? type.hashCode() : 0)) % 1001;
     }
 }

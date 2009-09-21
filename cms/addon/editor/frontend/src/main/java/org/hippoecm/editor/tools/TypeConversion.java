@@ -26,7 +26,7 @@ import org.hippoecm.frontend.types.TypeLocator;
 
 public class TypeConversion implements Serializable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: TypeConversion.java 17435 2009-04-23 10:31:59Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 

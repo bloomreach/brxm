@@ -47,7 +47,7 @@
       <sv:value>hipposys:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.EditmodelWorkflowImpl</sv:value>
+      <sv:value>org.hippoecm.editor.repository.impl.EditmodelWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Template engine workflow to edit a type</sv:value>

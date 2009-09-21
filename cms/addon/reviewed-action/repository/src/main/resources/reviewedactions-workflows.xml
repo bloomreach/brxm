@@ -328,7 +328,7 @@
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.EditmodelWorkflowImpl</sv:value>
+      <sv:value>org.hippoecm.editor.repository.impl.EditmodelWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Internal workflow to edit a template</sv:value>
@@ -349,7 +349,7 @@
         <sv:value>${editor.id}</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin</sv:value>
+        <sv:value>org.hippoecm.frontend.editor.workflow.EditmodelWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

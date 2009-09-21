@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -69,13 +69,16 @@ final public class UpdaterNode extends UpdaterItem implements Node {
     private final static String SVN_ID = "$Id$";
 
     boolean hollow;
-    Map<String, List<UpdaterItem>> children;
-    Map<UpdaterItem, String> reverse;
-    Set<UpdaterItem> removed;
+    Map<String, List<UpdaterItem>> children;// = new LinkedHashMap<String, List<UpdaterItem>>();
+    Map<UpdaterItem, String> reverse;// = new HashMap<UpdaterItem, String>();
+    Set<UpdaterItem> removed;// = new HashSet<UpdaterItem>();
 
     UpdaterNode(UpdaterSession session, UpdaterNode target) {
         super(session, target);
         hollow = false;
+        children = new LinkedHashMap<String, List<UpdaterItem>>();
+        reverse = new HashMap<UpdaterItem, String>();
+        removed = new HashSet<UpdaterItem>();
     }
 
     UpdaterNode(UpdaterSession session, Node origin, UpdaterNode target) {
@@ -174,13 +177,13 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             }
         }
 
-        if (getInternalProperty("jcr:primaryType").length > 0) {
+        if (origin != null && getInternalProperty("jcr:primaryType").length > 0) {
             nodeTypesChanged = !((Node) origin).getPrimaryNodeType().getName().equals(getInternalProperty("jcr:primaryType")[0]);
         } else {
             nodeTypesChanged = true;
         }
 
-        if (parent == null) {
+        if (origin == null || parent == null) {
             nodeLocationChanged = false;
         } else {
             nodeLocationChanged = (!parent.origin.isSame(origin.getParent()) || !origin.getName().equals(getName()));
@@ -201,7 +204,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         if (nodeTypesChanged) {
             if (!hollow) {
                 oldOrigin = origin;
-                if ((((Node)parent.origin).hasNode(getName())) &&
+                if (oldOrigin != null && (((Node)parent.origin).hasNode(getName())) &&
                         ((Node)parent.origin).getNode(getName()).getDefinition().isAutoCreated() &&
                         !((Node)parent.origin).getNode(getName()).getDefinition().allowsSameNameSiblings()) {
                     if(UpdaterEngine.log.isDebugEnabled()) {
@@ -212,8 +215,18 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     if(UpdaterEngine.log.isDebugEnabled()) {
                         UpdaterEngine.log.debug("commit create "+getPath()+" in "+((Node)parent.origin).getPath()+" (primary type "+((Node)parent.origin).getProperty("jcr:primaryType").getString()+") type "+getInternalProperty("jcr:primaryType")[0]);
                     }
-                    origin = ((Node)parent.origin).addNode(getName(), getInternalProperty("jcr:primaryType")[0]);
-                    nodeRelinked = true;
+                    if(!((Node)parent.origin).isCheckedOut()) {
+                        ((Node)parent.origin).checkout();
+                    }
+                    String[] primaryType = getInternalProperty("jcr:primaryType");
+                    if (primaryType != null && primaryType.length > 0) {
+                        origin = ((Node)parent.origin).addNode(getName(), primaryType[0]);
+                    } else {
+                        origin = ((Node)parent.origin).addNode(getName());
+                    }
+                    if (oldOrigin != null) {
+                        nodeRelinked = true;
+                    }
                 }
             }
         } else if(nodeLocationChanged) {
@@ -237,6 +250,9 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                 for(String mixin : mixins) {
                     newMixins.add(mixin);
                 }
+            }
+            if (!((Node)origin).isCheckedOut()) {
+                ((Node)origin).checkout();
             }
             if(((Node)origin).hasProperty("jcr:mixinTypes")) {
                 for(Value mixin : ((Node)origin).getProperty("jcr:mixinTypes").getValues()) {
@@ -347,6 +363,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             last = node;
             node = node.getNode(iter.nextToken());
         }
+        ((UpdaterNode)last).substantiate();
         return (UpdaterNode) last;
     }
 
@@ -374,7 +391,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             name = name.substring(0, name.indexOf("/"));
         }
         if (name.contains("[") && name.endsWith("]")) {
-            index = Integer.parseInt(name.substring(name.indexOf("[") + 1, name.length() - 1));
+            index = Integer.parseInt(name.substring(name.indexOf("[") + 1, name.length() - 1)) - 1;
             name = name.substring(0, name.indexOf("["));
         }
         if (sequel != null) {
@@ -406,17 +423,17 @@ final public class UpdaterNode extends UpdaterItem implements Node {
 
     public NodeType[] getNodeTypes() throws RepositoryException {
         Vector<NodeType> nodeTypes = new Vector<NodeType>();
-        NodeType nodeType = session.getNewType(getProperty("jcr:primaryType").getString());
-        if (nodeType == null) {
-            // big fat error
-        }
-        nodeTypes.add(nodeType);
-        if (hasProperty("jcr:mixinTypes")) {
-            Value[] mixins = getProperty("jcr:mixinTypes").getValues();
-            for (int i = 0; i < mixins.length; i++) {
-                nodeType = session.getNewType(mixins[i].getString());
-                nodeTypes.add(nodeType);
+        try {
+            NodeType nodeType = session.getNewType(getProperty("jcr:primaryType").getString());
+            nodeTypes.add(nodeType);
+            if (hasProperty("jcr:mixinTypes")) {
+                Value[] mixins = getProperty("jcr:mixinTypes").getValues();
+                for (int i = 0; i < mixins.length; i++) {
+                    nodeType = session.getNewType(mixins[i].getString());
+                    nodeTypes.add(nodeType);
+                }
             }
+        } catch (PathNotFoundException ex) {
         }
         return nodeTypes.toArray(new NodeType[nodeTypes.size()]);
     }
@@ -453,6 +470,9 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                 throw new PathNotFoundException(name.substring(0, name.lastIndexOf("/")));
             }
         }
+        if(name.contains("[")) {
+            name = name.substring(0, name.indexOf("["));
+        }
         UpdaterNode child = new UpdaterNode(session, this);
         List<UpdaterItem> siblings;
         if (children.containsKey(name)) {
@@ -463,6 +483,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         }
         siblings.add(child);
         reverse.put(child, name);
+	child.setPrimaryNodeType(primaryNodeTypeName);
         return child;
     }
 
@@ -688,47 +709,60 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         return false;
     }
 
-    @Deprecated
     public NodeType getPrimaryNodeType() throws RepositoryException {
-        throw new UpdaterException("illegal method");
+        return getNodeTypes()[0];
     }
 
-    @Deprecated
     public NodeType[] getMixinNodeTypes() throws RepositoryException {
-        throw new UpdaterException("illegal method");
+        NodeType[] types = getNodeTypes();
+        NodeType[] mixins = new NodeType[types.length-1];
+        System.arraycopy(types, 1, mixins, 0, mixins.length);
+        return mixins;
     }
 
     public boolean isNodeType(String nodeTypeName) throws RepositoryException {
         substantiate();
-        // FIXME
+        try {
+            for (NodeType type : getNodeTypes()) {
+                if (type.isNodeType(nodeTypeName))
+                    return true;
+            }
+        } catch (PathNotFoundException ex) {
+            // deliberate ignore, in case of virtual nodes without primary type (bad idea, but be leniant at this time
+        }
         return false;
     }
 
     public void addMixin(String mixinName) throws NoSuchNodeTypeException, VersionException, ConstraintViolationException, LockException, RepositoryException {
-        Property mixinsProperty = getProperty("jcr:mixinTypes");
-        Value[] mixins = mixinsProperty.getValues();
-
-        for (int i = 0; i < mixins.length; i++) {
-            if (mixins[i].getString().equals(mixinName)) {
-                Value[] newMixins = new Value[mixins.length - 1];
-                System.arraycopy(mixins, 0, newMixins, 0, i);
-                System.arraycopy(mixins, i + 1, newMixins, i, newMixins.length - i);
-                mixinsProperty.setValue(newMixins);
-                return;
+        if (hasProperty("jcr:mixinTypes")) {
+            Property mixinsProperty = getProperty("jcr:mixinTypes");
+            Value[] mixins = mixinsProperty.getValues();
+            for (int i = 0; i < mixins.length; i++) {
+                if (mixins[i].getString().equals(mixinName)) {
+                    Value[] newMixins = new Value[mixins.length - 1];
+                    System.arraycopy(mixins, 0, newMixins, 0, i);
+                    System.arraycopy(mixins, i + 1, newMixins, i, newMixins.length - i);
+                    mixinsProperty.setValue(newMixins);
+                    return;
+                }
             }
+        } else {
+            setProperty("jcr:mixinTypes", new String[] { mixinName });
         }
     }
 
     public void removeMixin(String mixinName) throws NoSuchNodeTypeException, VersionException, ConstraintViolationException, LockException, RepositoryException {
-        Property mixinsProperty = getProperty("jcr:mixinTypes");
-        Value[] mixins = mixinsProperty.getValues();
-        for (int i = 0; i < mixins.length; i++) {
-            if (mixins[i].getString().equals(mixinName)) {
-                Value[] newMixins = new Value[mixins.length - 1];
-                System.arraycopy(mixins, 0, newMixins, 0, i);
-                System.arraycopy(mixins, i + 1, newMixins, i, newMixins.length - i);
-                mixinsProperty.setValue(newMixins);
-                return;
+        if (hasProperty("jcr:mixinTypes")) {
+            Property mixinsProperty = getProperty("jcr:mixinTypes");
+            Value[] mixins = mixinsProperty.getValues();
+            for (int i = 0; i < mixins.length; i++) {
+                if (mixins[i].getString().equals(mixinName)) {
+                    Value[] newMixins = new Value[mixins.length - 1];
+                    System.arraycopy(mixins, 0, newMixins, 0, i);
+                    System.arraycopy(mixins, i + 1, newMixins, i, newMixins.length - i);
+                    mixinsProperty.setValue(newMixins);
+                    return;
+                }
             }
         }
     }
