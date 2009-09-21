@@ -44,8 +44,10 @@ public class YuiObject implements IClusterable {
 
     public YuiObject(YuiType type, IPluginConfig config) {
         this(type);
-        for (Setting<?> setting : settings.keySet()) {
-            setting.setFromConfig(config, this);
+        if(config != null) {
+            for (Setting<?> setting : settings.keySet()) {
+                setting.setFromConfig(config, this);
+            }
         }
     }
 
