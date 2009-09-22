@@ -189,7 +189,7 @@ public class RemodelWorkflowPluginTest extends PluginTest {
         //        printComponents(System.out);
         session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
         NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
-        assertEquals(nsReg.getURI("testns"), "http://example.org/test/0.1");
+        assertEquals("http://example.org/test/0.0", nsReg.getURI("testns"));
     }
 
 }
