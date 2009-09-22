@@ -30,7 +30,6 @@ ModalDialog.prototype = {
         
     show : function(parameters) {
         this.saveState();
-        
         var url = this.callbackUrl;
         for (var p in parameters) {
             url += ('&' + this.token + p + '=' + encodeURIComponent(parameters[p]));
@@ -95,9 +94,13 @@ ModalDialog.prototype = {
         this.editor.suspendUpdateToolbar = false;
         this.editor.currentModal = null;
         this.editor.activateEditor();
-        if (this._lastRange != null) { 
-          this.editor.restoreSelection(this._lastRange);
-        }
+        if (this._lastRange != null) {
+            try {
+                this.editor.restoreSelection(this._lastRange);
+            } catch(e) {
+                //A bug in IE brings us here. Ignore it.
+            }
+         }
         this.editor.updateToolbar();
         this.editor.focusEditor();
     }
