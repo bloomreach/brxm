@@ -1,1 +1,1 @@
-YAHOO.hippo.AccordionManager.create("${id}");
+YAHOO.hippo.AccordionManager.register("${id}", ${config});

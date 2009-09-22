@@ -40,7 +40,7 @@ public class AccordionBehavior extends AbstractBehavior {
     
     public void renderHead(org.apache.wicket.markup.html.IHeaderResponse response) {
         if(c.isVisible())
-            response.renderOnLoadJavascript("YAHOO.hippo.AccordionManager.renderUnit('" + parentId + "', '" + c.getMarkupId() + "')");
+            response.renderOnLoadJavascript("YAHOO.hippo.AccordionManager.render('" + parentId + "', '" + c.getMarkupId() + "')");
     };
 
 }
