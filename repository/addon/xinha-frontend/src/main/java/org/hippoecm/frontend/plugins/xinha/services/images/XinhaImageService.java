@@ -16,7 +16,6 @@
 
 package org.hippoecm.frontend.plugins.xinha.services.images;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.AccessDeniedException;

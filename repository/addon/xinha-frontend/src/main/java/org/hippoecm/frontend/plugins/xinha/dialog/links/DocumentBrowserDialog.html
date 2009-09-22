@@ -17,8 +17,10 @@
   <wicket:extend>
     <div wicket:id="content" />
     <div class="hippo-picker-properties">
-      <label>Title: </label><div wicket:id="title">[Title text box]</div>
-      <label>Open in new window: </label><div wicket:id="popup">[Open in new window]</div>
+      <label><wicket:message key="new-widow-label">Open in new window:</wicket:message> </label>
+      <div wicket:id="popup" style="width: 100px; float: left; padding-top: 4px;">[Open in new window]</div>
+      <label><wicket:message key="title-label">Title:</wicket:message> </label>
+      <div wicket:id="title" class="text-input">[Title text box]</div>
     </div>
   </wicket:extend>
 </wicket:panel>

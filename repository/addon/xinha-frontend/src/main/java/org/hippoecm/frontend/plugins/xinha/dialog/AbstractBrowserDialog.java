@@ -106,7 +106,7 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
     @Override
     public IValueMap getProperties() {
-        return new ValueMap("width=850,height=485");
+        return new ValueMap("width=845,height=485");
     }
 
     @Override

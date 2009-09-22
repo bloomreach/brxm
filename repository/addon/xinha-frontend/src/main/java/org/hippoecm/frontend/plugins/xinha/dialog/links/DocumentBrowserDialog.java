@@ -22,7 +22,6 @@ import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -46,9 +45,7 @@ public class DocumentBrowserDialog extends AbstractBrowserDialog {
     public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, IModel model) {
         super(context, config, model);
 
-        InternalXinhaLink link = (InternalXinhaLink) getModelObject();
-
-        add(new TextFieldWidget("title", new PropertyModel(link, XinhaLink.TITLE)) {
+        add(new TextFieldWidget("title", getPropertyModel(InternalXinhaLink.class, XinhaLink.TITLE)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -57,7 +54,7 @@ public class DocumentBrowserDialog extends AbstractBrowserDialog {
             }
         });
 
-        add(new BooleanFieldWidget("popup", new PropertyModel(link, "target")) {
+        add(new BooleanFieldWidget("popup", getPropertyModel(InternalXinhaLink.class, "target")) {
             private static final long serialVersionUID = 1L;
 
             @Override
