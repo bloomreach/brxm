@@ -152,6 +152,11 @@
       <scope>test</scope>
     </dependency>
     -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-connector</artifactId>
+      <scope>test</scope>
+    </dependency>
     
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
