@@ -92,11 +92,12 @@ public interface HstContainerURLProvider {
      * Stringifying the containerURL as a context relative path.
      * 
      * @param containerURL
+     * @param requestContext
      * @return
      * @throws UnsupportedEncodingException
      * @throws ContainerException
      */
-    String toContextRelativeURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException;
+    String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException;
     
     /**
      * Stringifying the containerURL as a full URL string.

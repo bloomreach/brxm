@@ -65,7 +65,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     }
     
     public HstURL createNavigationalURL(String pathInfo) {
-        HstContainerURL navURL = this.requestContext.getURLFactory().getServletUrlProvider().parseURL(this.request, this.response, this.requestContext, pathInfo);
+        HstContainerURL navURL = this.requestContext.getContainerURLProvider().parseURL(this.request, this.response, this.requestContext, pathInfo);
         navURL.setParameters(null);
         return this.requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, this.requestContext);
     }
@@ -371,7 +371,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         }
     }
     
-    public Map<String, String []> getRenderParamerters() {
+    public Map<String, String []> getRenderParameters() {
         return this.renderParameters;
     }
 

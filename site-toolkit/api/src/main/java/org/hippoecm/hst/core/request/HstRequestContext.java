@@ -24,6 +24,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
@@ -83,6 +84,13 @@ public interface HstRequestContext {
      * @return HstURLFactory
      */
     HstURLFactory getURLFactory();
+
+    /**
+     * Returns the {@link HstContainerURLProvider} to create HstContainerURLs
+     * 
+     * @return HstContainerURLProvider
+     */
+    HstContainerURLProvider getContainerURLProvider();
 
     /**
      * Returns the {@link HstSiteMapMatcher} to be able to match a path to a sitemap item

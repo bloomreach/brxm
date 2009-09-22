@@ -27,11 +27,11 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.collections.iterators.IteratorEnumeration;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
@@ -119,6 +119,10 @@ public class HstRequestContextImpl implements HstRequestContext {
     public HstURLFactory getURLFactory() {
         return this.urlFactory;
     }
+    
+    public HstContainerURLProvider getContainerURLProvider() {
+        return urlFactory != null ? urlFactory.getContainerURLProvider(this) : null;
+    }
 
     public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
         this.siteMapMatcher = siteMapMatcher;
@@ -172,11 +176,12 @@ public class HstRequestContextImpl implements HstRequestContext {
     }
 
     public Enumeration<String> getAttributeNames() {
+        
         if (this.attributes != null) {
-            return new IteratorEnumeration(this.attributes.keySet().iterator());
+            return Collections.enumeration(attributes.keySet());
         } else {
             List<String> emptyAttrNames = Collections.emptyList();
-            return new IteratorEnumeration(emptyAttrNames.iterator());
+            return Collections.enumeration(emptyAttrNames);
         }
     }
 
@@ -221,7 +226,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     public VirtualHost getVirtualHost() {
         MatchedMapping matchedMapping = getMatchedMapping();
         
-        if (matchedMapping.getMapping() != null) {
+        if (matchedMapping != null && matchedMapping.getMapping() != null) {
             return matchedMapping.getMapping().getVirtualHost();
         }
         

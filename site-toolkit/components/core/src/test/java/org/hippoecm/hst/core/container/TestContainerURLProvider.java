@@ -55,8 +55,8 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         super.setUp();
 
         this.urlFactory = getComponent(HstURLFactory.class.getName());
-        this.urlProvider = this.urlFactory.getServletUrlProvider();
         this.requestContext = new HstRequestContextImpl(null);
+        this.urlProvider = this.urlFactory.getContainerURLProvider(requestContext);
         ((HstRequestContextImpl) this.requestContext).setURLFactory(urlFactory);
         
         rootWindow = new MockHstComponentWindow();
@@ -185,7 +185,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         actionURL.setActionWindowReferenceNamespace("b");
         actionURL.setActionParameter("ap1", "one");
         actionURL.setActionParameter("ap2", "two");
-        String actionURLPathInfo = this.urlProvider.toURLString(actionURL, null);
+        String actionURLPathInfo = this.urlProvider.toURLString(actionURL, requestContext);
         actionURLPathInfo = actionURLPathInfo.substring("/site/content".length());
         ((MockHttpServletRequest) request).setPathInfo(actionURLPathInfo);
         
@@ -210,7 +210,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HstContainerURL resourceURL = this.urlProvider.parseURL(request, response, requestContext);
         resourceURL.setResourceWindowReferenceNamespace("b");
         resourceURL.setResourceId("myresource001");
-        String resourceURLPathInfo = this.urlProvider.toURLString(resourceURL, null);
+        String resourceURLPathInfo = this.urlProvider.toURLString(resourceURL, requestContext);
         resourceURLPathInfo = resourceURLPathInfo.substring("/site/content".length());
         ((MockHttpServletRequest) request).setPathInfo(resourceURLPathInfo);
         

@@ -29,19 +29,12 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public interface HstURLFactory {
     
     /**
-     * Returns HstURLProvider implementation for servlet environment.
+     * Returns the HstContainerURLProvider for the current HstRequestContext.
      * 
      * @return HstContainerURLProvider
      */
-    HstContainerURLProvider getServletUrlProvider();
+    HstContainerURLProvider getContainerURLProvider(HstRequestContext requestContext);
     
-    /**
-     * Returns HstURLProvider implementation for portlet environment.
-     * 
-     * @return HstContainerURLProvider
-     */
-    HstContainerURLProvider getPortletUrlProvider();
-
     /**
      * Returns HstURL for the HstURL type with reference namespace based on the base container URL
      * 

@@ -22,7 +22,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider {
     
-    @Override
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
         return toURLString(containerURL, requestContext, null);
     }

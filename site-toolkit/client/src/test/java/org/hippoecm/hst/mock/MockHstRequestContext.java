@@ -26,6 +26,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
@@ -132,6 +133,10 @@ public class MockHstRequestContext implements HstRequestContext {
         this.urlFactory = urlFactory;
     }
     
+    public HstContainerURLProvider getContainerURLProvider() {
+        return urlFactory != null ? urlFactory.getContainerURLProvider(this) : null;
+    }
+
     public void removeAttribute(String name) {
         this.attributes.remove(name);
     }

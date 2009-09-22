@@ -18,28 +18,31 @@ package org.hippoecm.hst.core.container;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import javax.portlet.BaseURL;
 import javax.portlet.MimeResponse;
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
+import javax.portlet.PortletURL;
 import javax.portlet.ResourceURL;
 
 import org.hippoecm.hst.container.HstContainerPortlet;
+import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstPortletRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLProvider {
+public class HstEmbeddedPortletContainerURLProviderImpl extends HstContainerURLProviderPortletImpl {
     
-    protected boolean portletResourceURLEnabled;
-    
-    public void setPortletResourceURLEnabled(boolean portletResourceURLEnabled) {
-        this.portletResourceURLEnabled = portletResourceURLEnabled;
+    @Override
+    public String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
+        StringBuilder url = new StringBuilder(100);
+        HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
+        String uriPrefix = erc.getMatchedMapping().getMapping().getUriPrefix();
+        // need to strip trailing /                
+        url.append(uriPrefix.substring(0, uriPrefix.length()-1));
+        String pathInfo = buildHstURLPath(containerURL);
+        url.append(pathInfo);
+        return url.toString();
     }
     
-    public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
-        return toURLString(containerURL, requestContext, null);
-    }
-    
+    @Override
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
         String urlString = "";
         
@@ -48,12 +51,14 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
         
         if (PortletRequest.RESOURCE_PHASE.equals(lifecycle) || PortletRequest.RENDER_PHASE.equals(lifecycle)) {
             String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
-            boolean hstContainerResource = !portletResourceURLEnabled && ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace);
+            String actionWindowReferenceNamespace = containerURL.getActionWindowReferenceNamespace();
+            boolean hstContainerResource = ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace);
             
             StringBuilder path = new StringBuilder(100);
             
+            String pathInfo = null;
+            
             if (hstContainerResource) {
-                String pathInfo = null;
                 String oldPathInfo = containerURL.getPathInfo();
                 String resourcePath = containerURL.getResourceId();
                 Map<String, String[]> oldParamMap = containerURL.getParameterMap();
@@ -69,36 +74,40 @@ public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLP
                     ((HstContainerURLImpl) containerURL).setParameters(oldParamMap);
                 }
                 
-                path.append(contextPath != null ? contextPath : getVirtualizedContextPath(containerURL, requestContext, pathInfo));
-                path.append(getVirtualizedServletPath(containerURL, requestContext, pathInfo));
-                path.append(pathInfo);
-                urlString = path.toString();
-                
-            } else {
-                path.append(containerURL.getServletPath());
-                path.append(buildHstURLPath(containerURL));
-                
-                BaseURL url = null;
-                PortletResponse response = prc.getPortletResponse();
-                
-                MimeResponse mimeResponse = (MimeResponse) response;
-                
-                if (containerURL.getActionWindowReferenceNamespace() != null) {
-                    url = mimeResponse.createActionURL();
-                    url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString());
-                } else if (resourceWindowReferenceNamespace != null) {
-                    url = mimeResponse.createResourceURL();
-                    ((ResourceURL) url).setResourceID(path.toString());
-                } else {
-                    url = mimeResponse.createRenderURL();
-                    url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString());
+                if (!portletResourceURLEnabled) {
+                    path.append(contextPath != null ? contextPath : getVirtualizedContextPath(containerURL, requestContext, pathInfo));
                 }
+            }
+            else {
+                pathInfo = buildHstURLPath(containerURL);
+            }
+            
+            if (resourceWindowReferenceNamespace == null && actionWindowReferenceNamespace == null) {
+                HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
+                String uriPrefix = erc.getMatchedMapping().getMapping().getUriPrefix();
+                // need to strip trailing /                
+                path.append(uriPrefix.substring(0, uriPrefix.length()-1));
+            }
+            else {
+                path.append(getVirtualizedServletPath(containerURL, requestContext, pathInfo));
+            }
+            path.append(pathInfo);
+
+            if (actionWindowReferenceNamespace != null) {
+                PortletURL url = ((MimeResponse)prc.getPortletResponse()).createActionURL();
+                url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, path.toString());
                 urlString = url.toString();
+            } else if (resourceWindowReferenceNamespace != null && (!hstContainerResource || portletResourceURLEnabled)) {
+                ResourceURL url = ((MimeResponse)prc.getPortletResponse()).createResourceURL();
+                url.setResourceID(path.toString());
+                urlString = url.toString();
+            } else {
+                // Embedded render URL
+                urlString = path.toString();
             }
         } else {
             // should not be allowed to come here: throw IllegalStateException?
         } 
-        
         return urlString;
     }
 }
