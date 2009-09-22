@@ -83,11 +83,11 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 //Workaround for HREPTWO-3035
                 //Set width of all resize handlers in IE to 20px, else they will be blocked
                 //by the scrollbars
-                if (YAHOO.env.ua.ie > 0) {
+                if (YAHOO.env.ua.ie >= 6 && YAHOO.env.ua.ie < 8) {
                     var re = Dom.getElementsByClassName('yui-resize-handle', 'div');
                     for(var i=0; i<re.length; i++) {
                         var handle = re[i]; 
-                        Dom.setStyle(handle, 'width', '20px');
+                        Dom.setStyle(handle, 'width', '10px');
                     }
                 }
             },
@@ -381,6 +381,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     uid = u["body"];
                     if (uid != undefined) {
                         unitEl = HippoDom.resolveElement(uid);
+                        if(unitEl == null) {
+                            throw new Error("Could not find element with uid " + uid);
+                        }
                         HippoDom.enhance(unitEl, uid);
                         this.config.units[i].bId = unitEl.id;
                     }
@@ -440,7 +443,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         new YAHOO.widget.Layout(this.id, this.config) :
                         new YAHOO.widget.Layout(this.config);
                     */
-                    
+
                     this.layout = new YAHOO.widget.Layout(this.config)
                     this.initLayout();
                 }
