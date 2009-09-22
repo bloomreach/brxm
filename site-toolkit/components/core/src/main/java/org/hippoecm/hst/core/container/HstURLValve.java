@@ -33,21 +33,16 @@ public class HstURLValve extends AbstractValve {
             requestContext.setContextNamespace(contextNamespace);
         }
         
-        String containerPathInfo = (String) servletRequest.getAttribute(ContainerConstants.HST_CONTAINER_PATH_INFO);
-        HstContainerURL baseURL = null;
-
-        // TODO: if requestContext.getBaseURL() != null, is there a reason or condition why we need to parse again?
-        if (containerPathInfo != null) {
-            baseURL = getUrlFactory().getServletUrlProvider().parseURL(context.getServletRequest(), context.getServletResponse(), requestContext, containerPathInfo);
-        } else {
-            baseURL = getUrlFactory().getServletUrlProvider().parseURL(context.getServletRequest(), context.getServletResponse(), requestContext);
-        }
-        
-        requestContext.setBaseURL(baseURL);
         requestContext.setURLFactory(getUrlFactory());
         requestContext.setLinkCreator(getLinkCreator());
         requestContext.setSiteMapMatcher(getSiteMapMatcher());
         requestContext.setHstQueryManagerFactory(getHstQueryManagerFactory());
+        
+        String containerPathInfo = (String) servletRequest.getAttribute(ContainerConstants.HST_CONTAINER_PATH_INFO);
+
+        HstContainerURL baseURL = requestContext.getContainerURLProvider().parseURL(servletRequest, context.getServletResponse(), requestContext, containerPathInfo);
+        
+        requestContext.setBaseURL(baseURL);
         
         // continue
         context.invokeNext();

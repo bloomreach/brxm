@@ -179,7 +179,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             window.addComponentExcpetion(new HstComponentException(e));
             
             if (log.isDebugEnabled()) {
-                log.warn("Component exception caught: " + e.toString(), e);
+                log.debug("Component exception caught: " + e.toString(), e);
             } else if (log.isWarnEnabled()) {
                 log.warn("Component exception caught: {}", e.toString());
             }

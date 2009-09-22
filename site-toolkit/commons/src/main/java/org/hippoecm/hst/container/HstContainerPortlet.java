@@ -84,7 +84,7 @@ public class HstContainerPortlet extends GenericPortlet {
     public static final String HST_HELP_PAGE_PARAM_NAME = "HelpPage";
 
     /*
-     * Name of render parameter for internal portlet render url path
+     * Name of portlet parameter for internal HST pathInfo url
      */
     public static final String HST_PATH_PARAM_NAME = "_hp";
     
@@ -222,7 +222,8 @@ public class HstContainerPortlet extends GenericPortlet {
     public void serveResource(ResourceRequest request, ResourceResponse response) throws PortletException, IOException {
         if (request.getResourceID() != null) {
             // only handle serveResource by ResourceID parameter
-            processRequest(request, response);
+            HstResponseState portletResponseState = new HstPortletResponseState(request, response);
+            processMimeResponseRequest(request, response, request.getResourceID(), portletResponseState);
         }
     }
     
@@ -320,7 +321,8 @@ public class HstContainerPortlet extends GenericPortlet {
                 throw new PortletException("HST URL Dispatcher is not found: " + hstActionDispUrl);
             }
         } else if (portletResponseState.isMimeResponse()) {
-            if (portletResponseState.isRenderResponse() && portletTitle != null) {
+            // must be RenderResponse, ResourceResponse is handled directly from serveResource()
+            if (portletTitle != null) {
                 ((RenderResponse) response).setTitle(portletTitle);
             }
             
@@ -355,11 +357,13 @@ public class HstContainerPortlet extends GenericPortlet {
 
     private void processMimeResponseRequest(PortletRequest request, MimeResponse response, String hstDispUrl, HstResponseState portletResponseState) throws PortletException, IOException {
         PortletRequestDispatcher dispatcher = this.portletContext.getRequestDispatcher(hstDispUrl);
-        dispatcher.include(request, response);
-        portletResponseState.flush();
+        if (dispatcher != null) {
+            dispatcher.include(request, response);
+            portletResponseState.flush();
+        }
     }
     
-    private void processActionResponseState(ActionRequest request, ActionResponse response, String hstServletPath, HstResponseState portletResponseState) throws PortletException, IOException {
+    private void processActionResponseState(ActionRequest request, ActionResponse response, String hstServletPath, HstResponseState portletResponseState) throws IOException {
         // write out Cookies to ActionResponse
         portletResponseState.flush();
         
@@ -373,5 +377,4 @@ public class HstContainerPortlet extends GenericPortlet {
             }
         }
     }
-
 }

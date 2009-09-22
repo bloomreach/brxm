@@ -44,7 +44,7 @@ public class InitializationValve extends AbstractValve
         }
         HstEmbeddedRequestContext erc = (HstEmbeddedRequestContext)servletRequest.getAttribute(ContainerConstants.HST_EMBEDDED_REQUEST_CONTEXT);
         
-        if (erc != null ) {
+        if (erc != null && servletRequest.getAttribute(ContainerConstants.HST_EMBEDDED_REQUEST_CONTEXT_TARGET) != null) {
             requestContext.setEmbeddedRequestContext(erc);
         }
         

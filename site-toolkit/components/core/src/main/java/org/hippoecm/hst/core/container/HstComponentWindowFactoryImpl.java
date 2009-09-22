@@ -45,20 +45,17 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         String referenceName = compConfig.getReferenceName();
         StringBuilder referenceNamespaceBuilder = new StringBuilder();
 
+        String parentReferenceNamespace = null;
         if (parentWindow == null) {
-            String contextNamespace = requestContext.getContextNamespace();
-            
-            if (contextNamespace != null) {
-                referenceNamespaceBuilder.append(contextNamespace);
-            }            
+            parentReferenceNamespace = requestContext.getContextNamespace();
         } else {
-            String parentReferenceNamespace = parentWindow.getReferenceNamespace();
+            parentReferenceNamespace = parentWindow.getReferenceNamespace();
+        }
             
-            if ("".equals(parentReferenceNamespace)) {
-                referenceNamespaceBuilder.append(referenceName);
-            } else {
-                referenceNamespaceBuilder.append(parentReferenceNamespace).append(this.referenceNameSeparator).append(referenceName);
-            }
+        if (parentReferenceNamespace == null || "".equals(parentReferenceNamespace)) {
+            referenceNamespaceBuilder.append(referenceName);
+        } else {
+            referenceNamespaceBuilder.append(parentReferenceNamespace).append(this.referenceNameSeparator).append(referenceName);
         }
 
         String referenceNamespace = referenceNamespaceBuilder.toString();
