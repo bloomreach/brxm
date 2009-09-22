@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
@@ -133,31 +134,12 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
                 Path path = new Path(pathInfo);
                 String urlInfo = path.getSegment(0);
                 String encodedInfo = urlInfo.substring(this.urlNamespacePrefix.length());
-                String decodedInfo = this.navigationalStateCodec.decodeParameters(encodedInfo, characterEncoding);
-                String [] requestInfos = StringUtils.splitPreserveAllTokens(decodedInfo, REQUEST_INFO_SEPARATOR_CHAR);
+                String [] requestInfos = StringUtils.splitPreserveAllTokens(encodedInfo, REQUEST_INFO_SEPARATOR_CHAR);
                 
                 String requestType = requestInfos[0];
                 
                 if (HstURL.ACTION_TYPE.equals(requestType)) {
                     String actionWindowReferenceNamespace = requestInfos[1];
-                    String queryParams = "";
-                    
-                    if (requestInfos.length > 3) {
-                        queryParams = StringUtils.join(requestInfos, REQUEST_INFO_SEPARATOR_CHAR, 2, requestInfos.length);
-                    } else {
-                        queryParams = requestInfos[2];
-                    }
-                    
-                    if (queryParams != null && !"".equals(queryParams)) {
-                        String [] paramPairs = StringUtils.split(queryParams, '&');
-                        
-                        for (String paramPair : paramPairs) {
-                            String [] paramNameAndValue = StringUtils.split(paramPair, '=');
-                            String paramValue = URLDecoder.decode(paramNameAndValue[1], characterEncoding);
-                            url.setActionParameter(paramNameAndValue[0], paramValue);
-                        }
-                    }
-                    
                     url.setPathInfo(path.getSubPath(1).toString());
                     url.setActionWindowReferenceNamespace(actionWindowReferenceNamespace);
                     
@@ -166,14 +148,14 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
                     }
                 } else if (HstURL.RESOURCE_TYPE.equals(requestType)) {
                     String resourceWindowReferenceNamespace = requestInfos[1];
-                    String resourceId = requestInfos[2];
+                    String resourceId = requestInfos.length > 2 ? requestInfos[2] : null;
                     
                     url.setResourceId(resourceId);
                     url.setPathInfo(path.getSubPath(1).toString());
                     url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
                     
                     if (log.isDebugEnabled()) {
-                        log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
+                        log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + (resourceId != null ? resourceId : "(null)"));
                     }
                 }
             }
@@ -190,7 +172,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         
         return url;
     }
-
+    
     public HstContainerURL createURL(HstContainerURL baseContainerURL, HstURL hstUrl) {
         HstContainerURLImpl containerURL = (HstContainerURLImpl) ((HstContainerURLImpl) baseContainerURL).clone();
         containerURL.setActionWindowReferenceNamespace(null);
@@ -200,7 +182,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         
         if (HstURL.ACTION_TYPE.equals(type)) {
             containerURL.setActionWindowReferenceNamespace(hstUrl.getReferenceNamespace());
-            containerURL.setActionParameters(hstUrl.getParameterMap());
+            mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
         } else if (HstURL.RESOURCE_TYPE.equals(type)) {
             containerURL.setResourceWindowReferenceNamespace(hstUrl.getReferenceNamespace());
             containerURL.setResourceId(hstUrl.getResourceID());
@@ -212,26 +194,34 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
     }
     
     public void mergeParameters(HstContainerURL containerURL, String referenceNamespace, Map<String, String []> parameterMap) {
-        if (referenceNamespace != null) {
-            for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+        if (referenceNamespace != null ) {
+            String prefix = "";
+            if (!referenceNamespace.equals("")) {
+                prefix = referenceNamespace + parameterNameComponentSeparator;
+                int prefixLen = prefix.length();
                 String name;
-                if("".equals(referenceNamespace)) {
-                     name = referenceNamespace + entry.getKey();
-                } else {
-                     name = referenceNamespace + this.parameterNameComponentSeparator + entry.getKey();
+                if (containerURL.getParameterMap() != null) {
+                    // first drop existing referenceNamespace parameters
+                    for (Iterator<Map.Entry<String,String[]>> iter = containerURL.getParameterMap().entrySet().iterator(); iter.hasNext(); ) {
+                        name = iter.next().getKey();
+                        if (name.startsWith(prefix) && name.length() > prefixLen) {
+                            iter.remove();
+                        }
+                    }
                 }
+            }
+            for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
                 String [] values = entry.getValue();
-                
                 if (values == null || values.length == 0) {
-                    containerURL.setParameter(name, (String) null);
+                    containerURL.setParameter(prefix+entry.getKey(), (String) null);
                 } else {
-                    containerURL.setParameter(name, values);
+                    containerURL.setParameter(prefix+entry.getKey(), values);
                 }
             }
         }
     }
     
-    public String toContextRelativeURLString(HstContainerURL containerURL) throws UnsupportedEncodingException, ContainerException {
+    public String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
         StringBuilder url = new StringBuilder(100);
         url.append(containerURL.getServletPath());
         String pathInfo = buildHstURLPath(containerURL);
@@ -250,34 +240,11 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         if (containerURL.getActionWindowReferenceNamespace() != null) {
             url.append(this.urlNamespacePrefixedPath);
             
-            Map<String, String []> actionParams = containerURL.getActionParameterMap();
             StringBuilder sbRequestInfo = new StringBuilder(80);
             sbRequestInfo.append(HstURL.ACTION_TYPE).append(REQUEST_INFO_SEPARATOR);
             sbRequestInfo.append(containerURL.getActionWindowReferenceNamespace()).append(REQUEST_INFO_SEPARATOR);
             
-            if (actionParams != null) {
-                boolean firstDone = false;
-                
-                for (Map.Entry<String, String []> entry : actionParams.entrySet()) {
-                    String paramName = entry.getKey();
-                    
-                    for (String value : entry.getValue()) {
-                        if (firstDone) {
-                            sbRequestInfo.append('&');
-                        }
-                        
-                        sbRequestInfo.append(paramName).append('=');
-                        
-                        if (value != null) {
-                            sbRequestInfo.append(URLEncoder.encode(value, characterEncoding));
-                        }
-                        
-                        firstDone = true;
-                    }
-                }
-            }
-            
-            url.append(this.navigationalStateCodec.encodeParameters(sbRequestInfo.toString(), characterEncoding));
+            url.append(URLEncoder.encode(sbRequestInfo.toString(), characterEncoding));
         } else if (containerURL.getResourceWindowReferenceNamespace() != null) {
             url.append(this.urlNamespacePrefixedPath);
             
@@ -286,7 +253,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
                 containerURL.getResourceWindowReferenceNamespace() + REQUEST_INFO_SEPARATOR + 
                 (containerURL.getResourceId() != null ? containerURL.getResourceId() : "");
             
-            url.append(this.navigationalStateCodec.encodeParameters(requestInfo, characterEncoding));
+            url.append(URLEncoder.encode(requestInfo, characterEncoding));
         }
         
         String[] unEncodedPaths = containerURL.getPathInfo().split("/");
@@ -321,18 +288,16 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
     protected String getVirtualizedContextPath(HstContainerURL containerURL, HstRequestContext requestContext, String path) {
         String virtualizedContextPath = containerURL.getContextPath();
         
-        if (requestContext != null) {
-            HstContainerURL baseURL = requestContext.getBaseURL();
-
-            if (baseURL != null) {
-                VirtualHost virtualHost = requestContext.getVirtualHost();
-                
-                if (virtualHost != null && path != null) {
-                    if (virtualHost.isContextPathInUrl()) {
-                        virtualizedContextPath = baseURL.getContextPath();
-                    } else {
-                        virtualizedContextPath = "";
-                    }
+        HstContainerURL baseURL = requestContext.getBaseURL();
+        if (baseURL != null) {
+            
+            VirtualHost virtualHost = requestContext.getVirtualHost();
+            
+            if (virtualHost != null && path != null) {
+                if (virtualHost.isContextPathInUrl()) {
+                    virtualizedContextPath = baseURL.getContextPath();
+                } else {
+                    virtualizedContextPath = "";
                 }
             }
         }
@@ -343,27 +308,25 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
     protected String getVirtualizedServletPath(HstContainerURL containerURL, HstRequestContext requestContext, String path) {
         String virtualizedServletPath = containerURL.getServletPath();
         
-        if (requestContext != null) {
-            HstContainerURL baseURL = requestContext.getBaseURL();
+        HstContainerURL baseURL = requestContext.getBaseURL();
 
-            if (baseURL != null) {
-                VirtualHost virtualHost = requestContext.getVirtualHost();
-                
-                if (virtualHost != null && path != null) {
-                    if (virtualHost.getVirtualHosts().isExcluded(path)) {
-                        // if the path is an excluded path defined in virtual hosting (for example /binaries), we do not include
-                        // a servletpath in the url
+        if (baseURL != null) {
+            VirtualHost virtualHost = requestContext.getVirtualHost();
+            
+            if (virtualHost != null && path != null) {
+                if (virtualHost.getVirtualHosts().isExcluded(path)) {
+                    // if the path is an excluded path defined in virtual hosting (for example /binaries), we do not include
+                    // a servletpath in the url
+                    virtualizedServletPath = "";
+                } else {
+                    // as the external url is mapped, get the external 'fake' servletpath
+                    virtualizedServletPath = requestContext.getMatchedMapping().getMapping().getUriPrefix();
+                    if (virtualizedServletPath == null) {
                         virtualizedServletPath = "";
-                    } else {
-                        // as the external url is mapped, get the external 'fake' servletpath
-                        virtualizedServletPath = requestContext.getMatchedMapping().getMapping().getUriPrefix();
-                        if (virtualizedServletPath == null) {
-                            virtualizedServletPath = "";
-                        }
                     }
-                    if (virtualizedServletPath.endsWith("/")) {
-                        virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
-                    }
+                }
+                if (virtualizedServletPath.endsWith("/")) {
+                    virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
                 }
             }
         }

@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,6 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
-import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ActionValve extends AbstractValve
@@ -37,44 +37,47 @@ public class ActionValve extends AbstractValve
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
-        HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
-        HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
+        HttpServletRequest servletRequest = context.getServletRequest();
+        HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-        
-        if (requestContext.getBaseURL().getActionWindowReferenceNamespace() != null) {
+        String actionWindowReferenceNamespace = requestContext.getBaseURL().getActionWindowReferenceNamespace();
+        if (actionWindowReferenceNamespace != null) {
             HstContainerURL baseURL = requestContext.getBaseURL();
-            HstComponentWindow window = findActionWindow(context.getRootComponentWindow(), baseURL.getActionWindowReferenceNamespace());
+            HstComponentWindow window = null;
+            window = findActionWindow(context.getRootComponentWindow(), actionWindowReferenceNamespace);
+            
             HstResponseState responseState = null;
-            HstURLFactory urlFactory = getUrlFactory();
+            HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider(requestContext);
             
             if (window == null) {
                 if (log.isWarnEnabled()) {
-                    log.warn("Cannot find the action window: {}", requestContext.getBaseURL().getActionWindowReferenceNamespace());
+                    log.warn("Cannot find the action window: {}", actionWindowReferenceNamespace);
                 }
             } else {
                 // Check if it is invoked from portlet.
                 responseState = (HstResponseState) servletRequest.getAttribute(HstResponseState.class.getName());
                 
                 if (responseState == null) {
-                    responseState = new HstServletResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse);
+                    responseState = new HstServletResponseState(servletRequest, servletResponse);
                 }
                 
-                HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.ACTION_PHASE);
-                HstResponseImpl response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window, responseState, null);
+                HstRequest request = new HstRequestImpl(servletRequest, requestContext, window, HstRequest.ACTION_PHASE);
+                HstResponseImpl response = new HstResponseImpl(servletRequest, servletResponse, requestContext, window, responseState, null);
                 ((HstComponentWindowImpl) window).setResponseState(responseState);
 
                 getComponentInvoker().invokeAction(context.getRequestContainerConfig(), request, response);
                 
-                Map<String, String []> renderParameters = response.getRenderParamerters();
+                Map<String, String []> renderParameters = response.getRenderParameters();
+                response.setRenderParameters(null);
                 
-                if (renderParameters != null) {
-                    String referenceNamespace = window.getReferenceNamespace();
-                    if (urlFactory.isReferenceNamespaceIgnored()) {
-                        referenceNamespace = "";
-                    }
-                    urlFactory.getServletUrlProvider().mergeParameters(baseURL, referenceNamespace, renderParameters);
-                    response.setRenderParameters(null);
+                if (renderParameters == null) {
+                    renderParameters = Collections.emptyMap();
                 }
+                String referenceNamespace = window.getReferenceNamespace();
+                if (getUrlFactory().isReferenceNamespaceIgnored()) {
+                    referenceNamespace = "";
+                }
+                urlProvider.mergeParameters(baseURL, referenceNamespace, renderParameters);
                 
                 if (window.hasComponentExceptions() && log.isWarnEnabled()) {
                     for (HstComponentException hce : window.getComponentExceptions()) {
@@ -87,57 +90,54 @@ public class ActionValve extends AbstractValve
                     
                     window.clearComponentExceptions();
                 }
-            }
-            
-            if (responseState.getErrorCode() > 0) {
-                
-                try {
-                    if (log.isDebugEnabled()) {
-                        log.debug("The action window has error status code: {} - {}", responseState.getErrorCode(), window.getName());
-                    }
-                    servletResponse.sendError(responseState.getErrorCode(), responseState.getErrorMessage());
-                } catch (IOException e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Exception invocation on sendError().", e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Exception invocation on sendError().");
-                    }
-                }
-                
-            } else {
-            
-                if (responseState.getRedirectLocation() == null) {
+                if (responseState.getErrorCode() > 0) {
+                    
                     try {
-                        // Clear action state first
-                        if (baseURL.getActionParameterMap() != null) {
-                            baseURL.getActionParameterMap().clear();
+                        if (log.isDebugEnabled()) {
+                            log.debug("The action window has error status code: {} - {}", Integer.valueOf(responseState.getErrorCode()), window.getName());
                         }
-                        baseURL.setActionWindowReferenceNamespace(null);
-                        
-                        if (requestContext.isPortletContext()) {
-                            HstContainerURLProvider urlProvider = urlFactory.getPortletUrlProvider();
-                            responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL));
-                        } else {
-                            HstContainerURLProvider urlProvider = urlFactory.getServletUrlProvider();
-                            responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext, servletRequest.getContextPath()));
-                        }
-                    } catch (UnsupportedEncodingException e) {
-                        throw new ContainerException(e);
+                        servletResponse.sendError(responseState.getErrorCode(), responseState.getErrorMessage());
                     } catch (IOException e) {
-                        throw new ContainerException(e);
+                        if (log.isDebugEnabled()) {
+                            log.warn("Exception invocation on sendError().", e);
+                        } else if (log.isWarnEnabled()) {
+                            log.warn("Exception invocation on sendError().");
+                        }
+                    }
+                    
+                } else {
+                
+                    if (responseState.getRedirectLocation() == null) {
+                        try {
+                            // Clear action state first
+                            if (baseURL.getActionParameterMap() != null) {
+                                baseURL.getActionParameterMap().clear();
+                            }
+                            baseURL.setActionWindowReferenceNamespace(null);
+                            
+                            if (requestContext.isPortletContext()) {
+                                responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL, requestContext));
+                            } else {
+                                responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext, servletRequest.getContextPath()));
+                            }
+                        } catch (UnsupportedEncodingException e) {
+                            throw new ContainerException(e);
+                        } catch (IOException e) {
+                            throw new ContainerException(e);
+                        }
+                    }
+                    
+                    try {
+                        if (!requestContext.isPortletContext()) {
+                            responseState.flush();
+                            servletResponse.sendRedirect(responseState.getRedirectLocation());
+                        }
+                    } catch (IOException e) {
+                        log.warn("Unexpected exception during redirect to " + responseState.getRedirectLocation(), e);
                     }
                 }
-                
-                try {
-                    if (!requestContext.isPortletContext()) {
-                        responseState.flush();
-                        servletResponse.sendRedirect(responseState.getRedirectLocation());
-                    }
-                } catch (IOException e) {
-                    log.warn("Unexpected exception during redirect to " + responseState.getRedirectLocation(), e);
-                }
-                
             }
+            
         } else {
             // continue
             context.invokeNext();
@@ -152,21 +152,26 @@ public class ActionValve extends AbstractValve
         if (rootReferenceNamespace.equals(actionWindowReferenceNamespace)) {
             actionWindow = rootWindow;
         } else {
+            String [] rootReferenceNamespaces = rootReferenceNamespace.split(getComponentWindowFactory().getReferenceNameSeparator());
             String [] referenceNamespaces = actionWindowReferenceNamespace.split(getComponentWindowFactory().getReferenceNameSeparator());
-            int start = ((referenceNamespaces.length > 0 && rootReferenceNamespace.equals(referenceNamespaces[0])) ? 1 : 0);
-            
-            HstComponentWindow tempWindow = rootWindow;
-            int index = start;
-            for ( ; index < referenceNamespaces.length; index++) {
-                if (tempWindow != null) {
-                    tempWindow = tempWindow.getChildWindowByReferenceName(referenceNamespaces[index]);
-                } else {
-                    break;
-                }
+            int index = 0;
+            while (index < rootReferenceNamespaces.length && index < referenceNamespaces.length && rootReferenceNamespaces[index].equals(referenceNamespaces[index])) {
+                index++;
             }
             
-            if (index == referenceNamespaces.length) {
-                actionWindow = tempWindow;
+            if (index < referenceNamespaces.length) {
+                HstComponentWindow tempWindow = rootWindow;
+                for ( ; index < referenceNamespaces.length; index++) {
+                    if (tempWindow != null) {
+                        tempWindow = tempWindow.getChildWindowByReferenceName(referenceNamespaces[index]);
+                    } else {
+                        break;
+                    }
+                }
+                
+                if (index == referenceNamespaces.length) {
+                    actionWindow = tempWindow;
+                }
             }
         }
         

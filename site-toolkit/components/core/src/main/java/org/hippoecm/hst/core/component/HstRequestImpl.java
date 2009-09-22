@@ -55,7 +55,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         this.requestContext = requestContext;
         this.referenceNamespaceIgnored = this.requestContext.getURLFactory().isReferenceNamespaceIgnored();
         this.componentWindow = componentWindow;
-        this.parameterNameComponentSeparator = requestContext.getURLFactory().getServletUrlProvider().getParameterNameComponentSeparator();
+        this.parameterNameComponentSeparator = requestContext.getContainerURLProvider().getParameterNameComponentSeparator();
     }
     
     public void setRequest(HttpServletRequest servletRequest) {
@@ -72,49 +72,38 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         
         String namespace = getReferenceNamespacePath(referencePath);
         String prefix = getFullNamespacePrefix(namespace);
-        int paramPrefixLen = prefix.length();
-        parameterMap = this.namespaceParametersMap.get(prefix);
-        
-        if (parameterMap == null) {
-            parameterMap = new HashMap<String, String []>();
-
-            if (HstRequest.ACTION_PHASE.equals(lifecyclePhase)) {
-                Map<String, String []> actionParams = this.requestContext.getBaseURL().getActionParameterMap();
-                
-                if (actionParams != null) {
-                    for (Map.Entry<String, String []> entry : actionParams.entrySet()) {
-                        String paramName = entry.getKey();
-                        String [] paramValues = entry.getValue();
-                        parameterMap.put(paramName, paramValues);
+        if (namespaceParametersMap.isEmpty()) {
+            if (referenceNamespaceIgnored) {
+                namespaceParametersMap.put("",new HashMap<String, String[]>((Map<String,String[]>)super.getParameterMap()));                
+            }
+            else {
+                String targetComponentReferencePrefix = HstRequest.RENDER_PHASE.equals(lifecyclePhase) ? "" : getFullNamespacePrefix(getReferenceNamespace());
+                for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
+                    String param = (String) paramNames.nextElement();
+                    String prefixKey = null;
+                    String paramKey = null;
+                    int index = param.indexOf(parameterNameComponentSeparator);
+                    if (index != -1 && index < param.length()-1) {
+                        prefixKey = param.substring(0, index+1);
+                        paramKey = param.substring(index+1);
                     }
-                }
-                
-                for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
-                    String paramName = (String) paramNames.nextElement();
-                    String [] paramValues = super.getParameterValues(paramName);
-                    parameterMap.put(paramName, paramValues);
-                }
-            } else if (HstRequest.RESOURCE_PHASE.equals(lifecyclePhase)) {
-                for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
-                    String paramName = (String) paramNames.nextElement();
-                    String [] paramValues = super.getParameterValues(paramName);
-                    parameterMap.put(paramName, paramValues);
-                }
-            } else {
-                for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
-                    String encodedParamName = (String) paramNames.nextElement();
-                    
-                    if (encodedParamName.startsWith(prefix)) {
-                        String paramName = encodedParamName.substring(paramPrefixLen);
-                        String [] paramValues = super.getParameterValues(encodedParamName);
-                        parameterMap.put(paramName, paramValues);
+                    else {
+                        prefixKey = targetComponentReferencePrefix;
+                        paramKey = param;
                     }
+                    parameterMap = namespaceParametersMap.get(prefixKey);
+                    if (parameterMap == null ) {
+                        parameterMap = new HashMap<String, String[]>();
+                        namespaceParametersMap.put(prefixKey, parameterMap);
+                    }
+                    parameterMap.put(paramKey, super.getParameterValues(param));
                 }
             }
-            
-            this.namespaceParametersMap.put(prefix, parameterMap);
         }
-        
+        parameterMap = namespaceParametersMap.get(prefix);
+        if (parameterMap == null ) {
+            parameterMap = Collections.emptyMap();
+        }
         return parameterMap;
     }
     
