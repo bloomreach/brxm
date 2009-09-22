@@ -129,11 +129,11 @@ public class BasicHstLinkCreator implements HstLinkCreator {
                      *
                      */ 
                     // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
-                    return new HstLinkImpl(this.getBinariesPrefix()+node.getPath(), getHstSite(resolvedSiteMapItem));
+                    return new HstLinkImpl(this.getBinariesPrefix()+node.getPath(), getHstSite(resolvedSiteMapItem), true);
                 
                 }
                 // if we get here, do normal linkrewriting for binary wrt canonical: it was linked to from /content/assets or /content/images
-                return new HstLinkImpl(this.getBinariesPrefix()+canonical.getPath(), getHstSite(resolvedSiteMapItem));
+                return new HstLinkImpl(this.getBinariesPrefix()+canonical.getPath(), getHstSite(resolvedSiteMapItem), true);
             }
             
             if (canonical == null) {
@@ -189,7 +189,7 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         if(isBinaryLocation(path)) {
             log.debug("Binary path, return hstLink prefixing this path with '{}'", this.getBinariesPrefix());
             // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
-            return new HstLinkImpl(this.getBinariesPrefix()+path, hstSite);
+            return new HstLinkImpl(this.getBinariesPrefix()+path, hstSite, true);
         }
         
         if(hstSite.getLocationMapTree() instanceof BasicLocationMapTree) {
