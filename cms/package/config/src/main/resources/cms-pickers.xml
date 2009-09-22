@@ -104,6 +104,20 @@
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.dialog.shortcuts</sv:value>
       </sv:property>
+      <sv:node sv:name="yui.config.accordion">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="ancestor.classname" sv:type="String">
+          <sv:value>hippo-picker</sv:value>
+        </sv:property>
+        <sv:property sv:name="register.resize.listener" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+        <sv:property sv:name="register.render.listener" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
     <sv:node sv:name="dialogBreadcrumbPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -248,6 +262,20 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${cluster.id}.model.folder</sv:value>
       </sv:property>
+      <sv:node sv:name="yui.config.accordion">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="ancestor.classname" sv:type="String">
+          <sv:value>hippo-picker</sv:value>
+        </sv:property>
+        <sv:property sv:name="register.resize.listener" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+        <sv:property sv:name="register.render.listener" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
     <sv:node sv:name="dialogBreadcrumbPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -437,6 +465,20 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${wicket.model.folder}</sv:value>
       </sv:property>
+      <sv:node sv:name="yui.config.accordion">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="ancestor.classname" sv:type="String">
+          <sv:value>hippo-picker</sv:value>
+        </sv:property>
+        <sv:property sv:name="register.resize.listener" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+        <sv:property sv:name="register.render.listener" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
     <sv:node sv:name="dialogBreadcrumbPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

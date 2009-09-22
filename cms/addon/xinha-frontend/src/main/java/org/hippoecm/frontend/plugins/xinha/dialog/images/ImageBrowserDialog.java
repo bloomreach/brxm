@@ -16,12 +16,19 @@
 
 package org.hippoecm.frontend.plugins.xinha.dialog.images;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -38,11 +45,13 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
     private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
+    
+    public final static List<String> ALIGN_OPTIONS = Arrays.asList(new String[] { "top", "middle", "bottom", "left", "right" });
 
     public ImageBrowserDialog(IPluginContext context, IPluginConfig config, final IModel model) {
         super(context, config, model);
 
-        add(new TextFieldWidget("alt", new PropertyModel(model, XinhaImage.ALT)) {
+        add(new TextFieldWidget("alt", getPropertyModel(XinhaImage.class, XinhaImage.ALT)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -50,6 +59,32 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
                 checkState();
             }
         });
+
+        DropDownChoice align = new DropDownChoice("align", new PropertyModel(model, XinhaImage.ALIGN), ALIGN_OPTIONS,
+                new IChoiceRenderer() {
+                    private static final long serialVersionUID = 1L;
+
+                    public Object getDisplayValue(Object object) {
+                        return new StringResourceModel((String) object, ImageBrowserDialog.this, null).getString();                        
+                    }
+
+                    public String getIdValue(Object object, int index) {
+                        return (String) object;
+                    }
+
+                });
+        align.add(new AjaxFormComponentUpdatingBehavior("onChange") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                checkState();
+            }
+        });
+
+        align.setOutputMarkupId(true);
+        align.setNullValid(false);
+        add(align);
 
         checkState();
     }

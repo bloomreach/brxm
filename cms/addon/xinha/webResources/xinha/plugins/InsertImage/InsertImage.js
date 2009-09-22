@@ -62,8 +62,14 @@ InsertImage.prototype.prepareDialog = function()
     // Connect the OK button
     var self = this;
     this.dialog.onOk = function(values) {
+        
+        //Workaround for strange value.value approach of f_align in Xinha/modules/InsertImage/pluginMethods.js ..
+        if(!YAHOO.lang.isUndefined(values.f_align)) {
+            values.f_align = {value: values.f_align};
+        }
+        
         var img = self.image;
-        if(values.f_url == '' && img != null) {
+        if(values.f_url == '' && img != null) { //Image should be removed
             var p = img.parentNode;
             while(img.hasChildNodes())
             {

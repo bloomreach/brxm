@@ -16,8 +16,13 @@
 <wicket:panel>
   <wicket:extend>
     <div wicket:id="content" />
-    <div class="hippo-picker-properties">
-        <label>Alternative text: </label><div wicket:id="alt">[Alt text box]</div>
+    <div class="hippo-picker-properties ">
+        <label><wicket:message key="align-label">Align:</wicket:message> </label>
+        <div style="width: 100px; float: left; padding-top: 4px;">
+          <select wicket:id="align">[ Align dropdown ]</select>
+        </div>
+        <label><wicket:message key="alt-text-label">Alternative text:</wicket:message> </label>
+        <div wicket:id="alt" class="text-input">[Alt text box]</div>
      </div>
   </wicket:extend>
 </wicket:panel>
