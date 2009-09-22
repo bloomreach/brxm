@@ -232,6 +232,9 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         } else if(nodeLocationChanged) {
             String name = getName();
             UpdaterEngine.log.debug("move unchanged node "+origin.getPath()+" to "+parent.origin.getPath()+"/"+name+" ("+((Node)parent.origin).getProperty("jcr:primaryType").getString()+")");
+            if(!origin.getParent().isCheckedOut()) {
+                origin.getParent().checkout();
+            }
             origin.getSession().move(origin.getPath(), parent.origin.getPath()+"/"+name);
             origin = null;
             for(NodeIterator findMoved = ((Node)parent.origin).getNodes(name); findMoved.hasNext(); ) {
@@ -382,7 +385,8 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             return 0;
     }
 
-    private UpdaterItem getItem(String relPath, boolean isProperty) throws PathNotFoundException {
+    private UpdaterItem getItem(String relPath, boolean isProperty) throws PathNotFoundException, RepositoryException {
+        substantiate();
         String name = relPath;
         String sequel = null;
         int index = 0;

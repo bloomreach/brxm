@@ -68,7 +68,7 @@ public class HREPTWO2182Test extends TestCase {
         assertEquals(1, nodes.getSize());
 
         WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-        Workflow workflow = workflowManager.getWorkflow("default", typeNode);
+        Workflow workflow = workflowManager.getWorkflow("test", typeNode);
         assertTrue(workflow instanceof EditmodelWorkflow);
 
         ((EditmodelWorkflow) workflow).edit();

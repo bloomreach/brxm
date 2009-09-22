@@ -83,52 +83,54 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
     }
 
     private void updateModel(final String prefix, final String cnd, final UpdaterModule module) throws WorkflowException, MappingException,
-                                                                                                                                   RepositoryException, RemoteException {
+                                                                                                       RepositoryException, RemoteException {
         UpdaterModule updateModelUpdaterModule = new UpdaterModule() {
             public void register(final UpdaterContext context) {
-                context.registerName(module.getClass().getName());
+                context.registerName(module != null ? module.getClass().getName() : getClass().getName());
                 context.registerStartTag(null);
                 context.registerEndTag(null);
-                module.register(new UpdaterContext() {
-                    public void registerName(String name) {
-                    }
+                if (module != null) {
+                    module.register(new UpdaterContext() {
+                        public void registerName(String name) {
+                        }
 
-                    public void registerBefore(String name) {
-                    }
+                        public void registerBefore(String name) {
+                        }
 
-                    public void registerAfter(String name) {
-                    }
+                        public void registerAfter(String name) {
+                        }
 
-                    public void registerStartTag(String name) {
-                    }
+                        public void registerStartTag(String name) {
+                        }
 
-                    public void registerEndTag(String name) {
-                    }
+                        public void registerEndTag(String name) {
+                        }
 
-                    public void registerVisitor(ItemVisitor visitor) {
-                        context.registerVisitor(visitor);
-                    }
+                        public void registerVisitor(ItemVisitor visitor) {
+                            context.registerVisitor(visitor);
+                        }
 
-                    public NodeType getNewType(Session session, String type) throws RepositoryException {
-                        return context.getNewType(session, type);
-                    }
+                        public NodeType getNewType(Session session, String type) throws RepositoryException {
+                            return context.getNewType(session, type);
+                        }
 
-                    public void setName(Item item, String name) throws RepositoryException {
-                        context.setName(item, name);
-                    }
+                        public void setName(Item item, String name) throws RepositoryException {
+                            context.setName(item, name);
+                        }
 
-                    public void setPrimaryNodeType(Node node, String name) throws RepositoryException {
-                        context.setPrimaryNodeType(node, name);
-                    }
+                        public void setPrimaryNodeType(Node node, String name) throws RepositoryException {
+                            context.setPrimaryNodeType(node, name);
+                        }
 
-                    public NodeType[] getNodeTypes(Node node) throws RepositoryException {
-                        return context.getNodeTypes(node);
-                    }
+                        public NodeType[] getNodeTypes(Node node) throws RepositoryException {
+                            return context.getNodeTypes(node);
+                        }
 
-                    public boolean isMultiple(Property property) {
-                        return context.isMultiple(property);
-                    }
-                });
+                        public boolean isMultiple(Property property) {
+                            return context.isMultiple(property);
+                        }
+                    });
+                }
                 context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, prefix, cnd, new StringReader(cnd)));
                 context.registerVisitor(new UpdaterEngine.Cleaner(context));
             }
@@ -139,7 +141,7 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
 
     private void updateModel(final String prefix, final String cnd, final UpdaterModule module, Map<String, List<Change>> changes) throws RepositoryException, WorkflowException, RemoteException {
         final Map<String, List<ChangeImpl>> changesImpl;
-        if(changes != null) {
+        if (changes != null) {
             changesImpl = ChangeImpl.convert(changes, session);
         } else {
             changesImpl = null;
@@ -155,7 +157,7 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
                         }
                     });
                 }
-                if(module != null) {
+                if (module != null) {
                     module.register(context);
                 }
             }
@@ -165,7 +167,7 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
     public void updateModel(String prefix, String cnd) throws WorkflowException, MappingException,
             RepositoryException, RemoteException
     {
-        updateModel(prefix, cnd, (String)null, new TreeMap<String,Map<String,Object>>());
+        updateModel(prefix, cnd, (UpdaterModule)null);
     }
 
     public void updateModel(final String prefix, final String cnd, final String contentUpdater, Object contentUpdaterCargo) throws WorkflowException, MappingException, RepositoryException, RemoteException {

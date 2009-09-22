@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.updater;
 
+import java.io.Reader;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -108,6 +109,9 @@ public class UpdaterEngine {
         }
 
         public void registerVisitor(ItemVisitor visitor) {
+            if(visitor instanceof UpdaterItemVisitor.NamespaceVisitor) {
+                visitor = new NamespaceVisitorImpl((UpdaterItemVisitor.NamespaceVisitor)visitor);
+            }
             visitors.add(visitor);
         }
 
@@ -302,8 +306,8 @@ public class UpdaterEngine {
             log.info("migration update cycle for module "+module.name);
             for (ItemVisitor visitor : module.visitors) {
                 try {
-                    if(visitor instanceof UpdaterItemVisitor.NamespaceVisitor) {
-                        UpdaterItemVisitor.NamespaceVisitor remap = ((UpdaterItemVisitor.NamespaceVisitor)visitor);
+                    if(visitor instanceof NamespaceVisitorImpl) {
+                        NamespaceVisitorImpl remap = ((NamespaceVisitorImpl)visitor);
                         nsreg.externalRemap(remap.namespace, remap.oldPrefix, remap.oldURI);
                         nsreg.externalRemap(remap.newPrefix, remap.namespace, remap.newURI);
                     }
@@ -425,9 +429,9 @@ public class UpdaterEngine {
         for (ModuleRegistration module : modules) {
             log.info("migration update cycle for module "+module.name);
             for (ItemVisitor visitor : module.visitors) {
-                if (visitor instanceof UpdaterItemVisitor.NamespaceVisitor) {
+                if (visitor instanceof NamespaceVisitorImpl) {
                     try {
-                        UpdaterItemVisitor.NamespaceVisitor remap = (UpdaterItemVisitor.NamespaceVisitor)visitor;
+                        NamespaceVisitorImpl remap = (NamespaceVisitorImpl)visitor;
                         Workspace workspace = session.getWorkspace();
                         NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
                         remap.oldURI = nsreg.getURI(remap.namespace);
@@ -456,7 +460,20 @@ public class UpdaterEngine {
             log.info("migration update cycle for module "+module.name);
             for (ItemVisitor visitor : module.visitors) {
                 try {
-                    updaterSession.getRootNode().accept(visitor);
+                    if(visitor instanceof UpdaterItemVisitor.Iterated) {
+                        UpdaterItemVisitor.Iterated iteratedVisitor = (UpdaterItemVisitor.Iterated) visitor;
+                        for(NodeIterator iter = iteratedVisitor.iterator(updaterSession.upstream); iter.hasNext(); ) {
+                            Node node = iter.nextNode();
+                            String path = node.getPath();
+                            node = updaterSession.getRootNode();
+                            if(!path.equals("/")) {
+                                node = node.getNode(path.substring(1));
+                            }
+                            iteratedVisitor.visit(node);
+                        }
+                    } else {
+                        updaterSession.getRootNode().accept(visitor);
+                    }
                 } catch (UpdaterException ex) {
                     if (exception != null) {
                         exception = ex;
@@ -561,6 +578,77 @@ public class UpdaterEngine {
                         child.remove();
                     }
                 }
+            }
+        }
+    }
+
+    public final static class NamespaceVisitorImpl extends UpdaterItemVisitor {
+        public String namespace;
+        public String oldURI;
+        public String newURI;
+        public String oldPrefix;
+        public String newPrefix;
+        public Reader cndReader;
+        public String cndName;
+        UpdaterContext context;
+
+        public NamespaceVisitorImpl(NamespaceVisitor definition) {
+            this.namespace = definition.prefix;
+            this.cndName = definition.cndName;
+            this.cndReader = definition.cndReader;
+            this.context = definition.context;
+        }
+
+        @Override
+        public final void visit(Node node) throws RepositoryException {
+            super.visit(node); // FIXME
+        }
+
+        @Override
+        protected final void entering(Node node, int level)
+                throws RepositoryException {
+            NodeType[] nodeTypes = context.getNodeTypes(node);
+            if (nodeTypes.length > 0 && nodeTypes[0].getName().startsWith(namespace + ":")) {
+                context.setPrimaryNodeType(node, newPrefix + ":" + nodeTypes[0].getName().substring(namespace.length() + 1));
+            }
+            if (nodeTypes.length > 1) {
+                boolean mixinsChanged = false;
+                String[] mixins = new String[nodeTypes.length - 1];
+                for (int i = 1; i < nodeTypes.length; i++) {
+                    if (nodeTypes[i].getName().startsWith(namespace + ":")) {
+                        mixins[i - 1] = newPrefix + ":" + nodeTypes[i].getName().substring(namespace.length() + 1);
+                        mixinsChanged = true;
+                    } else {
+                        mixins[i - 1] = nodeTypes[i].getName();
+                    }
+                }
+                if (mixinsChanged) {
+                    node.setProperty("jcr:mixinTypes", mixins);
+                }
+            }
+        }
+
+        @Override
+        protected final void entering(Property property, int level)
+                throws RepositoryException {
+        }
+
+        @Override
+        protected final void leaving(Node node, int level)
+                throws RepositoryException {
+            for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+                Node child = iter.nextNode();
+                if (child.getName().startsWith(namespace + ":")) {
+                    context.setName(child, newPrefix + ":" + child.getName().substring(child.getName().indexOf(":") + 1));
+                }
+            }
+        }
+
+        @Override
+        protected final void leaving(Property property, int level)
+                throws RepositoryException {
+            if (property.getName().startsWith(namespace + ":")) {
+                context.setName(property, newPrefix + ":" + property.getName().substring(property.getName().indexOf(":") + 1));
             }
         }
     }

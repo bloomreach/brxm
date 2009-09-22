@@ -110,15 +110,15 @@ public class TypeStoreTest extends PluginTest {
         JcrTypeStore typeStore = new JcrTypeStore();
         ITypeDescriptor descriptor = typeStore.load("test_0_0:test");
         assertNotNull(descriptor);
-        assertEquals("test_0_0:test", descriptor.getType());
+        assertEquals("test:test", descriptor.getType());
 
         IFieldDescriptor field = descriptor.getField("title");
-        assertEquals("test_0_0:title", field.getPath());
+        assertEquals("test:title", field.getPath());
 
         ITypeDescriptor inheriting = typeStore.load("test_0_0:inheriting");
         List<String> superTypes = inheriting.getSuperTypes();
         assertEquals(1, superTypes.size());
-        assertEquals("test_0_0:test", superTypes.get(0));
+        assertEquals("test:test", superTypes.get(0));
     }
 
 }
