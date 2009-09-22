@@ -37,13 +37,13 @@ if (!YAHOO.hippo.AccordionManager) {
         YAHOO.hippo.AccordionManagerImpl.prototype = {
             configurations : new YAHOO.hippo.HashMap(),
             
-            create : function(id, config) {
+            register : function(id, config) {
                 if(!this.configurations.containsKey(id)) {
                     this.configurations.put(id, config);
                 }
             },
 
-            renderUnit : function(id, unitId) {
+            render : function(id, unitId) {
                 var el = Dom.get(id);
                 if(el != null) {
                     if (Lang.isUndefined(el.accordion)) {
@@ -70,15 +70,7 @@ if (!YAHOO.hippo.AccordionManager) {
             timeoutID: null,
 
             id: null,
-            cfg: {
-                timeoutLength: 200,
-                ancestorClassName: 'yui-layout-bd',
-                unitClassName: 'hippo-accordion-unit',
-                unitHeaderHeight: 25,
-                calculateTotalHeight: false,
-                setHeightToClassname: null,
-                throttleUpdate: true 
-            },
+            cfg: null,
             current: null,
             region: null,
             totalHeight: 0,
@@ -86,23 +78,39 @@ if (!YAHOO.hippo.AccordionManager) {
             config: function(id, currentUnitId, config) {
                 this.id = id;
                 this.current = currentUnitId;
-                //TODO: handle configuration
+                this.cfg = config;
             },
     
             init: function() {
                 if(this.initialized) {
                     return;
                 }
-                this.initialized = true; //set because registration below does a direct callback
-    
+                this.initialized = true; //set here because render registration below does a direct callback
+
                 var me = this;
-                YAHOO.hippo.LayoutManager.registerResizeListener(Dom.get(this.id), me, function() {
-                    me.calculated = false;
-                    me.update();
-                });
-                YAHOO.hippo.LayoutManager.registerRenderListener(Dom.get(this.id), me, function() {
-                    me.update(true);
-                }, true);
+                var root = Dom.get(this.id);
+                if(this.cfg.registerResizeListener) {
+                    YAHOO.hippo.LayoutManager.registerResizeListener(root, me, function() {
+                        me.calculated = false;
+                        me.update();
+                    });
+                }
+                if(this.cfg.registerRenderListener) {
+                    YAHOO.hippo.LayoutManager.registerRenderListener(root, me, function() {
+                        me.update(true);
+                    }, true);
+                } else {
+                    this.update(true);
+                }                
+                YAHOO.hippo.HippoAjax.registerDestroyFunction(root, this.cleanup, this);
+            },
+            
+            cleanup : function() {
+                //TODO: implement new layoutmanager
+                //if(this.cfg.registerRenderListener) {
+              //if(this.cfg.registerResizeListener) {
+//                YAHOO.hippo.LayoutManager.unregisterResizeListener(Dom.get(this.id), 
+//                YAHOO.hippo.LayoutManager.unregisterRenderListener(Dom.get(this.id), 
             },
 
             calculate : function() {
@@ -110,7 +118,7 @@ if (!YAHOO.hippo.AccordionManager) {
                     return;
                 }
                 
-                var parent = Dom.getAncestorByClassName(this.id, this.cfg.ancestorClassName);
+                var parent = Dom.getAncestorByClassName(this.id, this.cfg.ancestorClassname);
                 if(parent != null) {
                     this.region = Dom.getRegion(parent);
                 } else {
@@ -118,7 +126,7 @@ if (!YAHOO.hippo.AccordionManager) {
                     return;
                 }
     
-                var children = Dom.getElementsByClassName(this.cfg.unitClassName, 'div', this.id);
+                var children = Dom.getElementsByClassName(this.cfg.unitClassname, 'div', this.id);
                 if(this.cfg.calculateTotalHeight) {
                     //set display of tree to none to calculate height of section headers
                     if(this.current != null) {
@@ -137,17 +145,18 @@ if (!YAHOO.hippo.AccordionManager) {
                 this.init();
                 this.calculate();
                 
-                var height = this.region.height - this.totalHeight; //also substract height of unit header
+                var height = this.region.height - this.totalHeight;
                 
-                //if we find an element with className this.cfg.unitClassName + '-add'
+                //if we find an element with className this.cfg.unitClassname + '-add'
                 //we have an active bottom element.
-                if(this.findElement(id, this.cfg.unitClassName + '-add', 'span') != null) {
+                var addLink = this.findElement(id, this.cfg.unitClassname + '-add', 'span');
+                if(addLink != null && Dom.getStyle(addLink, 'display') != 'none') {
                     height -= 26;
-                    Dom.setStyle(this.findElement(id, this.cfg.unitClassName + '-bottom'), 'display', 'block');
+                    Dom.setStyle(this.findElement(id, this.cfg.unitClassname + '-bottom'), 'display', 'block');
                 }
 
                 if(height > 0) {
-                    Dom.setStyle(this.findElement(id, this.cfg.unitClassName + '-center'), 'height', height + 'px');
+                    Dom.setStyle(this.findElement(id, this.cfg.unitClassname + '-center'), 'height', height + 'px');
                 }
                 this.current = id;
             },

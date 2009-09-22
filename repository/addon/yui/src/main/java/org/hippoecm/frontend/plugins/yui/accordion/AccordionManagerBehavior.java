@@ -40,10 +40,10 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
     private DynamicTextTemplate template;
     String id;
     
-    public AccordionManagerBehavior(IYuiManager manager) {
+    public AccordionManagerBehavior(IYuiManager manager, AccordionSettings accordionSettings) {
         super(manager);
         
-        this.template = new DynamicTextTemplate(INIT) {
+        this.template = new DynamicTextTemplate(INIT, accordionSettings) {
             private static final long serialVersionUID = 1L;
             
             @Override
