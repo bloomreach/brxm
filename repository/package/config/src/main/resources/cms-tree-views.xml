@@ -32,6 +32,14 @@
     <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
     </sv:property>
+    
+    <!-- Wicket tree helper properties -->
+    <sv:property sv:name="frontend:properties" sv:type="String">
+      <sv:value>use.width.from.classname</sv:value>
+      <sv:value>bind.to.layout.unit</sv:value>
+      <sv:value>register.context.menu</sv:value>
+    </sv:property>
+    
     <sv:node sv:name="documentsBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -54,12 +62,18 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
-      <sv:property sv:name="tree.autowidth" sv:type="Boolean">
-        <sv:value>true</sv:value>
+
+      <!-- Wicket tree helper properties -->
+      <sv:property sv:name="bind.to.layout.unit" sv:type="String">
+        <sv:value>${bind.to.layout.unit}</sv:value>
       </sv:property>
-      <sv:property sv:name="add.contextmenu.link" sv:type="Boolean">
-        <sv:value>true</sv:value>
+      <sv:property sv:name="register.context.menu" sv:type="String">
+        <sv:value>${register.context.menu}</sv:value>
       </sv:property>
+      <sv:property sv:name="use.width.from.classname" sv:type="String">
+        <sv:value>${use.width.from.classname}</sv:value>
+      </sv:property>    
+
       <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
@@ -185,6 +199,14 @@
     <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
     </sv:property>
+
+    <!-- Wicket tree helper properties -->
+    <sv:property sv:name="frontend:properties" sv:type="String">
+      <sv:value>use.width.from.classname</sv:value>
+      <sv:value>bind.to.layout.unit</sv:value>
+      <sv:value>register.context.menu</sv:value>
+    </sv:property>
+    
     <sv:node sv:name="imagesBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -204,6 +226,18 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
+      
+      <!-- Wicket tree helper properties -->
+      <sv:property sv:name="bind.to.layout.unit" sv:type="String">
+        <sv:value>${bind.to.layout.unit}</sv:value>
+      </sv:property>
+      <sv:property sv:name="register.context.menu" sv:type="String">
+        <sv:value>${register.context.menu}</sv:value>
+      </sv:property>
+      <sv:property sv:name="use.width.from.classname" sv:type="String">
+        <sv:value>${use.width.from.classname}</sv:value>
+      </sv:property>    
+      
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${wicket.id}</sv:value>
       </sv:property>
@@ -338,6 +372,14 @@
     <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
     </sv:property>
+
+    <!-- Wicket tree helper properties -->
+    <sv:property sv:name="frontend:properties" sv:type="String">
+      <sv:value>use.width.from.classname</sv:value>
+      <sv:value>bind.to.layout.unit</sv:value>
+      <sv:value>register.context.menu</sv:value>
+    </sv:property>
+    
     <sv:node sv:name="filesBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -357,6 +399,18 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
+      
+      <!-- Wicket tree helper properties -->
+      <sv:property sv:name="bind.to.layout.unit" sv:type="String">
+        <sv:value>${bind.to.layout.unit}</sv:value>
+      </sv:property>
+      <sv:property sv:name="register.context.menu" sv:type="String">
+        <sv:value>${register.context.menu}</sv:value>
+      </sv:property>
+      <sv:property sv:name="use.width.from.classname" sv:type="String">
+        <sv:value>${use.width.from.classname}</sv:value>
+      </sv:property>
+      
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${wicket.id}</sv:value>
       </sv:property>
@@ -485,6 +539,14 @@
     <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
     </sv:property>
+    
+    <!-- Wicket tree helper properties -->
+    <sv:property sv:name="frontend:properties" sv:type="String">
+      <sv:value>use.width.from.classname</sv:value>
+      <sv:value>bind.to.layout.unit</sv:value>
+      <sv:value>register.context.menu</sv:value>
+    </sv:property>
+    
     <sv:node sv:name="configurationBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -504,6 +566,18 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>false</sv:value>
       </sv:property>
+      
+      <!-- Wicket tree helper properties -->
+      <sv:property sv:name="bind.to.layout.unit" sv:type="String">
+        <sv:value>${bind.to.layout.unit}</sv:value>
+      </sv:property>
+      <sv:property sv:name="register.context.menu" sv:type="String">
+        <sv:value>${register.context.menu}</sv:value>
+      </sv:property>
+      <sv:property sv:name="use.width.from.classname" sv:type="String">
+        <sv:value>${use.width.from.classname}</sv:value>
+      </sv:property>
+      
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${wicket.id}</sv:value>
       </sv:property>
