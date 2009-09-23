@@ -89,6 +89,21 @@ final public class UpdaterNode extends UpdaterItem implements Node {
     private final void substantiate() throws RepositoryException {
         if (!hollow)
             return;
+        /* This is a precaution measure, checkout any node (or parent) that is being visited
+         * regardless if it is necessary (the commit phase has a more fine grained checkout)
+         * FIXME: when having a good testset, it should be measured whether these two checkouts
+         * are truely neccesary
+         */
+        if(((Node)origin).isNodeType("mix:versionable")) {
+            if (!((Node)origin).isCheckedOut()) {
+                ((Node)origin).checkout();
+            }
+        }
+        if(origin.getDepth() > 0 && origin.getParent().isNodeType("mix:versionable")) {
+            if (!origin.getParent().isCheckedOut()) {
+                origin.getParent().checkout();
+            }
+        }
         children = new LinkedHashMap<String, List<UpdaterItem>>();
         reverse = new HashMap<UpdaterItem, String>();
         removed = new HashSet<UpdaterItem>();
@@ -170,8 +185,12 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         boolean nodeRelinked = false;
 
         if (origin != null) {
-            if(origin instanceof HippoNode) {
-                if(!origin.isSame(((HippoNode)origin).getCanonicalNode())) {
+            if (origin instanceof HippoNode) {
+                try {
+                    if (!origin.isSame(((HippoNode)origin).getCanonicalNode())) {
+                        return;
+                    }
+                } catch (RepositoryException ex) {
                     return;
                 }
             }
@@ -194,7 +213,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         }
 
         if (!hollow && origin != null && origin.isNode()) {
-            if(((Node)origin).isNodeType("jcr:versionable")) {
+            if(((Node)origin).isNodeType("mix:versionable")) {
                 if(UpdaterEngine.log.isDebugEnabled()) {
                     UpdaterEngine.log.debug("commit checkout "+origin.getPath());
                 }
@@ -487,7 +506,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         }
         siblings.add(child);
         reverse.put(child, name);
-	child.setPrimaryNodeType(primaryNodeTypeName);
+        child.setPrimaryNodeType(primaryNodeTypeName);
         return child;
     }
 
