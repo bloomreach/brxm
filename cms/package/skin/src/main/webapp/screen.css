@@ -515,11 +515,11 @@ background-image:url(images/box-blue2.png);}
 .hippo-root div.wicket-mask-dark{opacity: 0.5; background-image:url("images/transparent-back.png"); filter:alpha(opacity=0.5)}
 
 /* Picker General Styling */
-.hippo-picker{background: url("images/picker-back.png") repeat-y; height: 356px; border-bottom: 1px solid #afafaf}
+.hippo-picker{background: url("images/picker-back.png") repeat-y; height: 356px;}
 .hippo-picker-tree{width: 193px; float: left;} 
 .hippo-picker-tree .hippo-tree{height: 255px; width: 193px}
 .hippo-picker-list-details{height: 331px; margin-left: 194px; background: #ffffff url('images/silverBack3.png') repeat-x; width: auto; position: relative; overflow: auto}
-.hippo-picker-properties{clear:both; height: 35px; padding: 10px; margin-top:0px;}
+.hippo-picker-properties{clear:both; height: 35px; padding: 10px; margin-top:0px; border-top: 1px solid #afafaf;}
 .hippo-picker .hippo-list-details .hippo-list-paging td{width: 630px; text-align: right;}
 .hippo-picker .hippo-window-form td input{width: 200px}
 
