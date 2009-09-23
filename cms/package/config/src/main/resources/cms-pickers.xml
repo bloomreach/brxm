@@ -301,6 +301,8 @@
       </sv:property>
       <sv:property sv:name="root.paths" sv:type="String">
         <sv:value>/content/documents</sv:value>
+        <sv:value>/content/gallery</sv:value>
+        <sv:value>/content/assets</sv:value>
       </sv:property>
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.config</sv:value>
@@ -539,6 +541,8 @@
       </sv:property>
       <sv:property sv:name="root.paths" sv:type="String">
         <sv:value>/content/documents</sv:value>
+        <sv:value>/content/gallery</sv:value>
+        <sv:value>/content/assets</sv:value>
       </sv:property>
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.config</sv:value>

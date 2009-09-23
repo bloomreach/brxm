@@ -62,9 +62,14 @@ public class BreadcrumbPlugin extends RenderPlugin {
     private final AjaxButton up;
 
     private MaxLengthStringFormatter format;
+    final IModelReference folderReference;
 
     public BreadcrumbPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        
+        if (config.getString("model.folder") == null) {
+            throw new IllegalArgumentException("Expected model.folder configuration key");
+        }
 
         roots = new HashSet<String>();
         String[] paths = config.getStringArray("root.paths");
@@ -75,36 +80,37 @@ public class BreadcrumbPlugin extends RenderPlugin {
         } else {
             roots.add("/");
         }
-        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+        
+        folderReference = context.getService(config.getString("model.folder"),
+                IModelReference.class);
+        if (folderReference != null) {
+            context.registerService(new IObserver() {
+                private static final long serialVersionUID = 1L;
+
+                public IObservable getObservable() {
+                    return folderReference;
+                }
+
+                public void onEvent(Iterator<? extends IEvent> event) {
+                    update((JcrNodeModel) folderReference.getModel());
+                }
+
+            }, IObserver.class.getName());
+        }
+
+        JcrNodeModel nodeModel = (JcrNodeModel) folderReference.getModel();
+        
         add(getListView(nodeModel));
 
-        if (config.getString("model.folder") != null) {
-            final IModelReference folderReference = context.getService(config.getString("model.folder"),
-                    IModelReference.class);
-            if (folderReference != null) {
-                context.registerService(new IObserver() {
-                    private static final long serialVersionUID = 1L;
-
-                    public IObservable getObservable() {
-                        return folderReference;
-                    }
-
-                    public void onEvent(Iterator<? extends IEvent> event) {
-                        update((JcrNodeModel) folderReference.getModel());
-                    }
-
-                }, IObserver.class.getName());
-            }
-        }
         up = new AjaxButton("up") {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                JcrNodeModel model = (JcrNodeModel) BreadcrumbPlugin.this.getModel();
+                JcrNodeModel model = (JcrNodeModel) folderReference.getModel();
                 model = model.getParentModel();
                 if (model != null) {
-                    BreadcrumbPlugin.this.setModel(model);
+                    folderReference.setModel(model);
                 }
             }
         };
@@ -120,6 +126,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
 
     protected void update(JcrNodeModel model) {
         replace(getListView(model));
+        setModel(model);
 
         JcrNodeModel parentModel = model.getParentModel();
         if (parentModel == null || roots.contains(model.getItemModel().getPath())) {
@@ -159,7 +166,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        BreadcrumbPlugin.this.setModel(nodeItem.model);
+                        folderReference.setModel(nodeItem.model);
                     }
 
                 };
