@@ -24,22 +24,21 @@ import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 
 public class WicketTreeHelperSettings extends YuiObject {
     private static final long serialVersionUID = 1L;
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
-    protected static final BooleanSetting TREE_AUTOWIDTH = new BooleanSetting("treeAutowidth", true);
-    protected static final BooleanSetting ADD_CONTEXTMENU_LINK = new BooleanSetting("addContextmenuLink", false);
-    protected static final StringSetting SET_WIDTH_TO_CLASSNAME = new StringSetting("setWidthToClassname", "hippo-tree");
 
-    protected static final YuiType TYPE = new YuiType(TREE_AUTOWIDTH, ADD_CONTEXTMENU_LINK, SET_WIDTH_TO_CLASSNAME);
+    protected static final BooleanSetting TREE_AUTOWIDTH = new BooleanSetting("treeAutowidth", true);
+    protected static final StringSetting SET_WIDTH_TO_CLASSNAME = new StringSetting("setWidthToClassname", "hippo-tree");
+    protected static final StringSetting USE_WIDTH_FROM_CLASSNAME = new StringSetting("useWidthFromClassname");
+    protected static final BooleanSetting BIND_TO_LAYOUT_UNIT = new BooleanSetting("bindToLayoutUnit", true);
+    protected static final BooleanSetting REGISTER_CONTEXT_MENU = new BooleanSetting("registerContextMenu", true);
+
+    protected static final YuiType TYPE = new YuiType(TREE_AUTOWIDTH, SET_WIDTH_TO_CLASSNAME,
+            USE_WIDTH_FROM_CLASSNAME, BIND_TO_LAYOUT_UNIT, REGISTER_CONTEXT_MENU);
 
     public WicketTreeHelperSettings(IPluginConfig config) {
         super(TYPE, config);
-    }
-    
-    public boolean isAddContextmenuLink() {
-        return ADD_CONTEXTMENU_LINK.get(this);
     }
 
     public boolean isTreeAutowidth() {

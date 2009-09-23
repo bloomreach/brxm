@@ -47,7 +47,7 @@ public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
         });
     }
     public String getInitString() {
-        return "YAHOO.hippo.TreeHelper.init(" + settings.toScript() + ");";
+        return "YAHOO.hippo.TreeHelper.init('" + getWicketId() + "', " + settings.toScript() + ");";
     }
 
     public String getRenderString() {

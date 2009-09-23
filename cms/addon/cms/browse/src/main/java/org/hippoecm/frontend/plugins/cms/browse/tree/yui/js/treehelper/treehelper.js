@@ -32,36 +32,38 @@ if (!YAHOO.hippo.TreeHelper) {
         };
 
         YAHOO.hippo.TreeHelperImpl.prototype = {
-            cfg : { treeAutowidth:false },
+            cfg : null,
             timeoutID: null,
-            layoutUnit : null,
-            initialized: false,
+            timeoutLength: 200,
                 
-            init : function(cfg){
-                if(this.initialized) {
-                    return;
+            init : function(id, cfg){
+                YAHOO.log('Register[' + id + '] cfg=' + Lang.dump(cfg), 'info', 'TreeHelper');
+                var el = Dom.get(id);
+                el['treeHelper'] = {
+                        cfg: cfg,
+                        layoutUnit: null
                 }
-                this.cfg = cfg;
-                this.cfg.timeoutLength = 200;
-                this.initialized = true;
             },
             
             register : function(id) {
                 var el = Dom.get(id);
-                if(Lang.isUndefined(el.treeHelperOnRender)) {
+                if(el.treeHelper.cfg.bindToLayoutUnit && Lang.isUndefined(el.treeHelper.onRender)) {
                     var me = this;
-                    YAHOO.hippo.LayoutManager.registerResizeListener(Dom.get(id), me, function() {
+                    YAHOO.hippo.LayoutManager.registerResizeListener(el, me, function() {
                         me.render(id);
                     });
-                    this.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(el);
-                    el.treeHelperOnRender = {set: true};
+                    el.treeHelper.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(el);
+                    el.treeHelper.onRender = {set: true};
                 }
             },
             
             updateMouseListeners : function(id) {
-                var items = Dom.getElementsByClassName('a_', 'div', id);
-                for(var i=0; i<items.length; i++) {
-                    this.updateMouseListener(items[i].parentNode);
+                var el = Dom.get(id);
+                if(el.treeHelper.cfg.registerContextMenu) {
+                    var items = Dom.getElementsByClassName('a_', 'div', id);
+                    for(var i=0; i<items.length; i++) {
+                        this.updateMouseListener(items[i].parentNode);
+                    }
                 }
             },
             
@@ -77,8 +79,9 @@ if (!YAHOO.hippo.TreeHelper) {
             render : function(id) {
                 this.register(id);
                 var width = 0;
+                var el = Dom.get(id);
                 
-                if(this.cfg.treeAutowidth) {
+                if(el.treeHelper.cfg.treeAutowidth) {
                     var computedWidth = 0;
                     var items = Dom.getElementsByClassName('a_', 'div', id);
                     
@@ -95,7 +98,7 @@ if (!YAHOO.hippo.TreeHelper) {
                         //Windows browsers need 10 pixels more
                         computedWidth += 39; //somehow YUI seems to miss the correct width of the text labels icon
                         if(isWin) {
-                            computedWidth += 10;
+                            //computedWidth += 5;
                         }
                         if(computedWidth > width) {
                             width = computedWidth;
@@ -106,16 +109,14 @@ if (!YAHOO.hippo.TreeHelper) {
                 if(width > 0) {
                     //try to set width to child element with classname 'hippo-tree'. We can't directly take 
                     //the childnode of 'id' because of the wicket:panel elements in dev-mode
-                    var ar = Dom.getElementsByClassName(this.cfg.setWidthToClassname, 'div', id);
+                    var ar = Dom.getElementsByClassName(el.treeHelper.cfg.setWidthToClassname, 'div', id);
                     if(!Lang.isUndefined(ar.length) && ar.length > 0) {
                         //Also check if the maxFound width in the tree isn't smaller than the layoutMax width
-                        if(this.layoutUnit != null) {
-                            var layoutMax = this.layoutUnit.getSizes().body.w;
-                            if(layoutMax > width) {
-                                width = layoutMax;
-                            }
+                        var layoutMax = this.getLayoutMax(el);
+                        if(layoutMax != null && layoutMax > width) {
+                            width = layoutMax;
                         }
-                        
+
                         var regionTree = Dom.getRegion(ar[0]);
                         var regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'hippo-accordion-unit-center'));
                         if(regionTree.height > regionUnitCenter.height) {
@@ -129,15 +130,25 @@ if (!YAHOO.hippo.TreeHelper) {
             },
             
             update: function(id) {
-                if(this.timeoutID != null) {
-                    window.clearTimeout(this.timeoutID);
+                var el = Dom.get(id);
+                if(el.treeHelper.timeoutID != null) {
+                    window.clearTimeout(el.treeHelper.timeoutID);
                 }
                 var me = this;
-                this.timeoutID = window.setTimeout(function() {
+                el.treeHelper.timeoutID = window.setTimeout(function() {
                     me.render(id);
-                }, this.cfg.timeoutLength);
+                }, this.timeoutLength);
+            },
+            
+            getLayoutMax : function(el) {
+                if(el.treeHelper.cfg.bindToLayoutUnit && el.treeHelper.layoutUnit != null) {
+                    return el.treeHelper.layoutUnit.getSizes().body.w;
+                } else if(el.treeHelper.cfg.useWidthFromClassname != null) {
+                    var e = Dom.getAncestorByClassName(el, el.treeHelper.cfg.useWidthFromClassname);
+                    return parseInt(Dom.getStyle(e, 'width'));
+                }
+                return null;
             }
-
         };
 
     })();

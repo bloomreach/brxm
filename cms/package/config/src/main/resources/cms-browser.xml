@@ -235,6 +235,15 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>model.browse.folder</sv:value>
       </sv:property>
+
+      <!-- Wicket tree helper properties -->
+      <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="register.context.menu" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+
     </sv:node>
   </sv:node>
   <sv:node sv:name="imagesTreeLoader">
@@ -263,6 +272,15 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>model.browse.folder</sv:value>
       </sv:property>
+      
+      <!-- Wicket tree helper properties -->
+      <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="register.context.menu" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      
     </sv:node>
   </sv:node>
   <sv:node sv:name="assetsTreeLoader">
@@ -291,6 +309,15 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>model.browse.folder</sv:value>
       </sv:property>
+      
+      <!-- Wicket tree helper properties -->
+      <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="register.context.menu" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      
     </sv:node>
   </sv:node>
   <sv:node sv:name="configurationTreeLoader">
@@ -319,6 +346,15 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>model.browse.folder</sv:value>
       </sv:property>
+      
+      <!-- Wicket tree helper properties -->
+      <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="register.context.menu" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+
     </sv:node>
   </sv:node>
   <sv:node sv:name="tabbedEditorTabs">
