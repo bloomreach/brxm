@@ -24,6 +24,8 @@ import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
 import javax.jcr.ItemVisitor;
 import javax.jcr.NamespaceException;
@@ -409,9 +411,9 @@ public class UpdaterEngine {
     }
 
     public static void migrate(Session session, Modules<UpdaterModule> modules) throws UpdaterException, RepositoryException {
-        session.refresh(false);
 	session = org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(session);
         ((SessionDecorator)session).postMountEnabled(false);
+        session.refresh(false);
         try {
             UpdaterEngine engine = new UpdaterEngine(session, modules);
             engine.update();
@@ -469,7 +471,11 @@ public class UpdaterEngine {
                             if(!path.equals("/")) {
                                 node = node.getNode(path.substring(1));
                             }
-                            iteratedVisitor.visit(node);
+                            try {
+                                iteratedVisitor.visit(node);
+                            } catch(InvalidItemStateException ex) {
+                                // deliberate ignore
+                            }
                         }
                     } else {
                         updaterSession.getRootNode().accept(visitor);

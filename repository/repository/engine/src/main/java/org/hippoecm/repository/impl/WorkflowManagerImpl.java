@@ -470,6 +470,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
             invocationChain = new LinkedList<WorkflowInvocation>();
             invocationIndex = invocationChain.listIterator();
 
+            rootSession.refresh(false);
+
             try {
                 String path = getPath(uuid);
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());

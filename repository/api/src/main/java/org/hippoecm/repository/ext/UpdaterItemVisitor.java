@@ -29,6 +29,7 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+import javax.jcr.InvalidItemStateException;
 
 import org.hippoecm.repository.api.HippoNode;
 
@@ -122,6 +123,8 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
                 }
                 currentLevel = 0;
             }
+        } catch (InvalidItemStateException ex) {
+            // deliberate ignore
         } catch (RepositoryException ex) {
             currentLevel = 0;
             throw ex;
