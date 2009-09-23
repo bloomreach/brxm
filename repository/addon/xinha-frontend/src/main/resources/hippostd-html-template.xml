@@ -188,6 +188,9 @@
           <sv:property sv:name="cluster.name" sv:type="String">
             <sv:value>cms-pickers/images</sv:value>
           </sv:property>
+          <sv:property sv:name="last.visited.nodetypes.allowed" sv:type="String">
+            <sv:value>hippogallery:stdImageGallery</sv:value>
+          </sv:property>         
         </sv:node>
         <sv:node sv:name="Xinha.plugins.CreateLink">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -195,6 +198,11 @@
           </sv:property>
           <sv:property sv:name="cluster.name" sv:type="String">
             <sv:value>cms-pickers/documents</sv:value>
+          </sv:property>
+          <sv:property sv:name="last.visited.nodetypes.allowed" sv:type="String">
+            <sv:value>hippostd:folder</sv:value>
+            <sv:value>hippogallery:stdImageGallery</sv:value>
+            <sv:value>hippogallery:stdAssetGallery</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="yui.config">

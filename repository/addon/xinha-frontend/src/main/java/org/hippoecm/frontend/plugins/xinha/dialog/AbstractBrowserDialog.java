@@ -16,7 +16,11 @@
 
 package org.hippoecm.frontend.plugins.xinha.dialog;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -30,6 +34,9 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.xinha.XinhaPlugin;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.preferences.IPreferencesStore;
+import org.hippoecm.frontend.service.preferences.PreferencesStore;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +48,16 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
     static final Logger log = LoggerFactory.getLogger(AbstractBrowserDialog.class);
 
+    private static final String LAST_VISITED = "last.visited";
+    private static final String LAST_VISITED_NODETYPES_ALLOWED = "last.visited.nodetypes.allowed";
+
     protected final IPluginContext context;
     protected final IPluginConfig config;
     private ModelReference<IModel> modelService;
     private IClusterControl control;
     protected IRenderService dialogRenderer;
+
+    private IModel lastModelVisited;
 
     public AbstractBrowserDialog(IPluginContext context, IPluginConfig config, IModel model) {
         super(model);
@@ -69,6 +81,16 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
         //save modelServiceId and dialogServiceId in cluster config
         String modelServiceId = decorated.getString("wicket.model");
         IModel model = ((DocumentLink) getModelObject()).getNodeModel();
+        
+        if(model == null) {
+            IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
+            String lastVisited = store.getString(config.getName(), LAST_VISITED);
+            if(lastVisited != null) {
+                model = new JcrNodeModel(lastVisited);
+            }
+        }
+        lastModelVisited = model;
+        
         modelService = new ModelReference<IModel>(modelServiceId, model) {
             private static final long serialVersionUID = 1L;
 
@@ -82,8 +104,8 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
                         link.setNodeModel(newModel);
                         checkState();
                     }
-                }
-
+                } 
+                lastModelVisited = model;
                 super.setModel(newModel);
             }
         };
@@ -111,10 +133,39 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
     @Override
     void onCloseInternal() {
+        savePreferences();
         dialogRenderer.unbind();
         dialogRenderer = null;
         control.stop();
         modelService.destroy();
+    }
+
+    private void savePreferences() {
+        if (lastModelVisited instanceof JcrNodeModel) {
+            JcrNodeModel nodeModel = (JcrNodeModel) lastModelVisited;
+            Node node = nodeModel.getNode();
+            if (node != null) {
+                String[] allowedTypes = config.containsKey(LAST_VISITED_NODETYPES_ALLOWED) ? config.getStringArray(LAST_VISITED_NODETYPES_ALLOWED) : new String[] {"hippostd:folder"};
+                if (allowedTypes != null) {
+                    for (String nodeType : allowedTypes) {
+                        try {
+                            Node testNode = node;
+                            while(!testNode.getPath().equals("/")) { //TODO: Can do nicer
+                                if(testNode.isNodeType(nodeType)) {
+                                    IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
+                                    store.set(config.getName(), LAST_VISITED, testNode.getPath());
+                                    break;
+                                }
+                                testNode = testNode.getParent();
+                            }
+                        } catch (RepositoryException e) {
+                            log.warn("An error occured while checking for nodetype[" + nodeType + "] on node["
+                                    + nodeModel.getItemModel().getPath() + "]", e);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     protected abstract JcrNodeModel findNewModel(IModel model);
