@@ -88,6 +88,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     List<Section> sections;
     boolean toggleBehaviour = false;
+    boolean findSectionForInitialFocus = false;
 
     AccordionManagerBehavior accordionManager;
 
@@ -107,12 +108,13 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         }
 
         List<String> extensions = Arrays.asList(config.getStringArray(RenderService.EXTENSIONS_ID));
-        sections = new ArrayList(extensions.size());
+        sections = new ArrayList<Section>(extensions.size());
         for (String extension : extensions) {
             sections.add(new Section(extension));
         }
+        
         if (!toggleBehaviour) {
-            sections.get(0).focussed = true;
+            findSectionForInitialFocus = true;
         }
 
         add(new ListView("list", sections) {
@@ -165,6 +167,15 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     @Override
     public void onBeforeRender() {
+        if(findSectionForInitialFocus) {
+            IRenderService renderer = findFocus();
+            if(renderer != null) {
+                renderer.focus(null);
+            } else {
+                focusSection(sections.get(0), false);
+            }
+            findSectionForInitialFocus = false;
+        }
         for (Section section : sections) {
             for (IRenderService service : section.extPt.getChildren()) {
                 Component component = service.getComponent();
@@ -192,14 +203,24 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
-        IPluginContext context = getPluginContext();
+        IRenderService renderer = findFocus();
+        if(renderer != null) {
+            renderer.focus(null);
+        }
+    }
+
+    private IRenderService findFocus() {
         JcrNodeModel model = (JcrNodeModel) getModel();
+        if(model == null) {
+            return null;
+        }
+        
         int matchLength = 0;
         IRenderService renderer = null;
         for (Section section : sections) {
             if (section.extPt.getChildren().size() > 0) {
                 IRenderService renderService = section.extPt.getChildren().get(0);
-                IModelReference modelService = context.getService(context.getReference(renderService).getServiceId(),
+                IModelReference modelService = getPluginContext().getService(getPluginContext().getReference(renderService).getServiceId(),
                         IModelReference.class);
                 if (modelService != null) {
                     IModel sectionModel = modelService.getModel();
@@ -215,9 +236,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 }
             }
         }
-        if (renderer != null) {
-            renderer.focus(null);
-        }
+        return renderer;
     }
 
     private void focusSection(Section section, boolean toggle) {
