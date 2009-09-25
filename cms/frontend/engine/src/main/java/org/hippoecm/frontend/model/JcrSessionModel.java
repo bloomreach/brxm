@@ -167,13 +167,13 @@ public class JcrSessionModel extends LoadableDetachableModel {
             if (repository != null && username != null && password != null) {
                 result = repository.login(username, password.toCharArray());
                 try {
-                    if(result.getRootNode().hasNode(HippoNodeType.LOG_PATH)) {
+                    if(result.getRootNode().hasNode(HippoNodeType.LOG_PATH) && result.getRootNode().getNode(HippoNodeType.LOG_PATH).getProperty("hippolog:enabled").getBoolean()) {
                         Workflow workflow = ((HippoWorkspace)result.getWorkspace()).getWorkflowManager().getWorkflow("internal",
                             result.getRootNode().getNode(HippoNodeType.LOG_PATH));
                         if(workflow instanceof EventLoggerWorkflow) {
                             ((EventLoggerWorkflow)workflow).logEvent(result.getUserID(), "Repository", "login");
                         }
-                        result.getRootNode().getNode("hippo:log").refresh(true);
+                        result.getRootNode().getNode(HippoNodeType.LOG_PATH).refresh(true);
                     }
                 } catch (AccessDeniedException ex) {
                     log.debug("Unable to log login event (maybe trying as Anonymous?): " +  ex.getMessage());
