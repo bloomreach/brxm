@@ -30,8 +30,8 @@ import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.groups.CreateGroupPanel;
@@ -48,6 +48,9 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
 
     private final Form form;
     private final IModel model;
+    private String password;
+    private String checkPassword;
+    
 
     public SetPasswordPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final IModel model) {
         super(id, breadCrumbModel);
@@ -61,18 +64,18 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
         form.setOutputMarkupId(true);
         add(form);
 
-        final PasswordTextField password = new PasswordTextField("password", new Model(""));
-        password.setResetPassword(false);
-        password.add(new PasswordStrengthValidator());
-        form.add(password);
+        final PasswordTextField passwordField = new PasswordTextField("password", new PropertyModel(this, "password"));
+        passwordField.setResetPassword(false);
+        passwordField.add(new PasswordStrengthValidator());
+        form.add(passwordField);
 
-        final PasswordTextField passwordCheck = new PasswordTextField("password-check");
-        passwordCheck.setModel(password.getModel());
-        passwordCheck.setRequired(false);
-        passwordCheck.setResetPassword(false);
-        form.add(passwordCheck);
+        final PasswordTextField passwordCheckField = new PasswordTextField("password-check", new PropertyModel(this, "checkPassword"));
+        passwordCheckField.setModel(passwordField.getModel());
+        passwordCheckField.setRequired(false);
+        passwordCheckField.setResetPassword(false);
+        form.add(passwordCheckField);
 
-        form.add(new EqualPasswordInputValidator(password, passwordCheck));
+        form.add(new EqualPasswordInputValidator(passwordField, passwordCheckField));
 
         // add a button that can be used to submit the form via ajax
         form.add(new AjaxButton("set-button", form) {
@@ -82,7 +85,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 String username = user.getUsername();
                 try {
-                    user.savePassword(password.getModelObjectAsString());
+                    user.savePassword(password);
                     log.info("User '" + username + "' password set by "
                             + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
                     Session.get().info(getString("user-password-set", model));
@@ -116,5 +119,21 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
 
     public IModel getTitle(Component component) {
         return new StringResourceModel("user-set-password-title", component, model);
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getCheckPassword() {
+        return checkPassword;
+    }
+
+    public void setCheckPassword(String checkPassword) {
+        this.checkPassword = checkPassword;
     }
 }
