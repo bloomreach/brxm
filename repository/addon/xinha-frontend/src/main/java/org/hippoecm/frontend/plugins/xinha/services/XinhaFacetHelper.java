@@ -63,7 +63,7 @@ public class XinhaFacetHelper {
                 }
                 break;
             }
-            document.getParent();
+            document = document.getParent();
         }
 
         return linkName;
