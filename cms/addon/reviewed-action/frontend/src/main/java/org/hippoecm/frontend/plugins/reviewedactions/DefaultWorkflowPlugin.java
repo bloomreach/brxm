@@ -110,7 +110,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.WorkflowDialog(new StringResourceModel("delete-message",
+                return new WorkflowAction.WorkflowDialog(new StringResourceModel("delete-text",
                         DefaultWorkflowPlugin.this, null, new Object[] { caption })) {
 
                     @Override
