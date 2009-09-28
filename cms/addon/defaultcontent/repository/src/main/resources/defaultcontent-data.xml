@@ -110,6 +110,14 @@
           <sv:property sv:name="hippostd:stateSummary" sv:type="String">
             <sv:value>changed</sv:value>
           </sv:property>
+          <sv:node sv:name="defaultcontent:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value><![CDATA[<html><body>body</body></html>]]></sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
         <sv:node sv:name="myarticle1">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -139,6 +147,14 @@
           <sv:property sv:name="hippostd:stateSummary" sv:type="String">
             <sv:value>changed</sv:value>
           </sv:property>
+          <sv:node sv:name="defaultcontent:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value><![CDATA[<html><body>body</body></html>]]></sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
       <sv:node sv:name="myarticle2">
@@ -178,6 +194,14 @@
           <sv:property sv:name="hippostd:stateSummary" sv:type="String">
             <sv:value>new</sv:value>
           </sv:property>
+          <sv:node sv:name="defaultcontent:body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value><![CDATA[<html><body>body</body></html>]]></sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
     </sv:node>
