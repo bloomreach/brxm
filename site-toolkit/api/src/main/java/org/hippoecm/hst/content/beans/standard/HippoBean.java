@@ -60,8 +60,18 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     Map<String, Object> getProperty();
     
     /**
-     * @param relPath
-     * @return return the HippoBean with relative path wrt to this bean
+     * 
+     * This methods fetches a child <code>HippoBean</code> with the relative path relPath. A relPath is not allowed to start with a "/", 
+     * as this is considered to be an absolute path. 
+     * 
+     * For example <code>getBean("x/y")</code> is a valid relative path. <code>"../x"</code> is also supported, but dis-encouraged as the <code>"../"</code> works directly on jcr level, which 
+     * does not take the <code>hippo:handle</code> intermediate node into account in case of a HippoDocument bean. Always preferred to use is {@link #getParentBean()} instead
+     * of using <code>"../"</code>. In case of a HippoDocument kind of bean, the {@link #getParentBean()} jumps to the parent of the handle, while <code>../</code> jumps to the handle, resulting
+     * in the exact same bean in case of a HippoDocument
+     *  
+     * 
+     * @param relPath a path that does not start with a "/"
+     * @return returns the <code>HippoBean</code> with relative path <code>relPath</code> to this bean, or <code>null</code> when it does not exist, or when the relPath is not a valid relative path
      */
     <T> T getBean(String relPath);
     

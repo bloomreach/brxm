@@ -17,6 +17,12 @@ package org.hippoecm.hst.content.beans.standard;
 
 import java.util.Iterator;
 
+/**
+ * A lazy proxied iterator, that only fetches the next bean when asked for it. As we fetch the beans lazily, this iterator is very
+ * efficient. For performance reasons, it is really important to use skip(int skipNum) if you know where you would like to start
+ * iterating from.
+ * 
+ */
 public interface HippoBeanIterator extends Iterator<HippoBean> {
 
     /**
@@ -30,7 +36,8 @@ public interface HippoBeanIterator extends Iterator<HippoBean> {
    HippoBean nextHippoBean();
    
    /**
-    * Skip a number of elements in the iterator.
+    * Skip a number of elements in the iterator. Using skip is very efficient when you know you want to have the, say, 100 to 110 
+    * beans, as the skip does not need to fetch number 1 to 100. 
     *
     * @param skipNum the non-negative number of elements to skip
     * @throws java.util.NoSuchElementException
