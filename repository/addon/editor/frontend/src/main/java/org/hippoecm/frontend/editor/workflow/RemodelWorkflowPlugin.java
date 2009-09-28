@@ -25,6 +25,7 @@ import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.StringResourceModel;
@@ -123,7 +124,12 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         for (NodeIterator nodeTypeIter = templateNamespace.getNodes(); nodeTypeIter.hasNext();) {
             Node nodeTypeNode = nodeTypeIter.nextNode();
             List<Change> changeList = new LinkedList<Change>();
-            changes.put(prefix + ":" + nodeTypeNode.getName(), changeList);
+            try {
+                session.getWorkspace().getNodeTypeManager().getNodeType(prefix+":"+nodeTypeNode.getName());
+                changes.put(prefix + ":" + nodeTypeNode.getName(), changeList);
+            } catch(NoSuchNodeTypeException ex) {
+                // the type did not previously exist, deliverate ignore and don't put changes in map
+            }
             Node draftNodeType = null;
             Node currentNodeType = null;
             String prototype = null;
