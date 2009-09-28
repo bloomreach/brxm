@@ -41,9 +41,7 @@ public class BrowserSpecificStylesheetsBehavior extends HeaderContributor {
 
             public void renderHead(IHeaderResponse response) {
                 Browser userBrowser = getBrowser();
-                if (userBrowser == null || userBrowser.userAgent == UserAgent.UNSUPPORTED) {
-                    log.warn("You are using an unsupported browser, no custom stylesheet possible.");
-                } else {
+                if (userBrowser != null && userBrowser.userAgent != UserAgent.UNSUPPORTED) {
                     for (StylesheetConfiguration ssc : configurations) {
                         if (loadStylesheets(userBrowser, ssc)) {
                             for (String location : ssc.styleSheets) {
