@@ -371,7 +371,7 @@
           <sv:value>hippostd:html</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:content" sv:type="String">
-          <sv:value><![CDATA[<html><body></body></html>]]></sv:value>
+          <sv:value><![CDATA[<html><body>body</body></html>]]></sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
