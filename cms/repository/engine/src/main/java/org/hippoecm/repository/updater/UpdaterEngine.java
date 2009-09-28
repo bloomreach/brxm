@@ -615,20 +615,23 @@ public class UpdaterEngine {
         @Override
         protected final void entering(Node node, int level)
                 throws RepositoryException {
-            NodeType[] nodeTypes = context.getNodeTypes(node);
-            if (nodeTypes.length > 0 && nodeTypes[0].getName().startsWith(namespace + ":")) {
-                context.setPrimaryNodeType(node, newPrefix + ":" + nodeTypes[0].getName().substring(namespace.length() + 1));
+            if(node.hasProperty("jcr:primaryType")) {
+                String primaryType = node.getProperty("jcr:primaryType").getString();
+                if(primaryType.startsWith(namespace + ":")) {
+                    context.setPrimaryNodeType(node, newPrefix + ":" + primaryType.substring(namespace.length() + 1));
+                }
             }
-            if (nodeTypes.length > 1) {
+            if(node.hasProperty("jcr:mixinTypes")) {
+                String[] mixins = new String[node.getProperty("jcr:mixinTypes").getValues().length];
+                int i=0;
                 boolean mixinsChanged = false;
-                String[] mixins = new String[nodeTypes.length - 1];
-                for (int i = 1; i < nodeTypes.length; i++) {
-                    if (nodeTypes[i].getName().startsWith(namespace + ":")) {
-                        mixins[i - 1] = newPrefix + ":" + nodeTypes[i].getName().substring(namespace.length() + 1);
+                for(Value value : node.getProperty("jcr:mixinTypes").getValues()) {
+                    mixins[i] = value.getString();
+                    if(mixins[i].startsWith(namespace + ":")) {
+                        mixins[i] = newPrefix + ":" + mixins[i].substring(namespace.length() + 1);
                         mixinsChanged = true;
-                    } else {
-                        mixins[i - 1] = nodeTypes[i].getName();
-                    }
+                   }
+                    ++i;
                 }
                 if (mixinsChanged) {
                     node.setProperty("jcr:mixinTypes", mixins);
