@@ -406,11 +406,14 @@
     <plugins>
       <plugin>
         <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.3</version>
+        <version>2.4</version>
       </plugin>
       <plugin>      
         <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+	<version>1.1</version>
         <artifactId>maven-remote-resources-plugin</artifactId>        
         <executions>
           <execution>
@@ -427,6 +430,7 @@
       </plugin>
       <plugin>
         <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.0-beta-8</version>
           <configuration>
@@ -443,6 +447,7 @@
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>2.2</version>
         <configuration>
           <archive>
             <manifest>
@@ -457,7 +462,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
-        <version>2.5</version>
+        <version>2.7</version>
         <configuration>
           <downloadSources>true</downloadSources>
           <downloadJavadocs>true</downloadJavadocs>
@@ -465,7 +470,9 @@
       </plugin>
       <plugin>
         <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
         <configuration>
           <fork>true</fork>
           <meminitial>128m</meminitial>
@@ -476,7 +483,9 @@
       </plugin>
       <plugin>
         <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>2.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -503,6 +512,7 @@
         -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
+        <version>2.1</version>
         <configuration>
           <issueLinkTemplatePerSystem>
             <Jira>%URL%/%ISSUE%</Jira>
