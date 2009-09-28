@@ -132,7 +132,7 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
                     });
                 }
                 context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, prefix, cnd, new StringReader(cnd)));
-                context.registerVisitor(new UpdaterEngine.Cleaner(context));
+                //context.registerVisitor(new UpdaterEngine.Cleaner(context));
             }
         };
         Modules<UpdaterModule> modules = new Modules(Collections.singletonList(updateModelUpdaterModule));

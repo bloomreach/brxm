@@ -124,7 +124,7 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
     }
 
     public void setValue(String[] values) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
-        if (value == null) {
+        if (values == null) {
             remove();
             return;
         }

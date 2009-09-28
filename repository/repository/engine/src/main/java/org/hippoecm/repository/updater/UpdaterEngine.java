@@ -607,6 +607,8 @@ public class UpdaterEngine {
 
         @Override
         public final void visit(Node node) throws RepositoryException {
+            if(node.getPath().equals("/jcr:system"))
+                return;
             super.visit(node); // FIXME
         }
 
