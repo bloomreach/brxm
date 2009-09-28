@@ -71,6 +71,9 @@ public class BrowseLinkTarget extends JcrObject {
         while (itemModel != null && !itemModel.exists()) {
             itemModel = itemModel.getParentModel();
         }
+        if (itemModel == null) {
+        	return null;
+        }
         return new JcrNodeModel(itemModel);
     }
 

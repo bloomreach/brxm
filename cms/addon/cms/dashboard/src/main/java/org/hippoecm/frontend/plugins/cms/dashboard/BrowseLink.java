@@ -64,6 +64,11 @@ public class BrowseLink extends Panel {
                     log.warn("no focus service found");
                 }
             }
+
+            @Override
+            public boolean isEnabled() {
+                return ((BrowseLinkTarget) BrowseLink.this.getModelObject()).getBrowseModel() != null;
+            }
         };
         add(link);
 
