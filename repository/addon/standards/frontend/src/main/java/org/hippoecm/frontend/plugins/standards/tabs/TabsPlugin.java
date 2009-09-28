@@ -62,10 +62,6 @@ public class TabsPlugin extends RenderPlugin {
     public TabsPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
 
-        tabs = new ArrayList<Tab>();
-        add(tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs));
-        tabbedPanel.setMaxTitleLength(properties.getInt(MAX_TAB_TITLE_LENGTH, 12));
-
         setOutputMarkupId(true);
 
         IPluginConfig panelConfig = new JavaPluginConfig();
@@ -78,6 +74,10 @@ public class TabsPlugin extends RenderPlugin {
 
         emptyPanel = new RenderService(context, panelConfig);
         context.registerService(emptyPanel, properties.getString(TAB_ID));
+
+        tabs = new ArrayList<Tab>();
+        add(tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs));
+        tabbedPanel.setMaxTitleLength(properties.getInt(MAX_TAB_TITLE_LENGTH, 12));
 
         selectCount = 0;
         tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
@@ -99,7 +99,7 @@ public class TabsPlugin extends RenderPlugin {
                         }
                     }
                 }
-                redraw();
+                tabbedPanel.redraw();
             }
 
             @Override
@@ -112,7 +112,7 @@ public class TabsPlugin extends RenderPlugin {
                         tabbedPanel.setSelectedTab(-1);
                     }
                     service.unbind();
-                    redraw();
+                    tabbedPanel.redraw();
                 }
             }
         };
@@ -247,7 +247,7 @@ public class TabsPlugin extends RenderPlugin {
                 tabbedPanel.setSelectedTab(tabs.indexOf(lastTab));
                 lastTab.lastSelected = ++TabsPlugin.this.selectCount;
                 lastTab.renderer.focus(null);
-                redraw();
+                tabbedPanel.redraw();
             }
         }
 
@@ -294,7 +294,7 @@ public class TabsPlugin extends RenderPlugin {
             if (tabs.indexOf(this) != tabbedPanel.getSelectedTab()) {
                 tabbedPanel.setSelectedTab(tabs.indexOf(this));
                 lastSelected = ++TabsPlugin.this.selectCount;
-                redraw();
+                tabbedPanel.redraw();
             }
         }
 
