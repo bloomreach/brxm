@@ -142,6 +142,14 @@ public class JcrItemModel extends LoadableDetachableModel {
                         absPath = node.getPath() + "/" + relPath;
                     }
                     return session.getItem(absPath);
+                } catch (InvalidItemStateException ex) {
+                   if (absPath != null) {
+                        uuid = null;
+                        relPath = null;
+                        return session.getItem(absPath);
+                    } else {
+                        throw ex;
+                    }
                 } catch (ItemNotFoundException ex) {
                     if (absPath != null) {
                         uuid = null;

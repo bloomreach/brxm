@@ -64,6 +64,8 @@ public class EditPerspective extends Perspective {
                                 MessageFormat format = new MessageFormat("{0} {1,date} {1,time}", getLocale());
                                 return format.format(new Object[] { nodeName.getObject(), calendar.getTime() });
                             }
+                        } catch (javax.jcr.InvalidItemStateException e) {
+                            // deliberate ignore - the model update is broken by design
                         } catch (ValueFormatException e) {
                             log.error("Value is not a date", e);
                         } catch (PathNotFoundException e) {

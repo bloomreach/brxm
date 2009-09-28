@@ -57,7 +57,16 @@ public class JcrNodeModel extends ItemModelWrapper implements IObservable {
     }
 
     public Node getNode() {
-        return (Node) itemModel.getObject();
+        Node node = (Node)itemModel.getObject();
+        try {
+            if (node != null) {
+                node.getParent();
+            }
+            return node;
+        } catch (RepositoryException ex) {
+            itemModel.detach();
+            return (Node)itemModel.getObject();
+        }
     }
 
     public JcrNodeModel getParentModel() {
