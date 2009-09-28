@@ -92,7 +92,7 @@ public class TemplateConverter implements UpdaterModule {
                             draft.addMixin(HippoNodeType.NT_REMODEL);
                             draft.setProperty(HippoNodeType.HIPPO_URI, uri.substring(0, uri.lastIndexOf("/") + 1) + newVersion);
                         }
-                        if(current != null)
+                        if(current != null) {
                             current.accept(new ItemVisitor() {
                                     public void visit(Node node) throws RepositoryException {
                                         Node canonical = node;
@@ -138,17 +138,16 @@ public class TemplateConverter implements UpdaterModule {
                                 });
                         }
                         if (node.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {
-                            for (NodeIterator iter = node.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes(HippoNodeType.HIPPO_PROTOTYPES); iter.hasNext();) {
+                            for (NodeIterator iter = node.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes(HippoNodeType.HIPPO_PROTOTYPE); iter.hasNext();) {
                                 Node prototype = iter.nextNode();
                                 if (prototype.isNodeType("nt:unstructured")) {
                                     context.setPrimaryNodeType(prototype, prefix + ":" + node.getName());
                                     prototype.addMixin(HippoNodeType.NT_HARDDOCUMENT);
-                                } else {
-                                    prototype.remove();
                                 }
                             }
                         }
                     }
+                }
             });
         }
     }
