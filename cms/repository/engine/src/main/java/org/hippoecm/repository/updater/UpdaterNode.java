@@ -761,14 +761,13 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             Property mixinsProperty = getProperty("jcr:mixinTypes");
             Value[] mixins = mixinsProperty.getValues();
             for (int i = 0; i < mixins.length; i++) {
-                if (mixins[i].getString().equals(mixinName)) {
-                    Value[] newMixins = new Value[mixins.length - 1];
-                    System.arraycopy(mixins, 0, newMixins, 0, i);
-                    System.arraycopy(mixins, i + 1, newMixins, i, newMixins.length - i);
-                    mixinsProperty.setValue(newMixins);
-                    return;
-                }
+                if (mixins[i].getString().equals(mixinName))
+                    return; // mixin already set
             }
+            Value[] newMixins = new Value[mixins.length + 1];
+            System.arraycopy(mixins, 0, newMixins, 0, mixins.length);
+            newMixins[mixins.length] = session.valueFactory.createValue(mixinName);
+            mixinsProperty.setValue(newMixins);
         } else {
             setProperty("jcr:mixinTypes", new String[] { mixinName });
         }
