@@ -634,7 +634,10 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
-      <sv:value>service.behavior.tabs</sv:value>
+      <sv:value>service.behavior.center</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.path" sv:type="String">
+      <sv:value>tabs:panel-container</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.yui.layout.UnitPlugin</sv:value>

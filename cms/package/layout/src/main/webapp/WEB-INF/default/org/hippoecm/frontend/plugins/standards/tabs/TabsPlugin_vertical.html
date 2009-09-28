@@ -16,7 +16,7 @@
 <html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
   <wicket:panel>
     <div wicket:id="tabs" class="hippo-tabs-perspective">
-      <div yui:id="tabbed-panel-layout" class="yui-g smooth_load_workaround" >
+      <div yui:id="tabbed-panel-layout" class="yui-g smooth_load_workaround">
         <div yui:id="tabbed-panel-layout-left" class="yui-b">
           <div wicket:id="tabs-container">
             <ul class="hippo-tabs-perspective-tabs">
@@ -32,7 +32,9 @@
           </div>
         </div>
         <div yui:id="tabbed-panel-layout-center" class="yui-b">
-          <div wicket:id="panel">[panel]</div>
+          <div wicket:id="panel-container">
+            <div wicket:id="panel">[panel]</div>
+          </div>
         </div>
       </div>
     </div>
