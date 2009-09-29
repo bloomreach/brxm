@@ -124,12 +124,8 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         for (NodeIterator nodeTypeIter = templateNamespace.getNodes(); nodeTypeIter.hasNext();) {
             Node nodeTypeNode = nodeTypeIter.nextNode();
             List<Change> changeList = new LinkedList<Change>();
-            try {
-                session.getWorkspace().getNodeTypeManager().getNodeType(prefix+":"+nodeTypeNode.getName());
-                changes.put(prefix + ":" + nodeTypeNode.getName(), changeList);
-            } catch(NoSuchNodeTypeException ex) {
-                // the type did not previously exist, deliverate ignore and don't put changes in map
-            }
+            changes.put(prefix + ":" + nodeTypeNode.getName(), changeList);
+
             Node draftNodeType = null;
             Node currentNodeType = null;
             String prototype = null;

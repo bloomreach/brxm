@@ -44,7 +44,9 @@ public interface RepositoryWorkflow extends Workflow {
 
     /**
      * Instruct the repository to apply the new node definition overriding the
-     * earlier node definition.
+     * earlier node definition.  The map of changes contains, for each type, a set of operations
+     * to apply to nodes of the type.  If a type does not exist yet, it should be in the map with
+     * an empty list.
      */
     public void updateModel(final String prefix, final String cnd, final String contentUpdater, Map<String, List<Change>> changes) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 

@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -26,6 +27,9 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeTypeManager;
+
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.updater.UpdaterNode;
 import org.hippoecm.repository.updater.UpdaterProperty;
@@ -144,13 +148,20 @@ class ChangeImpl {
         return changed;
     }
     static Map<String,List<ChangeImpl>> convert(Map<String,List<Change>> changes, Session session) throws RepositoryException {
-        Map<String,List<ChangeImpl>> map = new TreeMap<String,List<ChangeImpl>>();
+        NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
+    	Map<String,List<ChangeImpl>> map = new TreeMap<String,List<ChangeImpl>>();
         for(Map.Entry<String,List<Change>> entry : changes.entrySet()) {
-            List<ChangeImpl> list = new LinkedList<ChangeImpl>();
-            map.put(entry.getKey(), list);
-            for(Change change : entry.getValue()) {
-                list.add(create(change, session));
-            }
+        	// check whether nodetype exists.  If it doesn't, there is nothing to do!
+        	try {
+	        	/* NodeType nt = */ ntMgr.getNodeType(entry.getKey());
+        	} catch (NoSuchNodeTypeException nte) {
+        		continue;
+        	}
+        	List<ChangeImpl> list = new LinkedList<ChangeImpl>();
+        	map.put(entry.getKey(), list);
+        	for(Change change : entry.getValue()) {
+        		list.add(create(change, session));
+        	}
         }
         return map;
     }
