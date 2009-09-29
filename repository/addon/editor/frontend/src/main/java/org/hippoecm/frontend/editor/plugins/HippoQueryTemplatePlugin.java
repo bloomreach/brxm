@@ -79,7 +79,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
                 language = query.getLanguage();
                 statement = query.getStatement();
             } catch (InvalidQueryException e) {
-                log.error("invalid query statement. Revert to default statement " + e.getMessage());
+                log.warn("Invalid query statement. Revert to default xpath statement //*");
                 language = "xpath";
                 statement = "//*";
                 queryNode.setProperty("jcr:statement", "//*");
