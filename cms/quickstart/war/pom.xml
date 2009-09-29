@@ -404,7 +404,7 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.10</version>
+        <version>6.1.12</version>
         <configuration>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <connectors>
@@ -418,7 +418,7 @@
           <dependency>
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>jsp-2.1</artifactId>
-            <version>6.1.10</version>
+            <version>6.1.12</version>
             <exclusions>
               <exclusion>
                 <groupId>org.eclipse.jdt</groupId>
