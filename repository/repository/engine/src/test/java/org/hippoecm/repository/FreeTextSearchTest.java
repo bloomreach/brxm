@@ -114,7 +114,7 @@ public class FreeTextSearchTest extends TestCase {
         }
     }
     
-    //@Test
+    @Test
     public void testSimpleFreeTextSearch() throws Exception {
         
         createCompoundStructure(false);
@@ -137,7 +137,7 @@ public class FreeTextSearchTest extends TestCase {
      * @throws RepositoryException
      * @throws IOException 
      */
-    //@Test
+    @Test
     public void testFirstLevelChildNodeFreeTextSearch() throws Exception {
         
         createCompoundStructure(false);
@@ -160,7 +160,7 @@ public class FreeTextSearchTest extends TestCase {
      * @throws RepositoryException
      * @throws IOException 
      */
-    //@Test
+    @Test
     public void testSecondLevelChildNodeFreeTextSearch() throws Exception {
         
         createCompoundStructure(false);
@@ -183,7 +183,7 @@ public class FreeTextSearchTest extends TestCase {
      * @throws RepositoryException
      * @throws IOException 
      */
-    //@Test
+    @Test
     public void testSecondChildNodeBinaryFreeTextSearch() throws Exception {
         
         createCompoundStructure(false);
@@ -207,7 +207,7 @@ public class FreeTextSearchTest extends TestCase {
      * @throws RepositoryException
      * @throws IOException 
      */
-    //@Test
+    @Test
     public void testDeleteFirstLevelChildNode() throws Exception {
         
         createCompoundStructure(false);
@@ -333,8 +333,24 @@ public class FreeTextSearchTest extends TestCase {
     }
     
     
-    //@Test
+    @Test
     public void testModifySecondLevelChildNode() throws Exception {
+       
+        createCompoundStructure(false);
+        Node n = this.testPath.getNode("Document1/Document1");
+       
+        Node html = testPath.getNode("Document1/Document1/compoundchild/hippo:testhtml");
+        String word = "changedtesthtml";
+        html.setProperty("hippo:testcontent", "The content property of testhtml node now containing " + word);
+        n.save();
         
+        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+word+"')]";
+        QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+        NodeIterator nodes = queryResult.getNodes();
+        assertTrue(nodes.getSize() == 1L); 
+        while(nodes.hasNext()) {
+            Node doc = nodes.nextNode();
+            assertTrue(doc.getName().equals("Document1"));
+        }
     }
 }
