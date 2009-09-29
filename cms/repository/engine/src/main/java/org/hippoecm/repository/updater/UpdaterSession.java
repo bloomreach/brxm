@@ -80,7 +80,7 @@ final public class UpdaterSession implements HippoSession {
         this.root = new UpdaterNode(this, upstream.getRootNode(), null);
     }
 
-    public NodeType getNewType(String type) throws RepositoryException {
+    public NodeType getNewType(String type) throws NoSuchNodeTypeException, RepositoryException {
         return upstream.getWorkspace().getNodeTypeManager().getNodeType(type);
     }
 
