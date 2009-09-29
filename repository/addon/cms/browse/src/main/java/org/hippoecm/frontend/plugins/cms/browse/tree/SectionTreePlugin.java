@@ -176,10 +176,12 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
             }
             findSectionForInitialFocus = false;
         }
-        for (Section section : sections) {
-            for (IRenderService service : section.extPt.getChildren()) {
-                Component component = service.getComponent();
-                component.setVisible(section.focussed);
+        if (sections != null) {
+            for (Section section : sections) {
+                for (IRenderService service : section.extPt.getChildren()) {
+                    Component component = service.getComponent();
+                    component.setVisible(section.focussed);
+                }
             }
         }
         super.onBeforeRender();
@@ -211,7 +213,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     private IRenderService findFocus() {
         JcrNodeModel model = (JcrNodeModel) getModel();
-        if(model == null) {
+        if(model == null || model.getItemModel() == null || model.getItemModel().getPath() == null) {
             return null;
         }
         
@@ -226,10 +228,12 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                     IModel sectionModel = modelService.getModel();
                     if (sectionModel instanceof JcrNodeModel) {
                         JcrNodeModel sectionRoot = (JcrNodeModel) sectionModel;
-                        if (model.getItemModel().getPath().startsWith(sectionRoot.getItemModel().getPath())) {
-                            if (sectionRoot.getItemModel().getPath().length() > matchLength) {
-                                matchLength = sectionRoot.getItemModel().getPath().length();
-                                renderer = renderService;
+                        if (sectionRoot.getItemModel() != null) {
+                            if (model.getItemModel().getPath().startsWith(sectionRoot.getItemModel().getPath())) {
+                                if (sectionRoot.getItemModel().getPath().length() > matchLength) {
+                                    matchLength = sectionRoot.getItemModel().getPath().length();
+                                    renderer = renderService;
+                                }
                             }
                         }
                     }
