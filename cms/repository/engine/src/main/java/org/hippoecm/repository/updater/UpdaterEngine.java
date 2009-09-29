@@ -401,8 +401,8 @@ public class UpdaterEngine {
                         // engine.wrapup();
                         // subSession.logout();
                     }
-                    subSession.logout();
                 }
+                subSession.logout();
             } while (updates);
             log.info("migration cycle finished successfully");
         } catch(RepositoryException ex) {
