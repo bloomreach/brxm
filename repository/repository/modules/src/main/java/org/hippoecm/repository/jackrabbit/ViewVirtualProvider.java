@@ -129,10 +129,19 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
 
     @Override
     public NodeState populate(NodeState state) throws RepositoryException {
-        NodeState dereference = null;
         String[] docbase = getProperty(state.getNodeId(), docbaseName);
-        if(docbase != null) {
+        if(docbase == null || docbase.length == 0) {
+            return state;
+        }
+        if(docbase[0].endsWith("babecafebabe")) {
+            // one of the defined (and fixed, so string compare is fine) system areas
+            return state;
+        }
+        NodeState dereference = null;
+        try {
             dereference = getNodeState(new NodeId(new UUID(docbase[0])));
+        } catch (IllegalArgumentException e) {
+            log.warn("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
         }
         if(dereference != null) {
             LinkedHashMap<Name,String> view = new LinkedHashMap<Name,String>();
