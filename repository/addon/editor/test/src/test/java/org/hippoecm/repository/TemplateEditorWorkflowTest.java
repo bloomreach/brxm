@@ -227,7 +227,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         {
             Map<String, List<Change>> updates = new HashMap<String, List<Change>>();
             List<Change> changes = new LinkedList<Change>();
-            changes.add(new Change(ChangeType.RENAMED, "hippotest4:first","hippotest4:seconds"));
+            changes.add(new Change(ChangeType.RENAMED, "hippotest4:first", "hippotest4:seconds"));
             updates.put("hippotest4:test", changes);
 
             WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
@@ -245,6 +245,36 @@ public class TemplateEditorWorkflowTest extends TestCase {
             assertFalse(node.hasProperty("hippotest4:first"));
             assertTrue(node.hasProperty("hippotest4:second"));
         }
+    }
+
+    @Test
+    public void testNewType() throws RepositoryException, WorkflowException, RemoteException {
+        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Workflow workflow = workflowManager.getWorkflow("test", session.getRootNode().getNode("hippo:namespaces"));
+        assertNotNull(workflow);
+        assertTrue(workflow instanceof TemplateEditorWorkflow);
+
+        ((TemplateEditorWorkflow) workflow).createNamespace("prototypetest", "http://www.hippoecm.org/test/1.0");
+        session.refresh(false);
+
+        workflow = workflowManager.getWorkflow("test", session.getRootNode().getNode("hippo:namespaces").getNode(
+                "prototypetest"));
+        assertNotNull(workflow);
+        assertTrue(workflow instanceof NamespaceWorkflow);
+        ((NamespaceWorkflow) workflow).addType("compound", "subnode");
+
+        // It is necessary to pass the basedocument because the workflow is unable to pass the prefix internally.
+        // New types also lead to problems, as they will be used in queries.
+        Map<String, List<Change>> changes = new HashMap<String, List<Change>>();
+        changes.put("prototypetest:basedocument", new LinkedList<Change>());
+        ((NamespaceWorkflow) workflow).updateModel(
+                "<prototypetest='http://www.hippoecm.org/test/1.1'> [prototypetest:subnode]", changes);
+
+        Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces").getNode("prototypetest").getNode(
+                "subnode");
+        NodeIterator prototypes = templateTypeNode.getNode("hipposysedit:prototypes").getNodes();
+        assertTrue(prototypes.hasNext());
+        assertEquals("prototypetest:subnode", prototypes.nextNode().getPrimaryNodeType().getName());
     }
 
     @Test
