@@ -124,7 +124,6 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
                             if (value.getString() == null || value.getString().equals("")) {
                                 isValid = false;
                                 component.error( new StringResourceModel("mandatory-value-empty", component, null, new Object[] { propName }).getString() );
-                                //"Mandatory field " + propName + " has no value.");
                                 break;
                             }
                         }
@@ -133,7 +132,6 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
                         if (value == null || value.getString() == null || value.getString().equals("")) {
                             isValid = false;
                             component.error( new StringResourceModel("mandatory-value-empty", component, null, new Object[] { propName }).getString() );
-                            //"Mandatory field " + propName + " has no value.");
                             break;
                         }
                     }
@@ -152,7 +150,6 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
                     if (!nodes.hasNext()) {
                         isValid = false;
                         component.error( new StringResourceModel("mandatory-field-missing", component, null, new Object[] { nodeName }).getString() );
-                        //component.error("Mandatory field " + nodeName + " is not present");
                     }
                 }
             }
