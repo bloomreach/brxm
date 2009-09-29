@@ -20,8 +20,8 @@ import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.widgets.DateFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class DatePickerPlugin extends RenderPlugin {
 
         JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
         if ("edit".equals(config.getString("mode", "view"))) {
-            add(new DateFieldWidget("value", valueModel));
+            add(new DateFieldWidget("value", valueModel, context, config));
         } else {
             add(new DateLabel("value", valueModel, new StyleDateConverter(true)));
         }

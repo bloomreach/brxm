@@ -35,8 +35,8 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.widgets.DateFieldWidget;
 
 public class DatePickerPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -67,7 +67,7 @@ public class DatePickerPlugin extends RenderPlugin {
                 "hippostd:dayofyear").getString() : "-"));
 
         if ("edit".equals(config.getString("mode", "view"))) {
-            add(new DateFieldWidget("value", valueModel));
+            add(new DateFieldWidget("value", valueModel, context, config));
             panel.setVisible(false);
         } else {
             add(new DateLabel("value", valueModel, new StyleDateConverter(true)));
