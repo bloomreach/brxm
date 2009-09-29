@@ -188,7 +188,12 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             // there's a property, though not a node at the specified path
             throw new PathNotFoundException(absPath);
         }
-        new DereferencedSysViewSAXEventGenerator((Node) item, noRecurse, binaryAsLink, contentHandler).serialize();
+        try {
+            postMountEnabled(false);
+            new DereferencedSysViewSAXEventGenerator((Node) item, noRecurse, binaryAsLink, contentHandler).serialize();
+        } finally {
+            postMountEnabled(true);
+        }
     }
 
     public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
@@ -219,7 +224,12 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             // there's a property, though not a node at the specified path
             throw new PathNotFoundException(absPath);
         }
-        new PhysicalSysViewSAXEventGenerator((Node) item, noRecurse, binaryAsLink, contentHandler).serialize();
+        try {
+            postMountEnabled(false);
+            new PhysicalSysViewSAXEventGenerator((Node) item, noRecurse, binaryAsLink, contentHandler).serialize();
+        } finally {
+            postMountEnabled(true);
+        }
     }
 
     public void exportSystemView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
