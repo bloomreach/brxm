@@ -33,6 +33,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
+import org.hippoecm.repository.api.NodeNameCodec;
 
 abstract class Element {
     @SuppressWarnings("unused")
@@ -153,8 +154,22 @@ abstract class Element {
             if(!projects.hasNode("hippo:initialize") || !projects.getNode("hippo:initialize").isNodeType("hippo:initializefolder")) {
                 throw new NotExportableException("bad project description");
             }
-            projectName = manifestTitle;
-            projects.getSession().move(projects.getPath()+"/hippo:initialize", projects.getPath()+"/"+projectName);;
+            if(manifestTitle == null || manifestTitle.trim().equals("")) {
+                projectName = url.toString();
+                if(projectName.startsWith("jar:file:")) {
+                    projectName = projectName.substring(0, projectName.indexOf("!"));
+                    if(projectName.contains("/"))
+                        projectName = projectName.substring(projectName.lastIndexOf("/")+1);
+                    if(projectName.endsWith(".jar"))
+                        projectName = projectName.substring(0, projectName.length()-4);
+                    projectName = NodeNameCodec.encode(projectName);
+                } else {
+                    projectName = "invalid";
+                }
+            } else {
+                projectName = manifestTitle;
+            }
+            projects.getSession().move(projects.getPath()+"/hippo:initialize", projects.getPath()+"/"+projectName);
             projectNode = projects.getNode(projectName);
             projects.save();
         }
