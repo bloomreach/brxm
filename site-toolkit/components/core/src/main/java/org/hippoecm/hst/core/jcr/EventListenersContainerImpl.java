@@ -144,12 +144,16 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                 log.info("EventListenersContainer's initialization done.");
             }
         } catch (LoginException e) {
-            if (log.isInfoEnabled()) {
-                log.info("The repository is not available: {}. It will try initialization next time.", e.getMessage());
+            if (log.isDebugEnabled()) {
+                log.warn("The login credentials for EventListenersContainer might be wrong. " + e, e);
+            } else {
+                log.warn("The login credentials for {} might be wrong. {}", "EventListenersContainer", e);
             }
         } catch (RepositoryException e) {
-            if (log.isInfoEnabled()) {
-                log.info("The repository is not available: {}. It will try initialization next time.", e.getMessage());
+            if (log.isDebugEnabled()) {
+                log.warn("The repository is not available. It will try initialization next time. " + e, e);
+            } else {
+                log.warn("The repository is not available. {} {}", "It will try initialization next time.", e);
             }
         }
     }
