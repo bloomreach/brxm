@@ -378,7 +378,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return String array containing the fallback types
      */
     protected String[] getFallBackJcrNodeTypes(){
-        return new String[] { "hippo:facetselect", "hippo:document", "hippo:resource", "hippo:request" };
+        return new String[] { "hippo:facetselect","hippostd:directory","hippostd:folder" , "hippo:resource", "hippo:request", "hippostd:html", "hippo:document" };
     }
     
     private static void addJcrPrimaryNodeTypeClassPair(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs,
