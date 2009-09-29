@@ -43,3 +43,11 @@
 [test:mixinTest]
 
 [test:superMixinTest] > test:mixinTest, test:mixin
+
+[test:validator]
+- test:optional (string)
+- test:mandatory (string) mandatory
+- test:autocreated (string) = 'auto' mandatory autocreated 
+- test:protected (string) mandatory protected
+
+

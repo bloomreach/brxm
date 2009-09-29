@@ -27,9 +27,6 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -37,6 +34,8 @@ import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.standardworkflow.Change;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TemplateConverter implements UpdaterModule {
     
@@ -138,11 +137,28 @@ public class TemplateConverter implements UpdaterModule {
                                 });
                         }
                         if (node.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {
-                            for (NodeIterator iter = node.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes(HippoNodeType.HIPPO_PROTOTYPE); iter.hasNext();) {
+                        	Node draftPrototype = null;
+                            for (NodeIterator iter = node.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes(); iter.hasNext();) {
                                 Node prototype = iter.nextNode();
                                 if (prototype.isNodeType("nt:unstructured")) {
-                                    context.setPrimaryNodeType(prototype, prefix + ":" + node.getName());
-                                    prototype.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+                                	draftPrototype = prototype;
+                                	break;
+                                }
+                            }
+                            if (draftPrototype != null) {
+                            	for (NodeIterator iter = node.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes(HippoNodeType.HIPPO_PROTOTYPE); iter.hasNext();) {
+                            		Node prototype = iter.nextNode();
+                            		if (!prototype.isNodeType("nt:unstructured")) {
+                            			prototype.remove();
+                            		}
+                            	}
+                            	String newTypeName = rename(prefix, newVersion, prefix + ":" + node.getName());
+                                context.setPrimaryNodeType(draftPrototype, newTypeName);
+                                if (draftPrototype.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                                	draftPrototype.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+                                	draftPrototype.setProperty(HippoNodeType.HIPPO_PATHS, new Value[] {});
+                                } else if (draftPrototype.isNodeType(HippoNodeType.NT_REQUEST)) {
+                                	draftPrototype.addMixin("mix:referenceable");
                                 }
                             }
                         }
