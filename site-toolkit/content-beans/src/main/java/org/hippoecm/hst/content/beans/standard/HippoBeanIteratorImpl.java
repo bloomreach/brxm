@@ -72,7 +72,11 @@ public class HippoBeanIteratorImpl implements HippoBeanIterator{
             log.warn("ObjectContentManagerException. Return null for '"+path+"'" , e);
         } catch (HstContextualizeException e) {
             String path = getPath(n);
-            log.warn("HstContextualizeException. Return null for '"+path+"'" , e);
+            if(log.isDebugEnabled()) {
+                log.warn("HstContextualizeException. Return null for '"+path+"'" , e);
+            } else {
+                log.warn("HstContextualizeException. Return null for '{}' : {}", path , e.getMessage());
+            }
         } 
         return null;
     }
