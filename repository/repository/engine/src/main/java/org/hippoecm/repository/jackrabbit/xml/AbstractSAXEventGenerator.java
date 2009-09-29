@@ -257,6 +257,7 @@ abstract class AbstractSAXEventGenerator {
     protected void addNamespacePrefixes(Node node, AttributesImpl attributes)
             throws RepositoryException {
         final Set<String> prefixes = new HashSet();
+        prefixes.add(Name.NS_SV_PREFIX);
         node.accept(new TraversingItemVisitor.Default(true) {
             @Override
             protected void entering(Node node, int level) throws RepositoryException {
