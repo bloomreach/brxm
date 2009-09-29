@@ -136,7 +136,7 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
                     }
                 } else if (!propertyDefinition.isAutoCreated() && !propertyDefinition.isProtected()) {
                     isvalid = false;
-                    component.error(new StringResourceModel("mandatory-value-empty", component, null, new Object[] { propName }).getString());
+                    component.error("Mandatory field " + propName + "is not present");
                     break;
                 }
             }
