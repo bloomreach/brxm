@@ -26,7 +26,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/hippogallery/nt/1.3</sv:value>
+      <sv:value>http://www.onehippo.org/jcr/hippogallery/nt/2.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>hippogallery.cnd</sv:value>

@@ -14,10 +14,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.3"
+<sv:node xmlns:hippostd="http://www.onehippo.org/jcr/hippostd/nt/2.0"
          xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
-         xmlns:hippogallery="http://www.hippoecm.org/hippogallery/nt/1.3"
-         xmlns:defaultcontent="http://www.hippoecm.org/defaultcontent/nt/1.4"
+         xmlns:hippogallery="http://www.onehippo.org/jcr/hippogallery/nt/2.0"
+         xmlns:defaultcontent="http://www.hippoecm.org/defaultcontent/nt/1.5"
          xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
          xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="content">
