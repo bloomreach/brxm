@@ -46,8 +46,12 @@ public class JcrHippoRepository implements Repository {
             if (log.isInfoEnabled()) {
                 log.info("Trying to get hippo repository from {}.", repositoryURI);
             }
-            
-            hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryURI);
+
+            if (repositoryURI == null) {
+                hippoRepository = HippoRepositoryFactory.getHippoRepository();
+            } else {
+                hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryURI);
+            }
             
             if (log.isInfoEnabled()) {
                 log.info("Has retrieved hippo repository from {}.", repositoryURI);

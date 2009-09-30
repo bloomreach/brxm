@@ -21,47 +21,37 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.Session;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.SerializationUtils;
-import org.hippoecm.hst.AbstractBeanSpringTestCase;
+import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestJCRServiceBean extends AbstractBeanSpringTestCase {
+public class TestJCRServiceBean extends AbstractBeanTestCase {
     
     private static final String TESTPROJECT_EXISTING_VIRTUALNODE = "/testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct";
 
-    protected Object repository;
-    protected Credentials defaultCredentials;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         
-        this.repository = getComponent(Repository.class.getName());
-        this.defaultCredentials = getComponent(Credentials.class.getName());
     }
     
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         
-        if (this.repository != null) {
-            MethodUtils.invokeMethod(this.repository, "close", null);
-        }
     }
     
     @Test
     public void testServiceBeanProxy() throws Exception {
-        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
+        Session session = this.getSession();
         Node node = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALNODE);
         TextPage t = ServiceFactory.create(node, TextPage.class);
         
@@ -86,7 +76,9 @@ public class TestJCRServiceBean extends AbstractBeanSpringTestCase {
         
     @Test
     public void testServiceBeanProxyWithClass() throws Exception {
-        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
+        
+        Session session = this.getSession();
+        
         Node node = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALNODE);
         TextPage t = ServiceFactory.create(node, TextPageImpl.class);
         

@@ -154,7 +154,6 @@ import org.slf4j.LoggerFactory;
  * </EM>
  * </P>
  * 
- * @author <a href="mailto:w.ko@onehippo.com">Woonsan Ko</a>
  * @version $Id$
  */
 public class HstSiteConfigServlet extends HttpServlet {

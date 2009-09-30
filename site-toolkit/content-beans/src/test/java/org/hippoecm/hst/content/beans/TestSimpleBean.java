@@ -22,15 +22,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
-import org.apache.commons.beanutils.MethodUtils;
-import org.hippoecm.hst.AbstractBeanSpringTestCase;
+import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -55,26 +52,18 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestSimpleBean extends AbstractBeanSpringTestCase {
-
-    protected Object repository;
-    protected Credentials defaultCredentials;
+public class TestSimpleBean extends AbstractBeanTestCase {
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         
-        this.repository = getComponent(Repository.class.getName());
-        this.defaultCredentials = getComponent(Credentials.class.getName());
     }
     
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         
-        if (this.repository != null) {
-            MethodUtils.invokeMethod(this.repository, "close", null);
-        }
     }
 
     @Test
@@ -82,7 +71,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
              
         ObjectConverter objectConverter = getObjectConverter();
         
-        Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
+        Session session = this.getSession();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
 
         HippoFolder folder = (HippoFolder) obm.getObject("/testcontent/documents/testproject/Products");
@@ -113,7 +102,7 @@ public class TestSimpleBean extends AbstractBeanSpringTestCase {
     public void testSimpleObjectQuery() throws Exception {
         ObjectConverter objectConverter = getObjectConverter();
         
-        final Session session = (Session) MethodUtils.invokeMethod(this.repository, "login", this.defaultCredentials);
+        Session session = this.getSession();
       
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         

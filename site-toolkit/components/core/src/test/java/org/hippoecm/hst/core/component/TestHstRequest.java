@@ -32,7 +32,6 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstComponentWindowImpl;
 import org.hippoecm.hst.core.container.HstContainerURLImpl;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;

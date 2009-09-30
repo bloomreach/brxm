@@ -19,7 +19,6 @@ package org.hippoecm.hst.demo.util;
 /**
  * Pageable
  *
- * @author m.milicevic <me at machak.com>
  */
 
 import java.util.ArrayList;

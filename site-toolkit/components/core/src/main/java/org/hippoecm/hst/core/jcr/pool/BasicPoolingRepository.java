@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
  * <p>Basic implementation of <code>javax.jcr.Repository</code> that is
  * configured via JavaBeans properties.</p>
  *
- * @author <a href="mailto:w.ko@onehippo.com">Woonsan Ko</a>
  * @version $Id$
  */
 public class BasicPoolingRepository implements PoolingRepository, MultipleRepositoryAware {
@@ -370,7 +369,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     }
     
     private void doInitialize() throws Exception {
-        if (getRepository() == null && getRepositoryProviderClassName() != null && getRepositoryAddress() != null) {
+        if (getRepository() == null && getRepositoryProviderClassName() != null) {
             try {
                 this.jcrRepositoryProvider = (JcrRepositoryProvider) Class.forName(getRepositoryProviderClassName()).newInstance();
             } catch (Exception e) {

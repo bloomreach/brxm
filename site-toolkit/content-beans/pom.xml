@@ -46,19 +46,7 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-    
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-
+   
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
@@ -88,7 +76,14 @@
       <scope>provided</scope>
     </dependency>
     
-    <!-- Test dependencies -->
+    <!-- Hst test dependencies -->
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-test</artifactId>
+      <version>2.04.00-SNAPSHOT</version>
+      <scope>test</scope>
+      <classifier>tests</classifier>
+    </dependency>
     
     <dependency>
       <groupId>junit</groupId>
@@ -101,76 +96,7 @@
       <artifactId>geronimo-jta_1.1_spec</artifactId>
       <scope>test</scope>
     </dependency>
-    
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>commons-configuration</groupId>
-      <artifactId>commons-configuration</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <!--
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
-      <scope>test</scope>
-    </dependency>
-    -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-connector</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-      <artifactId>hst-addon-cnd_7_1</artifactId>
-      <version>${pom.version}</version>
-      <scope>test</scope>   
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-repository</artifactId>
-      <version>${pom.version}</version>
-      <scope>test</scope>      
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-testcontents</artifactId>
-      <version>${pom.version}</version>
-      <scope>test</scope>      
-    </dependency>
+    <!-- Hst test dependencies -->
     
   </dependencies>
   

@@ -177,8 +177,6 @@ public class HstOCMQuery {
     
     public void addOrderByDescending(String fieldNameAttribute)
     {
-        //Changes made to maintain the query state updated with every addition
-        //@author Shrirang Edgaonkar
         addExpression("@" + this.getJcrFieldName(fieldNameAttribute) + " descending");
     }
 

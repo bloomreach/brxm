@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * 
  * </p>
  * 
- * @author <a href="mailto:w.ko@onehippo.com">Woonsan Ko</a>
  * @version $Id$
  *  
  */

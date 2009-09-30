@@ -24,8 +24,6 @@ import org.hippoecm.hst.content.beans.standard.HippoResource;
 /**
  * Bean mapping class for the 'hippogallery:exampleImageSet' document type
  *
- * @author Roberto van der Linden
- * @author Jeroen Reijn
  */
 @Node(jcrType = "hippogallery:exampleImageSet")
 public class ImageBean extends HippoItem implements HippoImageBean {
