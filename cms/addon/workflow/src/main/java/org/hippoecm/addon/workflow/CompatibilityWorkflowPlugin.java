@@ -15,9 +15,11 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.observation.EventIterator;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -28,15 +30,19 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction.DestinationDialog;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -283,24 +289,26 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 IClusterConfig cluster = pluginConfigService.getCluster("cms-pickers/folders");
                 control = context.newCluster(cluster, config.getPluginConfig("cluster.options"));
                 IClusterConfig decorated = control.getClusterConfig();
-                String modelServiceId = decorated.getString("wicket.model.folder");
-                ModelReference modelService;
-                modelService = new ModelReference<IModel>(modelServiceId, getModel()) {
 
+                control.start();
+
+                String modelServiceId = decorated.getString("wicket.model.folder");
+                final IModelReference modelRef = context.getService(modelServiceId, IModelReference.class);
+                context.registerService(new IObserver() {
                     private static final long serialVersionUID = 1L;
 
-                    @Override
-                    public void setModel(IModel model) {
+                    public IObservable getObservable() {
+                        return modelRef;
+                    }
+
+                    public void onEvent(Iterator<? extends IEvent> events) {
+                        IModel model = modelRef.getModel();
                         if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
                             destination.setChainedModel(model);
                         }
-                        super.setModel(model);
                         DestinationDialog.this.setOkEnabled(true);
                     }
-                };
-                modelService.init(context);
-
-                control.start();
+                }, IObserver.class.getName());
 
                 dialogRenderer = context.getService(decorated.getString("wicket.id"), IRenderService.class);
                 dialogRenderer.bind(null, "picker");
@@ -338,7 +346,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
         @Deprecated
         public class DateDialog extends WorkflowDialog {
-            
+
             public DateDialog(IModel question, final PropertyModel dateModel) {
                 super();
 

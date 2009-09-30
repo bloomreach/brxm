@@ -166,6 +166,8 @@ public class PluginContext implements IPluginContext, IDetachable {
             }
             list.add(service);
             manager.registerService(service, name);
+        } else {
+            log.warn("registering a service when stopping down; ignoring");
         }
     }
 
