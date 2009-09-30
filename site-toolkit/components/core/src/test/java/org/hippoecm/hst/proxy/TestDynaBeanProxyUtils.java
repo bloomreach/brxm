@@ -28,11 +28,14 @@ import org.apache.commons.beanutils.DynaClass;
 import org.apache.commons.beanutils.DynaProperty;
 import org.apache.commons.beanutils.LazyDynaBean;
 import org.apache.commons.beanutils.LazyDynaMap;
+import org.junit.Ignore;
 import org.junit.Test;
 
+
+@Ignore
 public class TestDynaBeanProxyUtils {
 
-    //@Test
+    @Test
     public void testDynaBeanProxy() throws IllegalAccessException, InstantiationException {
         
         DynaProperty[] props = new DynaProperty[] { 
@@ -80,7 +83,7 @@ public class TestDynaBeanProxyUtils {
         assertEquals("Handball", ((String []) dynaBean.get("favorites"))[1]);
     }
 
-    //@Test
+    @Test
     public void testLazyDynaBeanProxy() throws IllegalAccessException, InstantiationException {
         
         DynaBean dynaBean = new LazyDynaBean();
@@ -118,7 +121,7 @@ public class TestDynaBeanProxyUtils {
         assertEquals("Handball", ((String []) dynaBean.get("favorites"))[1]);
     }
     
-    //@Test
+    @Test
     public void testLazyDynaBeanProxyWithMethods() throws IllegalAccessException, InstantiationException {
         
         DynaBean dynaBean = new LazyDynaBean() {
@@ -177,7 +180,7 @@ public class TestDynaBeanProxyUtils {
 
     }
     
-    //@Test
+    @Test
     public void testLazyDynaMapProxyWithMethods() throws IllegalAccessException, InstantiationException {
         
         Map<String, Object> values = new HashMap<String, Object>();

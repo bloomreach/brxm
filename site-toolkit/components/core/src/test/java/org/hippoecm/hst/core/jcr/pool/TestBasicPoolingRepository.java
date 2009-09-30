@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestBasicPoolingRepository extends AbstractSpringTestCase {
     
     protected BasicPoolingRepository poolingRepository;
@@ -53,7 +54,7 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
         assertTrue("The maxWait configuration must be greater than zero for test.", this.poolingRepository.getMaxWait() > 0);
     }
     
-    //@Test
+    @Test
     public void testBasicPoolingRepository() throws Exception {
         Repository repository = poolingRepository;
         int maxActive = poolingRepository.getMaxActive();
@@ -160,7 +161,7 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
         }
     }
     
-    //@Test
+    @Test
     public void testSessionLifeCycleManagementPerThread() throws Exception {
 
         final Repository repository = poolingRepository;

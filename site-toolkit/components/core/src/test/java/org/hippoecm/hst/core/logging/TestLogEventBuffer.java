@@ -25,15 +25,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.hippoecm.hst.logging.LogEvent;
+import org.junit.Ignore;
 import org.junit.Test;
 
+
+@Ignore
 public class TestLogEventBuffer {
 
     private static final int LOG_EVENT_BUFFER_SIZE = 10;
     
     private List<Exception> exceptions = Collections.synchronizedList(new LinkedList<Exception>());
     
-    //@Test
+    @Test
     public void testCircularFIFOLogEventBuffer() {
         
         CircularFIFOLogEventBuffer logEventBuffer = new CircularFIFOLogEventBuffer(LOG_EVENT_BUFFER_SIZE);
@@ -95,7 +98,7 @@ public class TestLogEventBuffer {
         
     }
     
-    //@Test
+    @Test
     public void testCircularFIFOLogEventBufferThreadSafety() throws Exception {
         final CircularFIFOLogEventBuffer logEventBuffer = new CircularFIFOLogEventBuffer(LOG_EVENT_BUFFER_SIZE);
         

@@ -32,6 +32,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestMultipleRepository extends AbstractSpringTestCase {
     
     protected MultipleRepository multipleRepository;
@@ -49,7 +50,7 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
         this.writableCredentials = (Credentials) getComponent(Credentials.class.getName() + ".writable");
     }
 
-    //@Test
+    @Test
     public void testMultipleRepository() throws LoginException, RepositoryException {
         Repository defaultRepository = this.multipleRepository.getRepositoryByCredentials(this.defaultCredentials);
         Repository writableRepository = this.multipleRepository.getRepositoryByCredentials(this.writableCredentials);
@@ -65,7 +66,7 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
         sessionFromWritableRepository.logout();
     }
     
-    //@Test
+    @Test
     public void testNumActives() throws LoginException, RepositoryException {
         PoolingRepository defaultRepository = (PoolingRepository) this.multipleRepository.getRepositoryByCredentials(this.defaultCredentials);
         PoolingRepository writableRepository = (PoolingRepository) this.multipleRepository.getRepositoryByCredentials(this.writableCredentials);
@@ -115,7 +116,7 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
         sessionFromDefaultRepository.logout();
     }
     
-    //@Test
+    @Test
     public void testSessionLifeCycleManagementPerThread() throws Exception {
 
         final Repository repository = multipleRepository;

@@ -35,8 +35,10 @@ import org.hippoecm.hst.core.container.HstContainerURLImpl;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestHstRequest extends AbstractSpringTestCase {
     
     protected HttpServletRequest servletRequest;
@@ -58,7 +60,7 @@ public class TestHstRequest extends AbstractSpringTestCase {
         this.requestContext.setBaseURL(baseURL);
     }
     
-    //@Test
+    @Test
     public void testRequestAttributes() {
 
         // Sets java servlet attributes

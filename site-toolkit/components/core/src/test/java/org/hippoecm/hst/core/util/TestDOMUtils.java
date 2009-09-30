@@ -21,11 +21,14 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import org.hippoecm.hst.util.DOMElementWriter;
+import org.junit.Ignore;
 import org.junit.Test;
 
+
+@Ignore
 public class TestDOMUtils {
 
-    //@Test
+    @Test
     public void testDOM4JElement() throws Exception {
         // Tests if setTextContent() is working 
         // with our serializable element implementation which is based on dom4j
@@ -61,7 +64,7 @@ public class TestDOMUtils {
         assertTrue("the text content is wrong.", stringified.contains("Hello, World!"));
     }
 
-    //@Test
+    @Test
     public void testDOM4JWriting() throws Exception {
         org.w3c.dom.Element element = DOMUtils.createSerializableElement("script");
         element.setAttribute("id", "my-test-javascript");

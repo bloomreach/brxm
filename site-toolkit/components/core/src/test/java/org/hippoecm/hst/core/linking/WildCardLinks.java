@@ -28,12 +28,15 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.BasicHstSiteMapMatcher;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * This test tests whether the linkcreation of items (jcr Nodes) which involve SiteMap wildcard matching are being created correctly
  *
  */
+
+@Ignore
 public class WildCardLinks extends AbstractSpringTestCase{
     
         private static final String TESTPROJECT_NAME = "testproject";
@@ -75,7 +78,7 @@ public class WildCardLinks extends AbstractSpringTestCase{
         * parameters
         */
        
-       //@Test 
+       @Test 
        public void testWithWildCardSiteMapItem() throws RepositoryException{
            Node node1 = (Node)session.getItem(TESTPROJECT_FOLDER1);
            HstLink hstLink = hstLinkCreator.create(node1, res);

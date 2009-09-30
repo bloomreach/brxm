@@ -89,7 +89,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         ((HstComponentFactoryImpl) componentFactory).componentRegistry.registerComponent(this.requestContainerConfig, "pages/newsoverview/header/title", component);
     }
     
-    //@Test
+    @Test
     public void testDefaultPipeline() throws ContainerException, UnsupportedEncodingException {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news");
@@ -110,7 +110,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     }
     
     
-    //@Test
+    @Test
     public void testDefaultPipeline2() throws ContainerException, UnsupportedEncodingException {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news/2009/februari");

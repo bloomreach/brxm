@@ -19,11 +19,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestHstNavigationalStateCodec {
 
-    //@Test
+    @Test
     public void testNavigationalStateCodec() throws ContainerException, UnsupportedEncodingException {
         HstNavigationalStateCodec codec = new HstNavigationalStateCodecImpl();
         String params = "a=1&b=2&path=/test/a.jsp";
