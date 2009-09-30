@@ -14,20 +14,6 @@
 #  limitations under the License.
 #
 
-
-# Unit testing properties
-
-#test.default.repository.address = target/storage
-test.default.repository.address = rmi://127.0.0.1/hipporepository
-test.default.repository.user.name = admin
-test.default.repository.password = admin
-
-#test.writable.repository.address = target/storage-writable
-test.writable.repository.address = rmi://127.0.0.1/hipporepository
-test.writable.repository.user.name = admin
-test.writable.repository.password = admin
-
-
 # Tomcat deployment properties. Use these with `tomcat' profile. E.g. `mvn -P tomcat clean install -DskipTests'
 
 tomcat.server.home = /home/hstdev/tomcat-6.0.18
