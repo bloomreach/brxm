@@ -39,7 +39,7 @@ public class TestConfigurationWithoutRepository extends AbstractSpringTestCase {
         this.siteMapMatcher = getComponent(HstSiteMapMatcher.class.getName());
     }
 
-    @Test
+    //@Test
     public void testConfiguration() {
         HstSite hstSite = hstSites.getSite(TESTPROJECT_NAME);
         assertNotNull(hstSite);

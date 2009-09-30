@@ -69,7 +69,7 @@ public class SimpleLinks extends AbstractSpringTestCase {
      * Test with no sitemap items involved having a wildcard, or thus with no 'hst:relativecontentpath' containing ${1} kind of
      * parameters
      */
-    @Test
+    //@Test
     public void testLinkToSiteMapItemId() {
 
         HstLink hstLink = hstLinkCreator.create("products", res);
@@ -83,7 +83,7 @@ public class SimpleLinks extends AbstractSpringTestCase {
       * Test with no sitemap items involved having a wildcard, or thus with no 'hst:relativecontentpath' containing ${1} kind of
       * parameters
       */
-    @Test
+    //@Test
     public void testLinkCreateOfNode() throws RepositoryException {
 
         Node someProductHandle = (Node) session.getItem(TESTPROJECT_EXISTING_VIRTUALHANDLE);

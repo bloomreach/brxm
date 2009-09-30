@@ -29,7 +29,7 @@ public class TestVirtualHosting extends AbstractSpringTestCase {
         }
 
      
-        @Test
+        //@Test
         public void testHosts(){
              
         }

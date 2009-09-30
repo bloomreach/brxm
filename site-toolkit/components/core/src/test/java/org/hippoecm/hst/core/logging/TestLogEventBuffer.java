@@ -33,7 +33,7 @@ public class TestLogEventBuffer {
     
     private List<Exception> exceptions = Collections.synchronizedList(new LinkedList<Exception>());
     
-    @Test
+    //@Test
     public void testCircularFIFOLogEventBuffer() {
         
         CircularFIFOLogEventBuffer logEventBuffer = new CircularFIFOLogEventBuffer(LOG_EVENT_BUFFER_SIZE);
@@ -95,7 +95,7 @@ public class TestLogEventBuffer {
         
     }
     
-    @Test
+    //@Test
     public void testCircularFIFOLogEventBufferThreadSafety() throws Exception {
         final CircularFIFOLogEventBuffer logEventBuffer = new CircularFIFOLogEventBuffer(LOG_EVENT_BUFFER_SIZE);
         

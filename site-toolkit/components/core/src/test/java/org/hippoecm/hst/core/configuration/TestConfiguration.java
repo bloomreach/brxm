@@ -54,14 +54,14 @@ public class TestConfiguration extends AbstractSpringTestCase {
      *         `- **.html
      */
     
-    @Test
+    //@Test
     public void testUrl1(){
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2009", hstSite);
         assertTrue("", "news/_default_".equals(res.getHstSiteMapItem().getId()));
         
     }
     
-    @Test
+    //@Test
     public void testUrl2(){
         
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2009/february/myArticle", hstSite);
@@ -73,7 +73,7 @@ public class TestConfiguration extends AbstractSpringTestCase {
         
     }
     
-    @Test
+    //@Test
     public void testUrl3_matchANY(){
         ResolvedSiteMapItem res = hstSiteMapMatcher.match("news/2009/february/day2/8oclock/16min/4sec/MyArticle", hstSite);
         assertTrue("", "news/_default_/_default_/_any_".equals(res.getHstSiteMapItem().getId()));

@@ -58,7 +58,7 @@ public class TestHstRequest extends AbstractSpringTestCase {
         this.requestContext.setBaseURL(baseURL);
     }
     
-    @Test
+    //@Test
     public void testRequestAttributes() {
 
         // Sets java servlet attributes

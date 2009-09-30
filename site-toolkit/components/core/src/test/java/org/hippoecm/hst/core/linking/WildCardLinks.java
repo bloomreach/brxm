@@ -75,7 +75,7 @@ public class WildCardLinks extends AbstractSpringTestCase{
         * parameters
         */
        
-       @Test 
+       //@Test 
        public void testWithWildCardSiteMapItem() throws RepositoryException{
            Node node1 = (Node)session.getItem(TESTPROJECT_FOLDER1);
            HstLink hstLink = hstLinkCreator.create(node1, res);

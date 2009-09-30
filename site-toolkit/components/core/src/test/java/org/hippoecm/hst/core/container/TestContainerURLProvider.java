@@ -74,7 +74,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         rightChildWindow.setParentWindow(rootWindow);
     }
     
-    @Test
+    //@Test
     public void testBasicCotnainerURL() throws UnsupportedEncodingException, ContainerException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
@@ -89,7 +89,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertEquals("The path info is wrong: " + containerURL.getPathInfo(), "/news/2008/08", containerURL.getPathInfo());
     }
     
-    @Test
+    //@Test
     public void testRenderContainerURL() throws UnsupportedEncodingException, ContainerException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
@@ -129,7 +129,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertEquals("The parameter value is wrong: param2", "value2", hstRequest.getParameter("param2"));        
     }
     
-    @Test
+    //@Test
     public void testNamespacelessRenderContainerURL() throws UnsupportedEncodingException, ContainerException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
@@ -173,7 +173,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertEquals("The parameter value is wrong: param2", "value2", hstRequest.getParameter("param2"));        
     }
     
-    @Test
+    //@Test
     public void testActionContainerURL() throws UnsupportedEncodingException, ContainerException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
@@ -199,7 +199,7 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         assertEquals("the second action parameter is not 'ap2'.", "two", actionParams.get("ap2")[0]);
     }
     
-    @Test
+    //@Test
     public void testResourceContainerURL() throws UnsupportedEncodingException, ContainerException {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
