@@ -21,6 +21,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.extensions.wizard.Wizard;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -73,23 +74,8 @@ public abstract class CreateTypeDialog extends Wizard implements IDialogService.
         MarkupContainer container = (MarkupContainer) super.newButtonBar(id);
         container.visitChildren(Button.class, new IVisitor() {
 
-            public Object component(final Component component) {
-                component.add(new AjaxEventBehavior("onclick") {
-
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected CharSequence getEventHandler() {
-                        return new AppendingStringBuffer(super.getEventHandler()).append("; return false;");
-                    }
-
-                    @Override
-                    protected void onEvent(AjaxRequestTarget target) {
-                        ((Button) component).onSubmit();
-                        target.addComponent(CreateTypeDialog.this);
-                    }
-
-                });
+            public Object component(Component component) {
+                component.add(newOnClickBehavior(component));
 
                 return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
             }
@@ -97,6 +83,24 @@ public abstract class CreateTypeDialog extends Wizard implements IDialogService.
         });
 
         return container;
+    }
+
+    protected IBehavior newOnClickBehavior(final Component component) {
+        return new AjaxEventBehavior("onclick") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected CharSequence getEventHandler() {
+                return new AppendingStringBuffer(super.getEventHandler()).append("; return false;");
+            }
+
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                ((Button) component).onSubmit();
+                target.addComponent(CreateTypeDialog.this);
+            }
+
+        };
     }
 
     @Override
