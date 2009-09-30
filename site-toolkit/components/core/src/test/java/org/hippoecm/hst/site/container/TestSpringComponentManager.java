@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class TestSpringComponentManager {
     
     private static final String SIMPLE_BEANS_1 = "/META-INF/assembly/simple-beans-1.xml";

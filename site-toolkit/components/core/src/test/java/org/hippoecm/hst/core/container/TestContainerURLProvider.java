@@ -41,7 +41,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-@Ignore
+
 public class TestContainerURLProvider extends AbstractSpringTestCase {
 
     protected HstURLFactory urlFactory;

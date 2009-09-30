@@ -24,7 +24,6 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
-  <import resource="classpath:/org/hippoecm/hst/core/TestConfigurations.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
 

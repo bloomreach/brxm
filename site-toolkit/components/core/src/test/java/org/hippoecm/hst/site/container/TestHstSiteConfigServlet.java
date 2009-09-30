@@ -31,7 +31,7 @@ import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
-@Ignore
+
 public class TestHstSiteConfigServlet {
     
     private static final String SIMPLE_PROPS = "default.sites.name = test-hst-config-project";

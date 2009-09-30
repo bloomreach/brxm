@@ -29,7 +29,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 
-@Ignore
 public class TestLogEventBuffer {
 
     private static final int LOG_EVENT_BUFFER_SIZE = 10;
