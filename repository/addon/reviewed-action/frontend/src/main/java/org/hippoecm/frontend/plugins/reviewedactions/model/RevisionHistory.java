@@ -181,6 +181,7 @@ public class RevisionHistory extends JcrObject {
                         }
                     }
                 }
+                Collections.reverse(list);
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);
             }
