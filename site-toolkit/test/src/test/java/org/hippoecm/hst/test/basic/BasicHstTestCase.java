@@ -40,7 +40,6 @@ public class BasicHstTestCase extends AbstractHstTestCase{
        assertTrue("Node /hst:testconfiguration must exist", session.itemExists("/hst:testconfiguration"));
        assertTrue("Node /testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct must exist", session.itemExists("/testpreview/testproject/hst:content/Products/SomeProduct/SomeProduct"));
 
-       Utilities.dump(session.getRootNode());
     }
     
 }
