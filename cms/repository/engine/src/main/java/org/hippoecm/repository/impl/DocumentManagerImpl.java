@@ -138,7 +138,9 @@ public class DocumentManagerImpl implements DocumentManager {
                 if(uuid != null) {
                     Node node = session.getNodeByUUID(uuid);
                     if(!node.isCheckedOut()) {
-                        node.checkout();
+                        if(node.isNodeType("mix:versionable")) {
+                            node.checkout();
+                        }
                         try {
                             Node parent = node.getParent();
                             if(parent.isNodeType(HippoNodeType.NT_HANDLE)) {
