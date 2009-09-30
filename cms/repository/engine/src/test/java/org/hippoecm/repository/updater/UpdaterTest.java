@@ -75,9 +75,9 @@ public class UpdaterTest extends TestCase {
                 });
             }
         };
-	List list = new LinkedList();
-	list.add(module);
-	Modules modules = new Modules(list);
+        List list = new LinkedList();
+        list.add(module);
+        Modules modules = new Modules(list);
         UpdaterEngine.migrate(session, modules);
     }
 }

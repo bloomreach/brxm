@@ -149,19 +149,19 @@ class ChangeImpl {
     }
     static Map<String,List<ChangeImpl>> convert(Map<String,List<Change>> changes, Session session) throws RepositoryException {
         NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
-    	Map<String,List<ChangeImpl>> map = new TreeMap<String,List<ChangeImpl>>();
+        Map<String,List<ChangeImpl>> map = new TreeMap<String,List<ChangeImpl>>();
         for(Map.Entry<String,List<Change>> entry : changes.entrySet()) {
-        	// check whether nodetype exists.  If it doesn't, there is nothing to do!
-        	try {
-	        	/* NodeType nt = */ ntMgr.getNodeType(entry.getKey());
-        	} catch (NoSuchNodeTypeException nte) {
-        		continue;
-        	}
-        	List<ChangeImpl> list = new LinkedList<ChangeImpl>();
-        	map.put(entry.getKey(), list);
-        	for(Change change : entry.getValue()) {
-        		list.add(create(change, session));
-        	}
+            // check whether nodetype exists.  If it doesn't, there is nothing to do!
+            try {
+                /* NodeType nt = */ ntMgr.getNodeType(entry.getKey());
+            } catch (NoSuchNodeTypeException nte) {
+                continue;
+            }
+            List<ChangeImpl> list = new LinkedList<ChangeImpl>();
+            map.put(entry.getKey(), list);
+            for(Change change : entry.getValue()) {
+                list.add(create(change, session));
+            }
         }
         return map;
     }

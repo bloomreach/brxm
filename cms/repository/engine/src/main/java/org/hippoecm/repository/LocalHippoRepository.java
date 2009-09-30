@@ -438,7 +438,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 }
             }
 
-	    syncSession.logout(); // the spawned impersonated sessions should remain active though
+            syncSession.logout(); // the spawned impersonated sessions should remain active though
 
         } catch (LoginException ex) {
             log.error("no access to repository by repository itself", ex);

@@ -46,19 +46,18 @@ public class JNDIReferenceFactory implements ObjectFactory {
                 }
             });
     }
-    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable environment)
-	throws NamingException {
+    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable environment) throws NamingException {
 
-	JCAManagedConnectionFactory connectionFactory = new JCAManagedConnectionFactory();
+        JCAManagedConnectionFactory connectionFactory = new JCAManagedConnectionFactory();
 
-	Reference ref = (Reference) obj;
-	Enumeration addrs = ref.getAll();
-	while (addrs.hasMoreElements()) {
-	    RefAddr addr = (RefAddr) addrs.nextElement();
-	    if (addr.getType().equals("location")) {
-		connectionFactory.setLocation((String) addr.getContent());
-	    }
-	}
+        Reference ref = (Reference) obj;
+        Enumeration addrs = ref.getAll();
+        while (addrs.hasMoreElements()) {
+            RefAddr addr = (RefAddr) addrs.nextElement();
+            if (addr.getType().equals("location")) {
+                connectionFactory.setLocation((String) addr.getContent());
+            }
+        }
 
         try {
             return connectionFactory.createConnectionFactory();

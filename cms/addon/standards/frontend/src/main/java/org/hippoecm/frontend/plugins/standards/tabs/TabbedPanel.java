@@ -41,244 +41,237 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 
 public class TabbedPanel extends WebMarkupContainer {
-	@SuppressWarnings("unused")
-	private final static String SVN_ID = "$Id$";
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+    
+    private static final long serialVersionUID = 1L;
+    
+    public static final String TAB_PANEL_ID = "panel";
+    
+    private final TabsPlugin plugin;
+    
+    private int maxTabLength = 12;
+    private final List<TabsPlugin.Tab> tabs;
+    private MarkupContainer panelContainer;
+    private transient boolean redraw = false;
 
-	private static final long serialVersionUID = 1L;
+    public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs) {
+        super(id, new Model(Integer.valueOf(-1)));
 
-	public static final String TAB_PANEL_ID = "panel";
+        if (tabs == null) {
+            throw new IllegalArgumentException("argument [tabs] cannot be null");
+        }
 
-	private final TabsPlugin plugin;
+        this.plugin = plugin;
+        this.tabs = tabs;
 
-	private int maxTabLength = 12;
-	private final List<TabsPlugin.Tab> tabs;
-	private MarkupContainer panelContainer;
-	private transient boolean redraw = false;
+        setOutputMarkupId(true);
 
-	public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs) {
-		super(id, new Model(Integer.valueOf(-1)));
+        final IModel tabCount = new AbstractReadOnlyModel() {
+            private static final long serialVersionUID = 1L;
 
-		if (tabs == null) {
-			throw new IllegalArgumentException("argument [tabs] cannot be null");
-		}
+            @Override
+            public Object getObject() {
+                return Integer.valueOf(TabbedPanel.this.tabs.size());
+            }
+        };
 
-		this.plugin = plugin;
-		this.tabs = tabs;
+        WebMarkupContainer tabsContainer = new WebMarkupContainer(
+                "tabs-container") {
+            private static final long serialVersionUID = 1L;
 
-		setOutputMarkupId(true);
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                tag.put("class", "tab-row");
+            }
+        };
+        tabsContainer.setOutputMarkupId(true);
+        add(tabsContainer);
 
-		final IModel tabCount = new AbstractReadOnlyModel() {
-			private static final long serialVersionUID = 1L;
+        // add the loop used to generate tab names
+        tabsContainer.add(new Loop("tabs", tabCount) {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public Object getObject() {
-				return Integer.valueOf(TabbedPanel.this.tabs.size());
-			}
-		};
+            @Override
+            protected void populateItem(LoopItem item) {
+                final int index = item.getIteration();
 
-		WebMarkupContainer tabsContainer = new WebMarkupContainer(
-				"tabs-container") {
-			private static final long serialVersionUID = 1L;
+                final WebMarkupContainer titleLink = newLink(index);
+                item.add(titleLink);
+                item.add(newBehavior(index));
+            }
 
-			@Override
-			protected void onComponentTag(ComponentTag tag) {
-				super.onComponentTag(tag);
-				tag.put("class", "tab-row");
-			}
-		};
-		tabsContainer.setOutputMarkupId(true);
-		add(tabsContainer);
+            @Override
+            protected LoopItem newItem(int iteration) {
+                return newTabContainer(iteration);
+            }
+        });
 
-		// add the loop used to generate tab names
-		tabsContainer.add(new Loop("tabs", tabCount) {
-			private static final long serialVersionUID = 1L;
+        panelContainer = new WebMarkupContainer("panel-container");
+        panelContainer.setOutputMarkupId(true);
+        panelContainer.add(plugin.getEmptyPanel());
+        add(panelContainer);
+    }
 
-			@Override
-			protected void populateItem(LoopItem item) {
-				final int index = item.getIteration();
+    protected LoopItem newTabContainer(final int tabIndex) {
+        LoopItem item = new LoopItem(tabIndex) {
+            private static final long serialVersionUID = 1L;
 
-				final WebMarkupContainer titleLink = newLink(index);
-				item.add(titleLink);
-				item.add(newBehavior(index));
-			}
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                String cssClass = (String)tag.getString("class");
+                if (cssClass == null) {
+                    cssClass = " ";
+                }
+                cssClass += " tab" + getIteration();
 
-			@Override
-			protected LoopItem newItem(int iteration) {
-				return newTabContainer(iteration);
-			}
+                if (getIteration() == getSelectedTab()) {
+                    cssClass += " selected";
+                }
+                if (getIteration() == getTabs().size() - 1) {
+                    cssClass += " last";
+                }
+                tag.put("class", cssClass.trim());
+            }
+        };
+        return item;
+    }
 
-		});
+    // used by superclass to add title to the container
+    protected WebMarkupContainer newLink(final int index) {
+        WebMarkupContainer container = new WebMarkupContainer("container",
+                new Model(Integer.valueOf(index)));
+        final TabsPlugin.Tab tabbie = (TabsPlugin.Tab)getTabs().get(index);
+        if (tabbie.canClose()) {
+            container.add(new AjaxFallbackLink("close") {
+                private static final long serialVersionUID = 1L;
 
-		panelContainer = new WebMarkupContainer("panel-container");
-		panelContainer.setOutputMarkupId(true);
-		panelContainer.add(plugin.getEmptyPanel());
-		add(panelContainer);
-	}
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    plugin.onClose(tabbie, target);
+                }
+            });
+        } else {
+            container.add(new Label("close").setVisible(false));
+        }
+        Component link;
+        container.add(link = new AjaxFallbackLink("link") {
+            private static final long serialVersionUID = 1L;
 
-	protected LoopItem newTabContainer(final int tabIndex) {
-		LoopItem item = new LoopItem(tabIndex) {
-			private static final long serialVersionUID = 1L;
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                plugin.onSelect(tabbie, target);
+            }
+        }.add(new Label("title", new LoadableDetachableModel() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			protected void onComponentTag(ComponentTag tag) {
-				super.onComponentTag(tag);
-				String cssClass = (String) tag.getString("class");
-				if (cssClass == null) {
-					cssClass = " ";
-				}
-				cssClass += " tab" + getIteration();
+            @Override
+            protected Object load() {
+                IModel titleModel = tabbie.getTitle();
+                if (titleModel != null) {
+                    String title = (String)titleModel.getObject();
+                    if (title.length() > maxTabLength) {
+                        title = title.substring(0, maxTabLength - 2) + ".."; // leave
+                    // space
+                    // for
+                    // two
+                    // ..
+                    // then
+                    // add
+                    // them
+                    }
+                    return title;
+                }
+                return "title";
+            }
+        })));
+        link.add(new AttributeAppender("title", tabbie.getTitle(), ""));
 
-				if (getIteration() == getSelectedTab()) {
-					cssClass += " selected";
-				}
-				if (getIteration() == getTabs().size() - 1) {
-					cssClass += " last";
-				}
-				tag.put("class", cssClass.trim());
-			}
-		};
-		return item;
-	}
+        return container;
+    }
 
-	// used by superclass to add title to the container
+    protected IBehavior newBehavior(final int tabIndex) {
+        return new AjaxEventBehavior("onclick") {
+            private static final long serialVersionUID = 1L;
 
-	protected WebMarkupContainer newLink(final int index) {
-		WebMarkupContainer container = new WebMarkupContainer("container",
-				new Model(Integer.valueOf(index)));
-		final TabsPlugin.Tab tabbie = (TabsPlugin.Tab) getTabs().get(index);
-		if (tabbie.canClose()) {
-			container.add(new AjaxFallbackLink("close") {
-				private static final long serialVersionUID = 1L;
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                plugin.onSelect(tabs.get(tabIndex), target);
+            }
 
-				@Override
-				public void onClick(AjaxRequestTarget target) {
-					plugin.onClose(tabbie, target);
-				}
-			});
-		} else {
-			container.add(new Label("close").setVisible(false));
-		}
-		Component link;
-		container.add(link = new AjaxFallbackLink("link") {
-			private static final long serialVersionUID = 1L;
+            @Override
+            protected IAjaxCallDecorator getAjaxCallDecorator() {
+                return new CancelEventIfNoAjaxDecorator(null);
+            }
+        };
+    }
 
-			@Override
-			public void onClick(AjaxRequestTarget target) {
-				plugin.onSelect(tabbie, target);
-			}
-		}.add(new Label("title", new LoadableDetachableModel() {
-			private static final long serialVersionUID = 1L;
+    public void setMaxTitleLength(int maxTitleLength) {
+        this.maxTabLength = maxTitleLength;
+    }
 
-			@Override
-			protected Object load() {
-				IModel titleModel = tabbie.getTitle();
-				if (titleModel != null) {
-					String title = (String) titleModel.getObject();
-					if (title.length() > maxTabLength) {
-						title = title.substring(0, maxTabLength - 2) + ".."; // leave
-						// space
-						// for
-						// two
-						// ..
-						// then
-						// add
-						// them
-					}
-					return title;
-				}
-				return "title";
-			}
-		})));
-		link.add(new AttributeAppender("title", tabbie.getTitle(), ""));
+    @Override
+    public boolean isTransparentResolver() {
+        return true;
+    }
 
-		return container;
-	}
+    public void redraw() {
+        redraw = true;
+    }
 
-	protected IBehavior newBehavior(final int tabIndex) {
-		return new AjaxEventBehavior("onclick") {
-			private static final long serialVersionUID = 1L;
+    public void render(PluginRequestTarget target) {
+        if (redraw) {
+            if (target != null) {
+                target.addComponent(get("tabs-container"));
+                target.addComponent(get("panel-container"));
+            }
+            redraw = false;
+        }
+    }
 
-			@Override
-			protected void onEvent(AjaxRequestTarget target) {
-				plugin.onSelect(tabs.get(tabIndex), target);
-			}
+    // @see org.apache.wicket.Component#onAttach()
+    @Override
+    protected void onBeforeRender() {
+        super.onBeforeRender();
+        if (!hasBeenRendered() && getSelectedTab() == -1) {
+            // select the first tab by default
+            setSelectedTab(0);
+        }
+    }
 
-			@Override
-			protected IAjaxCallDecorator getAjaxCallDecorator() {
-				return new CancelEventIfNoAjaxDecorator(null);
-			}
-		};
-	}
+    public final List<TabsPlugin.Tab> getTabs() {
+        return tabs;
+    }
 
-	public void setMaxTitleLength(int maxTitleLength) {
-		this.maxTabLength = maxTitleLength;
-	}
+    public void setSelectedTab(int index) {
+        if (index < 0 || index >= tabs.size()) {
+            panelContainer.replace(plugin.getEmptyPanel());
+            return;
+        }
 
-	@Override
-	public boolean isTransparentResolver() {
-		return true;
-	}
+        setModelObject(Integer.valueOf(index));
 
-	public void redraw() {
-		redraw = true;
-	}
+        ITab tab = (ITab)tabs.get(index);
 
-	public void render(PluginRequestTarget target) {
-		if (redraw) {
-			if (target != null) {
-				target.addComponent(get("tabs-container"));
-				target.addComponent(get("panel-container"));
-			}
-			redraw = false;
-		}
-	}
+        Panel panel = tab.getPanel(TAB_PANEL_ID);
 
-	// @see org.apache.wicket.Component#onAttach()
-	@Override
-	protected void onBeforeRender() {
-		super.onBeforeRender();
-		if (!hasBeenRendered() && getSelectedTab() == -1) {
-			// select the first tab by default
-			setSelectedTab(0);
-		}
-	}
+        if (panel == null) {
+            throw new WicketRuntimeException(
+                    "ITab.getPanel() returned null. TabbedPanel [" + getPath() + "] ITab index [" + index + "]");
 
-	public final List<TabsPlugin.Tab> getTabs() {
-		return tabs;
-	}
+        }
 
-	public void setSelectedTab(int index) {
-		if (index < 0 || index >= tabs.size()) {
-			panelContainer.replace(plugin.getEmptyPanel());
-			return;
-		}
+        if (!panel.getId().equals(TAB_PANEL_ID)) {
+            throw new WicketRuntimeException(
+                    "ITab.getPanel() returned a panel with invalid id [" + panel.getId() + "]. You must always return a panel with id equal to the provided panelId parameter. TabbedPanel [" + getPath() + "] ITab index [" + index + "]");
+        }
 
-		setModelObject(Integer.valueOf(index));
+        panelContainer.replace(panel);
+    }
 
-		ITab tab = (ITab) tabs.get(index);
-
-		Panel panel = tab.getPanel(TAB_PANEL_ID);
-
-		if (panel == null) {
-			throw new WicketRuntimeException(
-					"ITab.getPanel() returned null. TabbedPanel [" + getPath()
-							+ "] ITab index [" + index + "]");
-
-		}
-
-		if (!panel.getId().equals(TAB_PANEL_ID)) {
-			throw new WicketRuntimeException(
-					"ITab.getPanel() returned a panel with invalid id ["
-							+ panel.getId()
-							+ "]. You must always return a panel with id equal to the provided panelId parameter. TabbedPanel ["
-							+ getPath() + "] ITab index [" + index + "]");
-		}
-
-		panelContainer.replace(panel);
-	}
-
-	public final int getSelectedTab() {
-		return ((Integer) getModelObject()).intValue();
-	}
-
+    public final int getSelectedTab() {
+        return ((Integer)getModelObject()).intValue();
+    }
 }

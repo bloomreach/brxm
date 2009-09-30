@@ -35,58 +35,53 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class JcrValidatorPluginTest extends PluginTest {
+    final static String[] content = {
+        "/test", "nt:unstructured",
+        "/test/plugin", "frontend:plugin",
+        "plugin.class", JcrValidatorPlugin.class.getName(),
+        "wicket.model", "service.model",
+        "validator.id", "service.validator",
+        "feedback.id", "service.feedback",
+    };
+    IPluginConfig config;
 
-	final static String[] content = {
-			"/test", "nt:unstructured",
-				"/test/plugin", "frontend:plugin",
-					"plugin.class", JcrValidatorPlugin.class.getName(),
-					"wicket.model", "service.model",
-					"validator.id", "service.validator",
-					"feedback.id", "service.feedback",
-	};
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp(true);
+        build(session, content);
 
-	IPluginConfig config;
+        JcrNodeModel nodeModel = new JcrNodeModel("/test/content");
+        ModelReference modelRef = new ModelReference("service.model", nodeModel);
+        modelRef.init(context);
 
-	@Override
-	@Before
-	public void setUp() throws Exception {
-		super.setUp(true);
-		build(session, content);
+        config = new JcrPluginConfig(new JcrNodeModel("/test/plugin"));
+    }
 
-		JcrNodeModel nodeModel = new JcrNodeModel("/test/content");
-		ModelReference modelRef = new ModelReference("service.model", nodeModel);
-		modelRef.init(context);
+    protected List<FeedbackMessage> getFeedback() {
+        FeedbackMessages feedbackMessages = Session.get().getFeedbackMessages();
+        return feedbackMessages.messages(context.getService("service.feedback",
+                IFeedbackMessageFilter.class));
+    }
 
-		config = new JcrPluginConfig(new JcrNodeModel("/test/plugin"));
-	}
+    protected void validate() {
+        context.getService("service.validator", IValidateService.class).validate();
+    }
 
-	protected List<FeedbackMessage> getFeedback() {
-		FeedbackMessages feedbackMessages = Session.get().getFeedbackMessages();
-		return feedbackMessages.messages(context.getService("service.feedback",
-				IFeedbackMessageFilter.class));
-	}
+    @Test
+    public void testValidator() throws Exception {
+        start(config);
 
-	protected void validate() {
-		context.getService("service.validator", IValidateService.class)
-				.validate();
-	}
+        // [test:validator]
+        // - test:optional (string)
+        // - test:mandatory (string) mandatory
+        // - test:autocreated (string) mandatory autocreated
+        // - test:protected (string) mandatory protected
 
-	@Test
-	public void testValidator() throws Exception {
-		start(config);
+        Node content = root.getNode("test").addNode("content", "test:validator");
+        validate();
 
-		// [test:validator]
-		// - test:optional (string)
-		// - test:mandatory (string) mandatory
-		// - test:autocreated (string) mandatory autocreated
-		// - test:protected (string) mandatory protected
-
-		Node content = root.getNode("test")
-				.addNode("content", "test:validator");
-		validate();
-
-		List<FeedbackMessage> messages = getFeedback();
-		assertEquals(1, messages.size());
-	}
-
+        List<FeedbackMessage> messages = getFeedback();
+        assertEquals(1, messages.size());
+    }
 }
