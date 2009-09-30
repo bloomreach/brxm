@@ -18,20 +18,17 @@ package org.hippoecm.addon.workflow;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
-
 import java.util.Set;
+import java.util.TreeSet;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Workspace;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
-
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -42,6 +39,8 @@ import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class AbstractWorkflowPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -76,6 +75,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
     MenuHierarchy buildMenu(Set<Node> nodeSet) {
         final MenuHierarchy menu = new MenuHierarchy();
         List<Panel> list = new LinkedList<Panel>();
+        Set<String> usedCategories = new TreeSet<String>();
         for(Node documentNode : nodeSet) {
             if (documentNode != null) {
                 try {
@@ -83,6 +83,9 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                     if (workspace instanceof HippoWorkspace) {
                         WorkflowManager workflowMgr = ((HippoWorkspace) workspace).getWorkflowManager();
                         for (final String category : categories) {
+                            if (usedCategories.contains(category)) {
+                                continue;
+                            }
                             try {
                                 final WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, documentNode);
                                 if (descriptor != null) {
@@ -92,7 +95,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                     if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
                                         plugin = new StdWorkflowPlugin("item", pluginModel);
                                     } else if(pluginRenderer.startsWith("/")) {
-                                        plugin = (Panel) this.newPlugin("id", new JcrPluginConfig(new JcrNodeModel(documentNode.getSession().getRootNode().getNode(pluginRenderer.substring(1)))));
+                                        plugin = (Panel) this.newPlugin("id-"+category, new JcrPluginConfig(new JcrNodeModel(documentNode.getSession().getRootNode().getNode(pluginRenderer.substring(1)))));
                                         if(plugin != null) {
                                             plugin.setModel(pluginModel);
                                         } else {
@@ -124,6 +127,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                         });
                                         plugin.setVisible(false);
                                         list.add(plugin);
+                                        usedCategories.add(category);
                                     }
                                 }
                             } catch (ClassNotFoundException ex) {
