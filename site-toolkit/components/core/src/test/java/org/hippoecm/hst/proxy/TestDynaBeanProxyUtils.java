@@ -28,7 +28,6 @@ import org.apache.commons.beanutils.DynaClass;
 import org.apache.commons.beanutils.DynaProperty;
 import org.apache.commons.beanutils.LazyDynaBean;
 import org.apache.commons.beanutils.LazyDynaMap;
-import org.junit.Ignore;
 import org.junit.Test;
 
 
