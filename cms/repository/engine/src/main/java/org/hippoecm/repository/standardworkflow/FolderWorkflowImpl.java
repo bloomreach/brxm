@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
@@ -417,6 +418,20 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
     }
 
+    private void renameChildDocument(Node documentNode) throws RepositoryException {
+        if (documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+            for (NodeIterator children = documentNode.getNodes(); children.hasNext(); ) {
+                Node child = children.nextNode();
+                if (child != null) {
+                    if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                        child.checkout();
+                        documentNode.getSession().move(child.getPath(), documentNode.getPath()+"/"+documentNode.getName());
+                    }
+                }
+            }
+        }
+    }
+
     public void rename(String name, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         if(name.startsWith("/"))
             name  = name.substring(1);
@@ -633,8 +648,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             source = source.getParent();
         }
-        subject.getSession().getWorkspace().copy(source.getPath(), subject.getPath() + "/" + targetName);
-        renameChildDocument(subject, targetName);
+        renameChildDocument(((HippoSession)subject.getSession()).copy(source, subject.getPath() + "/" + targetName));
         subject.save();
         return new Document(subject.getNode(targetName).getUUID());
     }
@@ -715,8 +729,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             source = source.getParent();
         }
-        folder.getSession().getWorkspace().copy(source.getPath(), folder.getPath() + "/" + targetName);
-        renameChildDocument(folder, targetName);
+        renameChildDocument(((HippoSession)folder.getSession()).copy(source, folder.getPath() + "/" + targetName));
         folder.save();
         ((EmbedWorkflow)workflowContext.getWorkflow("embedded", sourceFolder)).copyOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
         return new Document(folder.getNode(targetName).getUUID());
