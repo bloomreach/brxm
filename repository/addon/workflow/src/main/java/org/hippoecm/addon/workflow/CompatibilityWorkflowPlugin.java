@@ -218,7 +218,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 try {
                     execute();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    log.error("Error during workflow execution", ex);
                     error(ex);
                 }
             }
