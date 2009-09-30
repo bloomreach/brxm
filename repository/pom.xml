@@ -413,7 +413,7 @@
       <plugin>      
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
-	<version>1.1</version>
+        <version>1.1</version>
         <artifactId>maven-remote-resources-plugin</artifactId>        
         <executions>
           <execution>
@@ -929,8 +929,8 @@
           <emacsOutput>true</emacsOutput>
           <xmlOutputDirectory>target/site</xmlOutputDirectory>
           <excludeFilterFile>src/site/findbugs-exclude.xml</excludeFilterFile>
-	  <effort>Max</effort>
-	  <threshold>High</threshold>
+          <effort>Max</effort>
+          <threshold>High</threshold>
           <relaxed>true</relaxed>
         </configuration>
       </plugin>

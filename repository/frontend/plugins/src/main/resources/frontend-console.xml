@@ -54,7 +54,7 @@
         <sv:value>extension.breadcrumb</sv:value>
         <sv:value>extension.editor</sv:value>
         <sv:value>extension.menu</sv:value>
-	<sv:value>extension.check</sv:value>
+        <sv:value>extension.check</sv:value>
         <sv:value>extension.logout</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">

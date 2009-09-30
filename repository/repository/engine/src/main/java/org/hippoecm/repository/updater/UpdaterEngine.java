@@ -411,7 +411,7 @@ public class UpdaterEngine {
     }
 
     public static void migrate(Session session, Modules<UpdaterModule> modules) throws UpdaterException, RepositoryException {
-	session = org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(session);
+        session = org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(session);
         ((SessionDecorator)session).postMountEnabled(false);
         session.refresh(false);
         try {

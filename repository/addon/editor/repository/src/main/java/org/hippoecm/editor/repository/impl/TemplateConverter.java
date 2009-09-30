@@ -137,28 +137,28 @@ public class TemplateConverter implements UpdaterModule {
                                 });
                         }
                         if (node.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {
-                        	Node draftPrototype = null;
+                            Node draftPrototype = null;
                             for (NodeIterator iter = node.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes(); iter.hasNext();) {
                                 Node prototype = iter.nextNode();
                                 if (prototype.isNodeType("nt:unstructured")) {
-                                	draftPrototype = prototype;
-                                	break;
+                                    draftPrototype = prototype;
+                                    break;
                                 }
                             }
                             if (draftPrototype != null) {
-                            	for (NodeIterator iter = node.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes(HippoNodeType.HIPPO_PROTOTYPE); iter.hasNext();) {
-                            		Node prototype = iter.nextNode();
-                            		if (!prototype.isNodeType("nt:unstructured")) {
-                            			prototype.remove();
-                            		}
-                            	}
-                            	String newTypeName = rename(prefix, newVersion, prefix + ":" + node.getName());
+                                for (NodeIterator iter = node.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes(HippoNodeType.HIPPO_PROTOTYPE); iter.hasNext();) {
+                                    Node prototype = iter.nextNode();
+                                    if (!prototype.isNodeType("nt:unstructured")) {
+                                        prototype.remove();
+                                    }
+                                }
+                                String newTypeName = rename(prefix, newVersion, prefix + ":" + node.getName());
                                 context.setPrimaryNodeType(draftPrototype, newTypeName);
                                 if (draftPrototype.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                                	draftPrototype.addMixin(HippoNodeType.NT_HARDDOCUMENT);
-                                	draftPrototype.setProperty(HippoNodeType.HIPPO_PATHS, new Value[] {});
+                                    draftPrototype.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+                                    draftPrototype.setProperty(HippoNodeType.HIPPO_PATHS, new Value[] {});
                                 } else if (draftPrototype.isNodeType(HippoNodeType.NT_REQUEST)) {
-                                	draftPrototype.addMixin("mix:referenceable");
+                                    draftPrototype.addMixin("mix:referenceable");
                                 }
                             }
                         }
