@@ -53,6 +53,9 @@ import org.slf4j.LoggerFactory;
  * only consists of published variants.
  */
 public class RevisionHistory extends JcrObject {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = -562404992641520380L;
 
     static final Logger log = LoggerFactory.getLogger(RevisionHistory.class);

@@ -25,6 +25,8 @@ import javax.resource.spi.ManagedConnectionFactory;
  * This class implements the default connection manager.
  */
 public final class JCAConnectionManager implements ConnectionManager {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * The method allocateConnection gets called by the resource adapter's

@@ -23,6 +23,8 @@ import java.util.Set;
 import org.junit.Test;
 
 public class HtmlProcessorTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testPrefixInternalImage() {

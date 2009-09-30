@@ -39,6 +39,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class EventLabelTest extends PluginTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     static class TestLabel extends Label {
         private static final long serialVersionUID = 1L;

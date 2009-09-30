@@ -35,6 +35,9 @@ import org.hippoecm.repository.updater.UpdaterNode;
 import org.hippoecm.repository.updater.UpdaterProperty;
 
 class ChangeImpl {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private ChangeType changeType;
     private String itemRelPath;
     private String itemParentRelPath = null;

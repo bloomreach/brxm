@@ -19,6 +19,7 @@ package org.hippoecm.frontend.service.preferences;
 import org.apache.wicket.IClusterable;
 
 public interface IPreference<T> extends IClusterable {
+    final static String SVN_ID = "$Id: $";
     
     void setName(String name);
     

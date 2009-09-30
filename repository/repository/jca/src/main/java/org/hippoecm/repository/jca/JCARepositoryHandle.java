@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.jca;
 
+import java.io.Serializable;
+
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
@@ -25,13 +27,13 @@ import javax.naming.Reference;
 import javax.resource.Referenceable;
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
-import java.io.Serializable;
 
 /**
  * This class implements the JCA implementation of repository.
  */
-public final class JCARepositoryHandle
-        implements Repository, Referenceable, Serializable {
+public final class JCARepositoryHandle implements Repository, Referenceable, Serializable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Managed connection factory.

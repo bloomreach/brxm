@@ -15,10 +15,10 @@
  */
 package org.hippoecm.repository.jca;
 
-import javax.jcr.NodeIterator;
-import org.hippoecm.repository.api.HippoSession;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.AccessControlException;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
@@ -30,6 +30,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -43,15 +44,17 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.AccessControlException;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
+import org.hippoecm.repository.api.HippoSession;
 
 /**
  * This class implements the JCA implementation of session.
  */
 public final class JCASessionHandle implements HippoSession {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Managed connection.

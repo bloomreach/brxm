@@ -26,6 +26,9 @@ import javax.naming.spi.ObjectFactory;
 import javax.resource.ResourceException;
 
 public class JNDIReferenceFactory implements ObjectFactory {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     public JNDIReferenceFactory() {
         System.err.println("ADD SHUTDOWN HOOK");
         Runtime.getRuntime().addShutdownHook(new Thread() {

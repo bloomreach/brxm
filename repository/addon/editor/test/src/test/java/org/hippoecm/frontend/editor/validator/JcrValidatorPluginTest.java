@@ -35,6 +35,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class JcrValidatorPluginTest extends PluginTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     final static String[] content = {
         "/test", "nt:unstructured",
         "/test/plugin", "frontend:plugin",

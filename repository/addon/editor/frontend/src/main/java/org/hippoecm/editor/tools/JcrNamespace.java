@@ -39,6 +39,8 @@ import org.hippoecm.repository.api.HippoSession;
  * as a way to abstract the layout of type descriptor data.
  */
 public class JcrNamespace {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private String prefix;
     private Session session;

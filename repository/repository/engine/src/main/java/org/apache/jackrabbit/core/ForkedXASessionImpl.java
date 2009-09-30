@@ -43,8 +43,9 @@ import java.util.Map;
 /**
  * Session extension that provides XA support.
  */
-public class ForkedXASessionImpl extends SessionImpl
-        implements XASession, XAResource {
+public class ForkedXASessionImpl extends SessionImpl implements XASession, XAResource {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Logger instance

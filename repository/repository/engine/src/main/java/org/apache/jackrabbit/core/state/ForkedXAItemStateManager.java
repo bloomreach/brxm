@@ -16,7 +16,6 @@
  */
 package org.apache.jackrabbit.core.state;
 
-
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.TransactionException;
 import org.apache.jackrabbit.core.TransactionContext;
@@ -47,6 +46,8 @@ import java.util.Collections;
  * is itself committed.
  */
 public class ForkedXAItemStateManager extends LocalItemStateManager implements InternalXAResource {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * The logger instance.

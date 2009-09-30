@@ -28,6 +28,8 @@ import org.hippoecm.repository.TestCase;
 import org.junit.Test;
 
 public class NodeTranslatorTest extends TestCase {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     @Test
     /**

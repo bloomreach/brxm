@@ -26,6 +26,8 @@ import java.util.Map;
  * session from the repository.
  */
 public final class JCAConnectionRequestInfo implements ConnectionRequestInfo {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Credentials.

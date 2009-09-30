@@ -12,6 +12,8 @@ import java.util.Iterator;
 
 /** A class for generating random names based on existing ones. */
 public class Names {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: $";
 
     // -- Constants --
 

@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.hippoecm.frontend.plugins.yui.rightclick;
 
 import org.apache.wicket.MarkupContainer;
@@ -26,6 +25,9 @@ import org.hippoecm.frontend.behaviors.IContextMenu;
  * This behavior adds a right-click event-handler to the component. 
  */
 public abstract class RightClickBehavior extends AbstractDefaultAjaxBehavior implements IContextMenu {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: $";
+
     private static final long serialVersionUID = 1L;
 
     public static final String MOUSE_X_PARAM = "HippoMouseX";
