@@ -33,10 +33,15 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
 
+import javax.transaction.xa.Xid;
 import org.apache.jackrabbit.rmi.client.ClientSession;
+import org.apache.jackrabbit.rmi.client.ClientXAResource;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 
+import org.apache.jackrabbit.rmi.remote.RemoteXAResource;
 import org.hippoecm.repository.SessionClassLoader;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
@@ -107,5 +112,81 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
 
     public ClassLoader getSessionClassLoader() throws RepositoryException {
         return new SessionClassLoader(this);
+    }
+
+    public XAResource getXAResource() {
+        try {
+            final RemoteXAResource resource = remote.getXAResource();
+            return new XAResource() {
+                public void commit(Xid arg0, boolean arg1) throws XAException {
+                    try {
+                        resource.commit(arg0, arg1);
+                    } catch (RemoteException ex) {
+                        throw new XAException(ex.getMessage());
+                    }
+                }
+                public void end(Xid arg0, int arg1) throws XAException {
+                    try {
+                        resource.end(arg0, arg1);
+                    } catch (RemoteException ex) {
+                        throw new XAException(ex.getMessage());
+                    }
+                }
+                public void forget(Xid arg0) throws XAException {
+                    try {
+                        resource.forget(arg0);
+                    } catch (RemoteException ex) {
+                        throw new XAException(ex.getMessage());
+                    }
+                }
+                public int getTransactionTimeout() throws XAException {
+                    try {
+                        return resource.getTransactionTimeout();
+                    } catch (RemoteException ex) {
+                        throw new XAException(ex.getMessage());
+                    }
+                }
+                public boolean isSameRM(XAResource arg0) throws XAException {
+                    return this == arg0;
+                }
+                public int prepare(Xid arg0) throws XAException {
+                    try {
+                        return resource.prepare(arg0);
+                    } catch (RemoteException ex) {
+                        throw new XAException(ex.getMessage());
+                    }
+                }
+                public Xid[] recover(int arg0) throws XAException {
+                    try {
+                        return resource.recover(arg0);
+                    } catch (RemoteException ex) {
+                        throw new XAException(ex.getMessage());
+                    }
+                }
+                public void rollback(Xid arg0) throws XAException {
+                    try {
+                        resource.rollback(arg0);
+                    } catch (RemoteException ex) {
+                        throw new XAException(ex.getMessage());
+                    }
+                }
+                public boolean setTransactionTimeout(int arg0) throws XAException {
+                    try {
+                        return resource.setTransactionTimeout(arg0);
+                    } catch (RemoteException ex) {
+                        throw new XAException(ex.getMessage());
+                    }
+                }
+                public void start(Xid arg0, int arg1) throws XAException {
+                    try {
+                        resource.start(arg0, arg1);
+                    } catch (RemoteException ex) {
+                        throw new XAException(ex.getMessage());
+                    }
+                }
+            };
+        } catch (RemoteException ex) {
+            return null;
+        }
     }
 }

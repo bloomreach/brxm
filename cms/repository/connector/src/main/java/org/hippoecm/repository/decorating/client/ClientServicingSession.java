@@ -33,6 +33,7 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
+import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
@@ -107,5 +108,9 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
 
     public ClassLoader getSessionClassLoader() throws RepositoryException {
         return new SessionClassLoader(this);
+    }
+
+    public XAResource getXAResource() {
+        return remote.getXAResource();
     }
 }
