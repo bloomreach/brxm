@@ -59,6 +59,9 @@ import org.slf4j.LoggerFactory;
  * A panel that displays the revision history of a document as a list.
  */
 public class RevisionHistoryView extends Panel implements IPagingDefinition {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = -6072417388871990194L;
 
     static final Logger log = LoggerFactory.getLogger(RevisionHistoryView.class);

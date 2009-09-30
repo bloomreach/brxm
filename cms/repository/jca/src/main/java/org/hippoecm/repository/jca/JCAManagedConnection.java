@@ -37,8 +37,9 @@ import org.hippoecm.repository.api.HippoSession;
  * This class implements the managed connection for
  * this resource adapter.
  */
-public final class JCAManagedConnection
-        implements ManagedConnection, ManagedConnectionMetaData {
+public final class JCAManagedConnection implements ManagedConnection, ManagedConnectionMetaData {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Managed connection factory.

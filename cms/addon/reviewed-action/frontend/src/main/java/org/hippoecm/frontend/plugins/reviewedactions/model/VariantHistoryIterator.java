@@ -34,6 +34,9 @@ import javax.jcr.version.VersionIterator;
  * secondary by version.
  */
 public class VariantHistoryIterator implements Iterator<Version> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private final Map<String, String> criteria;
 
     private Version current;

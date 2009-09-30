@@ -23,11 +23,12 @@ import javax.resource.spi.ResourceAdapterInternalException;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 
-
 /**
  * JCR ResourceAdapter.
  */
 public class JCAResourceAdapter implements ResourceAdapter {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private final XAResource[] xaResources = new XAResource[0];
 

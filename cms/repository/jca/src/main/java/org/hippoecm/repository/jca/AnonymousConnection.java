@@ -15,10 +15,11 @@
  */
 package org.hippoecm.repository.jca;
 
+import java.io.PrintWriter;
+
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
-
 import javax.security.auth.Subject;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
@@ -26,7 +27,6 @@ import javax.resource.spi.ConnectionEventListener;
 import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnectionMetaData;
 import javax.resource.ResourceException;
-import java.io.PrintWriter;
 
 /**
  * Implements a <code>ManagedConnection</code> for an anonymous user,
@@ -35,6 +35,8 @@ import java.io.PrintWriter;
  * @see JCAManagedConnectionFactory#createManagedConnection
  */
 public class AnonymousConnection implements ManagedConnection, XAResource {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Default transaction timeout, in seconds.

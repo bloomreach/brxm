@@ -27,6 +27,9 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceFactory;
 
 public class DialogServiceFactory implements IServiceFactory<IDialogService> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private IPluginContext context;

@@ -24,6 +24,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
 
 public class BrowseLinkTargetTest extends PluginTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testExistingTarget() throws Exception {
