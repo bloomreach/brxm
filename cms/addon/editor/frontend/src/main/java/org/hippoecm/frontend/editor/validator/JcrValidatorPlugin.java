@@ -28,6 +28,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
@@ -50,7 +51,7 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
     private IPluginConfig config;
     private Component component;
     private transient boolean validated = false;
-    private transient boolean isvalid = true;
+    private transient boolean isValid = true;
 
     public JcrValidatorPlugin(IPluginContext context, IPluginConfig config) {
         this.context = context;
@@ -85,11 +86,11 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
         if (!validated) {
             validate();
         }
-        return !isvalid;
+        return !isValid;
     }
 
     public void validate() {
-        isvalid = true;
+        isValid = true;
         IModelReference modelRef = context.getService(config.getString(RenderService.MODEL_ID), IModelReference.class);
         JcrNodeModel nodeModel = (JcrNodeModel) modelRef.getModel();
         try {
@@ -97,7 +98,7 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
             component.error("Problem while validating: " + ex.getMessage());
-            isvalid = false;
+            isValid = false;
         }
         validated = true;
     }
@@ -111,7 +112,7 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
             validateNodeType(node, mixin);
         }
     }
-
+    
     void validateNodeType(Node node, NodeType type) throws RepositoryException {
         for (PropertyDefinition propertyDefinition : type.getPropertyDefinitions()) {
             if (propertyDefinition.isMandatory()) {
@@ -121,22 +122,22 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
                     if (mandatory.getDefinition().isMultiple()) {
                         for (Value value : mandatory.getValues()) {
                             if (value.getString() == null || value.getString().equals("")) {
-                                isvalid = false;
-                                component.error("Mandatory field " + propName + " has no value.");
+                                isValid = false;
+                                component.error( new StringResourceModel("mandatory-value-empty", component, null, new Object[] { propName }).getString() );
                                 break;
                             }
                         }
                     } else {
                         Value value = mandatory.getValue();
                         if (value == null || value.getString() == null || value.getString().equals("")) {
-                            isvalid = false;
-                            component.error("Mandatory field " + propName + " has no value.");
+                            isValid = false;
+                            component.error( new StringResourceModel("mandatory-value-empty", component, null, new Object[] { propName }).getString() );
                             break;
                         }
                     }
                 } else if (!propertyDefinition.isAutoCreated() && !propertyDefinition.isProtected()) {
-                    isvalid = false;
-                    component.error("Mandatory field " + propName + "is not present");
+                    isValid = false;
+                    component.error(new StringResourceModel("mandatory-field-missing", component, null, new Object[] { propName }).getString() );
                     break;
                 }
             }
@@ -147,7 +148,8 @@ public class JcrValidatorPlugin implements IPlugin, IValidateService, IFeedbackM
                 if (!"*".equals(nodeName)) {
                     NodeIterator nodes = node.getNodes(nodeName);
                     if (!nodes.hasNext()) {
-                        component.error("Mandatory field " + nodeName + "is not present");
+                        isValid = false;
+                        component.error( new StringResourceModel("mandatory-field-missing", component, null, new Object[] { nodeName }).getString() );
                     }
                 }
             }
