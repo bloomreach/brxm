@@ -183,7 +183,7 @@ public class PluginContext implements IPluginContext, IDetachable {
 
     public void registerTracker(IServiceTracker<? extends IClusterable> listener, String name) {
         if (name == null) {
-            log.error("listener name is null");
+            log.warn("listener name is null");
         }
         if (!stopping) {
             List<IServiceTracker<? extends IClusterable>> list = listeners.get(name);

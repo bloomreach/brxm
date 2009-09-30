@@ -173,7 +173,7 @@ public class PluginManager implements IClusterable {
 
     public void registerTracker(IServiceTracker listener, String name) {
         if (name == null) {
-            log.error("listener name is null");
+            log.warn("listener name is null");
             return;
         } else {
             log.debug("registering listener " + listener + " for " + name);
