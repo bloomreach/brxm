@@ -23,6 +23,7 @@ import java.rmi.RemoteException;
 import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
@@ -41,4 +42,5 @@ public interface RemoteServicingSession extends RemoteSession, Remote, Serializa
     public void importDereferencedXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, RepositoryException, RemoteException;
 
+    public XAResource getXAResource();
 }

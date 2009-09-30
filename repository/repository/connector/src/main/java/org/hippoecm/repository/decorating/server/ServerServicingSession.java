@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
@@ -84,5 +85,9 @@ public class ServerServicingSession extends ServerSession implements RemoteServi
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }
+    }
+
+    public XAResource getXAResource() {
+        return session.getXAResource();
     }
 }

@@ -37,6 +37,7 @@
     <module>connector</module>
     <module>engine</module>
     <module>modules</module>
+    <module>jca</module>
     <module>test</module>
     <module>application</module>
   </modules>
