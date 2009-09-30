@@ -225,7 +225,6 @@ public class FolderTreePlugin extends RenderPlugin {
             }
 
             treeState.selectNode((TreeNode) treePath.getLastPathComponent(), true);
-            redraw();
         }
     }
 

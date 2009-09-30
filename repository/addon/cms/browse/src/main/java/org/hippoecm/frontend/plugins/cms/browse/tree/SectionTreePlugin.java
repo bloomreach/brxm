@@ -112,7 +112,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         for (String extension : extensions) {
             sections.add(new Section(extension));
         }
-        
+
         if (!toggleBehaviour) {
             findSectionForInitialFocus = true;
         }
@@ -167,9 +167,9 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     @Override
     public void onBeforeRender() {
-        if(findSectionForInitialFocus) {
+        if (findSectionForInitialFocus) {
             IRenderService renderer = findFocus();
-            if(renderer != null) {
+            if (renderer != null) {
                 renderer.focus(null);
             } else {
                 focusSection(sections.get(0), false);
@@ -192,8 +192,9 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         if (child != null) {
             for (Section section : sections) {
                 if (section.extPt.getChildren().contains(child)) {
-                    focusSection(section, false);
-                    redraw();
+                    if (focusSection(section, false)) {
+                        redraw();
+                    }
                     break;
                 }
             }
@@ -206,24 +207,24 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     protected void onModelChanged() {
         super.onModelChanged();
         IRenderService renderer = findFocus();
-        if(renderer != null) {
+        if (renderer != null) {
             renderer.focus(null);
         }
     }
 
     private IRenderService findFocus() {
         JcrNodeModel model = (JcrNodeModel) getModel();
-        if(model == null || model.getItemModel() == null || model.getItemModel().getPath() == null) {
+        if (model == null || model.getItemModel() == null || model.getItemModel().getPath() == null) {
             return null;
         }
-        
+
         int matchLength = 0;
         IRenderService renderer = null;
         for (Section section : sections) {
             if (section.extPt.getChildren().size() > 0) {
                 IRenderService renderService = section.extPt.getChildren().get(0);
-                IModelReference modelService = getPluginContext().getService(getPluginContext().getReference(renderService).getServiceId(),
-                        IModelReference.class);
+                IModelReference modelService = getPluginContext().getService(
+                        getPluginContext().getReference(renderService).getServiceId(), IModelReference.class);
                 if (modelService != null) {
                     IModel sectionModel = modelService.getModel();
                     if (sectionModel instanceof JcrNodeModel) {
@@ -243,21 +244,47 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         return renderer;
     }
 
-    private void focusSection(Section section, boolean toggle) {
+    private boolean focusSection(Section section, boolean toggle) {
+        boolean dirty = false;
         if (toggleBehaviour) {
             if (toggle) {
                 section.focussed = !section.focussed;
+                dirty = true;
             } else {
-                section.focussed = true;
+                if (!section.focussed) {
+                    section.focussed = true;
+                    dirty = true;
+                }
             }
         } else {
             for (Section curSection : sections) {
-                curSection.focussed = (curSection == section);
+                if (curSection == section) {
+                    if (!curSection.focussed) {
+                        curSection.focussed = true;
+                        dirty = true;
+                    }
+                } else {
+                    if (curSection.focussed) {
+                        curSection.focussed = false;
+                        dirty = true;
+                    }
+                }
             }
         }
         for (Section curSection : sections) {
-            curSection.selected = (curSection == section);
+            if (curSection == section) {
+                if (!curSection.selected) {
+                    curSection.selected = true;
+                    dirty = true;
+                }
+            } else {
+                if (curSection.selected) {
+                    curSection.selected = false;
+                    dirty = true;
+                }
+            }
         }
+        return dirty;
     }
 
 }
