@@ -46,19 +46,7 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-    
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
+ 
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
@@ -96,106 +84,8 @@
     </dependency>
     
     <!-- Test dependencies -->
-    
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.1_spec</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>commons-configuration</groupId>
-      <artifactId>commons-configuration</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <!--
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
-      <scope>test</scope>
-    </dependency>
-    -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-connector</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-      <artifactId>hst-addon-cnd_7_1</artifactId>
-      <version>${pom.version}</version>
-      <scope>test</scope>   
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-repository</artifactId>
-      <version>${pom.version}</version>
-      <scope>test</scope>      
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-testcontents</artifactId>
-      <version>${pom.version}</version>
-      <scope>test</scope>      
-    </dependency>
-    
+ 
+ 
   </dependencies>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemProperties>
-            <property>
-              <name>test.properties.resource</name>
-              <value>file:${basedir}/../build.properties</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   
 </project>
