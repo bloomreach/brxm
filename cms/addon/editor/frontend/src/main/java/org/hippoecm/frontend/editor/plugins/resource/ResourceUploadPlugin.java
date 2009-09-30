@@ -21,6 +21,7 @@ import java.util.Calendar;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -29,6 +30,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
+import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -74,14 +76,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
 
             add(fileUploadField = new FileUploadField("fileInput"));
 
-            add(new Button("submit", new StringResourceModel("upload", ResourceUploadPlugin.this, null)) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void onSubmit() {
-                    FileUploadForm.this.onSubmit();
-                }
-            });
+            add(new Button("submit", new StringResourceModel("upload", ResourceUploadPlugin.this, null)));
         }
 
         @Override
@@ -90,6 +85,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
             if (upload != null) {
                 String fileName = upload.getClientFileName();
                 String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+                
                 String type = types.getString(extension);
                 if (type != null) {
                     JcrNodeModel nodeModel = (JcrNodeModel) ResourceUploadPlugin.this.getModel();
@@ -98,8 +94,6 @@ public class ResourceUploadPlugin extends RenderPlugin {
                         node.setProperty("jcr:mimeType", type);
                         node.setProperty("jcr:data", upload.getInputStream());
                         node.setProperty("jcr:lastModified", Calendar.getInstance());
-
-                        node.save();
                     } catch (RepositoryException ex) {
                         // FIXME: report back to user
                         log.error(ex.getMessage());
@@ -108,6 +102,16 @@ public class ResourceUploadPlugin extends RenderPlugin {
                         log.error(ex.getMessage());
                     }
                 } else {
+                    String extensions = StringUtils.join(types.keySet().toArray(), ", ");
+                    getDialogService().show(
+                            new ExceptionDialog(new StringResourceModel("unrecognized", ResourceUploadPlugin.this,
+                                    null, new Object[] { extension, extensions }).getString()) {
+
+                                public IValueMap getProperties() {
+                                    return SMALL;
+                                }
+
+                            });
                     log.warn("Unrecognised file type");
                 }
             }
