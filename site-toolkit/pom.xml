@@ -66,7 +66,8 @@
     <dom4j.version>1.6.1</dom4j.version>
 
     <xml-apis.version>2.0.2</xml-apis.version>
-    <xerces.version>2.3.0</xerces.version>
+    <xerces.version>2.4.0</xerces.version>
+    <xercesImpl.version>2.9.1</xercesImpl.version>
     <xalan.version>2.4.1</xalan.version>
 
     <commons-lang.version>2.4</commons-lang.version>
@@ -359,10 +360,10 @@
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
-        <version>${xerces.version}</version>
+        <version>${xercesImpl.version}</version>
         <scope>runtime</scope>
       </dependency>
-      
+
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xerces</artifactId>
