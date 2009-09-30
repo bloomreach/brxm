@@ -31,6 +31,7 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
+import javax.transaction.xa.XAResource;
 
 /**
  * An extension of a plain javax.jcr.Session based session.  Any session as obtained from the Hippo Repository 2 can be cased to
@@ -41,11 +42,12 @@ public interface HippoSession extends Session {
     final static String SVN_ID = "$Id$";
 
     /**
-     * Copy performs an in-session deep copy of the indicated node to the target destination path and returns a Node 
-     * @param original
-     * @param absPath
-     * @return
-     * @throws javax.jcr.RepositoryException
+     * Convenience function to copy a node to a destination path in the same workspace
+     *
+     * @param srcNode the source path node to copy
+     * @param destAbsNodePath the absolute path of the to be created target
+     * node which will be a copy of srcNode
+     * @return the resulting copy
      */
     public Node copy(Node original, String absPath) throws RepositoryException;
 
@@ -126,6 +128,15 @@ public interface HippoSession extends Session {
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException;
+
+    /**
+     * Retrieves an {@link XAResource} object that the transaction manager
+     * will use to manage this XASession object's participation in
+     * a distributed transaction.
+     *
+     * @return the {@link XAResource} object.
+     */
+    public XAResource getXAResource();
 
     /**
      * FIXME WARNING this call is not yet part of the API.
