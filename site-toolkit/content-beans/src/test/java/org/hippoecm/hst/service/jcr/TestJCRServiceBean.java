@@ -56,10 +56,8 @@ public class TestJCRServiceBean extends AbstractBeanTestCase {
         TextPage t = ServiceFactory.create(node, TextPage.class);
         
         assertNotNull("title property is null!", t.getTitle());
-        System.out.println(t.getTitle());
         
         assertNotNull("summary property is null!", t.getSummary());
-        System.out.println(t.getSummary());
         
         byte [] bytes = SerializationUtils.serialize((Serializable) t);
         TextPage t2 = (TextPage) SerializationUtils.deserialize(bytes);
@@ -71,7 +69,6 @@ public class TestJCRServiceBean extends AbstractBeanTestCase {
         
         Service underlyingService = t.getUnderlyingService();
         assertNotNull("The underlying service is null!", underlyingService);
-        System.out.println("The underlying service: " + underlyingService);
     }
         
     @Test
@@ -84,10 +81,8 @@ public class TestJCRServiceBean extends AbstractBeanTestCase {
         
         assertTrue("the returned class is not implementation delegatee class.", t instanceof TextPageImpl);
         assertNotNull("title property is null!", t.getTitle());
-        System.out.println(t.getTitle());
         
         assertNotNull("summary property is null!", t.getSummary());
-        System.out.println(t.getSummary());
         
         byte [] bytes = SerializationUtils.serialize((Serializable) t);
         TextPage t2 = (TextPage) SerializationUtils.deserialize(bytes);
@@ -99,6 +94,5 @@ public class TestJCRServiceBean extends AbstractBeanTestCase {
         
         Service underlyingService = t.getUnderlyingService();
         assertNotNull("The underlying service is null!", underlyingService);
-        System.out.println("The underlying service: " + underlyingService);
     }
 }

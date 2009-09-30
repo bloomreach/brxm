@@ -99,8 +99,6 @@ public class Action extends GenericResourceServingHstComponent {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("[HstComponent: " + getClass().getName() + "] doAction() with params: " + request.getParameterMap());
-            
             String sort = request.getParameter("sort");
             String redirect = request.getParameter("redirect");
             

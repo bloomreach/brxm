@@ -174,8 +174,6 @@ public class TestDynaBeanProxyUtils {
         assertNotNull(xml);
         assertTrue(xml.startsWith("<bean>"));
         assertTrue(xml.endsWith("</bean>"));
-        System.out.println("xml: " + xml);
-
     }
     
     @Test

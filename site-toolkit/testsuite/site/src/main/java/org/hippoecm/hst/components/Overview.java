@@ -32,11 +32,8 @@ public class Overview extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         
-       // System.out.println(this.getParameters(request));
-        
         HippoBean hippoBean = this.getContentBean(request);
 
-        
         // how to get a list of documents of some specific bean
         List<NewsPage> news = ((HippoFolder)hippoBean).getDocuments(NewsPage.class);
         

@@ -39,7 +39,6 @@ public class TestDOMUtils {
 
         String stringified = DOMUtils.stringifyElement((org.dom4j.Element) element);
 
-        System.out.println("stringified: " + stringified);
         assertTrue("element name is different.", stringified.contains("<script "));
         assertTrue("id attribute does not exist.", stringified.contains("id=\"my-test-javascript\""));
         assertTrue("type attribute does not exist.", stringified.contains("type=\"text/javascript\""));
@@ -55,7 +54,6 @@ public class TestDOMUtils {
 
         stringified = DOMUtils.stringifyElement((org.dom4j.Element) element);
 
-        System.out.println("stringified: " + stringified);
         assertTrue("element name is different.", stringified.contains("<script "));
         assertTrue("id attribute does not exist.", stringified.contains("id=\"my-test-javascript\""));
         assertTrue("type attribute does not exist.", stringified.contains("type=\"text/javascript\""));
@@ -80,7 +78,6 @@ public class TestDOMUtils {
         }
 
         stringified = writer.toString();
-        System.out.println("stringified: " + stringified);
         assertTrue("element name is different.", stringified.contains("<script "));
         assertTrue("id attribute does not exist.", stringified.contains("id=\"my-test-javascript\""));
         assertTrue("type attribute does not exist.", stringified.contains("type=\"text/javascript\""));

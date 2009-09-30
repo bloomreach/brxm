@@ -30,9 +30,7 @@ public class TestHstNavigationalStateCodec {
         HstNavigationalStateCodec codec = new HstNavigationalStateCodecImpl();
         String params = "a=1&b=2&path=/test/a.jsp";
         String encoded = codec.encodeParameters(params, null);
-        System.out.println("encoded: " + encoded);
         String decoded = codec.decodeParameters(encoded, null);
-        System.out.println("decoded: " + decoded);
         assertEquals(params, decoded);
     }
 

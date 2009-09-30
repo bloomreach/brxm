@@ -90,11 +90,6 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
         
-        System.out.println("node: " + productsPage.getNode());
-        System.out.println("path: " + productsPage.getPath());
-        System.out.println("title: " + productsPage.getTitle());
-        System.out.println("body: " + productsPage.getBody().getContent());
-        
         session.logout();
     }
     

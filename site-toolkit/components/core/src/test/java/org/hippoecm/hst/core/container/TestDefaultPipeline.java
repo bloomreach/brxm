@@ -106,7 +106,6 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         
         String content = ((MockHttpServletResponse) this.servletResponse).getContentAsString();
         assertTrue("The content of HTTP response is null or empty!", content != null && !"".equals(content.trim()));
-        System.out.println("[HTTP Response] >>> " + content + " <<<");
     }
     
     
@@ -127,7 +126,6 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         
         String content = ((MockHttpServletResponse) this.servletResponse).getContentAsString();
         assertTrue("The content of HTTP response is null or empty!", content != null && !"".equals(content.trim()));
-        System.out.println("[HTTP Response] >>> " + content + " <<<");
     }
     
     class NewsOverview extends GenericHstComponent {

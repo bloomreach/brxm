@@ -44,8 +44,6 @@ public class HstMockJspServlet extends HttpServlet {
         
         StringBuilder content = new StringBuilder().append("JSP output from the page: " + myPath);
         
-        System.out.println(content);
-        
         PrintWriter out = res.getWriter();
         
         out.println("START:" + content);
