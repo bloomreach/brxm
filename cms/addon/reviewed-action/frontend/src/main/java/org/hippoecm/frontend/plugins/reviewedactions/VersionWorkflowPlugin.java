@@ -138,20 +138,25 @@ public class VersionWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace())
                         .getWorkflowManager();
 
+                Node unpublished = null;
                 Node document = null;
                 NodeIterator docs = handle.getNodes(handle.getName());
                 while (docs.hasNext()) {
-                    Node node = docs.nextNode();
-                    if (node.hasProperty("hippostd:state")
-                            && "unpublished".equals(node.getProperty("hippostd:state").getString())) {
-                        document = node;
+                    document = docs.nextNode();
+                    if (document.hasProperty("hippostd:state")
+                            && "unpublished".equals(document.getProperty("hippostd:state").getString())) {
+                        unpublished = document;
                     }
                 }
 
-                if (document != null) {
+                if (document == null) {
+                    return "document has been deleted";
+                }
+
+                if (unpublished != null) {
                     // create a revision to prevent loss of content from unpublished.
                     VersionWorkflow versionWorkflow = (VersionWorkflow) workflowManager.getWorkflow("versioning",
-                            document);
+                            unpublished);
                     versionWorkflow.version();
                 }
 
