@@ -6,7 +6,7 @@
  * component update
  * </p>
  * @namespace YAHOO.hippo
- * @requires yahoo, hashmap
+ * @requires yahoo, dom, hashmap
  * @module hippoajax
  * @beta
  */
