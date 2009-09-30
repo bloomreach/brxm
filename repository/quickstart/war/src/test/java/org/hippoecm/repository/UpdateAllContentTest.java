@@ -265,7 +265,7 @@ public class UpdateAllContentTest extends TestCase {
     cargo4.put("defaultcontent:event", new LinkedList<Change>());
     cargo4.put("defaultcontent:news", new LinkedList<Change>());
     cargo4.put("defaultcontent:overview", new LinkedList<Change>());
-    list.add(new Change(ChangeType.ADDITION,"defaultcontent:ydob","/hippo:namespaces/defaultcontent/article/hipposysedit:prototypes/hipposysedit:prototype[3]/defaultcontent:ydob"));
+    list.add(new Change(ChangeType.ADDITION,"defaultcontent:ydob","/hippo:namespaces/defaultcontent/article/hipposysedit:prototypes/hipposysedit:prototype[2]/defaultcontent:ydob"));
 
     Node editorNamespaceFolder = session.getRootNode().getNode("hippo:namespaces/defaultcontent");
     WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
