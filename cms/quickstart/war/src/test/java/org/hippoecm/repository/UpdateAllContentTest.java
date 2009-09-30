@@ -60,7 +60,7 @@ public class UpdateAllContentTest extends TestCase {
   @Test
   public void doTest() throws Exception {
     String cnd1 = "<nt='http://www.jcp.org/jcr/nt/1.0'>"
-	+ "<hippostd='http://www.hippoecm.org/hippostd/nt/1.3'>"
+	+ "<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>"
 	+ "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"
 	+ "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.5'>"
 	+ ""
@@ -95,7 +95,7 @@ public class UpdateAllContentTest extends TestCase {
 	+ "- defaultcontent:introduction (string)"
 	+ "";
     String cnd2 = "<nt='http://www.jcp.org/jcr/nt/1.0'>"
-	+ "<hippostd='http://www.hippoecm.org/hippostd/nt/1.3'>"
+	+ "<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>"
 	+ "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"
 	+ "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.6'>"
 	+ ""
@@ -130,7 +130,7 @@ public class UpdateAllContentTest extends TestCase {
 	+ "- defaultcontent:introduction (string)"
 	+ "";
     String cnd3 = "<nt='http://www.jcp.org/jcr/nt/1.0'>"
-	+ "<hippostd='http://www.hippoecm.org/hippostd/nt/1.3'>"
+	+ "<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>"
 	+ "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"
 	+ "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.7'>"
 	+ ""
@@ -166,7 +166,7 @@ public class UpdateAllContentTest extends TestCase {
 	+ "- defaultcontent:introduction (string)"
 	+ "";
     String cnd4 = "<nt='http://www.jcp.org/jcr/nt/1.0'>"
-	+ "<hippostd='http://www.hippoecm.org/hippostd/nt/1.3'>"
+	+ "<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>"
 	+ "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"
 	+ "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.8'>"
 	+ ""
@@ -203,7 +203,7 @@ public class UpdateAllContentTest extends TestCase {
 	+ "- defaultcontent:introduction (string)"
 	+ "";
     String cnd5 = "<nt='http://www.jcp.org/jcr/nt/1.0'>"
-	+ "<hippostd='http://www.hippoecm.org/hippostd/nt/1.3'>"
+	+ "<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>"
 	+ "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"
 	+ "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.9'>"
 	+ ""

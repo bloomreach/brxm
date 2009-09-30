@@ -18,8 +18,8 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
-<hippostd='http://www.hippoecm.org/hippostd/nt/1.3'>
-<hippogallery='http://www.hippoecm.org/hippogallery/nt/1.3'>
+<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<hippogallery='http://www.onehippo.org/jcr/hippogallery/nt/2.0'>
 
 [hippogallery:exampleImageSet] > hippo:document
 + hippogallery:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
@@ -32,6 +32,6 @@
 + hippogallery:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
 + hippogallery:picture (hippo:resource) = hippo:resource
 
-[hippogallery:stdImageGallery] > hippostd:gallery
+[hippogallery:stdImageGallery] > hippostd:gallery orderable
 
-[hippogallery:stdAssetGallery] > hippostd:gallery
+[hippogallery:stdAssetGallery] > hippostd:gallery orderable

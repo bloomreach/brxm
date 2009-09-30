@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 <sv:node xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
-         xmlns:defaultcontent="http://www.hippoecm.org/defaultcontent/nt/1.4"
+         xmlns:defaultcontent="http://www.hippoecm.org/defaultcontent/nt/1.5"
          xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4"
          xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
          xmlns:hipposysedit="http://www.onehippo.org/jcr/hipposysedit/nt/1.0"
@@ -47,7 +47,7 @@
         <sv:value>5db53ee8-5318-4bbb-b061-e4fa26c42918</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
-        <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.4</sv:value>
+        <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.5</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
         <sv:value>true</sv:value>
