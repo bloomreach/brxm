@@ -885,10 +885,10 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor .hippo-editor-template-field-edit table tr td{color: #b2b2b2; padding: 2px; }
 
 .hippo-editor .hippo-editor-template-field-new {height: 200px; overflow: auto;}
-.hippo-editor .hippo-editor-template-field-new li{list-style-type: none; margin-bottom: 5px;}
+.hippo-editor .hippo-editor-template-field-new li{list-style-type: none; margin-bottom: 5px;padding-top: 4px; padding-bottom: 2px;}
 .hippo-editor .hippo-editor-template-field-new li span em,
 .hippo-editor .hippo-editor-template-field-new li a{
-background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat;padding-top: 4px; padding-bottom: 2px; padding-left: 20px; display: block}
+background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat;padding-left: 20px; display: inline;}
 .hippo-editor .hippo-editor-template-field-new li a:hover{text-decoration: underline}
 /* .hippo-editor .hippo-editor-template-field-new li span em{display: none;} */
 .hippo-editor-template-field-edit{padding-left: 15px; padding-right: 15px; padding-top: 10px; padding-bottom: 5px;}
