@@ -76,17 +76,15 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     protected final static IValueMap MEDIUM = new ValueMap("width=475,height=375");
     protected final static IValueMap LARGE = new ValueMap("width=855,height=450");
 
+    static private IMarkupCacheKeyProvider cacheKeyProvider = new DefaultMarkupCacheKeyProvider();
+    static private IMarkupResourceStreamProvider streamProvider = new DefaultMarkupResourceStreamProvider();
+
     @SuppressWarnings("unchecked")
     private class Container extends Panel implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
         private static final long serialVersionUID = 1L;
 
-        private IMarkupCacheKeyProvider cacheKeyProvider;
-        private IMarkupResourceStreamProvider streamProvider;
-
         public Container(String id) {
             super(id);
-            cacheKeyProvider = new DefaultMarkupCacheKeyProvider();
-            streamProvider = new DefaultMarkupResourceStreamProvider();
         }
 
         public String getCacheKey(MarkupContainer container, Class containerClass) {

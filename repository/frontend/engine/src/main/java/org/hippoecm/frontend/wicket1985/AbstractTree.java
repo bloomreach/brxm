@@ -44,9 +44,9 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.markup.html.tree.BaseTree;
-import org.apache.wicket.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.string.AppendingStringBuffer;
@@ -595,6 +595,10 @@ public abstract class AbstractTree extends Panel implements ITreeStateListener, 
 	public void onDetach()
 	{
 		attached = false;
+		if (state instanceof IDetachable)
+		{
+		    ((IDetachable) state).detach();
+		}
 		super.onDetach();
 	}
 

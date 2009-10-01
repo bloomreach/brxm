@@ -53,9 +53,6 @@ public class MirrorTemplatePlugin extends RenderPlugin {
     public MirrorTemplatePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrNodeModel jcrNodeModel = (JcrNodeModel) getModel();
-        Node node = jcrNodeModel.getNode();
-
         IModel displayModel = new Model() {
             private static final long serialVersionUID = 1L;
 
@@ -82,61 +79,53 @@ public class MirrorTemplatePlugin extends RenderPlugin {
         };
 
         mode = config.getString("mode", "view");
-        try {
-            if ("edit".equals(mode)) {
-                final List<String> nodetypes = new ArrayList<String>();
-                if (config.getStringArray("nodetypes") != null) {
-                    String[] nodeTypes = config.getStringArray("nodetypes");
-                    nodetypes.addAll(Arrays.asList(nodeTypes));
-                }
-                if (nodetypes.size() == 0) {
-                    log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
-                }
-                final JcrPropertyValueModel docbaseModel = new JcrPropertyValueModel(new JcrPropertyModel(node
-                        .getProperty("hippo:docbase")));
-                //add(new TextFieldWidget("docbase", docbaseModel));
-                IDialogFactory dialogFactory = new IDialogFactory() {
-                    private static final long serialVersionUID = 1L;
-
-                    public AbstractDialog createDialog() {
-                        return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel() {
-                            private static final long serialVersionUID = 1L;
-
-                            public Object getObject() {
-                                return docbaseModel.getObject();
-                            }
-
-                            public void setObject(Object object) {
-                                docbaseModel.setObject(object);
-                                redraw();
-                            }
-
-                            public IModel getChainedModel() {
-                                return docbaseModel;
-                            }
-
-                            public void setChainedModel(IModel model) {
-                                throw new UnsupportedOperationException("Value model cannot be changed");
-                            }
-
-                            public void detach() {
-                                docbaseModel.detach();
-                            }
-                        }, nodetypes);
-                    }
-                };
-                add(new DialogLink("docbase", displayModel, dialogFactory, getDialogService()));
-            } else {
-                add(new Label("docbase", displayModel));
+        if ("edit".equals(mode)) {
+            final List<String> nodetypes = new ArrayList<String>();
+            if (config.getStringArray("nodetypes") != null) {
+                String[] nodeTypes = config.getStringArray("nodetypes");
+                nodetypes.addAll(Arrays.asList(nodeTypes));
             }
-        } catch (PathNotFoundException ex) {
-            log.error("failed to read existing facet select", ex);
-        } catch (ValueFormatException ex) {
-            log.error("failed to read existing facet select", ex);
-        } catch (RepositoryException ex) {
-            log.error("failed to read existing facet select", ex);
-        }
+            if (nodetypes.size() == 0) {
+                log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
+            }
+            //add(new TextFieldWidget("docbase", docbaseModel));
+            IDialogFactory dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
 
+                public AbstractDialog createDialog() {
+                    JcrNodeModel jcrNodeModel = (JcrNodeModel) MirrorTemplatePlugin.this.getModel();
+                    final JcrPropertyValueModel docbaseModel = new JcrPropertyValueModel(new JcrPropertyModel(
+                            jcrNodeModel.getItemModel().getPath() + "/hippo:docbase"));
+                    return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel() {
+                        private static final long serialVersionUID = 1L;
+
+                        public Object getObject() {
+                            return docbaseModel.getObject();
+                        }
+
+                        public void setObject(Object object) {
+                            docbaseModel.setObject(object);
+                            redraw();
+                        }
+
+                        public IModel getChainedModel() {
+                            return docbaseModel;
+                        }
+
+                        public void setChainedModel(IModel model) {
+                            throw new UnsupportedOperationException("Value model cannot be changed");
+                        }
+
+                        public void detach() {
+                            docbaseModel.detach();
+                        }
+                    }, nodetypes);
+                }
+            };
+            add(new DialogLink("docbase", displayModel, dialogFactory, getDialogService()));
+        } else {
+            add(new Label("docbase", displayModel));
+        }
         setOutputMarkupId(true);
     }
 }

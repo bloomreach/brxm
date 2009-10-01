@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.editor.tools.JcrPrototypeStore;
@@ -42,7 +43,7 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateEngine implements ITemplateEngine {
+public class TemplateEngine implements ITemplateEngine, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -50,17 +51,15 @@ public class TemplateEngine implements ITemplateEngine {
 
     static Logger log = LoggerFactory.getLogger(TemplateEngine.class);
 
-    private IPluginContext context;
+    private JcrTypeStore jcrTypeStore;
     private IStore<ITypeDescriptor> typeStore;
-    private IStore<IClusterConfig> jcrTemplateStore;
+    private JcrTemplateStore jcrTemplateStore;
     private IStore<IClusterConfig> builtinTemplateStore;
     private JcrPrototypeStore prototypeStore;
     private EditableTypes editableTypes;
 
     public TemplateEngine(IPluginContext context) {
-        this.context = context;
-
-        final JcrTypeStore jcrTypeStore = new JcrTypeStore();
+        jcrTypeStore = new JcrTypeStore();
         final BuiltinTypeStore builtinTypeStore = new BuiltinTypeStore();
         jcrTypeStore.setTypeLocator(new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore }));
         typeStore = new IStore<ITypeDescriptor>() {
@@ -118,6 +117,9 @@ public class TemplateEngine implements ITemplateEngine {
         if (model instanceof JcrNodeModel) {
             try {
                 Node node = ((JcrNodeModel) model).getNode();
+                if (node == null) {
+                    throw new TemplateEngineException("Invalid model, node does not exist");
+                }
                 // prototype has primary type "nt:unstructured"; look up real type
                 // by finding the containing templatetype.
                 if (node.getPath().startsWith("/hippo:namespaces")
@@ -169,6 +171,13 @@ public class TemplateEngine implements ITemplateEngine {
             editableTypes = new EditableTypes();
         }
         return editableTypes;
+    }
+
+    public void detach() {
+        jcrTemplateStore.detach();
+        jcrTypeStore.detach();
+        prototypeStore.detach();
+        editableTypes = null;
     }
 
 }

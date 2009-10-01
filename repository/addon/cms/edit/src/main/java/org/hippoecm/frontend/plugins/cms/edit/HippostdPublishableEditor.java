@@ -175,4 +175,11 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
         return null;
     }
 
+    @Override
+    public void detach() {
+        if (editorModel != null) {
+            editorModel.detach();
+        }
+        super.detach();
+    }
 }

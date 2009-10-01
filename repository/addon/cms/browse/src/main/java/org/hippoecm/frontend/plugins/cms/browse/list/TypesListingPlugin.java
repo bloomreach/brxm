@@ -24,9 +24,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -41,6 +43,7 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
+import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
@@ -58,8 +61,12 @@ public class TypesListingPlugin extends AbstractListingPlugin {
 
     static final Logger log = LoggerFactory.getLogger(TypesListingPlugin.class);
 
+    private JcrTypeStore typeStore;
+
     public TypesListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        typeStore = new JcrTypeStore();
     }
 
     @Override
@@ -77,7 +84,7 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         columns.add(column);
 
         column = new ListColumn(new StringResourceModel("typeslisting-type", this, null), null);
-        column.setRenderer(new TemplateTypeRenderer());
+        column.setRenderer(new TemplateTypeRenderer(typeStore));
         columns.add(column);
 
         column = new ListColumn(new StringResourceModel("typeslisting-state", this, null), "state");
@@ -93,37 +100,71 @@ public class TypesListingPlugin extends AbstractListingPlugin {
     protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
             ISortableDataProvider dataProvider, TableSelectionListener selectionListener, final boolean triState,
             ListPagingDefinition pagingDefinition) {
-        return new ListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected IObserver newObserver(final Item item, IModel model) {
-                if (model instanceof JcrNodeModel) {
-                    Node node = ((JcrNodeModel) model).getNode();
-                    try {
-                        if (node != null && node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                            final JcrNodeModel nodeModel = new JcrNodeModel(node
-                                    .getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE));
-                            return new IObserver() {
-                                private static final long serialVersionUID = 7399282716376782006L;
-
-                                public IObservable getObservable() {
-                                    return nodeModel;
-                                }
-
-                                public void onEvent(Iterator<? extends IEvent> events) {
-                                    redrawItem(item);
-                                }
-
-                            };
-                        }
-                    } catch (RepositoryException ex) {
-                        log.error(ex.getMessage(), ex);
-                    }
-                }
-                return super.newObserver(item, model);
-            }
-        };
+        return new TypesDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
+    @Override
+    protected void onDetach() {
+        typeStore.detach();
+        super.onDetach();
+    }
+
+    private class TypesDataTable extends ListDataTable {
+        private static final long serialVersionUID = 1L;
+
+        private TypesDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
+                TableSelectionListener selectionListener, boolean triState, IPagingDefinition pagingDefinition) {
+            super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+        }
+
+        void redraw(Item item) {
+            redrawItem(item);
+        }
+        
+        @Override
+        protected IObserver newObserver(final Item item, IModel model) {
+            if (model instanceof JcrNodeModel) {
+                Node node = ((JcrNodeModel) model).getNode();
+                try {
+                    if (node != null && node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                        JcrNodeModel nodeModel = new JcrNodeModel(node
+                                .getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE));
+                        return new TypeObserver(this, item, nodeModel);
+                    }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage(), ex);
+                }
+            }
+            return super.newObserver(item, model);
+        }
+    }
+
+    private class TypeObserver implements IObserver, IDetachable {
+        private static final long serialVersionUID = 7399282716376782006L;
+
+        private TypesDataTable table;
+        private Item item;
+        private JcrNodeModel nodeModel;
+        
+        TypeObserver(TypesDataTable table, Item item, JcrNodeModel model) {
+            this.table = table;
+            this.item = item;
+            this.nodeModel = model;
+        }
+        
+        public IObservable getObservable() {
+            return nodeModel;
+        }
+
+        @SuppressWarnings("unchecked")
+        public void onEvent(Iterator<? extends IEvent> events) {
+            table.redraw(item);
+        }
+
+        public void detach() {
+            nodeModel.detach();
+        }
+
+    }
+    
 }

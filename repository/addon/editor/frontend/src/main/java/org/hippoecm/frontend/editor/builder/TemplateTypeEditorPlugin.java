@@ -26,21 +26,26 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.EditorException;
+import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateTypeEditorPlugin extends RenderPlugin {
+public class TemplateTypeEditorPlugin extends RenderPlugin implements IRefreshable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -133,6 +138,8 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
             throw new RuntimeException("Failed to initialize", e);
         }
 
+        context.registerService(this, IRefreshable.class.getName());
+
         onModelChanged();
     }
 
@@ -218,6 +225,29 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
             builder.detach();
         }
         super.onDetach();
+    }
+
+    public void refresh() {
+        if (builder != null) {
+            try {
+                // prototype changes in an update-all-content
+                if (builder.getPrototype().getObject() == null) {
+                    if (!IEditor.Mode.EDIT.equals(getPluginConfig().getString("mode"))) {
+                        modelChanged();
+                    } else {
+                        IEditor editor = getPluginContext().getService(getPluginConfig().getString("editor.id"),
+                                IEditor.class);
+                        if (editor != null) {
+                            editor.setMode(IEditor.Mode.VIEW);
+                        }
+                    }
+                }
+            } catch (BuilderException e) {
+                log.warn("Could not find prototype", e);
+            } catch (EditorException e) {
+                log.warn("Could not set editor mode", e);
+            }
+        }
     }
 
 }
