@@ -82,17 +82,20 @@ public class ISO9075Helper {
      */
     private ISO9075Helper() {};
 
-    static public String encodeLocalName(String name) {
+    public static String encodeLocalName(String name) {
         return encodeColon(encode(name));
     }
+
     public static String decodeLocalName(String name) {
         return decode(name);
     }
 
-    static public String encodeColon(String name) {
+
+    public static String encodeColon(String name) {
         return name.replaceAll(colon,colonISO9075);
     }
-    static public String decodeColon(String name) {
+
+    public static String decodeColon(String name) {
         return name.replaceAll(colonISO9075,colon);
     }
 

@@ -18,15 +18,15 @@ package org.hippoecm.repository.api;
 import java.io.Serializable;
 
 /**
- * A plain old Java object representing a document in a JCR repository.
- * See {@link DocumentManager} on how to obtain a document instance.
+ * A Plain Old Java Object (POJO) representing a document in a JCR repository.
+ * Instances of this object can be returned by workflow calls to indicate to the callee which document has been created or otherwise affected.
+ * See {@link DocumentManager} on how to obtain a document instance manually.
  * </p>
  * Workflows returning specific implementation of a document
  * object will notice that the caller of the workflow gets only a simple Document object back, however through the
  * DocumentManager more complex Document based objects may be obtained.  The Document as returned by workflow calls
  * are only useful in subseqent calls to the workflowmanager to return a new workflow, or from a document the
  * getIdentity() method may be used to obtain the UUID of the javax.jcr.Node representing the document.
- * @author (Berry) A.W. van Halderen
  */
 public class Document implements Serializable, Cloneable {
     @SuppressWarnings("unused")

@@ -22,7 +22,6 @@ import javax.jcr.Session;
  * Documents in the repository can be retrieved as plain-old Java objects (POJOs) using a OCM mapping.  The document manager is
  * a service which allows for a sub-node structure to be mapped to a Java object.  The document manager is obtained from a
  * HippoWorkspace instance.
- * @author (Berry) A.W. van Halderen
  */
 public interface DocumentManager {
     final static String SVN_ID = "$Id$";
@@ -37,8 +36,6 @@ public interface DocumentManager {
     /**
      * Obtains the (plain-old) java object representation of the document in the specified category and which can be identified
      * using some abstract identification.
-     * TODO: give a code sample.
-     * 
      * @param category the category from which to obtain a specific implementation
      * @param identifier some reference to a document
      * @return the representation of the document in the repository which is at least of the Document class

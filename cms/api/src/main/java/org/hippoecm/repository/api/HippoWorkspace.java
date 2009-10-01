@@ -22,7 +22,6 @@ import javax.jcr.Workspace;
  * Any instance of a javax.jcr.Workspace returned by a HippoRepository may be casted to a HippoWorkspace to expose some
  * additional services from the Hippo repository 2.  These services are bound to the session from which this
  * workspace was obtained.
- * @author (Berry) A.W. van Halderen
  */
 public interface HippoWorkspace extends Workspace {
     final static String SVN_ID = "$Id$";

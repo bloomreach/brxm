@@ -23,7 +23,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 /**
  * Any javax.jcr.Node instance returned by any method of a Hippo Repostitory may be cast to the HippoNode interface to expose additional functionality.
- * @author (Berry) A.W. van Halderen
  */
 public interface HippoNode extends Node {
     final static String SVN_ID = "$Id$";
