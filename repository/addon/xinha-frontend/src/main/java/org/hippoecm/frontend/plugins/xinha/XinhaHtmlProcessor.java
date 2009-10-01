@@ -20,6 +20,8 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.wicket.protocol.http.WicketURLDecoder;
+
 public class XinhaHtmlProcessor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -77,11 +79,14 @@ public class XinhaHtmlProcessor {
             if (link.startsWith("http:") || link.startsWith("https:")) {
                 continue;
             }
+            String linkName;
             if (link.indexOf('/') > 0) {
-                links.add(link.substring(0, link.indexOf('/')));
+                linkName = link.substring(0, link.indexOf('/'));
             } else {
-                links.add(link);
+                linkName = link;
             }
+            linkName =  WicketURLDecoder.PATH_INSTANCE.decode(link);
+            links.add(linkName);
         }
         return links;
     }
