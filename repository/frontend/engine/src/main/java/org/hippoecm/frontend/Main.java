@@ -209,12 +209,19 @@ public class Main extends WebApplication {
             public IRequestTarget decode(RequestParameters requestParameters) {
                 String path = requestParameters.getPath().substring("binaries/".length());
                 path = urlDecodePathComponent(path);
+                // FIXME: workaround use a subsession because we can't refresh the session
+                // the logout is actually performed by the JcrResourceRequestTarget
+                UserSession session = (UserSession) Session.get();
+                ValueMap credentials = session.getCredentials();
+                javax.jcr.Session subSession = null;
                 try {
-                    UserSession session = (UserSession) Session.get();
-                    Node node = session.getJcrSession().getRootNode().getNode(path);
+                    subSession = session.getJcrSession().impersonate(new javax.jcr.SimpleCredentials(credentials.getString("username"), credentials.getString("password").toCharArray()));
+                    Node node = subSession.getRootNode().getNode(path);
                     return new JcrResourceRequestTarget(new JcrNodeModel(node));
                 } catch (PathNotFoundException e) {
                     log.error("binary not found " + e.getMessage());
+                } catch (javax.jcr.LoginException ex) {
+                    log.error(ex.getMessage());
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
                 }
