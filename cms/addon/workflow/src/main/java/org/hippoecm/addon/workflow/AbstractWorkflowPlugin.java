@@ -19,7 +19,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -52,6 +51,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
 
     public static final String CATEGORIES = "workflow.categories";
 
+    private PluginController plugins;
     private String[] categories;
     protected AbstractView view;
 
@@ -70,12 +70,15 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
             categories = new String[] {};
             log.warn("No categories ({}) defined", CATEGORIES);
         }
+
+        plugins = new PluginController(context, config, context.getReference(this).getServiceId());
     }
 
     MenuHierarchy buildMenu(Set<Node> nodeSet) {
+        plugins.stopRenderers();
+
         final MenuHierarchy menu = new MenuHierarchy();
         List<Panel> list = new LinkedList<Panel>();
-        Set<String> usedCategories = new TreeSet<String>();
         for(Node documentNode : nodeSet) {
             if (documentNode != null) {
                 try {
@@ -83,9 +86,6 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                     if (workspace instanceof HippoWorkspace) {
                         WorkflowManager workflowMgr = ((HippoWorkspace) workspace).getWorkflowManager();
                         for (final String category : categories) {
-                            if (usedCategories.contains(category)) {
-                                continue;
-                            }
                             try {
                                 final WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, documentNode);
                                 if (descriptor != null) {
@@ -95,7 +95,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                     if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
                                         plugin = new StdWorkflowPlugin("item", pluginModel);
                                     } else if(pluginRenderer.startsWith("/")) {
-                                        plugin = (Panel) this.newPlugin("id-"+category, new JcrPluginConfig(new JcrNodeModel(documentNode.getSession().getRootNode().getNode(pluginRenderer.substring(1)))));
+                                        plugin = (Panel) plugins.startRenderer(new JcrPluginConfig(new JcrNodeModel(documentNode.getSession().getRootNode().getNode(pluginRenderer.substring(1)))));
                                         if(plugin != null) {
                                             plugin.setModel(pluginModel);
                                         } else {
@@ -127,7 +127,6 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                         });
                                         plugin.setVisible(false);
                                         list.add(plugin);
-                                        usedCategories.add(category);
                                     }
                                 }
                             } catch (ClassNotFoundException ex) {
@@ -166,4 +165,5 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
 
         return menu;
     }
+
 }
