@@ -119,6 +119,9 @@
       <sv:property sv:name="validator.id" sv:type="String">
         <sv:value>${validator.id}</sv:value>
       </sv:property>
+      <sv:property sv:name="feedback.id" sv:type="String">
+        <sv:value>${feedback.id}</sv:value>
+      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.editor.workflow.TemplateEditingWorkflowPlugin</sv:value>
       </sv:property>
