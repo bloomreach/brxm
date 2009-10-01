@@ -36,7 +36,6 @@ import org.hippoecm.repository.api.ValueMap;
  * and store data. For this usage, some convenience login() methods are accessible though this interface, but these
  * are essentially the same as implemented in the JSR-170 based JCR repository, as would be returned by the method
  * getRepository(). 
- * @author (Berry) A.W. van Halderen
  */
 public interface HippoRepository {
     final static String SVN_ID = "$Id$";

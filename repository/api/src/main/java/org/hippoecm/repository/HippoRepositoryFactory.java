@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008 Hippo.
- *
+ *  Copyright 2009 Hippo.
+ * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,11 +44,9 @@ import javax.jcr.RepositoryException;
  * where a named service hipporepository is the Hippo repository.  A more efficient version of the RMI transport mechanism can
  * be used by appending <code>/spi</code> to this RMI based protocol address.  To start a new local repository, you can
  * use the location string <code>file:/absolute/filesystem/path</code>.
- * *
+ *
  * The returned Repository is a JCR-based repository, but is not a direct instance of the class javax.jcr.Repository to
  * allow some additional operations.
- * 
- * @author (Berry) A.W. van Halderen
  */
 public class HippoRepositoryFactory {
     @SuppressWarnings("unused")
@@ -268,6 +266,9 @@ public class HippoRepositoryFactory {
         }
     }
 
+    /**
+     * This method is not part of the API of this package.
+     */
     public static URL getManifest(Class clazz) {
         try {
             StringBuffer sb = new StringBuffer();

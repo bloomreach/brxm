@@ -36,7 +36,6 @@ import javax.transaction.xa.XAResource;
 /**
  * An extension of a plain javax.jcr.Session based session.  Any session as obtained from the Hippo Repository 2 can be cased to
  * a HippoSession allowing access to the extensions.
- * @author (Berry) A.W. van Halderen
  */
 public interface HippoSession extends Session {
     final static String SVN_ID = "$Id$";

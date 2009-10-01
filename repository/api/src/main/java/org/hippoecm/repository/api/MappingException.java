@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 /**
  * An MappingException is thrown for workflow or document mapping when when a required data or configuration is not present or a
  * representation in data could not be made.
- * @author (Berry) A.W. van Halderen
  */
 public class MappingException extends RepositoryException {
     @SuppressWarnings("unused")

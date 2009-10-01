@@ -17,7 +17,6 @@ package org.hippoecm.repository.api;
 
 /**
  * An WorkflowException is thrown when a workflow implementation disallows the workflow step to be taken for some reason. 
- * @author (Berry) A.W. van Halderen
  */
 public class WorkflowException extends Exception
 {

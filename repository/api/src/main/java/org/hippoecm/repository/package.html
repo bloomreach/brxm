@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+
+    This package provides a factory class to obtain access to a Hippo repository.
+
+    <h2>Overview</h2>
+
+    <p>
+    The Hippo repository is essentially a JSR-183 compliant Java Content
+    Repository (JCR).  In case of stand-alone applications or when no JNDI
+    reference is available, the HippoRepositoryFactory has static methods to
+    obtain a connection to a repsoitory.  This is based on a URL, allowing you
+    to start a new local repository, or connect remotely to an existing
+    repository instance.  The returned repository from this factory is an
+    instance of HippoRepository which contains a few convience calls for
+    transaction control and logging in.  The actual JCR repository is returned
+    using the call to HippoRepository.getRepository().  Whether you use the
+    HippoRepository class iself or immediately get the javax.jcr.Repository
+    class, you will find yourself with an authenticated javax.jcr.Session
+    object.
+    </p>
+    <p>
+    You should however be aware that there are a number of extensions the
+    Hippo Repository has on top of the JCR specification.  Because these calls
+    cannot be integrated into the JCR interfaces, you should be aware that the
+    following extensions exist:
+    </p>
+    <p>
+    Any javax.jcr.Node can also be cast to a HippoNode, which contains a
+    number of extensions related to handling JCR nodes.  A javax.jcr.Session
+    obtained by logging in can be cast to a HippoSession, containing exensions
+    related to changes in a session context.  Finally, javax.jcr.Workspace
+    instances may be cast to the HippoWorkspace interface allowing access to
+    some additional services such as the WorkflowManager.
+    </p>
+  </body>
+</html>

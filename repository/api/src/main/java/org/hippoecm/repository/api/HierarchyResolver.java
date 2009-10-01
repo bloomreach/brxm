@@ -21,6 +21,9 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+/**
+ * This interface is not yet part of the public API of the Hippo Repository.
+ */
 public interface HierarchyResolver {
     final static String SVN_ID = "$Id$";
 
