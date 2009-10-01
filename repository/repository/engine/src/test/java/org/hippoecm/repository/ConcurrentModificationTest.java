@@ -24,6 +24,7 @@ import javax.jcr.Session;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -260,7 +261,7 @@ public class ConcurrentModificationTest extends TestCase {
         }
     }
 
-    @Test
+    @Ignore
     public void testAddSameName() throws Exception {
         Node n = getTestNode().addNode("D");
         session.save();
@@ -291,7 +292,7 @@ public class ConcurrentModificationTest extends TestCase {
         }
     }
 
-    @Test
+    @Ignore
     public void testRemoveSameName() throws Exception {
         Node n = getTestNode().addNode("D");
         n.setProperty("pA", "foo");
