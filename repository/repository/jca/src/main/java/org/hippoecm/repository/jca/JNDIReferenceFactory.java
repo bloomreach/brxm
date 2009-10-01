@@ -30,10 +30,8 @@ public class JNDIReferenceFactory implements ObjectFactory {
     private final static String SVN_ID = "$Id$";
 
     public JNDIReferenceFactory() {
-        System.err.println("ADD SHUTDOWN HOOK");
         Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
-                    System.err.println("SHUTDOWN HOOK");
                     JCARepositoryManager.getInstance().shutdown();
                     Thread garbageClearThread = new Thread("garbage clearer") {
                             public void run() {
