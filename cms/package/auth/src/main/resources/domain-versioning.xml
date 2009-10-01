@@ -21,6 +21,56 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:domain</sv:value>
   </sv:property>
+  <sv:node sv:name="nt-system">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:domainrule</sv:value>
+    </sv:property>
+    <sv:node sv:name="type-rep-system">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:facetrule</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:facet" sv:type="String">
+        <sv:value>jcr:primaryType</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:type" sv:type="String">
+        <sv:value>Name</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:value" sv:type="String">
+        <sv:value>rep:system</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="nt-versionStorage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:domainrule</sv:value>
+    </sv:property>
+    <sv:node sv:name="type-rep-versionStorage">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:facetrule</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:facet" sv:type="String">
+        <sv:value>jcr:primaryType</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:type" sv:type="String">
+        <sv:value>Name</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:value" sv:type="String">
+        <sv:value>rep:versionStorage</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
   <sv:node sv:name="nt-versionHistory">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
@@ -155,6 +205,17 @@
     </sv:property>
     <sv:property sv:name="hipposys:role" sv:type="String">
       <sv:value>readonly</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:authrole">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:authrole</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:groups" sv:type="String">
+      <sv:value>editor</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:role" sv:type="String">
+      <sv:value>editor</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
