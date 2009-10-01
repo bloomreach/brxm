@@ -111,10 +111,14 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             }
         });
 
-        add(reorderAction = new WorkflowAction("reorder", new StringResourceModel("reorder-folder", this, null)
-                .getString(), new ResourceReference(getClass(), "reorder-16.png")) {
+        add(reorderAction = new WorkflowAction("reorder", new StringResourceModel("reorder-folder", this, null)) {
             public List<String> order = new LinkedList<String>();
 
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(getClass(), "reorder-16.png");
+            }
+            
             @Override
             protected Dialog createRequestDialog() {
                 return new ReorderDialog(this, config, (WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel(),
