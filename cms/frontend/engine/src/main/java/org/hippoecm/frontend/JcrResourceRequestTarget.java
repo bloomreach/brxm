@@ -45,6 +45,16 @@ public class JcrResourceRequestTarget implements IRequestTarget {
     public JcrResourceRequestTarget(JcrNodeModel node) {
         this.nodeModel = node;
     }
+    protected void finalize() throws Throwable {
+       try {
+           nodeModel.getNode().getSession().logout();
+       } catch(NullPointerException ex) {
+           // deliberate ignore
+       } catch(RepositoryException ex) {
+           // deliberate ignore
+       }
+       super.finalize();
+    }
 
     /*
      [hippo:resource]
