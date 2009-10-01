@@ -34,7 +34,7 @@ public class HtmlCleanerPlugin implements IPlugin, IHtmlCleanerService {
     static final Logger log = LoggerFactory.getLogger(HtmlCleanerPlugin.class);
 
     private IPluginConfig htmlCleanerConfig;
-    private HtmlCleanerTemplate htmlCleanerTemplate;
+    private transient HtmlCleanerTemplate htmlCleanerTemplate;
 
     public HtmlCleanerPlugin(IPluginContext context, final IPluginConfig config) {
         htmlCleanerConfig = config.getPluginConfig("cleaner.config");

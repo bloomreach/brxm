@@ -34,6 +34,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -239,4 +240,18 @@ public class ListDataTable extends DataTable {
     public TableSelectionListener getSelectionListener() {
         return selectionListener;
     }
+
+    @Override
+    protected void onDetach() {
+        // check for null; detach is called after component has been removed (destroyed)
+        if (observers != null) {
+            for (IObserver observer : observers.values()) {
+                if (observer instanceof IDetachable) {
+                    ((IDetachable) observer).detach();
+                }
+            }
+        }
+        super.onDetach();
+    }
+
 }

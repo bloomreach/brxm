@@ -570,7 +570,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
     }
 
     public JcrNodeModel getPrototype() throws BuilderException {
-        if (prototype == null) {
+        if (prototype == null || prototype.getObject() == null) {
             prototype = prototypeStore.getPrototype(type, true);
             if (prototype == null) {
                 if (readonly) {
@@ -792,6 +792,10 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     public void detach() {
         prototypeStore.detach();
+        jcrTypeStore.detach();
+        if (prototype != null) {
+            prototype.detach();
+        }
     }
 
     // IObservable

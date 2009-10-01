@@ -101,6 +101,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private ImagePickerBehavior imagePickerBehavior;
     private XinhaImageService imageService;
     private XinhaLinkService linkService;
+    private JcrNodeModel nodeModel;
 
     public AbstractXinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -116,7 +117,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
             JcrPropertyValueModel propertyValueModel = getValueModel();
             String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
-            JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
+            nodeModel = new JcrNodeModel(nodePath);
 
             // dialog functionality for plugins
             add(HeaderContributor.forJavaScript(new JavascriptResourceReference(XinhaDialogBehavior.class,
@@ -260,6 +261,14 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         super.render(target);
     }
 
+    @Override
+    protected void onDetach() {
+        if (nodeModel != null) {
+            nodeModel.detach();
+        }
+        super.onDetach();
+    }
+    
     protected String clean(final String value) throws Exception {
         if(value != null) {
             IHtmlCleanerService cleaner = getPluginContext().getService(IHtmlCleanerService.class.getName(),
@@ -539,6 +548,27 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             }
             addProperty(keyValue.substring(0, equalsIndex), keyValue.substring(equalsIndex + 1));
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof PluginConfiguration) {
+                PluginConfiguration that = (PluginConfiguration) o;
+                if (that.getPlugin() == getPlugin()) {
+                    String name = getName();
+                    if (name != null) {
+                        return name.equals(((Configuration) o).getName());
+                    } else {
+                        return ((Configuration) o).getName() == null;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return getPlugin().hashCode() ^ getName().hashCode();
+        }
     }
 
     class BaseConfiguration implements IClusterable {
@@ -584,17 +614,13 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             return properties.get(name);
         }
 
+        protected AbstractXinhaPlugin getPlugin() {
+            return AbstractXinhaPlugin.this;
+        }
+        
         @Override
         public boolean equals(Object o) {
-            if (o instanceof Configuration) {
-                if (name != null) {
-                    return name.equals(((Configuration) o).getName());
-                } else {
-                    return ((Configuration) o).getName() == null;
-                }
-            } else {
-                return false;
-            }
+            return o == this;
         }
 
         @Override

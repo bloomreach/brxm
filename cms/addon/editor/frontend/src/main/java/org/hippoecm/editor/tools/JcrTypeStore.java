@@ -20,12 +20,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.IStore;
@@ -45,7 +45,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrTypeStore implements IStore<ITypeDescriptor> {
+public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 
@@ -56,6 +56,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
     private TypeLocator locator;
     private Map<String, JcrTypeDescriptor> types = new HashMap<String, JcrTypeDescriptor>();
 
+    @SuppressWarnings("unchecked")
     public JcrTypeStore() {
         IStore<ITypeDescriptor> builtinTypeStore = new BuiltinTypeStore();
         locator = new TypeLocator(new IStore[] { this, builtinTypeStore });
@@ -168,6 +169,12 @@ public class JcrTypeStore implements IStore<ITypeDescriptor> {
         }
 
         return object.getName();
+    }
+
+    public void detach() {
+        for (JcrTypeDescriptor type : types.values()) {
+            type.detach();
+        }
     }
 
     // Privates

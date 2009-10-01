@@ -48,6 +48,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
             } else {
                 DialogWindow.this.shown = null;
                 setContent(new EmptyPanel(getContentId()));
+                setWindowClosedCallback(null);
             }
         }
     }
@@ -79,6 +80,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     public void hide(Dialog dialog) {
         if (dialog == shown) {
             close();
+            setWindowClosedCallback(null);
         }
         if (pending.contains(dialog)) {
             pending.remove(dialog);

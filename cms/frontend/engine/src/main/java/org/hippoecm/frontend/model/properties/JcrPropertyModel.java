@@ -66,6 +66,7 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider,
 
     private IObservationContext obContext;
     private IObserver observer;
+    private JcrNodeModel parentModel;
 
     //  Constructor
     public JcrPropertyModel(JcrItemModel model) {
@@ -190,11 +191,12 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider,
     }
 
     public void startObservation() {
+        parentModel = new JcrNodeModel(getItemModel().getParentModel());
         observer = new IObserver() {
             private static final long serialVersionUID = 1L;
 
             public IObservable getObservable() {
-                return new JcrNodeModel(getItemModel().getParentModel());
+                return parentModel;
             }
 
             public void onEvent(Iterator<? extends IEvent> events) {
@@ -232,6 +234,15 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider,
     public void stopObservation() {
         obContext.unregisterObserver(observer);
         observer = null;
+        parentModel = null;
+    }
+
+    @Override
+    public void detach() {
+        if (parentModel != null) {
+            parentModel.detach();
+        }
+        super.detach();
     }
 
     // override Object

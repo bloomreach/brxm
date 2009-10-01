@@ -38,6 +38,7 @@ import javax.jcr.Value;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -322,6 +323,18 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         }
     }
 
+    @Override
+    public void detach() {
+        if (fields != null) {
+            for (IFieldDescriptor field : fields.values()) {
+                if (field instanceof IDetachable) {
+                    ((IDetachable) field).detach();
+                }
+            }
+        }
+        super.detach();
+    }
+
     private boolean getBoolean(String path) {
         try {
             if (getNode().hasProperty(path)) {
@@ -371,7 +384,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         }
         super.stopObservation();
     }
-    
+
     private void subscribe(final IFieldDescriptor field) {
         final IObservationContext obContext = getObservationContext();
         IObserver observer = new IObserver() {
@@ -413,6 +426,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     protected void processEvents(EventCollection collection) {
         IObservationContext obContext = getObservationContext();
+        if (obContext != null) {
+            for (IFieldDescriptor field : fields.values()) {
+                unsubscribe(field);
+            }
+        }
+
         Map<String, IFieldDescriptor> oldFields = fields;
         fields = null;
         loadFields();
@@ -421,10 +440,6 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                 oldFields.put(field, fields.get(field));
                 collection.add(new TypeDescriptorEvent(this, oldFields.get(field),
                         TypeDescriptorEvent.EventType.FIELD_ADDED));
-                if (obContext != null) {
-                    IFieldDescriptor descriptor = fields.get(field);
-                    subscribe(descriptor);
-                }
             }
         }
         Iterator<Entry<String, IFieldDescriptor>> iter = oldFields.entrySet().iterator();
@@ -434,10 +449,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                 collection.add(new TypeDescriptorEvent(this, entry.getValue(),
                         TypeDescriptorEvent.EventType.FIELD_REMOVED));
                 iter.remove();
-                if (obContext != null) {
-                    IFieldDescriptor descriptor = entry.getValue();
-                    unsubscribe(descriptor);
-                }
+            }
+        }
+
+        if (obContext != null) {
+            for (IFieldDescriptor field : fields.values()) {
+                subscribe(field);
             }
         }
     }

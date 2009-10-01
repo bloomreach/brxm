@@ -124,6 +124,12 @@ public class EditorForm extends Form {
         }
     }
 
+    @Override
+    protected void onDetach() {
+        engineFactory.detach();
+        super.onDetach();
+    }
+
     protected void createTemplate() {
         JcrNodeModel model = (JcrNodeModel) getModel();
         if (model != null && model.getNode() != null) {

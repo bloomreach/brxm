@@ -15,18 +15,27 @@
  */
 package org.hippoecm.frontend.editor.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceFactory;
 
-public class TemplateEngineFactory implements IServiceFactory<ITemplateEngine> {
+public class TemplateEngineFactory implements IServiceFactory<ITemplateEngine>, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 
     private static final long serialVersionUID = 1L;
 
+    private Map<IPluginContext, TemplateEngine> engines = new HashMap<IPluginContext, TemplateEngine>();
+    
     public ITemplateEngine getService(IPluginContext context) {
-        return new TemplateEngine(context);
+        if (!engines.containsKey(context)) {
+            engines.put(context, new TemplateEngine(context));
+        }
+        return engines.get(context);
     }
 
     public Class<? extends ITemplateEngine> getServiceClass() {
@@ -34,7 +43,13 @@ public class TemplateEngineFactory implements IServiceFactory<ITemplateEngine> {
     }
 
     public void releaseService(IPluginContext context, ITemplateEngine service) {
-        // nothing, we don't keep a registery
+        engines.remove(context);
+    }
+
+    public void detach() {
+        for (TemplateEngine engine : engines.values()) {
+            engine.detach();
+        }
     }
 
 }

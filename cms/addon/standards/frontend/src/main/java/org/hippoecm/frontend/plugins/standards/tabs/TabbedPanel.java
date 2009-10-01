@@ -43,13 +43,13 @@ import org.hippoecm.frontend.PluginRequestTarget;
 public class TabbedPanel extends WebMarkupContainer {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     public static final String TAB_PANEL_ID = "panel";
-    
+
     private final TabsPlugin plugin;
-    
+
     private int maxTabLength = 12;
     private final List<TabsPlugin.Tab> tabs;
     private MarkupContainer panelContainer;
@@ -76,8 +76,7 @@ public class TabbedPanel extends WebMarkupContainer {
             }
         };
 
-        WebMarkupContainer tabsContainer = new WebMarkupContainer(
-                "tabs-container") {
+        WebMarkupContainer tabsContainer = new WebMarkupContainer("tabs-container") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -106,6 +105,7 @@ public class TabbedPanel extends WebMarkupContainer {
             protected LoopItem newItem(int iteration) {
                 return newTabContainer(iteration);
             }
+
         });
 
         panelContainer = new WebMarkupContainer("panel-container");
@@ -121,7 +121,7 @@ public class TabbedPanel extends WebMarkupContainer {
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
-                String cssClass = (String)tag.getString("class");
+                String cssClass = (String) tag.getString("class");
                 if (cssClass == null) {
                     cssClass = " ";
                 }
@@ -140,10 +140,10 @@ public class TabbedPanel extends WebMarkupContainer {
     }
 
     // used by superclass to add title to the container
+
     protected WebMarkupContainer newLink(final int index) {
-        WebMarkupContainer container = new WebMarkupContainer("container",
-                new Model(Integer.valueOf(index)));
-        final TabsPlugin.Tab tabbie = (TabsPlugin.Tab)getTabs().get(index);
+        WebMarkupContainer container = new WebMarkupContainer("container", new Model(Integer.valueOf(index)));
+        final TabsPlugin.Tab tabbie = (TabsPlugin.Tab) getTabs().get(index);
         if (tabbie.canClose()) {
             container.add(new AjaxFallbackLink("close") {
                 private static final long serialVersionUID = 1L;
@@ -171,23 +171,31 @@ public class TabbedPanel extends WebMarkupContainer {
             protected Object load() {
                 IModel titleModel = tabbie.getTitle();
                 if (titleModel != null) {
-                    String title = (String)titleModel.getObject();
+                    String title = (String) titleModel.getObject();
                     if (title.length() > maxTabLength) {
                         title = title.substring(0, maxTabLength - 2) + ".."; // leave
-                    // space
-                    // for
-                    // two
-                    // ..
-                    // then
-                    // add
-                    // them
+                        // space
+                        // for
+                        // two
+                        // ..
+                        // then
+                        // add
+                        // them
                     }
                     return title;
                 }
                 return "title";
             }
         })));
-        link.add(new AttributeAppender("title", tabbie.getTitle(), ""));
+        link.add(new AttributeAppender("title", new LoadableDetachableModel() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Object load() {
+                return tabbie.getTitle().getObject();
+            }
+
+        }, ""));
 
         return container;
     }
@@ -253,25 +261,29 @@ public class TabbedPanel extends WebMarkupContainer {
 
         setModelObject(Integer.valueOf(index));
 
-        ITab tab = (ITab)tabs.get(index);
+        ITab tab = (ITab) tabs.get(index);
 
         Panel panel = tab.getPanel(TAB_PANEL_ID);
 
         if (panel == null) {
-            throw new WicketRuntimeException(
-                    "ITab.getPanel() returned null. TabbedPanel [" + getPath() + "] ITab index [" + index + "]");
+            throw new WicketRuntimeException("ITab.getPanel() returned null. TabbedPanel [" + getPath()
+                    + "] ITab index [" + index + "]");
 
         }
 
         if (!panel.getId().equals(TAB_PANEL_ID)) {
             throw new WicketRuntimeException(
-                    "ITab.getPanel() returned a panel with invalid id [" + panel.getId() + "]. You must always return a panel with id equal to the provided panelId parameter. TabbedPanel [" + getPath() + "] ITab index [" + index + "]");
+                    "ITab.getPanel() returned a panel with invalid id ["
+                            + panel.getId()
+                            + "]. You must always return a panel with id equal to the provided panelId parameter. TabbedPanel ["
+                            + getPath() + "] ITab index [" + index + "]");
         }
 
         panelContainer.replace(panel);
     }
 
     public final int getSelectedTab() {
-        return ((Integer)getModelObject()).intValue();
+        return ((Integer) getModelObject()).intValue();
     }
+
 }

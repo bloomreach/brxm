@@ -34,6 +34,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -64,9 +65,11 @@ public class BreadcrumbPlugin extends RenderPlugin {
     private MaxLengthStringFormatter format;
     final IModelReference folderReference;
 
+    private List<NodeItem> nodeitems;
+
     public BreadcrumbPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
         if (config.getString("model.folder") == null) {
             throw new IllegalArgumentException("Expected model.folder configuration key");
         }
@@ -80,9 +83,8 @@ public class BreadcrumbPlugin extends RenderPlugin {
         } else {
             roots.add("/");
         }
-        
-        folderReference = context.getService(config.getString("model.folder"),
-                IModelReference.class);
+
+        folderReference = context.getService(config.getString("model.folder"), IModelReference.class);
         if (folderReference != null) {
             context.registerService(new IObserver() {
                 private static final long serialVersionUID = 1L;
@@ -99,7 +101,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
         }
 
         JcrNodeModel nodeModel = (JcrNodeModel) folderReference.getModel();
-        
+
         add(getListView(nodeModel));
 
         up = new AjaxButton("up") {
@@ -124,6 +126,16 @@ public class BreadcrumbPlugin extends RenderPlugin {
                 ".."), 0);
     }
 
+    @Override
+    protected void onDetach() {
+        if (nodeitems != null) {
+            for (NodeItem nodeItem : nodeitems) {
+                nodeItem.detach();
+            }
+        }
+        super.onDetach();
+    }
+
     protected void update(JcrNodeModel model) {
         replace(getListView(model));
         setModel(model);
@@ -138,14 +150,14 @@ public class BreadcrumbPlugin extends RenderPlugin {
     }
 
     private ListView getListView(JcrNodeModel model) {
-        final List<NodeItem> list = new LinkedList<NodeItem>();
+        nodeitems = new LinkedList<NodeItem>();
         if (model != null) {
             //add current folder as disabled
-            list.add(new NodeItem(model, false));
+            nodeitems.add(new NodeItem(model, false));
             if (!roots.contains(model.getItemModel().getPath())) {
                 model = model.getParentModel();
                 while (model != null) {
-                    list.add(new NodeItem(model, true));
+                    nodeitems.add(new NodeItem(model, true));
                     if (roots.contains(model.getItemModel().getPath())) {
                         model = null;
                     } else {
@@ -154,8 +166,8 @@ public class BreadcrumbPlugin extends RenderPlugin {
                 }
             }
         }
-        Collections.reverse(list);
-        ListView listview = new ListView("crumbs", list) {
+        Collections.reverse(nodeitems);
+        ListView listview = new ListView("crumbs", nodeitems) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -192,11 +204,11 @@ public class BreadcrumbPlugin extends RenderPlugin {
                     public String getObject() {
                         String css = nodeItem.enabled ? "enabled" : "disabled";
 
-                        if (list.size() == 1) {
+                        if (nodeitems.size() == 1) {
                             css += " firstlast";
                         } else if (item.getIndex() == 0) {
                             css += " first";
-                        } else if (item.getIndex() == (list.size() - 1)) {
+                        } else if (item.getIndex() == (nodeitems.size() - 1)) {
                             css += " last";
                         }
                         return css;
@@ -208,7 +220,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
         return listview;
     }
 
-    private static class NodeItem implements IClusterable {
+    private static class NodeItem implements IDetachable {
         private static final long serialVersionUID = 1L;
 
         boolean enabled;
@@ -232,6 +244,11 @@ public class BreadcrumbPlugin extends RenderPlugin {
         public String getDecodedName() {
             return (name != null ? NodeNameCodec.decode(name) : null);
         }
+
+        public void detach() {
+            model.detach();
+        }
+
     }
 
 }

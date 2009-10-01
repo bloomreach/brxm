@@ -170,6 +170,9 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
 
         folderService.detach();
         documentService.detach();
+        if (folder != null) {
+            folder.detach();
+        }
     }
 
     private JcrNodeModel findDocument(JcrNodeModel document) {

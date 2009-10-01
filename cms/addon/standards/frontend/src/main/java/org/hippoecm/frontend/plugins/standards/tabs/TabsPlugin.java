@@ -207,8 +207,8 @@ public class TabsPlugin extends RenderPlugin {
                     decorator = service;
                     if (titleModel instanceof IObservable) {
                         getPluginContext().unregisterService(Tab.this, IObserver.class.getName());
-                        titleModel = null;
                     }
+                    titleModel = null;
                     tabbedPanel.redraw();
                 }
 
@@ -217,8 +217,8 @@ public class TabsPlugin extends RenderPlugin {
                     if (decorator == service) {
                         if (titleModel instanceof IObservable) {
                             getPluginContext().unregisterService(Tab.this, IObserver.class.getName());
-                            titleModel = null;
                         }
+                        titleModel = null;
                         decorator = null;
                         tabbedPanel.redraw();
                     }
