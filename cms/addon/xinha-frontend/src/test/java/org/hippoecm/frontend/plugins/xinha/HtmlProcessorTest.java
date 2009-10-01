@@ -59,4 +59,12 @@ public class HtmlProcessorTest {
         assertTrue(links.contains("link"));
     }
 
+    @Test
+    public void testEncodedLink() {
+        String text="<a href=\"link%20je\">link</a>";
+        Set<String> links = XinhaHtmlProcessor.getInternalLinks(text);
+        assertEquals(1, links.size());
+        assertTrue(links.contains("link je"));
+    }
+
 }
