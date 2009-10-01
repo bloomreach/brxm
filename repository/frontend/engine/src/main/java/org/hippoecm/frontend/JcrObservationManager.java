@@ -375,7 +375,7 @@ public class JcrObservationManager implements ObservationManager {
                         list.add(session.getNodeByUUID(id));
                         validUuids.add(id);
                     } catch (ItemNotFoundException e) {
-                        log.warn("Could not dereference uuid {} : {}", id, e.getMessage());
+                        log.info("Could not dereference uuid {} : {}", id, e.getMessage());
                     } catch (RepositoryException e) {
                         log.warn("Could not dereference uuid {} : {}", id, e.getMessage());
                     }
