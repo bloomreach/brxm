@@ -85,7 +85,7 @@ public class XinhaHtmlProcessor {
             } else {
                 linkName = link;
             }
-            linkName =  WicketURLDecoder.PATH_INSTANCE.decode(link);
+            linkName = WicketURLDecoder.PATH_INSTANCE.decode(linkName);
             links.add(linkName);
         }
         return links;
