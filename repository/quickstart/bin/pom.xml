@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-quickstart</artifactId>
-    <version>2.09.00</version>
+    <version>2.09.01-SNAPSHOT</version>
   </parent>
 
   <name>Hippo ECM BIN quickstart</name>
@@ -28,16 +28,16 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_09_00/quickstart/bin</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_09_00/quickstart/bin</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_09_00/quickstart/bin</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/quickstart/bin</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/quickstart/bin</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/quickstart/bin</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-quickstart-war</artifactId>
-      <version>2.09.00</version>
+      <version>2.09.01-SNAPSHOT</version>
       <type>war</type>
     </dependency>
     <dependency>
