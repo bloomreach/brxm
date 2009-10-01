@@ -109,7 +109,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     /** Query for finding initialization items
      * TODO: move this query into the repository as query node
      * FIXME: this assumes all initailizeitem are also system, but they aren't necessarily
-     * */
+     */
     public final static String GET_INITIALIZE_ITEMS =
         "SELECT * FROM hipposys:initializeitem " +
         "WHERE jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" + HippoNodeType.HIPPO_NAMESPACE + " IS NOT NULL " +
@@ -254,7 +254,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     private void initialize() throws RepositoryException {
 
-        Modules.setModules(new Modules(getClass().getClassLoader()));
+        Modules.setModules(new Modules(Thread.currentThread().getContextClassLoader()));
 
         jackrabbitRepository = new LocalRepositoryImpl(RepositoryConfig.create(getRepositoryConfigAsStream(),
                 getRepositoryPath()));
@@ -338,12 +338,12 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             }
             try {
                 List<URL> extensions = new LinkedList<URL>();
-                for(Enumeration iter = getClass().getClassLoader().getResources("org/hippoecm/repository/extension.xml");
+                for(Enumeration iter = Thread.currentThread().getContextClassLoader().getResources("org/hippoecm/repository/extension.xml");
                     iter.hasMoreElements(); ) {
                     URL configurationURL = (URL) iter.nextElement();
                     extensions.add(configurationURL);
                 }
-                for(Enumeration iter = getClass().getClassLoader().getResources("hippoecm-extension.xml");
+                for(Enumeration iter = Thread.currentThread().getContextClassLoader().getResources("hippoecm-extension.xml");
                     iter.hasMoreElements(); ) {
                     URL configurationURL = (URL) iter.nextElement();
                     extensions.add(configurationURL);
