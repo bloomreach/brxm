@@ -70,8 +70,6 @@ import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
  * non-fatal errors that are caused by documents which can currently not be
  * (un)published are logged as warnings.  This even though they are not really
  * serious, but you do want to keep track of them.
- *
- * @author (Berry) A.W. van Halderen
  */
 public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
     @SuppressWarnings("unused")
