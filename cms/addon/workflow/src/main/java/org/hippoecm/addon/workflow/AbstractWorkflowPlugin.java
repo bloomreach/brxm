@@ -31,6 +31,7 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -70,14 +71,21 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
             categories = new String[] {};
             log.warn("No categories ({}) defined", CATEGORIES);
         }
-
-        plugins = new PluginController(context, config, context.getReference(this).getServiceId());
+        // It should not occur, but the lifecycle model currently can return null here.  To avoid NPEs we
+        // will disable the normal operability of the plugin at this time.
+        IServiceReference serviceReference = context.getReference(this);
+        if(serviceReference != null) {
+            plugins = new PluginController(context, config, serviceReference.getServiceId());
+        } else {
+            plugins = null;
+        }
     }
 
     MenuHierarchy buildMenu(Set<Node> nodeSet) {
-        plugins.stopRenderers();
-
         final MenuHierarchy menu = new MenuHierarchy();
+        if (plugins == null)
+            return menu;
+        plugins.stopRenderers();
         List<Panel> list = new LinkedList<Panel>();
         for(Node documentNode : nodeSet) {
             if (documentNode != null) {
