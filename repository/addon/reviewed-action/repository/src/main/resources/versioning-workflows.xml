@@ -27,6 +27,9 @@
     <sv:property sv:name="hipposys:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.VersionWorkflowImpl</sv:value>
     </sv:property>
+    <sv:property sv:name="hipposys:privileges" sv:type="String">
+      <sv:value>hippo:author</sv:value>
+    </sv:property>
     <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Versioning workflow</sv:value>
     </sv:property>
@@ -70,6 +73,9 @@
     </sv:property>
     <sv:property sv:name="hipposys:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.VersionWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:privileges" sv:type="String">
+      <sv:value>hippo:editor</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Versioning workflow</sv:value>
