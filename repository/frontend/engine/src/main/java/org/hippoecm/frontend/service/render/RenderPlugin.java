@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.service.render;
 
 import java.io.Serializable;
-import java.util.AbstractList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -28,7 +26,7 @@ import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.AbstractPluginDecorator;
+import org.hippoecm.frontend.plugin.config.impl.InheritingPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
@@ -85,7 +83,7 @@ public class RenderPlugin extends RenderService implements IPlugin {
 
         IPluginContext pluginContext = getPluginContext();
         JavaClusterConfig childClusterConfig = new JavaClusterConfig();
-        IPluginConfig childPluginConfig = new JavaPluginConfig(new InheritingPluginConfig(config));
+        IPluginConfig childPluginConfig = new JavaPluginConfig(new InheritingPluginConfig(config, getPluginConfig()));
 
         String serviceId = getPluginContext().getReference(this).getServiceId() + "." + "id" + (++childPluginCounter);
         childPluginConfig.put(RenderService.WICKET_ID, serviceId);
@@ -109,42 +107,6 @@ public class RenderPlugin extends RenderService implements IPlugin {
             return renderservice.getComponent();
         } else {
             return null;
-        }
-    }
-
-    private class InheritingPluginConfig extends AbstractPluginDecorator {
-        private static final long serialVersionUID = 1L;
-
-        InheritingPluginConfig(IPluginConfig upstream) {
-            super(upstream);
-        }
-
-        @Override
-        protected Object decorate(Object object) {
-            if (object instanceof String) {
-                String value = (String) object;
-                if (value.startsWith("${") && value.endsWith("}")) {
-                    return RenderPlugin.this.getPluginConfig().get(value.substring(2, value.length() - 1));
-                } else {
-                    return value;
-                }
-            } else if (object instanceof IPluginConfig) {
-                return new InheritingPluginConfig((IPluginConfig) object);
-            } else if (object instanceof List) {
-                final List list = (List) object;
-                return new AbstractList() {
-                    @Override
-                    public Object get(int index) {
-                        return decorate(list.get(index));
-                    }
-
-                    @Override
-                    public int size() {
-                        return list.size();
-                    }
-                };
-            }
-            return object;
         }
     }
 
