@@ -87,6 +87,8 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
+
+        onModelChanged();
     }
 
     @Override
@@ -107,7 +109,7 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     acceptAction.setVisible(((Boolean)info.get("acceptRequest")).booleanValue());
                 }
                 if (info.containsKey("rejectRequest") && info.get("rejectRequest") instanceof Boolean) {
-                    acceptAction.setVisible(((Boolean)info.get("rejectRequest")).booleanValue());
+                    rejectAction.setVisible(((Boolean)info.get("rejectRequest")).booleanValue());
                 }
 
                 if (documentNode.hasProperty("type")) {
