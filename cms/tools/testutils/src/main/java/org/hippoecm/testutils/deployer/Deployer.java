@@ -33,10 +33,6 @@ import javax.enterprise.deploy.spi.status.ProgressObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author (Berry) A.W. van Halderen
- */
 public class Deployer {
 
     protected Logger logger = LoggerFactory.getLogger(Deployer.class);
