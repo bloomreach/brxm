@@ -56,6 +56,8 @@ public class EditorFactory implements IClusterable {
                 } else {
                     throw new CmsEditorException("Document has been deleted");
                 }
+            } else if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                return new TemplateTypeEditor(manager, context, config, nodeModel, mode);
             } else {
                 return new DefaultCmsEditor(manager, context, config, nodeModel, mode);
             }

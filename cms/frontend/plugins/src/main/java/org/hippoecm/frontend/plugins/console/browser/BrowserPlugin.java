@@ -24,7 +24,7 @@ import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.tree.CachedTreeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -43,14 +43,14 @@ public class BrowserPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(BrowserPlugin.class);
 
     protected JcrTree tree;
-    protected CachedTreeModel treeModel;
+    protected JcrTreeModel treeModel;
     protected IJcrTreeNode rootNode;
 
     public BrowserPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         this.rootNode = new JcrTreeNode(new JcrNodeModel("/"), null);
-        treeModel = new CachedTreeModel(rootNode);
+        treeModel = new JcrTreeModel(rootNode);
         context.registerService(treeModel, IObserver.class.getName());
         tree = newTree(treeModel);
         add(tree);

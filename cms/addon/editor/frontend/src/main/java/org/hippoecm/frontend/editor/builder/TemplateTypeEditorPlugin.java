@@ -23,29 +23,25 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.IModelReference;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.service.EditorException;
-import org.hippoecm.frontend.service.IEditor;
-import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateTypeEditorPlugin extends RenderPlugin implements IRefreshable {
+public class TemplateTypeEditorPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -105,9 +101,10 @@ public class TemplateTypeEditorPlugin extends RenderPlugin implements IRefreshab
         try {
             Node node = (Node) nodeModel.getObject();
             String typeName = node.getParent().getName() + ":" + node.getName();
-            IModel selectedExtensionPointModel = new IModel() {
+            IModel selectedExtensionPointModel = new LoadableDetachableModel() {
+                private static final long serialVersionUID = 1L;
 
-                public Object getObject() {
+                protected Object load() {
                     IModel upstream = selectedExtPtService.getModel();
                     if (upstream != null) {
                         if (upstream.getObject() != null) {
@@ -115,16 +112,6 @@ public class TemplateTypeEditorPlugin extends RenderPlugin implements IRefreshab
                         }
                     }
                     return "${cluster.id}.field";
-                }
-
-                public void setObject(Object object) {
-                    // TODO Auto-generated method stub
-
-                }
-
-                public void detach() {
-                    // TODO Auto-generated method stub
-
                 }
 
             };
@@ -137,8 +124,6 @@ public class TemplateTypeEditorPlugin extends RenderPlugin implements IRefreshab
             log.error(e.getMessage());
             throw new RuntimeException("Failed to initialize", e);
         }
-
-        context.registerService(this, IRefreshable.class.getName());
 
         onModelChanged();
     }
@@ -225,29 +210,6 @@ public class TemplateTypeEditorPlugin extends RenderPlugin implements IRefreshab
             builder.detach();
         }
         super.onDetach();
-    }
-
-    public void refresh() {
-        if (builder != null) {
-            try {
-                // prototype changes in an update-all-content
-                if (builder.getPrototype().getObject() == null) {
-                    if (!IEditor.Mode.EDIT.equals(getPluginConfig().getString("mode"))) {
-                        modelChanged();
-                    } else {
-                        IEditor editor = getPluginContext().getService(getPluginConfig().getString("editor.id"),
-                                IEditor.class);
-                        if (editor != null) {
-                            editor.setMode(IEditor.Mode.VIEW);
-                        }
-                    }
-                }
-            } catch (BuilderException e) {
-                log.warn("Could not find prototype", e);
-            } catch (EditorException e) {
-                log.warn("Could not set editor mode", e);
-            }
-        }
     }
 
 }

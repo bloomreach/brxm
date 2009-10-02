@@ -159,7 +159,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         private IObservationContext obContext;
         private IObserver observer;
-        
+
         public void setObservationContext(IObservationContext context) {
             this.obContext = context;
         }
@@ -167,15 +167,15 @@ public class TemplateBuilder implements IDetachable, IObservable {
         public void startObservation() {
             obContext.registerObserver(observer = new IObserver() {
                 private static final long serialVersionUID = -510095692858775942L;
-                
+
                 public IObservable getObservable() {
                     return delegate;
                 }
-                
+
                 public void onEvent(Iterator<? extends IEvent> events) {
                     obContext.notifyObservers(new EventCollection(events));
                 }
-                
+
             });
         }
 
@@ -189,11 +189,11 @@ public class TemplateBuilder implements IDetachable, IObservable {
         private static final long serialVersionUID = -7856611025545479323L;
 
         Map<String, IFieldDescriptor> delegate;
-        
+
         FieldMap(Map<String, IFieldDescriptor> delegate) {
             this.delegate = delegate;
         }
-        
+
         @Override
         public Set<Map.Entry<String, IFieldDescriptor>> entrySet() {
             return new AbstractSet<Map.Entry<String, IFieldDescriptor>>() {
@@ -228,7 +228,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         public void remove() {
                             upstream.remove();
                         }
-                        
+
                     };
                 }
 
@@ -236,15 +236,18 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 public int size() {
                     return delegate.size();
                 }
-                
+
             };
         }
-        
+
     }
-    
+
     class BuilderTypeDescriptor implements ITypeDescriptor {
 
         private static final long serialVersionUID = 1L;
+
+        private IObservationContext obContext;
+        private IObserver observer;
 
         public void addField(IFieldDescriptor descriptor) {
             typeDescriptor.addField(descriptor);
@@ -305,8 +308,8 @@ public class TemplateBuilder implements IDetachable, IObservable {
             typeDescriptor.setIsNode(isNode);
         }
 
-        public void setObservationContext(IObservationContext context) {
-            typeDescriptor.setObservationContext(context);
+        public void setObservationContext(final IObservationContext context) {
+            obContext = context;
         }
 
         public void setPrimary(String name) {
@@ -318,11 +321,23 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
 
         public void startObservation() {
-            typeDescriptor.startObservation();
+            obContext.registerObserver(observer = new IObserver() {
+                private static final long serialVersionUID = 1L;
+
+                public IObservable getObservable() {
+                    return typeDescriptor;
+                }
+
+                public void onEvent(Iterator<? extends IEvent> events) {
+                    obContext.notifyObservers(new EventCollection(events));
+                }
+
+            });
         }
 
         public void stopObservation() {
-            typeDescriptor.stopObservation();
+            obContext.unregisterObserver(observer);
+            observer = null;
         }
 
         @Override
@@ -795,6 +810,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
         jcrTypeStore.detach();
         if (prototype != null) {
             prototype.detach();
+        }
+        if (clusterConfig != null && (clusterConfig instanceof IDetachable)) {
+            ((IDetachable) clusterConfig).detach();
         }
     }
 

@@ -186,6 +186,9 @@ public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDeta
     private transient Set<Map.Entry<String, Object>> entries;
 
     public JcrPluginConfig(JcrNodeModel nodeModel) {
+        if (nodeModel == null) {
+            throw new RuntimeException("Invalid node model <null>");
+        }
         this.nodeModel = nodeModel;
         this.map = new JcrMap(nodeModel);
         this.childConfigs = new HashMap<JcrNodeModel, JcrPluginConfig>();

@@ -78,8 +78,6 @@ public class JcrSessionModel extends LoadableDetachableModel {
             session.logout();
             detach();
         }
-        classLoader = null;
-        workflowManager = null;
     }
 
     public ValueMap getCredentials() {
@@ -143,6 +141,9 @@ public class JcrSessionModel extends LoadableDetachableModel {
             if (session.isLive()) {
                 session.logout();
             }
+            classLoader = null;
+            workflowManager = null;
+            facetSearchObserver = null;
         }
         super.detach();
     }

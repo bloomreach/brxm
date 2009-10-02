@@ -19,9 +19,10 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.tree.IJcrTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
-import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
 
 public abstract class LookupDialog extends AbstractDialog {
     @SuppressWarnings("unused")
@@ -32,7 +33,7 @@ public abstract class LookupDialog extends AbstractDialog {
     private static final IValueMap SIZE = new ValueMap("width=515,height=470");
 
     private LookupTargetTreeView tree;
-    private JcrTreeModel treeModel;
+    private IJcrTreeModel treeModel;
 
     protected LookupDialog(JcrTreeNode rootNode) {
         treeModel = new JcrTreeModel(rootNode);
