@@ -31,7 +31,7 @@ import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.tree.CachedTreeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -57,7 +57,7 @@ public class FolderTreePlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
 
     protected final JcrTree tree;
-    protected CachedTreeModel treeModel;
+    protected JcrTreeModel treeModel;
     protected JcrTreeNode rootNode;
     private JcrNodeModel rootModel;
 
@@ -75,7 +75,7 @@ public class FolderTreePlugin extends RenderPlugin {
         DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
         this.rootNode = new FolderTreeNode(rootModel, folderTreeConfig);
 
-        treeModel = new CachedTreeModel(rootNode);
+        treeModel = new JcrTreeModel(rootNode);
         context.registerService(treeModel, IObserver.class.getName());
         tree = new CmsJcrTree("tree", treeModel, newTreeNodeTranslator(config)) {
             private static final long serialVersionUID = 1L;

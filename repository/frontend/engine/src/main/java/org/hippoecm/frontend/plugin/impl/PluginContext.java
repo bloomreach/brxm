@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugin.impl;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedList;
@@ -23,6 +25,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -306,6 +309,13 @@ public class PluginContext implements IPluginContext, IDetachable {
         if (config != null && config instanceof IDetachable) {
             ((IDetachable) config).detach();
         }
+    }
+
+    private void writeObject(ObjectOutputStream output) throws IOException {
+        if (stopping) {
+            throw new WicketRuntimeException("Stopped plugin is still being referenced");
+        }
+        output.defaultWriteObject();
     }
 
 }

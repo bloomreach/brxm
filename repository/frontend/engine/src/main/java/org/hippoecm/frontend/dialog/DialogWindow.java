@@ -22,6 +22,7 @@ import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
@@ -47,8 +48,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
                 internalShow(dialog);
             } else {
                 DialogWindow.this.shown = null;
-                setContent(new EmptyPanel(getContentId()));
-                setWindowClosedCallback(null);
+                cleanup();
             }
         }
     }
@@ -80,7 +80,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     public void hide(Dialog dialog) {
         if (dialog == shown) {
             close();
-            setWindowClosedCallback(null);
+            cleanup();
         }
         if (pending.contains(dialog)) {
             pending.remove(dialog);
@@ -89,7 +89,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
             show(pending.remove(0));
         }
     }
-    
+
     public void close() {
         IRequestTarget target = RequestCycle.get().getRequestTarget();
         if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
@@ -108,6 +108,12 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     @Override
     public boolean isShown() {
         return (shown != null);
+    }
+
+    private void cleanup() {
+        setContent(new EmptyPanel(getContentId()));
+        setWindowClosedCallback(null);
+        setTitle(new Model("title"));
     }
 
     private void internalShow(Dialog dialog) {

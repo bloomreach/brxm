@@ -15,14 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.console.dialog;
 
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.tree.IJcrTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
-import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.widgets.JcrTree;
 
 class LookupTargetTreeView extends JcrTree {
@@ -34,7 +35,7 @@ class LookupTargetTreeView extends JcrTree {
     private IJcrTreeNode selectedNode;
     private LookupDialog dialog;
 
-    LookupTargetTreeView(String id, JcrTreeModel treeModel, LookupDialog dialog) {
+    LookupTargetTreeView(String id, TreeModel treeModel, LookupDialog dialog) {
         super(id, treeModel);
         this.dialog = dialog;
     }
@@ -52,7 +53,7 @@ class LookupTargetTreeView extends JcrTree {
         return selectedNode;
     }
 
-    void setSelectedNode(JcrNodeModel selectedNode, JcrTreeModel treeModel) {
+    void setSelectedNode(JcrNodeModel selectedNode, IJcrTreeModel treeModel) {
         ITreeState treeState = getTreeState();
         TreePath treePath = treeModel.lookup(selectedNode);
         if (treePath != null) {

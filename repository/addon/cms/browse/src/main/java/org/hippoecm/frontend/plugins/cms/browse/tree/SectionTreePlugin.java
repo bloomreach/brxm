@@ -21,13 +21,13 @@ import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -52,7 +52,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    private class Section implements IClusterable {
+    private class Section implements IDetachable {
         private static final long serialVersionUID = 1L;
 
         String extension;
@@ -81,6 +81,12 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                     }
                 }
             };
+        }
+
+        public void detach() {
+            for (IRenderService service : extPt.getChildren()) {
+                service.getComponent().detach();
+            }
         }
     }
 
@@ -210,6 +216,14 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         if (renderer != null) {
             renderer.focus(null);
         }
+    }
+
+    @Override
+    protected void onDetach() {
+        for (Section section : sections) {
+            section.detach();
+        }
+        super.onDetach();
     }
 
     private IRenderService findFocus() {

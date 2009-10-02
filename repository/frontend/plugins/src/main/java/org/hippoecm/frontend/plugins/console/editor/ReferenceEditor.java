@@ -55,14 +55,13 @@ class ReferenceEditor extends Panel {
             asString = valueModel.getValue().getString();
             Node targetNode = session.getNodeByUUID(asString);
             if (targetNode instanceof HippoNode) {
-                final JcrNodeModel targetModel = new JcrNodeModel(targetNode);
-                AjaxLink link = new AjaxLink("reference-link") {
+                AjaxLink link = new AjaxLink("reference-link", new JcrNodeModel(targetNode)) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onClick(AjaxRequestTarget requestTarget) {
                         EditorPlugin plugin = (EditorPlugin) findParent(EditorPlugin.class);
-                        plugin.setModel(targetModel);
+                        plugin.setModel((JcrNodeModel) getModel());
                     }
                 };
                 add(link);
