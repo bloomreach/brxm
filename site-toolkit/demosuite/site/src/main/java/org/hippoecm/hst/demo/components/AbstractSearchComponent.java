@@ -1,6 +1,10 @@
 package org.hippoecm.hst.demo.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
@@ -53,11 +57,19 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
         HstQueryManager manager = getQueryManager();
         try {
 
-            final HstQuery hstQuery = manager.createQuery(scope);
-
-            if (nodeType != null) {
-                // TODO
+            final HstQuery hstQuery = manager.createQuery(this.getContentBean(request));
+            
+            List<HippoBean> scopes = new ArrayList<HippoBean>();
+            
+            
+            try {
+                HippoBean assets = (HippoBean)this.getObjectBeanManager(request).getObject("/content/assets");
+                scopes.add(assets);
+            } catch (ObjectBeanManagerException e) {
+                e.printStackTrace();
             }
+ 
+            hstQuery.addScopes(scopes);
             
             if (sortBy != null) {
                 hstQuery.addOrderByDescending(sortBy);
@@ -98,7 +110,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             
 
         } catch (QueryException e) {
-            log.error("Exception in searchComponent:" + e);
+            log.error("Exception in searchComponent: ", e);
             setError(request, "An error occurred, invalid query syntax?");
         }
         

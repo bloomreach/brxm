@@ -19,6 +19,7 @@ import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.standard.HippoImage;
 
 public class GeneralPage extends HippoDocument {
 
@@ -49,7 +50,7 @@ public class GeneralPage extends HippoDocument {
      * the jsp el can always try a var.image without getting an expression language exception
      * @return
      */
-    public ImageBean getImage(){
+    public HippoImage getImage(){
         return null;
     }
 }

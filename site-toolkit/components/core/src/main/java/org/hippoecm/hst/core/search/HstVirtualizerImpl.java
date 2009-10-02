@@ -16,10 +16,13 @@
  */
 package org.hippoecm.hst.core.search;
 
+import java.util.Set;
+
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.LoggerFactory;
 
@@ -27,12 +30,10 @@ public class HstVirtualizerImpl implements HstVirtualizer {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstVirtualizerImpl.class);
     
-    private String canonicalContentNodePath;
-    private String contentFacetSelectNodePath;
+    Set<KeyValue<String, String>> pathMappers;
     
-    public HstVirtualizerImpl(String canonicalContentNodePath, String contentFacetSelectNodePath) {
-        this.canonicalContentNodePath = canonicalContentNodePath;
-        this.contentFacetSelectNodePath = contentFacetSelectNodePath;
+    public HstVirtualizerImpl(Set<KeyValue<String, String>> pathMappers) {
+       this.pathMappers  = pathMappers;
     }
 
     public Node virtualize(Node canonical)  throws HstContextualizeException{
@@ -49,14 +50,17 @@ public class HstVirtualizerImpl implements HstVirtualizer {
              }else {
                  path = canonical.getPath();
              }
-             if(canonicalContentNodePath == null || contentFacetSelectNodePath == null) {
-                 throw new HstContextualizeException("Unable to virtualize node '"+path+"' ");
+             
+             for(KeyValue<String, String> mapper : pathMappers) {
+                 if(path.startsWith(mapper.getKey())) {
+                     String virtualizedPath = mapper.getValue() + path.substring(mapper.getKey().length());
+                     return (Node)canonical.getSession().getItem(virtualizedPath);
+                 }
              }
-             if(!path.startsWith(canonicalContentNodePath)) {
-                 throw new HstContextualizeException("Unable to virtualize node '"+path+"' because does not start with expected path '"+canonicalContentNodePath+"'");
-             }
-             String virtualizedPath = contentFacetSelectNodePath + path.substring(canonicalContentNodePath.length());
-             return (Node)canonical.getSession().getItem(virtualizedPath);
+             
+             // can never happen in principal
+             throw new HstContextualizeException("Unable to virtualize node '"+path+"' ");
+           
         } catch(PathNotFoundException e) {
             log.warn("The node '{}' cannot be virtualized. Return null", path);
             return null;

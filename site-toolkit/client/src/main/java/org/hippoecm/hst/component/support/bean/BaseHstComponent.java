@@ -38,6 +38,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
+import org.hippoecm.hst.content.beans.standard.HippoAsset;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDirectory;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
@@ -45,7 +46,9 @@ import org.hippoecm.hst.content.beans.standard.HippoFacetSearch;
 import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
 import org.hippoecm.hst.content.beans.standard.HippoFixedDirectory;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.standard.HippoImage;
 import org.hippoecm.hst.content.beans.standard.HippoRequest;
 import org.hippoecm.hst.content.beans.standard.HippoResource;
 import org.hippoecm.hst.core.component.GenericHstComponent;
@@ -213,6 +216,42 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     /**
+     * @param request
+     * @return the root gallery HippoFolderBean at <code>/content/gallery</code> and <code>null</code> if it does not exist 
+     */
+    public HippoFolderBean getGalleryBaseBean(HstRequest request){
+        try {
+            HippoBean assets = (HippoBean)this.getObjectBeanManager(request).getObject("/content/assets");
+            if(assets instanceof HippoFolderBean) {
+                return (HippoFolderBean)assets;
+            } else {
+                log.warn("Asset base folder not of type folder. Cannot return folder bean for it. Return null");
+            }
+        } catch (ObjectBeanManagerException e) {
+           log.warn("Cannot find the root Asset folder. Return null");
+        }
+        return null;
+    }
+    
+    /**
+     * @param request
+     * @return the root asset HippoFolderBean at <code>/content/assets</code> and null if it does not exist 
+     */
+    public HippoFolderBean getAssetBaseBean(HstRequest request){
+        try {
+            HippoBean gallery = (HippoBean)this.getObjectBeanManager(request).getObject("/content/assets");
+            if(gallery instanceof HippoFolderBean) {
+                return (HippoFolderBean)gallery;
+            } else {
+                log.warn("Gallery base folder not of type folder. Cannot return folder bean for it. Return null");
+            }
+        } catch (ObjectBeanManagerException e) {
+           log.warn("Cannot find the root Asset folder. Return null");
+        }
+        return null;
+    }
+    
+    /**
      * Return a <code>HippoBean</code> when it can be found for the relativeContentPath for the <code>{@link ResolvedSiteMapItem}</code>. If there is no
      * relativeContentPath available in the <code>{@link ResolvedSiteMapItem}</code>, or when the relativeContentPath does not point to an existing jcr node,
      * <code>null</code> will be returned
@@ -365,6 +404,8 @@ public class BaseHstComponent extends GenericHstComponent {
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoResource.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoRequest.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoAsset.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoImage.class, true);
         // builds a fallback jcrPrimaryNodeType array.
         String[] fallBackJcrNodeTypes = getFallBackJcrNodeTypes();
         ObjectConverter objectConverter = new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs,

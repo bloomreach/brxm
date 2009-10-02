@@ -13,17 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.demo.beans;
+package org.hippoecm.hst.content.beans.standard;
 
-import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoResource;
+/**
+ * This is a base interface for possible beans containing an asset.  
+ */
 
-@Node(jcrType="demosite:textpage")
-public class TextBean extends BaseBean{
-
-	// if you have in document resources
-    public HippoResource getResource() {
-        return getBean("demosite:hippo_resource");
-    }
+public interface HippoAssetBean extends HippoBean{
+    
+    /**
+     * Get the asset 
+     *
+     * @return the resource containing the asset
+     */
+    HippoResourceBean getAsset();
 
 }

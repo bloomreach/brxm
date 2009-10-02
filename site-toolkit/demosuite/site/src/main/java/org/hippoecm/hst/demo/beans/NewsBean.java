@@ -19,11 +19,12 @@ import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoImage;
 
 @Node(jcrType="demosite:newspage")
 public class NewsBean extends TextBean{
 
-    private ImageBean imageBean;
+    private HippoImage imageBean;
     private boolean imagesLoaded = false;
     
     @Override
@@ -37,7 +38,7 @@ public class NewsBean extends TextBean{
      *
      * @return the image of the newspage
      */
-    public ImageBean getImage() {
+    public HippoImage getImage() {
         if(imagesLoaded) {
             return this.imageBean;
         }
@@ -51,10 +52,10 @@ public class NewsBean extends TextBean{
             return null;
         }
         HippoBean referencedBean = imageLinkBean.getReferencedBean();
-        if(referencedBean == null || !(referencedBean instanceof ImageBean) ) {
+        if(referencedBean == null || !(referencedBean instanceof HippoImage) ) {
             return null;
         }
-        this.imageBean = (ImageBean) imageLinkBean.getReferencedBean();
+        this.imageBean = (HippoImage) imageLinkBean.getReferencedBean();
         return imageBean;
     }
  

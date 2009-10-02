@@ -12,11 +12,15 @@
 
   <p> </p>
   
+  <hst:link var="resource" hippobean="${document.resource}" />
+  <a href="${resource}">${document.resource.name}</a>
+  
   <div>
     <hst:include ref="todolist"/>
   </div>
 
   <p style="height: 30em;">  </p>
+  
   
 </div>
 

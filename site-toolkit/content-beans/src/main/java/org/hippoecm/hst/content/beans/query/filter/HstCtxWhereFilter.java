@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.content.beans.query.filter;
 
+import java.util.List;
+
 import javax.jcr.Node;
 
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
@@ -29,12 +31,10 @@ public class HstCtxWhereFilter implements BaseFilter{
     
     private String jcrExpression;
     
-    public HstCtxWhereFilter(HstCtxWhereClauseComputer hstCtxWhereClauseComputer, Node node) throws FilterException {
-        
-       this.jcrExpression = null;
+    public HstCtxWhereFilter(HstCtxWhereClauseComputer hstCtxWhereClauseComputer, Node scope) throws FilterException {
        
-       try {
-           jcrExpression = hstCtxWhereClauseComputer.getCtxWhereClause(node);
+        try {
+           jcrExpression = hstCtxWhereClauseComputer.getCtxWhereClause(scope);
        } catch (HstContextualizeException e) {
            throw new FilterException("Exception while computing the context where clause", e);
        }
@@ -47,16 +47,18 @@ public class HstCtxWhereFilter implements BaseFilter{
        }
     }
 
-    public String getJcrExpression(){
-        return this.jcrExpression;
+    public HstCtxWhereFilter(HstCtxWhereClauseComputer hstCtxWhereClauseComputer, List<Node> scopes,
+            boolean skipInvalidScopes) throws FilterException{
+        
+        try {
+            jcrExpression = hstCtxWhereClauseComputer.getCtxWhereClause(scopes, skipInvalidScopes);
+        } catch (HstContextualizeException e) {
+            throw new FilterException("Cannot create context where filter: ", e);
+        }
     }
 
-    public void addAndFilter(BaseFilter filter) {
-        if(filter.getJcrExpression() == null) {
-            log.warn("Filter has an empty jcr expression. ignore filter");
-            return;
-        }
-        this.jcrExpression = "(" + this.jcrExpression + ")" + " and ( " + filter.getJcrExpression() + " )";
+    public String getJcrExpression(){
+        return this.jcrExpression;
     }
 
 

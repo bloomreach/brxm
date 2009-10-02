@@ -77,7 +77,7 @@ public class HstQueryManagerImpl implements HstQueryManager{
     @Deprecated
     public HstQuery createQuery(HstRequestContext hstRequestContext, HippoBean scope) throws QueryException{
         if(scope.getNode() == null) {
-            throw new QueryException("Cannot create a query for a detached HippoBean where the jcr node is null");
+            return createQuery((Node)null);
         }
         return createQuery(scope.getNode());
     }
@@ -86,8 +86,8 @@ public class HstQueryManagerImpl implements HstQueryManager{
      * Creates a empty query, with the scope HippoBean
      */
     public HstQuery createQuery(HippoBean scope) throws QueryException{
-        if(scope.getNode() == null) {
-            throw new QueryException("Cannot create a query for a detached HippoBean where the jcr node is null");
+        if(scope == null || scope.getNode() == null) {
+            return createQuery((Node)null);
         }
         return createQuery(scope.getNode());
     }
@@ -104,7 +104,7 @@ public class HstQueryManagerImpl implements HstQueryManager{
      */
     public HstQuery createQuery(HippoBean scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
         if(scope.getNode() == null) {
-            throw new QueryException("Cannot create a query for a detached HippoBean where the jcr node is null");
+            return createQuery((Node)null, filterBean, includeSubTypes);
         }
         return createQuery(scope.getNode(), filterBean, includeSubTypes);
     }
@@ -116,7 +116,7 @@ public class HstQueryManagerImpl implements HstQueryManager{
     
     public HstQuery createQuery(HippoBean scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
         if(scope.getNode() == null) {
-            throw new QueryException("Cannot create a query for a detached HippoBean where the jcr node is null");
+            return createQuery((Node)null, filterBeans);
         }
         return createQuery(scope.getNode(), filterBeans);
     }
@@ -130,10 +130,6 @@ public class HstQueryManagerImpl implements HstQueryManager{
      * added as variable arguments. It is not possible to retrieve subtypes of the applied filterBeans.
      */
     public HstQuery createQuery(Node scope, Class<? extends HippoBean>... filterBeans) throws QueryException{
-        if(scope == null) {
-            throw new QueryException("Cannot create a query for a detached HippoBean where the jcr node is null");
-        }
-        
         List<String> primaryNodeTypes = new ArrayList<String>(); 
         for(Class<? extends HippoBean> annotatedBean : filterBeans) {
            String primaryNodeTypeNameForBean = objectConverter.getPrimaryNodeTypeNameFor(annotatedBean);

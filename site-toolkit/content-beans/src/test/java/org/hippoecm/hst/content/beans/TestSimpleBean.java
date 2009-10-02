@@ -145,6 +145,12 @@ public class TestSimpleBean extends AbstractBeanTestCase {
 
         public final Logger log = LoggerFactory.getLogger(MyHstCtxWhereClauseComputerImpl.class.getName()); 
         
+
+        public HstVirtualizer getVirtualizer(List<Node> scopes, boolean skipInvalidScopes)
+                throws HstContextualizeException {
+            return null;
+        }
+        
         public HstVirtualizer getVirtualizer(Node ctxAwareNode) throws HstContextualizeException{
             return null;
         }
@@ -260,6 +266,11 @@ public class TestSimpleBean extends AbstractBeanTestCase {
             }
             
         }
+
+        public String getCtxWhereClause(List<Node> scopes, boolean skipInvalidScopes) throws HstContextualizeException {
+            return getCtxWhereClause(scopes.get(0));
+        }
+
 
     }
 

@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.standard.HippoImage;
 import org.hippoecm.hst.persistence.ContentNodeBinder;
 import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
 import org.slf4j.Logger;
@@ -83,7 +84,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
      * the jsp el can always try a var.image without getting an expression language exception
      * @return
      */
-    public ImageBean getImage(){
+    public HippoImage getImage(){
         return null;
     }
     

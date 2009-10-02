@@ -15,9 +15,14 @@
  */
 package org.hippoecm.hst.content.beans.query;
 
+import java.util.List;
+
+import javax.jcr.Node;
+
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 public interface HstQuery {
 
@@ -57,7 +62,28 @@ public interface HstQuery {
     void addOrderByDescending(String fieldNameAttribute);
 
     /**
-     * 
+     * add scopes to search in. 
+     * @param scopes
+     */
+    void addScopes(List<HippoBean> scopes);
+    
+    /**
+     * add scopes to search in. 
+     * @param scopes
+     */
+    void addScopes(Node[] scopes);
+    
+    /**
+     * Whether invalid scopes should be skipped, or if an invalid scope is found (jcr node is null, HippoBean is empty, etc), throw 
+     * a QueryException. Default HstQuery implementation throw a QueryException when an invalid scope is encountered. If skipInvalid is set
+     * to <code>true</code>, then still, when all scopes happen to be invalid, a QueryException is thrown
+     * @param skipInvalidScopes is <code>true</code>, invalid scopes are ignored
+     */
+    void setSkipInvalidScopes(boolean skipInvalidScopes);
+    
+    /**
+     * The actual execution of the HstQuery. The HstQueryResult will never contain one and the same result twice. So, if a result matches
+     * the search criteria twice, it is still returned as one hit. 
      * @return <code>{@link HstQueryResult}</code>
      */
     HstQueryResult execute() throws QueryException;

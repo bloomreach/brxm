@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.search;
 
+import java.util.List;
+
 import javax.jcr.Node;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -41,12 +43,32 @@ public interface HstCtxWhereClauseComputer {
     String getCtxWhereClause(Node node) throws HstContextualizeException;
     
     /**
-     * Returns a virtualizer for the ctxAwareNode. If the ctxAwareNode is physical, a virtualizer can be 
-     * returned that just returns the physical node directly, or <code>null</code>. 
-     * @param ctxAwareNode
-     * @return A virtualizer for the ctxAwareNode. If <code>null</code> is returned, no virtualization can be done
+     * returns the context where clause as from {@link #getCtxWhereClause(Node)}, only now combines a set of scopes.
+     * @param scopes
+     * @param skipInvalidScopes <code>true</code> when invalid scopes are skipped
+     * @return the string containing the xpath where clause (without the enclosing '[' and ']') representing all scopes or <code>null</code> when it cannot 
+     * compute one. If there is no where clause, for example because the node is the jcr root node, just "" should be returned
      * @throws HstContextualizeException
      */
-    HstVirtualizer getVirtualizer(Node ctxAwareNode) throws HstContextualizeException;
+    String getCtxWhereClause(List<Node> scopes, boolean skipInvalidScopes) throws HstContextualizeException;
+    
+    /**
+     * Returns a virtualizer for the scope. If the scope is physical, a virtualizer can be 
+     * returned that just returns the physical node. 
+     * @param scope
+     * @return A virtualizer for the scope. If <code>null</code> is returned, no virtualization can be done
+     * @throws HstContextualizeException
+     */
+    HstVirtualizer getVirtualizer(Node scope) throws HstContextualizeException;
+    
+    /**
+    * Returns a virtualizer for the scopes. 
+    * @param scopes all the scopes that was searched in
+    * @param skipInvalidScopes whether to skip invalid scopes. If false, a HstContextualizeException is thrown when an invalid scope is found
+    * @return A virtualizer for the scopes. If <code>null</code> is returned, no virtualization can be done
+    * @throws HstContextualizeException
+    */
+   HstVirtualizer getVirtualizer(List<Node> scopes, boolean skipInvalidScopes) throws HstContextualizeException;
+
    
 }

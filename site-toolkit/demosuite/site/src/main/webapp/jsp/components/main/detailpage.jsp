@@ -67,6 +67,14 @@
     </p>
   </div>
   
+  
+  <c:if test="${not empty document.resource}">
+      <h2>resource link:</h2>
+      <hst:link var="resource" hippobean="${document.resource}" />
+      <a href="${resource}">${document.resource.name}</a>
+      <br/><br/>
+  </c:if>
+  
   <c:if test="${not empty document.image}">
     <img src="<hst:link hippobean="${document.image.picture}"/>"/>
   </c:if>
