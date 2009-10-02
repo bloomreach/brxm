@@ -38,14 +38,15 @@
     <junit.version>4.5</junit.version>
     
     <hst-configuration-editor.version>1.02.00</hst-configuration-editor.version>
-    <hippoecm.version>2.07.01</hippoecm.version>
+    <hippoecm.version>2.09.00</hippoecm.version>
     <hst.version>2.04.00-SNAPSHOT</hst.version>
     
     <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
     <javax.jcr.version>1.0</javax.jcr.version>
     <spring.version>2.5.6</spring.version>
     <xalan.version>2.4.1</xalan.version>
-    <xerces.version>2.3.0</xerces.version>
+    <xerces.version>2.4.0</xerces.version>
+    <xercesImpl.version>2.9.1</xercesImpl.version>
     <xml-apis.version>2.0.2</xml-apis.version>
     <commons-proxy.version>1.0</commons-proxy.version>
     
@@ -103,7 +104,7 @@
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
-        <version>${dollar}{xerces.version}</version>
+        <version>${dollar}{xercesImpl.version}</version>
         <scope>runtime</scope>
       </dependency>
     
