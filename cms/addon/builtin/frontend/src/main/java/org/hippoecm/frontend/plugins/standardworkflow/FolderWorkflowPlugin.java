@@ -143,10 +143,17 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             protected Dialog createRequestDialog() {
                 StringResourceModel messageModel;
                 try {
-                    IModel folderName = new NodeTranslator(new JcrNodeModel(
+                    final IModel folderName = new NodeTranslator(new JcrNodeModel(
                             ((WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel()).getNode())).getNodeName();
+                    // FIXME: no longer necessary in Wicket-1.4.x; see WICKET-2381
                     messageModel = new StringResourceModel("delete-message-extended", FolderWorkflowPlugin.this, null,
-                            new Object[] { folderName });
+                            new Object[] { folderName }) {
+                        @Override
+                        public void detach() {
+                            folderName.detach();
+                            super.detach();
+                        }
+                    };
                 } catch (RepositoryException ex) {
                     messageModel = new StringResourceModel("delete-message", FolderWorkflowPlugin.this, null);
                 }
