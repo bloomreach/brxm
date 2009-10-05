@@ -31,8 +31,8 @@ import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -124,8 +124,7 @@ public class FolderTreePlugin extends RenderPlugin {
                             target.addComponent(getComponentToUpdate());
                             IContextMenuManager menuManager = (IContextMenuManager) findParent(IContextMenuManager.class);
                             if (menuManager != null) {
-                                menuManager.collapse(this, target);
-                                menuManager.addContextMenu(this, target);
+                                menuManager.showContextMenu(this);
                                 String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
                                 String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
                                 if (x != null && y != null) {

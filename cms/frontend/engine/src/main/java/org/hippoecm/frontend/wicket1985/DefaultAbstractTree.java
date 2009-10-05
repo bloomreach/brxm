@@ -585,8 +585,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
                                 target.addComponent(parent);
                                 IContextMenuManager menuManager = (IContextMenuManager) findParent(IContextMenuManager.class); 
                                 if (menuManager != null) {
-                                        menuManager.collapse(this, target);
-                                        menuManager.addContextMenu(this, target);
+                                        menuManager.showContextMenu(this);
                                         onContextLinkClicked(content, target);
                                 }																
 			}
@@ -610,7 +609,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
                         this.content = content;
                         this.parent = parent;
                 }
-
+                
                 public void collapse(AjaxRequestTarget target) {
                         content.setVisible(false);
                         target.addComponent(parent);
