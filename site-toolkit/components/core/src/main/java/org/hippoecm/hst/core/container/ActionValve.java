@@ -29,6 +29,7 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
+import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ActionValve extends AbstractValve
@@ -118,7 +119,12 @@ public class ActionValve extends AbstractValve
                             if (requestContext.isPortletContext()) {
                                 responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL, requestContext));
                             } else {
-                                responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext, servletRequest.getContextPath()));
+                                /* 
+                                 * We will redirect to a URL containing the protocol + hostname + portnumber to avoid problems
+                                 * when redirecting behind a proxy.
+                                 */
+                                String url = requestContext.getVirtualHost().getBaseURL(servletRequest) + urlProvider.toURLString(baseURL, requestContext, servletRequest.getContextPath());
+                                responseState.sendRedirect(url);
                             }
                         } catch (UnsupportedEncodingException e) {
                             throw new ContainerException(e);

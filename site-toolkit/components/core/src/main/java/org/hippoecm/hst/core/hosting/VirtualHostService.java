@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.Configuration;
 import org.hippoecm.hst.service.AbstractJCRService;
@@ -246,6 +247,37 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
 
     public VirtualHost getChildHost(String name) {
         return childVirtualHosts.get(name);
+    }
+
+
+    public String getBaseURL(HttpServletRequest request) {
+        StringBuilder builder = new StringBuilder();
+        
+        String protocol = this.getProtocol();
+        
+        if (protocol == null) {
+            protocol = "http";
+        }
+        
+        String serverName = request.getServerName();
+        
+        int port = this.getPortNumber();
+        
+        if (port == 0) {
+            port = request.getServerPort();
+        }
+        
+        if ((port == 80 && "http".equals(protocol)) || (port == 443 && "https".equals(protocol))) {
+            port = 0;
+        }
+        
+        builder.append(protocol);
+        builder.append("://").append(serverName);
+        
+        if (this.isPortVisible() && port != 0) {
+            builder.append(":").append(port);
+        }
+        return builder.toString();
     }
 
 }

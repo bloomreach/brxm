@@ -107,36 +107,9 @@ public class HstLinkImpl implements HstLink{
             MatchedMapping mapping = request.getRequestContext().getMatchedMapping();
             
             if( mapping != null && mapping.getMapping() != null) {
-                StringBuilder builder = new StringBuilder();
-               
+                
                 VirtualHost vhost = mapping.getMapping().getVirtualHost();
-                
-                String protocol = vhost.getProtocol();
-                
-                if (protocol == null) {
-                    protocol = "http";
-                }
-                
-                String serverName = request.getServerName();
-                
-                int port = vhost.getPortNumber();
-                
-                if (port == 0) {
-                    port = request.getServerPort();
-                }
-                
-                if ((port == 80 && "http".equals(protocol)) || (port == 443 && "https".equals(protocol))) {
-                    port = 0;
-                }
-                
-                builder.append(protocol);
-                builder.append("://").append(serverName);
-                
-                if (vhost.isPortVisible() && port != 0) {
-                    builder.append(":").append(port);
-                }
-                
-                urlString = builder.toString() + urlString;
+                urlString = vhost.getBaseURL(request) + urlString;
             } else {
                 log.warn("Cannot create external link because there is no virtual host to use");
             }

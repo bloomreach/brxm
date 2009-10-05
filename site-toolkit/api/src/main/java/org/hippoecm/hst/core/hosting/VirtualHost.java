@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.hosting;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * VirtualHost which holds the mapping between host (server name) and site name.
  * 
@@ -71,5 +73,30 @@ public interface VirtualHost {
      * @return the protocol to use for creating external urls, for example http / https
      */
     String getProtocol();
+    
+    
+    /**
+     * Returns the base of the <code>URL</code> as seen by for example a browser. The base URL is consists of <code>protocol + hostname + portnumber</code>
+     * for example 'http://www.hippoecm.org:8081' 
+     * 
+     * The protocol is 'http' by default, unless {@link # getProtocol()} returns something else 
+     * The hostname is the HttpServeltRequest request.getServerName() (proxies must have <code>ProxyPreserveHost On</code>)
+     * The portnumber is as follows: 
+     * <ul>
+     *   <li>when {@link #isPortVisible()} is <code>false</code>, there is no portnumber</li>
+     *   <li>otherwise: 
+     *       <ul>
+     *          <li><code>port = {@link #getPortNumber()}</code></li>
+     *          <li><code>if (port == 0) {port = request.getServerPort()}</code></li>
+     *          <li>if(port == 80 && "http".equals(protocol)) || (port == 443 && "https".equals(protocol)): no portnumber will be in baseUrl
+     *       </ul>
+     *   </li>
+     * </ul>  
+     * 
+     * @param request the HttpServletRequest
+     * @return the <code>URL</code> until the context path, thus <code>protocol + hostname + portnumber</code>, for example 'http://www.hippoecm.org:8081' 
+     */
+    
+    String getBaseURL(HttpServletRequest request);
 
 }
