@@ -29,7 +29,6 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
-import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class ActionValve extends AbstractValve
@@ -51,7 +50,8 @@ public class ActionValve extends AbstractValve
             HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider(requestContext);
             
             if (window == null) {
-                if (log.isWarnEnabled()) {
+                if (log.isWarnEnabled()) 
+                {
                     log.warn("Cannot find the action window: {}", actionWindowReferenceNamespace);
                 }
             } else {
