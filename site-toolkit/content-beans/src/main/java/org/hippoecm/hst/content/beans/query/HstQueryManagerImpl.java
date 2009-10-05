@@ -136,7 +136,7 @@ public class HstQueryManagerImpl implements HstQueryManager{
            if(primaryNodeTypeNameForBean != null) {
                primaryNodeTypes.add(primaryNodeTypeNameForBean);
            } else {
-               throw new QueryException("Cannot find primaryNodeType for '"+primaryNodeTypeNameForBean.getClass().getName()+"'.");
+               throw new QueryException("Cannot find primaryNodeType for '"+annotatedBean.getClass().getName()+"'.");
            }
         }
         NodeTypeFilter primaryNodeTypeFilter = null;
