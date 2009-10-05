@@ -1241,3 +1241,10 @@ table.hippo-list-documents > tbody {
   color: #69849f;
   background-color: #fff8d5; 
 }
+
+/* Reposition the YUI-logger so that it does not block the logout link */
+body.hippo-root div.yui-log-container {
+  top: 30px;
+  right: 5px;
+}
+
