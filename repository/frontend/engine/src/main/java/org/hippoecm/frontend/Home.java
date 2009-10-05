@@ -16,7 +16,6 @@
 package org.hippoecm.frontend;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.WicketAjaxReference;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.behavior.IBehavior;
@@ -59,11 +58,11 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     private DialogServiceFactory dialogService;
     private ObservableRegistry obRegistry;
     private IPluginConfigService pluginConfigService;
-    private IContextMenu activeContextMenu;
-    private ContextMenuBehavior contextMenuBehavior;
+    private ContextMenuBehavior menuBehavior;
 
     public Home() {
-        this(new JcrApplicationFactory(new JcrNodeModel("/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH)));
+        this(new JcrApplicationFactory(new JcrNodeModel("/" + HippoNodeType.CONFIGURATION_PATH + "/"
+                + HippoNodeType.FRONTEND_PATH)));
     }
 
     public Home(IApplicationFactory appFactory) {
@@ -103,8 +102,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         };
         context.registerTracker(tracker, serviceId);
 
-        contextMenuBehavior = new ContextMenuBehavior();
-        add(contextMenuBehavior);
+        add(menuBehavior = new ContextMenuBehavior());
 
         add(HeaderContributor.forJavaScript(WicketAjaxReference.INSTANCE));
 
@@ -151,6 +149,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
             root.render(target);
         }
         dialogService.render(target);
+        menuBehavior.checkMenus(target);
     }
 
     public void focus(IRenderService child) {
@@ -204,20 +203,8 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         super.onDetach();
     }
 
-    public void addContextMenu(IContextMenu activeMenu, AjaxRequestTarget target) {
-        activeContextMenu = activeMenu;
-        contextMenuBehavior.setShown(true, target);
-    }
-
-    public void collapse(IContextMenu current, AjaxRequestTarget target) {
-        if (activeContextMenu == null) {
-            return;
-        }
-
-        if (current != activeContextMenu) {
-            activeContextMenu.collapse(target);
-            contextMenuBehavior.setShown(false, target);
-        }
+    public void showContextMenu(IContextMenu active) {
+        menuBehavior.activate(active);
     }
 
 }
