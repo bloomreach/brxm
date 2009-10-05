@@ -15,12 +15,19 @@
  */
 package org.hippoecm.frontend.behaviors;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.Component;
 
+/**
+ * Marker interface for IContextMenuManager {@link Component}s.  All {@link IContextMenu}s
+ * that are contained in the component hierarchy will be closed when the context menu
+ * manager is notified.  Other context menu managers (and their sub-trees) are excluded
+ * from the hierarchical search.
+ * <p>
+ * The interface can be set on a {@link Component} or one of it's {@link IBehavior}s.
+ * When an ancestor context menu manager searches for context menu's, it 
+ */
 public interface IContextMenuManager {
     final static String SVN_ID = "$Id$";
 
-    void addContextMenu(IContextMenu activeMenu, AjaxRequestTarget target);
-
-    void collapse(IContextMenu current, AjaxRequestTarget target);
+	void showContextMenu(IContextMenu active);
 }

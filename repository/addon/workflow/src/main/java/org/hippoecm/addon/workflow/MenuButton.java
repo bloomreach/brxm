@@ -45,9 +45,10 @@ class MenuButton extends Panel implements IContextMenu {
             public void onClick(AjaxRequestTarget target) {
                 content.setVisible(!content.isVisible());
                 target.addComponent(MenuButton.this);
-                IContextMenuManager manager = getContextMenuManager();
-                manager.collapse(MenuButton.this, target);
-                manager.addContextMenu(MenuButton.this, target);
+                if (content.isVisible()) {
+                    IContextMenuManager manager = getContextMenuManager();
+                    manager.showContextMenu(MenuButton.this);
+                }
             }
 
             @Override
@@ -56,8 +57,7 @@ class MenuButton extends Panel implements IContextMenu {
                 target.addComponent(MenuButton.this);
                 if (content.isVisible()) {
                     final MenuBar bar = (MenuBar) findParent(MenuBar.class);
-                    bar.collapse(MenuButton.this, target);
-                    getContextMenuManager().addContextMenu(MenuButton.this, target);
+                    getContextMenuManager().showContextMenu(MenuButton.this);
                 }
             }
         });
