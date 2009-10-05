@@ -133,7 +133,7 @@ public class SimpleHtmlExtractor {
                         
                         if (ch == '>' || Character.isWhitespace(ch)) {
                             tagStarted = true;
-                            offset = line.indexOf('>', offset + 6);
+                            offset = line.indexOf('>', offset + tagName.length());
                             if (offset != -1) {
                                 String temp = line.substring(offset + 1);
                                 offset = temp.toUpperCase().indexOf(endTag);
