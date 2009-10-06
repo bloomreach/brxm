@@ -17,6 +17,11 @@ package org.hippoecm.frontend.editor.tools;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Map;
 
 import org.hippoecm.editor.tools.JcrTypeDescriptor;
@@ -44,4 +49,19 @@ public class JcrTypeDescriptorTest extends PluginTest {
         assertEquals(3, fields.size());
     }
 
+    @Test
+    public void testSerialization() throws Exception {
+        JcrTypeStore typeStore = new JcrTypeStore();
+
+        JcrTypeDescriptor descriptor = typeStore.getTypeDescriptor("test:test");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(descriptor);
+
+        InputStream is = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(is);
+        JcrTypeDescriptor clone = (JcrTypeDescriptor) ois.readObject();
+        assertEquals(2, clone.getFields().size());
+    }
+    
 }
