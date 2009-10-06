@@ -91,8 +91,6 @@ public class BaseHstComponent extends GenericHstComponent {
 
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "beans-annotated-classes";
     public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
-    public static final String BEANS_REQUEST_CONTEXT_ATTR_NAME = BaseHstComponent.class.getName() + ".beans";
-    public static final String QUERY_REQUEST_CONTEXT_ATTR_NAME = BaseHstComponent.class.getName() + ".query";
 
     protected boolean beansInitialized;
     protected ObjectConverter objectConverter;
@@ -284,19 +282,14 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     public ObjectBeanManager getObjectBeanManager(HstRequest request) {
-        HstRequestContext requestContext = request.getRequestContext();
-        ObjectBeanManager obm = (ObjectBeanManager) requestContext.getAttribute(BEANS_REQUEST_CONTEXT_ATTR_NAME);
-        if (obm == null) {
-            try {
-                obm = new ObjectBeanManagerImpl(requestContext.getSession(), this.objectConverter);
-                requestContext.setAttribute(BEANS_REQUEST_CONTEXT_ATTR_NAME, obm);
-            } catch (UnsupportedRepositoryOperationException e) {
-                throw new HstComponentException(e);
-            } catch (RepositoryException e) {
-                throw new HstComponentException(e);
-            }
+        try {
+            HstRequestContext requestContext = request.getRequestContext();
+            return new ObjectBeanManagerImpl(requestContext.getSession(), this.objectConverter);
+        } catch (UnsupportedRepositoryOperationException e) {
+            throw new HstComponentException(e);
+        } catch (RepositoryException e) {
+            throw new HstComponentException(e);
         }
-        return obm;
     }
     
     /**
