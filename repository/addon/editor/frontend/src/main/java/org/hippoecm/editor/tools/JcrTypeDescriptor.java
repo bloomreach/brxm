@@ -15,6 +15,8 @@
  */
 package org.hippoecm.editor.tools;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -65,12 +67,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     private static final Logger log = LoggerFactory.getLogger(JcrTypeDescriptor.class);
 
     private String name;
-    private String type;
     private TypeLocator locator;
-    private transient Map<String, IFieldDescriptor> declaredFields;
-    private transient Map<String, IFieldDescriptor> fields;
-    private transient Map<String, IObserver> observers = new TreeMap<String, IObserver>();
-    private transient IFieldDescriptor primary;
+    private Map<String, IFieldDescriptor> declaredFields;
+    private Map<String, IFieldDescriptor> fields;
+    private Map<String, IObserver> observers = new TreeMap<String, IObserver>();
+    private IFieldDescriptor primary;
+    private transient boolean attached = false;
 
     public JcrTypeDescriptor(JcrNodeModel nodeModel, TypeLocator locator) throws RepositoryException {
         super(nodeModel);
@@ -90,20 +92,8 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             name = prefix + ":" + templateTypeNode.getName();
         }
 
-        if (typeNode.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
-            type = typeNode.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
-        } else {
-            type = name;
-        }
-
-        primary = null;
+        attached = true;
         loadFields();
-        for (IFieldDescriptor field : fields.values()) {
-            if (field.isPrimary()) {
-                primary = field;
-                break;
-            }
-        }
     }
 
     public String getName() {
@@ -111,7 +101,15 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     }
 
     public String getType() {
-        return type;
+        try {
+            Node typeNode = getNode();
+            if (typeNode.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
+                return typeNode.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
+            }
+        } catch (RepositoryException ex) {
+            log.error("error determining JCR type");
+        }
+        return name;
     }
 
     public List<String> getSuperTypes() {
@@ -135,18 +133,18 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         try {
             String[] types = superTypes.toArray(new String[superTypes.size()]);
             getNode().setProperty(HippoNodeType.HIPPO_SUPERTYPE, types);
-
-            updateFields();
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
     }
 
     public Map<String, IFieldDescriptor> getFields() {
+        attach();
         return fields;
     }
 
     public Map<String, IFieldDescriptor> getDeclaredFields() {
+        attach();
         return declaredFields;
     }
 
@@ -179,7 +177,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     public Value createValue() {
         try {
-            int propertyType = PropertyType.valueFromName(type);
+            int propertyType = PropertyType.valueFromName(getType());
             switch (propertyType) {
             case PropertyType.BOOLEAN:
                 return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(false);
@@ -219,7 +217,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             JcrFieldDescriptor desc = new JcrFieldDescriptor(new JcrNodeModel(field), this);
             desc.copy(descriptor);
 
-            updateFields();
+            detach();
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -236,17 +234,17 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                 }
                 fieldNode.remove();
             } else {
-                log.warn("field " + field + " was not found in type " + type);
+                log.warn("field " + field + " was not found in type " + getType());
             }
 
-            updateFields();
+            detach();
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
     }
 
     public void setPrimary(String name) {
-        loadFields();
+        attach();
         if (primary != null) {
             if (!primary.getName().equals(name)) {
                 if (!(primary instanceof JcrFieldDescriptor)) {
@@ -267,7 +265,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             log.warn("field " + name + " was not found");
         }
 
-        updateFields();
+        detach();
     }
 
     @Override
@@ -284,9 +282,14 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         return new HashCodeBuilder(53, 7).append(this.name).toHashCode();
     }
 
+    /**
+     * (re)load the cached fields "fields", "declaredFields", "primary"
+     */
     protected void loadFields() {
         fields = new HashMap<String, IFieldDescriptor>();
         declaredFields = new HashMap<String, IFieldDescriptor>();
+        primary = null;
+
         for (String superType : getSuperTypes()) {
             try {
                 fields.putAll(locator.locate(superType).getFields());
@@ -321,16 +324,31 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
+
+        for (IFieldDescriptor field : fields.values()) {
+            if (field.isPrimary()) {
+                primary = field;
+                break;
+            }
+        }
+    }
+
+    protected void attach() {
+        if (!attached) {
+            updateFields();
+            attached = true;
+        }
     }
 
     @Override
     public void detach() {
-        if (fields != null) {
+        if (attached) {
             for (IFieldDescriptor field : fields.values()) {
                 if (field instanceof IDetachable) {
                     ((IDetachable) field).detach();
                 }
             }
+            attached = false;
         }
         super.detach();
     }
@@ -422,6 +440,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
         // do our own event generation, ignoring the JCR events
         updateFields();
+        attached = true;
     }
 
     protected void processEvents(EventCollection collection) {
@@ -437,8 +456,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         loadFields();
         for (String field : fields.keySet()) {
             if (!oldFields.containsKey(field)) {
-                oldFields.put(field, fields.get(field));
-                collection.add(new TypeDescriptorEvent(this, oldFields.get(field),
+                collection.add(new TypeDescriptorEvent(this, fields.get(field),
                         TypeDescriptorEvent.EventType.FIELD_ADDED));
             }
         }
@@ -471,7 +489,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     }
 
     public boolean isType(String typeName) {
-        if (type.equals(typeName)) {
+        if (getType().equals(typeName)) {
             return true;
         }
         List<String> candidates = getSuperTypes();
