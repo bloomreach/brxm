@@ -353,7 +353,7 @@ public class BasicLocationMapTree implements LocationMapTree{
             return bestMatch;
         }
         
-        // checked all childs and self. No result. Now check parents & parents sibblings
+        // checked all childs and self. No result. Now check sibblings & parents & parents sibblings
         for(HstSiteMapItem siteMapItem : matchingSiteMapItems) {
            
             int depth = 0;
