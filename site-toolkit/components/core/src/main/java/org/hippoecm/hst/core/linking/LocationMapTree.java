@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.linking;
 
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItem;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 
 /**
@@ -41,14 +42,17 @@ public interface LocationMapTree {
     * Tries to find the best match for the <code>path</code> within this <code>LocationMapTree</code> belonging to <code>HstSite</code>.
     * As it can easily happen that multiple <code>SiteMapItem</code>'s are suitable for to match the <code>path</code>, implementing
     * classes should try to return the 'best' match. Typically, the 'best' match would be a match that resolves to a <code>SiteMapItem</code>
-    * containing a relative content path that is the most specific for the current path. 
+    * containing a relative content path that is the most specific for the current path. When two relative content path match equally well, then
+    * if there is a sitemap item that is either a child, self, sibbling, parent and sibblings of parents of the current ResolvedSiteMapItem's backing HstSiteMapItem, then this 
+    * sitemap item is preferred. The precedence is first self, then children, then sibblings, then parents and then sibblings of parents
     *
     * @param path the path you want to match
     * @param hstSite the current <code>HstSite</code> a match is tried for
     * @param representsDocument a boolean indicating whether the path to be rewritten is belonging to a document
+    * @param resolvedSiteMapItem the current context which is used when two relative content paths match equally well.
     * @return the resolvedLocationMapTreeItem that contains a rewritten path and the hstSiteMapId which is the unique id of the
     * HstSiteMapItem that returned the best match. If no match can be made, <code>null</code> is returned 
     */ 
-   ResolvedLocationMapTreeItem match(String path, HstSite hstSite, boolean representsDocument);
+   ResolvedLocationMapTreeItem match(String path, HstSite hstSite, boolean representsDocument, ResolvedSiteMapItem resolvedSiteMapItem);
    
 }

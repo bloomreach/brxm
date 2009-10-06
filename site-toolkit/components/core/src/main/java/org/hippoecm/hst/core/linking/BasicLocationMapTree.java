@@ -17,17 +17,16 @@ package org.hippoecm.hst.core.linking;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.configuration.Configuration;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -37,15 +36,11 @@ import org.slf4j.LoggerFactory;
 public class BasicLocationMapTree implements LocationMapTree{
 
     private final static Logger log = LoggerFactory.getLogger(BasicLocationMapTree.class);
-    private final static int DEFAULT_CACHE_SIZE = 5000;
     
     private Map<String, LocationMapTreeItem> children = new HashMap<String, LocationMapTreeItem>();
     private String canonicalSiteContentPath;
-    private Map<String, ResolvedLocationMapTreeItem> cache;
-    
     @SuppressWarnings("unchecked")
     public BasicLocationMapTree(String canonicalSiteContentPath) {
-        this.cache = Collections.synchronizedMap(new LRUMap(DEFAULT_CACHE_SIZE));
         this.canonicalSiteContentPath = canonicalSiteContentPath;
         
     }
@@ -148,7 +143,7 @@ public class BasicLocationMapTree implements LocationMapTree{
     }
 
     
-    public ResolvedLocationMapTreeItem match(String path, HstSite hstSite,boolean representsDocument) {
+    public ResolvedLocationMapTreeItem match(String path, HstSite hstSite,boolean representsDocument, ResolvedSiteMapItem resolvedSiteMapItem) {
         String origPath = path;
       
         if(!path.startsWith(this.getCanonicalSiteContentPath())){
@@ -159,20 +154,7 @@ public class BasicLocationMapTree implements LocationMapTree{
         path = path.substring(this.getCanonicalSiteContentPath().length());
         // normalize leading and trailing slashes
         path = PathUtils.normalizePath(path);
-        
-        ResolvedLocationMapTreeItem o = this.cache.get(path);
-        
-        // TODO remove this
-        if(true) {
-            o = null;
-        }
-        if(o != null) {
-            if(o instanceof NullResolvedLocationMapTreeItem) {
-                return null;
-            }
-            return o;
-        }
-        
+     
         String[] elements = path.split("/"); 
         
         
@@ -209,38 +191,48 @@ public class BasicLocationMapTree implements LocationMapTree{
 
         if(matchedLocationMapTreeItem == null || matchedLocationMapTreeItem.getHstSiteMapItems().size() == 0) {
             log.warn("Unable to linkrewrite '{}' to any sitemap item", origPath);
-            cache.put(path, new NullResolvedLocationMapTreeItem());
             return null;
         }
         
         HstSiteMapItem hstSiteMapItem = null;
+        
       
         if(matchedLocationMapTreeItem.getHstSiteMapItems().size() > 1) {
             log.debug("Multiple sitemap items are suited equally for linkrewrite of '{}'. If we represent a document, see if can map to an extension", path);
+           
+            List<HstSiteMapItem> matchingSiteMapItems = new ArrayList<HstSiteMapItem>();
             for(HstSiteMapItem item : matchedLocationMapTreeItem.getHstSiteMapItems()) {
                 HstSiteMapItemService serv = (HstSiteMapItemService)item;
                 if(representsDocument) {
                     if(serv.getExtension() != null) {
-                        //  found a sitemap item with an extension! Take this one
-                        hstSiteMapItem = serv;
-                        break;
+                        //  found a sitemap item with an extension! Add this one
+                        matchingSiteMapItems.add(serv);
                     } else {
                         continue;
                     }
                 } else {
                     if(serv.getExtension() == null) {
-                        //  found a sitemap item without an extension! Take this one
-                        hstSiteMapItem = serv;
-                        break;
+                        //  found a sitemap item without an extension! Add this one
+                        matchingSiteMapItems.add(serv);
                     } else {
                         continue;
                     }
                 }
             }
-            if(hstSiteMapItem == null) {
+            if(matchingSiteMapItems.size() == 0) {
                 log.debug("Did not find a sitemap item that can represent this item. We return the first sitemap item.");
+            } else if(matchingSiteMapItems.size() == 1) {
+                hstSiteMapItem = matchingSiteMapItems.get(0);
+            } else {
+                log.debug("Multiple sitemap items are equally well suited for linkrewriting. Let's find if there is a sitemap item that" +
+                		"has precedence.");
+                
+                // fetch the best matching sitemap item: 
+                hstSiteMapItem = fetchBestInContext(matchingSiteMapItems, resolvedSiteMapItem.getHstSiteMapItem());
+                
             }
         } 
+        
         
         if(hstSiteMapItem == null){
             hstSiteMapItem = matchedLocationMapTreeItem.getHstSiteMapItems().get(0);
@@ -249,7 +241,7 @@ public class BasicLocationMapTree implements LocationMapTree{
         String resolvedPath = (String)pp.resolveProperty("parameterizedPath", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
         if(resolvedPath == null) {
             log.warn("Unable to resolve '{}'. Return null", ((HstSiteMapItemService)hstSiteMapItem).getParameterizedPath());
-            cache.put(path, new NullResolvedLocationMapTreeItem());
+          
             return null;
         }
         
@@ -258,13 +250,10 @@ public class BasicLocationMapTree implements LocationMapTree{
         ResolvedLocationMapTreeItem r = new ResolvedLocationMapTreeItemImpl(resolvedPath, hstSiteMapItem.getId());
         
         
-        cache.put(path, r);
         return r;
       
     }
 
-    
-    
     private LocationMapTreeItem resolveMatchingSiteMap(LocationMapTreeItem locationMapTreeItem, Properties params, int position, String[] elements) {
         return traverseInToLocationMapTreeItem(locationMapTreeItem, params, position, elements, new ArrayList<LocationMapTreeItem>());
      }
@@ -331,20 +320,85 @@ public class BasicLocationMapTree implements LocationMapTree{
     
     
     /*
-     * To be able to cache 'null', we use this placeholder null impl 
+     * find the sitemap item that matches the context best: first whether it is equal to the current ctx sitemap item,
+     * then the sitemap item that is a closest child, and the the closest parent. If this results in no match, pick the first.
+     * 
+     * if the list is empty, return null
      */
-    private class NullResolvedLocationMapTreeItem  implements ResolvedLocationMapTreeItem{
-
-        private static final long serialVersionUID = 1L;
-
-        public String getHstSiteMapItemId() {
-            return null;
-        }
-
-        public String getPath() {
-            return null;
+    private HstSiteMapItem fetchBestInContext(List<HstSiteMapItem> matchingSiteMapItems, HstSiteMapItem currentCtxSiteMapItem) {
+        int bestDepth = Integer.MAX_VALUE;
+        HstSiteMapItem bestMatch = null;
+        
+        for(HstSiteMapItem siteMapItem : matchingSiteMapItems) {
+            if(siteMapItem == currentCtxSiteMapItem) {
+                return siteMapItem;
+            }
+            
+            int depth = 0;
+            HstSiteMapItem current = siteMapItem;
+            while(current.getParentItem() != null) {
+                current = current.getParentItem();
+                depth++;
+                if(current == currentCtxSiteMapItem) {
+                    if(depth < bestDepth) {
+                        bestMatch = siteMapItem;
+                        bestDepth = depth;
+                    }
+                    break;
+                }
+            }
         }
         
+        if(bestMatch != null) {
+            return bestMatch;
+        }
+        
+        // checked all childs and self. No result. Now check parents & parents sibblings
+        for(HstSiteMapItem siteMapItem : matchingSiteMapItems) {
+           
+            int depth = 0;
+            HstSiteMapItem current = currentCtxSiteMapItem;
+            
+            while(current.getParentItem() != null) {
+                current = current.getParentItem();
+                depth++;
+                
+                if(current == siteMapItem) {
+                    if(depth < bestDepth) {
+                        bestMatch = siteMapItem;
+                        bestDepth = depth;
+                    }
+                    break;
+                }
+                
+                // check sibblings
+                
+                for(HstSiteMapItem sibbling : current.getChildren()) {
+                    if(sibbling == siteMapItem) {
+                        if(depth < bestDepth) {
+                            bestMatch = siteMapItem;
+                            bestDepth = depth;
+                        }
+                        break;
+                    }
+                }
+                
+            }
+        }
+        
+        if(bestMatch != null) {
+          return bestMatch;  
+        }
+        
+        // there is no sitemap item with a better precedence, return the first in the list
+        if(matchingSiteMapItems.size() > 0) {
+            return matchingSiteMapItems.get(0);
+        }
+        
+        
+        return null;
     }
+
+    
 
 }
