@@ -27,20 +27,27 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.editor.tools.JcrTypeDescriptor;
 import org.hippoecm.frontend.PluginTest;
+import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.impl.TemplateEngine;
+import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.yui.layout.PageLayoutPlugin;
+import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
+import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
-import org.hippoecm.repository.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +67,7 @@ public class TemplateBuilderTest extends PluginTest {
 
         public void detach() {
         }
-        
+
     }
 
     // the tests will modify templates, so reinitialize for each test
@@ -202,7 +209,7 @@ public class TemplateBuilderTest extends PluginTest {
         assertEquals(2, type.getFields().size());
         assertFalse(node.hasNode("test:nt_unstructured"));
     }
-    
+
     @Test
     public void testChangePath() throws Exception {
         TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());
@@ -230,10 +237,47 @@ public class TemplateBuilderTest extends PluginTest {
 
         // remove field
         type.removeField("title");
-        
+
         home.processEvents();
 
         assertFalse(prototype.getNode().hasProperty("test:titel_new"));
+    }
+
+    @Test
+    // regression test for HREPTWO-3155
+    public void testMoveRemove() throws Exception {
+        // YUCK!
+        WebAppBehavior yuiWebApp = new WebAppBehavior(new WebAppSettings(new JavaPluginConfig()));
+        home.add(yuiWebApp);
+        context.registerService(yuiWebApp, "service.behavior.yui");
+        home.add(new PageLayoutPlugin(context, new JavaPluginConfig()));
+
+        Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces/test/test");
+        JcrNodeModel nodeModel = new JcrNodeModel(templateTypeNode);
+        ModelReference modelRef = new ModelReference("service.model", nodeModel);
+        modelRef.init(context);
+
+        TemplateEngineFactory factory = new TemplateEngineFactory();
+        context.registerService(factory, "service.engine");
+        ITemplateEngine engine = context.getService("service.engine", ITemplateEngine.class);
+
+        ITypeDescriptor type = engine.getType(nodeModel);
+        IClusterConfig template = engine.getTemplate(type, "view");
+        JavaPluginConfig parameters = new JavaPluginConfig();
+        parameters.put("wicket.id", "service.root");
+        parameters.put("wicket.model", "service.model");
+        parameters.put("engine", "service.engine");
+        parameters.put("mode", "edit");
+        IClusterControl cluster = context.newCluster(template, parameters);
+        cluster.start();
+
+        refreshPage();
+
+        // down
+        tester.clickLink("root:extension.form:template:preview:view:1:item:transitions:1:link");
+
+        // remove
+        tester.clickLink("root:extension.form:template:preview:view:1:item:remove");
     }
 
 }

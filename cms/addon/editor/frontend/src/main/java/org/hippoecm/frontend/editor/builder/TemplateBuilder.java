@@ -72,7 +72,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateBuilder.class);
 
-    class BuilderFieldDescriptor implements IFieldDescriptor {
+    class BuilderFieldDescriptor implements IFieldDescriptor, IDetachable {
         private static final long serialVersionUID = 6935814333088957137L;
 
         private final IFieldDescriptor delegate;
@@ -182,6 +182,12 @@ public class TemplateBuilder implements IDetachable, IObservable {
         public void stopObservation() {
             obContext.unregisterObserver(observer);
             observer = null;
+        }
+
+        public void detach() {
+            if (delegate instanceof IDetachable) {
+                ((IDetachable) delegate).detach();
+            }
         }
     }
 
@@ -360,20 +366,10 @@ public class TemplateBuilder implements IDetachable, IObservable {
         private static final long serialVersionUID = 1L;
 
         private List<IPluginConfig> plugins;
-        private Map<String, String> fields = new TreeMap<String, String>();
         private transient Map<String, IFieldDescriptor> removedFields;
 
         BuilderPluginList(List<IPluginConfig> plugins) {
             this.plugins = plugins;
-
-            // maintain a list of field plugins, so that we can clean up when one
-            // of them disappears.
-            // TODO: check plugin class to verify that the plugin is a fieldplugin
-            for (IPluginConfig plugin : clusterConfig.getPlugins()) {
-                if (plugin.getString("field") != null) {
-                    fields.put(plugin.getName(), plugin.getString("field"));
-                }
-            }
         }
 
         @Override
@@ -389,15 +385,14 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         updatePrototype();
                     }
                 }
-                fields.put(config.getName(), field);
             }
         }
 
         @Override
         public IPluginConfig remove(int index) {
             IPluginConfig config = plugins.remove(index);
-            if (fields.containsKey(config.getName())) {
-                String field = fields.remove(config.getName());
+            String field = config.getString("field");
+            if (field != null) {
                 if (removedFields == null) {
                     removedFields = new TreeMap<String, IFieldDescriptor>();
                 }

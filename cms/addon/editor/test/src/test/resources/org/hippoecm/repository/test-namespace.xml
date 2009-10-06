@@ -148,6 +148,9 @@
           <sv:property sv:name="field" sv:type="String">
             <sv:value>title</sv:value>
           </sv:property>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Title</sv:value>
+          </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
           </sv:property>
@@ -177,6 +180,9 @@
           <sv:property sv:name="field" sv:type="String">
             <sv:value>child</sv:value>
           </sv:property>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Child</sv:value>
+          </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
           </sv:property>
@@ -196,6 +202,19 @@
             <sv:value>${cluster.id}.translator</sv:value>
           </sv:property>
         </sv:node>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="hipposysedit:prototypes">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposysedit:prototypeset</sv:value>
+      </sv:property>
+      <sv:node sv:name="hipposysedit:prototype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>test:test</sv:value>
+        </sv:property>
+        <sv:property sv:name="test:title" sv:type="String">
+          <sv:value>title</sv:value>
+        </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>
