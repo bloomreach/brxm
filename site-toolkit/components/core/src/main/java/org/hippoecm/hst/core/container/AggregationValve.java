@@ -93,7 +93,7 @@ public class AggregationValve extends AbstractValve {
                 
                 HstContainerConfig requestContainerConfig = context.getRequestContainerConfig();
                 // process doBeforeRender() of each component as sorted order, parent first.
-                processWindowsBeforeRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap);
+                processWindowsBeforeRender(requestContainerConfig, rootWindow, sortedComponentWindows, requestMap, responseMap);
                 
                 // check if any invocation on sendError() exists...
                 int errorCode = 0;
@@ -214,9 +214,10 @@ public class AggregationValve extends AbstractValve {
             }
         }
     }
-
+    
     protected void processWindowsBeforeRender(
             final HstContainerConfig requestContainerConfig, 
+            final HstComponentWindow rootWindow,
             final HstComponentWindow [] sortedComponentWindows,
             final Map<HstComponentWindow, HstRequest> requestMap, 
             final Map<HstComponentWindow, HstResponse> responseMap)
@@ -227,10 +228,14 @@ public class AggregationValve extends AbstractValve {
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
             getComponentInvoker().invokeBeforeRender(requestContainerConfig, request, response);
+            
+            if (rootWindow.getResponseState().getForwardPathInfo() != null) {
+                break;
+            }
         }
 
     }
-
+    
     protected void processWindowsRender(
             final HstContainerConfig requestContainerConfig, 
             final HstComponentWindow [] sortedComponentWindows,
