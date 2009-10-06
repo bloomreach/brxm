@@ -15,24 +15,11 @@
  */
 package org.hippoecm.hst.demo.components;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.query.HstQuery;
-import org.hippoecm.hst.content.beans.query.HstQueryManager;
-import org.hippoecm.hst.content.beans.query.HstQueryResult;
-import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
-import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.demo.beans.BaseBean;
-import org.hippoecm.hst.demo.util.PageableCollection;
-import org.hippoecm.hst.demo.util.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,45 +39,5 @@ public class Home extends BaseHstComponent {
             return;
         }
         request.setAttribute("document",n);
-        
-        
-        HstQueryManager manager = getQueryManager();
-           try {
-            final HstQuery hstQuery = manager.createQuery(this.getContentBean(request));
-            
-            List<HippoBean> scopes = new ArrayList<HippoBean>();
-
-            scopes.add(this.getGalleryBaseBean(request));
-            scopes.add(this.getAssetBaseBean(request));
-            
-            hstQuery.addScopes(scopes);
-            
-            
-            Filter filter = hstQuery.createFilter();
-            filter.addContains(".", "jsr170-1.0.pdf");
-            hstQuery.setFilter(filter);
-            
-            final HstQueryResult result = hstQuery.execute();
-            
-            final HippoBeanIterator iterator = result.getHippoBeans();
-          
-            int count = 0;
-            List<HippoBean> results = new ArrayList<HippoBean>();
-            while (iterator.hasNext()) {
-                HippoBean bean = iterator.nextHippoBean();
-                if(bean != null) {
-                    results.add(bean);
-                }
-               
-            }
-            request.setAttribute("results", results);
-            
-        } catch (QueryException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-            
-            
- 
     }
 }
