@@ -122,7 +122,16 @@ class UploadForm extends Form {
         if (upload != null) {
             try {
                 String filename = upload.getClientFileName();
-                String mimetype = upload.getContentType();
+                String mimetype;
+                if(filename.endsWith(".pdf")) {
+                    /*
+                     *  we make an exception for pdf to hardcode the mapping, as firefox might post the binary with the wrong mimetype,
+                     *  for example application/application-pdf, see HREPTWO-3168
+                     */
+                    mimetype = "application/pdf";
+                } else {
+                    mimetype = upload.getContentType();
+                }
                 InputStream istream = upload.getInputStream();
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 try {
