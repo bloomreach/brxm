@@ -194,7 +194,8 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         
         if(hstSite.getLocationMapTree() instanceof BasicLocationMapTree) {
             if(path.startsWith(((BasicLocationMapTree)hstSite.getLocationMapTree()).getCanonicalSiteContentPath())) {
-                ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite, representsDocument, resolvedSiteMapItem);
+                // TODO make the canonical option as an argument. Now, hardcoded set to 'false'
+                ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite, representsDocument, resolvedSiteMapItem, false);
                 if(resolvedLocation != null && resolvedLocation.getPath() != null) {
                     if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
                     if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, resolvedLocation.getPath());

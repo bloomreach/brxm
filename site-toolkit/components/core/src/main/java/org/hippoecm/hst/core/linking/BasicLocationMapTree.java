@@ -20,7 +20,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Properties;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.Configuration;
 import org.hippoecm.hst.configuration.HstSite;
@@ -143,7 +146,7 @@ public class BasicLocationMapTree implements LocationMapTree{
     }
 
     
-    public ResolvedLocationMapTreeItem match(String path, HstSite hstSite,boolean representsDocument, ResolvedSiteMapItem resolvedSiteMapItem) {
+    public ResolvedLocationMapTreeItem match(String path, HstSite hstSite,boolean representsDocument, ResolvedSiteMapItem resolvedSiteMapItem, boolean canonical) {
         String origPath = path;
       
         if(!path.startsWith(this.getCanonicalSiteContentPath())){
@@ -227,8 +230,18 @@ public class BasicLocationMapTree implements LocationMapTree{
                 log.debug("Multiple sitemap items are equally well suited for linkrewriting. Let's find if there is a sitemap item that" +
                 		"has precedence.");
                 
-                // fetch the best matching sitemap item: 
-                hstSiteMapItem = fetchBestInContext(matchingSiteMapItems, resolvedSiteMapItem.getHstSiteMapItem());
+                if(canonical) {
+                    log.debug("Multiple sitemap items are equally suited. Because canonical = true, we do not return the best fit according" +
+                    "the current context, but return the canonical item, which is the same regardless the context");
+           
+                    // TODO add facility to control yourself *what* the canonical sitemap item is. This might be part of the hst configuration
+                    // for now, we return the first sitemap item in the list as the canonical: for now, this results in the same canonical location
+                    // regardless context. We need to make it configurable
+                    hstSiteMapItem = matchingSiteMapItems.get(0);
+                } else {
+                    // fetch the best matching sitemap item: 
+                    hstSiteMapItem = fetchBestInContext(matchingSiteMapItems, resolvedSiteMapItem.getHstSiteMapItem());
+                }
                 
             }
         } 
@@ -320,8 +333,14 @@ public class BasicLocationMapTree implements LocationMapTree{
     
     
     /*
-     * find the sitemap item that matches the context best: first whether it is equal to the current ctx sitemap item,
-     * then the sitemap item that is a closest child, and the the closest parent. If this results in no match, pick the first.
+     * The algorithm which sitemap item is best in context is as follows: 
+     * 
+     * 1) one of the N sitemap items is the same as the current ctx sitemapitem, this one is taken (SAME) : break;
+     * 2) if one of the N sitemap items is a *descendant* sitemap item of the current ctx sitemap item, that one is taken : break;
+     * 3) Take the matched sitemap items (List) with the first common ancestor with the current ctx sitemap item : if List contains 1 item: return item: else continue;
+     * 4) If (3) returns multiple matched items, return the ones that are the closest (wrt depth) to the common ancestor: if there is one, return item : else continue;
+     * 5) If (4) returns 1 or more items, pick the first (we cannot distinguish better) 
+     * 6) If still no best context hit found, we return the first matchingSiteMapItem in the matchingSiteMapItems list, as there they are all equally out of context
      * 
      * if the list is empty, return null
      */
@@ -329,11 +348,15 @@ public class BasicLocationMapTree implements LocationMapTree{
         int bestDepth = Integer.MAX_VALUE;
         HstSiteMapItem bestMatch = null;
         
+        
         for(HstSiteMapItem siteMapItem : matchingSiteMapItems) {
+            // step (1) algorithm
             if(siteMapItem == currentCtxSiteMapItem) {
+                // step (1) completed the algorithm
                 return siteMapItem;
             }
             
+            // step (2) algorithm
             int depth = 0;
             HstSiteMapItem current = siteMapItem;
             while(current.getParentItem() != null) {
@@ -350,48 +373,65 @@ public class BasicLocationMapTree implements LocationMapTree{
         }
         
         if(bestMatch != null) {
+            // step (2) completed the algorithm
             return bestMatch;
         }
         
-        // checked all childs and self. No result. Now check sibblings & parents & parents sibblings
+        // step (3) algorithm
+        /*
+         * A map containing as keys the matchingSiteMapItems and as values the sorted list of parent sitemap items of the key
+         * 
+         */
+        Map<HstSiteMapItem, List<HstSiteMapItem>> matchingMapWithParents  = new HashMap<HstSiteMapItem, List<HstSiteMapItem>>();
+
+        // a sorted list of parents, where the highest parents are last in the list
+        
         for(HstSiteMapItem siteMapItem : matchingSiteMapItems) {
-           
-            int depth = 0;
-            HstSiteMapItem current = currentCtxSiteMapItem;
-            
+            HstSiteMapItem current = siteMapItem;
+            List<HstSiteMapItem> parentList = new ArrayList<HstSiteMapItem>();
             while(current.getParentItem() != null) {
                 current = current.getParentItem();
-                depth++;
-                
-                if(current == siteMapItem) {
-                    if(depth < bestDepth) {
-                        bestMatch = siteMapItem;
-                        bestDepth = depth;
-                    }
-                    break;
+                parentList.add(current);
+            }
+            matchingMapWithParents.put(siteMapItem, parentList);
+        }
+        
+        // now, for the current context item, we iterate up, and see which matchingSiteMapItems are the first to have a common ancestor as the current context. In the
+        // Integer we store how deep the matchingSiteMapItem is below the common ancestor, which is needed in step (4) if we get there
+        NavigableMap<Integer, HstSiteMapItem> commonAncestorMap = new TreeMap<Integer, HstSiteMapItem>();
+        
+        HstSiteMapItem checkForCommonAncestor = currentCtxSiteMapItem;
+        while(checkForCommonAncestor.getParentItem() != null && commonAncestorMap.size() == 0) {
+            checkForCommonAncestor = checkForCommonAncestor.getParentItem();
+            for(Entry<HstSiteMapItem, List<HstSiteMapItem>> entry : matchingMapWithParents.entrySet()) {
+                if(entry.getValue().contains(checkForCommonAncestor)) {
+                    // we found a common ancestor! Add to commonAncestorMap
+                    commonAncestorMap.put(entry.getValue().indexOf(checkForCommonAncestor), entry.getKey());
                 }
-                
-                // check sibblings
-                
-                for(HstSiteMapItem sibbling : current.getChildren()) {
-                    if(sibbling == siteMapItem) {
-                        if(depth < bestDepth) {
-                            bestMatch = siteMapItem;
-                            bestDepth = depth;
-                        }
-                        break;
-                    }
-                }
-                
             }
         }
         
-        if(bestMatch != null) {
-          return bestMatch;  
-        }
-        
-        // there is no sitemap item with a better precedence, return the first in the list
-        if(matchingSiteMapItems.size() > 0) {
+        if(commonAncestorMap.size() == 1) {
+            // step (3) has resulted in one best sitemap item: return this one:
+            return commonAncestorMap.firstEntry().getValue();
+        } else if (commonAncestorMap.size() > 1) {
+            // step (4) and (5) we have multiple matching sitemap items with a common first ancestor: now, find the sitemap item that is closest 
+            // to this ancestor. If there are multiple with equal depth to the ancestor, we return the first (see step (5))
+            
+            // to be sure, do not check deeper then 25 levels, this is not reasonable ;-)
+            int i = 0;
+            while(i <= 25) {
+                if(commonAncestorMap.containsKey(i)) {
+                    // we found one with minimum depth: return this one:
+                    return commonAncestorMap.get(i);
+                }
+                if(i == 25) {
+                    log.warn("Did not find the matching sitemap items within 25 levels below the common ancestor. Skip as the limit is 25");
+                }
+                i++;
+            }
+        } else if(matchingSiteMapItems.size() > 0) {
+            // we are at step (6) : just return the first, we cannot do better
             return matchingSiteMapItems.get(0);
         }
         
