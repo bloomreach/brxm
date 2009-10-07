@@ -1127,6 +1127,7 @@ div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top:
 
 .edit-16{background-image:url("images/icons/edit-16.png")}
 .delete-16{background-image:url("images/icons/edit-delete-16.png")}
+.clear-16{background-image:url("images/icons/edit-clear-16.png");margin-left:10px;padding-bottom:8px;}
 .add-16{background-image:url("images/icons/list-add-16.png")}
 .remove-16{background-image:url("images/icons/edit-delete-16.png")}
 

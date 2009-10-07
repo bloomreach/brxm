@@ -40,6 +40,7 @@ import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.ClearableDialogLink;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -52,11 +53,13 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class FacetSelectTemplatePlugin extends RenderPlugin {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(FacetSelectTemplatePlugin.class);
+
+    private static final String EMPTY_LINK_TEXT = "[...]";
 
     private final String mode;
 
@@ -86,18 +89,20 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
             log.error(e.getMessage());
         }
         
-        IModel displayModel = new Model() {
+        final IModel displayModel = new Model() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public Object getObject() {
                 Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getModel()).getNode();
                 try {
-                    String docbaseUUID = node.getProperty("hippo:docbase").getString();
-                    if (docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.startsWith("cafebabe-")) {
-                        return "[...]";
-                    }
+                    if (node != null && node.hasProperty("hippo:docbase")) {
+                        String docbaseUUID = node.getProperty("hippo:docbase").getString();
+                        if (docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.startsWith("cafebabe-")) {
+                            return EMPTY_LINK_TEXT;
+                        }
                     return node.getSession().getNodeByUUID(docbaseUUID).getPath();
+                    }
                 } catch (ValueFormatException e) {
                     log.warn("Invalid value format for docbase " + e.getMessage());
                     log.debug("Invalid value format for docbase ", e);
@@ -107,7 +112,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
                 } catch (RepositoryException e) {
                     log.error("Invalid docbase" + e.getMessage(), e);
                 }
-                return "[...]";
+                return EMPTY_LINK_TEXT;
             }
         };
 
@@ -192,7 +197,27 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
                         }, nodetypes);
                     }
                 };
-                add(new DialogLink("docbase", displayModel, dialogFactory, getDialogService()));
+                
+                add(new ClearableDialogLink("docbase", displayModel, dialogFactory, getDialogService()) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void onClear() {
+                        Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getModel()).getNode();
+                        try {
+                            node.setProperty("hippo:docbase", node.getSession().getRootNode().getUUID());
+                        } catch (RepositoryException e) {
+                            log.error("Unable to reset docbase to rootnode uuid", e);
+                        }
+                        redraw();
+                    }
+
+                    @Override
+                    public boolean isClearVisable() {
+                        // Checking for string literals ain't pretty. It's probably better to create a better display model.
+                        return !EMPTY_LINK_TEXT.equals((String) displayModel.getObject());
+                    }
+                });
 
                 add(new DataView("arguments", provider) {
                     public void populateItem(final Item item) {

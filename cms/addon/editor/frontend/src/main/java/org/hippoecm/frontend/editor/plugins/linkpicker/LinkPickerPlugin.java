@@ -30,7 +30,7 @@ import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.dialog.ClearableDialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -53,20 +53,22 @@ public class LinkPickerPlugin extends RenderPlugin {
 
     static final Logger log = LoggerFactory.getLogger(LinkPickerPlugin.class);
 
+    private static final String EMPTY_LINK_TEXT = "[...]";
+
     public LinkPickerPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         IDialogService dialogService = getDialogService();
         valueModel = (JcrPropertyValueModel) getModel();
 
-        IModel displayModel = new Model() {
+        final IModel displayModel = new Model() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public Object getObject() {
                 String docbaseUUID = (String) valueModel.getObject();
-                if (docbaseUUID == null || docbaseUUID.equals("")) {
-                    return "[...]";
+                if (docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.startsWith("cafebabe-")) {
+                    return EMPTY_LINK_TEXT;
                 }
                 try {
                     return ((UserSession) Session.get()).getJcrSession().getNodeByUUID(docbaseUUID).getPath();
@@ -82,7 +84,7 @@ public class LinkPickerPlugin extends RenderPlugin {
                 } catch (RepositoryException e) {
                     log.error("Invalid docbase " + e.getMessage(), e);
                 }
-                return "[...]";
+                return EMPTY_LINK_TEXT;
             }
         };
 
@@ -126,7 +128,27 @@ public class LinkPickerPlugin extends RenderPlugin {
                     }, nodetypes);
                 }
             };
-            add(new DialogLink("value", displayModel, dialogFactory, dialogService));
+            
+            add(new ClearableDialogLink("value", displayModel, dialogFactory, getDialogService()) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onClear() {
+                    try {
+                        valueModel.setObject(((UserSession) Session.get()).getJcrSession().getRootNode().getUUID());
+                    } catch (RepositoryException e) {
+                        log.error("Unable to reset docbase to rootnode uuid", e);
+                    }
+                    redraw();
+                }
+
+                @Override
+                public boolean isClearVisable() {
+                    // Checking for string literals ain't pretty. It's probably better to create a better display model.
+                    return !EMPTY_LINK_TEXT.equals((String) displayModel.getObject());
+                }
+            });
+
         } else {
             add(new Label("value", displayModel));
         }
