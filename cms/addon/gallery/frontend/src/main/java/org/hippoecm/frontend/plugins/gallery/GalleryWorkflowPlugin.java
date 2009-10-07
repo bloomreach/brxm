@@ -129,6 +129,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
             if (upload != null) {
                 try {
                     String filename = upload.getClientFileName();
+                    String mimetype;
                     if(filename.endsWith(".pdf")) {
                         /*
                          *  we make an exception for pdf to hardcode the mapping, as firefox might post the binary with the wrong mimetype,
