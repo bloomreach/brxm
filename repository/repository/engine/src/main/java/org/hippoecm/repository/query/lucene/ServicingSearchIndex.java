@@ -170,12 +170,16 @@ public class ServicingSearchIndex extends SearchIndex {
         List<NodeState> reIndexVariantsStates = new ArrayList<NodeState>();
         List<NodeId> reIndexVariantsIds = new ArrayList<NodeId>();
         for(NodeState addedState : addedStates) {
-            NodeState documentVariant = getVariantDocumentIfAncestor(addedState, checkedIds);
-            if(documentVariant != null && !addedIds.contains(documentVariant.getNodeId()) && !reIndexVariantsIds.contains(documentVariant.getNodeId())) {
-                if(!removedIds.contains(documentVariant.getNodeId())) {
-                    reIndexVariantsStates.add(documentVariant);
-                    reIndexVariantsIds.add(documentVariant.getNodeId());
-                }
+            try {
+                NodeState documentVariant = getVariantDocumentIfAncestor(addedState, checkedIds);
+                if(documentVariant != null && !addedIds.contains(documentVariant.getNodeId()) && !reIndexVariantsIds.contains(documentVariant.getNodeId())) {
+                    if(!removedIds.contains(documentVariant.getNodeId())) {
+                        reIndexVariantsStates.add(documentVariant);
+                        reIndexVariantsIds.add(documentVariant.getNodeId());
+                    }
+                } 
+            } catch (ItemStateException e) {
+                log.debug("Unable to get state '{}'", e.getMessage());
             }
         }
         
@@ -203,35 +207,39 @@ public class ServicingSearchIndex extends SearchIndex {
         Document doc = indexer.createDoc();
         mergeAggregatedNodeIndexes(node, doc);
         
+        try {
+            if (aggregateDescendants) {
+                aggregateDescendants(node, doc, indexFormatVersion);
+            } else if (isDocumentVariant(node)) {
+                // we have a Hippo Document state, let's aggregate child text
+                // for free text searching.
+                aggregateDescendants(node, doc, indexFormatVersion);
+            }
+        } catch (ItemStateException e) {
+            log.debug("Unable to get state '{}'", e.getMessage());
+        }
         
-        if(aggregateDescendants) {
-            aggregateDescendants(node, doc, indexFormatVersion);
-        } else if (isDocumentVariant(node)) {
-            // we have a Hippo Document state, let's aggregate child text for free text searching.
-            aggregateDescendants(node, doc, indexFormatVersion);
-        } 
         return doc;
     }
 
     /**
-     * @return <code>true</code> when the NodeState belongs to a hippo:document below a hippo:handle
+     * @return <code>true</code> when the NodeState belongs to a
+     *         hippo:document below a hippo:handle
      */
-    private boolean isDocumentVariant(NodeState node){
+    private boolean isDocumentVariant(NodeState node) throws ItemStateException{
         if (this.getIndexingConfig() instanceof ServicingIndexingConfiguration) {
             ServicingIndexingConfiguration sIndexConfig = (ServicingIndexingConfiguration) this.getIndexingConfig();
 
             ItemStateManager ism = getContext().getItemStateManager();
-            try {
-                if(node.getParentId() == null) {
-                    return false;
-                }
-                NodeState parent = (NodeState) ism.getItemState(node.getParentId());
-                if (parent != null && parent.getNodeTypeName().equals(sIndexConfig.getHippoHandleName()) && !node.getNodeTypeName().equals(sIndexConfig.getHippoRequestName())) {
-                    return true;
-                }
-            } catch (ItemStateException e) {
-                log.warn("Unable to get parent state");
+            
+            if(node.getParentId() == null) {
+                return false;
             }
+            NodeState parent = (NodeState) ism.getItemState(node.getParentId());
+            if (parent != null && parent.getNodeTypeName().equals(sIndexConfig.getHippoHandleName()) && !node.getNodeTypeName().equals(sIndexConfig.getHippoRequestName())) {
+                return true;
+            }
+          
         }
         return false;
     }
@@ -243,7 +251,7 @@ public class ServicingSearchIndex extends SearchIndex {
      * @return the <code>NodeState</code> of the Document variant which is an ancestor of the state or <code>null</code> if this state was not a child of a document variant
      */
     
-    private NodeState getVariantDocumentIfAncestor(NodeState state, List<NodeId> checkedIds){
+    private NodeState getVariantDocumentIfAncestor(NodeState state, List<NodeId> checkedIds) throws ItemStateException {
         
         if(checkedIds.contains(state.getNodeId())) {
             // already checked these ancestors: no need to do it again
@@ -254,20 +262,16 @@ public class ServicingSearchIndex extends SearchIndex {
             return state;
         } 
         ItemStateManager ism = getContext().getItemStateManager();
-        try {
-            if(state.getParentId() == null) {
-                return null;
-            }
-            NodeState parent = (NodeState) ism.getItemState(state.getParentId());
-            if(parent == null) {
-                return null;
-                
-            }
-            return getVariantDocumentIfAncestor(parent, checkedIds);
-        } catch (ItemStateException e) {
-            log.warn("Unable to get parent state '{}'", e.getMessage());
+        if(state.getParentId() == null) {
+            return null;
         }
-        return null;
+        NodeState parent = (NodeState) ism.getItemState(state.getParentId());
+        if(parent == null) {
+            return null;
+            
+        }
+        return getVariantDocumentIfAncestor(parent, checkedIds);
+        
     }
     
     /**
