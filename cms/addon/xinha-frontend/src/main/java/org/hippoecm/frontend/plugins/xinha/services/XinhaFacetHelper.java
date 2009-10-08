@@ -58,8 +58,10 @@ public class XinhaFacetHelper {
                 if (document.isNew()) {
                     log.warn("Document is new, saving session");
                     document.getSession().save();
+                    document.getSession().refresh(false);
                 } else {
                     document.save();
+                    document.refresh(false);
                 }
                 break;
             }
