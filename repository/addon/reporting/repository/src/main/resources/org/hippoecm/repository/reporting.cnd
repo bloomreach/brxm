@@ -19,8 +19,8 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
-<reporting='http://www.hippoecm.org/reporting/nt/1.4'>
-<frontend='http://www.hippoecm.org/frontend/nt/1.4'>
+<reporting='http://www.onehippo.org/jcr/reporting/nt/2.0'>
+<frontend='http://www.onehippo.org/jcr/frontend/nt/2.0'>
 
 [reporting:report] > hippo:document
 + reporting:query (hippo:query) = hippo:query mandatory
