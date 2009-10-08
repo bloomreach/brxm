@@ -26,7 +26,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/htmlcleaner/nt/1.2</sv:value>
+      <sv:value>http://www.onehippo.org/jcr/htmlcleaner/nt/2.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>hippohtmlcleaner.cnd</sv:value>

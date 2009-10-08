@@ -246,6 +246,8 @@ public class Release72Updater implements UpdaterModule {
             context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippogallery", "hippogallery.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippogallery.cnd"))));
             context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "frontend", "frontend.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("frontend.cnd"))));
             context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "reporting", "reporting.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("reporting.cnd"))));
+            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippohtmlcleaner", "hippohtmlcleaner.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippohtmlcleaner.cnd"))));
+            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "defaultcontent", "defaultcontent.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("defaultcontent.cnd"))));
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace(System.err);
         }
