@@ -18,7 +18,8 @@
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
-<frontend='http://www.hippoecm.org/frontend/nt/1.4'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<frontend='http://www.onehippo.org/jcr/frontend/nt/2.0'>
 <editor='http://www.hippoecm.org/editor/nt/1.0'>
 
 // a set of templates.
@@ -29,6 +30,20 @@
 // to be set on a templatetype
 [editor:editable] mixin
 + editor:templates (editor:templateset)
+
+[editor:mimetype]
+- editor:mediatype (string) mandatory
+- editor:subtype (string) mandatory
+- editor:extension (string) multiple
++ editor:icon (hippo:resource)
+
+[editor:mimetypefolder]
++ * (editor:mimetype)
+
+[editor:configuration]
++ editor:mimetypes (editor:mimetypefolder)
+
+
 
 /* tentative
 
