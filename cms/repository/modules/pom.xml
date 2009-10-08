@@ -76,7 +76,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.jackrabbit.MirrorVirtualProvider org.hippoecm.repository.jackrabbit.ViewVirtualProvider org.hippoecm.repository.jackrabbit.FacetSelectProvider org.hippoecm.repository.jackrabbit.FacetResultSetProvider org.hippoecm.repository.jackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoecm.repository.jackrabbit.SubtypedDataProvider org.hippoecm.repository.quartz.SchedulerModule</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.jackrabbit.MirrorVirtualProvider org.hippoecm.repository.jackrabbit.ViewVirtualProvider org.hippoecm.repository.jackrabbit.FacetSelectProvider org.hippoecm.repository.jackrabbit.FacetResultSetProvider org.hippoecm.repository.jackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoecm.repository.jackrabbit.SubtypedDataProvider org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.upgrade.Release72Updater</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>

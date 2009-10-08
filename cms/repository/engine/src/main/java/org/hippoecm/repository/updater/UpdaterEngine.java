@@ -310,8 +310,12 @@ public class UpdaterEngine {
                 try {
                     if(visitor instanceof NamespaceVisitorImpl) {
                         NamespaceVisitorImpl remap = ((NamespaceVisitorImpl)visitor);
-                        nsreg.externalRemap(remap.namespace, remap.oldPrefix, remap.oldURI);
-                        nsreg.externalRemap(remap.newPrefix, remap.namespace, remap.newURI);
+                        if(remap.oldPrefix != null) {
+                            nsreg.externalRemap(remap.namespace, remap.oldPrefix, remap.oldURI);
+                            nsreg.externalRemap(remap.newPrefix, remap.namespace, remap.newURI);
+                        } else {
+                            nsreg.externalRemap(remap.newPrefix, remap.namespace, remap.newURI);
+                        }
                     }
                 } catch(UpdaterException ex) {
                     System.err.println(ex.getClass().getName()+": "+ex.getMessage());
@@ -436,8 +440,15 @@ public class UpdaterEngine {
                         NamespaceVisitorImpl remap = (NamespaceVisitorImpl)visitor;
                         Workspace workspace = session.getWorkspace();
                         NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
-                        remap.oldURI = nsreg.getURI(remap.namespace);
-                        remap.oldPrefix = remap.namespace + "_" + remap.oldURI.substring(remap.oldURI.lastIndexOf('/') + 1).replace('.', '_');
+                        remap.oldURI = null;
+                        remap.oldPrefix = null;
+                        for(String candidatePrefix : nsreg.getPrefixes()) {
+                            if(remap.namespace.equals(candidatePrefix)) {
+                                remap.oldURI = nsreg.getURI(remap.namespace);
+                                remap.oldPrefix = remap.namespace + "_" + remap.oldURI.substring(remap.oldURI.lastIndexOf('/') + 1).replace('.', '_');
+                                break;
+                            }
+                        }
                         CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(remap.cndReader, remap.cndName);
                         NamespaceMapping mapping = cndReader.getNamespaceMapping();
                         remap.newURI = mapping.getURI(remap.namespace);
@@ -447,12 +458,14 @@ public class UpdaterEngine {
                         NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl)workspace.getNodeTypeManager();
                         NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
                         for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
-                            NodeTypeDef ntd = (NodeTypeDef)iter.next();
-                            /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
+                            try {
+                                NodeTypeDef ntd = (NodeTypeDef)iter.next();
+                                /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
+                            } catch(InvalidNodeTypeDefException ex) {
+                                // deliberate ignore
+                            }
                         }
                     } catch (ParseException ex) {
-                        log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
-                    } catch (InvalidNodeTypeDefException ex) {
                         log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
                     }
                 }
