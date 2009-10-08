@@ -14,8 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4"
-         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="cms-tree-views">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:clusterfolder</sv:value>
