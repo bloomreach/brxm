@@ -14,8 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
-         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="hippo:initialize">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
@@ -26,7 +25,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/reporting/nt/1.4</sv:value>
+      <sv:value>http://www.onehippo.org/jcr/reporting/nt/2.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>reporting.cnd</sv:value>
