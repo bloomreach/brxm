@@ -15,9 +15,6 @@
   limitations under the License.
 -->
 <sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-         xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
-         xmlns:hippostd="http://www.onehippo.org/jcr/hippostd/nt/2.0"
-         xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4"
          xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="cms-browser">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">

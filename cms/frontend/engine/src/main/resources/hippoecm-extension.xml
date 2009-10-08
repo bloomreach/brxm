@@ -26,7 +26,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/frontend/nt/1.4</sv:value>
+      <sv:value>http://www.onehippo.org/jcr/frontend/nt/2.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>frontend.cnd</sv:value>

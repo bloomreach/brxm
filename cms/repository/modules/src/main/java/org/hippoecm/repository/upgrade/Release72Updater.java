@@ -171,7 +171,7 @@ public class Release72Updater implements UpdaterModule {
         //{"type","hippo:translation","hipponew:translation"},
         //{"type","hippo:translated","hipponew:translated"},
 
-        {"type", "frontend:workflow", "frontend:workflow2"},
+        {"type", "frontend:workflow", "frontend_2_0:workflow"},
         {"field", "hippo:workflow", "hipposys_1_0:classname"},
         {"field", "hippo:nodetype", "hipposys_1_0:nodetype"},
         {"field", "hippo:display", "hipposys_1_0:display"},
@@ -244,6 +244,7 @@ public class Release72Updater implements UpdaterModule {
             context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippo", "hippo.cnd", new InputStreamReader(Class.forName("org.hippoecm.repository.LocalHippoRepository").getResourceAsStream("repository.cnd"))));
             context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostd", "hippostd.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippostd.cnd"))));
             context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippogallery", "hippogallery.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippogallery.cnd"))));
+            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "frontend", "frontend.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("frontend.cnd"))));
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace(System.err);
         }

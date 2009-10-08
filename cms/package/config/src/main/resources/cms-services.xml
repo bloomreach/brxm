@@ -16,8 +16,7 @@
 -->
 <sv:node sv:name="cms-services" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
   xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
-  xmlns:mix="http://www.jcp.org/jcr/mix/1.0" 
-  xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.4">
+  xmlns:mix="http://www.jcp.org/jcr/mix/1.0">
 
   <!-- This cluster contains the plugins that expose non-gui services that must
   be available before the plugins in cms-static are started.  It is a separate

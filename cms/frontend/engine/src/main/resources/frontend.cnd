@@ -18,9 +18,9 @@
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
-<hippo='http://www.onehippo.org/jcr/hippo/nt/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hipposys='http://www.onehippo.org/jcr/hipposys/nt/1.0'>
-<frontend='http://www.hippoecm.org/frontend/nt/1.4'>
+<frontend='http://www.onehippo.org/jcr/frontend/nt/2.0'>
 
 [frontend:pluginconfig] > nt:base orderable
 - * (string)
