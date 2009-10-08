@@ -198,7 +198,15 @@ public class Release72Updater implements UpdaterModule {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
                 node.getNode("content").remove();
+
+                /*
+                 * The removal of the entire /hippo:log tree seems to be appropriate.  This is relatively volatile data as
+                 * this is a sliding log file with the oldest entries being removed automatically.  Combine this with the
+                 * fact that old entries might not contain the same information and the effort of converting data which is
+                 * going to be removed quickly is unnecessary.
+                 */
                 node.getNode("hippo:log").remove();
+
                 node.getNode("hippo:namespaces").remove();
                 node.getNode("live").remove();
                 node.getNode("preview").remove();
