@@ -25,6 +25,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.updater.UpdaterProperty;
 import org.slf4j.Logger;
@@ -91,7 +92,7 @@ public class Utilities {
         }
         for (NodeIterator iter = parent.getNodes(); iter.hasNext(); ) {
             Node node = iter.nextNode();
-            if (!node.getPath().equals("/jcr:system")) {
+            if (!node.getPath().equals("/jcr:system") && (!(node instanceof HippoNode) || node.isSame(((HippoNode)node).getCanonicalNode()))) {
                 dump(out, node, level + 1);
             }
         }

@@ -15,9 +15,12 @@
  */
 package org.hippoecm.repository.upgrade;
 
+import java.io.InputStreamReader;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 import javax.jcr.util.TraversingItemVisitor;
 
 import org.hippoecm.repository.ext.UpdaterContext;
@@ -26,170 +29,207 @@ import org.hippoecm.repository.ext.UpdaterModule;
 
 public class Release72Updater implements UpdaterModule {
     private static final String[][] rules = {
-        {"type", "hippo:remodel", "hipposysedit:remodel"},
-        {"field", "hippo:uri", "hipposysedit:uri"},
-        {"type", "hippo:field", "hipposysedit:field"},
-        {"field", "hippo:name", "hipposysedit:name"},
-        {"field", "hippo:path", "hipposysedit:path"},
-        {"field", "hippo:type", "hipposysedit:type"},
-        {"field", "hippo:multiple", "hipposysedit:multiple"},
-        {"field", "hippo:mandatory", "hipposysedit:mandatory"},
-        {"field", "hippo:ordered", "hipposysedit:ordered"},
-        {"field", "hippo:primary", "hipposysedit:primary"},
-        {"type", "hippo:nodetype", "hipposysedit:nodetype"},
-        {"field", "hippo:type", "hipposysedit:type "},
-        {"field", "hippo:supertype", "hipposysedit:supertype"},
-        {"field", "hippo:node", "hipposysedit:node"},
-        {"field", "hippo:mixin", "hipposysedit:mixin"},
-        {"child", "hippo:field", "hipposysedit:field"},
-        {"type", "hippo:templatetype", "hipposysedit:templatetype"},
-        {"type", "hippo:initializeitem", "hipponew:initializeitem"},
-        {"type", "hippo:softdocument", "hipposys:softdocument"},
-        {"field", "hippo:uuid", "hipposys:uuid"},
-        {"type", "hippo:request", "hipposys:request"},
-        {"type", "hippo:implementation", "hipposys:implementation"},
-        {"field", "hippo:classname", "hipposys:classname"},
-        {"field", "hippo:serialver", "hipposys:serialver"},
-        {"type", "hippo:type", "hipposys:type"},
-        {"field", "hippo:nodetype", "hipposys:nodetype"},
-        {"field", "hippo:display", "hipposys:display"},
-        {"field", "hippo:classname", "hipposys:classname"},
-        {"type", "hippo:types", "hipposys:types"},
-        {"type", "hippo:workflow", "hipposys:workflow"},
-        {"field", "hippo:workflow", "hipposys:classname"},
-        {"field", "hippo:privileges", "hipposys:privileges"},
-        {"field", "hippo:nodetype", "hipposys:nodetype"},
-        {"field", "hippo:display", "hipposys:display"},
-        {"field", "hippo:classname", "hipposys:classname"},
-        {"child", "hippo:types", "hipposys:types"},
-        {"child", "hippo:config", "hipposys:config"},
-        {"type", "hippo:workflowcategory", "hipposys:workflowcategory"},
-        {"type", "hippo:workflowfolder", "hipposys:workflowfolder"},
-        {"type", "hippo:ocmquery", "hipposys:ocmquery"},
-        {"field", "hippo:classname", "hipposys:classname"},
-        {"child", "hippo:types", "hipposys:types"},
-        {"type", "hippo:ocmqueryfolder", "hipposys:ocmqueryfolder"},
-        {"type", "hippo:queryfolder", "hipposys:queryfolder"},
-        {"type", "hippo:basequeryfolder", "hipposys:basequeryfolder"},
-        {"type", "hippo:propertyreference", "hipposys:propertyreference"},
-        {"type", "hippo:relativepropertyreference", "hipposys:relativepropertyreference"},
-        {"field", "hippo:relPath", "hipposys:relPath"},
-        {"type", "hippo:resolvepropertyreference", "hipposys:resolvepropertyreference"},
-        {"field", "hippo:relPath", "hipposys:relPath"},
-        {"type", "hippo:builtinpropertyreference", "hipposys:builtinpropertyreference"},
-        {"field", "hippo:method", "hipposys:method"},
-        {"type", "hippo:propertyreferences", "hipposys:propertyreferences"},
-        {"type", "hippo:deriveddefinition", "hipposys:deriveddefinition"},
-        {"field", "hippo:nodetype", "hipposys:nodetype"},
-        {"field", "hippo:classname", "hipposys:classname"},
-        {"field", "hippo:serialver", "hipposys:serialver"},
-        {"child", "hippo:accessed", "hipposys:accessed"},
-        {"child", "hippo:derived", "hipposys:derived"},
-        {"type", "hippo:derivativesfolder", "hipposys:derivativesfolder"},
-        {"type", "hippo:initializefolder", "hipponew:initializefolder"},
-        {"type", "hippo:temporaryfolder", "hipposys:temporaryfolder"},
-        {"type", "hippo:applicationfolder", "hipposys:applicationfolder"},
-        {"type", "hippo:configuration", "hipposys:configuration"},
-        {"type", "hippo:accessmanager", "hipposys:accessmanager"},
-        {"field", "hippo:permissioncachesize", "hipposys:permissioncachesize"},
-        {"type", "hippo:user", "hipposys:user"},
-        {"field", "hippo:securityprovider", "hipposys:securityprovider"},
-        {"field", "hippo:active", "hipposys:active"},
-        {"field", "hippo:password", "hipposys:password"},
-        {"field", "hippo:passkey", "hipposys:passkey"},
-        {"field", "hippo:lastlogin", "hipposys:lastlogin"},
-        {"type", "hippo:externaluser", "hipposys:externaluser"},
-        {"field", "hippo:lastsync", "hipposys:lastsync"},
-        {"type", "hippo:group", "hipposys:group"},
-        {"field", "hippo:securityprovider", "hipposys:securityprovider"},
-        {"field", "hippo:members", "hipposys:members"},
-        {"field", "hippo:groups", "hipposys:groups"},
-        {"field", "hippo:description", "hipposys:description"},
-        {"type", "hippo:externalgroup", "hipposys:externalgroup"},
-        {"field", "hippo:syncdate", "hipposys:syncdate"},
-        {"type", "hippo:role", "hipposys:role"},
-        {"field", "hippo:privileges", "hipposys:privileges"},
-        {"field", "hippo:roles", "hipposys:roles"},
-        {"field", "hippo:jcrread", "hipposys:jcrread"},
-        {"field", "hippo:jcrwrite", "hipposys:jcrwrite"},
-        {"field", "hippo:jcrremove", "hipposys:jcrremove"},
-        {"type", "hippo:externalrole", "hipposys:externalrole"},
-        {"field", "hippo:securityprovider", "hipposys:securityprovider"},
-        {"type", "hippo:authrole", "hipposys:authrole"},
-        {"field", "hippo:users", "hipposys:users"},
-        {"field", "hippo:groups", "hipposys:groups"},
-        {"field", "hippo:role", "hipposys:role"},
-        {"field", "hippo:description", "hipposys:description"},
-        {"type", "hippo:facetrule", "hipposys:facetrule"},
-        {"field", "hippo:facet", "hipposys:facet"},
-        {"field", "hippo:value", "hipposys:value"},
-        {"field", "hippo:type", "hipposys:type"},
-        {"field", "hippo:equals", "hipposys:equals"},
-        {"field", "hippo:filter", "hipposys:filter"},
-        {"field", "hippo:description", "hipposys:description"},
-        {"type", "hippo:domainrule", "hipposys:domainrule"},
-        {"field", "hippo:description", "hipposys:description"},
-        {"type", "hippo:domain", "hipposys:domain"},
-        {"field", "hippo:description", "hipposys:description"},
-        {"type", "hippo:userprovider", "hipposys:userprovider"},
-        {"field", "hippo:dirlevels", "hipposys:dirlevels"},
-        {"type", "hippo:groupprovider", "hipposys:groupprovider"},
-        {"field", "hippo:dirlevels", "hipposys:dirlevels"},
-        {"type", "hippo:roleprovider", "hipposys:roleprovider"},
-        {"type", "hippo:securityprovider", "hipposys:securityprovider"},
-        {"field", "hippo:classname", "hipposys:classname"},
-        {"child", "hippo:userprovider", "hipposys:userprovider"},
-        {"child", "hippo:groupprovider", "hipposys:groupprovider"},
-        {"child", "hippo:roleprovider", "hipposys:roleprovider"},
-        {"type", "hippo:userfolder", "hipposys:userfolder"},
-        {"type", "hippo:groupfolder", "hipposys:groupfolder"},
-        {"type", "hippo:rolefolder", "hipposys:rolefolder"},
-        {"type", "hippo:domainfolder", "hipposys:domainfolder"},
-        {"type", "hippo:securityfolder", "hipposys:securityfolder"},
-        {"field", "hippo:userspath", "hipposys:userspath"},
-        {"field", "hippo:groupspath", "hipposys:groupspath"},
-        {"field", "hippo:rolespath", "hipposys:rolespath"},
-        {"field", "hippo:domainspath", "hipposys:domainspath"},
-        {"child", "hippo:accessmanager", "hipposys:accessmanager"},
-        {"type", "hippo:namespace", "hipposysedit:namespace"},
-        {"type", "hippo:namespacefolder", "hipposysedit:namespacefolder"},
-        {"type", "hippo:resource", "hipponew:resource"},
-        {"type", "hippo:query", "hipponew:query"},
-        {"type", "hippo:derived", "hipponew:derived"},
-        {"type", "hippo:document", "hipponew:document"},
-        {"type", "hippo:handle", "hipponew:handle"},
-        {"type", "hippo:hardhandle", "hipponew:hardhandle"},
-        {"type", "hippo:harddocument", "hipponew:harddocument"},
-        {"type", "hippo:facetresult", "hipponew:facetresult"},
-        {"type", "hippo:facetbasesearch", "hipponew:facetbasesearch"},
-        {"type", "hippo:facetsearch", "hipponew:facetsearch"},
-        {"type", "hippo:facetselect", "hipponew:facetselect"},
-        {"type", "hippo:mirror", "hipponew:mirror"},
+        {"type", "hippo:remodel", "hipposysedit_1_0:remodel"},
+        {"field", "hippo:uri", "hipposysedit_1_0:uri"},
+        {"type", "hippo:field", "hipposysedit_1_0:field"},
+        {"field", "hippo:name", "hipposysedit_1_0:name"},
+        {"field", "hippo:path", "hipposysedit_1_0:path"},
+        {"field", "hippo:type", "hipposysedit_1_0:type"},
+        {"field", "hippo:multiple", "hipposysedit_1_0:multiple"},
+        {"field", "hippo:mandatory", "hipposysedit_1_0:mandatory"},
+        {"field", "hippo:ordered", "hipposysedit_1_0:ordered"},
+        {"field", "hippo:primary", "hipposysedit_1_0:primary"},
+        {"type", "hippo:nodetype", "hipposysedit_1_0:nodetype"},
+        {"field", "hippo:type", "hipposysedit_1_0:type "},
+        {"field", "hippo:supertype", "hipposysedit_1_0:supertype"},
+        {"field", "hippo:node", "hipposysedit_1_0:node"},
+        {"field", "hippo:mixin", "hipposysedit_1_0:mixin"},
+        {"child", "hippo:field", "hipposysedit_1_0:field"},
+        {"type", "hippo:templatetype", "hipposysedit_1_0:templatetype"},
+        {"type", "hippo:initializeitem", "hippo_2_0:initializeitem"},
+        {"type", "hippo:softdocument", "hipposys_1_0:softdocument"},
+        {"field", "hippo:uuid", "hipposys_1_0:uuid"},
+        {"type", "hippo:request", "hipposys_1_0:request"},
+        {"type", "hippo:implementation", "hipposys_1_0:implementation"},
+        {"field", "hippo:classname", "hipposys_1_0:classname"},
+        {"field", "hippo:serialver", "hipposys_1_0:serialver"},
+        {"type", "hippo:type", "hipposys_1_0:type"},
+        {"field", "hippo:nodetype", "hipposys_1_0:nodetype"},
+        {"field", "hippo:display", "hipposys_1_0:display"},
+        {"field", "hippo:classname", "hipposys_1_0:classname"},
+        {"type", "hippo:types", "hipposys_1_0:types"},
+        {"type", "hippo:workflow", "hipposys_1_0:workflow"},
+        {"field", "hippo:workflow", "hipposys_1_0:classname"},
+        {"field", "hippo:privileges", "hipposys_1_0:privileges"},
+        {"field", "hippo:nodetype", "hipposys_1_0:nodetype"},
+        {"field", "hippo:display", "hipposys_1_0:display"},
+        {"field", "hippo:classname", "hipposys_1_0:classname"},
+        {"child", "hippo:types", "hipposys_1_0:types"},
+        {"child", "hippo:config", "hipposys_1_0:config"},
+        {"type", "hippo:workflowcategory", "hipposys_1_0:workflowcategory"},
+        {"type", "hippo:workflowfolder", "hipposys_1_0:workflowfolder"},
+        {"type", "hippo:ocmquery", "hipposys_1_0:ocmquery"},
+        {"field", "hippo:classname", "hipposys_1_0:classname"},
+        {"child", "hippo:types", "hipposys_1_0:types"},
+        {"type", "hippo:ocmqueryfolder", "hipposys_1_0:ocmqueryfolder"},
+        {"type", "hippo:queryfolder", "hipposys_1_0:queryfolder"},
+        {"type", "hippo:basequeryfolder", "hipposys_1_0:basequeryfolder"},
+        {"type", "hippo:propertyreference", "hipposys_1_0:propertyreference"},
+        {"type", "hippo:relativepropertyreference", "hipposys_1_0:relativepropertyreference"},
+        {"field", "hippo:relPath", "hipposys_1_0:relPath"},
+        {"type", "hippo:resolvepropertyreference", "hipposys_1_0:resolvepropertyreference"},
+        {"field", "hippo:relPath", "hipposys_1_0:relPath"},
+        {"type", "hippo:builtinpropertyreference", "hipposys_1_0:builtinpropertyreference"},
+        {"field", "hippo:method", "hipposys_1_0:method"},
+        {"type", "hippo:propertyreferences", "hipposys_1_0:propertyreferences"},
+        {"type", "hippo:deriveddefinition", "hipposys_1_0:deriveddefinition"},
+        {"field", "hippo:nodetype", "hipposys_1_0:nodetype"},
+        {"field", "hippo:classname", "hipposys_1_0:classname"},
+        {"field", "hippo:serialver", "hipposys_1_0:serialver"},
+        {"child", "hippo:accessed", "hipposys_1_0:accessed"},
+        {"child", "hippo:derived", "hipposys_1_0:derived"},
+        {"type", "hippo:derivativesfolder", "hipposys_1_0:derivativesfolder"},
+        {"type", "hippo:initializefolder", "hippo_2_0:initializefolder"},
+        {"type", "hippo:temporaryfolder", "hipposys_1_0:temporaryfolder"},
+        {"type", "hippo:applicationfolder", "hipposys_1_0:applicationfolder"},
+        {"type", "hippo:configuration", "hipposys_1_0:configuration"},
+        {"type", "hippo:accessmanager", "hipposys_1_0:accessmanager"},
+        {"field", "hippo:permissioncachesize", "hipposys_1_0:permissioncachesize"},
+        {"type", "hippo:user", "hipposys_1_0:user"},
+        {"field", "hippo:securityprovider", "hipposys_1_0:securityprovider"},
+        {"field", "hippo:active", "hipposys_1_0:active"},
+        {"field", "hippo:password", "hipposys_1_0:password"},
+        {"field", "hippo:passkey", "hipposys_1_0:passkey"},
+        {"field", "hippo:lastlogin", "hipposys_1_0:lastlogin"},
+        {"type", "hippo:externaluser", "hipposys_1_0:externaluser"},
+        {"field", "hippo:lastsync", "hipposys_1_0:lastsync"},
+        {"type", "hippo:group", "hipposys_1_0:group"},
+        {"field", "hippo:securityprovider", "hipposys_1_0:securityprovider"},
+        {"field", "hippo:members", "hipposys_1_0:members"},
+        {"field", "hippo:groups", "hipposys_1_0:groups"},
+        {"field", "hippo:description", "hipposys_1_0:description"},
+        {"type", "hippo:externalgroup", "hipposys_1_0:externalgroup"},
+        {"field", "hippo:syncdate", "hipposys_1_0:syncdate"},
+        {"type", "hippo:role", "hipposys_1_0:role"},
+        {"field", "hippo:privileges", "hipposys_1_0:privileges"},
+        {"field", "hippo:roles", "hipposys_1_0:roles"},
+        {"field", "hippo:jcrread", "hipposys_1_0:jcrread"},
+        {"field", "hippo:jcrwrite", "hipposys_1_0:jcrwrite"},
+        {"field", "hippo:jcrremove", "hipposys_1_0:jcrremove"},
+        {"type", "hippo:externalrole", "hipposys_1_0:externalrole"},
+        {"field", "hippo:securityprovider", "hipposys_1_0:securityprovider"},
+        {"type", "hippo:authrole", "hipposys_1_0:authrole"},
+        {"field", "hippo:users", "hipposys_1_0:users"},
+        {"field", "hippo:groups", "hipposys_1_0:groups"},
+        {"field", "hippo:role", "hipposys_1_0:role"},
+        {"field", "hippo:description", "hipposys_1_0:description"},
+        {"type", "hippo:facetrule", "hipposys_1_0:facetrule"},
+        {"field", "hippo:facet", "hipposys_1_0:facet"},
+        {"field", "hippo:value", "hipposys_1_0:value"},
+        {"field", "hippo:type", "hipposys_1_0:type"},
+        {"field", "hippo:equals", "hipposys_1_0:equals"},
+        {"field", "hippo:filter", "hipposys_1_0:filter"},
+        {"field", "hippo:description", "hipposys_1_0:description"},
+        {"type", "hippo:domainrule", "hipposys_1_0:domainrule"},
+        {"field", "hippo:description", "hipposys_1_0:description"},
+        {"type", "hippo:domain", "hipposys_1_0:domain"},
+        {"field", "hippo:description", "hipposys_1_0:description"},
+        {"type", "hippo:userprovider", "hipposys_1_0:userprovider"},
+        {"field", "hippo:dirlevels", "hipposys_1_0:dirlevels"},
+        {"type", "hippo:groupprovider", "hipposys_1_0:groupprovider"},
+        {"field", "hippo:dirlevels", "hipposys_1_0:dirlevels"},
+        {"type", "hippo:roleprovider", "hipposys_1_0:roleprovider"},
+        {"type", "hippo:securityprovider", "hipposys_1_0:securityprovider"},
+        {"field", "hippo:classname", "hipposys_1_0:classname"},
+        {"child", "hippo:userprovider", "hipposys_1_0:userprovider"},
+        {"child", "hippo:groupprovider", "hipposys_1_0:groupprovider"},
+        {"child", "hippo:roleprovider", "hipposys_1_0:roleprovider"},
+        {"type", "hippo:userfolder", "hipposys_1_0:userfolder"},
+        {"type", "hippo:groupfolder", "hipposys_1_0:groupfolder"},
+        {"type", "hippo:rolefolder", "hipposys_1_0:rolefolder"},
+        {"type", "hippo:domainfolder", "hipposys_1_0:domainfolder"},
+        {"type", "hippo:securityfolder", "hipposys_1_0:securityfolder"},
+        {"field", "hippo:userspath", "hipposys_1_0:userspath"},
+        {"field", "hippo:groupspath", "hipposys_1_0:groupspath"},
+        {"field", "hippo:rolespath", "hipposys_1_0:rolespath"},
+        {"field", "hippo:domainspath", "hipposys_1_0:domainspath"},
+        {"child", "hippo:accessmanager", "hipposys_1_0:accessmanager"},
+        {"type", "hippo:namespace", "hipposysedit_1_0:namespace"},
+        {"type", "hippo:namespacefolder", "hipposysedit_1_0:namespacefolder"},
+        {"type", "hippo:resource", "hippo_2_0:resource"},
+        {"type", "hippo:query", "hippo_2_0:query"},
+        {"type", "hippo:derived", "hippo_2_0:derived"},
+        {"type", "hippo:document", "hippo_2_0:document"},
+        {"type", "hippo:handle", "hippo_2_0:handle"},
+        {"type", "hippo:hardhandle", "hippo_2_0:hardhandle"},
+        {"type", "hippo:harddocument", "hippo_2_0:harddocument"},
+        {"type", "hippo:facetresult", "hippo_2_0:facetresult"},
+        {"type", "hippo:facetbasesearch", "hippo_2_0:facetbasesearch"},
+        {"type", "hippo:facetsearch", "hippo_2_0:facetsearch"},
+        {"type", "hippo:facetselect", "hippo_2_0:facetselect"},
+        {"type", "hippo:mirror", "hippo_2_0:mirror"},
         //{"type","hippo:translation","hipponew:translation"},
         //{"type","hippo:translated","hipponew:translated"},
 
         {"type", "frontend:workflow", "frontend:workflow2"},
-        {"field", "hippo:workflow", "hipposys:classname"},
-        {"field", "hippo:nodetype", "hipposys:nodetype"},
-        {"field", "hippo:display", "hipposys:display"},
-        {"field", "hippo:classname", "hipposys:classname"},
-        {"field", "hippo:privileges", "hipposys:privileges"},
-        {"child", "hippo:types", "hipposys:types"},
-        {"child", "hippo:config", "hipposys:config"},
-        {"type", "frontend:user", "frontend:user2"},
-        {"field", "hippo:securityprovider", "hipposys:securityprovider"},
-        {"field", "hippo:active", "hipposys:active"},
-        {"field", "hippo:password", "hipposys:password"},
-        {"field", "hippo:passkey", "hipposys:passkey"},
-        {"field", "hippo:lastlogin", "hipposys:lastlogin"}
+        {"field", "hippo:workflow", "hipposys_1_0:classname"},
+        {"field", "hippo:nodetype", "hipposys_1_0:nodetype"},
+        {"field", "hippo:display", "hipposys_1_0:display"},
+        {"field", "hippo:classname", "hipposys_1_0:classname"},
+        {"field", "hippo:privileges", "hipposys_1_0:privileges"},
+        {"child", "hippo:types", "hipposys_1_0:types"},
+        {"child", "hippo:config", "hipposys_1_0:config"},
+        //{"type", "frontend:user", "frontend:user2"},
+        //{"field", "hippo:securityprovider", "hipposys_1_0:securityprovider"},
+        //{"field", "hippo:active", "hipposys_1_0:active"},
+        //{"field", "hippo:password", "hipposys_1_0:password"},
+        //{"field", "hippo:passkey", "hipposys_1_0:passkey"},
+        //{"field", "hippo:lastlogin", "hipposys_1_0:lastlogin"},
+
+        {"type", "hippo:implementation", "hipposys_1_0:implementation"},
+        {"field", "hippo:classname", "hipposys_1_0:classname"}
     };
 
     public void register(final UpdaterContext context) {
+        context.registerName("upgrade");
         context.registerStartTag("m13");
-        context.registerEndTag("v72");
+        context.registerEndTag("tag209");
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("rep:root") {
+            @Override
+            public void entering(final Node node, int level) throws RepositoryException {
+                node.getNode("content").remove();
+                node.getNode("hippo:log").remove();
+                node.getNode("hippo:namespaces").remove();
+                node.getNode("live").remove();
+                node.getNode("preview").remove();
+            }
+        });
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:configuration") {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
+                for (String[] delete : new String[][] {
+                            {"hippo:derivatives", "hippo:corederivatives"},
+                            {"hippo:temporary"},
+                            {"hippo:documents", "embedded", "root"},
+                            {"hippo:queries"},
+                            {"hippo:workflows"},
+                            {"hippo:initialize"},
+                            {"hippo:frontend"},
+                            {"hippo:roles", "admin"},
+                            {"hippo:groups", "admin"},
+                            {"hippo:users", "admin", "workflowuser"}
+                        }) {
+                    for (NodeIterator it = node.getNode(delete[0]).getNodes(); it.hasNext();) {
+                        Node child = it.nextNode();
+                        boolean keep = false;
+                        for (int i = 1; i < delete.length; i++) {
+                            if (child.getName().equals(delete[i]))
+                                keep = true;
+                        }
+                        if (!keep)
+                            child.remove();
+                    }
+                }
                 node.accept(new TraversingItemVisitor.Default(true) {
                     @Override
                     public void entering(final Node node, int level) throws RepositoryException {
@@ -198,17 +238,36 @@ public class Release72Updater implements UpdaterModule {
                 });
             }
         });
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippo", /* "http://www.hippoecm.org/nt/1.3", "http://www.onehippo.org/jcr/hippo/nt/2.0", */ "hippo.cnd", null));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostd", /* "http://www.hippoecm.org/hippostd/nt/1.3", "http://www.onehippo.org/jcr/hippostd/nt/2.0", */ "hippostd.cnd", null));
-        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippogallery", /* "http://www.hippoecm.org/hippogallery/nt/1.3", "http://www.onehippo.org/jcr/hippogallery/nt/2.0", */ "hippogallery.cnd", null));
+        try {
+            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposys", "hipposys.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposys.cnd"))));
+            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", "hipposysedit.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd"))));
+            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippo", "hippo.cnd", new InputStreamReader(Class.forName("org.hippoecm.repository.LocalHippoRepository").getResourceAsStream("repository.cnd"))));
+            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostd", "hippostd.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippostd.cnd"))));
+            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippogallery", "hippogallery.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippogallery.cnd"))));
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace(System.err);
+        }
     }
 
     private void convert(Node node, UpdaterContext context) throws RepositoryException {
         for (int i = 0; i < rules.length; i++) {
             String[] rule = rules[i];
             if ("type".equals(rule[0])) {
-                if (node.getProperty("jcr:primaryType").getString().equals(rule[1])) {
-                    context.setPrimaryNodeType(node, rule[2]);
+                boolean typeMatch = false;
+                int typeMatchIndex = 0;
+                for (NodeType nodeType : context.getNodeTypes(node)) {
+                    if (nodeType.getName().equals(rule[1])) {
+                        typeMatch = true;
+                        if (typeMatchIndex == 0) {
+                            context.setPrimaryNodeType(node, rule[2]);
+                        } else {
+                            node.removeMixin(rule[1]);
+                            node.addMixin(rule[2]);
+                        }
+                    }
+                    ++typeMatchIndex;
+                }
+                if (typeMatch) {
                     if (rule[2].equals("hipposysedit:templatetype")) {
                         for (NodeIterator iter = node.getNodes("hippo:nodetype"); iter.hasNext();) {
                             Node child = iter.nextNode();

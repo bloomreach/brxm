@@ -279,7 +279,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             if (upgradeEnabled) {
                 ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(false);
-                UpdaterEngine.migrate(jcrRootSession);
+                Session migrateSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
+                UpdaterEngine.migrate(migrateSession);
+                migrateSession.logout();
             }
 
             try {
