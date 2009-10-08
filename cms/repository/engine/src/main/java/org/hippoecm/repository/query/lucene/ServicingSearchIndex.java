@@ -442,8 +442,10 @@ public class ServicingSearchIndex extends SearchIndex {
         
         public NodeState nextNodeState() throws NoSuchElementException {
             NodeState state = (NodeState)process.next();
-            processedStates.add(state);
-            processedIds.add(state.getNodeId());
+            if(state != null) {
+                processedStates.add(state);
+                processedIds.add(state.getNodeId());
+            }
             return state;
         }
 
