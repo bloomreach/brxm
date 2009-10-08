@@ -64,7 +64,7 @@ public class ServerRepository extends org.apache.jackrabbit.rmi.server.ServerRep
         cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.onehippo.org/jcr/hippogallery/nt/2.0", "stdgalleryset"), 3);
         cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.onehippo.org/jcr/hippogallery/nt/2.0", "stdImageGallery"), 3);
         cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.onehippo.org/jcr/hippogallery/nt/2.0", "stdAssetGallery"), 3);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/hippolog/nt/1.3", "item"), 3);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.onehippo.org/jcr/hippolog/nt/2.0", "item"), 3);
         cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.4", "plugincluster"), -1);
         cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.4", "plugin"), -1);
         cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.hippoecm.org/frontend/nt/1.4", "pluginconfig"), -1);

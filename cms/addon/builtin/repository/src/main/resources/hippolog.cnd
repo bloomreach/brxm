@@ -19,7 +19,7 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
-<hippolog='http://www.hippoecm.org/hippolog/nt/1.3'>
+<hippolog='http://www.onehippo.org/jcr/hippolog/nt/2.0'>
 
 [hippolog:item] > nt:base
 - hippolog:timestamp (long) mandatory
