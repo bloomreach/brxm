@@ -13,9 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.editor.repository.impl;
+package org.hippoecm.repository.util;
 
-// FIXME class should move
 public class VersionNumber implements Comparable<VersionNumber> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -104,5 +103,9 @@ public class VersionNumber implements Comparable<VersionNumber> {
 
     public static VersionNumber versionFromURI(String uri) {
         return new VersionNumber(uri.substring(uri.lastIndexOf("/") + 1));
+    }
+
+    public String versionToURI(String uri) {
+        return uri.substring(0, uri.lastIndexOf("/")+1) + toString();
     }
 }

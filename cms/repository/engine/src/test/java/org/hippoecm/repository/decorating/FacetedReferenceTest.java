@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 
-import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;

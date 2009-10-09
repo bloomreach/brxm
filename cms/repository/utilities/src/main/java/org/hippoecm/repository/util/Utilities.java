@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository;
+package org.hippoecm.repository.util;
 
 import java.io.PrintStream;
 
@@ -27,7 +27,7 @@ import javax.jcr.Value;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.updater.UpdaterProperty;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +70,7 @@ public class Utilities {
                 continue;
             }
             out.print(prefix + "- " + prop.getName() + " = ");
-            if (prop instanceof UpdaterProperty ? ((UpdaterProperty)prop).isMultiple() : prop.getDefinition().isMultiple()) {
+            if (prop.getDefinition().isMultiple()) {
                 Value[] values = prop.getValues();
                 out.print("{ ");
                 for (int i = 0; i < values.length; i++) {
@@ -83,7 +83,7 @@ public class Utilities {
                 }
                 out.println(" } ");
             } else {
-                if (!(prop instanceof UpdaterProperty) && prop.getType() == PropertyType.BINARY) {
+                if (prop.getType() == PropertyType.BINARY) {
                     out.println("<<binary>>");
                 } else {
                     out.println(prop.getString());

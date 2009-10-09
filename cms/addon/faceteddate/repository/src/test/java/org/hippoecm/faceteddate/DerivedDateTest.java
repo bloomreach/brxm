@@ -36,7 +36,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.util.Utilities;
 
 public class DerivedDateTest extends TestCase {
     @SuppressWarnings("unused")
