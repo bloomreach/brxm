@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.upgrade;
 
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import javax.jcr.Node;
@@ -246,19 +247,33 @@ public class Release72Updater implements UpdaterModule {
                 });
             }
         });
-        try {
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposys", "hipposys.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposys.cnd"))));
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", "hipposysedit.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd"))));
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippo", "hippo.cnd", new InputStreamReader(Class.forName("org.hippoecm.repository.LocalHippoRepository").getResourceAsStream("repository.cnd"))));
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostd", "hippostd.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippostd.cnd"))));
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippogallery", "hippogallery.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippogallery.cnd"))));
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "frontend", "frontend.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("frontend.cnd"))));
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippolog", "hippolog.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippolog.cnd"))));
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "reporting", "reporting.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("reporting.cnd"))));
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippohtmlcleaner", "hippohtmlcleaner.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippohtmlcleaner.cnd"))));
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "defaultcontent", "defaultcontent.cnd", new InputStreamReader(getClass().getClassLoader().getResourceAsStream("defaultcontent.cnd"))));
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace(System.err);
+        for (String[] nodeTypeDefinitions : new String[][] {
+                    {"hipposys"},
+                    {"hipposysedit"},
+                    {"hippo", "repository.cnd", "org.hippoecm.repository.LocalHippoRepository" },
+                    {"hippostd"},
+                    {"hippogallery"},
+                    {"frontend"},
+                    {"hippolog"},
+                    {"reporting"},
+                    {"hippohtmlcleaner"},
+                    {"defaultcontent"}}) {
+            try {
+                String prefix = nodeTypeDefinitions[0];
+                String cndName = (nodeTypeDefinitions.length > 1 && nodeTypeDefinitions[1] != null ? nodeTypeDefinitions[1] : prefix + ".cnd");
+                String classContext = (nodeTypeDefinitions.length > 2 && nodeTypeDefinitions[2] != null ? nodeTypeDefinitions[2] : null);
+                InputStream cndStream;
+                if (classContext != null) {
+                    cndStream = Class.forName(classContext).getResourceAsStream(cndName);
+                } else {
+                    cndStream = getClass().getClassLoader().getResourceAsStream(cndName);
+                }
+                if (cndStream != null) {
+                    context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, prefix, cndName, new InputStreamReader(cndStream)));
+                }
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace(System.err);
+            }
         }
     }
 
