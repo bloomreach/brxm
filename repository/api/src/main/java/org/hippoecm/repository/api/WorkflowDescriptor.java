@@ -20,18 +20,29 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
+/**
+ * 
+ */
 public interface WorkflowDescriptor {
+    /**
+     * 
+     */
     final static String SVN_ID = "$Id$";
 
     /**
      * Obtain the human-interpretable display name of this workflow.
      *
+     * @return 
+     * @throws RepositoryException
      * @returns A description of the workflow
      */
     public String getDisplayName() throws RepositoryException;
 
     /**
      * Obtain the workflow interfaces implemented by this workflow.
+     * @return 
+     * @throws ClassNotFoundException
+     * @throws RepositoryException 
      */
     public Class<Workflow>[] getInterfaces() throws ClassNotFoundException, RepositoryException;
 
@@ -39,9 +50,17 @@ public interface WorkflowDescriptor {
      * Method to access extra information that might be associated with this workflow.
      * An example is the plugin class name to be used by a frontend application to access the workflow.
      *
+     * @param name 
+     * @return 
+     * @throws RepositoryException
      * @returns A String value, can be null.
      */
     public String getAttribute(String name) throws RepositoryException;
 
+    /**
+     * 
+     * @return
+     * @throws javax.jcr.RepositoryException
+     */
     public Map<String,Serializable> hints() throws RepositoryException;
 }

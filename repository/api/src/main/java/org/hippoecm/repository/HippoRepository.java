@@ -35,9 +35,11 @@ import org.hippoecm.repository.api.ValueMap;
  * repository. The primary usage is to use create an authenticated session which can be used to retrieve
  * and store data. For this usage, some convenience login() methods are accessible though this interface, but these
  * are essentially the same as implemented in the JSR-170 based JCR repository, as would be returned by the method
- * getRepository(). 
+ * getRepository().
+ * @see javax.jcr.Repository
  */
 public interface HippoRepository {
+    /** @exclude */
     final static String SVN_ID = "$Id$";
 
     /**
@@ -45,8 +47,8 @@ public interface HippoRepository {
      * If a user identity and credentials are available through the application container,
      * then use JAAS to obtain the credentials and use login(SimpleCredentials).
      * @return 
-     * @throws LoginException  indicates an authenticaion failure
-     * @throws RepositoryException indicates some other failure while authenticating (such as connection error)
+     * @throws javax.jcr.LoginException  indicates an authenticaion failure
+     * @throws javax.jcr.RepositoryException indicates some other failure while authenticating (such as connection error)
      */
     public Session login() throws LoginException, RepositoryException;
 
@@ -55,8 +57,8 @@ public interface HippoRepository {
      * @param username the username to use as part of the credentials
      * @param password the password to use as part of the credentials
      * @return a authenticated session based on the given credentials
-     * @throws LoginException indicates an authenticaion failure
-     * @throws RepositoryException indicates some other failure while authenticating (such as connection error)
+     * @throws javax.jcr.LoginException indicates an authenticaion failure
+     * @throws javax.jcr.RepositoryException indicates some other failure while authenticating (such as connection error)
      */
     public Session login(String username, char[] password) throws LoginException, RepositoryException;
 
@@ -64,8 +66,8 @@ public interface HippoRepository {
      * Creates a new Session for the user identifier with the indicated credentials.
      * @param credentials
      * @return a authenticated session based on the given credentials
-     * @throws LoginException indicates an authenticaion failure
-     * @throws RepositoryException indicates some other failure while authenticating (such as connection error)
+     * @throws javax.jcr.LoginException indicates an authenticaion failure
+     * @throws javax.jcr.RepositoryException indicates some other failure while authenticating (such as connection error)
      */
     public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException;
 
@@ -106,12 +108,23 @@ public interface HippoRepository {
     public Repository getRepository();
 
     /**
-     * This call is not (yet) part of the API, but under evaluation.
+     * @exclude
+     * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
+     * Returns a java.util.Map representation of the subtree starting with the indicated node in the repository.
+     * @param node the starting node of the subtree to map as a java.util.Map
+     * @return a map representation of the content in the repository
+     * @throws RepositoryException in case of a generic error occurs communicating with the repository
      */
     public RepositoryMap getRepositoryMap(Node node) throws RepositoryException;
 
     /**
-     * This call is not (yet) part of the API, but under evaluation.
+     * @exclude
+     * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
+     * Returns a ValueMap (which is an enhanced java.util.Map interface) representation of the subtree starting
+     * with the indicated node in the repository.
+     * @param node the starting node of the subtree to map as a java.util.Map
+     * @return a map representation of the content in the repository
+     * @throws RepositoryException in case of a generic error occurs communicating with the repository
      */
     public ValueMap getValueMap(Node node) throws RepositoryException;
 }

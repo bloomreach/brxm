@@ -40,6 +40,11 @@
       <version>2.09.01-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>

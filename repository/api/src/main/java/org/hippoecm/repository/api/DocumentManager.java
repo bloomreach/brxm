@@ -24,6 +24,9 @@ import javax.jcr.Session;
  * HippoWorkspace instance.
  */
 public interface DocumentManager {
+    /**
+     * 
+     */
     final static String SVN_ID = "$Id$";
 
     /**

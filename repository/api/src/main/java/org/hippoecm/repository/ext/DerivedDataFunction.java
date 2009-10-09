@@ -21,17 +21,34 @@ import java.util.Map;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
+/**
+ * 
+ * @author berry
+ */
 public abstract class DerivedDataFunction extends Object {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     ValueFactory valueFactory;
+    /**
+     * 
+     * @return
+     */
     public ValueFactory getValueFactory() {
         return valueFactory;
     }
     // FIXME: not part of public API
+    /**
+     * 
+     * @param factory
+     */
     public void setValueFactory(ValueFactory factory) {
         valueFactory = factory;
     }
+    /**
+     * 
+     * @param parameters
+     * @return
+     */
     public abstract Map<String,Value[]> compute(Map<String,Value[]> parameters);
 }

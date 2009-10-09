@@ -34,21 +34,25 @@ import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
 /**
- * An extension of a plain javax.jcr.Session based session.  Any session as obtained from the Hippo Repository 2 can be cased to
- * a HippoSession allowing access to the extensions.
+ * An extension of a plain {@link javax.jcr.Session} based session.  Any session as obtained from the Hippo Repository 2 can be cased to
+ * a HippoSession allowing access to the extensions to the JCR API.
  */
 public interface HippoSession extends Session {
+    /** @exclude */
     final static String SVN_ID = "$Id$";
 
     /**
-     * Convenience function to copy a node to a destination path in the same workspace
-     *
-     * @param srcNode the source path node to copy
+     * Convenience function to copy a node to a destination path in the same workspace.  Unlike the copy method in the javax.jcr.Workspace class,
+     * this copy method does not immediately persist (i.e. requires a save operation on the session, or ancestor node of the destination path) and it does
+     * return the produced copy.  The latter makes this the preferred method to copy a node as the method on the Workspace makes it impossible to know for
+     * sure which node is produced in case of same-name siblings.  It also provides a save method for copying node types that are extensions of the Hippo repository.
+     * @param srcNode the node to copy
      * @param destAbsNodePath the absolute path of the to be created target
      * node which will be a copy of srcNode
      * @return the resulting copy
+     * @throws RepositoryException a generic error while accessing the repository
      */
-    public Node copy(Node original, String absPath) throws RepositoryException;
+    public Node copy(Node srcNode, String destAbsNodePath) throws RepositoryException;
 
     /**
      * Obtains an iterator over the set of nodes that potentially contain
@@ -104,20 +108,39 @@ public interface HippoSession extends Session {
     public NodeIterator pendingChanges() throws RepositoryException;
 
     /**
-     * DO NOT USE: api of this method has not yet stabilized!
+     * @exclude
+     * <b>This call is not (yet) part of the API, but under evaluation.</b>
      * Export a dereferenced view of a node.
      *
-     * TODO: fix see tags
-     * @see #exportDereferencedView(String,ContentHandler,boolean,boolean)
-     * @see org.hippoecm.repository.jackrabbit.xml.HippoSysViewSAXEventGenerator
+     * @param absPath the absolute path to the subtree to be exported
+     * @param out the output stream to which the resulting XML should be outputted
+     * @param binaryAsLink whether to include binaries
+     * @param noRecurse whether to output just a single node or the whole subtree
+     * @throws IOException in case of an error writing to the output stream
+     * @throws RepositoryException a generic error while accessing the repository
+     * @throws PathNotFoundException in case the absPath parameter does not point to a valid node
      * @see javax.jcr.Session#exportSystemView(String,OutputStream,boolean,boolean)
      */
     public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException;
 
     /**
-     * DO NOT USE: api of this method has not yet stabilized!
-     * Import a dereferenced export
+     * @exclude
+     * <b>This call is not (yet) part of the API, but under evaluation.</b>
+     * Import a dereferenced export.
+     * @param parentAbsPath the parent node below which to in
+     * @param in the input stream from which to read the XML
+     * @param uuidBehavior how to handle deserialized UUIDs in the input stream {@link javax.jcr.ImportUUIDBehavior}
+     * @param mergeBehavior an options flag containing one of the values of {@link ImportMergeBehavior} indicating how to merge nodes that already exist
+     * @param referenceBehavior an options flag containing one of the values of {@link ImportReferenceBehavior} indicating how to handle references
+     * @throws IOException if incoming stream is not a valid XML document.
+     * @throws PathNotFoundException in case the parentAbsPath parameter does not point to a valid node
+     * @throws ItemExistsException in case the to be imported node already exist below the parent and same-name siblings are not allowed, or when the merge behavior does not allow merging on an existing node and the node does exist
+     * @throws ConstraintViolationException when imported node is marked protected accoring to the node definition of the parent
+     * @throws InvalidSerializedDataException 
+     * @throws VersionException when the parent node is not in checked-out status
+     * @throws LockException when the parent node is locked
+     * @throws RepositoryException a generic error while accessing the repository
      * @see #exportDereferencedView(String,OutputStream,boolean,boolean)
      * @see javax.jcr.Session#importXML(java.lang.String, java.io.InputStream, int)
      * @see org.hippoecm.repository.api.ImportReferenceBehavior
@@ -138,9 +161,12 @@ public interface HippoSession extends Session {
     public XAResource getXAResource();
 
     /**
-     * FIXME WARNING this call is not yet part of the API.
-     * Probably it will change into getSessionClassLoader(Node) or similar
-     * Get a classloader which uses the JCR  repository to load the classes from
+     * @exclude
+     * <b>This call is not (yet) part of the API, but under evaluation.</b>
+     * Probably it will change into getSessionClassLoader(Node) or similar.
+     * Get a classloader which uses the JCR  repository to load the classes from.
+     * @return a classloader instance that will load class definitions stored in the JCR repository
+     * @throws RepositoryException  a generic error while accessing the repository
      */
     public ClassLoader getSessionClassLoader() throws RepositoryException;
 }

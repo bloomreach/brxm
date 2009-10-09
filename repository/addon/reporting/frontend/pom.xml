@@ -35,6 +35,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
       <version>2.09.01-SNAPSHOT</version>

@@ -15,9 +15,15 @@
  */
 package org.hippoecm.repository.ext;
 
-/** Marker interface
- *  DO NOT USE, should be moved to repository engine package [ FIXME ]
+/**
+ * @exclude
+ * <b>This interface is not part of the API, and should never be implemented by classes other than in the core repository implementation.</b><p/>
+ * This interface is used as a marker interface indicating that the workflow is implemented by the repository itself.
  */
+// FIXME: this interface should be moved to the repository engine package
 public interface InternalWorkflow {
+    /**
+     * @exclude
+     */
     final static String SVN_ID = "$Id$";
 }

@@ -19,15 +19,18 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Workspace;
 
 /**
- * Any instance of a javax.jcr.Workspace returned by a HippoRepository may be casted to a HippoWorkspace to expose some
- * additional services from the Hippo repository 2.  These services are bound to the session from which this
+ * Any instance of a {@link javax.jcr.Workspace} returned by a HippoRepository may be casted to a HippoWorkspace to expose some
+ * additional services from the Hippo repository.  These services are bound to the session from which this
  * workspace was obtained.
  */
 public interface HippoWorkspace extends Workspace {
+    /**
+     * @exclude
+     */
     final static String SVN_ID = "$Id$";
 
     /**
-     * The document manager service allows the representation of a document stored as a subtree of a javax.jcr.Node as a Java object.
+     * The document manager service allows the representation of a document stored as a subtree of a {link javax.jcr.Node} as a Java object.
      * @return the document manager
      * @throws javax.jcr.RepositoryException indicates an unspecified error from the repository
      */

@@ -534,6 +534,29 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <inherited>false</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <author>false</author>
+          <show>protected</show>
+          <source>1.5</source>
+          <javadocVersion>1.6</javadocVersion>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
+          </links>
+          <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
+          <docletArtifact>
+            <groupId>org.hippoecm</groupId>
+            <artifactId>hippo-ecm-tools-documentation</artifactId>
+            <version>2.09.01-SNAPSHOT</version>
+          </docletArtifact>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -830,11 +853,19 @@
         <version>2.6</version>
         <configuration>
           <aggregate>true</aggregate>
+          <author>false</author>
+          <show>protected</show>
           <source>1.5</source>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
           </links>
+          <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
+          <docletArtifact>
+            <groupId>org.hippoecm</groupId>
+            <artifactId>hippo-ecm-tools-documentation</artifactId>
+            <version>2.09.01-SNAPSHOT</version>
+          </docletArtifact>
         </configuration>
         <reportSets>
           <reportSet>
@@ -895,8 +926,6 @@
         </configuration>
       </plugin>
 
-
-      <!--  -->
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>

@@ -267,7 +267,10 @@ public class HippoRepositoryFactory {
     }
 
     /**
-     * This method is not part of the API of this package.
+     * @exclude
+     * <b>This call is not part of the API.</b><p/>
+     * @param clazz the class object for which to obtain a reference to the manifest
+     * @return the URL of the manifest found, or null if it could not be obtained
      */
     public static URL getManifest(Class clazz) {
         try {

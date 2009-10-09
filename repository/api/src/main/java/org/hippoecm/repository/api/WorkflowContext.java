@@ -22,6 +22,9 @@ import javax.jcr.RepositoryException;
  * information during the execution of a workflow step.
  */
 public interface WorkflowContext {
+    /**
+     * 
+     */
     final static String SVN_ID = "$Id$";
 
     /**
@@ -50,13 +53,35 @@ public interface WorkflowContext {
 
     /**
      * Obtains a workflow instance for the same document this workflow context 
+     * @param category 
+     * @return 
+     * @throws MappingException
+     * @throws WorkflowException 
+     * @throws RepositoryException
      */
     public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException;
 
+    /**
+     * 
+     * @param category
+     * @param document
+     * @return
+     * @throws org.hippoecm.repository.api.MappingException
+     * @throws org.hippoecm.repository.api.WorkflowException
+     * @throws javax.jcr.RepositoryException
+     */
     public Workflow getWorkflow(String category, Document document) throws MappingException, WorkflowException,
                                                                            RepositoryException;
 
+    /**
+     * 
+     * @return
+     */
     public String getUserIdentity();
 
+    /**
+     * 
+     * @return
+     */
     public RepositoryMap getWorkflowConfiguration();
 }

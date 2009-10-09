@@ -28,7 +28,7 @@ import java.io.Serializable;
  * are only useful in subseqent calls to the workflowmanager to return a new workflow, or from a document the
  * getIdentity() method may be used to obtain the UUID of the javax.jcr.Node representing the document.
  */
-public class Document implements Serializable, Cloneable {
+public class Document extends Object implements Serializable, Cloneable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -36,15 +36,16 @@ public class Document implements Serializable, Cloneable {
     private String identity = null;
 
     /** 
-     * Constructor that should be considered protected rather than public and may be used for extending classes to
+     * Constructor that should be considered to have a protected signature rather than public and may be used for extending classes to
      * create a new Document.
      */
     public Document() {
     }
 
     /**
-     * THIS CALL IS NOT PART OF THE PUBLIC API OF HIPPO ECM.<p/>
-     * In no circumstance should this call be used.
+     * @exclude
+     * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
+     * @param identity the uuid of the backing {@link javax.jcr.Node} in the repository that this document instance represents.
      */
     public Document(String identity) {
         this.identity = identity;
@@ -54,7 +55,8 @@ public class Document implements Serializable, Cloneable {
      * Clone a document object, which is useful to create a new copy of a repository-backed document including all its
      * contents from the repository, rather than just the information currently mapped to the Document object.
      * @return the cloned Document object
-     * @throws java.lang.CloneNotSupportedException if never really cloned
+     * @throws java.lang.CloneNotSupportedException if the sub-class of this document does not allow cloning
+     * @see java.lang.Object#clone()
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -70,11 +72,11 @@ public class Document implements Serializable, Cloneable {
 
     /**
      * Obtain the identity, if known at this point, of a document.  The
-     * identity of a Document is the identity of the primary javax.jcr.Node
+     * identity of a Document is the identity of the primary {@link javax.jcr.Node}
      * used in persisting the data of the document.</p>
      * A Document returned for example by a workflow step can be accessed
      * using:
-     * <code>Node node = session.getNodeByUUID(document.getIdentity());</code>
+     * <pre>Node node = session.getNodeByUUID(document.getIdentity());</pre>
      *
      * @return a string containing the UUID of the Node representing the Document.
      * or <code>null</code> if not available.
@@ -84,23 +86,27 @@ public class Document implements Serializable, Cloneable {
     }
 
     /**
-     * THIS CALL IS NOT PART OF THE PUBLIC API OF HIPPO ECM.<p/>
-     * In no circumstance should this call be used.
+     * @exclude
+     * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
+     * @param uuid the UUID of the backing {@link javax.jcr.Node} this document instance represents
      */
     public final void setIdentity(String uuid) {
         identity = uuid;
     }
 
     /**
-     * This call is not useful for extension programmers, and should normally
-     * not be used.
+     * @exclude
+     * <b>This call is not part of the API, this call is not useful for extension programmers, and should normally
+     * not be used.</b><p/>
+     * @return the document instance from which this document was cloned
+     * @see java.lang.Object@clone()
      */
     public Document isCloned() {
         return isCloned;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

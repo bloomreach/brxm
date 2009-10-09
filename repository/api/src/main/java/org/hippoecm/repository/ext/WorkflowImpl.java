@@ -25,26 +25,45 @@ import java.util.TreeMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 
+/**
+ * 
+ */
 public abstract class WorkflowImpl implements Remote, Workflow
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    /**
+     * 
+     */
     protected WorkflowContext context;
+    /**
+     * 
+     * @throws java.rmi.RemoteException
+     */
     public WorkflowImpl() throws RemoteException {
     }
 
     /**
      * This method should never be invoked by extensions or applications
+     * @param context 
      */
     final public void setWorkflowContext(WorkflowContext context) {
         this.context = context;
     }
 
+    /**
+     * 
+     * @return
+     */
     final protected WorkflowContext getWorkflowContext() {
         return context;
     }
 
+    /**
+     * 
+     * @return
+     */
     public Map<String,Serializable> hints() {
         return hints(this);
     }

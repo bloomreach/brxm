@@ -24,19 +24,26 @@
     class, you will find yourself with an authenticated javax.jcr.Session
     object.
     </p>
+
     <p>
     You should however be aware that there are a number of extensions the
     Hippo Repository has on top of the JCR specification.  Because these calls
     cannot be integrated into the JCR interfaces, you should be aware that the
     following extensions exist:
     </p>
+    
     <p>
-    Any javax.jcr.Node can also be cast to a HippoNode, which contains a
-    number of extensions related to handling JCR nodes.  A javax.jcr.Session
-    obtained by logging in can be cast to a HippoSession, containing exensions
-    related to changes in a session context.  Finally, javax.jcr.Workspace
-    instances may be cast to the HippoWorkspace interface allowing access to
-    some additional services such as the WorkflowManager.
+    Any {@link javax.jcr.Node} can also be cast to a
+    {@link org.hippoecm.repository.api.HippoNode}, which contains a number of
+    extensions related to handling JCR nodes.
+    A {@link javax.jcr.Session} obtained by logging in can be cast to a
+    {@link org.hippoecm.repository.api.HippoSession}, containing exensions
+    related to changes in a session context.
+    Finally, {@link javax.jcr.Workspace} instances may be cast to the
+    {@link org.hippoecm.repository.api.HippoWorkspace} interface allowing
+    access to some additional services such as the
+    {@link org.hippoecm.repository.api.WorkflowManager}.
     </p>
+
   </body>
 </html>
