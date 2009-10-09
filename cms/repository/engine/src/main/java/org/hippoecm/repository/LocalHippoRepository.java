@@ -277,7 +277,15 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             // get the current root/system session for the default workspace for namespace and nodetypes init
             Session jcrRootSession =  ((LocalRepositoryImpl)jackrabbitRepository).getRootSession(null);
 
-            if (upgradeEnabled) {
+            boolean hasHippoNamespace;
+            try {
+                jcrRootSession.getNamespaceURI("hippo");
+                hasHippoNamespace = true;
+            } catch (NamespaceException ex) {
+                hasHippoNamespace = false;
+            }
+
+            if (upgradeEnabled && hasHippoNamespace) {
                 ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(false);
                 Session migrateSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
                 UpdaterEngine.migrate(migrateSession);
