@@ -15,18 +15,30 @@
  */
 package org.hippoecm.repository.upgrade;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.util.TraversingItemVisitor;
 
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
+import org.hippoecm.repository.util.VersionNumber;
 
 public class Release72Updater implements UpdaterModule {
     private static final String[][] rules = {
@@ -323,7 +335,6 @@ public class Release72Updater implements UpdaterModule {
                     {"hippolog"},
                     {"reporting"},
                     {"hippohtmlcleaner"},
-                    {"defaultcontent"},
                     {"editor"}}) {
             try {
                 String prefix = nodeTypeDefinitions[0];
@@ -341,6 +352,20 @@ public class Release72Updater implements UpdaterModule {
             } catch (ClassNotFoundException ex) {
                 ex.printStackTrace(System.err);
             }
+            /*
+            try {
+                String uri = context.getWorkspace().getNamespaceRegistry().getURI("defaultcontent");
+                context.getWorkspace().getNamespaceRegistry().registerNamespace("defaultcontent", VersionNumber.versionFromURI(uri).next().versionToURI(uri));
+                String cnd = org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter.compactNodeTypeDef(context.getWorkspace(), "defaultcontent");
+                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "defaultcontent", "-", new StringReader(cnd)));
+            } catch (IOException ex) {
+                ex.printStackTrace(System.err);
+            } catch (NamespaceException ex) {
+                ex.printStackTrace(System.err);
+            } catch (RepositoryException ex) {
+                ex.printStackTrace(System.err);
+            }
+            */
         }
     }
 

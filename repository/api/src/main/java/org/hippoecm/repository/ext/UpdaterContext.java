@@ -21,15 +21,15 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
 
 /**
  * 
- * @author berry
  */
 public interface UpdaterContext {
     /**
-     * 
+     * @exclude
      */
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
@@ -78,7 +78,7 @@ public interface UpdaterContext {
      * @param session
      * @param type 
      * @return node type definition
-     * @throws RepositoryException
+     * @throws RepositoryException  in case of a generic error in the interaction with the repository
      */
     public NodeType getNewType(Session session, String type) throws RepositoryException;
 
@@ -86,7 +86,7 @@ public interface UpdaterContext {
      * During an update, the setName call may be used to rename an item savely.
      * @param item the item to be renamed
      * @param name the new name of the item
-     * @throws javax.jcr.RepositoryException
+     * @throws javax.jcr.RepositoryException  in case of a generic error in the interaction with the repository
      */
     public void setName(Item item, String name) throws RepositoryException;
 
@@ -96,7 +96,7 @@ public interface UpdaterContext {
      * are valid until just before changes are commited.
      * @param node the node for which to change the primary node type
      * @param name the new primary node type name
-     * @throws javax.jcr.RepositoryException
+     * @throws javax.jcr.RepositoryException  in case of a generic error in the interaction with the repository
      */
     public void setPrimaryNodeType(Node node, String name) throws RepositoryException;
 
@@ -106,7 +106,7 @@ public interface UpdaterContext {
      * @param node the node for which to obtain the defined node types
      * @return an array of all node type definitions, the primary node type
      * will be the first in the array
-     * @throws javax.jcr.RepositoryException
+     * @throws javax.jcr.RepositoryException in case of a generic error in the interaction with the repository
      */
     public NodeType[] getNodeTypes(Node node) throws RepositoryException;
 
@@ -116,5 +116,14 @@ public interface UpdaterContext {
      * @param property the property to inspect
      * @return true if the set value is a multi-value
      */
-    public boolean isMultiple(Property property);
+    public boolean isMultiple(Property property) throws RepositoryException;
+
+    /**
+     * Returns the workspace that may be used during the registration of the module, but should normally not be used during the
+     * evaluation by visitors.  The returned workspace is not accociated with a session and can only be used to query
+     * the namespace registry.
+     * @return a workspace that may only be used to access the namespace manager
+     * @throws RepositoryException in case of a generic error in the interaction with the repository
+     */
+    public Workspace getWorkspace() throws RepositoryException;
 }
