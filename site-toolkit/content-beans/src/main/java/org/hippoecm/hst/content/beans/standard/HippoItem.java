@@ -152,7 +152,9 @@ public class HippoItem implements HippoBean{
                if(child.getName().equals(childNodeName)) {
                    try {
                        Object bean = this.objectConverter.getObject(child);
-                       childBeans.add((T)bean);
+                       if(bean != null) {
+                           childBeans.add((T)bean);
+                       } 
                    } catch (ObjectBeanManagerException e) {
                       log.warn("Skipping bean: {}", e);
                    }
