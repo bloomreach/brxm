@@ -442,7 +442,8 @@ public class UpdaterEngine {
                         NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
                         remap.oldURI = null;
                         remap.oldPrefix = null;
-                        for(String candidatePrefix : nsreg.getPrefixes()) {
+                        String[] prefixes = nsreg.getPrefixes();
+                        for(String candidatePrefix : prefixes) {
                             if(remap.namespace.equals(candidatePrefix)) {
                                 remap.oldURI = nsreg.getURI(remap.namespace);
                                 remap.oldPrefix = remap.namespace + "_" + remap.oldURI.substring(remap.oldURI.lastIndexOf('/') + 1).replace('.', '_');
@@ -453,7 +454,18 @@ public class UpdaterEngine {
                         NamespaceMapping mapping = cndReader.getNamespaceMapping();
                         remap.newURI = mapping.getURI(remap.namespace);
                         remap.newPrefix = remap.namespace + "_" + remap.newURI.substring(remap.newURI.lastIndexOf('/') + 1).replace('.', '_');
-                        nsreg.registerNamespace(remap.newPrefix, remap.newURI);
+                        boolean prefixExists = false;
+                        for(String prefix : prefixes) {
+                            if (prefix.equals(remap.newPrefix)) {
+                                if (!nsreg.getURI(prefix).equals(remap.newURI)) {
+                                    throw new NamespaceException("Prefix " + remap.newPrefix + " is already mapped to " + nsreg.getURI(prefix));
+                                }
+                                prefixExists = true;
+                            }
+                        }
+                        if (!prefixExists) {
+                            nsreg.registerNamespace(remap.newPrefix, remap.newURI);
+                        }
                         List ntdList = cndReader.getNodeTypeDefs();
                         NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl)workspace.getNodeTypeManager();
                         NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();

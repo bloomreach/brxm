@@ -46,7 +46,7 @@ public class Release72Updater implements UpdaterModule {
         {"field", "hippo:node", "hipposysedit_1_0:node"},
         {"field", "hippo:mixin", "hipposysedit_1_0:mixin"},
         {"child", "hippo:field", "hipposysedit_1_0:field"},
-        {"type", "hippo:templatetype", "hipposysedit_1_0:templatetype"},
+        // {"type", "hippo:templatetype", "hipposysedit_1_0:templatetype"},
         {"type", "hippo:initializeitem", "hippo_2_0:initializeitem"},
         {"type", "hippo:softdocument", "hipposys_1_0:softdocument"},
         {"field", "hippo:uuid", "hipposys_1_0:uuid"},
@@ -169,6 +169,7 @@ public class Release72Updater implements UpdaterModule {
         {"type", "hippo:facetsearch", "hippo_2_0:facetsearch"},
         {"type", "hippo:facetselect", "hippo_2_0:facetselect"},
         {"type", "hippo:mirror", "hippo_2_0:mirror"},
+        {"type", "hippo:facetlink", null},
         //{"type","hippo:translation","hipponew:translation"},
         //{"type","hippo:translated","hipponew:translated"},
 
@@ -188,7 +189,8 @@ public class Release72Updater implements UpdaterModule {
         //{"field", "hippo:lastlogin", "hipposys_1_0:lastlogin"},
 
         {"type", "hippo:implementation", "hipposys_1_0:implementation"},
-        {"field", "hippo:classname", "hipposys_1_0:classname"}
+        {"field", "hippo:classname", "hipposys_1_0:classname"},
+        
     };
 
     public void register(final UpdaterContext context) {
@@ -208,9 +210,72 @@ public class Release72Updater implements UpdaterModule {
                  */
                 node.getNode("hippo:log").remove();
 
-                node.getNode("hippo:namespaces").remove();
                 node.getNode("live").remove();
                 node.getNode("preview").remove();
+            }
+        });
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:namespacefolder") {
+            @Override
+            public void entering(final Node node, int level) throws RepositoryException {
+                context.setPrimaryNodeType(node, "hipposysedit_1_0:namespacefolder");
+                for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+                    Node child = iter.nextNode();
+                    if (child.isNodeType("hippo:namespace")) {
+                        context.setPrimaryNodeType(child, "hipposysedit_1_0:namespace");
+                    }
+                }
+            }
+        });
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:templatetype") {
+            @Override
+            public void entering(final Node node, int level) throws RepositoryException {
+                context.setPrimaryNodeType(node, "hipposysedit_1_0:templatetype");
+                Node child = node.getNode("hippo:nodetype");
+                for (NodeIterator nodetypeVersionIter = child.getNodes(child.getName()); nodetypeVersionIter.hasNext();) {
+                    Node version = nodetypeVersionIter.nextNode();
+                    context.setName(version, "hipposysedit_1_0:nodetype");
+                    version.accept(new TraversingItemVisitor.Default(true) {
+                        @Override
+                        public void entering(final Node node, int level) throws RepositoryException {
+                            convert(node, context);
+                        }
+                    });
+                }
+                context.setName(child, "hipposysedit_1_0:nodetype");
+                context.setPrimaryNodeType(child, "hippo_2_0:handle");
+
+                if (node.hasNode("hippo:prototype")) {
+                    child = node.getNode("hippo:prototype");
+                    for (NodeIterator prototypeIter = child.getNodes("hippo:prototype"); prototypeIter.hasNext();) {
+                        Node prototype = prototypeIter.nextNode();
+                        context.setName(prototype, "hipposysedit_1_0:prototype");
+                        prototype.accept(new TraversingItemVisitor.Default(true) {
+                            @Override
+                            public void entering(final Node node, int level) throws RepositoryException {
+                                convert(node, context);
+                            }
+                        });
+                    }
+                    context.setName(child, "hipposysedit_1_0:prototypes");
+                    context.setPrimaryNodeType(child, "hipposysedit_1_0:prototypeset");
+                }
+
+                if (node.hasNode("hippo:template")) {
+                    node.addMixin("editor_1_0:editable");
+                    child = node.getNode("hippo:template");
+                    for (NodeIterator templateIter = child.getNodes(child.getName()); templateIter.hasNext();) {
+                        Node template = templateIter.nextNode();
+                        context.setName(template, "hipposysedit_1_0:template");
+                        template.accept(new TraversingItemVisitor.Default(true) {
+                            @Override
+                            public void entering(final Node node, int level) throws RepositoryException {
+                                convert(node, context);
+                            }
+                        });
+                    }
+                    context.setName(child, "editor_1_0:templates");
+                    context.setPrimaryNodeType(child, "editor_1_0:templateset");
+                }
             }
         });
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:configuration") {
@@ -252,12 +317,14 @@ public class Release72Updater implements UpdaterModule {
                     {"hipposysedit"},
                     {"hippo", "repository.cnd", "org.hippoecm.repository.LocalHippoRepository" },
                     {"hippostd"},
+                    {"hippostd", "hippostd-addendum.cnd"},
                     {"hippogallery"},
                     {"frontend"},
                     {"hippolog"},
                     {"reporting"},
                     {"hippohtmlcleaner"},
-                    {"defaultcontent"}}) {
+                    {"defaultcontent"},
+                    {"editor"}}) {
             try {
                 String prefix = nodeTypeDefinitions[0];
                 String cndName = (nodeTypeDefinitions.length > 1 && nodeTypeDefinitions[1] != null ? nodeTypeDefinitions[1] : prefix + ".cnd");
@@ -287,59 +354,47 @@ public class Release72Updater implements UpdaterModule {
                     if (nodeType.getName().equals(rule[1])) {
                         typeMatch = true;
                         if (typeMatchIndex == 0) {
-                            context.setPrimaryNodeType(node, rule[2]);
+                            if (rule[2] != null) {
+                                context.setPrimaryNodeType(node, rule[2]);
+                            } else {
+                                node.remove();
+                                return;
+                            }
                         } else {
                             node.removeMixin(rule[1]);
                             node.addMixin(rule[2]);
                         }
+                        break;
                     }
                     ++typeMatchIndex;
                 }
                 if (typeMatch) {
-                    if (rule[2].equals("hipposysedit:templatetype")) {
-                        for (NodeIterator iter = node.getNodes("hippo:nodetype"); iter.hasNext();) {
-                            Node child = iter.nextNode();
-                            for (NodeIterator documentsIter = child.getNodes(child.getName()); documentsIter.hasNext();) {
-                                context.setName(documentsIter.nextNode(), "hipposysedit:nodetype");
-                            }
-                            context.setName(child, "hipposysedit:nodetype");
-                            context.setPrimaryNodeType(child, "hipposysedit:handle");
-                        }
-                        for (NodeIterator iter = node.getNodes("hippo:template"); iter.hasNext();) {
-                            Node child = iter.nextNode();
-                            for (NodeIterator documentsIter = child.getNodes(child.getName()); documentsIter.hasNext();) {
-                                context.setName(documentsIter.nextNode(), "hipposysedit:template");
-                            }
-                            context.setName(child, "hipposysedit:template");
-                            context.setPrimaryNodeType(child, "hipposysedit:handle");
-                        }
-                        for (NodeIterator iter = node.getNodes("hippo:prototype"); iter.hasNext();) {
-                            Node child = iter.nextNode();
-                            for (NodeIterator documentsIter = child.getNodes(child.getName()); documentsIter.hasNext();) {
-                                context.setName(documentsIter.nextNode(), "hipposysedit:prototype");
-                            }
-                            context.setName(child, "hipposysedit:prototype");
-                            context.setPrimaryNodeType(child, "hipposysedit:handle");
-                        }
-                    }
                     int j;
                     for (j = i + 1; j < rules.length; j++) {
                         rule = rules[j];
                         if ("field".equals(rule[0])) {
                             if (node.hasProperty(rule[1])) {
-                                if (context.isMultiple(node.getProperty(rule[1]))) {
-                                    node.setProperty(rule[2], node.getProperty(rule[1]).getValues());
-                                } else {
-                                    if (rule[2].equals("hipposys:value")) {
-                                        String value = node.getProperty(rule[1]).getString();
-                                        for (int k = 0; k < rules.length; k++) {
-                                            if (rules[k][0].equals("type") && rules[k][1].equals(value)) {
-                                                value = rules[k][2];
+                                if (rule[2] != null) {
+                                    if (context.isMultiple(node.getProperty(rule[1]))) {
+                                        node.setProperty(rule[2], node.getProperty(rule[1]).getValues());
+                                    } else {
+                                        // TODO: whenever property is a Name (or Path), see if there is a prefix
+                                        // in there that we can remap.
+                                        if (rule[2].equals("hipposys_1_0:value")) {
+                                            String value = node.getProperty(rule[1]).getString();
+                                            for (int k = 0; k < rules.length; k++) {
+                                                if (rules[k][0].equals("type") && rules[k][1].equals(value)) {
+                                                    value = rules[k][2];
+                                                    // hipposys:value is a String property, so the prefix will not be remapped
+                                                    String prefix = value.substring(0, value.indexOf('_'));
+                                                    value = prefix + value.substring(value.indexOf(':'));
+                                                    break;
+                                                }
                                             }
                                             node.setProperty(rule[2], value);
+                                        } else {
+                                            node.setProperty(rule[2], node.getProperty(rule[1]).getValue());
                                         }
-                                    } else {
-                                        node.setProperty(rule[2], node.getProperty(rule[1]).getValue());
                                     }
                                 }
                                 node.getProperty(rule[1]).remove();
@@ -347,9 +402,13 @@ public class Release72Updater implements UpdaterModule {
                         } else if ("child".equals(rule[0])) {
                             for (NodeIterator iter = node.getNodes(rule[1]); iter.hasNext();) {
                                 Node child = iter.nextNode();
-                                context.setName(child, rule[2]);
-                                if (rule.length > 3) {
-                                    context.setPrimaryNodeType(child, rule[3]);
+                                if (rule[2] != null) {
+                                    context.setName(child, rule[2]);
+                                    if (rule.length > 3) {
+                                        context.setPrimaryNodeType(child, rule[3]);
+                                    }
+                                } else {
+                                    child.remove();
                                 }
                             }
                         } else {
