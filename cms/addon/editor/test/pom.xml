@@ -99,7 +99,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- provided -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>

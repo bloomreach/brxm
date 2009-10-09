@@ -35,6 +35,9 @@ import javax.jcr.version.VersionException;
  * Its interface is compliant with the upcoming standard of JCR2 (JSR-283) which leveraged the most important extension implemented; parameterized (stored) queries.
  */
 public interface HippoQuery extends Query {
+    /**
+     * 
+     */
     final static String SVN_ID = "$Id$";
 
     /**
@@ -49,9 +52,27 @@ public interface HippoQuery extends Query {
      */
     public Session getSession() throws RepositoryException;
 
+    /**
+     * 
+     * @param absPath
+     * @param type
+     * @return
+     * @throws javax.jcr.ItemExistsException
+     * @throws javax.jcr.PathNotFoundException
+     * @throws javax.jcr.version.VersionException
+     * @throws javax.jcr.nodetype.ConstraintViolationException
+     * @throws javax.jcr.lock.LockException
+     * @throws javax.jcr.UnsupportedRepositoryOperationException
+     * @throws javax.jcr.RepositoryException
+     */
     public Node storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException, VersionException,
             ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException;
 
+    /**
+     * 
+     * @return
+     * @throws javax.jcr.RepositoryException
+     */
     public String[] getArguments() throws RepositoryException;
 
     /**
@@ -70,10 +91,27 @@ public interface HippoQuery extends Query {
      */
     public QueryResult execute(Map<String,String> arguments) throws RepositoryException;
 
+    /**
+     * 
+     * @param varName
+     * @param value
+     * @throws java.lang.IllegalArgumentException
+     * @throws javax.jcr.RepositoryException
+     */
     public void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException;
 
+    /**
+     * 
+     * @param limit
+     * @throws javax.jcr.RepositoryException
+     */
     public void setLimit(long limit) throws RepositoryException;
 
+    /**
+     * 
+     * @param offset
+     * @throws javax.jcr.RepositoryException
+     */
     public void setOffset(long offset) throws RepositoryException;
 
     /* FIXME

@@ -23,12 +23,34 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.WorkflowException;
 
+/**
+ * 
+ * @author berry
+ */
 public interface WorkflowInvocation extends Externalizable {
+    /**
+     * 
+     */
     final static String SVN_ID = "$Id$";
 
+    /**
+     * 
+     * @param session
+     * @return
+     * @throws javax.jcr.RepositoryException
+     * @throws org.hippoecm.repository.api.WorkflowException
+     */
     public Object invoke(Session session) throws RepositoryException, WorkflowException;
 
+    /**
+     * 
+     * @return
+     */
     public Node getSubject();
 
+    /**
+     * 
+     * @param node
+     */
     public void setSubject(Node node);
 }

@@ -21,7 +21,14 @@ import java.util.Map;
  * This interface is not yet part of the public API.
  */
 public interface RepositoryMap extends Map {
+    /**
+     * 
+     */
     final static String SVN_ID = "$Id$";
 
+    /**
+     * 
+     * @return
+     */
     public boolean exists();
 }

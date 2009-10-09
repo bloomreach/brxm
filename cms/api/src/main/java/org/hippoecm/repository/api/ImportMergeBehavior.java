@@ -16,17 +16,37 @@
 package org.hippoecm.repository.api;
 
 /**
- * WARNING: this api is not yet stable!
+ * @exclude
+ * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
  * The possible actions specified by the <code>mergeBehavior</code>
- * parameter in {@link HippoSession#importDereferencedXML}, and
- * {@link HippoSession#getDereferencedImportContentHandler}.
+ * parameter in {@link HippoSession#importDereferencedXML}.
+ * When a node already exists in the repository on the same path during import, the value specified by the mergeBehavior governs what to do in such a case.
+ * The mergeBehavior parameter must be just one of these values.
  */
 public interface ImportMergeBehavior {
+    /**
+     * @exclude
+     */
     final static String SVN_ID = "$Id$";
 
+    /**
+     * When a node already exists in the repository on the same path, skip the node in the import and its subtree.
+     */
     public static final int IMPORT_MERGE_SKIP = 0;
+    /**
+     * When a node already exits, drop the existing node and import th enew node.
+     */
     public static final int IMPORT_MERGE_OVERWRITE = 1;
+    /**
+     * When a node already exist, try to add a new node as a same-name sibling.  If the parenting node type definition does not allow same-name siblings of that name, revert to skip behavior.
+     */
     public static final int IMPORT_MERGE_ADD_OR_SKIP = 2; // try add first else skip
+    /**
+     * When a node already exist, try to add a new node as a same-name sibling.  If the parenting node type definition does not allow same-name siblings of that name, revert to overwrite behavior.
+     */
     public static final int IMPORT_MERGE_ADD_OR_OVERWRITE = 3; //try add first else overwrite
+    /**
+     * When a node alread exist, throw an {@link javax.jcr.ItemExistsException} exception and abort the import.  The import so far is kept in session transient state.
+     */
     public static final int IMPORT_MERGE_THROW = 4;
 }

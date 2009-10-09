@@ -23,7 +23,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
+/**
+ * 
+ * @author berry
+ */
 public interface UpdaterContext {
+    /**
+     * 
+     */
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
@@ -69,7 +76,7 @@ public interface UpdaterContext {
      * a certain primary type, as a replacement for Node.getPrimaryNodeType()
      * and Node.getMixinNodeTypes()
      * @param session
-     * @param the namespaced node type
+     * @param type 
      * @return node type definition
      * @throws RepositoryException
      */

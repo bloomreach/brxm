@@ -17,8 +17,20 @@ package org.hippoecm.repository.ext;
 
 import org.hippoecm.repository.api.WorkflowManager;
 
+/**
+ * 
+ * @author berry
+ */
 public interface WorkflowModule {
+    /**
+     * 
+     */
     final static String SVN_ID = "$Id$";
 
+    /**
+     * 
+     * @param workflowManager
+     * @param invocation
+     */
     public void submit(WorkflowManager workflowManager, WorkflowInvocation invocation);
 }

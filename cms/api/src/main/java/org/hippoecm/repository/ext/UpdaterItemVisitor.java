@@ -33,19 +33,36 @@ import javax.jcr.InvalidItemStateException;
 
 import org.hippoecm.repository.api.HippoNode;
 
+/**
+ * 
+ * @author berry
+ */
 public abstract class UpdaterItemVisitor implements ItemVisitor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    /**
+     * 
+     */
     final protected boolean breadthFirst;
     private LinkedList<Item> currentQueue;
     private LinkedList<Item> nextQueue;
+    /**
+     * 
+     */
     public int currentLevel;
 
+    /**
+     * 
+     */
     protected UpdaterItemVisitor() {
         this(false);
     }
 
+    /**
+     * 
+     * @param breadthFirst
+     */
     protected UpdaterItemVisitor(boolean breadthFirst) {
         this.breadthFirst = breadthFirst;
         if (breadthFirst) {
@@ -55,15 +72,39 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         currentLevel = 0;
     }
 
+    /**
+     * 
+     * @param property
+     * @param level
+     * @throws javax.jcr.RepositoryException
+     */
     protected abstract void entering(Property property, int level)
             throws RepositoryException;
 
+    /**
+     * 
+     * @param node
+     * @param level
+     * @throws javax.jcr.RepositoryException
+     */
     protected abstract void entering(Node node, int level)
             throws RepositoryException;
 
+    /**
+     * 
+     * @param property
+     * @param level
+     * @throws javax.jcr.RepositoryException
+     */
     protected abstract void leaving(Property property, int level)
             throws RepositoryException;
 
+    /**
+     * 
+     * @param node
+     * @param level
+     * @throws javax.jcr.RepositoryException
+     */
     protected abstract void leaving(Node node, int level)
             throws RepositoryException;
 
@@ -131,10 +172,20 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         }
     }
 
+    /**
+     * 
+     */
     public static class Default extends UpdaterItemVisitor {
+        /**
+         * 
+         */
         public Default() {
         }
 
+        /**
+         * 
+         * @param breadthFirst
+         */
         public Default(boolean breadthFirst) {
             super(breadthFirst);
         }
@@ -147,34 +198,81 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             entering(node, 0);
             leaving(node, 0);
         }
+        /**
+         * 
+         * @param node
+         * @param level
+         * @throws javax.jcr.RepositoryException
+         */
         protected void entering(Node node, int level)
                 throws RepositoryException {
         }
 
+        /**
+         * 
+         * @param property
+         * @param level
+         * @throws javax.jcr.RepositoryException
+         */
         protected void entering(Property property, int level)
                 throws RepositoryException {
         }
 
+        /**
+         * 
+         * @param node
+         * @param level
+         * @throws javax.jcr.RepositoryException
+         */
         protected void leaving(Node node, int level)
                 throws RepositoryException {
         }
 
+        /**
+         * 
+         * @param property
+         * @param level
+         * @throws javax.jcr.RepositoryException
+         */
         protected void leaving(Property property, int level)
                 throws RepositoryException {
         }
     }
 
+    /**
+     * 
+     */
     public static abstract class Iterated extends Default {
+        /**
+         * 
+         * @param session
+         * @return
+         * @throws javax.jcr.RepositoryException
+         */
         public abstract NodeIterator iterator(Session session) throws RepositoryException;
     }
 
+    /**
+     * 
+     */
     public static class QueryVisitor extends Iterated {
         String statement;
         String language;
+        /**
+         * 
+         * @param statement
+         * @param language
+         */
         public QueryVisitor(String statement, String language) {
             this.statement = statement;
             this.language = language;
         }
+        /**
+         * 
+         * @param session
+         * @return
+         * @throws javax.jcr.RepositoryException
+         */
         public NodeIterator iterator(Session session) throws RepositoryException {
             Query query = session.getWorkspace().getQueryManager().createQuery(statement, language);
             QueryResult result = query.execute();
@@ -182,11 +280,24 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         }
     }
 
+    /**
+     * 
+     */
     public static class NodeTypeVisitor extends Iterated {
         String nodeType;
+        /**
+         * 
+         * @param nodeType
+         */
         public NodeTypeVisitor(String nodeType) {
           this.nodeType = nodeType;
         }
+        /**
+         * 
+         * @param session
+         * @return
+         * @throws javax.jcr.RepositoryException
+         */
         public NodeIterator iterator(Session session) throws RepositoryException {
             Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM "+nodeType, javax.jcr.query.Query.SQL);
             QueryResult result = query.execute();
@@ -194,12 +305,34 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         }
     }
 
+    /**
+     * 
+     */
     public final static class NamespaceVisitor extends UpdaterItemVisitor {
+        /**
+         * 
+         */
         public String prefix;
+        /**
+         * 
+         */
         public Reader cndReader;
+        /**
+         * 
+         */
         public String cndName;
+        /**
+         * 
+         */
         public UpdaterContext context;
 
+        /**
+         * 
+         * @param context
+         * @param prefix
+         * @param cndName
+         * @param cndReader
+         */
         public NamespaceVisitor(UpdaterContext context, String prefix, String cndName, Reader cndReader) {
             this.prefix = prefix;
             this.cndName = cndName;
@@ -207,18 +340,42 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             this.context = context;
         }
 
+        /**
+         * 
+         * @param property
+         * @param level
+         * @throws javax.jcr.RepositoryException
+         */
         @Override
         protected void entering(Property property, int level) throws RepositoryException {
         }
 
+        /**
+         * 
+         * @param node
+         * @param level
+         * @throws javax.jcr.RepositoryException
+         */
         @Override
         protected void entering(Node node, int level) throws RepositoryException {
         }
 
+        /**
+         * 
+         * @param property
+         * @param level
+         * @throws javax.jcr.RepositoryException
+         */
         @Override
         protected void leaving(Property property, int level) throws RepositoryException {
         }
 
+        /**
+         * 
+         * @param node
+         * @param level
+         * @throws javax.jcr.RepositoryException
+         */
         @Override
         protected void leaving(Node node, int level) throws RepositoryException {
         }

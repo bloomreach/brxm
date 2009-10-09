@@ -118,7 +118,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- provided -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jta_1.1_spec</artifactId>

@@ -46,8 +46,14 @@
     </dependency>
 
     <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>jpox</groupId>
@@ -149,6 +155,14 @@
             <goals><goal>enhance</goal></goals>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+          </dependency>
+        </dependencies>
       </plugin>
    </plugins>
   </build>

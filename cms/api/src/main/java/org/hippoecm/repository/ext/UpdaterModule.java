@@ -15,8 +15,19 @@
  */
 package org.hippoecm.repository.ext;
 
+/**
+ * 
+ * @author berry
+ */
 public interface UpdaterModule {
+    /**
+     * 
+     */
     final static String SVN_ID = "$Id$";
 
+    /**
+     * 
+     * @param context
+     */
     public void register(UpdaterContext context);
 }
