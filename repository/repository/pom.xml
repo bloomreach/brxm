@@ -38,6 +38,7 @@
     <module>engine</module>
     <module>modules</module>
     <module>jca</module>
+    <module>utilities</module>
     <module>test</module>
     <module>application</module>
   </modules>
