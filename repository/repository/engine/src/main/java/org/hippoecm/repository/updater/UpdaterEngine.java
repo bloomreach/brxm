@@ -363,16 +363,6 @@ public class UpdaterEngine {
 
     public static void migrate(Session session) {
         try {
-            if(!session.getRootNode().isNodeType("mix:referenceable")) {
-                session.getRootNode().addMixin("mix:referenceable");
-                session.save();
-            }
-            try {
-                session.getWorkspace().getNamespaceRegistry().getURI("hippo");
-            } catch(NamespaceException ex) {
-                log.info("no migration cycle because clean repository startup without hippo namespace");
-                return;
-            }
             if(!session.getRootNode().hasNode(HippoNodeType.CONFIGURATION_PATH) ||
                !session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).hasNode(HippoNodeType.INITIALIZE_PATH)) {
                 log.info("no migration cycle because clean repository startup without hippo configuration");
