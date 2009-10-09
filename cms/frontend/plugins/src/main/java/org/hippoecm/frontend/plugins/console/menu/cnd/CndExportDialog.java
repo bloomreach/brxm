@@ -44,7 +44,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.tools.projectexport.DownloadLink;
-import org.hippoecm.tools.projectexport.JcrCompactNodeTypeDefWriter;
+import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -56,6 +56,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
+import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.hippoecm.tools.projectexport.Element.ContentElement;
 import org.hippoecm.tools.projectexport.Element.NamespaceElement;
 import org.hippoecm.tools.projectexport.Element.ProjectElement;
