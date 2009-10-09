@@ -127,7 +127,7 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
                             return context.getNodeTypes(node);
                         }
 
-                        public boolean isMultiple(Property property) {
+                        public boolean isMultiple(Property property) throws RepositoryException {
                             return context.isMultiple(property);
                         }
 
