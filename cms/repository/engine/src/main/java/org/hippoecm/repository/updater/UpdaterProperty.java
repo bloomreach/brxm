@@ -21,13 +21,16 @@ import java.util.Calendar;
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
+import javax.jcr.version.OnParentVersionAction;
 import javax.jcr.version.VersionException;
 
 final public class UpdaterProperty extends UpdaterItem implements Property {
@@ -215,11 +218,42 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
 
     @Deprecated
     public PropertyDefinition getDefinition() throws RepositoryException {
-        throw new UpdaterException("illegal method");
+        return new PropertyDefinition() {
+            public int getRequiredType() {
+                return PropertyType.UNDEFINED;
+            }
+            public String[] getValueConstraints() {
+                return null;
+            }
+            public Value[] getDefaultValues() {
+                return null;
+            }
+            public boolean isMultiple() {
+                return UpdaterProperty.this.isMultiple();
+            }
+            public NodeType getDeclaringNodeType() {
+                return null;
+            }
+            public String getName() {
+                return "*";
+            }
+            public boolean isAutoCreated() {
+                return false;
+            }
+            public boolean isMandatory() {
+                return false;
+            }
+            public int getOnParentVersion() {
+                return OnParentVersionAction.COMPUTE;
+            }
+            public boolean isProtected() {
+                return false;
+            }
+        };
     }
 
     @Deprecated
     public int getType() throws RepositoryException {
-        throw new UpdaterException("illegal method");
+        return PropertyType.UNDEFINED;
     }
 }
