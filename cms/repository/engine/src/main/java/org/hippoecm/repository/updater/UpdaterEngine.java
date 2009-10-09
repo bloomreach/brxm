@@ -15,52 +15,69 @@
  */
 package org.hippoecm.repository.updater;
 
-import java.io.Reader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
+import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.Item;
+import javax.jcr.ItemExistsException;
 import javax.jcr.ItemVisitor;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
+import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
-
-import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
-import org.apache.jackrabbit.core.nodetype.compact.ParseException;
-import org.hippoecm.repository.impl.SessionDecorator;
+import javax.jcr.observation.ObservationManager;
+import javax.jcr.query.QueryManager;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
+import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
+import org.apache.jackrabbit.core.nodetype.compact.ParseException;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
+
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
+import org.hippoecm.repository.impl.SessionDecorator;
 
 public class UpdaterEngine {
     @SuppressWarnings("unused")
@@ -111,10 +128,16 @@ public class UpdaterEngine {
         }
 
         public void registerVisitor(ItemVisitor visitor) {
-            if(visitor instanceof UpdaterItemVisitor.NamespaceVisitor) {
-                visitor = new NamespaceVisitorImpl((UpdaterItemVisitor.NamespaceVisitor)visitor);
+            try {
+                if (visitor instanceof UpdaterItemVisitor.NamespaceVisitor) {
+                    visitor = new NamespaceVisitorImpl(session.getWorkspace().getNamespaceRegistry(), (UpdaterItemVisitor.NamespaceVisitor)visitor);
+                }
+                visitors.add(visitor);
+            } catch (RepositoryException ex) {
+                ex.printStackTrace(System.err);
+            } catch (ParseException ex) {
+                ex.printStackTrace(System.err);
             }
-            visitors.add(visitor);
         }
 
         public NodeType getNewType(Session session, String type) throws RepositoryException {
@@ -135,6 +158,93 @@ public class UpdaterEngine {
 
         public boolean isMultiple(Property property) {
             return ((UpdaterProperty)property).isMultiple();
+        }
+
+        public Workspace getWorkspace() throws RepositoryException {
+            return new ContextWorkspace(this);
+        }
+    }
+
+    class ContextWorkspace implements Workspace, NamespaceRegistry {
+        Workspace upstreamWorkspace;
+        NamespaceRegistry upstreamRegistry;
+        ModuleRegistration module;
+        Map<String, String> privateNamespaceRegister = new HashMap<String,String>();
+        ContextWorkspace(ModuleRegistration module) throws RepositoryException {
+            this.module = module;
+            upstreamWorkspace = session.getWorkspace();
+            upstreamRegistry = upstreamWorkspace.getNamespaceRegistry();
+        }
+        public Session getSession() {
+            throw new UnsupportedOperationException("Unsupported operation");
+        }
+        public String getName() {
+            throw new UnsupportedOperationException("Unsupported operation");
+        }
+        public void copy(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+            throw new UnsupportedOperationException("NUnsupported operation");
+        }
+        public void copy(String srcWorkspace, String srcAbsPath, String destAbsPath) throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+            throw new UnsupportedOperationException("Unsupported operation");
+        }
+        public void clone(String srcWorkspace, String srcAbsPath, String destAbsPath, boolean removeExisting) throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+            throw new UnsupportedOperationException("Unsupported operation");
+        }
+        public void move(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
+            throw new UnsupportedOperationException("Unsupported operation");
+        }
+        public void restore(Version[] versions, boolean removeExisting) throws ItemExistsException, UnsupportedRepositoryOperationException, VersionException, LockException, InvalidItemStateException, RepositoryException {
+            throw new UnsupportedOperationException("Unsupported operation");
+        }
+        public QueryManager getQueryManager() throws RepositoryException {
+            throw new UnsupportedOperationException("Unsupported operation");
+        }
+        public NamespaceRegistry getNamespaceRegistry() throws RepositoryException {
+            return this;
+        }
+        public NodeTypeManager getNodeTypeManager() throws RepositoryException {
+            return upstreamWorkspace.getNodeTypeManager();
+        }
+        public ObservationManager getObservationManager() throws UnsupportedRepositoryOperationException, RepositoryException {
+            throw new UnsupportedOperationException("Unsupported operation");
+        }
+        public String[] getAccessibleWorkspaceNames() throws RepositoryException {
+            throw new UnsupportedOperationException("Unsupported operation");
+        }
+        public ContentHandler getImportContentHandler(String parentAbsPath, int uuidBehavior) throws PathNotFoundException, ConstraintViolationException, VersionException, LockException, AccessDeniedException, RepositoryException {
+            throw new UnsupportedOperationException("Unsupported operation");
+        }
+        public void importXML(String parentAbsPath, InputStream in, int uuidBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, InvalidSerializedDataException, LockException, AccessDeniedException, RepositoryException {
+            throw new UnsupportedOperationException("Unsupported operation");
+        }
+        public void registerNamespace(String prefix, String uri) throws NamespaceException, UnsupportedRepositoryOperationException, AccessDeniedException, RepositoryException {
+            privateNamespaceRegister.put(prefix, uri);
+        }
+        public void unregisterNamespace(String prefix) throws NamespaceException, UnsupportedRepositoryOperationException, AccessDeniedException, RepositoryException {
+            throw new UnsupportedRepositoryOperationException();
+        }
+        public String[] getPrefixes() throws RepositoryException {
+            return null;
+        }
+        public String[] getURIs() throws RepositoryException {
+            return null;
+        }
+        public String getURI(String prefix) throws NamespaceException, RepositoryException {
+            if (privateNamespaceRegister.containsKey(prefix)) {
+                return privateNamespaceRegister.get(prefix);
+            }
+            for (ItemVisitor visitor : module.visitors) {
+                if (visitor instanceof NamespaceVisitorImpl) {
+                    NamespaceVisitorImpl namespaceVisitor = (NamespaceVisitorImpl)visitor;
+                    if (namespaceVisitor.namespace.equals(prefix)) {
+                        return namespaceVisitor.newURI;
+                    }
+                }
+            }
+            return upstreamRegistry.getURI(prefix);
+        }
+        public String getPrefix(String uri) throws NamespaceException, RepositoryException {
+            return null;
         }
     }
 
@@ -305,7 +415,7 @@ public class UpdaterEngine {
         UpdaterException exception = null;
         NamespaceRegistryImpl nsreg = (NamespaceRegistryImpl) session.getWorkspace().getNamespaceRegistry();
         for (ModuleRegistration module : modules) {
-            log.info("migration update cycle for module "+module.name);
+            log.info("migration close cycle for module "+module.name);
             for (ItemVisitor visitor : module.visitors) {
                 try {
                     if(visitor instanceof NamespaceVisitorImpl) {
@@ -426,49 +536,35 @@ public class UpdaterEngine {
             log.info("migration update cycle for module "+module.name);
             for (ItemVisitor visitor : module.visitors) {
                 if (visitor instanceof NamespaceVisitorImpl) {
-                    try {
-                        NamespaceVisitorImpl remap = (NamespaceVisitorImpl)visitor;
-                        Workspace workspace = session.getWorkspace();
-                        NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
-                        remap.oldURI = null;
-                        remap.oldPrefix = null;
-                        String[] prefixes = nsreg.getPrefixes();
-                        for(String candidatePrefix : prefixes) {
-                            if(remap.namespace.equals(candidatePrefix)) {
-                                remap.oldURI = nsreg.getURI(remap.namespace);
-                                remap.oldPrefix = remap.namespace + "_" + remap.oldURI.substring(remap.oldURI.lastIndexOf('/') + 1).replace('.', '_');
-                                break;
+                    NamespaceVisitorImpl remap = (NamespaceVisitorImpl)visitor;
+                    log.info("migration handling namespace " + remap.namespace);
+                    Workspace workspace = session.getWorkspace();
+                    NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
+                    String[] prefixes = nsreg.getPrefixes();
+                    boolean prefixExists = false;
+                    for (String prefix : prefixes) {
+                        if (prefix.equals(remap.newPrefix)) {
+                            if (!nsreg.getURI(prefix).equals(remap.newURI)) {
+                                throw new NamespaceException("Prefix " + remap.newPrefix + " is already mapped to " + nsreg.getURI(prefix));
                             }
+                            prefixExists = true;
                         }
-                        CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(remap.cndReader, remap.cndName);
-                        NamespaceMapping mapping = cndReader.getNamespaceMapping();
-                        remap.newURI = mapping.getURI(remap.namespace);
-                        remap.newPrefix = remap.namespace + "_" + remap.newURI.substring(remap.newURI.lastIndexOf('/') + 1).replace('.', '_');
-                        boolean prefixExists = false;
-                        for(String prefix : prefixes) {
-                            if (prefix.equals(remap.newPrefix)) {
-                                if (!nsreg.getURI(prefix).equals(remap.newURI)) {
-                                    throw new NamespaceException("Prefix " + remap.newPrefix + " is already mapped to " + nsreg.getURI(prefix));
-                                }
-                                prefixExists = true;
+                    }
+                    if (!prefixExists) {
+                        log.info("migration registering new prefix " + remap.newPrefix + " to " + remap.newURI);
+                        nsreg.registerNamespace(remap.newPrefix, remap.newURI);
+                    }
+                    List ntdList = remap.cndReader.getNodeTypeDefs();
+                    NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl)workspace.getNodeTypeManager();
+                    NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
+                    for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
+                        try {
+                            NodeTypeDef ntd = (NodeTypeDef)iter.next();
+                            log.info("migration registering new nodetype " + ntd.getName());
+                            /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
+                        } catch (InvalidNodeTypeDefException ex) {
+                            // deliberate ignore
                             }
-                        }
-                        if (!prefixExists) {
-                            nsreg.registerNamespace(remap.newPrefix, remap.newURI);
-                        }
-                        List ntdList = cndReader.getNodeTypeDefs();
-                        NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl)workspace.getNodeTypeManager();
-                        NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
-                        for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
-                            try {
-                                NodeTypeDef ntd = (NodeTypeDef)iter.next();
-                                /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
-                            } catch(InvalidNodeTypeDefException ex) {
-                                // deliberate ignore
-                            }
-                        }
-                    } catch (ParseException ex) {
-                        log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
                     }
                 }
             }
@@ -609,15 +705,26 @@ public class UpdaterEngine {
         public String newURI;
         public String oldPrefix;
         public String newPrefix;
-        public Reader cndReader;
+        public CompactNodeTypeDefReader cndReader;
         public String cndName;
         UpdaterContext context;
 
-        public NamespaceVisitorImpl(NamespaceVisitor definition) {
+        public NamespaceVisitorImpl(NamespaceRegistry nsReg, NamespaceVisitor definition) throws RepositoryException, ParseException {
             this.namespace = definition.prefix;
             this.cndName = definition.cndName;
-            this.cndReader = definition.cndReader;
             this.context = definition.context;
+            oldURI = null;
+            oldPrefix = null;
+            try {
+                oldURI = nsReg.getURI(namespace);
+                oldPrefix = namespace + "_" + oldURI.substring(oldURI.lastIndexOf('/') + 1).replace('.', '_');
+            } catch (NamespaceException ex) {
+                // deliberate ignore
+                }
+            this.cndReader = new CompactNodeTypeDefReader(definition.cndReader, cndName);
+            NamespaceMapping mapping = cndReader.getNamespaceMapping();
+            newURI = mapping.getURI(namespace);
+            newPrefix = namespace + "_" + newURI.substring(newURI.lastIndexOf('/') + 1).replace('.', '_');
         }
 
         @Override
@@ -628,8 +735,7 @@ public class UpdaterEngine {
         }
 
         @Override
-        protected final void entering(Node node, int level)
-                throws RepositoryException {
+        protected final void entering(Node node, int level) throws RepositoryException {
             if(node.hasProperty("jcr:primaryType")) {
                 String primaryType = node.getProperty("jcr:primaryType").getString();
                 if(primaryType.startsWith(namespace + ":")) {

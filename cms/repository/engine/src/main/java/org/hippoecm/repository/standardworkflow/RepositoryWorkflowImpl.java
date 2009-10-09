@@ -33,6 +33,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
 
 import org.slf4j.Logger;
@@ -128,6 +129,10 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
 
                         public boolean isMultiple(Property property) {
                             return context.isMultiple(property);
+                        }
+
+                        public Workspace getWorkspace() {
+                            return null;
                         }
                     });
                 }
