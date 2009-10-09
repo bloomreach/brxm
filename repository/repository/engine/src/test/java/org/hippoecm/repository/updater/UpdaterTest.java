@@ -27,7 +27,7 @@ import org.junit.Ignore;
 
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.util.Utilities;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.ext.UpdaterContext;
 

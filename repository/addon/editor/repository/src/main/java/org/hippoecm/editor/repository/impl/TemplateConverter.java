@@ -34,6 +34,8 @@ import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.standardworkflow.Change;
+import org.hippoecm.repository.util.VersionNumber;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

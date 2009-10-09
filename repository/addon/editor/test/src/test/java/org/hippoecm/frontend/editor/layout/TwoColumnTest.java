@@ -35,7 +35,7 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.Before;
 import org.junit.Test;
 
