@@ -96,7 +96,6 @@
       <version>2.09.01-SNAPSHOT</version>
     </dependency>
 
-    <!-- provided -->
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jta_1.1_spec</artifactId>
@@ -256,6 +255,14 @@
             <goals><goal>enhance</goal></goals>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+          </dependency>
+        </dependencies>
       </plugin>
    </plugins>
   </build>
