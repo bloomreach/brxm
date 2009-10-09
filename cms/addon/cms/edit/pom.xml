@@ -78,8 +78,7 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jta_1.1_spec</artifactId>
-      <scope>test</scope>tools/projectexport/pom.xml \
-
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
