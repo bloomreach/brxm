@@ -277,6 +277,11 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             // get the current root/system session for the default workspace for namespace and nodetypes init
             Session jcrRootSession =  ((LocalRepositoryImpl)jackrabbitRepository).getRootSession(null);
 
+            if(!jcrRootSession.getRootNode().isNodeType("mix:referenceable")) {
+                jcrRootSession.getRootNode().addMixin("mix:referenceable");
+                jcrRootSession.save();
+            }
+
             boolean hasHippoNamespace;
             try {
                 jcrRootSession.getNamespaceURI("hippo");
