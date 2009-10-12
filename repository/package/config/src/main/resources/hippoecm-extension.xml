@@ -196,7 +196,7 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>904.0</sv:value>
+      <sv:value>2002.0</sv:value>
     </sv:property>
   </sv:node>
   <!-- CMS tree views -->
@@ -211,7 +211,7 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>905.0</sv:value>
+      <sv:value>2003.0</sv:value>
     </sv:property>
   </sv:node>
   <!-- CMS Xinha picker -->
@@ -226,7 +226,7 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>906.0</sv:value>
+      <sv:value>2004.0</sv:value>
     </sv:property>
   </sv:node>
   <!-- CMS services -->
