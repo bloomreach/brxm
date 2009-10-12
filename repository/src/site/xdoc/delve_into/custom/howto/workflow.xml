@@ -29,7 +29,7 @@
 <p>
 The most common functionality to be added in the repository is the addition of
 project specific workflow.  The role of workflow and the access to workflow
-steps are described in <a href="../../../delve_into/sysadmin/">Workflow
+steps are described in <a href="../../../delve_into/sysadmin/index.html">Workflow
 functionality</a>.  A default set of workflow operations is defined in
 available plugins.  The extension of workflows is not merely based on
 modifications to these available plugins.  Instead, entirely new workflows

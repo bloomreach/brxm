@@ -57,7 +57,7 @@
     <p>Marc will add an article about an upcoming multicultural Bazaar.
     </p>
 
-   <blockquote>
+   <div class='nav'>
     <table>
 
      <tr>
@@ -252,7 +252,7 @@
      </tr>
 
     </table>
-   </blockquote>
+   </div>
 
 
  <!--

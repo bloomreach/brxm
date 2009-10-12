@@ -66,6 +66,9 @@
       <item name="Roadmap" href="/about/roadmap.html"/>
       <item name="Version numbers" href="/about/version_numbers.html"/>
       <!-- <item name="Term Index" href="/about/term_index.html"/> -->
+      <item name="Release notes" href='/about/release_notes/index.html'>
+       <item name="7.1" href="/about/release_notes/CMS_7_1_release.html"/>
+      </item>
     </menu>
 
     <menu name="Hippo CMS 7 Support">

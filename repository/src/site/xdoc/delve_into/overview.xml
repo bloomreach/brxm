@@ -49,7 +49,7 @@
         information in a clear way.
      -->
      
-     <blockquote>
+     <div class='nav'>
         <table summary='table summary' title='table title' class='tabclassrita'> 
          <tr>
           <td>
@@ -126,7 +126,7 @@
       </td>
      </tr>
     </table>
-     </blockquote>
+  </div>
 
     </section>
 

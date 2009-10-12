@@ -56,7 +56,7 @@ ________________________________________________________________________________
     <p>
      The content of the current folder is
      tabulated in the <a href='folder_tabulation_panel.html'>folder tabulation panel</a>.
-     The content can be <a href='document'>documents</a>, images, <a href='asset'>assets</a> and subfolders.
+     The content can be <a href='document.html'>documents</a>, images, assets and subfolders.
      Of all items of content, information is presented in table form.
     </p>
     <p>
@@ -65,7 +65,7 @@ ________________________________________________________________________________
       This allows to proceed to one of the subfolders and make that the current folder.
     </p>
     <p>
-     If a <a href='sliders'>slider</a> folder is the current folder, it is the one that is open.
+     If a <a href='slider.html'>slider</a> folder is the current folder, it is the one that is open.
      If another folder is the current folder, it is marked bright yellow.
     </p>
     <p>

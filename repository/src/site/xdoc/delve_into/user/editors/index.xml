@@ -28,7 +28,7 @@ ________________________________________________________________________________
   <body>
     <section name="Editors Guide">
       <span class="shortdesc">Guide for Hippo CMS users to perform the role of editor.</span>
-
+ <subsection>
 <table>
   <tr>
     <td>
@@ -49,7 +49,7 @@ ________________________________________________________________________________
     <td>A collection of concepts a CMS editor may want to know.</td>
   </tr>
 </table>
-
+</subsection>
     </section>
   </body>
 </document>

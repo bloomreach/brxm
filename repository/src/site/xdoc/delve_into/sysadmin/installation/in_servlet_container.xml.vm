@@ -44,7 +44,7 @@
 
       <h4>Install required libraries</h4>
 
-      <blockquote>
+      <div class='nav'>
        <table>
         <tr>
          <td>
@@ -60,11 +60,11 @@
 
     </tr>
        </table>
-      </blockquote>
+     </div>
 
       <h4>Deploy Hippo CMS WAR</h4>
 
-      <blockquote>
+      <div class='nav'>
        <table>
           <tr>
          <td>
@@ -103,7 +103,7 @@
   </td>
   </tr>
        </table>
-      </blockquote>
+      </div>
      </subsection>
     </section>
    </body>

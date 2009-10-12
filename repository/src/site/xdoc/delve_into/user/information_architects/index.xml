@@ -41,7 +41,7 @@ ________________________________________________________________________________
   For a more general introduction on the role of information architect in Hippo CMS, see below the table.
 </p>
 
-
+<subsection>
 <table>
   <tr>
     <td>
@@ -62,6 +62,7 @@ ________________________________________________________________________________
     <td>A collection of concepts a CMS information architect may want to know.</td>
   </tr>
 </table>
+</subsection>
 
 <subsection name='General introduction to document types'>
 <p>

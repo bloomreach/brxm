@@ -31,7 +31,7 @@ ________________________________________________________________________________
     <section name="Goto a Folder">
       <span class="shortdesc">How to get to a folder, to add or change content in it.</span>
 
-   <script type="text/javascript">
+    <script type="text/javascript">
     leftpx=0;
     bottompx=600;
    </script>

@@ -33,7 +33,7 @@
       If you decide you want Tomcat, continue.
      </p>
 
-      <blockquote>
+      <div class='nav'>
        <table>
         <tr> 
          <td>
@@ -56,13 +56,13 @@
        the acquired tomcat folder will be called $TOMCATDIR. 
        It has a name like apache-tomcat-6.0.18.
    </td>
-  </tr>  
+  </tr>
   <tr>
    <td><a name='startup'/>Startup</td>
    <td>
     <span class='commandline-48 icon-48'/>
    </td>
-   <td>          
+   <td>
        Start Tomcat with one of the startup scripts in <code>$TOMCATDIR/bin</code>,
        .sh for Linux and .bat for MS.
    </td>
@@ -90,7 +90,7 @@
    </td>
   </tr>
    </table>
-  </blockquote>
+  </div>
 
 
      </section>

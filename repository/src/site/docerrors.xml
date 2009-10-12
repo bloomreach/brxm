@@ -8,7 +8,16 @@
    
    <folder>about
    
-   <document ext="xml" filename="roadmap" relpath="about">Roadmap Hippo CMS<linkto_unchecked/></document><document ext="xml" filename="term_index" relpath="about"><linkto_unchecked/>
+   <folder>release_notes
+   <title>Hippo CMS release notes</title><shortdesc> </shortdesc>
+   <document ext="xml" filename="CMS_7_1_release" relpath="about/release_notes">Hippo CMS 7.1 release notes<linkto_unchecked/>
+    <dummyref>Cannot create external links<span class="bad"> in X </span>inha field</dummyref>
+    <dummyref>Internal link<span class="bad"> in X </span>inha field does not get correctly URL encoded</dummyref>
+    <badtext>The workflow toolbar now groups document and publication actions in a dropdown menu right under the<span class="bad"> current </span>ly selected tab in review mode. See the documentation for screenshots:</badtext>
+    <badtext>Unequal visual mark of folder being<span class="bad"> current </span></badtext>
+    <badtext>Adding a document to the<span class="bad"> current </span>ly selected folder does not update doclisting</badtext></document><document ext="xml" filename="index" relpath="about/release_notes"><linkto_unchecked/>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document></folder><document ext="xml" filename="roadmap" relpath="about">Roadmap Hippo CMS<linkto_unchecked/></document><document ext="xml" filename="term_index" relpath="about"><linkto_unchecked/>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="version_numbers" relpath="about">Version numbering scheme<linkto_unchecked/></document></folder><folder>delve_into
    

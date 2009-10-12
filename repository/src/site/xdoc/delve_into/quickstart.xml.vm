@@ -128,7 +128,7 @@
 
  <subsection name='Next' title='What can you do after you did the above?'>
 
- <blockquote>
+ <div class='nav'>
   <table>
    <tr>
     <td>User</td>
@@ -150,7 +150,7 @@
     </td>
    </tr>
   </table>
- </blockquote>
+ </div>
 
  </subsection>
 

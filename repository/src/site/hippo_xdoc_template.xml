@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -45,20 +45,20 @@ ________________________________________________________________________________
           <p>Text
              text
           </p>
-      
+
           <h4>First subsubsection title</h4> 
           <p>Text
              text
           </p>
-      
+
         </subsection>
 
 
         <subsection name="Second subsection title">
-     
+
           <p>Text
           </p>
-     
+
           <source>
             code line 1
             code line 2

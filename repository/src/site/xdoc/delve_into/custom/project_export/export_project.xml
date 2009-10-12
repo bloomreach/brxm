@@ -34,7 +34,7 @@ ________________________________________________________________________________
    </script>
    <div class='group'>
     <div id='screenshot'><div>
-     <img src="../../../images/screenshots/cms_T07/console/export_project.png" alt='Export project'/> 
+     <img src="../../../images/screenshots/cms_T07/console/export_project.png" alt='Export project'/>
     </div></div>
     <p>
      After you have <a href='start.html'>started project export</a> you see a list of
@@ -65,6 +65,8 @@ ________________________________________________________________________________
     In the screenshot, an absolute path for the folder (starting with a /)
     is specified: '/home/rita/myproject/content'. An absolute path always refers to the
     same position in the filesystem.
+    You can also use a relative path, but in that case you should be well aware
+    of the configuration of your servlet container:
     The referred position of a relative path depends on the configuration
     of the servlet container that is running the repository.
    </p>
@@ -89,7 +91,7 @@ ________________________________________________________________________________
    </p>
    <p>
     Modules in your project are sub projects and if they supply their own customized content,
-    you will <a href='add_project.html'>add a separate project</a> to the export project list
+    you should <a href='add_project.html'>add a separate project</a> to the export project list
     for each of them.
    </p>
    <p>

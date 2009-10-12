@@ -26,7 +26,7 @@
    <span class='shortdesc'>To get introduced to the role of CMS administrator,
     take the following tour.</span>
 
-   <blockquote>
+   <div class='nav'>
     <table>
 
      <tr>
@@ -146,7 +146,7 @@
      </tr>
 
     </table>
-   </blockquote>
+   </div>
 
     </section>
   </body>
