@@ -97,6 +97,10 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         derivedEngine.save(node);
     }
 
+    public void postValidation() throws ConstraintViolationException, RepositoryException {
+        derivedEngine.validate();
+    }
+
     public void postMountEnabled(boolean enabled) {
         ((HippoLocalItemStateManager)((org.apache.jackrabbit.core.WorkspaceImpl)session.getWorkspace()).getItemStateManager()).setEnabled(enabled);
     }

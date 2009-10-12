@@ -75,6 +75,7 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.decorating.checked.CheckedDecoratorFactory;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
+import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.updater.UpdaterEngine;
 import org.slf4j.Logger;
@@ -133,6 +134,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     /** Whether to perform an automatic upgrade from previous releases */
     private boolean upgradeEnabled = true;
+
+    /** When during startup a situation is detected that a restart is required, this flag signals this, but only one restart should be appropriate */
+    boolean needsRestart = false;
 
     List<DaemonModule> daemonModules = new LinkedList<DaemonModule>();
 
@@ -252,7 +256,37 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
+    static private void delete(File path) {
+        if(path.exists()) {
+            if(path.isDirectory()) {
+                File[] files = path.listFiles();
+                for(int i=0; i<files.length; i++)
+                    delete(files[i]);
+            }
+            path.delete();
+        }
+    }
+
     private void initialize() throws RepositoryException {
+        initializeStartup();
+        if(needsRestart) {
+            log.warn("restarting repository after upgrade cycle");
+            close();
+            log.warn("post migration cycle forced reindexing");
+            initializeReindex();
+            initializeStartup();
+            log.warn("post migration cycle validating content");
+            ((SessionDecorator)rootSession).postValidation();
+        }
+    }
+
+    private void initializeReindex() {
+        File basedir = new File(getRepositoryPath());
+        delete(new File(basedir, "repository/index"));
+        delete(new File(basedir, "workspaces/default/index"));
+    }
+
+    private void initializeStartup() throws RepositoryException {
 
         Modules.setModules(new Modules(Thread.currentThread().getContextClassLoader()));
 
@@ -260,10 +294,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 getRepositoryPath()));
         repository = jackrabbitRepository;
 
-        String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
-        log.info("Node type registration support: " + (result != null ? result : "no"));
-
-        result = System.getProperty(SYSTEM_UPGRADE_PROPERTY);
+        String result = System.getProperty(SYSTEM_UPGRADE_PROPERTY);
         if (result != null) {
             upgradeEnabled = Boolean.parseBoolean(result);
         }
@@ -292,8 +323,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             if (upgradeEnabled && hasHippoNamespace) {
                 ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(false);
-                Session migrateSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
-                UpdaterEngine.migrate(migrateSession);
+                Session migrateSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {})));
+                needsRestart = UpdaterEngine.migrate(migrateSession);
                 migrateSession.logout();
             }
 

@@ -45,6 +45,8 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 
 import org.slf4j.Logger;
@@ -77,8 +79,6 @@ public class DerivedDataEngine {
             start = System.currentTimeMillis();
         }
         try {
-            ValueFactory valueFactory = session.getValueFactory();
-
             if(logger.isDebugEnabled())
                 logger.debug("Derived engine active");
             Set<Node> recomputeSet = new TreeSet<Node>(new Comparator<Node>() {
@@ -161,6 +161,35 @@ public class DerivedDataEngine {
 
             Node derivatesFolder = session.getRootNode().getNode("hippo:configuration/hippo:derivatives");
             for(Node modified : recomputeSet) {
+                compute(session.getValueFactory(), derivatesFolder, modified);
+            }
+        } catch(ConstraintViolationException ex) {
+            logger.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+        } finally {
+            if(logger.isDebugEnabled()) {
+                logger.debug("Derived engine done in " + (System.currentTimeMillis() - start) + " ms");
+            }
+        }
+    }
+
+    public void validate() throws ConstraintViolationException, RepositoryException {
+        int totalCount = 0, changedCount = 0;
+        ValueFactory valueFactory = session.getValueFactory();
+        Node derivatesFolder = session.getRootNode().getNode("hippo:configuration/hippo:derivatives");
+        Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM hippo:derived", Query.SQL);
+        QueryResult result = query.execute();
+        for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
+            ++totalCount;
+            Node node = iter.nextNode();
+            if(compute(valueFactory, derivatesFolder, node)) {
+                ++changedCount;
+            }
+        }
+        logger.warn("Validated "+totalCount+" nodes, and reset "+changedCount+" nodes");
+        session.save();
+    }
+
+    private final boolean compute(ValueFactory valueFactory, Node derivatesFolder, Node modified) throws ConstraintViolationException, RepositoryException {
                 if(!modified.isCheckedOut()) {
                     modified.checkout();
                 }
@@ -508,14 +537,7 @@ public class DerivedDataEngine {
                         logger.info("write error on modified node "+modified.getPath(), ex);
                     }
                 }
-            }
-        } catch(ConstraintViolationException ex) {
-            logger.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-        } finally {
-            if(logger.isDebugEnabled()) {
-                logger.debug("Derived engine done in " + (System.currentTimeMillis() - start) + " ms");
-            }
-        }
+                return changed;
     }
 
     public static void removal(Node removed) throws RepositoryException {
