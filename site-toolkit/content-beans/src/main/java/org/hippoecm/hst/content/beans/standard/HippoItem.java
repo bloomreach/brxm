@@ -231,6 +231,10 @@ public class HippoItem implements HippoBean{
                 parentNode = parentNode.getParent();
             }
             Object o = this.objectConverter.getObject(parentNode);
+            if(o == null) {
+                log.debug("Failed to get parent bean for node '{}'", parentNode.getPath());
+                return null;
+            }
             if(o instanceof HippoBean) {
                 return (HippoBean)o;
             } else {

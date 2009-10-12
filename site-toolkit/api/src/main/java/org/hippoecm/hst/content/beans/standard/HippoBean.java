@@ -96,7 +96,7 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * Returns the parent bean wrt this bean. Note that this does not automatically imply
      * a bean with the parent jcr node of this bean. When the parent node is of type "hippo:handle",
      * the parent of the handle must be taken
-     * @return the parent bean wrt this bean. 
+     * @return the parent bean wrt this bean, or if the object convertor cannot create a bean for the parent, return <code>null</code>
      */
     HippoBean getParentBean();
     
