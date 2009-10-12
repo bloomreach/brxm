@@ -29,6 +29,9 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
+            <sv:value>hippostd:publishable</sv:value>
+            <sv:value>hippostd:publishableSummary</sv:value>
+            <sv:value>hippostd:languageable</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>abababab-7b53-40d3-a94d-8f6f64cf0d95</sv:value>
