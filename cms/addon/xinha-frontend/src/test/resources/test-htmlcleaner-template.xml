@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:hippohtmlcleaner="http://www.hippoecm.org/htmlcleaner/nt/1.2"
+<sv:node xmlns:hippohtmlcleaner="http://www.onehippo.org/jcr/htmlcleaner/nt/2.0"
          xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="cleaner.config">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
