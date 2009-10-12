@@ -213,10 +213,9 @@ public class BasicHstLinkCreator implements HstLinkCreator {
                     }
                 }
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("For HstSite '{}' we cannot create a link for node '{}' because it is outside the site scope", hstSite.getName(), path);
-                }
-                // TODO try to link to another HstSite that has a matching 'content base path'
+                  // TODO try to link to another HstSite that has a matching 'content base path'
+                 log.warn("For HstSite '{}' we cannot create a link for node '{}' because it is outside the site scope", hstSite.getName(), path);
+               
             }
         }
         return null;
