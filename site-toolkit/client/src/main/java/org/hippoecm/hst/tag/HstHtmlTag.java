@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -31,7 +29,9 @@ import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.utils.SimpleHmlStringParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,9 +73,21 @@ public class HstHtmlTag extends TagSupport {
     @Override
     public int doEndTag() throws JspException{
        
+        HstRequest request = (HstRequest) pageContext.getRequest().getAttribute(ContainerConstants.HST_REQUEST);
+        HstResponse response = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
         
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
+        if (response == null && pageContext.getResponse() instanceof HstResponse) {
+            response = (HstResponse) pageContext.getResponse();
+        }
+        if (request == null && pageContext.getRequest() instanceof HstRequest) {
+            request = (HstRequest)pageContext.getRequest();
+        }
+        
+        if(response == null || request == null) {
+            log.error("Cannot continue HstHtmlTag because response/request not an instance of hst response/request");
+            return EVAL_PAGE;
+        }
+        
         String characterEncoding = response.getCharacterEncoding();
         
         if (characterEncoding == null) {
@@ -89,7 +101,7 @@ public class HstHtmlTag extends TagSupport {
             
         String html = hippoHtml.getContent();
        
-        if(hippoHtml.getNode() != null && response instanceof HstResponse) {
+        if(hippoHtml.getNode() != null) {
             html = SimpleHmlStringParser.parse(hippoHtml.getNode(), html, request, (HstResponse)response);
         } else {
             log.warn("Node should be a HippoNode and response a HstResponse");
