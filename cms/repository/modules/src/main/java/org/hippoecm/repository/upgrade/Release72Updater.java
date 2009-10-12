@@ -19,11 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.jcr.NamespaceException;
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -202,7 +201,6 @@ public class Release72Updater implements UpdaterModule {
 
         {"type", "hippo:implementation", "hipposys_1_0:implementation"},
         {"field", "hippo:classname", "hipposys_1_0:classname"},
-        
     };
 
     public void register(final UpdaterContext context) {
@@ -248,15 +246,17 @@ public class Release72Updater implements UpdaterModule {
             }
         });
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:templatetype") {
+
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
                 // Should a new nodetype descriptor be created?
                 boolean convert = false;
+                String prefix = node.getParent().getName();
                 String uri = null;
                 String newUri = null;
                 if (node.getDepth() > 0 && node.getParent().isNodeType("hipposysedit_1_0:namespace")
-                        && !"system".equals(node.getParent().getName())) {
-                    uri = node.getSession().getNamespaceURI(node.getParent().getName());
+                        && !"system".equals(prefix)) {
+                    uri = node.getSession().getNamespaceURI(prefix);
                     VersionNumber version = new VersionNumber(uri.substring(uri.lastIndexOf("/") + 1));
                     newUri = uri.substring(0, uri.lastIndexOf('/') + 1) + version.next().toString();
                     convert = true;
@@ -366,6 +366,7 @@ public class Release72Updater implements UpdaterModule {
                 node.getNode("hippo:namespaces/hippo").remove();
                 node.getNode("hippo:namespaces/system").remove();
                 node.getNode("hippo:namespaces/hippostd").remove();
+                node.getNode("hippo:namespaces/hippogallery").remove();
             }
         });
         for (String[] nodeTypeDefinitions : new String[][] {
