@@ -374,5 +374,26 @@ public class HippoItem implements HippoBean{
       }
     }
 
+    /**
+     * equality is based on the absolute path of the backing jcr node.
+     */
+    @Override
+    public boolean equals(Object obj) {
+       if(obj instanceof HippoBean) {
+           return ((HippoBean)obj).getPath().equals(this.getPath());
+       } else {
+           return false;
+       }   
+    }
+    
+    /**
+     * hashcode is based on the absolute path of the backing jcr node.
+     */
+    @Override
+    public int hashCode() {
+        return this.getPath().hashCode();
+    }
 
+
+    
 }

@@ -26,12 +26,29 @@ import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 
 public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<HippoBean> {
 
+    /**
+     * This returns the backing jcr node for this bean. 
+     * 
+     * @return the backing jcr node for this bean. <code>null</code> if the bean is detached
+     */
     Node getNode();
     
     JCRValueProvider getValueProvider();
 
+    /**
+     * This returns the node name of the backing jcr node for this bean
+     * 
+     * @return the node name of the backing jcr node. This method never returns <code>null</code>
+     */
     String getName();
 
+    /**
+     * This returns the absolute path of the backing jcr node for this bean, for example /documents/content/myprojec/news/article
+     * 
+     * When the jcr node is virtual, it returns the virtual path.
+     * 
+     * @return the absolute jcr path of the backing jcr node. This method never returns <code>null</code>
+     */
     String getPath();
     
     /**
@@ -159,5 +176,6 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * @return a ComparatorMap in which you can compare HippoBean's via the get(Object o)
      */
     Map<Object,Object> getEqualComparator();
-
+    
+    
 }
