@@ -185,16 +185,32 @@ public class HippoItem implements HippoBean{
             while(nodes.hasNext()) {
                 Node child = nodes.nextNode();
                 if(child == null) {continue;}
+                
+                boolean nodeTypeMatch = false;
                 if(child.getPrimaryNodeType().getName().equals(jcrPrimaryNodeType)) {
-                    try {
-                        Object bean = this.objectConverter.getObject(child);
-                        if(bean != null && annotatedClass.isAssignableFrom(bean.getClass())) {
-                            childBeans.add((T)bean);
+                    nodeTypeMatch = true;
+                } else if(child.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if(child.hasNode(child.getName())) {
+                        child = child.getNode(child.getName());
+                        if(child.getPrimaryNodeType().getName().equals(jcrPrimaryNodeType)) {
+                            nodeTypeMatch = true;
                         }
-                    } catch (ObjectBeanManagerException e) {
-                       log.warn("Skipping bean: {}", e);
                     }
                 }
+                
+                if(!nodeTypeMatch) {
+                    continue;
+                }
+                
+                try {
+                    Object bean = this.objectConverter.getObject(child);
+                    if(bean != null && annotatedClass.isAssignableFrom(bean.getClass())) {
+                        childBeans.add((T)bean);
+                    }
+                } catch (ObjectBeanManagerException e) {
+                   log.warn("Skipping bean: {}", e);
+                }
+              
             }
         } catch (RepositoryException e) {
             log.error("RepositoryException: Cannot get ChildBeans for jcrPrimaryNodeType: '"+jcrPrimaryNodeType+"' ", e);
