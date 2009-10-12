@@ -15,8 +15,10 @@
  */
 package org.hippoecm.repository.upgrade;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -200,11 +202,20 @@ public class Release72Updater implements UpdaterModule {
         context.registerName("upgrade");
         context.registerStartTag("m13");
         context.registerEndTag("tag209");
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:derived") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                if (node.hasProperty("hippo:related")) {
+                    node.getProperty("hippo:related").remove();
+                }
+                if (node.hasProperty("hippo:compute")) {
+                    node.getProperty("hippo:compute").remove();
+                }
+            }
+        });
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("rep:root") {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
-                node.getNode("content").remove();
-
                 /*
                  * The removal of the entire /hippo:log tree seems to be appropriate.  This is relatively volatile data as
                  * this is a sliding log file with the oldest entries being removed automatically.  Combine this with the
@@ -378,20 +389,18 @@ public class Release72Updater implements UpdaterModule {
             } catch (ClassNotFoundException ex) {
                 ex.printStackTrace(System.err);
             }
-            /*
-            try {
-                String uri = context.getWorkspace().getNamespaceRegistry().getURI("defaultcontent");
-                context.getWorkspace().getNamespaceRegistry().registerNamespace("defaultcontent", VersionNumber.versionFromURI(uri).next().versionToURI(uri));
-                String cnd = org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter.compactNodeTypeDef(context.getWorkspace(), "defaultcontent");
-                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "defaultcontent", "-", new StringReader(cnd)));
-            } catch (IOException ex) {
-                ex.printStackTrace(System.err);
-            } catch (NamespaceException ex) {
-                ex.printStackTrace(System.err);
-            } catch (RepositoryException ex) {
-                ex.printStackTrace(System.err);
-            }
-            */
+        }
+        try {
+            String uri = context.getWorkspace().getNamespaceRegistry().getURI("defaultcontent");
+            context.getWorkspace().getNamespaceRegistry().registerNamespace("defaultcontent", VersionNumber.versionFromURI(uri).next().versionToURI(uri));
+            String cnd = org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter.compactNodeTypeDef(context.getWorkspace(), "defaultcontent");
+            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "defaultcontent", "-", new StringReader(cnd)));
+        } catch (NamespaceException ex) {
+            ex.printStackTrace(System.err);
+        } catch (RepositoryException ex) {
+            ex.printStackTrace(System.err);
+        } catch (IOException ex) {
+            ex.printStackTrace(System.err);
         }
     }
 

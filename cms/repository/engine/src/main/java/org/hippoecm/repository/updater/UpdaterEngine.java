@@ -42,6 +42,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -97,6 +98,7 @@ public class UpdaterEngine {
         Set<String> startTag;
         String endTag;
         List<ItemVisitor> visitors;
+        ContextWorkspace workspace;
 
         ModuleRegistration(UpdaterModule module) {
             this.module = module;
@@ -161,7 +163,10 @@ public class UpdaterEngine {
         }
 
         public Workspace getWorkspace() throws RepositoryException {
-            return new ContextWorkspace(this);
+            if(workspace == null) {
+                workspace = new ContextWorkspace(this);
+            }
+            return workspace;
         }
     }
 
@@ -509,6 +514,18 @@ public class UpdaterEngine {
                 subSession.logout();
             } while (updates);
             log.info("migration cycle finished successfully");
+        } catch(ReferentialIntegrityException ex) {
+            String uuid = ex.getMessage().substring(0, ex.getMessage().indexOf(":"));
+            try {
+                Node node = session.getNodeByUUID(uuid);
+                log.error("error in migration cycle: node still referenced: "+uuid+" "+node.getPath());
+                for(PropertyIterator iter = node.getReferences(); iter.hasNext(); ) {
+                    Property reference = iter.nextProperty();
+                    log.error("  referring property "+reference.getPath());
+                }
+            } catch(RepositoryException ignored) {
+                log.error("error in migration cycle: node still referenced: "+uuid);
+            }
         } catch(RepositoryException ex) {
             log.error("error in migration cycle: "+ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
