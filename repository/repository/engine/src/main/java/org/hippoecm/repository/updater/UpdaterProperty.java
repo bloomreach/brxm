@@ -81,6 +81,7 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
     @Override
     public void setName(String name) throws RepositoryException {
         super.setName(":" + name);
+        parent.removed.add(this);
     }
 
     // javax.jcr.Item interface
