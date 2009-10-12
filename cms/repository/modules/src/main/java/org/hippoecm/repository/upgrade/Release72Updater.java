@@ -15,26 +15,17 @@
  */
 package org.hippoecm.repository.upgrade;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeIterator;
-import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.util.TraversingItemVisitor;
 
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
@@ -241,11 +232,34 @@ public class Release72Updater implements UpdaterModule {
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:templatetype") {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
+                // Should a new nodetype descriptor be created?
+                boolean convert = false;
+                String uri = null;
+                String newUri = null;
+                if (node.getDepth() > 0 && node.getParent().isNodeType("hipposysedit_1_0:namespace")
+                        && !"system".equals(node.getParent().getName())) {
+                    uri = node.getSession().getNamespaceURI(node.getParent().getName());
+                    VersionNumber version = new VersionNumber(uri.substring(uri.lastIndexOf("/") + 1));
+                    newUri = uri.substring(0, uri.lastIndexOf('/') + 1) + version.next().toString();
+                    convert = true;
+                    try {
+                        node.getSession().getNamespacePrefix(newUri);
+                    } catch (NamespaceException ex) {
+                        convert = false;
+                    }
+                }
+
                 context.setPrimaryNodeType(node, "hipposysedit_1_0:templatetype");
                 Node child = node.getNode("hippo:nodetype");
+                Node current = null;
                 for (NodeIterator nodetypeVersionIter = child.getNodes(child.getName()); nodetypeVersionIter.hasNext();) {
                     Node version = nodetypeVersionIter.nextNode();
                     context.setName(version, "hipposysedit_1_0:nodetype");
+                    if (convert && version.isNodeType("hippo:remodel")) {
+                        if (uri.equals(version.getProperty("hippo:uri").getString())) {
+                            current = version;
+                        }
+                    }
                     version.accept(new TraversingItemVisitor.Default(true) {
                         @Override
                         public void entering(final Node node, int level) throws RepositoryException {
@@ -255,6 +269,10 @@ public class Release72Updater implements UpdaterModule {
                 }
                 context.setName(child, "hipposysedit_1_0:nodetype");
                 context.setPrimaryNodeType(child, "hippo_2_0:handle");
+                if (current != null) {
+                    Node clone = ((HippoSession) child.getSession()).copy(current, current.getPath());
+                    clone.setProperty("hipposysedit_1_0:uri", newUri);
+                }
 
                 if (node.hasNode("hippo:prototype")) {
                     child = node.getNode("hippo:prototype");
@@ -322,6 +340,14 @@ public class Release72Updater implements UpdaterModule {
                         convert(node, context);
                     }
                 });
+            }
+        });
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("rep:root") {
+            @Override
+            public void entering(final Node node, int level) throws RepositoryException {
+                node.getNode("hippo:namespaces/hippo").remove();
+                node.getNode("hippo:namespaces/system").remove();
+                node.getNode("hippo:namespaces/hippostd").remove();
             }
         });
         for (String[] nodeTypeDefinitions : new String[][] {
@@ -460,4 +486,5 @@ public class Release72Updater implements UpdaterModule {
             }
         }
     }
+
 }
