@@ -23,11 +23,13 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.ActionDescription;
@@ -62,6 +64,19 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
     private static Logger log = LoggerFactory.getLogger(EditingReviewedActionsWorkflowPlugin.class);
 
+    static class FeedbackLogger extends Component {
+        private static final long serialVersionUID = 1L;
+
+        public FeedbackLogger() {
+            super("id");
+        }
+
+        @Override
+        protected void onRender(MarkupStream markupStream) {
+        }
+        
+    }
+    
     private Fragment feedbackContainer;
     private transient boolean closing = false;
 
@@ -169,7 +184,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 workflow.commitEditableInstance();
 
                 DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-                EditingReviewedActionsWorkflowPlugin.this.info(new StringResourceModel("saved",
+                new FeedbackLogger().info(new StringResourceModel("saved",
                         EditingReviewedActionsWorkflowPlugin.this, null, new Object[] { df.format(new Date()) })
                         .getString());
                 showFeedback();
@@ -222,7 +237,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 private static final long serialVersionUID = 1L;
 
                 public boolean accept(FeedbackMessage message) {
-                    return EditingReviewedActionsWorkflowPlugin.class.isInstance(message.getReporter());
+                    return FeedbackLogger.class.isInstance(message.getReporter());
                 }
             }, getPluginContext()));
             add(feedbackFragment);
