@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
@@ -40,7 +41,7 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
 
     static final Logger log = LoggerFactory.getLogger(OnCloseDialog.class);
 
-    public interface Actions {
+    public interface Actions extends IClusterable {
 
         void save();
 
