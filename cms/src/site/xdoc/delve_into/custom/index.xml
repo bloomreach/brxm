@@ -35,6 +35,7 @@
         implemented as an add-on, consisting of a number of plugins.        
       </p>
 
+  <subsection>
       <blockquote>
         <table>
           <tr>
@@ -79,7 +80,8 @@
             </td>
           </tr>
         </table>
-      </blockquote>
+       </blockquote>
+      </subsection>
     </section>
   </body>
 </document>

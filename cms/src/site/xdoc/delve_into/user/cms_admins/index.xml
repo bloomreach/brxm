@@ -29,6 +29,7 @@ ________________________________________________________________________________
     <section name="CMS Administrator Guide">
       <span class="shortdesc">Guide for Hippo CMS users to perform the role of CMS administrator.</span>
 
+<subsection>
 <table>
   <tr>
     <td>
@@ -49,7 +50,7 @@ ________________________________________________________________________________
     <td>A collection of concepts a CMS administrator may want to know.</td>
   </tr>
 </table>
-
+</subsection>
     </section>
   </body>
 </document>

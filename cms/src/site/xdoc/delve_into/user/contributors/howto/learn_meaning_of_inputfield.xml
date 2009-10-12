@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -35,7 +35,7 @@ ________________________________________________________________________________
    </script>
    <div class='group'> 
     <div id='screenshot'><div>
-     <img src="../../../../images/screenshots/cms_M9/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/> 
+     <img src="../../../../images/screenshots/cms_M9/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/>
     </div></div> 
     <p>
      Make sure you know what the fields in a <a href='../concepts/document_type.html'>document type</a>
@@ -52,7 +52,7 @@ ________________________________________________________________________________
    <p>
       The <a href='../concepts/document_type.html'>document types</a> used in your organization, were
       created by an information architect with the
-      intent that every <a href='contributor'>author</a> would
+      intent that every <a href='../concepts/contributor.html'>author</a> would
       fill in information with the same meaning of the field in mind.
    </p>
    <p>

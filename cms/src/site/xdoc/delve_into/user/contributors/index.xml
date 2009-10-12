@@ -42,6 +42,7 @@ the inputfields in Hippo documents may allow quite complex editing.
   For a more general introduction, see below the table.
 </p>
 
+<subsection>
 <table>
   <tr>
     <td>
@@ -62,6 +63,7 @@ the inputfields in Hippo documents may allow quite complex editing.
     <td>A collection of concepts a CMS author may want to know.</td>
   </tr>
 </table>
+</subsection>
 
 <subsection name='General introduction for authors'>
 <p>

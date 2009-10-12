@@ -2,6 +2,20 @@
 <?xml-stylesheet type="text/xsl" href="../stylesheets/folder.xsl"?>
  <folder rootpath='/home/rita/werk/cms/src/site/xdoc'>.
   <folder>about
+   <folder>release_notes
+<info>
+ <title>Hippo CMS release notes</title>
+ <shortdesc> </shortdesc>
+</info>
+    <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
+   fullname='about/release_notes/CMS_7_1_release.xml'
+   relpath='about/release_notes'
+  >CMS_7_1_release</file>
+    <file ext='xml' mimetype='application/xml' valid='yes'
+   fullname='about/release_notes/index.xml'
+   relpath='about/release_notes'
+  >index</file>
+   </folder>
    <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='about/roadmap.xml'
    relpath='about'
@@ -363,10 +377,6 @@
    fullname='delve_into/sysadmin/index.xml'
    relpath='delve_into/sysadmin'
   >index</file>
-    <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/sysadmin/index.xml~'
-   relpath='delve_into/sysadmin'
-  >index</file>
     <folder>installation
 <info>
  <title>Installation</title>             <!-- string -->
@@ -462,10 +472,6 @@
   >index</file>
      <file ext='xml.vm' mimetype='application/xml' valid='yes'
    fullname='delve_into/sysadmin/installation/in_servlet_container.xml.vm'
-   relpath='delve_into/sysadmin/installation'
-  >in_servlet_container</file>
-     <file ext='xml.vm~' mimetype='application/xml'
-   fullname='delve_into/sysadmin/installation/in_servlet_container.xml.vm~'
    relpath='delve_into/sysadmin/installation'
   >in_servlet_container</file>
      <file ext='xml' mimetype='application/xml' valid='yes' note='todo'
@@ -900,10 +906,6 @@
    fullname='delve_into/user/contributors/tour.xml'
    relpath='delve_into/user/contributors'
   >tour</file>
-     <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/contributors/tour.xml~'
-   relpath='delve_into/user/contributors'
-  >tour</file>
     </folder>
     <folder>editors
      <folder>concepts
@@ -1029,10 +1031,6 @@
     </folder>
     <file ext='xml' mimetype='application/xml' valid='yes'
    fullname='delve_into/user/index.xml'
-   relpath='delve_into/user'
-  >index</file>
-    <file ext='xml~' mimetype='application/xml'
-   fullname='delve_into/user/index.xml~'
    relpath='delve_into/user'
   >index</file>
     <folder>information_architects

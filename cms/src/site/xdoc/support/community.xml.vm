@@ -66,7 +66,7 @@
             <a href="./forums.html">Hippo CMS 7 Public Forums</a>: Get answers to your questions from
 	    users and Hippo developers.
 	    <br/>
-	    Allow for a few hours or days to receive answers. Allthough many questions
+	    Allow for a few hours or days to receive answers. Although many questions
 	    are answered on the forums, no guarantees can be given.
 	   </td>
 	  </tr>
@@ -76,7 +76,7 @@
 	     <span class='issue-48 icon-48'/>
 	   </td>
 	   <td> 
-		  <a href="../issue-tracking.html">${product_name} issue tracker</a>:
+		  <a href="${issue_tracker_homepage}">${product_name} issue tracker</a>:
 		  Read here what issues the developers of ${product_name} have been and are currently working on.
 	   </td>
           </tr>
@@ -122,8 +122,8 @@
 	</div>
 </subsection>
 
-<subsection name='Alternatives'> 
-   You may also consult <a href="../index.html">this documentation</a>, acquire 
+<subsection name='Alternatives'>
+   You may also consult this documentation, acquire
    <a href="http://www.onehippo.com/en/support">commercial support</a> or
    <a href='./contributing.html'>contribute yourself</a>!.
  </subsection>

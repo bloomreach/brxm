@@ -64,7 +64,7 @@ ________________________________________________________________________________
      The appropriate editor will receive this request. This is Janine.
   </p>
  </li>
- <li><p>Half an hour ago, janine accepted the request for "hippo:request"</p>
+ <li><p>Half an hour ago, janine accepted the request for "multibazar2009"</p>
   <p>The editor Janine accepted publication of the document "multibazar2009".</p>
  </li>
  <li><p>Half an hour ago, marc requested "multibazar2009" to be taken offline</p>
@@ -87,7 +87,7 @@ ________________________________________________________________________________
  </li>
  <li><p>Half an hour ago, janine took "artificial intelligence" offline</p>
  </li>
- <li><p>Half an hour ago, janine withdrew request for "hippo:request"</p>
+ <li><p>Half an hour ago, janine withdrew request for "multibazar2009".</p>
   <p>As part of Janine's action, Janine withdraws Marcs request. This occurs automatically.
      She may never have noticed Marcs request.</p>
  </li>
@@ -99,9 +99,9 @@ ________________________________________________________________________________
  </li>
  <li>Five minutes ago, marc requested publication for "multibazar2009"
  </li>
- <li>Five minutes ago, janine rejected request for "hippo:request"
+ <li>Five minutes ago, janine rejected request for "multibazar2009".
  </li>
- <li><p>One minute ago, marc withdrew request for "hippo:request"</p>
+ <li><p>One minute ago, marc withdrew request for "multibazar2009"</p>
   <p>After Janine requested Marc's request, Janine does not see the request any more,
      but Marc sees his request on the document, until he withdraws it.</p>
  </li>

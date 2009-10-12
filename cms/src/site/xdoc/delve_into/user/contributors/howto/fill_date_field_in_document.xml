@@ -44,13 +44,13 @@ ________________________________________________________________________________
    </div>
 
    <p>
-      <a href='./set_edit_mode.html'>With your document in</a> <a href='edit_mode'>edit mode</a>, 
-      fill in the date and time in a date field in the document. 
+    <a href='./set_edit_mode.html'>With your document in</a> <a href='../concepts/edit_mode.html'>edit mode</a>,
+      fill in the date and time in a date field in the document.
       They can be typed and the date can also be chosen
       from a calendar and AM/PM is chosen from a little pull down menu.
    </p>
    <p>
-     <a href='./learn_meaning_of_inputfield.html'>Ensure 
+     <a href='./learn_meaning_of_inputfield.html'>Ensure
         that you know the meaning of the date inputfield</a> and fill in the correct date!
    </p>
 
@@ -60,14 +60,14 @@ ________________________________________________________________________________
      <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document</a>.</li>
      <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document</a>.</li>
      <li><a href='./save_document.html'>Save the changes to the document</a>.</li>
-    </ul>       
+    </ul>
    </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
-    </ul>       
+    </ul>
    </subsection>
   </section>
  </body>
-</document>        
+</document>

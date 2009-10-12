@@ -24,11 +24,11 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">395 errors and/or todos in 241 out of 241 documents (100%).</span>
+      <span class="shortdesc">404 errors and/or todos in 243 out of 243 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
-        <li>0 documents using dummy references.
+        <li>1 documents using dummy references.
      </li>
         <li> 
         Checking if documents are linked to was not possible (no previous, readable linkreport to compare to).
@@ -39,7 +39,7 @@
      </li>
         <li>2 documents to review.
      </li>
-        <li>33 documents missing required info.
+        <li>34 documents missing required info.
      </li>
         <li>0 empty documents.
      </li>
@@ -51,11 +51,22 @@
      </li>
         <li>1 not valid XML documents.
      </li>
-        <li>21 documents with bad text.
+        <li>22 documents with bad text.
      </li>
         <li>9 multisection documents.
      </li>
       </ul>
+      <subsection name="Documents with dummy references: 1">
+        <ol>
+          <li>
+            <a href="./about/release_notes/CMS_7_1_release.html">CMS_7_1_release: Hippo CMS 7.1 release notes</a>
+            <ul>
+              <li>Cannot create external links<span xmlns="" class="bad"> in X </span>inha field</li>
+              <li>Internal link<span xmlns="" class="bad"> in X </span>inha field does not get correctly URL encoded</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
       <subsection name="Documents with standard typos: 2">
         <ol>
           <li>
@@ -179,8 +190,15 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 33">
+      <subsection name="Documents lacking some information: 34">
         <ol>
+          <li>
+            <a href="./about/release_notes/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
           <li>
             <a href="./about/term_index.html">term_index: </a>
             <ul>
@@ -575,8 +593,16 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 21">
+      <subsection name="badtext documents: 22">
         <ol>
+          <li>
+            <a href="./about/release_notes/CMS_7_1_release.html">CMS_7_1_release: Hippo CMS 7.1 release notes</a>
+            <ul>
+              <li>The workflow toolbar now groups document and publication actions in a dropdown menu right under the<span xmlns="" class="bad"> current </span>ly selected tab in review mode. See the documentation for screenshots:</li>
+              <li>Unequal visual mark of folder being<span xmlns="" class="bad"> current </span></li>
+              <li>Adding a document to the<span xmlns="" class="bad"> current </span>ly selected folder does not update doclisting</li>
+            </ul>
+          </li>
           <li>
             <a href="./delve_into/custom/howto/extend_dashboard.html">extend_dashboard: Giving our plugin a place on the dashboard</a>
             <ul>

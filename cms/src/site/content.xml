@@ -8,7 +8,18 @@
    
    <folder>about
    
-   <document ext="xml" filename="roadmap" relpath="about">Roadmap Hippo CMS
+   <folder>release_notes
+   <title>Hippo CMS release notes</title><shortdesc> </shortdesc>
+   <document ext="xml" filename="CMS_7_1_release" relpath="about/release_notes">Hippo CMS 7.1 release notes
+   <section>Hippo CMS 7.1 release notes</section>
+   <shortdesc> </shortdesc>
+   <subsection>Important changes for Hippo CMS end-users</subsection>
+   <subsection>Improvements</subsection>
+   <subsection>What didn't make it into the release?</subsection>
+   <subsection>Demo</subsection>
+   <subsection>List of Jira issues that have been resolved in Hippo CMS 7.1</subsection>
+  </document><document ext="xml" filename="index" relpath="about/release_notes">
+  </document></folder><document ext="xml" filename="roadmap" relpath="about">Roadmap Hippo CMS
    <section>Roadmap Hippo CMS</section>
    <shortdesc>What's up for the future?</shortdesc>
   </document><document ext="xml" filename="term_index" relpath="about">

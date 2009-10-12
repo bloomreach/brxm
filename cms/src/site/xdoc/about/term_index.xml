@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 1020 terms</span>
+      <span class="shortdesc">Term index, 1027 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -77,6 +77,12 @@ repository itself.
 </a>
             </td>
             <td>Workflow configuration</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../about/release_notes/CMS_7_1_release.html#_"> </a>
+            </td>
+            <td>Hippo CMS 7.1 release notes</td>
           </tr>
           <tr>
             <td>
@@ -1758,6 +1764,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../about/release_notes/CMS_7_1_release.html#Demo">Demo</a>
+            </td>
+            <td>Hippo CMS 7.1 release notes</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/jcr/jcr.html#Dependencies">Dependencies</a>
             </td>
             <td>JCR Basics</td>
@@ -2743,6 +2755,12 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../about/release_notes/CMS_7_1_release.html#Hippo_CMS_7_1_release_notes">Hippo CMS 7.1 release notes</a>
+            </td>
+            <td>Hippo CMS 7.1 release notes</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/index.html#Hippo_CMS_Add-ons">Hippo CMS Add-ons</a>
             </td>
             <td>Welcome: Hippo CMS Add-ons</td>
@@ -3491,6 +3509,18 @@ repository itself.
           </tr>
           <tr>
             <td>
+              <a href="../about/release_notes/CMS_7_1_release.html#Important_changes_for_Hippo_CMS_end-users">Important changes for Hippo CMS end-users</a>
+            </td>
+            <td>Hippo CMS 7.1 release notes</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../about/release_notes/CMS_7_1_release.html#Improvements">Improvements</a>
+            </td>
+            <td>Hippo CMS 7.1 release notes</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/installation/in_application_server.html#in_Application_Server">in Application Server</a>
             </td>
             <td>in Application Server</td>
@@ -3728,6 +3758,12 @@ repository itself.
               <a href="../delve_into/tools/maven/basics.html#Learn_to_basics_of_maven:_pom_xml_and_mvn_clean_install_">Learn to basics of maven: pom.xml and mvn clean install.</a>
             </td>
             <td>Maven basics</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../about/release_notes/CMS_7_1_release.html#List_of_Jira_issues_that_have_been_resolved_in_Hippo_CMS_7_1">List of Jira issues that have been resolved in Hippo CMS 7.1</a>
+            </td>
+            <td>Hippo CMS 7.1 release notes</td>
           </tr>
           <tr>
             <td>
@@ -5844,6 +5880,12 @@ repository itself.
               <a href="../delve_into/user/contributors/concepts/workspace_navigation_panel.html#What_and_where_is_the_workspace_navigation_panel_">What and where is the workspace navigation panel?</a>
             </td>
             <td>Concept: Workspace Navigation Panel</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../about/release_notes/CMS_7_1_release.html#What_didn't_make_it_into_the_release_">What didn't make it into the release?</a>
+            </td>
+            <td>Hippo CMS 7.1 release notes</td>
           </tr>
           <tr>
             <td>

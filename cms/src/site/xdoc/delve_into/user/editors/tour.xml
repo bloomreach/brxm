@@ -36,7 +36,7 @@
        the Swatia newspaper.
     </p>
 
-   <blockquote>
+   <div class='nav'>
     <table>
      <tr>
       <td>Browser</td>
@@ -184,7 +184,7 @@
      </tr>
 
     </table>
-   </blockquote>
+   </div>
 
     </section>
   </body>
