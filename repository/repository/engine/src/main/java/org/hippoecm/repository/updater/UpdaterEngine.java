@@ -476,12 +476,13 @@ public class UpdaterEngine {
         versionProperty.getParent().save();
     }
 
-    public static void migrate(Session session) {
+    public static boolean migrate(Session session) {
+        boolean needsRestart = false;
         try {
             if(!session.getRootNode().hasNode(HippoNodeType.CONFIGURATION_PATH) ||
                !session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).hasNode(HippoNodeType.INITIALIZE_PATH)) {
                 log.info("no migration cycle because clean repository startup without hippo configuration");
-                return;
+                return false;
             }
             boolean updates;
             do {
@@ -489,6 +490,7 @@ public class UpdaterEngine {
                 UpdaterEngine engine = new UpdaterEngine(subSession);
                 updates = engine.prepare();
                 if (updates) {
+                    needsRestart = true;
                     log.info("migration update cycle starting");
                     try {
                         engine.update();
@@ -529,6 +531,7 @@ public class UpdaterEngine {
         } catch(RepositoryException ex) {
             log.error("error in migration cycle: "+ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
+        return needsRestart;
     }
 
     public static void migrate(Session session, Modules<UpdaterModule> modules) throws UpdaterException, RepositoryException {
