@@ -20,17 +20,24 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.jcr.NamespaceException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.util.TraversingItemVisitor;
 
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
+import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.hippoecm.repository.util.VersionNumber;
 
 public class Release72Updater implements UpdaterModule {
@@ -390,11 +397,15 @@ public class Release72Updater implements UpdaterModule {
                 ex.printStackTrace(System.err);
             }
         }
+
         try {
-            String uri = context.getWorkspace().getNamespaceRegistry().getURI("defaultcontent");
-            context.getWorkspace().getNamespaceRegistry().registerNamespace("defaultcontent", VersionNumber.versionFromURI(uri).next().versionToURI(uri));
-            String cnd = org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter.compactNodeTypeDef(context.getWorkspace(), "defaultcontent");
-            context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "defaultcontent", "-", new StringReader(cnd)));
+            Workspace workspace = context.getWorkspace();
+            for(String subtypedNamespace : subTypedNamespaces(workspace)) {
+                String uri = workspace.getNamespaceRegistry().getURI(subtypedNamespace);
+                workspace.getNamespaceRegistry().registerNamespace(subtypedNamespace, VersionNumber.versionFromURI(uri).next().versionToURI(uri));
+                String cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(workspace, subtypedNamespace);
+                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, subtypedNamespace, "-", new StringReader(cnd)));
+            }
         } catch (NamespaceException ex) {
             ex.printStackTrace(System.err);
         } catch (RepositoryException ex) {
@@ -402,6 +413,56 @@ public class Release72Updater implements UpdaterModule {
         } catch (IOException ex) {
             ex.printStackTrace(System.err);
         }
+    }
+
+    private Set<String> subTypedNamespaces(Workspace workspace) throws RepositoryException {
+        Set<String> superTypeNamespaces = new HashSet<String>();
+        Set<String> subtypedNamespaces = new HashSet<String>();
+        Set<String> skippedNamespaces = new HashSet<String>();
+        superTypeNamespaces.add("hippo");
+        skippedNamespaces.add("hipposys");
+        skippedNamespaces.add("hipposysedit");
+        skippedNamespaces.add("hippostd");
+        skippedNamespaces.add("hippogallery");
+        skippedNamespaces.add("frontend");
+        skippedNamespaces.add("hippolog");
+        skippedNamespaces.add("reporting");
+        skippedNamespaces.add("hippohtmlcleaner");
+        skippedNamespaces.add("editor");
+        skippedNamespaces.add("hipposched");
+        skippedNamespaces.add("hippoldap");
+
+        skippedNamespaces.addAll(superTypeNamespaces);
+        NodeTypeManager ntMgr = workspace.getNodeTypeManager();
+        boolean rerun;
+        do {
+            rerun = false;
+            for (NodeTypeIterator ntiter = ntMgr.getAllNodeTypes(); ntiter.hasNext();) {
+                NodeType nt = ntiter.nextNodeType();
+                String ntName = nt.getName();
+                if (ntName.contains(":")) {
+                    String ntNamespace = ntName.substring(0, ntName.indexOf(":"));
+                    if (!superTypeNamespaces.contains(ntNamespace) && !subtypedNamespaces.contains(ntNamespace)) {
+                        for (NodeType superType : nt.getSupertypes()) {
+                            String superName = superType.getName();
+                            if (superName.contains(":")) {
+                                String superNamespace = superName.substring(0, superName.indexOf(":"));
+                                if (superTypeNamespaces.contains(superNamespace)) {
+                                    superTypeNamespaces.add(ntNamespace);
+                                    if (!skippedNamespaces.contains(ntNamespace))
+                                        subtypedNamespaces.add(ntNamespace);
+                                    rerun = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (rerun)
+                    break;
+            }
+        } while (rerun);
+        return subtypedNamespaces;
     }
 
     private void convert(Node node, UpdaterContext context) throws RepositoryException {
