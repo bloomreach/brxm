@@ -50,18 +50,18 @@ public class JCRUtilities {
 
     /**
      * 
-     * @param facetSelectNode
+     * @param mirrorNode
      * @return the dereferenced node or <code>null</code> when no dereferenced node can be found
      */
-    public static Node getDeref(Node facetSelectNode) {
+    public static Node getDeref(Node mirrorNode) {
         
         try {
-            if(!facetSelectNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                log.debug("Cannot deref a node that is not of type {}. Return null", HippoNodeType.NT_FACETSELECT);
+            if(!mirrorNode.isNodeType(HippoNodeType.NT_FACETSELECT) && !mirrorNode.isNodeType(HippoNodeType.NT_MIRROR)) {
+                log.debug("Cannot deref a node that is not of (sub)type {} or {}. Return null", HippoNodeType.NT_FACETSELECT, HippoNodeType.NT_MIRROR);
                 return null;
             }
             // HippoNodeType.HIPPO_DOCBASE is a mandatory property so no need to test if exists
-            String docBaseUUID = facetSelectNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+            String docBaseUUID = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
             
             // test whether docBaseUUID can be parsed as a uuid
             try {
@@ -70,7 +70,7 @@ public class JCRUtilities {
                 log.warn("Docbase cannot be parsed to a valid uuid. Return null");
                 return null;
             }
-            return facetSelectNode.getSession().getNodeByUUID(docBaseUUID);
+            return mirrorNode.getSession().getNodeByUUID(docBaseUUID);
         } catch (ItemNotFoundException e) {
             log.error("ItemNotFoundException, cannot return deferenced node because docbase uuid cannot be found. Return null");
         } catch (RepositoryException e) {

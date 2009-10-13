@@ -219,13 +219,13 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                     
                     curNode = curNode.getNode(folderName);
 
-                    if (curNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    if (curNode.isNodeType(HippoNodeType.NT_FACETSELECT) || curNode.isNodeType(HippoNodeType.NT_MIRROR )) {
                         String docbaseUuid = curNode.getProperty("hippo:docbase").getString();
                         // check whether docbaseUuid is a valid uuid, otherwise a runtime IllegalArgumentException is thrown
                         try {
                             UUID.fromString(docbaseUuid);
                         } catch (IllegalArgumentException e){
-                            throw new ContentPersistenceException("hippo:docbase in facetselect does not contain a valid uuid", e);
+                            throw new ContentPersistenceException("hippo:docbase in mirror does not contain a valid uuid", e);
                         }
                         // this is always the canonical
                         curNode = session.getNodeByUUID(docbaseUuid);
