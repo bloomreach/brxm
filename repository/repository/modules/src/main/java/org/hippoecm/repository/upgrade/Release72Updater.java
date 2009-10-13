@@ -328,9 +328,10 @@ public class Release72Updater implements UpdaterModule {
             public void entering(final Node node, int level) throws RepositoryException {
                 for (String[] delete : new String[][] {
                             {"hippo:temporary"}, // this removal is appropriate, any changes to this folder should be considered transient
+                            {"hippo:documents", "embedded", "root"},
                             {"hippo:queries"},
                             {"hippo:workflows"},
-                            {"hippo:frontend"},
+                            {"hippo:frontend"}, // tracking changes in cms configuration deemed too expensive
                             {"hippo:roles", "admin"},
                             {"hippo:groups", "admin"},
                             {"hippo:users", "admin", "workflowuser"}
@@ -352,7 +353,6 @@ public class Release72Updater implements UpdaterModule {
                             "core-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "reviewedactions2", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "versioning", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "frontend-console", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "user-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "user-author", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "group-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
@@ -388,23 +388,6 @@ public class Release72Updater implements UpdaterModule {
                             "hippohtmlcleaner", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippostd-html-template", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "system-html-template", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "html-cleaner-service", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-login", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-static", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-preview", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-headshortcuts", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-dashshortcuts", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-dashshortcuts-changepassword", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-dashboard", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-reports", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-browser", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-folder-views", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-tree-views", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-pickers", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-services", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "cms-dashshortcuts-gotolink", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "namespaces", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-system", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
@@ -415,7 +398,6 @@ public class Release72Updater implements UpdaterModule {
                             "templateeditor-namespace.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-type-query.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "editor-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "layout-provider", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "domain-templates-templateset", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "reporting", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippogallery", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
@@ -423,8 +405,32 @@ public class Release72Updater implements UpdaterModule {
                             "hippogallery-images", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippogallery-image", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippogallery-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "content" // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                }) {
+                            "content", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+
+                            /**
+                             * These initialisation nodes correspond to the /hippo:configuration/hippo:frontend tree.
+                             * The configuration changes are too big to merge by writing JCR calls.
+                             */
+                            "frontend-console",
+                            "html-cleaner-service",
+                            "cms",
+                            "cms-login",
+                            "cms-static",
+                            "cms-editor",
+                            "cms-preview",
+                            "cms-headshortcuts",
+                            "cms-dashshortcuts",
+                            "cms-dashshortcuts-changepassword",
+                            "cms-dashboard",
+                            "cms-reports",
+                            "cms-browser",
+                            "cms-folder-views",
+                            "cms-tree-views",
+                            "cms-pickers",
+                            "cms-services",
+                            "cms-dashshortcuts-gotolink",
+                            "layout-provider",
+                            }) {
                     if (node.getNode("hippo:initialize").hasNode(delete)) {
                         node.getNode("hippo:initialize").getNode(delete).remove();
                     }
