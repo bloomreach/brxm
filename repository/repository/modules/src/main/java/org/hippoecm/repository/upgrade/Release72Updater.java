@@ -327,7 +327,6 @@ public class Release72Updater implements UpdaterModule {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
                 for (String[] delete : new String[][] {
-                            {"hippo:derivatives", "hippo:corederivatives"},
                             {"hippo:temporary"}, // this removal is appropriate, any changes to this folder should be considered transient
                             {"hippo:documents", "embedded", "root"},
                             {"hippo:queries"},
@@ -349,85 +348,83 @@ public class Release72Updater implements UpdaterModule {
                     }
                 }
                 for (String delete : new String[] {
-                            "hippoldap",
-                            "reviewedactions0",
-                            "reviewedactions1",
-                            "core-workflows",
-                            "reviewedactions2",
-                            "versioning",
-                            "frontend-console",
-                            "user-editor",
-                            "user-author",
-                            "group-editor",
-                            "group-author",
-                            "group-everybody",
-                            "role-jcrread",
-                            "role-jcrwrite",
-                            "role-editor",
-                            "role-author",
-                            "domain-defaultread",
-                            "domain-defaultwrite",
-                            "domain-versioning",
-                            "domain-workflow",
-                            "domain-hippodocuments",
-                            "domain-hippofolders",
-                            "domain-frontendconfig",
-                            "domain-hippogallery",
-                            "domain-htmlcleaner",
-                            "domain-templates",
-                            "domain-hippolog",
-                            "domain-hipporequests",
-                            "hippostd-date",
-                            "deriveddate",
-                            "templateeditor-faceteddate",
-                            "hippostd",
-                            "hippolog",
-                            "hippostd-queries",
-                            "hippostd-workflows",
-                            "embedded-workflows",
-                            "hippostd-workflows2",
-                            "shortcuts-workflows",
-                            "hipposched",
-                            "frontend",
-                            "hippohtmlcleaner",
-                            "hippostd-html-template",
-                            "system-html-template",
-                            "html-cleaner-service",
-                            "cms",
-                            "cms-login",
-                            "cms-static",
-                            "cms-editor",
-                            "cms-preview",
-                            "cms-headshortcuts",
-                            "cms-dashshortcuts",
-                            "cms-dashshortcuts-changepassword",
-                            "cms-dashboard",
-                            "cms-reports",
-                            "cms-browser",
-                            "cms-folder-views",
-                            "cms-tree-views",
-                            "cms-pickers",
-                            "cms-services",
-                            "cms-dashshortcuts-gotolink",
-                            "editor",
-                            "namespaces",
-                            "templateeditor-system",
-                            "templateeditor-hippo",
-                            "templateeditor-hipposysedit",
-                            "hippostd-types",
-                            "frontend-types",
-                            "templateeditor-namespace.xml",
-                            "templateeditor-type-query.xml",
-                            "editor-workflows",
-                            "layout-provider",
-                            "domain-templates-templateset",
-                            "reporting",
-                            "hippogallery",
-                            "hippogallery-files",
-                            "hippogallery-images",
-                            "hippogallery-image",
-                            "hippogallery-editor",
-                            "content"
+                            "hippoldap", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "reviewedactions1", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "core-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "reviewedactions2", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "versioning", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "frontend-console", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "user-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "user-author", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "group-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "group-author", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "group-everybody", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "role-jcrread", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "role-jcrwrite", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "role-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "role-author", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-defaultread", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-defaultwrite", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-versioning", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-workflow", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-hippodocuments", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-hippofolders", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-frontendconfig", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-hippogallery", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-htmlcleaner", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-templates", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-hippolog", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-hipporequests", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippostd-date", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "templateeditor-faceteddate", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippostd", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippolog", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippostd-queries", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippostd-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "embedded-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippostd-workflows2", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "shortcuts-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hipposched", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "frontend", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippohtmlcleaner", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippostd-html-template", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "system-html-template", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "html-cleaner-service", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-login", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-static", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-preview", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-headshortcuts", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-dashshortcuts", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-dashshortcuts-changepassword", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-dashboard", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-reports", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-browser", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-folder-views", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-tree-views", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-pickers", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-services", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "cms-dashshortcuts-gotolink", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "namespaces", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "templateeditor-system", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "templateeditor-hippo", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "templateeditor-hipposysedit", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippostd-types", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "frontend-types", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "templateeditor-namespace.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "templateeditor-type-query.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "editor-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "layout-provider", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "domain-templates-templateset", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "reporting", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippogallery", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippogallery-files", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippogallery-images", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippogallery-image", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippogallery-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "content" // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                 }) {
                     if (node.getNode("hippo:initialize").hasNode(delete)) {
                         node.getNode("hippo:initialize").getNode(delete).remove();
