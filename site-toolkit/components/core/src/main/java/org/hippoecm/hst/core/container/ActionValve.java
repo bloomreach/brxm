@@ -119,7 +119,7 @@ public class ActionValve extends AbstractValve
                             if (requestContext.isPortletContext()) {
                                 responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL, requestContext));
                             } else {
-                                responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext, servletRequest.getContextPath()));
+                                responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext, null));
                             }
                         } catch (UnsupportedEncodingException e) {
                             throw new ContainerException(e);
