@@ -228,9 +228,6 @@ public class Release72Updater implements UpdaterModule {
                  * going to be removed quickly is unnecessary.
                  */
                 node.getNode("hippo:log").remove();
-
-                node.getNode("live").remove();
-                node.getNode("preview").remove();
             }
         });
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:namespacefolder") {
@@ -430,21 +427,8 @@ public class Release72Updater implements UpdaterModule {
                             "hippogallery-images",
                             "hippogallery-image",
                             "hippogallery-editor",
-                            "defaultcontent",
-                            "defaultcontent-types",
-                            "defaultcontent-type-document",
-                            "defaultcontent-type-address",
-                            "defaultcontent-type-article",
-                            "defaultcontent-type-event",
-                            "defaultcontent-type-news",
-                            "defaultcontent-type-overview",
-                            "content",
-                            "live",
-                            "preview",
-                            "image_example",
-                            "asset_example",
-                            "reviewedactions3",
-                            "reviewedactions4",}) {
+                            "content"
+                }) {
                     if (node.getNode("hippo:initialize").hasNode(delete)) {
                         node.getNode("hippo:initialize").getNode(delete).remove();
                     }
