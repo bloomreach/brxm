@@ -67,7 +67,6 @@ abstract public class ClearableDialogLink extends Panel {
             }
         };
         add(clearLink);
-        clearLink.add(new Label("clear-link-text", "Clear link"));
     }
 
     public void enable() {
