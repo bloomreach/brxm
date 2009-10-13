@@ -19,18 +19,24 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+
+<hst:link var="yuiLoaderSrc" path="/javascript/yui/yuiloader/yuiloader-min.js"/>
+<hst:link var="inlineEditingSrc" path="/javascript/inline-editing.js"/>
+
+
 <hst:element var="yuiLoader" name="script">
   <hst:attribute name="id" value="yuiloader" />
   <hst:attribute name="type" value="text/javascript" />
   <hst:attribute name="language" value="javascript" />
-  <hst:attribute name="src" value="/site/javascript/yui/yuiloader/yuiloader-min.js" />
+  <hst:attribute name="src" value="${yuiLoaderSrc}" />
 </hst:element>
 <hst:head-contribution keyHint="yuiLoader" element="${yuiLoader}" />
+
 <hst:element var="inlineEditing" name="script">
   <hst:attribute name="id" value="inlineEditing" />
   <hst:attribute name="type" value="text/javascript" />
   <hst:attribute name="language" value="javascript" />
-  <hst:attribute name="src" value="/site/javascript/inline-editing.js" />
+  <hst:attribute name="src" value="${inlineEditingSrc}" />
 </hst:element>
 <hst:head-contribution keyHint="inlineEditing" element="${inlineEditing}" />
 
