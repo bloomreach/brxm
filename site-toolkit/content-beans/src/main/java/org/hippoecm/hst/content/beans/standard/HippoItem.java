@@ -224,7 +224,6 @@ public class HippoItem implements HippoBean{
         try {
             Node parentNode = valueProvider.getParentJcrNode();
             if(parentNode == null) {
-                log.warn("Cannot return parent bean for detached bean. Return null");
                 return null;
             } 
             if(parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
