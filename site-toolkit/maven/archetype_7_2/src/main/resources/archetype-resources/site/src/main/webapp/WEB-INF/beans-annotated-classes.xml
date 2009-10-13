@@ -18,5 +18,6 @@
     limitations under the License.
 -->
 <hst-content-beans>
-    <annotated-class>${package}.beans.TextPage</annotated-class>
+    <annotated-class>${package}.beans.BaseDocument</annotated-class>
+    <annotated-class>${package}.beans.TextDocument</annotated-class>
 </hst-content-beans>

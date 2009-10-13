@@ -14,7 +14,7 @@
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>8f2f2cb3-fce5-40d9-8a51-24c753e8075e</sv:value>
   </sv:property>
-  <sv:node sv:name="textpage">
+  <sv:node sv:name="textdocument">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -112,7 +112,7 @@
       </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textpage</sv:value>
+          <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textdocument</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>

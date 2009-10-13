@@ -23,8 +23,8 @@ package ${package}.beans;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
-@Node(jcrType="${rootArtifactId.replace($hyphen,$empty)}:textpage")
-public class TextPage extends GeneralPage{
+@Node(jcrType="${rootArtifactId.replace($hyphen,$empty)}:textdocument")
+public class TextDocument extends BaseDocument{
 
     public HippoHtml getHtml(){
         return getHippoHtml("${rootArtifactId.replace($hyphen,$empty)}:body");    

@@ -52,7 +52,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="textpage">
+  <sv:node sv:name="textdocument">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposysedit:templatetype</sv:value>
     </sv:property>
@@ -179,7 +179,7 @@
       </sv:property>
       <sv:node sv:name="hipposysedit:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textpage</sv:value>
+          <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textdocument</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
@@ -230,7 +230,7 @@
           <sv:value>wicket.id</sv:value>
         </sv:property>
         <sv:property sv:name="type" sv:type="String">
-          <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textpage</sv:value>
+          <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textdocument</sv:value>
         </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
