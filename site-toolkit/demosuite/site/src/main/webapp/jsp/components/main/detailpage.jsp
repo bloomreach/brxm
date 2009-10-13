@@ -131,14 +131,17 @@
     <input type="hidden" name="field" value=""/>
     <input type="hidden" name="workflowAction" value=""/>
     <textarea id="editor" name="editor" class="inline-editor-editor" cols="50" rows="5"></textarea>
+    
+    <hst:link var="icons" path="/images/icons"/>
     <span id="editorToolbar" class="inline-editor-toolbar">
-      <img src="/site/images/icons/document-save-16.png" id="editorToolbar_save" alt="Save" title="Save"/>
-      <img src="/site/images/icons/document-revert-16.png" id="editorToolbar_close" alt="Close without saving" title="Close without saving"/>
-      <img src="/site/images/icons/workflow-requestpublish-16.png" id="editorToolbar_requestPublication" alt="Request publication" title="Request publication"/>
-      <img src="/site/images/icons/edit-16.png" id="editorToolbar_editInCMS" alt="Edit in CMS" title="Edit in CMS"/>
+      <img src="${icons}/document-save-16.png" id="editorToolbar_save" alt="Save" title="Save"/>
+      <img src="${icons}/document-revert-16.png" id="editorToolbar_close" alt="Close without saving" title="Close without saving"/>
+      <img src="${icons}/workflow-requestpublish-16.png" id="editorToolbar_requestPublication" alt="Request publication" title="Request publication"/>
+      <img src="${icons}/edit-16.png" id="editorToolbar_editInCMS" alt="Edit in CMS" title="Edit in CMS"/>
     </span>
   </div>
 </form>
+
 
 <script type="text/javascript" language="javascript">
 //Instantiate and configure Loader:
