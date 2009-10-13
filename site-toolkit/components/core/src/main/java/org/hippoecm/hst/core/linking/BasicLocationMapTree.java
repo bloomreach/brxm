@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableMap;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.Map.Entry;
@@ -398,7 +397,7 @@ public class BasicLocationMapTree implements LocationMapTree{
         
         // now, for the current context item, we iterate up, and see which matchingSiteMapItems are the first to have a common ancestor as the current context. In the
         // Integer we store how deep the matchingSiteMapItem is below the common ancestor, which is needed in step (4) if we get there
-        NavigableMap<Integer, HstSiteMapItem> commonAncestorMap = new TreeMap<Integer, HstSiteMapItem>();
+        TreeMap<Integer, HstSiteMapItem> commonAncestorMap = new TreeMap<Integer, HstSiteMapItem>();
         
         HstSiteMapItem checkForCommonAncestor = currentCtxSiteMapItem;
         while(checkForCommonAncestor.getParentItem() != null && commonAncestorMap.size() == 0) {
