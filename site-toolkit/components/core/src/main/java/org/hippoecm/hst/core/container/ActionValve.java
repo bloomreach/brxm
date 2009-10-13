@@ -119,12 +119,7 @@ public class ActionValve extends AbstractValve
                             if (requestContext.isPortletContext()) {
                                 responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL, requestContext));
                             } else {
-                                /* 
-                                 * We will redirect to a URL containing the protocol + hostname + portnumber to avoid problems
-                                 * when redirecting behind a proxy.
-                                 */
-                                String url = requestContext.getVirtualHost().getBaseURL(servletRequest) + urlProvider.toURLString(baseURL, requestContext, servletRequest.getContextPath());
-                                responseState.sendRedirect(url);
+                                responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext, servletRequest.getContextPath()));
                             }
                         } catch (UnsupportedEncodingException e) {
                             throw new ContainerException(e);
