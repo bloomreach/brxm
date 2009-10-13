@@ -328,7 +328,6 @@ public class Release72Updater implements UpdaterModule {
             public void entering(final Node node, int level) throws RepositoryException {
                 for (String[] delete : new String[][] {
                             {"hippo:temporary"}, // this removal is appropriate, any changes to this folder should be considered transient
-                            {"hippo:documents", "embedded", "root"},
                             {"hippo:queries"},
                             {"hippo:workflows"},
                             {"hippo:frontend"},
