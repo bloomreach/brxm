@@ -408,11 +408,11 @@ public class BasicLocationMapTree implements LocationMapTree{
                     commonAncestorMap.put(entry.getValue().indexOf(checkForCommonAncestor), entry.getKey());
                 }
             }
-        }
+        } 
         
         if(commonAncestorMap.size() == 1) {
             // step (3) has resulted in one best sitemap item: return this one:
-            return commonAncestorMap.firstEntry().getValue();
+            return commonAncestorMap.get(0);
         } else if (commonAncestorMap.size() > 1) {
             // step (4) and (5) we have multiple matching sitemap items with a common first ancestor: now, find the sitemap item that is closest 
             // to this ancestor. If there are multiple with equal depth to the ancestor, we return the first (see step (5))
