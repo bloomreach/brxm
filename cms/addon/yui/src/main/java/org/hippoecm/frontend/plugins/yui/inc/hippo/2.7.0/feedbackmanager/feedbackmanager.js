@@ -38,12 +38,12 @@ if (!YAHOO.hippo.FeedbackManager) {
 			instances : new YAHOO.hippo.HashMap(),
 
 			create : function(id, config) {
-				YAHOO.log("Creating feedback panel [" + id + "]");
+				YAHOO.log("Creating feedback panel [" + id + "]", "info", "FeedbackManager");
 				this._add(id, config, this.instances);
 			},
 
 			get : function(id) {
-				YAHOO.log("Retrieving feedback panel [" + id + "]");
+				YAHOO.log("Retrieving feedback panel [" + id + "]", "info", "FeedbackManager");
 				return this.instances.get(id);
 			},
 
