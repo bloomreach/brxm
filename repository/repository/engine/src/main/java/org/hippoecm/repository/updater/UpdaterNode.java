@@ -692,24 +692,32 @@ final public class UpdaterNode extends UpdaterItem implements Node {
 
     public PropertyIterator getReferences() throws RepositoryException {
         substantiate();
-        // FIXME
+        // FIXME: not supported at this time
         return new SetPropertyIterator(new LinkedHashSet<UpdaterProperty>());
     }
 
     public boolean hasNode(String relPath) throws RepositoryException {
         substantiate();
-        if (resolveNode(relPath).children.containsKey(resolveName(relPath))) {
-            if (resolveIndex(resolveName(relPath)) < resolveNode(relPath).children.get(resolveName(relPath)).size())
-                return true;
+        try {
+            if (resolveNode(relPath).children.containsKey(resolveName(relPath))) {
+                if (resolveIndex(resolveName(relPath)) < resolveNode(relPath).children.get(resolveName(relPath)).size())
+                    return true;
+            }
+        } catch(PathNotFoundException ex) {
+            // deliberate ignore
         }
         return false;
     }
 
     public boolean hasProperty(String relPath) throws RepositoryException {
         substantiate();
-        if (resolveNode(relPath).children.containsKey(":" + resolveName(relPath))) {
-            if (resolveIndex(resolveName(relPath)) < resolveNode(relPath).children.get(":" + resolveName(relPath)).size())
-                return true;
+        try {
+            if (resolveNode(relPath).children.containsKey(":" + resolveName(relPath))) {
+                if (resolveIndex(resolveName(relPath)) < resolveNode(relPath).children.get(":" + resolveName(relPath)).size())
+                    return true;
+            }
+        } catch(PathNotFoundException ex) {
+            // deliberate ignore
         }
         return false;
     }

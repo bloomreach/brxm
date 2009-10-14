@@ -17,6 +17,7 @@ package org.hippoecm.repository.updater;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -51,15 +53,14 @@ import javax.jcr.Value;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
-import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -85,6 +86,8 @@ public class UpdaterEngine {
     private final static String SVN_ID = "$Id$";
 
     protected final static Logger log = LoggerFactory.getLogger(UpdaterEngine.class);
+
+    static protected int BATCH_THRESHOLD = 96;
 
     Session session;
     UpdaterSession updaterSession;
@@ -491,14 +494,8 @@ public class UpdaterEngine {
                 updates = engine.prepare();
                 if (updates) {
                     needsRestart = true;
-                    log.info("migration update cycle starting");
                     try {
-                        engine.update();
-                        log.info("migration cycle commit");
-                        engine.commit();
-                        log.info("migration cycle save");
-                        subSession.save();
-                        log.info("migration cycle saved");
+                        engine.upgrade();
                         engine.close();
                         subSession.save();
                         log.info("migration cycle closed");
@@ -507,10 +504,6 @@ public class UpdaterEngine {
                     } catch(UpdaterException ex) {
                         subSession.refresh(false);
                         log.error("error in migration cycle, skipping but might lead to serious errors");
-                    } finally {
-                        // log.info("migration cycle wrapup");
-                        // engine.wrapup();
-                        // subSession.logout();
                     }
                 }
                 subSession.logout();
@@ -540,24 +533,121 @@ public class UpdaterEngine {
         session.refresh(false);
         try {
             UpdaterEngine engine = new UpdaterEngine(session, modules);
-            engine.update();
-            engine.commit();
-            session.save();
+            engine.upgrade();
             engine.close();
             session.save();
         } finally {
             ((SessionDecorator)session).postMountEnabled(true);
         }
     }
-            
-    private void update() throws RepositoryException {
+
+    private void upgrade() throws RepositoryException {
+        log.info("upgrade cycle starting");
+        preprocess();
+        log.info("upgrade cycle traverse process");
+        process();
+        log.info("upgrade cycle traverse process commit");
+        updaterSession.commit();
+        log.info("upgrade cycle traverse process save");
+        session.save();
+        log.info("upgrade cycle iterated process");
+        Map<String,List<UpdaterItemVisitor>> totalBatch = new TreeMap<String,List<UpdaterItemVisitor>>();
         UpdaterException exception = null;
         for (ModuleRegistration module : modules) {
-            log.info("migration update cycle for module "+module.name);
+            log.info("migration update cycle for module " + module.name);
+            for (ItemVisitor visitor : module.visitors) {
+                NodeIterator nodeIter = null;
+                if (visitor instanceof UpdaterItemVisitor.Iterated) {
+                    UpdaterItemVisitor.Iterated iteratedVisitor = (UpdaterItemVisitor.Iterated)visitor;
+                    if (!iteratedVisitor.isAtomic()) {
+                        nodeIter = iteratedVisitor.iterator(updaterSession.upstream);
+                    }
+                } else if(visitor instanceof NamespaceVisitorImpl) {
+                    NamespaceVisitorImpl namespaceVisitor = (NamespaceVisitorImpl) visitor;
+                    if(!namespaceVisitor.isAtomic()) {
+                        nodeIter = namespaceVisitor.iterator(updaterSession.upstream);
+                    }
+                }
+                if(nodeIter != null) {
+                    log.info("migration update iterated for module " + module.name + " (" + visitor.toString() + ")");
+                    while(nodeIter.hasNext()) {
+                        Node node = nodeIter.nextNode();
+                        String path = node.getPath();
+                        List<UpdaterItemVisitor> visitors;
+                        if ((visitors = totalBatch.get(path)) == null) {
+                                visitors = new LinkedList<UpdaterItemVisitor>();
+                                totalBatch.put(path, visitors);
+                        }
+                        visitors.add((UpdaterItemVisitor)visitor);
+                    }
+                }
+            }
+        }
+        Collection<Map<String, List<UpdaterItemVisitor>>> partitionedBatch = partition(totalBatch);
+        for (Map<String, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
+            for (Map.Entry<String, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
+                String path = entry.getKey();
+                Node node = updaterSession.getRootNode();
+                try {
+                    if (!path.equals("/")) {
+                        node = node.getNode(path.substring(1));
+                    }
+                    for (UpdaterItemVisitor visitor : entry.getValue()) {
+                        node.accept(visitor);
+                    }
+                } catch (UpdaterException ex) {
+                    if (exception != null) {
+                        exception = ex;
+                    }
+                    log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
+                } catch (PathNotFoundException ex) {
+                    // deliberate ignore
+                } catch (InvalidItemStateException ex) {
+                    // deliberate ignore
+                }
+            }
+            log.info("upgrade cycle iterated process intermediate commit");
+            updaterSession.commit();
+            updaterSession.flush();
+            log.info("upgrade cycle iterated process intermediate save");
+            session.save();
+        }
+        if (exception != null) {
+            throw exception;
+        }
+        log.info("upgrade cycle iterated process commit");
+        updaterSession.commit();
+        log.info("upgrade cycle iterated process save");
+        session.save();
+        log.info("upgrade cycle saved");
+    }
+
+    protected Collection<Map<String, List<UpdaterItemVisitor>>> partition(Map<String, List<UpdaterItemVisitor>> totalBatch) {
+        LinkedList<Map<String, List<UpdaterItemVisitor>>> partitionedBatch = new LinkedList<Map<String, List<UpdaterItemVisitor>>>();
+        Map<String, List<UpdaterItemVisitor>> currentBatch = null;
+        for (Map.Entry<String, List<UpdaterItemVisitor>> entry : totalBatch.entrySet()) {
+            if(currentBatch == null) {
+                currentBatch = new TreeMap<String, List<UpdaterItemVisitor>>();
+            }
+            currentBatch.put(entry.getKey(), entry.getValue());
+            if(currentBatch.size() >= BATCH_THRESHOLD) {
+                partitionedBatch.add(currentBatch);
+                currentBatch = null;
+            }
+        }
+        if (currentBatch != null) {
+            partitionedBatch.add(currentBatch);
+        }
+        return partitionedBatch;
+    }
+
+    private void preprocess() throws RepositoryException {
+        for (ModuleRegistration module : modules) {
+            log.info("upgrade preprocess cycle for module " + module.name);
             for (ItemVisitor visitor : module.visitors) {
                 if (visitor instanceof NamespaceVisitorImpl) {
                     NamespaceVisitorImpl remap = (NamespaceVisitorImpl)visitor;
-                    log.info("migration handling namespace " + remap.namespace);
+                    log.info("upgrade handling namespace " + remap.namespace);
                     Workspace workspace = session.getWorkspace();
                     NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
                     String[] prefixes = nsreg.getPrefixes();
@@ -571,7 +661,7 @@ public class UpdaterEngine {
                         }
                     }
                     if (!prefixExists) {
-                        log.info("migration registering new prefix " + remap.newPrefix + " to " + remap.newURI);
+                        log.info("upgrade registering new prefix " + remap.newPrefix + " to " + remap.newURI);
                         nsreg.registerNamespace(remap.newPrefix, remap.newURI);
                     }
                     List ntdList = remap.cndReader.getNodeTypeDefs();
@@ -580,36 +670,44 @@ public class UpdaterEngine {
                     for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
                         try {
                             NodeTypeDef ntd = (NodeTypeDef)iter.next();
-                            log.info("migration registering new nodetype " + ntd.getName());
+                            log.info("upgrade registering new nodetype " + ntd.getName());
                             /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
                         } catch (InvalidNodeTypeDefException ex) {
+                            ex.printStackTrace(System.err);
                             // deliberate ignore
-                            }
+                        }
                     }
                 }
             }
         }
+    }
+
+    private void process() throws RepositoryException {
+        UpdaterException exception = null;
         for (ModuleRegistration module : modules) {
-            log.info("migration update cycle for module "+module.name);
             for (ItemVisitor visitor : module.visitors) {
                 try {
-                    if(visitor instanceof UpdaterItemVisitor.Iterated) {
+                    if(!(visitor instanceof UpdaterItemVisitor.Iterated)) {
+                        log.info("migration update traverse for module "+module.name+" ("+visitor.toString()+")");
+                        updaterSession.getRootNode().accept(visitor);
+                    } else {
                         UpdaterItemVisitor.Iterated iteratedVisitor = (UpdaterItemVisitor.Iterated) visitor;
-                        for(NodeIterator iter = iteratedVisitor.iterator(updaterSession.upstream); iter.hasNext(); ) {
-                            Node node = iter.nextNode();
-                            String path = node.getPath();
-                            node = updaterSession.getRootNode();
-                            if(!path.equals("/")) {
-                                node = node.getNode(path.substring(1));
-                            }
-                            try {
-                                iteratedVisitor.visit(node);
-                            } catch(InvalidItemStateException ex) {
-                                // deliberate ignore
+                        if(iteratedVisitor.isAtomic()) {
+                            log.info("migration update traverse iterated for module "+module.name+" ("+visitor.toString()+")");
+                            for (NodeIterator iter = iteratedVisitor.iterator(updaterSession.upstream); iter.hasNext();) {
+                                Node node = iter.nextNode();
+                                String path = node.getPath();
+                                node = updaterSession.getRootNode();
+                                if (!path.equals("/")) {
+                                    node = node.getNode(path.substring(1));
+                                }
+                                try {
+                                    iteratedVisitor.visit(node);
+                                } catch (InvalidItemStateException ex) {
+                                    // deliberate ignore
+                                }
                             }
                         }
-                    } else {
-                        updaterSession.getRootNode().accept(visitor);
                     }
                 } catch (UpdaterException ex) {
                     if (exception != null) {
@@ -624,10 +722,7 @@ public class UpdaterEngine {
         }
     }
 
-    private void commit() throws RepositoryException {
-        updaterSession.commit();
-    }
-
+    /*
     public static class Converted extends UpdaterItemVisitor {
         public Converted() {
         }
@@ -718,18 +813,20 @@ public class UpdaterEngine {
             }
         }
     }
+    */
 
-    public final static class NamespaceVisitorImpl extends UpdaterItemVisitor {
-        public String namespace;
-        public String oldURI;
-        public String newURI;
-        public String oldPrefix;
-        public String newPrefix;
-        public CompactNodeTypeDefReader cndReader;
-        public String cndName;
+    static class NamespaceVisitorImpl extends UpdaterItemVisitor {
+        String namespace;
+        String oldURI;
+        String newURI;
+        String oldPrefix;
+        String newPrefix;
+        CompactNodeTypeDefReader cndReader;
+        String cndName;
         UpdaterContext context;
+        private Set<Node> collection = null;
 
-        public NamespaceVisitorImpl(NamespaceRegistry nsReg, NamespaceVisitor definition) throws RepositoryException, ParseException {
+        NamespaceVisitorImpl(NamespaceRegistry nsReg, NamespaceVisitor definition) throws RepositoryException, ParseException {
             this.namespace = definition.prefix;
             this.cndName = definition.cndName;
             this.context = definition.context;
@@ -747,11 +844,106 @@ public class UpdaterEngine {
             newPrefix = namespace + "_" + newURI.substring(newURI.lastIndexOf('/') + 1).replace('.', '_');
         }
 
+        public String toString() {
+            return "NamespaceVisitor["+namespace+"]";
+        }
+
+        public boolean isAtomic() {
+            //return !cndName.equals("-"); FIXME
+            return true;
+        }
+
+        protected boolean isMatch(Node node) throws RepositoryException {
+            if(node.hasProperty("jcr:primaryType")) {
+                String primaryType = node.getProperty("jcr:primaryType").getString();
+                if(primaryType.startsWith(namespace + ":")) {
+                    return true;
+                }
+            }
+            if(node.hasProperty("jcr:mixinTypes")) {
+                String[] mixins = new String[node.getProperty("jcr:mixinTypes").getValues().length];
+                int i=0;
+                for(Value value : node.getProperty("jcr:mixinTypes").getValues()) {
+                    mixins[i] = value.getString();
+                    if(mixins[i].startsWith(namespace + ":")) {
+                        return true;
+                    }
+                    ++i;
+                }
+            }
+            return false;
+        }
+
+        public NodeIterator iterator(Session session) throws RepositoryException {
+            collection = new HashSet<Node>();
+            session.getRootNode().accept(this);
+            final Iterator<Node> iterator = collection.iterator();
+            collection = null;
+            return new NodeIterator() {
+                int position = 0;
+                public Node nextNode() {
+                    return (Node) next();
+                }
+                public void skip(long skipNum) {
+                    while(skipNum > 0)
+                        next();
+                }
+                public long getSize() {
+                    return -1;
+                }
+                public long getPosition() {
+                    return position;
+                }
+                public boolean hasNext() {
+                    return iterator.hasNext();
+                }
+                public Object next() {
+                    ++position;
+                    return iterator.next();
+                }
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+
         @Override
-        public final void visit(Node node) throws RepositoryException {
-            if(node.getPath().equals("/jcr:system"))
+        public void visit(Node node) throws RepositoryException {
+            if (node.getPath().equals("/jcr:system")) {
                 return;
-            super.visit(node); // FIXME
+            }
+            if (node instanceof HippoNode) {
+                Node canonical = ((HippoNode)node).getCanonicalNode();
+                if (canonical == null || canonical.isSame(node)) {
+                    return;
+                }
+            }
+            if(isAtomic() || collection == null) {
+                entering(node, currentLevel);
+            }
+            if(collection != null) {
+                collection.add(node);
+            }
+            if (isAtomic() || collection != null) {
+                ++currentLevel;
+                try {
+                    for (NodeIterator nodeIter = node.getNodes(); nodeIter.hasNext();) {
+                        nodeIter.nextNode().accept(this);
+                    }
+                    for (PropertyIterator propIter = node.getProperties(); propIter.hasNext();) {
+                        propIter.nextProperty().accept(this);
+                    }
+                } catch (InvalidItemStateException ex) {
+                    // deliberate ignore
+                } catch (RepositoryException ex) {
+                    currentLevel = 0;
+                    throw ex;
+                }
+                --currentLevel;
+            }
+            if (isAtomic() || collection == null) {
+                leaving(node, 0);
+            }
         }
 
         @Override
