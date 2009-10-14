@@ -185,13 +185,13 @@ public class Detail extends BasePersistenceHstComponent {
     
     @Override
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
+        
+        super.doBeforeServeResource(request, response);
+        
         boolean succeeded = true;
         String errorMessage = "";
         
         String workflowAction = request.getParameter("workflowAction");
-        HippoBean n = this.getContentBean(request);
-        String path = n.getPath();
-        String physicalPath = path.replace("/preview/demosite/hst:content/", "/content/documents/demosite/");
         
         String field = request.getParameter("field");
         
@@ -248,7 +248,6 @@ public class Detail extends BasePersistenceHstComponent {
         }
         
         request.setAttribute("payload", "{\"success\": " + succeeded + ", \"message\": \"" + errorMessage + "\"}");
-        response.setServeResourcePath("/jsp/components/main/detailpage-ajaxresult.jsp");
     }
 
 }

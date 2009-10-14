@@ -17,7 +17,11 @@ package org.hippoecm.hst.core.request;
 
 import java.util.Map;
 
-
+/**
+ * A <code>ComponentConfiguration</code> provides some configuration information to a component.
+ * 
+ * @version $Id$
+ */
 public interface ComponentConfiguration {
 
     /**
@@ -31,4 +35,15 @@ public interface ComponentConfiguration {
      * 
      */
     Map<String, String> getParameters(ResolvedSiteMapItem hstResolvedSiteMapItem);
+    
+    /**
+     * @return the location of the view renderer
+     */
+    String getRenderPath();
+    
+    /**
+     * @return return the servletpath of the servlet that must serve the resources for this <code>HstComponent</code>
+     */
+    String getServeResourcePath();
+    
 }

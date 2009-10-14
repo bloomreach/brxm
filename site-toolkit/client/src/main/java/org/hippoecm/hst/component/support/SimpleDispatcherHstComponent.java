@@ -185,6 +185,9 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
     
     @Override
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
+        
+        super.doBeforeServeResource(request, response);
+        
         request.setAttribute(LIFECYCLE_PHASE_ATTRIBUTE, BEFORE_RESOURCE_PHASE);
         
         String dispatchPath = getDispatchPathParameter(request, request.getLifecyclePhase());

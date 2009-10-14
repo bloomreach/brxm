@@ -124,7 +124,7 @@
   
 </div>
 
-<form id="editorForm" method="post" action="<hst:resourceURL resourceId='inlineEdit' />">
+<form id="editorForm" method="post" action="<hst:resourceURL resourceId='/jsp/components/main/detailpage-ajaxresult.jsp' />">
   <div class="yui-skin-sam">
     <input type="hidden" name="nodepath" value="${document.path}"/>
     <input type="hidden" name="customnodepath" value=""/>

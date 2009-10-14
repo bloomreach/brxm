@@ -45,6 +45,9 @@ public class GenericResourceServingHstComponent extends BaseHstComponent {
     }
     
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
+        
+        super.doBeforeServeResource(request, response);
+        
         String resourceId = request.getResourceID();
         
         // This example application assumes the resource is a static file

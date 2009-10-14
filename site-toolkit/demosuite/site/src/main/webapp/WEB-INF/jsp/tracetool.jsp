@@ -48,7 +48,7 @@ String traceLogLevelName = traceLogEventBuffer.getLevelName();
 </hst:element>
 <hst:head-contribution keyHint="hstTraceToolDojoRequires" element="${hstTraceToolDojoRequires}" />
 
-<hst:resourceURL var="logResourcePath" resourceId="log" />
+<hst:resourceURL var="logResourcePath" resourceId="/WEB-INF/jsp/tracetool-log.jsp" />
 
 <a href="javascript:toggleHstTraceWindow()">>> HST Traces</a>
 <div id="hstTraceTabContainer" dojoType="dijit.layout.TabContainer" class="tundra" style="DISPLAY: 'none'; WIDTH: 100%; HEIGHT: 400px">
@@ -72,7 +72,7 @@ String traceLogLevelName = traceLogEventBuffer.getLevelName();
   </div>
 </div>
 
-<hst:resourceURL var="logLevelUrl" resourceId="level" />
+<hst:resourceURL var="logLevelUrl" resourceId="/WEB-INF/jsp/tracetool-level.jsp" />
 
 <script type="text/javascript" language="javascript">
 function toggleHstTraceWindow() {

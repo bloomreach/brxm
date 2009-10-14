@@ -53,4 +53,13 @@ public class ComponentConfigurationImpl implements ComponentConfiguration{
         log.debug("Return value '{}' for property '{}'", parsedParamValue, name);
         return parsedParamValue;
     }
+    
+    public String getRenderPath() {
+        return componentConfiguration.getRenderPath();
+    }
+    
+    public String getServeResourcePath() {
+        return componentConfiguration.getServeResourcePath();
+    }
+    
 }

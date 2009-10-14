@@ -30,7 +30,6 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.util.HttpUtils;
-import org.hippoecm.hst.core.util.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +51,6 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
     protected final static Logger log = LoggerFactory.getLogger(AbstractHstContainerURLProvider.class);
     
     protected static final String REQUEST_INFO_SEPARATOR = "|";
-    protected static final char REQUEST_INFO_SEPARATOR_CHAR = '|';
 
     protected static final String DEFAULT_HST_URL_NAMESPACE_PREFIX = "_hn:";
 
@@ -116,46 +114,41 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         
         url.setCharacterEncoding(characterEncoding);
         
+        String namespacedPathPart = null;
+        // pathInfo argument is always passed when a navigational url is needed; 
+        // navigational urls cannot have namespaced path part.
         if (pathInfo == null) {
-            pathInfo = request.getPathInfo();
-            if (pathInfo != null) {
-                try {
-                    pathInfo = URLDecoder.decode(pathInfo, characterEncoding);
-                } catch (UnsupportedEncodingException e) {
-                    //  never happens
-                }
-            }
+            String [] namespacedPartAndPathInfo = splitPathInfo(request, characterEncoding);
+            namespacedPathPart = namespacedPartAndPathInfo[0];
+            pathInfo = namespacedPartAndPathInfo[1];
         }
         
         url.setPathInfo(pathInfo);
         
         try {
-            if (pathInfo != null && pathInfo.startsWith(this.urlNamespacePrefixedPath)) {
-                Path path = new Path(pathInfo);
-                String urlInfo = path.getSegment(0);
-                String encodedInfo = urlInfo.substring(this.urlNamespacePrefix.length());
-                String [] requestInfos = StringUtils.splitPreserveAllTokens(encodedInfo, REQUEST_INFO_SEPARATOR_CHAR);
+            if (namespacedPathPart != null) {
+                String encodedInfo = namespacedPathPart.substring(urlNamespacePrefixedPath.length());
+                String [] requestInfos = StringUtils.splitByWholeSeparatorPreserveAllTokens(encodedInfo, REQUEST_INFO_SEPARATOR, 2);
                 
                 String requestType = requestInfos[0];
                 
                 if (HstURL.ACTION_TYPE.equals(requestType)) {
                     String actionWindowReferenceNamespace = requestInfos[1];
-                    url.setPathInfo(path.getSubPath(1).toString());
                     url.setActionWindowReferenceNamespace(actionWindowReferenceNamespace);
                     
                     if (log.isDebugEnabled()) {
                         log.debug("action window chosen for {}: {}", url.getPathInfo(), actionWindowReferenceNamespace);
                     }
                 } else if (HstURL.RESOURCE_TYPE.equals(requestType)) {
-                    String resourceWindowReferenceNamespace = requestInfos[1];
-                    String resourceId = requestInfos.length > 2 ? requestInfos[2] : null;
+                    String [] detailInfos = StringUtils.splitByWholeSeparatorPreserveAllTokens(requestInfos[1], REQUEST_INFO_SEPARATOR, 2);
+                    String resourceWindowReferenceNamespace = detailInfos[0];
+                    String resourceId = detailInfos.length > 1 ? detailInfos[1] : null;
                     
                     url.setResourceId(resourceId);
-                    url.setPathInfo(path.getSubPath(1).toString());
                     url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
                     
                     if (log.isDebugEnabled()) {
-                        log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + (resourceId != null ? resourceId : "(null)"));
+                        log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
                     }
                 }
             }
@@ -333,5 +326,46 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         
         return virtualizedServletPath;
     }
+    
+    /*
+     * Splits path info to an array of namespaced path part and remainder. 
+     */
+    protected String [] splitPathInfo(HttpServletRequest request, String characterEncoding) {
+        String pathInfo = request.getPathInfo();
+        
+        if (pathInfo == null) {
+            return new String [] { null, null};
+        }
+        
+        try {
+            pathInfo = URLDecoder.decode(pathInfo, characterEncoding);
+        } catch (UnsupportedEncodingException ignore) {
+        }
+        
+        if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
+            return new String [] { null, pathInfo };
+        }
+        
+        String requestURI = (String) request.getAttribute("javax.servlet.include.request_uri");
+        
+        if (requestURI == null) {
+            requestURI = request.getRequestURI();
+        }
+        
+        String temp = requestURI.substring(requestURI.indexOf(urlNamespacePrefixedPath));
+        int offset = temp.indexOf('/', 1);
+        String namespacedPathPart = temp.substring(0, offset);
 
+        try {
+            namespacedPathPart = URLDecoder.decode(namespacedPathPart, characterEncoding);
+        } catch (UnsupportedEncodingException ignore) {
+        }
+        
+        if (pathInfo.startsWith(namespacedPathPart)) {
+            pathInfo = pathInfo.substring(namespacedPathPart.length());
+        }
+        
+        return new String [] { namespacedPathPart, pathInfo };
+    }
+    
 }

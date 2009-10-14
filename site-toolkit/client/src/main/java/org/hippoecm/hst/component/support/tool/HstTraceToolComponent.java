@@ -40,22 +40,5 @@ public class HstTraceToolComponent extends GenericHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         response.setRenderPath(this.renderPath);
     }
- 
-    public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
-        String resourceId = request.getResourceID();
-        String resourceRenderPath = null;
-        
-        int offset = this.renderPath.lastIndexOf(".jsp");
-        
-        if (offset >= 0) {
-            resourceRenderPath = this.renderPath.substring(0, offset) + "-" + resourceId + ".jsp";
-        } else {
-            resourceRenderPath = this.renderPath + "/" + resourceId;
-        }
-        
-        if (resourceRenderPath != null) {
-            response.setServeResourcePath(resourceRenderPath);
-        }
-    }
     
 }
