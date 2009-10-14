@@ -24,6 +24,10 @@ function AutoResize(editor) {
     this.DOM = YAHOO.util.Dom;
     
     this.parentElement = this.findParent();
+    var xl = parseInt(this.DOM.getStyle(this.parentElement, 'padding-left'));
+    var xr = parseInt(this.DOM.getStyle(this.parentElement, 'padding-right'));
+    this.parentPaddingX = xl+xr;
+    
     this.dim = {
             w: -1,
             h: -1,
@@ -34,7 +38,7 @@ function AutoResize(editor) {
     YAHOO.hippo.LayoutManager.registerResizeListener(this.editor._textArea,
             this, function(type, args) {
         me.checkResize(editor);
-    }, true, false);
+    }, true);
 }
 
 AutoResize.prototype.getDim = function(vWidth, vHeight) {
@@ -43,20 +47,8 @@ AutoResize.prototype.getDim = function(vWidth, vHeight) {
     var minHeight = this.editor.config.AutoResize.minHeight;
     var minWidth = this.editor.config.AutoResize.minWidth;
     
-    if(Xinha.is_ie) {
-        if(!this.initialized) {
-            x = this.parentElement.offsetWidth;
-            var xl = parseInt(this.DOM.getStyle(this.parentElement, 'padding-left'));
-            var xr = parseInt(this.DOM.getStyle(this.parentElement, 'padding-right'));
-            x -= (xl + xr);
-            this.initialized = true;
-        } else {
-            var diff = vWidth - this.dim.viewWidth;
-            x = this.dim.w + diff;
-        }
-    } else {
-        x = parseInt(this.DOM.getStyle(this.parentElement, 'width'));    
-    }
+    var parentRegion = this.DOM.getRegion(this.parentElement);
+    x = parentRegion.width - this.parentPaddingX;
     
     if(x < minWidth) {
         x = minWidth;
@@ -104,15 +96,14 @@ AutoResize.prototype.doResize = function(editor) {
         this.timeout = null;
         var vWidth = this.DOM.getViewportWidth();
         var vHeight = this.DOM.getViewportHeight();
-        if(this.dim.viewWidth != vWidth || this.dim.viewHeight != vHeight) {
-            var newDim = this.getDim(vWidth, vHeight);
-            if(this.dim.w != newDim.w || this.dim.h != newDim.h) {
-                editor.sizeEditor(newDim.w + 'px', newDim.h + 'px', true, true);
-                this.dim = newDim;
-                
-                if(Xinha.is_ie) {
-                    this.DOM.setStyle(this.findParent(), 'height', this.dim.h + 'px');
-                }
+        var newDim = this.getDim(vWidth, vHeight);
+
+        if(this.dim.w != newDim.w || this.dim.h != newDim.h) {
+            this.dim = newDim;
+            
+            editor.sizeEditor(newDim.w + 'px', newDim.h + 'px', true, true);
+            if(Xinha.is_ie) {
+                this.DOM.setStyle(this.findParent(), 'height', this.dim.h + 'px');
             }
         }
     }
