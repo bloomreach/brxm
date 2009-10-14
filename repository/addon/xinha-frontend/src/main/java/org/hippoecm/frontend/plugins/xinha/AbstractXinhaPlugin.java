@@ -16,43 +16,33 @@
 package org.hippoecm.frontend.plugins.xinha;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
-import javax.jcr.Item;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
-import org.apache.wicket.Application;
-import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.Page;
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Response;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
-import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
-import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -67,11 +57,10 @@ import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
+import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
+import org.hippoecm.frontend.service.render.HeaderContributorHelper;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,14 +76,13 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     public static final String XINHA_SAVED_FLAG = "XINHA_SAVED_FLAG";
     public static final String XINHA_PARAM_PREFIX = "xinha-param-prefix-";
 
-    // hardcoded ignore path set
-    private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
-            "/hippo:configuration", "/hippo:namespaces" }));
+    private static final ResourceReference XINHA_MODAL_JS = new JavascriptResourceReference(XinhaDialogBehavior.class,
+            "xinha-modal.js");
 
     private final String mode;
-    private TextArea editor;
+    private XinhaTextArea editor;
     private Configuration configuration;
-    private AbstractAjaxBehavior postBehavior;
+    //private AbstractAjaxBehavior postBehavior;
 
     private InternalLinkBehavior linkPickerBehavior;
     private ExternalLinkBehavior externalLinkBehavior;
@@ -111,18 +99,22 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         add(fragment);
 
         if ("edit".equals(mode)) {
-            fragment.add(createEditor(config));
+
+            fragment.add(editor = new XinhaTextArea("value", new XinhaModel(getValueModel())));
+
             configuration = new Configuration(config);
+            configuration.setName(editor.getMarkupId());
             context.registerService(configuration, Configuration.class.getName());
 
-            JcrPropertyValueModel propertyValueModel = getValueModel();
-            String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
-            nodeModel = new JcrNodeModel(nodePath);
+            add(new EditorManagerBehavior(YuiPluginHelper.getManager(context)));
 
             // dialog functionality for plugins
-            add(HeaderContributor.forJavaScript(new JavascriptResourceReference(XinhaDialogBehavior.class,
-                    "xinha-modal.js")));
+            add(HeaderContributor.forJavaScript(XINHA_MODAL_JS));
 
+            String nodePath = getValueModel().getJcrPropertymodel().getItemModel().getParentModel().getPath();
+            configuration.addProperty("prefix", XinhaUtil.encode(BINARIES_PREFIX + nodePath));
+
+            JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
             imageService = new XinhaImageService(nodeModel) {
                 private static final long serialVersionUID = 1L;
 
@@ -132,8 +124,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
 
             };
-            fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config
-                    .getPluginConfig("Xinha.plugins.InsertImage"), imageService));
 
             linkService = new XinhaLinkService(nodeModel) {
                 private static final long serialVersionUID = 1L;
@@ -144,9 +134,11 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
 
             };
+
+            fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config
+                    .getPluginConfig("Xinha.plugins.InsertImage"), imageService));
             fragment.add(linkPickerBehavior = new InternalLinkBehavior(context, config
                     .getPluginConfig("Xinha.plugins.CreateLink"), linkService));
-
             fragment.add(externalLinkBehavior = new ExternalLinkBehavior(context, config));
 
             add(new XinhaDropBehavior(context, config) {
@@ -204,16 +196,15 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
     protected abstract JcrPropertyValueModel getValueModel();
 
+    /**
+     * Callback urls aren't known at construction so set them here
+     */
     @Override
     public void onBeforeRender() {
         if (configuration != null) {
-            // FIXME: add logic to clean up on the client (delete Xinha.config)
-            editor.setMarkupId("xinha" + Integer.valueOf(Session.get().nextSequenceValue()));
-            configuration.setName(editor.getMarkupId());
-            configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
-            configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
-            configuration.addProperty("xinhaParamToken", XINHA_PARAM_PREFIX);
+            configuration.addProperty("callbackUrl", editor.getCallbackUrl());
 
+            //TODO: add enum to distinguish sorts of drops available
             if (configuration.getPluginConfiguration("InsertImage") != null) {
                 configuration.getPluginConfiguration("InsertImage").addProperty("callbackUrl",
                         imagePickerBehavior.getCallbackUrl().toString());
@@ -228,37 +219,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 configuration.getPluginConfiguration("CreateExternalLink").addProperty("callbackUrl",
                         externalLinkBehavior.getCallbackUrl().toString());
             }
-
-            JcrPropertyValueModel propertyValueModel = getValueModel();
-            // getValueModel regularly returns null, if so, skip the image/binary link
-            if (propertyValueModel != null) {
-                String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
-                configuration.addProperty("prefix", XinhaUtil.encode(BINARIES_PREFIX + nodePath));
-            }
-
-            IPluginContext context = getPluginContext();
-            XinhaEditorBehavior sharedBehavior = context.getService(XinhaEditorBehavior.class.getName(),
-                    XinhaEditorBehavior.class);
-            if (sharedBehavior == null) {
-                sharedBehavior = new XinhaEditorBehavior(context);
-                Page page = context.getService(Home.class.getName(), Home.class);
-                String serviceId = context.getReference(page).getServiceId();
-                context.registerService(sharedBehavior, serviceId);
-                context.registerService(sharedBehavior, XinhaEditorBehavior.class.getName());
-            }
         }
         super.onBeforeRender();
-    }
-
-    @Override
-    public void render(PluginRequestTarget target) {
-        if (configuration != null) {
-            Page page = (Page) findParent(Page.class);
-            if (page == null) {
-                configuration.setName(null);
-            }
-        }
-        super.render(target);
     }
 
     @Override
@@ -270,13 +232,13 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     }
     
     protected String clean(final String value) throws Exception {
-        if(value != null) {
+        if (value != null) {
             IHtmlCleanerService cleaner = getPluginContext().getService(IHtmlCleanerService.class.getName(),
-                IHtmlCleanerService.class);
+                    IHtmlCleanerService.class);
             if (cleaner != null) {
                 return cleaner.clean(value);
             }
-        } 
+        }
         return value;
     }
 
@@ -284,148 +246,93 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         Set<String> linkNames = XinhaHtmlProcessor.getInternalLinks(text);
         linkService.cleanup(linkNames);
     }
-    
-    private Component createEditor(final IPluginConfig config) {
-        final JcrPropertyValueModel valueModel = getValueModel();
-        editor = new TextArea("value", new IModel() {
-            private static final long serialVersionUID = 1L;
 
-            public Object getObject() {
-                return valueModel.getObject();
-            }
+    private class XinhaModel implements IModel {
+        private static final long serialVersionUID = 1L;
 
-            public void setObject(Object value) {
-                try {
-                    String cleanedValue = clean((String) value);
-                    if (cleanedValue != null) {
-                        removeLinks(cleanedValue);
-                    }
-                    valueModel.setObject(cleanedValue);
-                } catch (Exception e) {
-                    error(new ResourceModel("error-while-cleaning-conent",
-                            "An error occured while cleaning the content"));
-                    log.error("Exception caught during editor creation while cleaning value: " + value, e);
+        private JcrPropertyValueModel valueModel;
+
+        public XinhaModel(JcrPropertyValueModel valueModel) {
+            this.valueModel = valueModel;
+        }
+
+        public Object getObject() {
+            return valueModel.getObject();
+        }
+
+        public void setObject(Object value) {
+            try {
+                String cleanedValue = clean((String) value);
+                if (cleanedValue != null) {
+                    removeLinks(cleanedValue);
                 }
+                valueModel.setObject(cleanedValue);
+            } catch (Exception e) {
+                error(new ResourceModel("error-while-cleaning-conent", "An error occured while cleaning the content"));
+                log.error("Exception caught during editor creation while cleaning value: " + value, e);
             }
+        }
 
-            public void detach() {
-                valueModel.detach();
-            }
+        public void detach() {
+            valueModel.detach();
+        }
 
-        }) {
-            private static final long serialVersionUID = 1L;
+    }
 
-            @Override
-            protected void onComponentTag(final ComponentTag tag) {
-                StringBuilder sb = new StringBuilder();
-                String width = config.getString("width", "500px");
-                sb.append("width: ");
-                sb.append(width);
-                sb.append(";");
+    private class XinhaTextArea extends TextArea {
+        private static final long serialVersionUID = 1L;
 
-                String height = config.getString("height", "200px");
-                sb.append("height: ");
-                sb.append(height);
-                sb.append(";");
+        private AbstractAjaxBehavior callback;
 
-                tag.put("style", sb.toString());
-                super.onComponentTag(tag);
-            }
-        };
+        public XinhaTextArea(String id, IModel model) {
+            super(id, model);
 
-        postBehavior = new AbstractAjaxBehavior() {
-            private static final long serialVersionUID = 1L;
+            setOutputMarkupId(true);
+            setVisible(true);
+            setMarkupId("xinha" + Integer.valueOf(Session.get().nextSequenceValue()));
 
-            public void onRequest() {
-                IRequestTarget requestTarget = new IRequestTarget() {
-                    public void respond(RequestCycle requestCycle) {
-                        WebResponse r = (WebResponse) requestCycle.getResponse();
+            add(callback = new AbstractAjaxBehavior() {
+                private static final long serialVersionUID = 1L;
 
-                        // Determine encoding
-                        final String encoding = Application.get().getRequestCycleSettings()
-                                .getResponseRequestEncoding();
-                        r.setCharacterEncoding(encoding);
-                        r.setContentType("application/json; charset=" + encoding);
-
-                        // Make sure it is not cached
-                        r.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
-                        r.setHeader("Cache-Control", "no-cache, must-revalidate");
-                        r.setHeader("Pragma", "no-cache");
-
-                        handleRequest(requestCycle.getRequest(), r);
+                public void onRequest() {
+                    Request request = RequestCycle.get().getRequest();
+                    boolean save = Boolean.valueOf(request.getParameter("save")).booleanValue();
+                    if (save) {
+                        processInput();
                     }
-
-                    public void detach(RequestCycle requestCycle) {
-                    }
-
-                };
-                RequestCycle.get().setRequestTarget(requestTarget);
-            }
-
-            protected void handleRequest(Request request, Response response) {
-                boolean save = Boolean.valueOf(request.getParameter("save")).booleanValue();
-                if (save) {
-                    editor.processInput();
-                    //target.appendJavascript(XINHA_SAVED_FLAG);
                 }
+            });
+        }
 
-                String browse = request.getParameter("browse");
-                if (browse != null) {
+        public String getCallbackUrl() {
+            return callback.getCallbackUrl().toString();
+        }
 
-                    if ("".equals(browse)) {
-                        browse = "/";
-                    }
+        @Override
+        protected void onComponentTag(final ComponentTag tag) {
+            StringBuilder sb = new StringBuilder();
+            String width = getPluginConfig().getString("width", "500px");
+            sb.append("width: ");
+            sb.append(width);
+            sb.append(";");
 
-                    StringBuilder sb = new StringBuilder();
+            String height = getPluginConfig().getString("height", "200px");
+            sb.append("height: ");
+            sb.append(height);
+            sb.append(";");
 
-                    //custom browsing
-                    try {
-                        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-                        Item item = session.getItem(browse);
-                        if (item.isNode()) {
-                            Node itemNode = (Node) item;
-                            NodeIterator iterator = itemNode.getNodes();
-                            while (iterator.hasNext()) {
-                                Node childNode = iterator.nextNode();
-                                Node canonicalNode = ((HippoNode) childNode).getCanonicalNode();
-                                if (canonicalNode != null && canonicalNode.isSame(childNode)
-                                        && !ignorePaths.contains(canonicalNode.getPath())) {
-                                    sb.append("{");
-                                    sb.append("title: '").append(childNode.getName()).append("'");
-                                    boolean isHandle = childNode.isNodeType(HippoNodeType.NT_HANDLE);
-                                    sb.append(", clickable: ").append(isHandle);
-                                    sb.append(", url: '").append(childNode.getPath()).append("'");
-                                    if (childNode.getNodes().hasNext() && !isHandle) {
-                                        sb.append(", children: []");
-                                    }
-                                    sb.append("}");
-                                    if (iterator.hasNext()) {
-                                        sb.append(",");
-                                    }
-                                }
-                            }
-                        }
-                    } catch (RepositoryException e) {
-                        log.error(e.getMessage());
-                    }
+            sb.append("display: none;");
+            tag.put("style", sb.toString());
+            super.onComponentTag(tag);
+        }
 
-                    response.write("[" + sb.toString() + "]");
-                }
-            }
-        };
-
-        editor.setOutputMarkupId(true);
-        editor.setVisible(true);
-        editor.add(postBehavior);
-
-        add(this.new XinhaHeaderContributor());
-        add(new EditorManagerBehavior(YuiPluginHelper.getManager(getPluginContext())));
-
-        return editor;
     }
 
     class EditorManagerBehavior extends AbstractYuiBehavior {
         private static final long serialVersionUID = 1L;
+
+        protected static final String SINGLE_QUOTE = "'";
+        Pattern numbers = Pattern.compile("\\d*");
 
         public EditorManagerBehavior(IYuiManager manager) {
             super(manager);
@@ -434,23 +341,148 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         @Override
         public void addHeaderContribution(IYuiContext context) {
             context.addModule(XinhaNamespace.NS, "editormanager");
+
+            context.addTemplate(new DynamicTextTemplate(AbstractXinhaPlugin.class, "xinha_init.js") {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected Map<String, Object> getVariables() {
+                    final Page page = getPluginContext().getService(Home.class.getName(), Home.class);
+                    String url = HeaderContributorHelper.getFixedRelativePathPrefixToContextRoot()
+                    + "xinha/xinha/";
+                    String lang = page.getLocale().getLanguage();
+                    String skin = configuration.getSkin();
+
+                    Map<String, Object> map = super.getVariables();
+                    map.put("editorUrl", url);
+                    map.put("editorLang", lang);
+                    map.put("editorSkin", skin);
+                    return map;
+                }
+            });
+
+            //add register xinha config
+            context.addOnDomLoad(new AbstractReadOnlyModel() {
+                private static final long serialVersionUID = 1L;
+                
+                //Cache config
+                String config;
+
+                @Override
+                public Object getObject() {
+                    if(config == null) {
+                        config = parseConfiguration(configuration);
+                    }
+                    return "YAHOO.hippo.EditorManager.register(" + config + ");";
+                }
+            });
         }
 
-    }
+        /**
+         * Construct a Javascript object literal that represents the configuration of the Xinha editor.
+         * An example of the returned object is
+         * { 
+         *   name: 'xinha1', 
+         *   properties: [{key: 'callbackUrl', value: '...'}]},
+         *   plugins: ['AutoSave', 'table'],
+         *   pluginProperties: [{ name: 'AutoSave', values [{key: 'timeout', value: 200}]}],
+         *   toolbars: ['createlink', 'bold'],
+         *   styleSheets: ['../../skin/skin.css']
+         * }
+         * @param configuration
+         * @return
+         */
+        protected String parseConfiguration(Configuration configuration) {
+            String plugins = asArray(configuration.getPluginConfigurations());
+            String properties = asKeyValueArray(configuration.getProperties());
+            String pluginProperties = "";
+            for (PluginConfiguration pc : configuration.getPluginConfigurations()) {
+                if (pluginProperties.length() > 0) {
+                    pluginProperties += ", ";
+                }
+                pluginProperties += "{ ";
+                pluginProperties += "name: '" + pc.getName() + "', ";
+                pluginProperties += "values: " + asKeyValueArray(pc.getProperties());
+                pluginProperties += "}";
+            }
+            pluginProperties = "[" + pluginProperties + "]";
 
-    //Move this to editorBehaviour?
-    class XinhaHeaderContributor extends AbstractHeaderContributor {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public final IHeaderContributor[] getHeaderContributors() {
-            IPluginContext context = getPluginContext();
-
-            // make sure a shared behavior exists
-            XinhaEditorBehavior sharedBehavior = context.getService(XinhaEditorBehavior.class.getName(),
-                    XinhaEditorBehavior.class);
-            return sharedBehavior.getHeaderContributorsPartly();
+            String toolbars = asArray(configuration.getToolbarItems());
+            String styleSheets = asArray(configuration.getStyleSheets());
+            return "{name: '" + configuration.getName() + "', properties: " + properties + ", plugins: " + plugins
+                    + ", pluginProperties: " + pluginProperties + ", toolbars: " + toolbars + ", styleSheets: "
+                    + styleSheets + "}";
         }
+
+        /**
+         * Transforms the Map<String, String> into a Javascript array with object literals that contain a key/value pair
+         * 
+         * Example: [{key: 'id', value: 'myId'}, {key: 'index', value: 1}]  
+         */
+        private String asKeyValueArray(Map<String, String> properties) {
+            String ret = "";
+            for (String key : properties.keySet()) {
+                if (ret.length() > 0) {
+                    ret += ", ";
+                }
+                ret += "{ key : '" + key + "', value : " + serialize2JS(properties.get(key)) + "}";
+            }
+            return "[" + ret + "]";
+        }
+
+        /**
+         * Transforms the List<String> into a Javascript array
+         * 
+         * Example: ['foo', 'bar', true, 1]
+         */
+        private String asArray(List<String> list) {
+            String val = "  [\n";
+            for (Iterator<String> iter = list.iterator(); iter.hasNext();) {
+                val += "    ";
+                val += serialize2JS(iter.next());
+                if (iter.hasNext())
+                    val += ",";
+                val += "\n";
+            }
+            val += "  ]";
+            return val;
+        }
+
+        /**
+         * Transforms the Set of BaseConfigurations into a Javascript array containing the configuration names
+         * 
+         * Example: ['config1', 'config2']
+         */
+        private String asArray(Set<? extends BaseConfiguration> configs) {
+            String val = "  [\n";
+            for (Iterator<? extends BaseConfiguration> iter = configs.iterator(); iter.hasNext();) {
+                val += "    ";
+                val += serialize2JS(iter.next().getName());
+                if (iter.hasNext())
+                    val += ",";
+                val += "\n";
+            }
+            val += "  ]";
+            return val;
+        }
+
+        /**
+         * Serializes a String value into a Javascript value. True/false will be serialized as Javascript booleans,
+         * numbers will be serialized as Javascript numbers and String will be escaped by two single quotes. 
+         */
+        private String serialize2JS(String value) {
+            if (value == null)
+                return "null";
+            else if (value.equalsIgnoreCase("true"))
+                return "true";
+            else if (value.equalsIgnoreCase("false"))
+                return "false";
+            else if (numbers.matcher(value).matches())
+                return value;
+
+            return SINGLE_QUOTE + value.replaceAll(SINGLE_QUOTE, "\\\\" + SINGLE_QUOTE) + SINGLE_QUOTE;
+        }
+
     }
 
     class Configuration extends BaseConfiguration {
@@ -467,6 +499,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         private final String skin;
 
         public Configuration(IPluginConfig config) {
+            addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
+            addProperty("xinhaParamToken", XINHA_PARAM_PREFIX);
+
             toolbarItems = new ArrayList<String>();
             String[] values = config.getStringArray(XINHA_TOOLBAR);
             if (values != null) {
