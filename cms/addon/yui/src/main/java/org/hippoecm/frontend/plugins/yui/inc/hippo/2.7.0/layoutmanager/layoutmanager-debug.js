@@ -33,6 +33,25 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, HippoDom = YAHOO.hippo.Dom,  
             Event = YAHOO.util.Event;
         
+        YAHOO.widget.Layout.prototype._setupBodyElements =  function() {
+            this._doc = Dom.get('layout-doc');
+            if (!this._doc) {
+                this._doc = document.createElement('div');
+                this._doc.id = 'layout-doc';
+                if (document.body.firstChild) {
+                    document.body.insertBefore(this._doc, document.body.firstChild);
+                } else {
+                    document.body.appendChild(this._doc);
+                }
+            }
+            this._createUnits();
+            this._setBodySize();
+            //Skip onwindow resize handling here
+            //Event.on(window, 'resize', this.resize, this, true);
+            Dom.addClass(this._doc, 'yui-layout-doc');
+        };
+
+        
         YAHOO.hippo.LayoutManagerImpl = function() {
             this.init();
         };
@@ -43,26 +62,48 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             _w              : new YAHOO.hippo.HashMap(),
             renderQueue     : new YAHOO.hippo.FunctionQueue('render'),
             throttler       : new Wicket.Throttler(true),
-            throttleDelay   : 2000,
+            throttleDelay   : 0,
+            resizeEvent     : null,
         
             init : function() {
-                //Handle the resizing of the window
-                var me = this;
-                //Event.on(window, 'resize', me.resize, me, true);
+                //Register window resize event
+                Event.on(window, 'resize', this.resize, this, true);
+                this.throttleDelay = 0;
+                if(YAHOO.env.ua.ie) {
+                    this.throttleDelay = 400;
+                } else if(YAHOO.env.ua.gecko) {
+                    this.throttleDelay = 400;
+                }
+                
+                this.resizeEvent = new YAHOO.util.CustomEvent('rootResizeEvent');
             },
             
+            /** 
+             * This will only optimize resize performance when
+             * layouts do not register a window.resize themselves I guess
+             */
             resize : function() {
-                if(this.root != null) {// && YAHOO.env.ua.ie) {
+                if(this.throttleDelay > 0) {
+                    var me = this;
+                    this.throttler.throttle('resize-root', this.throttleDelay, function() {
+                        me._resize();
+                    });
+                } else {
+                    this._resize();
+                }
+            },
+
+            _resize : function() {
+                if(this.root != null) {
                     try {
-                        //seems not needed, maybe only IE?
-                        //me.throttler.throttle('resize-root', 1000, this.root.resize);
-                        this.root.resize(); //IE is not auto-bound to the body, so bind window-resize
+                        this.root.resize();
+                        this.resizeEvent.fire();
                     } catch(e) {
-                        YAHOO.log('Error resizing root', 'error');
+                        YAHOO.log('Error resizing root: ' + e, 'error');
                     }
                 }
             },
-            
+
             render : function() {
                 try {
                     this.cleanupWireframes();
@@ -80,14 +121,10 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 })
                 this._w.clear();
 
-                //Workaround for HREPTWO-3035
-                //Set width of all resize handlers in IE to 20px, else they will be blocked
-                //by the scrollbars
                 if (YAHOO.env.ua.ie >= 6 && YAHOO.env.ua.ie < 8) {
                     var re = Dom.getElementsByClassName('yui-resize-handle', 'div');
                     for(var i=0; i<re.length; i++) {
-                        var handle = re[i]; 
-                        Dom.setStyle(handle, 'width', '10px');
+                        Dom.setStyle(re[i], 'width', '10px');
                     }
                 }
             },
@@ -108,15 +145,15 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             addToRenderQueue : function(wireframe) {
-                var func = function() {
+                this.renderQueue.registerFunction(function() {
                     wireframe.render();
-                }
-                this.renderQueue.registerFunction(func);
+                });
             },
             
             getWireframe : function(id) {
-               if(id == this.root.id)
+               if(id == this.root.id) {
                    return this.root;
+               }
                return this.wireframes.get(id);
             },
 
@@ -136,68 +173,125 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             cleanup : function(id) {
-                var wireframe = this.wireframes.get(id);
+                var wireframe = this.wireframes.remove(id);
+                if(wireframe.parent != null) {
+                    wireframe.parent.removeChild(wireframe);
+                }
                 wireframe.children.forEach(this, function(k, v) {
                     this.cleanup(k);
                 });
                 wireframe.children.clear();
                 if (wireframe.layout != null) {
                     wireframe.layout.destroy();
-                    this.wireframes.remove(id);
                 }
+            },
+
+            registerRootResizeListener : function(obj, func) {
+                this.resizeEvent.subscribe(func, obj, true);
+            },
+
+            unregisterRootResizeListener : function(func) {
+                this.resizeEvent.unsubscribe(func);                
+            },
+
+            registerResizeListener : function(el, obj, func, executeNow, _timeoutLength) {
+                var layoutUnit = this.findLayoutUnit(el);
+                if(layoutUnit == null) {
+                    YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ']', 'error', 'LayoutManager');
+                    return;
+                }
+                var timeoutLength = this.throttleDelay;
+                if(!Lang.isUndefined(_timeoutLength) && Lang.isNumber(_timeoutLength)) { //also check for false for backward compatibility
+                    timeoutLength = _timeoutLength;
+                }
+                this.registerEventListener(layoutUnit, layoutUnit, 'resize', obj, func, executeNow, timeoutLength);
             },
             
-            registerResizeListener : function(el, obj, func, executeNow, calculateScroll) {
+            registerRenderListener : function(el, obj, func, executeNow) {
                 var layoutUnit = this.findLayoutUnit(el);
                 if(layoutUnit == null) {
-                    YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ']', 'error');
+                    YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ', can not register render event', 'error', 'LayoutManager');
                     return;
                 }
-                this.registerEventListener(layoutUnit, layoutUnit, 'resize', obj, func, executeNow, calculateScroll);
+                this.registerEventListener(layoutUnit.get('parent'), layoutUnit, 'render', obj, func, executeNow);
             },
 
-            registerRenderListener : function(el, obj, func, executeNow, calculateScroll) {
-                var layoutUnit = this.findLayoutUnit(el);
-                if(layoutUnit == null) {
-                    YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ', can not register render event', 'error');
-                    return;
-                }
-
-                this.registerEventListener(layoutUnit.get('parent'), layoutUnit, 'render', obj, func, executeNow, calculateScroll);
-            },
-
-            registerEventListener : function(target, unit, evt, obj, func, executeNow, calculateScroll) {
+            registerEventListener : function(target, unit, evt, obj, func, executeNow, timeoutLength) {
+                var myId = '[' + evt + ', ' + obj.id + ']';
                 if(executeNow) {
-                    func();
+                    YAHOO.log('ExecuteNow' + myId, 'info', 'LayoutManager');
+                    func.apply(obj, [unit.getSizes()]);
                 }
-
+                var useTimeout = !Lang.isUndefined(timeoutLength) && Lang.isNumber(timeoutLength) && timeoutLength > 0;
                 var eventName = evt + 'CustomEvent';
-                if (Lang.isUndefined(target[eventName]) 
-                        || Lang.isNull(target[eventName])) {
-                    target[eventName] = new YAHOO.util.CustomEvent(eventName, this);
-                    
-                    var callback = function() {
-                        var sizes = unit.getSizes();
-                        if(calculateScroll) {
-                            var scrollBottom = unit.body.scrollHeight - (unit.body.scrollTop + unit.body.clientHeight); // height of element scroll
-                            var scroll = unit.body.scrollTop + scrollBottom > 0;
-                            sizes['scroll'] = scroll;
-                        }
-                        target[eventName].fire(sizes);
-                    };
-                    target.on(evt, callback);
+                var info = { numberOfTimeouts:0, absStart: null, relStart: null };
+                var me = this;
+                
+                if(Lang.isUndefined(target[eventName + 'Subscribers'])) {
+                    target[eventName + 'Subscribers'] = new Array();
 
+                    var callback = function() {
+                        if(info.numberOfTimeouts == 0) {
+                            YAHOO.log('Callback' + myId + ' called, timeout=' + useTimeout, 'info', 'LayoutManager');
+                            info.absStart = new Date();
+                        } else {
+                            var prevTime = new Date().getTime() - info.relStart.getTime();
+                            YAHOO.log('Callback[' + evt + ', ' + obj.id + '] re-called after ' + prevTime + 'ms, timeouts=' + info.numberOfTimeouts, 'info', 'LayoutManager');
+                        }
+                        var me = this;
+                        var execute = function() {
+                            var abs = new Date().getTime() - info.absStart.getTime();
+                            YAHOO.log('Execute' + myId + ' called after ' + abs + 'ms, timeouts=' + info.numberOfTimeouts + ', timeout=' + useTimeout, 'info', 'LayoutManager');
+                            info = { numberOfTimeouts:0, absStart: null, relStart: null };
+                            
+                            var evtStart = new Date();
+                            for(var i=0; i<target[eventName + 'Subscribers'].length; i++) {
+                                var f = target[eventName + 'Subscribers'][i];
+                                f.apply(obj, [unit.getSizes()]);
+                            }
+
+                            YAHOO.log('Execute' + myId + ' handling took ' + (new Date().getTime()-evtStart.getTime()) + 'ms', 'info', 'LayoutManager');
+                        }
+                        if(useTimeout) {
+                            info.relStart = new Date();
+                            YAHOO.log('Throttle' + myId + ', timeoutLength=' + timeoutLength, 'info', 'LayoutManager');
+                            info.numberOfTimeouts++;
+                            this.throttler.throttle(eventName + obj.id, timeoutLength, execute);
+                        } else {
+                            execute();
+                        }
+                    };
+                    YAHOO.log('Register' + myId + ' on unit ' + target.get('id') + ', timeout=' + useTimeout, 'info', 'LayoutManager');
+                    target.subscribe(evt, callback, null, this);
                 }
-                var subs = target[eventName].subscribers; 
-                for(var i=0; i<subs.length; i++) {
-                    if(subs[i].obj == obj) {
-                        return;
-                    }
-                    if(subs[i].obj.id == obj.id) {
-                        return;
-                    }
+                target[eventName + 'Subscribers'].push(func);
+            },
+            
+            unregisterResizeListener : function (el, func) {
+                var layoutUnit = this.findLayoutUnit(el);
+                if(layoutUnit == null) {
+                    YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ']', 'error', 'LayoutManager');
+                    return false;
                 }
-                target[eventName].subscribe(func, obj);
+                return this.unregisterEventListener('resize', layoutUnit, func);
+            },
+
+            unregisterRenderListener : function (el, func) {
+                var layoutUnit = this.findLayoutUnit(el);
+                if(layoutUnit == null) {
+                    YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ', can not unregister render event', 'error', 'LayoutManager');
+                    return false;
+                }
+                return this.unregisterEventListener('render', layoutUnit.get('parent'), func);
+            },
+
+            unregisterEventListener : function (evt, target, func) {
+                var eventName = evt + 'CustomEvent';
+                if (!Lang.isUndefined(target[eventName]) 
+                        && !Lang.isNull(target[eventName])) {
+                    return target[eventName].unsubscribe(func);
+                }
+                return false;
             },
 
             findLayoutUnit : function(el) {
@@ -227,6 +321,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             this.config = config;
             this.layout = null;
             this.children = new YAHOO.hippo.HashMap();
+            this.throttler = new Wicket.Throttler(true);
             
             this.name = id.indexOf(':') > -1 ? id.substr(id.indexOf(':') + 1) : id;
         };
@@ -237,6 +332,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
                     this.enhanceIds();
                     this.prepareConfig();
+                    //this.config.linkedWithParent = true;
                 
                     var layout = new YAHOO.widget.Layout(this.id, this.config);
                     this.layout = layout;
@@ -245,8 +341,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     try {
                         this.layout.render();
                     } catch(e) {
-                        YAHOO.log('An error occured during render of wireframe[' + this.id +']', 'error');
-                        YAHOO.log(Lang.dump(this), 'error');
+                        YAHOO.log('An error occured during render of wireframe[' + this.id +'], dump=' + Lang.dump(this), 'error', 'Wireframe');
                     }
                 }
                 this.afterRender();
@@ -260,9 +355,16 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     Dom.setStyle(me.id, 'width',  me.config.width + 'px');
                 });
                 
-                this.layout.on('resize', function() {
-                    me.storeDimensions();
-                });
+                this.layout.on('resize', this.onLayoutResize, null, this);
+            },
+            
+            onLayoutResize: function() {
+                this.storeDimensions();
+                
+                var values = this.children.valueSet();
+                for(var i=0; i<values.length; i++) {
+                    values[i].resize();
+                }
             },
 
             resize : function() {
@@ -301,11 +403,11 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             loadStoredDimensions : function() {
                 var docDim = this.readDimension('doc');
                 if(docDim == null || docDim.w == null || docDim.h == null) {
-                    YAHOO.log('No stored dimensions found for: ' + this.name);
+                    YAHOO.log('No stored dimensions found for: ' + this.name, 'info', 'Wireframe');
                     return false;
                 }
                 
-                YAHOO.log('Stored dimensions found for: ' + this.name);
+                YAHOO.log('Stored dimensions found for: ' + this.name, 'info', 'Wireframe');
                 this.config.width = docDim.w;
                 this.config.height = docDim.h;
                 var IEIE = 'doc[w=' + docDim.w + ',h=' + docDim.h + '], ';
@@ -324,7 +426,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             storeDimensions : function() {
-                YAHOO.log('Store sizes for: ' + this.name);
+                YAHOO.log('Store sizes for: ' + this.name, 'info', 'Wireframe');
                 var sizes = this.layout.getSizes();
                 this.storeDimension(sizes, 'doc');
                 this.storeDimension(sizes, 'top');
@@ -336,7 +438,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             
             storeDimension : function(sizes, pos) {
                 if(this.hasPosition(pos)) {
-                    YAHOO.log('Sizes changed for ' + this.name);
+                    YAHOO.log('Sizes changed for ' + this.name, 'info', 'Wireframe');
                     var date = new Date();
                     date.setDate(date.getDate() + 31);
                     var opts = { expires: date };
@@ -411,7 +513,10 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             }
             
             if(Lang.isNumber(config.leftWidth) && config.leftWidth > 0) {
-                var left = {position: 'left', body: 'lt', width: config.leftWidth, scroll: false};
+                var left = {position: 'left', body: 'lt', width: config.leftWidth, scroll: config.leftScroll};
+                if(config.leftGutter != null) {
+                    left.gutter = config.leftGutter;
+                }
                 units.push(left);
             }
             
@@ -436,14 +541,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             render: function() {
                 if(this.layout == null) {
                     this.prepareConfig();
-                    
-                    //for now we don't use the body element as wireframe root in IE
-                    /*
-                    var layout = YAHOO.env.ua.ie ? 
-                        new YAHOO.widget.Layout(this.id, this.config) :
-                        new YAHOO.widget.Layout(this.config);
-                    */
-
                     this.layout = new YAHOO.widget.Layout(this.config)
                     this.initLayout();
                 }
@@ -451,11 +548,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 
                 //hack!
                 Dom.setStyle('doc3', 'display', 'none');
-                
-            },
-            
-            enhanceIds : function(){
-                //dont enhance root ids, yet
             },
             
             prepareConfig : function() {
@@ -468,6 +560,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 this.config.height = Dom.getClientHeight()-this.margins.h;
                 this.config.width = Dom.getClientWidth()-this.margins.w; //this works better than offsetWidth
             }
+
         });
         
         YAHOO.hippo.Wireframe = function(id, config) {
@@ -486,6 +579,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     this.config.parent = this.parent.layout;
                 }
                 this.initDimensions();
+				
+                //HREPTWO-3064 To make older browsers more responsive during resizing
+                //we throttle the resize event until it is finished. If we don't set the parent to null
+                //YUI layout will connect the resize event of a parent wireframes to it's nested wireframes,
+                //rendering the throttle approach useless
+                this.config.parent = null;
             },
             
             initDimensions : function() {
@@ -543,7 +642,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         YAHOO.hippo.RelativeWireframe = function(id, config) {
             YAHOO.hippo.RelativeWireframe.superclass.constructor.apply(this, arguments);
             
-            this.relativeUnits = {};
+            this.relativeUnits = [];
             for(var i=0; i<config.units.length; i++) {
                 var unit = config.units[i];
                 var r = {};
@@ -568,34 +667,37 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             initDimensions : function() {
                 if (!this.loadStoredDimensions()) {
                     var dim = this.getDimensions();
-                    
-                    for(var i=0; i<this.config.units.length; i++) {
-                        var unit = this.config.units[i];
-                        if(unit.position != 'center') {
-                            var p = this.relativeUnits[unit.position].w;
-                            if(!Lang.isUndefined(p) && Lang.isNumber(p)) {
-                                //set rel width
-                                this.config.units[i].width = parseInt(dim.w*p);
-                            }
-                            p = this.relativeUnits[unit.position].h;
-                            if(!Lang.isUndefined(p) && Lang.isNumber(p)) {
-                                //set rel height
-                                this.config.units[i].height = parseInt(dim.h*p);
-                            }
-                        }
-                    }
-                    
                     this.config.height = dim.h;
                     this.config.width = dim.w;
+                    
+                    for(var i=0; i<this.config.units.length; i++) {
+                        var pos = this.config.units[i].position;
+                        if(pos != 'center') {
+                            var w = this.relativeUnits[pos].w;
+                            var h = this.relativeUnits[pos].h;
+
+                            this.config.units[i].width = parseInt(dim.w*w);
+                            this.config.units[i].height = parseInt(dim.h*h);
+                        }
+                    }
                 }
             },
             
             updateDimensions : function() {
-                //recalc dims
-                var dim = this.getDimensions();
-                this.config.height = dim.h;
-                this.config.width = dim.w;
-                //this.storeDimensions();
+                this.initDimensions();
+
+                for(var i=0; i<this.config.units.length; i++) {
+                    var pos = this.config.units[i].position;
+                    if(pos != 'center') {
+                        var x = this.layout.getUnitByPosition(pos);
+                        x._configs.width.value = this.config.units[i].width;
+                        x._configs.height.value = this.config.units[i].height;
+                    }
+                }
+            },
+            
+            loadStoredDimensions : function() {
+                return false;
             }
         });
         
@@ -735,7 +837,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             this._resize.destroy();
         }
         var par = this.get('parent');
-    
+        
         this.setStyle('display', 'none');
         if (this._clip) {
             this._clip.parentNode.removeChild(this._clip);
