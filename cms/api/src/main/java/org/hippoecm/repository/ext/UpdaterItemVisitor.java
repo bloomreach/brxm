@@ -50,7 +50,7 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
     /**
      * 
      */
-    public int currentLevel;
+    protected int currentLevel;
 
     /**
      * 
@@ -193,11 +193,13 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         @Override
         public final void visit(Property property) throws RepositoryException {
         }
+
         @Override
         public final void visit(Node node) throws RepositoryException {
             entering(node, 0);
             leaving(node, 0);
         }
+
         /**
          * 
          * @param node
@@ -243,6 +245,7 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
      * 
      */
     public static abstract class Iterated extends Default {
+        private boolean isAtomic = false;
         /**
          * 
          * @param session
@@ -250,6 +253,13 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
          * @throws javax.jcr.RepositoryException
          */
         public abstract NodeIterator iterator(Session session) throws RepositoryException;
+        public final Iterated setAtomic() {
+            isAtomic = true;
+            return this;
+        }
+        public /*final*/ boolean isAtomic() {
+            return isAtomic;
+        }
     }
 
     /**
@@ -278,6 +288,14 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             QueryResult result = query.execute();
             return result.getNodes();
         }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return "QueryVisitor["+statement+"]";
+        }
+
     }
 
     /**
@@ -303,6 +321,14 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             QueryResult result = query.execute();
             return result.getNodes();
         }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return "NodeTypeVisitor["+nodeType+"]";
+        }
+
     }
 
     /**
@@ -338,6 +364,14 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             this.cndName = cndName;
             this.cndReader = cndReader;
             this.context = context;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return "NamespaceVisitor["+prefix+"]";
         }
 
         /**
