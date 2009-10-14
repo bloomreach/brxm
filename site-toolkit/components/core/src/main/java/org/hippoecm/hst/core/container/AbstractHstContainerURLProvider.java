@@ -128,7 +128,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         try {
             if (namespacedPathPart != null) {
                 String encodedInfo = namespacedPathPart.substring(urlNamespacePrefixedPath.length());
-                String [] requestInfos = StringUtils.splitByWholeSeparatorPreserveAllTokens(encodedInfo, REQUEST_INFO_SEPARATOR, 2);
+                String [] requestInfos = StringUtils.splitByWholeSeparatorPreserveAllTokens(encodedInfo, REQUEST_INFO_SEPARATOR, 3);
                 
                 String requestType = requestInfos[0];
                 
@@ -140,9 +140,8 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
                         log.debug("action window chosen for {}: {}", url.getPathInfo(), actionWindowReferenceNamespace);
                     }
                 } else if (HstURL.RESOURCE_TYPE.equals(requestType)) {
-                    String [] detailInfos = StringUtils.splitByWholeSeparatorPreserveAllTokens(requestInfos[1], REQUEST_INFO_SEPARATOR, 2);
-                    String resourceWindowReferenceNamespace = detailInfos[0];
-                    String resourceId = detailInfos.length > 1 ? detailInfos[1] : null;
+                    String resourceWindowReferenceNamespace = requestInfos[1];
+                    String resourceId = requestInfos.length > 2 ? requestInfos[2] : null;
                     
                     url.setResourceId(resourceId);
                     url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
