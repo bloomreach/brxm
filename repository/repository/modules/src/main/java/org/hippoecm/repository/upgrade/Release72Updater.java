@@ -367,11 +367,13 @@ public class Release72Updater implements UpdaterModule {
                                 "org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin");
                     }
                     if (node.hasNode("revert")) {
-                        node.getNode("revert").remove();
+                        Node restore = node.getNode("revert");
+                        context.setName(restore, "restore");
+                        restore.setProperty("editor.id", "${editor.id}");
                     }
                 }
             }
-        });
+        }.setAtomic());
         /**
          * add browser.id, editor.id to all frontend workflow plugins.
          * This doesn't harm plugins that don't use these services, but it might be better to
@@ -406,9 +408,9 @@ public class Release72Updater implements UpdaterModule {
                     renderer.setProperty("plugin.class", className);
                 }
             }
-        });
+        }.setAtomic());
         /**
-         * 
+         * upgrade domain rules
          */
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:domain") {
             @Override
@@ -464,6 +466,29 @@ public class Release72Updater implements UpdaterModule {
                 }
             }
         }.setAtomic());
+        /**
+         * add hipposys:system to workflowuser
+         */
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:userfolder") {
+            @Override
+            public void entering(final Node node, int level) throws RepositoryException {
+                if (node.hasNode("workflowuser")) {
+                    node.getNode("workflowuser").setProperty("hipposys_1_0:system", true);
+                }
+            }
+        }.setAtomic());
+        /**
+         * frontend:user => hipposys:user
+         */
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("frontend:user") {
+            @Override
+            public void entering(final Node node, int level) throws RepositoryException {
+                context.setPrimaryNodeType(node, "hippo:user");
+                node.setProperty("frontend:firstname", (String) null);
+                node.setProperty("frontend:lastname", (String) null);
+                node.setProperty("frontend:email", (String) null);
+            }
+        }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:configuration") {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
@@ -472,9 +497,6 @@ public class Release72Updater implements UpdaterModule {
                             {"hippo:documents", "embedded", "root"},
                             {"hippo:queries"},
                             {"hippo:frontend"}, // tracking changes in cms configuration deemed too expensive
-                            {"hippo:roles", "admin"},
-                            {"hippo:groups", "admin"},
-                            {"hippo:users", "admin", "workflowuser"}
                         }) {
                     for (NodeIterator it = node.getNode(delete[0]).getNodes(); it.hasNext();) {
                         Node child = it.nextNode();
@@ -489,15 +511,6 @@ public class Release72Updater implements UpdaterModule {
                 }
                 for (String delete : new String[] {
                             "hippoldap", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "user-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "user-author", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "group-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "group-author", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "group-everybody", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "role-jcrread", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "role-jcrwrite", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "role-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "role-author", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippostd-date", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-faceteddate", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippostd", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
@@ -525,6 +538,33 @@ public class Release72Updater implements UpdaterModule {
                             "hippogallery-image", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippogallery-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "content", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+
+                            /**
+                             * users: type conversion is sufficient
+                             */
+                            /*
+                            "user-editor",
+                            "user-author",
+                            */
+
+                            /**
+                             * groups: type conversion is sufficient
+                             */
+                            /*
+                            "group-editor",
+                            "group-author",
+                            "group-everybody",
+                            */
+
+                            /**
+                             * roles: type conversion is sufficient
+                             */
+                            /*
+                            "role-jcrread",
+                            "role-jcrwrite",
+                            "role-editor",
+                            "role-author",
+                            */
 
                             /**
                              * authorization rules
