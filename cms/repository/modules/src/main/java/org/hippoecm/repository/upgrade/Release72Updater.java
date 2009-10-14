@@ -26,6 +26,7 @@ import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
@@ -38,8 +39,13 @@ import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.hippoecm.repository.util.VersionNumber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Release72Updater implements UpdaterModule {
+
+    static final Logger log = LoggerFactory.getLogger(Release72Updater.class);
+    
     private static final String[][] rules = {
         {"type", "hippo:remodel", "hipposysedit_1_0:remodel"},
         {"field", "hippo:uri", "hipposysedit_1_0:uri"},
@@ -57,7 +63,7 @@ public class Release72Updater implements UpdaterModule {
         {"field", "hippo:node", "hipposysedit_1_0:node"},
         {"field", "hippo:mixin", "hipposysedit_1_0:mixin"},
         {"child", "hippo:field", "hipposysedit_1_0:field"},
-        // {"type", "hippo:templatetype", "hipposysedit_1_0:templatetype"},
+        {"type", "hippo:templatetype", "hipposysedit_1_0:templatetype"},
         {"type", "hippo:initializeitem", "hippo_2_0:initializeitem"},
         {"type", "hippo:softdocument", "hipposys_1_0:softdocument"},
         {"field", "hippo:uuid", "hipposys_1_0:uuid"},
@@ -71,11 +77,11 @@ public class Release72Updater implements UpdaterModule {
         {"field", "hippo:classname", "hipposys_1_0:classname"},
         {"type", "hippo:types", "hipposys_1_0:types"},
         {"type", "hippo:workflow", "hipposys_1_0:workflow"},
-        {"field", "hippo:workflow", "hipposys_1_0:classname"},
         {"field", "hippo:privileges", "hipposys_1_0:privileges"},
         {"field", "hippo:nodetype", "hipposys_1_0:nodetype"},
         {"field", "hippo:display", "hipposys_1_0:display"},
         {"field", "hippo:classname", "hipposys_1_0:classname"},
+        {"field", "hippo:workflow", "hipposys_1_0:classname"},
         {"child", "hippo:types", "hipposys_1_0:types"},
         {"child", "hippo:config", "hipposys_1_0:config"},
         {"type", "hippo:workflowcategory", "hipposys_1_0:workflowcategory"},
@@ -185,10 +191,10 @@ public class Release72Updater implements UpdaterModule {
         //{"type","hippo:translated","hipponew:translated"},
 
         {"type", "frontend:workflow", "frontend_2_0:workflow"},
-        {"field", "hippo:workflow", "hipposys_1_0:classname"},
         {"field", "hippo:nodetype", "hipposys_1_0:nodetype"},
         {"field", "hippo:display", "hipposys_1_0:display"},
         {"field", "hippo:classname", "hipposys_1_0:classname"},
+        {"field", "hippo:workflow", "hipposys_1_0:classname"},
         {"field", "hippo:privileges", "hipposys_1_0:privileges"},
         {"child", "hippo:types", "hipposys_1_0:types"},
         {"child", "hippo:config", "hipposys_1_0:config"},
@@ -203,6 +209,22 @@ public class Release72Updater implements UpdaterModule {
         {"field", "hippo:classname", "hipposys_1_0:classname"},
     };
 
+    static String[][] renames = {
+        { "org.hippoecm.repository.standardworkflow.EditmodelWorkflowImpl",
+          "org.hippoecm.editor.repository.impl.EditmodelWorkflowImpl" },
+        { "org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin",
+          "org.hippoecm.frontend.editor.workflow.EditmodelWorkflowPlugin" },
+    };
+
+    private static String getNewClass(String oldName) {
+        for (String[] rename : renames) {
+            if (rename[0].equals(oldName)) {
+                return rename[1];
+            }
+        }
+        return oldName;
+    }
+    
     public void register(final UpdaterContext context) {
         context.registerName("upgrade");
         context.registerStartTag("m13");
@@ -323,6 +345,67 @@ public class Release72Updater implements UpdaterModule {
                 }
             }
         });
+        
+        /**
+         * reviewed-actions workflow update
+         */
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:workflowcategory") {
+            @Override
+            protected void entering(Node node, int level) throws RepositoryException {
+                if (node.getName().equals("versioning")) {
+                    if (node.hasNode("version")) {
+                        Node version = node.getNode("version");
+                        if (version.getProperty("hippo:classname").getString().equals("org.hippoecm.repository.api.Document")) {
+                            version.setProperty("hippo:classname",
+                                    "org.hippoecm.repository.standardworkflow.VersionWorkflowImpl");
+                        }
+                        version.setProperty("hippo:privileges", new String[] { "hippo:author" });
+                        context.setPrimaryNodeType(version, "frontend:workflow");
+                        Node renderer = version.addNode("frontend:renderer", "frontend:plugin");
+                        renderer.setProperty("plugin.class",
+                                "org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin");
+                    }
+                    if (node.hasNode("revert")) {
+                        node.getNode("revert").remove();
+                    }
+                }
+            }
+        });
+        /**
+         * add browser.id, editor.id to all frontend workflow plugins.
+         * This doesn't harm plugins that don't use these services, but it might be better to
+         * be a bit more fine-grained about this.
+         */
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("frontend:workflow") {
+            @Override
+            public void entering(final Node node, int level) throws RepositoryException {
+                // convert property to child node
+                if (node.hasProperty("frontend:renderer")) {
+                    if (!node.hasNode("frontend:renderer")) {
+                        Node child = node.addNode("frontend_2_0:renderer", "frontend_2_0:plugin");
+                        child.setProperty("plugin.class", node.getProperty("frontend:renderer").getString());
+                        child.setProperty("model.id", "${model.id}");
+                        child.setProperty("browser.id", "${browser.id}");
+                        child.setProperty("editor.id", "${editor.id}");
+                        node.setProperty("frontend_2_0:renderer", (Value) null);
+                    } else {
+                        log.error("Unable to convert deprecated property frontend:renderer to child node");
+                    }
+                }
+                Node renderer = node.getNode("frontend:renderer");
+                if (!renderer.hasProperty("validator.id")) {
+                    renderer.setProperty("validator.id", "${validator.id}");
+                }
+                if (!renderer.hasProperty("feedback.id")) {
+                    renderer.setProperty("feedback.id", "${feedback.id}");
+                }
+                String oldClassName = renderer.getProperty("plugin.class").getString();
+                String className = getNewClass(oldClassName);
+                if (!className.equals(oldClassName)) {
+                    renderer.setProperty("plugin.class", className);
+                }
+            }
+        });
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:configuration") {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
@@ -330,7 +413,6 @@ public class Release72Updater implements UpdaterModule {
                             {"hippo:temporary"}, // this removal is appropriate, any changes to this folder should be considered transient
                             {"hippo:documents", "embedded", "root"},
                             {"hippo:queries"},
-                            {"hippo:workflows"},
                             {"hippo:frontend"}, // tracking changes in cms configuration deemed too expensive
                             {"hippo:roles", "admin"},
                             {"hippo:groups", "admin"},
@@ -349,10 +431,6 @@ public class Release72Updater implements UpdaterModule {
                 }
                 for (String delete : new String[] {
                             "hippoldap", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "reviewedactions1", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "core-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "reviewedactions2", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "versioning", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "user-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "user-author", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "group-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
@@ -379,10 +457,6 @@ public class Release72Updater implements UpdaterModule {
                             "hippostd", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippolog", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippostd-queries", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippostd-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "embedded-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippostd-workflows2", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "shortcuts-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hipposched", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "frontend", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippohtmlcleaner", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
@@ -397,7 +471,6 @@ public class Release72Updater implements UpdaterModule {
                             "frontend-types", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-namespace.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-type-query.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "editor-workflows", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "domain-templates-templateset", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "reporting", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippogallery", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
@@ -406,6 +479,27 @@ public class Release72Updater implements UpdaterModule {
                             "hippogallery-image", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippogallery-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "content", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            
+                            /**
+                             * The reviewed-actions addon should ideally take care of upgrading its content.
+                             * At the moment, the imports below combine workflows from different projects.
+                             * The upgrade is carried out by the frontend:workflow and workflowcategory iterators. 
+                             */
+                            /*
+                            "reviewedactions1",
+                            "core-workflows",
+                            "reviewedactions2",
+                            "versioning",
+                            */
+                            
+                            /**
+                             * The workflows that ship with the frontend/repository engines + editor.
+                             */
+                            "editor-workflows",
+                            "hippostd-workflows",
+                            "embedded-workflows",
+                            "hippostd-workflows2",
+                            "shortcuts-workflows",
 
                             /**
                              * These initialisation nodes correspond to the /hippo:configuration/hippo:frontend tree.
@@ -429,10 +523,13 @@ public class Release72Updater implements UpdaterModule {
                             "cms-pickers",
                             "cms-services",
                             "cms-dashshortcuts-gotolink",
+                            "reviewedactions3",
+                            "reviewedactions4",
                             "layout-provider",
                             }) {
                     if (node.getNode("hippo:initialize").hasNode(delete)) {
                         node.getNode("hippo:initialize").getNode(delete).remove();
+                        System.out.println("  removing " + delete);
                     }
                 }
                 node.accept(new TraversingItemVisitor.Default(true) {
@@ -450,6 +547,14 @@ public class Release72Updater implements UpdaterModule {
                 node.getNode("hippo:namespaces/system").remove();
                 node.getNode("hippo:namespaces/hippostd").remove();
                 node.getNode("hippo:namespaces/hippogallery").remove();
+
+                // recreate workflow nodes
+                Node workflowCategories = node.getNode("hippo:configuration/hippo:workflows");
+                for (String category : new String[] { "internal", "embedded", "threepane", "shortcuts", "editor" }) {
+                    if (workflowCategories.hasNode(category)) {
+                        workflowCategories.getNode(category).remove();
+                    }
+                }
             }
         });
         for (String[] nodeTypeDefinitions : new String[][] {
@@ -585,7 +690,7 @@ public class Release72Updater implements UpdaterModule {
                                     } else {
                                         // TODO: whenever property is a Name (or Path), see if there is a prefix
                                         // in there that we can remap.
-                                        if (rule[2].equals("hipposys_1_0:value")) {
+                                        if (rule[2].equals("hipposys_1_0:value") || rule[2].equals("hipposys_1_0:nodetype")) {
                                             String value = node.getProperty(rule[1]).getString();
                                             for (int k = 0; k < rules.length; k++) {
                                                 if (rules[k][0].equals("type") && rules[k][1].equals(value)) {
@@ -593,10 +698,14 @@ public class Release72Updater implements UpdaterModule {
                                                     // hipposys:value is a String property, so the prefix will not be remapped
                                                     String prefix = value.substring(0, value.indexOf('_'));
                                                     value = prefix + value.substring(value.indexOf(':'));
+                                                    System.out.println(" replacing at " + node.getPath() + ": " + rules[k][1] + " => " + value);
                                                     break;
                                                 }
                                             }
                                             node.setProperty(rule[2], value);
+                                        } else if (rule[2].equals("hipposys_1_0:classname")) {
+                                            String value = node.getProperty(rule[1]).getString();
+                                            node.setProperty(rule[2], getNewClass(value));
                                         } else {
                                             node.setProperty(rule[2], node.getProperty(rule[1]).getValue());
                                         }
