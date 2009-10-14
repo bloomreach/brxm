@@ -348,6 +348,14 @@ if (!YAHOO.hippo.EditorManager) {
                 var editor = this.editors.get(xId);
                 editor.lastData = editor.xinha.getInnerHTML();
                 
+              //Workaround for http://issues.onehippo.com/browse/HREPTWO-2960
+              //Test if IE8, than set&remove focus on Xinha to prevent UI lockup
+              if(YAHOO.env.ua.ie >= 8) {
+                  editor.xinha.activateEditor();
+                  editor.xinha.focusEditor();
+                  editor.xinha.deactivateEditor();
+              }
+
                 this.log('Xinhap[' + xId + '] - Render took ' + (new Date().getTime() - editor._timer.getTime()) + 'ms');
             },
             
