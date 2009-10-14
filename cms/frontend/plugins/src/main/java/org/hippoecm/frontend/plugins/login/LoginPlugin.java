@@ -28,6 +28,7 @@ import java.util.jar.Manifest;
 
 import javax.jcr.Repository;
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.RequestCycle;
@@ -48,6 +49,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.value.ValueMap;
 
 import org.hippoecm.frontend.Home;
@@ -64,6 +66,8 @@ public class LoginPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String LOCALE_COOKIE = "loc";
+    
     protected ValueMap credentials = new ValueMap();
 
     public LoginPlugin(IPluginContext context, IPluginConfig config) {
@@ -140,8 +144,25 @@ public class LoginPlugin extends RenderPlugin {
         public SignInForm(final String id) {
             super(id);
             
+
             // by default, use the user's browser settings for the locale
-            selectedLocale = getSession().getLocale().getLanguage();
+            selectedLocale = "en";
+            if (locales.contains(getSession().getLocale().getLanguage())) {
+                selectedLocale = getSession().getLocale().getLanguage();
+            }
+            
+            // check if user has previously selected a locale
+            Cookie[] cookies = ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
+            if(cookies != null) {
+                for (int i = 0; i < cookies.length; i++) {
+                    if (LOCALE_COOKIE.equals(cookies[i].getName())) {
+                        if (locales.contains(cookies[i].getValue())) {
+                            selectedLocale = cookies[i].getValue();
+                            getSession().setLocale(new Locale(selectedLocale));
+                        }
+                    }
+                }
+            }
 
             add(usernameTextField = new RequiredTextField("username",  new StringPropertyModel(credentials, "username")));
             add(passwordTextField = new PasswordTextField("password", new StringPropertyModel(credentials, "password")));
@@ -154,6 +175,9 @@ public class LoginPlugin extends RenderPlugin {
 
                 protected void onUpdate(AjaxRequestTarget target) {
                     //immediately set the locale when the user changes it
+                    Cookie localeCookie = new Cookie(LOCALE_COOKIE, selectedLocale);
+                    localeCookie.setMaxAge(365*24*3600); // expire one year from now
+                    ((WebResponse)RequestCycle.get().getResponse()).addCookie(localeCookie);
                     getSession().setLocale(new Locale(selectedLocale));
                     setResponsePage(this.getFormComponent().getPage());
                 }
