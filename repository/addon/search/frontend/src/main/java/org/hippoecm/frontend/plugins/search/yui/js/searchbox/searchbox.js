@@ -33,11 +33,10 @@ YAHOO.extend(YAHOO.hippo.SearchBox, YAHOO.hippo.HippoAutoComplete, {
     
     initConfig : function(config) {
         YAHOO.hippo.SearchBox.superclass.initConfig.call(this, config);
-        _this = this;
         this.itemSelectEvent.subscribe(function(sType, aArgs) {
             var data = aArgs[2];
-            var url = _this.callbackUrl + '&browse=' + encodeURIComponent(data.url);
-            _this.callbackMethod(url);
+            var url = config.callbackUrl + '&browse=' + encodeURIComponent(data.url);
+            config.callbackFunction(url);
             this._clearTextboxValue();
         });
         
