@@ -37,7 +37,7 @@ public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(YuiTreeNamespace.NS, "treehelper");
-        context.addOnWinLoad(new AbstractReadOnlyModel() {
+        context.addOnDomLoad(new AbstractReadOnlyModel() {
             private static final long serialVersionUID = 1L;
             
             @Override
