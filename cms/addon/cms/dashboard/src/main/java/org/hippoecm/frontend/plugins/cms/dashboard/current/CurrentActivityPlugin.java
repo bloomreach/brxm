@@ -104,6 +104,7 @@ public class CurrentActivityPlugin extends RenderPlugin {
             DocumentEvent documentEvent = new DocumentEvent((JcrNodeModel) item.getModel());
             String path = documentEvent.getDocumentPath();
             if (path != null) {
+                path = fixPathForRequests(path);
                 EventModel label = new EventModel((JcrNodeModel) item.getModel(), new JcrNodeModel(path));
                 BrowseLinkTarget target = new BrowseLinkTarget(path);
                 BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", new Model(target),
@@ -115,6 +116,30 @@ public class CurrentActivityPlugin extends RenderPlugin {
                 entryLabel.setEscapeModelStrings(false);
                 item.add(entryLabel);
             }
+        }
+        
+        /**
+         * FIXME: This is a temporary(?) best effort fix for not showing "hippo:request" in 
+         * the activity view. 
+         * @param path
+         * @return
+         */
+        private String fixPathForRequests(String path) {
+            if (!path.endsWith("hippo:request")) {
+                return path;
+            }
+            
+            String[] pathElts = path.split("/");
+            StringBuilder newPath = new StringBuilder();
+            // build new path, strip last element, eg "hippo:request"
+            for (int i=0; i < pathElts.length - 1; i++) {
+                if (pathElts[i].length() > 0) {
+                    newPath.append("/").append(pathElts[i]);
+                }
+            }
+            // add last part again to point to document
+            newPath.append("/").append(pathElts[pathElts.length -2]);
+            return newPath.toString();
         }
     }
 
