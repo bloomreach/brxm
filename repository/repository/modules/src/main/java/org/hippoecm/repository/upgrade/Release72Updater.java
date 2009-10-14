@@ -407,6 +407,63 @@ public class Release72Updater implements UpdaterModule {
                 }
             }
         });
+        /**
+         * 
+         */
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:domain") {
+            @Override
+            public void entering(final Node node, int level) throws RepositoryException {
+                String name = node.getName();
+                if ("defaultwrite".equals(name)) {
+                    if (node.hasNode("hippo-handle")) {
+                        Node hippoHandle = node.getNode("hippo-handle");
+                        hippoHandle.getNode("type-hippo-handle").setProperty("hippo:facet", "nodetype");
+                    }
+                } else if ("versioning".equals(name)) {
+                    Node facetRule;
+
+                    if (!node.hasNode("nt-system")) {
+                        Node ntSystem = node.addNode("nt-system", "hippo:domainrule");
+                        facetRule = ntSystem.addNode("type-rep-system", "hippo:facetrule");
+                        facetRule.setProperty("hippo:equals", true);
+                        facetRule.setProperty("hippo:facet", "jcr:primaryType");
+                        facetRule.setProperty("hippo:filter", false);
+                        facetRule.setProperty("hippo:type", "Name");
+                        facetRule.setProperty("hippo:value", "rep:system");
+                    }
+
+                    if (!node.hasNode("nt-versionStorage")) {
+                        Node ntVersionStorage = node.addNode("nt-versionStorage", "hippo:domainrule");
+                        facetRule = ntVersionStorage.addNode("type-rep-versionStorage", "hippo:facetrule");
+                        facetRule.setProperty("hippo:equals", true);
+                        facetRule.setProperty("hippo:facet", "jcr:primaryType");
+                        facetRule.setProperty("hippo:filter", false);
+                        facetRule.setProperty("hippo:type", "Name");
+                        facetRule.setProperty("hippo:value", "rep:versionStorage");
+                    }
+
+                    Node authRole = node.addNode("hippo:authrole", "hippo:authrole");
+                    authRole.setProperty("hippo:role", "editor" );
+                    authRole.setProperty("hippo:groups", new String[] { "editor" });
+                } else if ("templates".equals(name)) {
+                    Node facetRule;
+                    if (!node.hasNode("type-hippo-prototypes")) {
+                        Node ntPrototypes = node.addNode("type-hippo-prototypes", "hippo:domainrule");
+                        facetRule = ntPrototypes.addNode("nodetype-hippo-prototypeset", "hippo:facetrule");
+                        facetRule.setProperty("hippo:equals", true);
+                        facetRule.setProperty("hippo:facet", "jcr:primaryType");
+                        facetRule.setProperty("hippo:filter", false);
+                        facetRule.setProperty("hippo:type", "Name");
+                        facetRule.setProperty("hippo:value", "hipposysedit:prototypeset");
+                    }
+
+                    Node ntPrototype = node.getNode("hippo-prototype");
+                    context.setName(ntPrototype, "type-hippo-prototype");
+                    facetRule = ntPrototype.getNode("nodetype-hippo-prototype");
+                    facetRule.setProperty("hippo:value", "hipposysedit:prototype");
+                }
+            }
+        }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:configuration") {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
@@ -441,18 +498,6 @@ public class Release72Updater implements UpdaterModule {
                             "role-jcrwrite", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "role-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "role-author", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-defaultread", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-defaultwrite", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-versioning", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-workflow", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-hippodocuments", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-hippofolders", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-frontendconfig", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-hippogallery", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-htmlcleaner", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-templates", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-hippolog", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-hipporequests", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippostd-date", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-faceteddate", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippostd", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
@@ -480,7 +525,25 @@ public class Release72Updater implements UpdaterModule {
                             "hippogallery-image", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippogallery-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "content", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            
+
+                            /**
+                             * authorization rules
+                             */
+                            /*
+                            "domain-defaultread",
+                            "domain-defaultwrite",
+                            "domain-versioning",
+                            "domain-workflow",
+                            "domain-hippodocuments",
+                            "domain-hippofolders",
+                            "domain-frontendconfig",
+                            "domain-hippogallery",
+                            "domain-htmlcleaner",
+                            "domain-templates",
+                            "domain-hippolog",
+                            "domain-hipporequests",
+                            */
+
                             /**
                              * The reviewed-actions addon should ideally take care of upgrading its content.
                              * At the moment, the imports below combine workflows from different projects.
