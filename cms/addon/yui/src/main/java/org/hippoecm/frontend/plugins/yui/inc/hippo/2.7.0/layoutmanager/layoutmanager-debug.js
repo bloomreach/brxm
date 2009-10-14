@@ -546,8 +546,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
                 this.layout.render();
                 
-                //hack!
+                //workaround
                 Dom.setStyle('doc3', 'display', 'none');
+                
+                //HREPTWO-3072 it seems the body with/height is set once by YUI-layout
+                //after a resize it's not updated, so we set it to auto instead
+                Dom.setStyle(document.body, 'width', 'auto');
+                Dom.setStyle(document.body, 'height', 'auto');
             },
             
             prepareConfig : function() {
