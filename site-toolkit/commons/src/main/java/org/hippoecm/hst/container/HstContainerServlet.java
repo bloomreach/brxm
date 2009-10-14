@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerConfig;
+import org.hippoecm.hst.core.container.Pipeline;
 import org.hippoecm.hst.site.HstServices;
 
 /**
@@ -49,6 +50,8 @@ public class HstContainerServlet extends HttpServlet {
 
     public static final String CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME = HstContainerServlet.class.getName() + ".clientComponentManager";
     
+    public static final String DEFAULT_PIPELINE_INIT_PARAM = "hstDefaultPipeline";
+    
     protected HstContainerConfig requestContainerConfig;
     
     protected String contextNamespace;
@@ -63,21 +66,18 @@ public class HstContainerServlet extends HttpServlet {
     
     protected String clientComponentManagerContextAttributeName = HstContainerServlet.class.getName() + ".clientComponentManager";
     
+    protected String defaultPipeline;
+    
     
     @Override
     public void init(ServletConfig config) throws ServletException {
         
         super.init(config);
         
-        this.contextNamespace = getConfigOrContextInitParameter(CONTEXT_NAMESPACE_INIT_PARAM, null);
+        contextNamespace = getConfigOrContextInitParameter(CONTEXT_NAMESPACE_INIT_PARAM, contextNamespace);
+        clientComponentManagerClassName = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM, clientComponentManagerClassName);
         
-        String param = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM, null);
-        
-        if (param != null) {
-            clientComponentManagerClassName = param;
-        }
-        
-        param = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM, null);
+        String param = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM, null);
         
         if (param != null) {
             String [] configs = param.split(",");
@@ -89,11 +89,8 @@ public class HstContainerServlet extends HttpServlet {
             clientComponentManagerConfigurations = configs;
         }
         
-        param = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM, null);
-        
-        if (param != null) {
-            clientComponentManagerContextAttributeName = param;
-        }
+        clientComponentManagerContextAttributeName = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM, clientComponentManagerContextAttributeName);
+        defaultPipeline = getConfigOrContextInitParameter(DEFAULT_PIPELINE_INIT_PARAM, null);
         
         initialized = false;
         
@@ -177,6 +174,10 @@ public class HstContainerServlet extends HttpServlet {
             
             if (this.contextNamespace != null) {
                 req.setAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE, contextNamespace);
+            }
+            
+            if (defaultPipeline != null && req.getAttribute(Pipeline.class.getName()) == null) {
+                req.setAttribute(Pipeline.class.getName(), defaultPipeline);
             }
             
             HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, req, res);
