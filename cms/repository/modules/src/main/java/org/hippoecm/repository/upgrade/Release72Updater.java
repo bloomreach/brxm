@@ -239,7 +239,7 @@ public class Release72Updater implements UpdaterModule {
                     node.getProperty("hippo:compute").remove();
                 }
             }
-        });
+        }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("rep:root") {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
@@ -249,9 +249,11 @@ public class Release72Updater implements UpdaterModule {
                  * fact that old entries might not contain the same information and the effort of converting data which is
                  * going to be removed quickly is unnecessary.
                  */
-                node.getNode("hippo:log").remove();
+                if (node.hasNode("hippo:log")) {
+                    node.getNode("hippo:log").remove();
+                }
             }
-        });
+        }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:namespacefolder") {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
@@ -263,9 +265,8 @@ public class Release72Updater implements UpdaterModule {
                     }
                 }
             }
-        });
+        }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:templatetype") {
-
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
                 // Should a new nodetype descriptor be created?
@@ -344,7 +345,7 @@ public class Release72Updater implements UpdaterModule {
                     context.setPrimaryNodeType(child, "editor_1_0:templateset");
                 }
             }
-        });
+        }.setAtomic());
         
         /**
          * reviewed-actions workflow update
@@ -539,14 +540,20 @@ public class Release72Updater implements UpdaterModule {
                     }
                 });
             }
-        });
+        }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("rep:root") {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
-                node.getNode("hippo:namespaces/hippo").remove();
-                node.getNode("hippo:namespaces/system").remove();
-                node.getNode("hippo:namespaces/hippostd").remove();
-                node.getNode("hippo:namespaces/hippogallery").remove();
+                if (node.hasNode("hippo:namespaces")) {
+                    if (node.hasNode("hippo:namespaces/hippo"))
+                        node.getNode("hippo:namespaces/hippo").remove();
+                    if (node.hasNode("hippo:namespaces/system"))
+                        node.getNode("hippo:namespaces/system").remove();
+                    if (node.hasNode("hippo:namespaces/hippostd"))
+                        node.getNode("hippo:namespaces/hippostd").remove();
+                    if (node.hasNode("hippo:namespaces/hippogallery"))
+                        node.getNode("hippo:namespaces/hippogallery").remove();
+                }
 
                 // recreate workflow nodes
                 Node workflowCategories = node.getNode("hippo:configuration/hippo:workflows");
@@ -556,7 +563,7 @@ public class Release72Updater implements UpdaterModule {
                     }
                 }
             }
-        });
+        }.setAtomic());
         for (String[] nodeTypeDefinitions : new String[][] {
                     {"hipposys"},
                     {"hipposysedit"},
@@ -579,6 +586,8 @@ public class Release72Updater implements UpdaterModule {
                 } else {
                     cndStream = getClass().getClassLoader().getResourceAsStream(cndName);
                 }
+                if(cndName.equals("hippogallery"))
+                    cndName = "-";
                 if (cndStream != null) {
                     context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, prefix, cndName, new InputStreamReader(cndStream)));
                 }

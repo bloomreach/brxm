@@ -72,12 +72,20 @@ final public class UpdaterSession implements HippoSession {
     ValueFactory valueFactory;
     UpdaterNode root;
     UpdaterWorkspace workspace;
+    private List<Relink> relinking;
+    private Map<String,String> relinkMap;
 
     public UpdaterSession(Session session) throws UnsupportedRepositoryOperationException, RepositoryException {
         this.upstream = session;
         this.valueFactory = session.getValueFactory();
         this.workspace = new UpdaterWorkspace(this, session.getWorkspace());
-        this.root = new UpdaterNode(this, upstream.getRootNode(), null);
+        flush();
+    }
+
+    public void flush() throws RepositoryException {
+        root = new UpdaterNode(this, upstream.getRootNode(), null);
+        relinking = new LinkedList<Relink>();
+        relinkMap = new HashMap<String,String>();
     }
 
     public NodeType getNewType(String type) throws NoSuchNodeTypeException, RepositoryException {
@@ -94,8 +102,6 @@ final public class UpdaterSession implements HippoSession {
             this.targetUUID = targetUUID;
         }
     }
-    private List<Relink> relinking = new LinkedList<Relink>();
-    private Map<String,String> relinkMap = new HashMap<String,String>();
 
     void relink(Node source, Node target) throws RepositoryException {
         if(source.isNodeType("mix:referenceable")) {
