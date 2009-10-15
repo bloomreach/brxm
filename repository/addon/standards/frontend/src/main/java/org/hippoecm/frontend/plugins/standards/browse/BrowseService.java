@@ -161,11 +161,13 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
 
     public void detach() {
         JcrNodeModel nodeModel = documentService.getModel();
-        if (!nodeModel.getItemModel().exists()) {
+        if (nodeModel == null || !nodeModel.getItemModel().exists()) {
             nodeModel = folderService.getModel();
         }
-        if (nodeModel.getItemModel().exists()) {
+        if (nodeModel != null && nodeModel.getItemModel().exists()) {
             path = nodeModel.getItemModel().getPath();
+        } else {
+            path = null;
         }
 
         folderService.detach();
