@@ -96,7 +96,7 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
     }
 
     public int getChildCount() {
-        ensureChildcountLoaded();
+        ensureChildrenLoaded();
         return childcount;
     }
 
@@ -106,9 +106,6 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
     }
 
     public boolean isLeaf() {
-        if (!reloadChildcount) {
-            return childcount == 0;
-        }
         try {
             if (nodeModel != null && nodeModel.getNode() != null) {
                 return !nodeModel.getNode().getNodes().hasNext();
