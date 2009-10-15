@@ -276,14 +276,18 @@ public class Release72Updater implements UpdaterModule {
                 String newUri = null;
                 if (node.getDepth() > 0 && node.getParent().isNodeType("hipposysedit_1_0:namespace")
                         && !"system".equals(prefix)) {
-                    uri = node.getSession().getNamespaceURI(prefix);
-                    VersionNumber version = new VersionNumber(uri.substring(uri.lastIndexOf("/") + 1));
-                    newUri = uri.substring(0, uri.lastIndexOf('/') + 1) + version.next().toString();
-                    convert = true;
                     try {
-                        node.getSession().getNamespacePrefix(newUri);
+                        uri = node.getSession().getNamespaceURI(prefix);
+                        VersionNumber version = new VersionNumber(uri.substring(uri.lastIndexOf("/") + 1));
+                        newUri = uri.substring(0, uri.lastIndexOf('/') + 1) + version.next().toString();
+                        convert = true;
+                        try {
+                            node.getSession().getNamespacePrefix(newUri);
+                        } catch (NamespaceException ex) {
+                            convert = false;
+                        }
                     } catch (NamespaceException ex) {
-                        convert = false;
+                        log.warn("Unknown namespace prefix " + prefix);
                     }
                 }
 
@@ -294,7 +298,7 @@ public class Release72Updater implements UpdaterModule {
                     Node version = nodetypeVersionIter.nextNode();
                     context.setName(version, "hipposysedit_1_0:nodetype");
                     if (convert && version.isNodeType("hippo:remodel")) {
-                        if (uri.equals(version.getProperty("hippo:uri").getString())) {
+                        if (uri != null && uri.equals(version.getProperty("hippo:uri").getString())) {
                             current = version;
                         }
                     }
@@ -512,32 +516,36 @@ public class Release72Updater implements UpdaterModule {
                 for (String delete : new String[] {
                             "hippoldap", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippostd-date", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "templateeditor-faceteddate", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippostd", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippolog", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippostd-queries", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hipposched", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "frontend", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippohtmlcleaner", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippostd-html-template", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "system-html-template", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "namespaces", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "templateeditor-system", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "templateeditor-hippo", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-hipposysedit", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippostd-types", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "frontend-types", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-namespace.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-type-query.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "domain-templates-templateset", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "reporting", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippogallery", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippogallery-files", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippogallery-images", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippogallery-image", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippogallery-editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "content", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+
+                            /**
+                             * Templates from the "system", hippo and hippostd namespaces have to be re-initialized
+                             * as they are removed.
+                             */
+                            "hippostd-html-template",
+                            "system-html-template",
+                            "hippogallery-editor",
+                            "hippostd-types",
+                            "templateeditor-faceteddate",
+                            "templateeditor-system",
+                            "templateeditor-hippo",
+                            "frontend-types",
 
                             /**
                              * users: type conversion is sufficient
@@ -567,7 +575,7 @@ public class Release72Updater implements UpdaterModule {
                             */
 
                             /**
-                             * authorization rules
+                             * authorization rules: conversion suffices
                              */
                             /*
                             "domain-defaultread",
@@ -582,6 +590,7 @@ public class Release72Updater implements UpdaterModule {
                             "domain-templates",
                             "domain-hippolog",
                             "domain-hipporequests",
+                            "domain-templates-templateset",
                             */
 
                             /**
@@ -633,7 +642,6 @@ public class Release72Updater implements UpdaterModule {
                             }) {
                     if (node.getNode("hippo:initialize").hasNode(delete)) {
                         node.getNode("hippo:initialize").getNode(delete).remove();
-                        System.out.println("  removing " + delete);
                     }
                 }
                 node.accept(new TraversingItemVisitor.Default(true) {
@@ -717,10 +725,10 @@ public class Release72Updater implements UpdaterModule {
     }
 
     private Set<String> subTypedNamespaces(Workspace workspace) throws RepositoryException {
-        Set<String> superTypeNamespaces = new HashSet<String>();
+        Set<String> knownNamespaces = new HashSet<String>();
         Set<String> subtypedNamespaces = new HashSet<String>();
         Set<String> skippedNamespaces = new HashSet<String>();
-        superTypeNamespaces.add("hippo");
+        knownNamespaces.add("hippo");
         skippedNamespaces.add("hipposys");
         skippedNamespaces.add("hipposysedit");
         skippedNamespaces.add("hippostd");
@@ -733,7 +741,7 @@ public class Release72Updater implements UpdaterModule {
         skippedNamespaces.add("hipposched");
         skippedNamespaces.add("hippoldap");
 
-        skippedNamespaces.addAll(superTypeNamespaces);
+        skippedNamespaces.addAll(knownNamespaces);
         NodeTypeManager ntMgr = workspace.getNodeTypeManager();
         boolean rerun;
         do {
@@ -743,13 +751,15 @@ public class Release72Updater implements UpdaterModule {
                 String ntName = nt.getName();
                 if (ntName.contains(":")) {
                     String ntNamespace = ntName.substring(0, ntName.indexOf(":"));
-                    if (!superTypeNamespaces.contains(ntNamespace) && !subtypedNamespaces.contains(ntNamespace)) {
+                    // if the namespace (x) is not known, but one of the supertypes of the type is in a
+                    // known namespace (y) then add the namespace (x) to the list of known namespaces and restart.
+                    if (!knownNamespaces.contains(ntNamespace)) {
                         for (NodeType superType : nt.getSupertypes()) {
                             String superName = superType.getName();
                             if (superName.contains(":")) {
                                 String superNamespace = superName.substring(0, superName.indexOf(":"));
-                                if (superTypeNamespaces.contains(superNamespace)) {
-                                    superTypeNamespaces.add(ntNamespace);
+                                if (knownNamespaces.contains(superNamespace)) {
+                                    knownNamespaces.add(ntNamespace);
                                     if (!skippedNamespaces.contains(ntNamespace))
                                         subtypedNamespaces.add(ntNamespace);
                                     rerun = true;
