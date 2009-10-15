@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reporting;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -82,7 +83,7 @@ public class ReportPlugin implements IPlugin {
 
     private Node getReportNode() {
         String reportId = config.getString("report.input.node");
-        Node node;
+        Node node = null;
         try {
             if (reportId != null) {
                 Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
@@ -90,12 +91,11 @@ public class ReportPlugin implements IPlugin {
                 if (!node.isNodeType(ReportingNodeTypes.NT_REPORT)) {
                     node = null;
                 }
-            } else {
-                node = null;
             }
+        } catch (ItemNotFoundException e) {
+            log.info("Report node not found with id: " + reportId);
         } catch (RepositoryException e) {
-            log.error(e.getMessage());
-            node = null;
+            log.error("Error while fetching report node with id: " + reportId, e);
         }
         return node;
     }
