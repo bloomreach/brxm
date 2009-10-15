@@ -92,7 +92,13 @@ public class JcrCompactNodeTypeDefWriter {
             visit(namespacePrefix, superType);
         }
         for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
-            visit(namespacePrefix, nd.getDeclaringNodeType());
+            for (NodeType childType : nd.getRequiredPrimaryTypes()) {
+                visit(namespacePrefix, childType);
+            }
+            NodeType defaultPriType = nd.getDefaultPrimaryType();
+            if (defaultPriType != null) {
+                visit(namespacePrefix, defaultPriType);
+            }
         }
         if (nt.getName().startsWith(namespacePrefix+":")) {
             result.add(nt);
