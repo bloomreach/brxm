@@ -293,7 +293,7 @@ public class JcrPropertyValueModel extends Model {
                 try {
                     if (prop.getDefinition().isMultiple()) {
                         Value[] values = prop.getValues();
-                        if (index < values.length) {
+                        if (values.length > 0 && index > -1 && index < values.length) {
                             value = values[index];
                         } else {
                             value = null;
