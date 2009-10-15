@@ -36,5 +36,10 @@ public interface Valve
      * Initialize the valve before using in a pipeline.
      */
     void initialize() throws ContainerException;
-
+    
+    /**
+     * Called by the container to indicate to a valve that the valve is being taken out of service
+     */
+    void destroy();
+    
 }

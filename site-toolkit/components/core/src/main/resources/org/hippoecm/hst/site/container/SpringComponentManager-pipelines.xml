@@ -35,7 +35,8 @@
     </property>
   </bean>
 
-  <bean id="abstractValve" abstract="true">
+  <bean id="abstractValve" abstract="true"
+        init-method="initialize" destroy-method="destroy">
     <property name="containerConfiguration" ref="containerConfiguration" />
     <property name="sitesManagers">
       <map>

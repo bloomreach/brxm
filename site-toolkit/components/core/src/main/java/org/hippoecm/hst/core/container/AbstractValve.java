@@ -139,6 +139,9 @@ public abstract class AbstractValve implements Valve
     public void initialize() throws ContainerException {
     }
     
+    public void destroy() {
+    }
+    
     public void setTraceToolComponentName(String traceToolComponentName) {
         this.traceToolComponentName = StringUtils.trim(traceToolComponentName);
     }

@@ -153,6 +153,11 @@
       <artifactId>hst-sandbox-persistency</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
+      <artifactId>hst-sandbox-jaxrs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

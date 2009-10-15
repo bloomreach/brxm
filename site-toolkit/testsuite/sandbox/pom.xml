@@ -31,6 +31,7 @@
 
   <modules>
     <module>persistency</module>
+    <module>jaxrs</module>
   </modules>
 
 </project>
