@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 import javax.jcr.query.QueryManager;
@@ -208,6 +209,8 @@ public class SearchBehavior extends AutoCompleteBehavior {
                             }
                         }
                     }
+                } catch (PathNotFoundException e) {
+                    log.warn("Search path not found: " + path);
                 } catch (RepositoryException e) {
                     log.error("An error occured while constructing the default search where-clause part", e);
                     throw new IllegalStateException(
