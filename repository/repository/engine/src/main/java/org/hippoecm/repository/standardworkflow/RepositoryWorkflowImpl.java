@@ -160,7 +160,7 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
                             UpdaterNode node = (UpdaterNode)n;
                             ChangeImpl.change(node, changesImpl);
                         }
-                    });
+                    }.setAtomic());
                 }
                 if (module != null) {
                     module.register(context);
