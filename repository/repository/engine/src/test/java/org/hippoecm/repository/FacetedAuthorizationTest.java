@@ -537,7 +537,7 @@ public class FacetedAuthorizationTest extends TestCase {
         assertTrue(navNode.hasNode("readdoc0"));
         assertTrue(navNode.hasNode("readdoc0/subread"));
         NodeIterator iter = navNode.getNodes();
-        assertEquals(2L, iter.getSize());
+        assertEquals(testData.getNodes().getSize(), iter.getSize());
     }
 
     @Test
