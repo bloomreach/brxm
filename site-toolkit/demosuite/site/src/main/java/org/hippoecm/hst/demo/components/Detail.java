@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.demo.components;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -77,9 +78,12 @@ public class Detail extends BasePersistenceHstComponent {
         
         
         if (crBean == null || !(crBean instanceof BaseBean)) {
-            response.setStatus(404);
-            // or if load error page: response.forward("/error");
-            return;
+            response.setStatus(HstResponse.SC_NOT_FOUND);
+            try {
+                response.forward("/error");
+            } catch (IOException e) {
+                throw new HstComponentException("Could not forward the request to the error page.", e);
+            }
         }
         request.setAttribute("document", crBean);
         

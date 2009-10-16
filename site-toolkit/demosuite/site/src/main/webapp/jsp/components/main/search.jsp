@@ -27,21 +27,35 @@
 <c:set var="firstpage" value="${searchResults.startPage}"/>
 <c:set var="lastpage" value="${searchResults.endPage}"/>
 <div id="yui-u">
-    <h1>Search</h1>
-    
+    <c:choose>
+      <c:when test="${isError}">
+        <h1>Page not found</h1>
+        <p>The page you were looking for cannot be found.</p>
+        <hst:head-contribution keyHint="title"><title>Page not found</title></hst:head-contribution>
+      </c:when>
+      <c:otherwise>
+       <h1>Search</h1>
+       <hst:head-contribution keyHint="title"><title>Search</title></hst:head-contribution>
+      </c:otherwise>
+    </c:choose>    
+
     <c:choose>
       <c:when test="${hstRequest.requestContext.portletContext}">
         <hst:actionURL var="searchURL" />
         <form action="${searchURL}" method="post">
-          <input type="text" name="query" value="${query}"/>
-          <input type="submit" value="Search"/>
+	        <div>
+	          <input type="text" name="query" value="${query}"/>
+	          <input type="submit" value="Search"/>
+	        </div>
         </form>
       </c:when>
       <c:otherwise>
         <hst:link var="searchURL" path="/search" />
         <form action="${searchURL}" method="get">
-          <input type="text" name="query" value="${query}"/>
-          <input type="submit" value="Search"/>
+	        <div>
+	          <input type="text" name="query" value="${query}"/>
+	          <input type="submit" value="Search"/>
+	        </div>
         </form>
       </c:otherwise>
     </c:choose>
@@ -50,7 +64,7 @@
 
         <c:choose>
             <c:when test="${searchResults.total > 0}">
-                <p/>        
+                <p></p>        
                 <p>
                 Results <b>${searchResults.startOffset +1} - ${searchResults.endOffset}</b> of <b>${searchResults.total}</b> for <b>${query}</b>.
                 </p>
@@ -64,8 +78,6 @@
                                 <p><fmt:formatDate value="${bean.date.time}" type="Date" pattern="MMMM d, yyyy h:mm a" /></p>
                                 <p>${bean.text}</p>
                             </div>
-                        </li>
-                        
                         </li>
                     </ul>
                 </c:forEach>
@@ -90,7 +102,7 @@
 
             </c:when>
             <c:otherwise>
-                <p/>
+                <p></p>
                 <p>No results for <b>${query}</b>.</p>
             </c:otherwise>
         </c:choose>
