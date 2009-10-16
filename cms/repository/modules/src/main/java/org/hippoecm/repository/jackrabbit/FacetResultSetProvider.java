@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -52,6 +53,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     }
 
     protected class FacetResultSetNodeId extends HippoNodeId {
+    	private static final long serialVersionUID = 1L;
         String queryname;
         String docbase;
         String[] search;
@@ -68,8 +70,8 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         }
     }
 
-    MirrorVirtualProvider subNodesProvider;
-    FacetedNavigationEngine facetedEngine;
+    ViewVirtualProvider subNodesProvider;
+    FacetedNavigationEngine<FacetedNavigationEngine.Query, FacetedNavigationEngine.Context> facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
 
     Name countName;
@@ -90,11 +92,10 @@ public class FacetResultSetProvider extends HippoVirtualProvider
 
     @Override
     protected void initialize() throws RepositoryException {
-        subNodesProvider = (MirrorVirtualProvider) lookup("org.hippoecm.repository.jackrabbit.MirrorVirtualProvider");
         countName = resolveName(HippoNodeType.HIPPO_COUNT);
         countPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETRESULT), countName);
         primaryTypePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETRESULT), countName);
-        this.subNodesProvider = (MirrorVirtualProvider) lookup("org.hippoecm.repository.jackrabbit.MirrorVirtualProvider");
+        this.subNodesProvider = (ViewVirtualProvider) lookup(ViewVirtualProvider.class.getName());
         register(null, resolveName(HippoNodeType.NT_FACETRESULT));
     }
 
@@ -186,7 +187,15 @@ public class FacetResultSetProvider extends HippoVirtualProvider
             if(parentId == null)
                 continue;
             Name name = getNodeState(parentId).getChildNodeEntry(upstream).getName();
-            state.addChildNodeEntry(name, subNodesProvider . new MirrorNodeId(state.getNodeId(), upstream, name));
+            /*
+             *  TODO : inherit all the 
+             *  this.view = view;
+             *  this.order = order;
+             *  this.singledView = singledView;
+             *  
+             *  from parent NodeId, which is NOT a ViewNodeId, nor a MirrorNodeId
+             */
+            state.addChildNodeEntry(name, subNodesProvider . new ViewNodeId(state.getNodeId(), upstream, name, new LinkedHashMap<Name,String>(), new LinkedHashMap<Name,String>(), false));
         }
 
         return state;

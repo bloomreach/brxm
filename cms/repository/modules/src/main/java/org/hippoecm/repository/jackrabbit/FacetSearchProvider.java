@@ -35,8 +35,8 @@ public class FacetSearchProvider extends AbstractFacetSearchProvider
     @Override
     public void initialize() throws RepositoryException {
         super.initialize();
-        subSearchProvider = (FacetSubSearchProvider) lookup("org.hippoecm.repository.jackrabbit.FacetSubSearchProvider");
-        subNodesProvider  = (FacetResultSetProvider) lookup("org.hippoecm.repository.jackrabbit.FacetResultSetProvider");
+        subSearchProvider = (FacetSubSearchProvider) lookup(FacetSubSearchProvider.class.getName());
+        subNodesProvider  = (FacetResultSetProvider) lookup(FacetResultSetProvider.class.getName());
         virtualNodeName = resolveName(HippoNodeType.NT_FACETSUBSEARCH);
         register(resolveName(HippoNodeType.NT_FACETSEARCH), virtualNodeName);
     }

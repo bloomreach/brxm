@@ -35,104 +35,23 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected class ViewNodeId extends MirrorNodeId {
-        private static final long serialVersionUID = 1L;
-
-        /* The following fields MUST be immutable
-         */
-        boolean singledView;
-        LinkedHashMap<Name,String> view;
-        LinkedHashMap<Name,String> order;
-
-        ViewNodeId(NodeId parent, NodeId upstream, Name name, LinkedHashMap<Name,String> view, LinkedHashMap<Name,String> order, boolean singledView) {
-            super(ViewVirtualProvider.this, parent, name, upstream);
-            this.view = view;
-            this.order = order;
-            this.singledView = singledView;
-        }
-
-        class Child implements Comparable<Child> {
-            Name name;
-            ViewNodeId nodeId;
-            Child(Name name, ViewNodeId viewNodeId) {
-                this.name = name;
-                this.nodeId = viewNodeId;
-            }
-            public Name getKey() {
-                return name;
-            }
-            public ViewNodeId getValue() {
-                return ViewNodeId.this;
-            }
-            public int compareTo(Child o) {
-                if(o == null)
-                    throw new NullPointerException();
-
-                if(order == null)
-                    return 0;
-
-                for(Map.Entry<Name,String> entry : order.entrySet()) {
-                    Name facet = entry.getKey();
-                    String value = entry.getValue();
-
-                    int thisFacetValueIndex = -1;
-                    String[] thisFacetValues = getProperty(upstream, facet);
-                    if(thisFacetValues != null) {
-                        for(int i=0; i<thisFacetValues.length; i++) {
-                            if(thisFacetValues[i].equals(value)) {
-                                thisFacetValueIndex = i;
-                                break;
-                            }
-                        }
-                    }
-
-                    int otherFacetValueIndex = -1;
-                    String[] otherFacetValues = getProperty(o.getValue().upstream, facet);
-                    if(otherFacetValues != null) {
-                        for(int i=0; i<otherFacetValues.length; i++) {
-                            if(otherFacetValues[i].equals(value)) {
-                                otherFacetValueIndex = i;
-                                break;
-                            }
-                        }
-                    }
-
-                    if(thisFacetValueIndex != -1 && otherFacetValueIndex == -1) {
-                        return -1;
-                    } else if(thisFacetValueIndex == -1 && otherFacetValueIndex != -1) {
-                        return 1;
-                    } else if(value == null || value.equals("") || value.equals("*")) {
-                        if(thisFacetValues[thisFacetValueIndex].compareTo(otherFacetValues[otherFacetValueIndex]) != 0) {
-                            return thisFacetValues[thisFacetValueIndex].compareTo(otherFacetValues[otherFacetValueIndex]);
-                        }
-                    }
-                }
-
-                return 0;
-            }
-        }
-    }
-
-    public ViewVirtualProvider() throws RepositoryException {
-        super();
-    }
-
-    private Name handleName;
-    private Name requestName;
+    Name handleName;
+    Name requestName;
 
     @Override
     protected void initialize() throws RepositoryException {
         super.initialize();
+        
+        register(resolveName(HippoNodeType.NT_MIRROR), null);
         handleName = resolveName(HippoNodeType.NT_HANDLE);
         requestName = resolveName(HippoNodeType.NT_REQUEST);
     }
-
-    @Override
-    public NodeState populate(NodeState state) throws RepositoryException {
-        String[] docbase = getProperty(state.getNodeId(), docbaseName);
-        if(docbase == null || docbase.length == 0) {
+    
+    protected NodeState populate(ViewVirtualProvider subProvider, NodeState state,String[] docbase, String[] newFacets, String[] newValues, String[] newModes, boolean newCriteria) throws RepositoryException {
+    	if(docbase == null || docbase.length == 0) {
             return state;
         }
+    	
         if(docbase[0].endsWith("babecafebabe")) {
             // one of the defined (and fixed, so string compare is fine) system areas
             return state;
@@ -144,16 +63,93 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
             log.warn("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
         }
         if(dereference != null) {
+        	
+        	boolean singledView = false;
             LinkedHashMap<Name,String> view = new LinkedHashMap<Name,String>();
-            for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-                ChildNodeEntry entry = (ChildNodeEntry) iter.next();
-                if(this.match(view, entry.getId())) {
-                    NodeId childNodeId = this . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view,null,false);
-                    state.addChildNodeEntry(entry.getName(), childNodeId);
+            LinkedHashMap<Name,String> order = null;
+            
+            if (state.getParentId()!=null && state.getParentId() instanceof ViewNodeId) {
+            	// parent state is already virtual, inherit possible filter criteria
+                ViewNodeId viewNodeId = ((ViewNodeId)state.getParentId());
+                if(viewNodeId.view != null) {
+                    view.putAll(viewNodeId.view);
                 }
+                if(viewNodeId.order != null) {
+                    if(order == null) {
+                        order = new LinkedHashMap<Name,String>();
+                    }
+                    order.putAll(viewNodeId.order);
+                }
+                singledView = viewNodeId.singledView;
+             }
+            
+            if(newCriteria) {
+            	if(newFacets == null || newValues == null || newModes == null || newFacets.length != newValues.length || newFacets.length != newModes.length) {
+                    throw new RepositoryException("Malformed definition of faceted selection: all must be of same length and must exist.");
+                }
+                for(int i=0; i<newFacets.length; i++) {
+                    if(newModes[i].equalsIgnoreCase("stick") || newModes[i].equalsIgnoreCase("select") ||
+                       newModes[i].equalsIgnoreCase("single")) {
+                        view.put(resolveName(newFacets[i]), newValues[i]);
+                        if(newModes[i].equalsIgnoreCase("single")) {
+                            singledView = true;
+                        }
+                    } else if(newModes[i].equalsIgnoreCase("prefer") || newModes[i].equalsIgnoreCase("prefer-single")) {
+                        if(order == null) {
+                            order = new LinkedHashMap<Name,String>();
+                        }
+                        order.put(resolveName(newFacets[i]), newValues[i]);
+                        if(newModes[i].endsWith("prefer-single")) {
+                            singledView = true;
+                        }
+                    } else if(newModes[i].equalsIgnoreCase("clear")) {
+                        view.remove(resolveName(newFacets[i]));
+                    }
+                }
+            }
+            
+            boolean isHandle = dereference.getNodeTypeName().equals(handleName);
+            if(order != null && isHandle) {
+                // since the order is not null, we first have to sort all childs according the order. We only order below a handle
+                Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
+                for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ){
+                    ChildNodeEntry entry = (ChildNodeEntry) iter.next();
+                    ViewNodeId childNodeId = subProvider. new ViewNodeId(state.getNodeId(), entry.getId(), entry.getName(), view, order, singledView);
+                    children.add(childNodeId . new Child(entry.getName(), childNodeId));
+                }
+                ViewNodeId.Child[] childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
+                Arrays.sort(childrenArray);
+                for(int i = 0; i < childrenArray.length && (i == 0 || !singledView) ; i ++) {
+                    state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
+                }
+
+            } else {
+	            for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
+	                ChildNodeEntry entry = (ChildNodeEntry) iter.next();
+	                // filtering is only applied on handles
+	                if(!isHandle || subProvider.match(view, entry.getId())) {
+	                	if(isHandle && singledView && getNodeState(entry.getId()).getNodeTypeName().equals(requestName)) {
+	                        continue;
+	                    } else {
+		                	NodeId childNodeId = subProvider . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view,order,singledView);
+		                    state.addChildNodeEntry(entry.getName(), childNodeId);
+		                    
+		                    if(isHandle && singledView) {
+		                        // stop after first match because single hippo document view
+		                        break;
+		                    }
+	                    }
+	                }
+	            }
             }
         }
         return state;
+    }
+    
+    @Override
+    public NodeState populate(NodeState state) throws RepositoryException {
+        String[] docbase = getProperty(state.getNodeId(), docbaseName);
+        return populate(this, state, docbase, null, null, null, false);
     }
 
     protected boolean match(Map<Name,String> view, NodeId candidate) {
@@ -195,8 +191,9 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
                         ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view, viewId.order, viewId.singledView);
                         children.add(childNodeId . new Child(entry.getName(), childNodeId));
                         // stop after first match because single hippo document view, and not using sorted set
-                        if(viewId.order == null)
+                        if(viewId.order == null) {
                             break;
+                        }
                     }
                 } else {
                     ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view, viewId.order, viewId.singledView);
@@ -212,4 +209,86 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
             state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
         }
    }
+
+    protected class ViewNodeId extends MirrorNodeId {
+        private static final long serialVersionUID = 1L;
+
+        /* The following fields MUST be immutable
+         */
+        boolean singledView;
+        LinkedHashMap<Name,String> view;
+        LinkedHashMap<Name,String> order;
+
+        ViewNodeId(NodeId parent, NodeId upstream, Name name, LinkedHashMap<Name,String> view, LinkedHashMap<Name,String> order, boolean singledView) {
+            super(ViewVirtualProvider.this, parent, name, upstream);
+            this.view = view;
+            this.order = order;
+            this.singledView = singledView;
+        }
+
+        class Child implements Comparable<Child> {
+            Name name;
+            ViewNodeId nodeId;
+            Child(Name name, ViewNodeId viewNodeId) {
+                this.name = name;
+                this.nodeId = viewNodeId;
+            }
+            public Name getKey() {
+                return name;
+            }
+            public ViewNodeId getValue() {
+                return ViewNodeId.this;
+            }
+            public int compareTo(Child o) {
+                if(o == null) {
+                    throw new NullPointerException();
+                }
+                if(o.equals(this)) {
+                	return 0;
+                }
+                if(order == null)
+                	// never return 0 (See Comparable api)
+                    return 1;
+
+                for(Map.Entry<Name,String> entry : order.entrySet()) {
+                    Name facet = entry.getKey();
+                    String value = entry.getValue();
+
+                    int thisFacetValueIndex = -1;
+                    String[] thisFacetValues = getProperty(upstream, facet);
+                    if(thisFacetValues != null) {
+                        for(int i=0; i<thisFacetValues.length; i++) {
+                            if(thisFacetValues[i].equals(value)) {
+                                thisFacetValueIndex = i;
+                                break;
+                            }
+                        }
+                    }
+
+                    int otherFacetValueIndex = -1;
+                    String[] otherFacetValues = getProperty(o.getValue().upstream, facet);
+                    if(otherFacetValues != null) {
+                        for(int i=0; i<otherFacetValues.length; i++) {
+                            if(otherFacetValues[i].equals(value)) {
+                                otherFacetValueIndex = i;
+                                break;
+                            }
+                        }
+                    }
+
+                    if(thisFacetValueIndex != -1 && otherFacetValueIndex == -1) {
+                        return -1;
+                    } else if(thisFacetValueIndex == -1 && otherFacetValueIndex != -1) {
+                        return 1;
+                    } else if(value == null || value.equals("") || value.equals("*")) {
+                        if(thisFacetValues[thisFacetValueIndex].compareTo(otherFacetValues[otherFacetValueIndex]) != 0) {
+                            return thisFacetValues[thisFacetValueIndex].compareTo(otherFacetValues[otherFacetValueIndex]);
+                        }
+                    }
+                }
+                // never return 0 (See Comparable api)
+                return 1;
+            }
+        }
+    }
 }

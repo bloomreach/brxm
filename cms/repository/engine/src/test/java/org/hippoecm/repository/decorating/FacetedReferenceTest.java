@@ -135,8 +135,8 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         assertNotNull(traverse(session,"/test/english/articles/brave-new-world/brave-new-world"));
         assertNotNull(traverse(session,"/test/english/articles/war-of-the-worlds/war-of-the-worlds[language='english']"));
         assertNull(traverse(session,"/test/english/articles/war-of-the-worlds/war-of-the-worlds[language='dutch']"));
-        assertNotNull(traverse(session,"/test/dutch/war-of-the-worlds[language='dutch']"));
-        assertNull(traverse(session,"/test/dutch/war-of-the-worlds[language='english']"));
+        assertNotNull(traverse(session,"/test/dutch/war-of-the-worlds[@language='dutch']"));
+        assertNull(traverse(session,"/test/dutch/war-of-the-worlds[@language='english']"));
     }
     
     @Test
