@@ -156,12 +156,14 @@ public class JcrNodeModel extends ItemModelWrapper implements IObservable {
             return true;
         }
         JcrNodeModel nodeModel = (JcrNodeModel) object;
-        return new EqualsBuilder().append(itemModel, nodeModel.itemModel).isEquals();
+        return itemModel.equals(nodeModel.getItemModel());
+        //return new EqualsBuilder().append(itemModel, nodeModel.itemModel).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(57, 433).append(itemModel).toHashCode();
+        return itemModel.hashCode();
+        //return new HashCodeBuilder(57, 433).append(itemModel).toHashCode();
     }
 
 }

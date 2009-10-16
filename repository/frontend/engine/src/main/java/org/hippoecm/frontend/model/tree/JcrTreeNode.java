@@ -212,12 +212,14 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
             return true;
         }
         JcrTreeNode treeNode = (JcrTreeNode) object;
-        return new EqualsBuilder().append(nodeModel, treeNode.nodeModel).isEquals();
+        return nodeModel.equals(treeNode.getNodeModel());
+        //return new EqualsBuilder().append(nodeModel, treeNode.nodeModel).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(467, 17).append(nodeModel).toHashCode();
+        return nodeModel.hashCode();
+        //return new HashCodeBuilder(467, 17).append(nodeModel).toHashCode();
     }
 
     @Override
