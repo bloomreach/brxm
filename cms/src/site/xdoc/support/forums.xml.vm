@@ -27,7 +27,7 @@
        <span class='shortdesc'>Get support from others on the Hippo public forums</span>
 
   <!-- Load the Nabble Embeddable Forum -->
-  <script src="../nabble.js">
+  <script src="../images/nabble.js">
   </script>
  
   </section>

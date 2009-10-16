@@ -50,7 +50,8 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='add_custom_compound.html'>Add custom compound</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='add_custom_compound.html'>Add custom compound</a> (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='./add_string_to_documenttype.html'>Add a string field to a type</a>.</li>
     <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a type</a>.</li>
     <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a type</a>.</li>

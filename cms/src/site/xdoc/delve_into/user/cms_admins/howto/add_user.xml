@@ -47,7 +47,8 @@ ________________________________________________________________________________
   <subsection name='Next'>
    <ul>
     <li><a href='./assign_user_to_group.html'>Assign user to group</a>
-       (continue <a href='../tour.html'>tour</a>).</li>
+     (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='./change_user_properties.html'>Edit user properties</a>.</li>
    </ul>
   </subsection>

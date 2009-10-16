@@ -71,7 +71,8 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='create_documenttype.html'>Create a document type</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='create_documenttype.html'>Create a document type</a> (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='create_namespace.html'>Create another namespace</a>.</li>
    </ul>
   </subsection>

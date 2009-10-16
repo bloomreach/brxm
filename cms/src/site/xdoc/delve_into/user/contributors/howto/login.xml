@@ -66,8 +66,9 @@ ________________________________________________________________________________
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./change_own_password.html'>Change your password (continue</a> <a href='../tour.html'>tour, first day).</a></li>
-     <li><a href='./show_referring_documents.html'>Show referring documents (continue</a> <a href='../tour.html'>tour, later).</a></li>
+     <li><a href='./change_own_password.html'>Change your password (continue tour, first day)</a>.</li>
+     <li><a href='./show_referring_documents.html'>Show referring documents (continue tour, later)</a>.</li>
+     <li><a href='../tour.html'>tour</a>.</li>
      <li><a href='./goto_content_workspace.html'>Go to the content workspace</a></li>
     </ul>
    </subsection>

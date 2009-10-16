@@ -53,7 +53,8 @@ ________________________________________________________________________________
   <subsection name='Next'>
    <ul>
     <li><a href='./publish_all.html'>Publish all</a>
-       (continue <a href='../tour.html'>tour</a>).</li>
+     (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='./change_user_properties.html'>Change user properties</a>.</li>
     <li><a href='./add_user.html'>Add a user</a>.</li>
    </ul>

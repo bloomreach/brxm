@@ -51,7 +51,8 @@ ________________________________________________________________________________
   <subsection name='Next'>
    <ul>
     <li><a href='./set_permissions_for_group.html'>Set permissions for a group</a> 
-       (continue <a href='../tour.html'>tour</a>).</li>
+     (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='./assign_user_to_group.html'>Assign a user to a group</a>.</li>
    </ul>
   </subsection>

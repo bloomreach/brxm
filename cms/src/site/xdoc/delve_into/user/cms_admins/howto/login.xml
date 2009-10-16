@@ -50,7 +50,8 @@ ________________________________________________________________________________
   <subsection name='Next'>
    <ul>
     <li><a href='change_password.html'>Change your password</a> 
-     (continue <a href='../tour.html'>tour</a>).</li>
+     (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='publish_all.html'>Publish all</a>.</li>
     <li><a href='add_user.html'>Add a user</a>.</li>
     <li><a href='add_group.html'>Add a group</a>.</li>

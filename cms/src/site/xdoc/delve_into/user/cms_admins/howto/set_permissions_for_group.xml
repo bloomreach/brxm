@@ -52,7 +52,8 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./add_user.html'>Add a user</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='./add_user.html'>Add a user</a> (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='./assign_user_to_group.html'>Assign users to the group</a>.</li>
    </ul>
   </subsection>

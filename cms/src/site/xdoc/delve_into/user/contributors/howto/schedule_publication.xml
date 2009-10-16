@@ -52,7 +52,8 @@ ________________________________________________________________________________
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./logout.html'>Logout (continue</a> <a href='../tour.html'>tour</a>).</li>
+     <li><a href='./logout.html'>Logout (continue tour)</a>.</li>
+     <li><a href='../tour.html'>tour</a>.</li>
      <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
      <li><a href='./goto_folder.html'>Open another folder</a>.</li>
     </ul>

@@ -59,7 +59,8 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='count_modified_at_publish.html'>Count modified at publish</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='count_modified_at_publish.html'>Count modified at publish</a> (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='publish_all_in_folder.html'>Publish all in folder</a>.</li>
    </ul>
   </subsection>
