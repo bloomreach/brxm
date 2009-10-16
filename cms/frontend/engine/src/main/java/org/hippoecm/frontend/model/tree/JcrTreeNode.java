@@ -25,15 +25,11 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +46,8 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
     private List<TreeNode> children;
 
     private boolean reloadChildren = true;
-    private boolean reloadChildcount = true;
-    private int childcount = 0;
+    private boolean reloadChildCount = true;
+    private int childCount = -1;
     private IJcrTreeNode parent;
 
     public JcrTreeNode(JcrNodeModel nodeModel, IJcrTreeNode parent) {
@@ -96,8 +92,11 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
     }
 
     public int getChildCount() {
+        if (!reloadChildCount && childCount > -1) {
+            return childCount;
+        }
         ensureChildrenLoaded();
-        return childcount;
+        return childCount;
     }
 
     public int getIndex(TreeNode node) {
@@ -107,8 +106,11 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
 
     public boolean isLeaf() {
         try {
-            if (nodeModel != null && nodeModel.getNode() != null) {
-                return !nodeModel.getNode().getNodes().hasNext();
+            if (nodeModel != null) {
+                Node node = nodeModel.getNode();
+                if (node != null) {
+                    return !node.getNodes().hasNext();
+                }
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -125,7 +127,7 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
     @Override
     public void detach() {
         reloadChildren = true;
-        reloadChildcount = true;
+        //reloadChildCount = true;
         if (children != null) {
             for (TreeNode child : children) {
                 if (child instanceof IDetachable) {
@@ -135,18 +137,6 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
             children = null;
         }
         super.detach();
-    }
-
-    protected int loadChildcount() throws RepositoryException {
-        int result;
-        Node node = nodeModel.getNode();
-        if (node.isNodeType(HippoNodeType.NT_FACETRESULT) || node.isNodeType(HippoNodeType.NT_FACETSEARCH)
-                || ((node instanceof HippoNode) && ((HippoNode) node).getCanonicalNode() == null)) {
-            result = 1;
-        } else {
-            result = (int) node.getNodes().getSize();
-        }
-        return result;
     }
 
     protected List<TreeNode> loadChildren() throws RepositoryException {
@@ -171,35 +161,20 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
         return newChildren;
     }
 
-    private void ensureChildcountLoaded() {
-        if (nodeModel == null || nodeModel.getNode() == null) {
-            reloadChildren = false;
-            reloadChildcount = false;
-            childcount = 0;
-        } else if (reloadChildcount) {
-            try {
-                childcount = loadChildcount();
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-            reloadChildcount = false;
-        }
-    }
-
     private void ensureChildrenLoaded() {
         if (nodeModel.getNode() == null) {
             reloadChildren = false;
-            reloadChildcount = false;
+            reloadChildCount = false;
             children = new ArrayList<TreeNode>();
         } else if (reloadChildren) {
             try {
                 children = loadChildren();
-                childcount = children.size();
+                childCount = children.size();
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
             reloadChildren = false;
-            reloadChildcount = false;
+            reloadChildCount = false;
         }
     }
 

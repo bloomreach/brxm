@@ -20,8 +20,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -57,16 +55,7 @@ public class JcrNodeModel extends ItemModelWrapper implements IObservable {
     }
 
     public Node getNode() {
-        Node node = (Node)itemModel.getObject();
-        try {
-            if (node != null) {
-                node.getParent();
-            }
-            return node;
-        } catch (RepositoryException ex) {
-            itemModel.detach();
-            return (Node)itemModel.getObject();
-        }
+        return (Node) itemModel.getObject();
     }
 
     public JcrNodeModel getParentModel() {
@@ -157,7 +146,6 @@ public class JcrNodeModel extends ItemModelWrapper implements IObservable {
         }
         JcrNodeModel nodeModel = (JcrNodeModel) object;
         return itemModel.equals(nodeModel.getItemModel());
-        //return new EqualsBuilder().append(itemModel, nodeModel.itemModel).isEquals();
     }
 
     @Override
