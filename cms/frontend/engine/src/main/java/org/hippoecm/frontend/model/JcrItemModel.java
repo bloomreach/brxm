@@ -284,7 +284,7 @@ public class JcrItemModel extends LoadableDetachableModel {
             return false;
         } 
 
-        if (!this.uuid.equals(that.uuid)) {
+        if (this.uuid != null && !this.uuid.equals(that.uuid)) {
             return false;
         }
         
