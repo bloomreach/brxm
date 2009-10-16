@@ -89,7 +89,7 @@
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-test</artifactId>
-      <version>2.04.00-SNAPSHOT</version>
+      <version>${pom.version}</version>
       <scope>test</scope>
       <classifier>tests</classifier>
     </dependency>
