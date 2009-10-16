@@ -20,7 +20,6 @@ import java.io.IOException;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
-import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
@@ -35,26 +34,8 @@ public class ContextResolvingValve extends AbstractValve
         HstRequestContextImpl requestContext = (HstRequestContextImpl) context.getServletRequest().getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         HstContainerURL baseURL = requestContext.getBaseURL();
         HstEmbeddedRequestContext erc = requestContext.getEmbeddedRequestContext();
-
-        MatchedMapping matchedMapping;
-        if(requestContext.getMatchedMapping() != null) {
-            matchedMapping = requestContext.getMatchedMapping();
-        } else {
-            String hostName = context.getServletRequest().getServerName();
-            if(this.virtualHostsManager.getVirtualHosts() == null) {
-                throw new ContainerException("Hosts are not properly initialized");
-            }
-            matchedMapping = this.virtualHostsManager.getVirtualHosts().findMapping(hostName, baseURL.getServletPath() + baseURL.getPathInfo());   
-            if (matchedMapping == null) {
-                throw new ContainerException("No proper configuration found for host : " + hostName);
-            }
-            requestContext.setMatchedMapping(matchedMapping);
-        }
         
-        String siteName = matchedMapping.getSiteName();
-        if(siteName == null || "".equals(siteName)) {
-            throw new ContainerException("No siteName found for matchedMapping. Configure one in your virtual hosting.");
-        }
+        String siteName = requestContext.getMatchedMapping().getSiteName();
         
         if (erc != null) {
             // DEBUG check we actually have a matching site...

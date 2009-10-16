@@ -68,6 +68,9 @@
   <bean id="urlValve" parent="abstractValve" class="org.hippoecm.hst.core.container.HstURLValve">
   </bean>
   
+  <bean id="siteResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SiteResolvingValve">
+  </bean>
+  
   <bean id="contextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
   </bean>
   
@@ -111,6 +114,7 @@
             <property name="invokingValves">
               <list>
                 <ref bean="urlValve" />
+                <ref bean="siteResolvingValve" />
                 <ref bean="contextResolvingValve" />
                 <ref bean="securityValve" />
                 <ref bean="siteMenusResolvingValve" />

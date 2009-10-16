@@ -61,16 +61,16 @@ public class BaseHstContentService {
         init();
     }
     
+    protected HstRequestContext getHstRequestContext() {
+        return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+    }
+    
     protected ContentPersistenceManager getContentPersistenceManager() throws LoginException, RepositoryException {
         return new PersistableObjectBeanManagerWorkflowImpl(getHstRequestContext().getSession(), getObjectConverter());
     }
     
     protected ObjectConverter getObjectConverter() {
         return objectConverter;
-    }
-    
-    protected HstRequestContext getHstRequestContext() {
-        return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
     
     protected HippoBeanContent createHippoContentBean(HippoBean bean) throws RepositoryException {

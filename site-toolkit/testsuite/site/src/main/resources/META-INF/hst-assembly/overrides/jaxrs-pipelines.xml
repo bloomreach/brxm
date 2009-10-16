@@ -51,6 +51,8 @@
     </property>
     <property name="invokingValves">
       <list>
+        <ref bean="urlValve" />
+        <ref bean="siteResolvingValve" />
         <ref bean="securityValve" />
         <ref bean="cxfServletDelegatingValve" />
       </list>
