@@ -1,5 +1,5 @@
 <%--
-  Copyright 2008 Hippo
+  Copyright 2008-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<fmt:setLocale value="en-US"/>
+
 <hst:link var="feedlink" path="/rss.xml"/>
 <rss version="2.0">
    <channel>

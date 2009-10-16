@@ -1,5 +1,5 @@
 <%--
-  Copyright 2009 Hippo
+  Copyright 2008-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@
 <hst:head-contribution keyHint="yuiResetFontsGridCss" element="${yuiResetFontsGridCss}" />
 <hst:head-contribution keyHint="demoSiteCss" element="${demoSiteCss}" />
 
-  <div id="hd" role="banner">        
+  <div id="hd">        
     <div id="topnav" class="yui-gc">
       <div class="yui-u first"></div>
       <div class="yui-u">
@@ -45,7 +45,7 @@
     <div id="nav">
       <ul class="menu">
         <li class="active">Tutorial</li>      
-        <li><a href="http://docs.onehippo.org/" title="News">Main documentation</a></li>
+        <li><a href="http://www.onehippo.org/" title="News">Main documentation</a></li>
       </ul>
     </div>  
   </div>

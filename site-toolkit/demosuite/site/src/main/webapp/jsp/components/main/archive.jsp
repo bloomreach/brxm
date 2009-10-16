@@ -24,13 +24,16 @@
 <c:set var="prevpage" value="${searchResults.previous}"/>
 <c:set var="firstpage" value="${searchResults.startPage}"/>
 <c:set var="lastpage" value="${searchResults.endPage}"/>
+
+<hst:head-contribution keyHint="title"><title>Archive</title></hst:head-contribution>
+
 <div id="yui-u">
         <h1>Archive</h1>
         <h2>Displaying ${searchResults.startOffset +1} - ${searchResults.endOffset} of ${searchResults.total} results</h2>
         
         <c:forEach var="bean" items="${searchResults.items}" varStatus="indexer">
+          <ul class="list-overview">
             <hst:link var="link" hippobean="${bean.item}"/>                         
-        <ul class="list-overview">
             <li class="title">
                 <a href="${link}">${bean.title}</a>
                 <div>
@@ -38,11 +41,10 @@
                     <p>${bean.text}</p>
                 </div>
             </li>
-            
-            </li>
-        </ul>
+          </ul>
         </c:forEach>
-        <ul id="paging-nav">
+        <c:if test="${not empty searchResults.pageNumbersArray}">
+	        <ul id="paging-nav">
             <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}" varStatus="status">
                 <c:set var="active" value="" />
                 <c:if test="${searchResults.currentPage == pageNr}">
@@ -54,6 +56,7 @@
                 </hst:renderURL>
                 <li${active}><a href="${pagelink}" title="${pageNr}">${pageNr}</a></li>
             </c:forEach>
-        </ul>
+	        </ul>
+        </c:if>
     
 </div>

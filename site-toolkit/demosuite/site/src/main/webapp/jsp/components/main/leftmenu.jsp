@@ -1,5 +1,5 @@
 <%--
-  Copyright 2008 Hippo
+  Copyright 2008-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@
               </a>
           </c:otherwise>
       </c:choose>
-      <c:if test="${item.expanded}">
+      <c:if test="${item.expanded and not empty item.childMenuItems}">
       <ul>
           <c:forEach var="subitem" items="${item.childMenuItems}">
               <li>
@@ -48,7 +48,7 @@
                   </a>
               </c:otherwise>
               </c:choose>
-                  <c:if test="${subitem.expanded}">
+                  <c:if test="${subitem.expanded and not empty subitem.childMenuItems}">
                       <ul>
                       <c:forEach var="subsubitem" items="${subitem.childMenuItems}">
                           <li>
@@ -63,7 +63,7 @@
                               </a>
                           </c:otherwise>
                           </c:choose>
-                          <c:if test="${subitem.expanded}">
+                          <c:if test="${subitem.expanded and not empty subsubitem.childMenuItems}">
                           <ul>
                               <c:forEach var="subsubsubitem" items="${subsubitem.childMenuItems}">
                                   <c:choose >
@@ -83,8 +83,8 @@
                                   </c:choose>
                               </c:forEach>
                           </ul>
-                          </li>
-                      </c:if>
+                        </c:if>
+                       </li>
                       </c:forEach>
                       </ul>
                   </c:if>

@@ -147,6 +147,8 @@ img.newsimage {
 	*padding-right: 0.75em;
 }
 
+img.noborder {border:none;}
+
 a.back {
 	background: url(../images/goback.jpg) no-repeat;
 	/*padding-right: 123px;*/
@@ -201,4 +203,8 @@ li.todo {
   list-style-image:none;
   list-style-position:outside;
   list-style-type:circle;
+}
+
+div.right {
+    float:right;
 }

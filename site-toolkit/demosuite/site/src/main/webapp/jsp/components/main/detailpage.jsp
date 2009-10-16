@@ -1,5 +1,5 @@
 <%--
-  Copyright 2008 Hippo
+  Copyright 2008-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@
 <hst:element var="yuiLoader" name="script">
   <hst:attribute name="id" value="yuiloader" />
   <hst:attribute name="type" value="text/javascript" />
-  <hst:attribute name="language" value="javascript" />
   <hst:attribute name="src" value="${yuiLoaderSrc}" />
 </hst:element>
 <hst:head-contribution keyHint="yuiLoader" element="${yuiLoader}" />
@@ -35,15 +34,16 @@
 <hst:element var="inlineEditing" name="script">
   <hst:attribute name="id" value="inlineEditing" />
   <hst:attribute name="type" value="text/javascript" />
-  <hst:attribute name="language" value="javascript" />
   <hst:attribute name="src" value="${inlineEditingSrc}" />
 </hst:element>
 <hst:head-contribution keyHint="inlineEditing" element="${inlineEditing}" />
 
+<hst:head-contribution keyHint="title"><title>${document.title}</title></hst:head-contribution>
+
 <c:if test="${not empty goBackLink}">
-<div align="right">
+<div class="right">
   <a href="<hst:link path="${goBackLink}"/>">
-    <img src="<hst:link path="/images/goback.jpg"/>" border="0"/>
+    <img src="<hst:link path="/images/goback.jpg"/>" class="noborder" alt="Go back"/>
   </a>
 </div>
 </c:if>
@@ -101,7 +101,7 @@
   </div>
   
   <div>
-    <form method="POST" action="${addURL}">
+    <form method="post" action="${addURL}">
       <h4>Enter your comment here:</h4>
       <table>
         <tr>
