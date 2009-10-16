@@ -325,7 +325,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
 
     }
     
-    public class FacetSearchEntry implements Comparable {
+    public class FacetSearchEntry implements Comparable<FacetSearchEntry> {
         private String facetValue;
         private Count count;
         public FacetSearchEntry(String facetValue, Count count) {
@@ -333,12 +333,17 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             this.count = count;
         }
 
-        public int compareTo(Object entry) {
-            if(entry instanceof FacetSearchEntry) {
-                // The highest counts first
-                return ((FacetSearchEntry)entry).count.count - this.count.count; 
-            }
-            return 0;
+        public int compareTo(FacetSearchEntry entry) {
+           if(entry == null) {
+               throw new NullPointerException();
+           }
+           if(entry.equals(this)) {
+        	   return 0;
+           }
+           if(entry.count.count - this.count.count == 0) {
+        	   return 1;
+           }
+           return (entry.count.count - this.count.count);
         }
         
     }

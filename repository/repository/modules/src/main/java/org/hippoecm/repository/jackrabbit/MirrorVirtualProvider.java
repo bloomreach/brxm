@@ -25,21 +25,18 @@ import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.nodetype.PropDefId;
-import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.uuid.UUID;
-
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class MirrorVirtualProvider extends HippoVirtualProvider
+public abstract class MirrorVirtualProvider extends HippoVirtualProvider
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected class MirrorNodeId extends HippoNodeId {
+    protected abstract class MirrorNodeId extends HippoNodeId {
 
         private static final long serialVersionUID = 1L;
 
@@ -70,9 +67,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
 
     @Override
     protected void initialize() throws RepositoryException {
-        register(resolveName(HippoNodeType.NT_MIRROR), null);
-
-        docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
+    	docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
         jcrUUIDName = resolveName("jcr:uuid");
         jcrMixinTypesName = resolveName("jcr:mixinTypes");
         hippoUUIDName = resolveName(HippoNodeType.HIPPO_UUID);
@@ -83,36 +78,6 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         mixinVersionableName = resolveName("mix:versionable");
 
         hippoUUIDPropDef = lookupPropDef(softDocumentName, hippoUUIDName);
-    }
-
-    public MirrorVirtualProvider() throws RepositoryException {
-        super();
-    }
-
-    @Override
-    public NodeState populate(NodeState state) throws RepositoryException {
-        String[] docbase = getProperty(state.getNodeId(), docbaseName);
-        if(docbase == null || docbase.length == 0) {
-            return state;
-        }
-        if(docbase[0].endsWith("babecafebabe")) {
-            // one of the defined (and fixed, so string compare is fine) system areas
-            return state;
-        }
-        NodeState dereference = null;
-        try {
-            dereference = getNodeState(new NodeId(new UUID(docbase[0])));
-        } catch (IllegalArgumentException e) {
-            log.warn("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
-        }
-        if(dereference != null) {
-            for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-                ChildNodeEntry entry = (ChildNodeEntry) iter.next();
-                NodeId childNodeId = new MirrorNodeId(dereference.getNodeId(), entry.getId(), entry.getName());
-                state.addChildNodeEntry(entry.getName(), childNodeId);
-            }
-        }
-        return state;
     }
 
     @Override
@@ -167,11 +132,6 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         return state;
     }
 
-    protected void populateChildren(NodeId nodeId, NodeState state, NodeState upstream) {
-        for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-            ChildNodeEntry entry = (ChildNodeEntry) iter.next();
-            MirrorNodeId childNodeId = new MirrorNodeId(nodeId, entry.getId(), entry.getName());
-            state.addChildNodeEntry(entry.getName(), childNodeId);
-        }
-    }
+    protected abstract void populateChildren(NodeId nodeId, NodeState state, NodeState upstream);
+    
 }

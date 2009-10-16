@@ -21,17 +21,13 @@ import java.util.TreeMap;
 import javax.jcr.NamespaceException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.NameFactory;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SubtypedDataProvider implements DataProviderModule {
     @SuppressWarnings("unused")
@@ -43,19 +39,26 @@ public class SubtypedDataProvider implements DataProviderModule {
 
     public void initialize(DataProviderContext context) {
         NodeTypeRegistry ntReg = context.getNodeTypeRegistry();
-        NameFactory nameFactory = NameFactoryImpl.getInstance();
+        //NameFactory nameFactory = NameFactoryImpl.getInstance();
 
         Map<Name, String> subtyping = new TreeMap<Name, String>();
         try {
-
-            subtyping.put(context.getQName(HippoNodeType.NT_FACETSELECT), "org.hippoecm.repository.jackrabbit.FacetSelectProvider");
+            subtyping.put(context.getQName(HippoNodeType.NT_FACETSELECT), FacetSelectProvider.class.getName());
         } catch (IllegalNameException ex) {
             log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
         } catch (NamespaceException ex) {
             log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
         }
         try {
-            subtyping.put(context.getQName(HippoNodeType.NT_FACETSEARCH), "org.hippoecm.repository.jackrabbit.FacetSearchProvider");
+            subtyping.put(context.getQName(HippoNodeType.NT_FACETSEARCH), FacetSearchProvider.class.getName());
+        } catch (IllegalNameException ex) {
+            log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
+        } catch (NamespaceException ex) {
+            log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
+        }
+        
+        try {
+            subtyping.put(context.getQName(HippoNodeType.NT_MIRROR), ViewVirtualProvider.class.getName());
         } catch (IllegalNameException ex) {
             log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
         } catch (NamespaceException ex) {
