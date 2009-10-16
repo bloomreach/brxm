@@ -47,7 +47,8 @@ public class JcrItemModel extends LoadableDetachableModel {
     // the leading id of the item is the (uuid,relPath) tuple.
     private String uuid;
     private String relPath;
-
+    private int hash;
+    
     // the path of the item, used to retrieve the item when the uuid has not been
     // determined yet or the uuid cannot be resolved.
     private String absPath = null;
@@ -62,7 +63,8 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     public JcrItemModel(String path) {
         super();
-        this.absPath = path;
+        uuid = null;
+        absPath = path;
     }
 
     public String getUuid() {
@@ -79,7 +81,8 @@ public class JcrItemModel extends LoadableDetachableModel {
         Item item = (Item) getObject();
         if (item != null) {
             try {
-                return item.getPath();
+                absPath = item.getPath();
+                return absPath;
             } catch (InvalidItemStateException e) {
                 // ignore, item has been removed
                 log.debug("Item " + absPath + " no longer exists", e);
@@ -273,15 +276,47 @@ public class JcrItemModel extends LoadableDetachableModel {
             return true;
         }
         JcrItemModel that = (JcrItemModel) object;
-        save();
-        that.save();
-        return new EqualsBuilder().append(uuid, that.uuid).append(relPath, that.relPath).isEquals();
+        
+        // Two Objects that compare as equals must generate the same hash code,
+        // but two Objects with the same hash code do not have to be equal.
+        // this implicitly calls the save method when needed
+        if (this.hashCode() != that.hashCode()) {
+            return false;
+        } 
+
+        if (!this.uuid.equals(that.uuid)) {
+            return false;
+        }
+        
+        if (this.relPath == null && that.relPath == null) {
+            return true;
+        } else if (this.relPath != null) {
+            return this.relPath.equals(that.relPath);
+        } else {
+            return false;
+        }
     }
 
     @Override
     public int hashCode() {
-        save();
-        return new HashCodeBuilder(177, 3).append(uuid).append(relPath).toHashCode();
+        if (hash == 0) {
+            if (uuid == null) {
+                // try to retrieve uuid
+                save();
+            }
+            // prefer uuid over path
+            if (uuid != null) {
+                if (relPath == null) {
+                    hash = uuid.hashCode();
+                } else {
+                    hash = uuid.hashCode() + relPath.hashCode();
+                }
+            } else {
+                // no node found
+                hash = -1;
+            }
+        }
+        return hash;
     }
 
 }
