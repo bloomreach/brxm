@@ -60,7 +60,8 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./logout.html'>Logout</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='./logout.html'>Logout</a> (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='./create_folder.html'>Create another folder</a>.</li>
    </ul>
   </subsection>

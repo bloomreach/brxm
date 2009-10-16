@@ -94,7 +94,8 @@ ________________________________________________________________________________
 
    <subsection name='Next'>
     <ul>
-     <li><a href='logout.html'>Logout</a> (continue <a href='../tour.html'>tour</a>).</li>
+     <li><a href='logout.html'>Logout</a> (continue tour).</li>
+     <li><a href='../tour.html'>tour</a>.</li>
      <li><a href='create_folder.html'>Create a folder</a>.</li>
      <li><a href='count_published.html'>Count published documents</a>.</li>
     </ul>

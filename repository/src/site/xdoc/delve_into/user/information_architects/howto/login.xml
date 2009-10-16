@@ -53,7 +53,8 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./create_namespace.html'>Create new namespace</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='./create_namespace.html'>Create new namespace</a> (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='./goto_documenttype_card.html'>Go to document types tab page</a>.</li>
    </ul>
   </subsection>

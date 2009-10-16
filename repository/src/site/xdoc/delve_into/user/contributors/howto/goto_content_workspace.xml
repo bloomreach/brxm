@@ -47,10 +47,9 @@ ________________________________________________________________________________
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./goto_folder.html'>Go to folder</a>, i.e. make it 
-      the <a href='../concepts/current_folder.html'>current folder</a> 
-      (<a href='./goto_folder.html'>continue</a> <a href='../tour.html'>tour</a>).</li>
-    </ul>       
+     <li><a href='./goto_folder.html'>Go to folder (continue tour)</a>.</li>
+     <li><a href='../tour.html'>tour</a>.</li>
+    </ul>
    </subsection>
 
    <subsection name='Alternative'>

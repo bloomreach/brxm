@@ -25,8 +25,8 @@
     <section name="What is Hippo CMS?">
       <span class='shortdesc'>What part of Hippo ECM is it, what are its tasks?</span>
 
-          <script src="vimeo.js"></script>
-      
+        <script src="images/vimeo.js"></script>
+
           <span class='add'>Enlightning diagram?</span>
       <span class='review'>all text: move short features list to feature document?</span>
 
@@ -42,6 +42,7 @@
          <a href='./about/roadmap.html'>roadmap</a> for coming releases.
       </p>
 
+   <div class='nav'>
    <table>
    <tr>
     <td>
@@ -107,7 +108,7 @@
     </td>
    </tr>
   </table>
-
+ </div>
 
  <!--
         Any applications conforming to the JCR API can be linked to Hippo CMS. 

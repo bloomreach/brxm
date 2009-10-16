@@ -51,7 +51,8 @@ ________________________________________________________________________________
   <subsection name='Next'>
    <ul>
     <li><a href='./logout.html'>Logout</a>
-       (continue <a href='../tour.html'>tour</a>).</li>
+     (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
    </ul>
   </subsection>
 

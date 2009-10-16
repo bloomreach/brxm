@@ -56,7 +56,8 @@ ________________________________________________________________________________
   <subsection name='Next'>
    <ul>
     <li><a href='./update_all_content.html'>Update all content</a>.</li>
-    <li><a href='create_custom_compound.html'>Create custom compound</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='create_custom_compound.html'>Create custom compound</a> (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='./logout.html'>Logout</a>.</li>
     <li><a href='./create_documenttype.html'>Create a document type</a>.</li>
     <li><a href='./goto_namespace.html'>Go to namespace</a>.</li>

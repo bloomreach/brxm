@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -60,20 +60,20 @@ ________________________________________________________________________________
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document (continue</a> 
-         <a href='../tour.html'>tour</a>).</li>
+     <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document (continue tour)</a></li>
+     <li><a href='../tour.html'>tour</a>.</li>
      <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document</a>.</li>
      <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
      <li><a href='./save_document.html'>Save the changes to the document</a>.</li>
-    </ul>       
+    </ul>
    </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
-    </ul>       
+    </ul>
    </subsection>
 
   </section>
  </body>
-</document>        
+</document>

@@ -60,7 +60,8 @@ ________________________________________________________________________________
   <subsection name='Next'>
    <ul>
     <li><a href='specify_type_details.html'>Howto specify the type details</a>.</li>
-    <li><a href='specify_type_layout.html'>Howto specify the type layout</a> (continue <a href='../tour.html'>tour</a>).</li>
+    <li><a href='specify_type_layout.html'>Howto specify the type layout</a> (continue tour).</li>
+    <li><a href='../tour.html'>tour</a>.</li>
     <li><a href='add_date_to_documenttype.html'>Add date to document type</a>.</li>
     <li><a href='create_documenttype.html'>Create another document type</a>.</li>
    </ul>

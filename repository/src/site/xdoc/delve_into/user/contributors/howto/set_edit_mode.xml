@@ -71,7 +71,8 @@ ________________________________________________________________________________
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./request_publication.html'>Request publication (continue</a> <a href='../tour.html'>tour</a>).</li>
+     <li><a href='./request_publication.html'>Request publication (continue tour)</a>.</li>
+     <li><a href='../tour.html'>tour</a>.</li>
      <!--  <li><a href='./goto_document_tab.html'>Open another document</a>.</li> -->
      <li><a href='./goto_folder.html'>Open another folder (list its contents)</a>.</li>
      <li><a href='./logout.html'>Logout</a>.</li>

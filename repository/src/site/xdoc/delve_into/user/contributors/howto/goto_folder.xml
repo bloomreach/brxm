@@ -69,15 +69,16 @@ ________________________________________________________________________________
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./create_document.html'>Create a document (continue</a> <a href='../tour.html'>tour)</a>.</li>
+     <li><a href='./create_document.html'>Create a document (continue tour).</a></li>
+     <li><a href='../tour.html'>tour</a>.</li>
      <!-- <li><a href='./goto_document_tab.html'>Goto document tab</a>.</li> -->
-    </ul>       
+    </ul>
    </subsection>
    <subsection name='Alternative'>
     <ul>
      <li><a href='./index.html'>Howto list.</a></li>
      <li><a href='../concepts/index.html'>Glossary.</a></li>
-    </ul>       
+    </ul>
    </subsection>
   </section>
  </body>

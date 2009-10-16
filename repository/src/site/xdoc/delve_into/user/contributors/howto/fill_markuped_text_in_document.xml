@@ -130,7 +130,8 @@ ________________________________________________________________________________
 
    <subsection name='Next'>
     <ul>
-     <li><a href='./save_document.html'>Save the changes to the document (continue</a> <a href='../tour.html'>tour</a>).</li>
+     <li><a href='./save_document.html'>Save the changes to the document (continue tour)</a>.</li>
+     <li><a href='../tour.html'>tour</a>.</li>
      <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
      <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
      <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document</a>.</li>
