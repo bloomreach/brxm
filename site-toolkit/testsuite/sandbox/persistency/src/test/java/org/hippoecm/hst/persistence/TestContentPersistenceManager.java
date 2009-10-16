@@ -35,9 +35,9 @@ public class TestContentPersistenceManager {
     public void setUp() throws Exception {
         cpm = new MockContentPersistenceManager();
         
-        comment1 = new Comment("/content/blog/comments/comment1", "comment1 - title", "comment1 - content");
+        comment1 = new Comment("/content/blog/comments/comment1", "00000000-0000-0000-0000-000000000001", "comment1 - title", "comment1 - content");
         ((MockContentPersistenceManager) cpm).setObject(comment1.getPath(), comment1);
-        comment2 = new Comment("/content/blog/comments/comment2", "comment2 - title", "comment2 - content");
+        comment2 = new Comment("/content/blog/comments/comment2", "00000000-0000-0000-0000-000000000002", "comment2 - title", "comment2 - content");
         ((MockContentPersistenceManager) cpm).setObject(comment2.getPath(), comment2);
     }
 
@@ -45,8 +45,15 @@ public class TestContentPersistenceManager {
     public void testBasicUsage() throws Exception {
         Comment testComment1 = (Comment) cpm.getObject("/content/blog/comments/comment1");
         assertEquals(comment1, testComment1);
+        
         Comment testComment2 = (Comment) cpm.getObject("/content/blog/comments/comment2");
         assertEquals(comment2, testComment2);
+        
+        Comment testComment3 = (Comment) cpm.getObjectByUuid("00000000-0000-0000-0000-000000000001");
+        assertEquals(comment1, testComment3);
+        
+        Comment testComment4 = (Comment) cpm.getObjectByUuid("00000000-0000-0000-0000-000000000002");
+        assertEquals(comment2, testComment4);
         
         testComment1.setTitle("testcomment1 - title");
         testComment1.setContent("testcomment1 - content");
@@ -69,17 +76,23 @@ public class TestContentPersistenceManager {
         private static final long serialVersionUID = 1L;
         
         private String path;
+        private String uuid;
         private String title;
         private String content;
         
-        public Comment(String path, String title, String content) {
+        public Comment(String path, String uuid, String title, String content) {
             this.path = path;
+            this.uuid = uuid;
             this.title = title;
             this.content = content;
         }
         
         public String getPath() {
             return path;
+        }
+        
+        public String getUuid() {
+            return uuid;
         }
         
         public void setTitle(String title) {

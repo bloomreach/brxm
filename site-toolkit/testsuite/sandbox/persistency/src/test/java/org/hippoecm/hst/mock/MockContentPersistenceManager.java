@@ -65,6 +65,15 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         
         return null;
     }
+    
+    public Object getObjectByUuid(String uuid) throws ContentPersistenceException {
+        for (Object object : objectToPathMap.keySet()) {
+            if (uuid.equals(getUuidProperty(object))) {
+                return object;
+            }
+        }
+        return null;
+    }
 
     public synchronized void setObject(String absPath, Object object) throws ContentPersistenceException {
         if (absPath == null) {
@@ -139,6 +148,19 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         }
         
         return path;
+    }
+    
+    protected String getUuidProperty(Object object) {
+        String uuid = null;
+        
+        try {
+            Method getPathMethod = object.getClass().getMethod("getUuid", null);
+            uuid = (String) getPathMethod.invoke(object, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return uuid;
     }
     
     protected Object getSerializedCopy(Object object) throws ContentPersistenceException {

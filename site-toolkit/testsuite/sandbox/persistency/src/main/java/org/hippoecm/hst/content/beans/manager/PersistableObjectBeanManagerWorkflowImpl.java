@@ -142,6 +142,19 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
             throw new ContentPersistenceException(e);
         }
     }
+
+    /**
+     * Get an object from the JCR repository
+     *
+     * @see {@link ObjectBeanManager#getObjectByUuid(String)}
+     */
+    public Object getObjectByUuid(String uuid) throws ContentPersistenceException {
+        try {
+            return obm.getObjectByUuid(uuid);
+        } catch (ObjectBeanManagerException e) {
+            throw new ContentPersistenceException(e);
+        }
+    }
     
     /**
      * Creates content node(s) with the specified node type at the specified absolute path.

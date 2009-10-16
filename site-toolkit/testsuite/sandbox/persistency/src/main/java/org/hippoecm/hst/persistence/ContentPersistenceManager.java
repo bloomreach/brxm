@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.persistence;
 
+import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+
 /**
  * <CODE>ContentPersistenceManager</CODE> is the primary interface for HST-2-Persistence-aware application components.
  * <P>
@@ -48,6 +50,14 @@ public interface ContentPersistenceManager {
      * @throws ContentPersistenceException
      */
     Object getObject(String absPath) throws ContentPersistenceException;
+    
+    /**
+     * Returns the content object by the specified uuid.
+     * @param uuid
+     * @return an object having the specified uuid
+     * @throws ContentPersistenceException
+     */
+    Object getObjectByUuid(String uuid) throws ContentPersistenceException;
     
     /**
      * Creates content node(s) with the specified node type at the specified absolute path.

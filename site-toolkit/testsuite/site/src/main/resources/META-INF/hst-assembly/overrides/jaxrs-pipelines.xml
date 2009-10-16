@@ -31,9 +31,9 @@
         class="org.hippoecm.hst.core.container.ServletDelegatingValve$ServletConfigImpl">
     <constructor-arg value="CXFNonSpringJaxrsServlet" />
     <constructor-arg>
-      <props>
-        <prop key="jaxrs.serviceClasses">org.hippoecm.hst.services.support.jaxrs.demo.CustomerService</prop>
-      </props>
+      <bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="location" value="classpath:/jaxrs.properties" />
+      </bean>
     </constructor-arg>
   </bean>
   
@@ -51,6 +51,7 @@
     </property>
     <property name="invokingValves">
       <list>
+        <ref bean="securityValve" />
         <ref bean="cxfServletDelegatingValve" />
       </list>
     </property>

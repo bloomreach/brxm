@@ -53,7 +53,7 @@ public class SecurityValve extends AbstractValve {
     protected void checkAuthorized(HttpServletRequest servletRequest) throws ContainerSecurityException {
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-        boolean secured = resolvedSiteMapItem.isSecured();
+        boolean secured = (resolvedSiteMapItem != null && resolvedSiteMapItem.isSecured());
         
         if (!secured) {
             if (log.isDebugEnabled()) {

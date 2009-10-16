@@ -36,6 +36,17 @@
       <scope>provided</scope>
     </dependency>
     
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    
     <!-- JAX-RS API -->
     <dependency>
       <groupId>javax.ws.rs</groupId>
@@ -78,6 +89,12 @@
       <version>${pom.version}</version>
     </dependency>
     
+    <dependency>
+      <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
+      <artifactId>hst-sandbox-persistency</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+  
     <!-- Test dependencies -->
     
     <dependency>
