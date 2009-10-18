@@ -37,7 +37,7 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    boolean isMultiple;
+    boolean isWeakReference;
     Value value;
     Value[] values;
     ValueFactory valueFactory;
@@ -45,6 +45,7 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
     UpdaterProperty(UpdaterSession session, UpdaterNode target) {
         super(session, target);
         this.valueFactory = session.valueFactory;
+        this.isWeakReference = false;
     }
 
     UpdaterProperty(UpdaterSession session, Property origin, UpdaterNode target) throws RepositoryException {
@@ -57,8 +58,49 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
             value = origin.getValue();
             values = null;
         }
+
+        isWeakReference = "hippo:docbase".equals(origin.getName());
+
+        register();
+    }
+    
+    void register() throws RepositoryException {
+        // if this is a facetselect/mirror/facetsearch docbase, then retarget
+        // (first check is necessary for hippo namespace upgrade)
+        if (isWeakReference || isStrongReference()) {
+            if(values != null) {
+                for(int i=0; i<values.length; i++) {
+                    session.addReference(this, values[i].getString());
+                }
+            } else {
+                session.addReference(this, value.getString());
+            }
+        }
     }
 
+    void unregister() throws RepositoryException {
+        if (isWeakReference || isStrongReference()) {
+            if(values != null) {
+                for(int i=0; i<values.length; i++) {
+                    session.removeReference(this, values[i].getString());
+                }
+            } else {
+                session.removeReference(this, value.getString());
+            }
+        }
+    }
+    
+    boolean isStrongReference() throws RepositoryException {
+        if (values != null) {
+            if (values.length > 0) {
+                return values[0].getType() == PropertyType.REFERENCE;
+            }
+        } else if (value != null) {
+            return value.getType() == PropertyType.REFERENCE;
+        }
+        return false;
+    }
+    
     public boolean isMultiple() {
         if (values != null)
             return true;
@@ -67,23 +109,36 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
     }
 
     void commit() throws RepositoryException {
-        if(origin != null) {
-            if(values != null) {
-                for(int i=0; i<values.length; i++) {
-                    values[i] = session.retarget(values[i]);
-                }
-            } else {
-                value = session.retarget(value);
+        // new property has same parent as old one, e.g. nt:unstructured
+        if (origin != null && origin.getParent().isSame(parent.origin)) {
+            origin.remove();
+        }
+
+        String name = getName();
+        if (isMultiple()) {
+            if(UpdaterEngine.log.isDebugEnabled()) {
+                UpdaterEngine.log.debug("commit set multivalue property "+name+ " on "+getPath());
             }
+            origin = ((Node)parent.origin).setProperty(name, values);
+        } else {
+            if(UpdaterEngine.log.isDebugEnabled()) {
+                UpdaterEngine.log.debug("commit set singlevalue property "+name+ " on "+getPath());
+            }
+            origin = ((Node) parent.origin).setProperty(name, value);
         }
     }
 
     @Override
     public void setName(String name) throws RepositoryException {
         super.setName(":" + name);
-        parent.removed.add(this);
     }
 
+    @Override
+    public void remove() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+        unregister();
+        super.remove();
+    }
+    
     // javax.jcr.Item interface
 
     public boolean isNode() {
@@ -98,44 +153,48 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
     // javax.jcr.Property interface
 
     public void setValue(Value value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        unregister();
         if (value == null) {
             remove();
             return;
         }
-        isMultiple = false;
         this.value = value;
         this.values = null;
+        register();
     }
 
     public void setValue(Value[] values) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        unregister();
         if (values == null) {
             remove();
             return;
         }
-        isMultiple = true;
         this.value = null;
         this.values = values;
+        register();
     }
 
     public void setValue(String value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        unregister();
         if (value == null) {
             remove();
             return;
         }
-        isMultiple = false;
         this.value = valueFactory.createValue(value);
         this.values = null;
+        register();
     }
 
     public void setValue(String[] values) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
+        unregister();
         if (values == null) {
             remove();
             return;
         }
-        isMultiple = true;
         this.values = new Value[values.length];
         for (int i = 0; i < values.length; i++)
             this.values[i] = valueFactory.createValue(values[i]);
+        register();
     }
 
     @Deprecated

@@ -265,8 +265,8 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         }
 
         if (!hollow) {
-            Set<String> curMixins = new TreeSet();
-            Set<String> newMixins = new TreeSet();
+            Set<String> curMixins = new TreeSet<String>();
+            Set<String> newMixins = new TreeSet<String>();
             String[] mixins = getInternalProperty("jcr:mixinTypes");
             if (mixins != null) {
                 for(String mixin : mixins) {
@@ -331,17 +331,6 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     if (items.getValue().size() > 0) {
                         UpdaterProperty property = (UpdaterProperty) items.getValue().get(0);
                         property.commit();
-                        if (property.isMultiple()) {
-                            if(UpdaterEngine.log.isDebugEnabled()) {
-                                UpdaterEngine.log.debug("commit set multivalue property "+name+ " on "+getPath());
-                            }
-                            ((Node) origin).setProperty(name, property.getValues());
-                        } else {
-                            if(UpdaterEngine.log.isDebugEnabled()) {
-                                UpdaterEngine.log.debug("commit set singlevalue property "+name+ " on "+getPath());
-                            }
-                            ((Node) origin).setProperty(name, property.getValue());
-                        }
                     }
                 } else {
                     for (UpdaterItem item : items.getValue()) {
