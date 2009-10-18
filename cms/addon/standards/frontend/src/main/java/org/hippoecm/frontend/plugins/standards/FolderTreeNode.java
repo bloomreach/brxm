@@ -27,7 +27,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,21 +46,6 @@ public class FolderTreeNode extends JcrTreeNode {
     private FolderTreeNode(JcrNodeModel model, FolderTreeNode parent) {
         super(model, parent);
         this.config = parent.config;
-    }
-
-    @Override
-    protected int loadChildcount() throws RepositoryException {
-        Node jcrNode = nodeModel.getNode();
-        // do not count for virtual nodes w.r.t performance
-        if (jcrNode.isNodeType(HippoNodeType.NT_FACETRESULT)
-                || jcrNode.isNodeType(HippoNodeType.NT_FACETSEARCH)
-                || ((jcrNode instanceof HippoNode)
-                        && (((HippoNode) jcrNode).getCanonicalNode() == null
-                                || !((HippoNode) jcrNode).getCanonicalNode().isSame(jcrNode)))) {
-            return 1;
-        } else {
-            return loadChildren().size();
-        }
     }
 
     @Override
