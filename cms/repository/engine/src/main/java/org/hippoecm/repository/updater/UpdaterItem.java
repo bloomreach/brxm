@@ -38,7 +38,6 @@ public abstract class UpdaterItem implements Item {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    String originalName;
     Item origin;
     UpdaterNode parent;
     UpdaterSession session;
@@ -59,9 +58,6 @@ public abstract class UpdaterItem implements Item {
         if (parent == null)
             throw new RepositoryException("cannot rename the root node");
         String oldName = parent.reverse.get(this);
-        if (originalName == null) {
-            originalName = oldName;
-        }
         Iterator<UpdaterItem> iter = parent.children.get(oldName).iterator();
         for (int index = 0; iter.hasNext(); index++) {
             if (iter.next() == this) {
