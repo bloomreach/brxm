@@ -24,12 +24,6 @@ System.out.println("Console out from webpage.jsp");
 <html>
 <head>
 
-childContentNames: 
-<hst:defineObjects/>
-<c:forEach var="childContentName" items="${hstResponse.childContentNames}">
-  <hst:include ref="${childContentName}" />
-</c:forEach>
-
 <!-- include header -->
 <hst:include ref="header" />
 
@@ -39,7 +33,6 @@ childContentNames:
 <body>
 
 <h1>The new Hst</h1>
-
 
 <div class="page">
     <div style="float:left">
