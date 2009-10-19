@@ -195,7 +195,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
 
         if (fatalError) {
             // there's no sense in continuing
-            throw new AbortWithHttpStatusException(500, false);
+            throw new AbortWithHttpStatusException(503, false);
         }
         
         if (result == null) {
