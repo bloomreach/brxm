@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +43,7 @@ import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -76,13 +78,15 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     public static final String XINHA_SAVED_FLAG = "XINHA_SAVED_FLAG";
     public static final String XINHA_PARAM_PREFIX = "xinha-param-prefix-";
 
+    private static final String[] defaultFormatBlock = {"h1", "h2", "h3", "h4", "h5", "h6", "p",
+            "address", "pre"};
+
     private static final ResourceReference XINHA_MODAL_JS = new JavascriptResourceReference(XinhaDialogBehavior.class,
             "xinha-modal.js");
 
     private final String mode;
     private XinhaTextArea editor;
     private Configuration configuration;
-    //private AbstractAjaxBehavior postBehavior;
 
     private InternalLinkBehavior linkPickerBehavior;
     private ExternalLinkBehavior externalLinkBehavior;
@@ -230,7 +234,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         }
         super.onDetach();
     }
-    
+
     protected String clean(final String value) throws Exception {
         if (value != null) {
             IHtmlCleanerService cleaner = getPluginContext().getService(IHtmlCleanerService.class.getName(),
@@ -348,8 +352,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 @Override
                 protected Map<String, Object> getVariables() {
                     final Page page = getPluginContext().getService(Home.class.getName(), Home.class);
-                    String url = HeaderContributorHelper.getFixedRelativePathPrefixToContextRoot()
-                    + "xinha/xinha/";
+                    String url = HeaderContributorHelper.getFixedRelativePathPrefixToContextRoot() + "xinha/xinha/";
                     String lang = page.getLocale().getLanguage();
                     String skin = configuration.getSkin();
 
@@ -364,13 +367,13 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             //add register xinha config
             context.addOnDomLoad(new AbstractReadOnlyModel() {
                 private static final long serialVersionUID = 1L;
-                
+
                 //Cache config
                 String config;
 
                 @Override
                 public Object getObject() {
-                    if(config == null) {
+                    if (config == null) {
                         config = parseConfiguration(configuration);
                     }
                     return "YAHOO.hippo.EditorManager.register(" + config + ");";
@@ -409,9 +412,57 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
             String toolbars = asArray(configuration.getToolbarItems());
             String styleSheets = asArray(configuration.getStyleSheets());
-            return "{name: '" + configuration.getName() + "', properties: " + properties + ", plugins: " + plugins
-                    + ", pluginProperties: " + pluginProperties + ", toolbars: " + toolbars + ", styleSheets: "
-                    + styleSheets + "}";
+            String formatBlock = asDictionary(configuration.getFormatBlock(), true, true, "xinha.formatblock.");
+            return "{" +
+            		"name: '" + configuration.getName() + "', properties: " + properties + ", " +
+            		"plugins: " + plugins + ", pluginProperties: " + pluginProperties + ", " +
+            		"toolbars: " + toolbars + ", styleSheets: "+ styleSheets + ", " + 
+            		"formatBlock: " + formatBlock + "}";
+        }
+        
+        /**
+         * Transforms the List<String> into a Javascript object literal. The values of the input list will be
+         * used as keys and their translated values will be used as values. If reversed is set the values will be
+         * used as keys and vice-versa (this to support Xinha's formatblock)
+         * If addLabel is set, a value identified by translationPrefix + 'identifier' will be inserted as the first element
+         * in the object literal. This value will have an empty key so Xinha will know it's the label.
+         * If translationPrefix is not null it will be concatenated with the key to retrieve a translation value.   
+         * 
+         * Example: {'h1': 'Heading 1', 'pre': 'Formatted'}
+         * Reversed example: {'Heading 1' : 'h1', 'Formatted' : 'pre'}
+         * Example with label: {'': 'Label value', 'pre': 'Formatted', 'h1': 'Heading 1'}
+         * 
+         * @param keys  List of keys to be translated
+         * @param reversed Set this to use the keys as values and values as keys 
+         * @return javascript object literal with translated keys
+         */
+        private String asDictionary(List<String> keys, boolean addLabel, boolean reversed, String translationPrefix) {
+            if(translationPrefix == null) {
+                translationPrefix = "";
+            }
+            
+            String ret = "";
+            if(addLabel) {
+                String value = "'" + new StringResourceModel(translationPrefix + "identifier", AbstractXinhaPlugin.this, null).getString() + "'";
+                if(reversed) {
+                    ret += value + " : ''";
+                } else {
+                    ret += "'' : " + value;
+                }
+            }
+            for (String key : keys) {
+                if (ret.length() > 0) {
+                    ret += ", ";
+                }
+                String value = "'" + new StringResourceModel(translationPrefix + key, AbstractXinhaPlugin.this, null).getString() + "'";
+                key = "'" + key + "'";
+                if(reversed) {
+                    ret += value + " : " + key;
+                } else {
+                    ret += key + " : " + value;
+                }
+            }
+            return "{" + ret + "}";
         }
 
         /**
@@ -492,11 +543,14 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         private static final String XINHA_TOOLBAR = "Xinha.config.toolbar";
         private static final String XINHA_CSS = "Xinha.config.css";
         private static final String XINHA_SKIN = "Xinha.skin";
+        private static final String XINHA_FORMAT = "Xinha.format";
 
         private final Map<String, PluginConfiguration> pluginConfigurations = new HashMap<String, PluginConfiguration>();
         private final List<String> toolbarItems;
         private final List<String> styleSheets;
         private final String skin;
+        
+        private final List<String> formatBlock;
 
         public Configuration(IPluginConfig config) {
             addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
@@ -518,6 +572,14 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
             }
 
+            formatBlock = new LinkedList<String>();
+            String[] formatInput = config.containsKey(XINHA_FORMAT) ? config.getStringArray(XINHA_FORMAT) : defaultFormatBlock; 
+            for(String f : formatInput) {
+                if(!formatBlock.contains(f)) {
+                    formatBlock.add(f);
+                }
+            }
+
             skin = config.getString(XINHA_SKIN);
 
             values = config.getStringArray(XINHA_PLUGINS);
@@ -535,7 +597,11 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             }
 
         }
-
+        
+        public List<String> getFormatBlock() {
+            return formatBlock;
+        }
+        
         public List<String> getToolbarItems() {
             return toolbarItems;
         }
@@ -652,7 +718,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         protected AbstractXinhaPlugin getPlugin() {
             return AbstractXinhaPlugin.this;
         }
-        
+
         @Override
         public boolean equals(Object o) {
             return o == this;

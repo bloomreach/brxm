@@ -212,14 +212,10 @@ if (!YAHOO.hippo.EditorManager) {
                     }
                 }
                 
-                
-                //TODO: make configurable
-                //Set formatting
-//                xinhaConfig.formatblock = {
-//                        "&mdash; format &mdash;": "",
-//                        "Heading 3": "h3",
-//                        "Normal"   : "p"
-//                      };
+                //Set formatting options
+                if(!Lang.isUndefined(editor.config.formatBlock)) {
+                    xinhaConfig.formatblock = editor.config.formatBlock;
+                }
                 
                 //var editors = Xinha.makeEditors([ editor.name ], xinhaConfig, editor.config.plugins);
                 //make editors 
