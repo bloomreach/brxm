@@ -27,7 +27,7 @@ ________________________________________________________________________________
 
   <body>
     <section name="Remove field from document type">
-      <span class="shortdesc">How to remove a field from a document type.</span>
+      <span class="shortdesc">How to remove a field from a document type?</span>
 
    <script type="text/javascript">
     leftpx=450;
@@ -52,14 +52,16 @@ ________________________________________________________________________________
      already exists, all information in that field from all those documents will be lost!
    </div>
 
-
-
+   <p>The changes will be available only after <a href='./update_all_content.html'>update all content</a>.
+      Read the warnings about it carefully. You may add or change more fields first.
+   </p>
 
   <subsection name='Next'>
    <ul>
     <li><a href='./save_documenttype.html'>Save documenttype</a>
      (continue tour).</li>
     <li><a href='../tour.html'>tour</a>.</li>
+    <li><a href='./update_all_content.html'>Update all content</a>.</li>
     <li><a href='./change_field_in_documenttype.html'>Change a field in a document type</a>.</li>
     <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type</a>.</li>
     <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>

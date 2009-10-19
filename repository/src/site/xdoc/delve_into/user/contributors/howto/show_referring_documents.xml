@@ -22,11 +22,11 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Show referring documents</title>
+    <title>Show referring</title>
   </properties>
 
   <body>
-    <section name="Show referring documents">
+    <section name="Show referring">
      <span class="shortdesc">How to get a list of where the current
        document is used, i.e. which documents refer the current document?</span>
 

@@ -16,7 +16,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
@@ -27,7 +27,7 @@ ________________________________________________________________________________
 
   <body>
     <section name="Start CMS site">
-      <span class="shortdesc">How to go to the CMS site, i.e. start a CMS session, in your browser.</span>
+      <span class="shortdesc">How to go to the CMS site, i.e. start a CMS session, in your browser?</span>
 
    <script type="text/javascript">
     leftpx=0;

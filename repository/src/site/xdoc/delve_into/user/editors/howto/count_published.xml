@@ -22,11 +22,11 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Count published documents</title>
+    <title>Count published</title>
   </properties>
 
   <body>
-    <section name="Count published documents">
+    <section name="Count published">
      <span class="shortdesc">How to get a count of all published documents in a folder?</span>
 
    <script type="text/javascript">

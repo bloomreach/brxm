@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Fill date in Document</title>
+    <title>Supply Dates</title>
   </properties>
 
   <body>
-    <section name="Fill date in Document">
-      <span class="shortdesc">How to fill a date field in a document.</span>
+    <section name="Supply Dates">
+      <span class="shortdesc">How to fill date fields in a document?</span>
 
    <script type="text/javascript">
     leftpx=450;

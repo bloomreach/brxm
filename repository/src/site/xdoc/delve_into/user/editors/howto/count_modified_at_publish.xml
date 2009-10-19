@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Count modified document at publish</title>
+    <title>Count modified at publish</title>
   </properties>
 
   <body>
-    <section name="Count modified document at publish">
-     <span class="shortdesc">Count modified document at publish</span>
+    <section name="Count modified at publish">
+     <span class="shortdesc">What does the count of modified documents mean, which is shown after publishing?</span>
 
    <script type="text/javascript">
     leftpx=0;

@@ -22,12 +22,11 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Set permissions for a group</title>
+    <title>Set group permissions</title>
   </properties>
 
   <body>
     <section name="Set group permissions">
-      <span class="shortdesc">How to set permissions for a Hippo CMS group of users.</span>
 
    <script type="text/javascript">
     leftpx=150;

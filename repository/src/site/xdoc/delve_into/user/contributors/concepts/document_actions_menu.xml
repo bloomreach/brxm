@@ -27,10 +27,10 @@ ________________________________________________________________________________
 
   <body>
     <section name="Document actions menu">
-     <span class="shortdesc">The document actions menu is a menu of actions that can be performed
-      on a specific document.</span>
+     <span class="shortdesc">What is a document actions menu?</span>
 
-   <p>
+   <p>The document actions menu is a menu of actions that can be performed
+      on a specific document.
     You find the document actions menu in the <a href='review_mode.html'>review mode</a> of a document,
     at the top.
    </p>
