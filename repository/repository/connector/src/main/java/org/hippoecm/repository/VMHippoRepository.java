@@ -53,7 +53,7 @@ class VMHippoRepository {
         if (hippoRepository != null) {
             return hippoRepository;
         } else {
-            throw new NotBoundException();
+            throw new RepositoryException("No repository found at: vm://" + location);
         }
     }
 

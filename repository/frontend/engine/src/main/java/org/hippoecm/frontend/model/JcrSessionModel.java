@@ -27,6 +27,7 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.FacetSearchObserver;
 import org.hippoecm.frontend.InvalidLoginPage;
@@ -160,6 +161,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
     @Override
     protected Object load() {
         javax.jcr.Session result = null;
+        boolean fatalError = false;
         try {
             Main main = (Main) Application.get();
             HippoRepository repository = main.getRepository();
@@ -176,20 +178,26 @@ public class JcrSessionModel extends LoadableDetachableModel {
                         }
                         result.getRootNode().getNode(HippoNodeType.LOG_PATH).refresh(true);
                     }
-                } catch (AccessDeniedException ex) {
-                    log.debug("Unable to log login event (maybe trying as Anonymous?): " +  ex.getMessage());
-                } catch (RepositoryException ex) {
-                    log.error(ex.getClass().getName()+": "+ex.getMessage());
-                } catch (RemoteException ex) {
-                    log.error(ex.getClass().getName()+": "+ex.getMessage());
+                } catch (AccessDeniedException e) {
+                    log.debug("Unable to log login event (maybe trying as Anonymous?): " +  e.getMessage());
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException while logging login event", e);
+                } catch (RemoteException e) {
+                    log.error("RemoteException while logging login event", e);
                 }
             }
         } catch (LoginException e) {
             log.info("[" + getRemoteAddr() + "] Invalid login as user: " + credentials.getString("username"));
         } catch (RepositoryException e) {
-            log.error(e.getMessage());
+            fatalError = true;
+            log.error("Unable to obtain repository instance, aborting.", e);
         }
 
+        if (fatalError) {
+            // there's no sense in continuing
+            throw new AbortWithHttpStatusException(500, false);
+        }
+        
         if (result == null) {
             credentials = Main.DEFAULT_CREDENTIALS;
             Main main = (Main) Application.get();
