@@ -126,6 +126,10 @@ final public class UpdaterSession implements HippoSession {
             QueryResult result = query.execute();
             for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
                 Node reference = iter.nextNode();
+                // ignore version storage
+                if (reference.getPath().startsWith("/jcr:system")) {
+                    continue;
+                }
                 if (reference.isNodeType("mix:versionable")) {
                     reference.checkout();
                 }
