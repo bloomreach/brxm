@@ -15,21 +15,26 @@
  */
 package org.hippoecm.repository.updater;
 
-import java.util.List;
-import java.util.LinkedList;
+import static org.junit.Assert.assertEquals;
 
-import org.hippoecm.repository.ext.UpdaterItemVisitor;
+import java.io.StringReader;
+import java.rmi.RemoteException;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.junit.Test;
-import org.junit.Ignore;
-
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.util.Utilities;
-import org.hippoecm.repository.ext.UpdaterModule;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.UpdaterContext;
+import org.hippoecm.repository.ext.UpdaterItemVisitor;
+import org.hippoecm.repository.ext.UpdaterModule;
+import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
+import org.junit.Test;
 
 public class UpdaterTest extends TestCase {
     @SuppressWarnings("unused")
@@ -80,4 +85,74 @@ public class UpdaterTest extends TestCase {
         Modules modules = new Modules(list);
         UpdaterEngine.migrate(session, modules);
     }
+
+    @Test
+    public void testReferences() throws RepositoryException, RemoteException, WorkflowException {
+        Node container = session.getRootNode().getNode("test");
+
+        // create back references (refA points to earlier node A)
+        
+        Node A = container.addNode("A", "test:target");
+        A.addMixin("hippo:harddocument");
+
+        Node refA = container.addNode("refA", "test:referrer");
+        refA.setProperty("referenceA", A);
+        Node facetA = refA.addNode("linkA", "hippo:facetselect");
+        facetA.setProperty("hippo:docbase", A.getUUID());
+        facetA.setProperty("hippo:facets", new String[0]);
+        facetA.setProperty("hippo:values", new String[0]);
+        facetA.setProperty("hippo:modes", new String[0]);
+
+
+        // create forward references (refB points to later node B)
+        Node refB = container.addNode("refB", "test:referrer");
+        Node B = container.addNode("B", "test:target");
+        B.addMixin("hippo:harddocument");
+
+        refB.setProperty("referenceB", B);
+        Node facetB = refB.addNode("linkB", "hippo:facetselect");
+        facetB.setProperty("hippo:docbase", B.getUUID());
+        facetB.setProperty("hippo:facets", new String[0]);
+        facetB.setProperty("hippo:values", new String[0]);
+        facetB.setProperty("hippo:modes", new String[0]);
+
+        session.save();
+
+        UpdaterModule module = new UpdaterModule() {
+            String newTest  = 
+                "<test='http://www.onehippo.org/jcr/hippo/test/nt/1.1'>"+
+                "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"+
+                "[test:target] > hippo:document "+
+                "[test:referrer] > hippo:document - * (reference) + * (hippo:facetselect)";
+
+            public void register(UpdaterContext context) {
+                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "test", "-", new StringReader(newTest)));
+            }
+        };
+        List list = new LinkedList();
+        list.add(module);
+        Modules modules = new Modules(list);
+        UpdaterEngine.migrate(session, modules);
+
+
+        // verify back references
+        
+        refA = session.getRootNode().getNode("test/refA");
+        A = refA.getProperty("referenceA").getNode();
+        assertEquals("test_1_1:target", A.getPrimaryNodeType().getName());
+
+        String uuid = refA.getNode("linkA").getProperty("hippo:docbase").getString();
+        assertEquals(A.getUUID(), uuid);
+
+
+        // verify forward references
+
+        refB = session.getRootNode().getNode("test/refB");
+        B = refB.getProperty("referenceB").getNode();
+        assertEquals("test_1_1:target", B.getPrimaryNodeType().getName());
+
+        uuid = refB.getNode("linkB").getProperty("hippo:docbase").getString();
+        assertEquals(B.getUUID(), uuid);
+    }
+
 }

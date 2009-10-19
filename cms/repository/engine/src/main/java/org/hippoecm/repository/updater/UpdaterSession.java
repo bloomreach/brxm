@@ -103,20 +103,24 @@ final public class UpdaterSession implements HippoSession {
             if (log.isDebugEnabled()) {
                 log.debug("remap " + source.getPath() + " from " + sourceUUID + " to " + targetUUID + " (" + targetNode.getPath() + ")");
             }
+            Value targetValue = valueFactory.createValue(targetUUID, PropertyType.REFERENCE);
             for(PropertyIterator iter = source.getReferences(); iter.hasNext(); ) {
                 Property reference = iter.nextProperty();
                 if (reference.getParent().isNodeType("mix:versionable")) {
                     reference.getParent().checkout();
                 }
+                if (log.isDebugEnabled()) {
+                    log.debug("setting " + reference.getPath() + " from " + sourceUUID + " to " + targetUUID);
+                }
                 if(reference.getDefinition().isMultiple()) {
                     Value[] values = reference.getValues();
                     for(int i=0; i<values.length; i++) {
                         if(values[i].getString().equals(sourceUUID))
-                            values[i] = valueFactory.createValue(targetUUID, PropertyType.REFERENCE);
+                            values[i] = targetValue;
                     }
                     reference.setValue(values);
                 } else {
-                    reference.setValue(upstream.getRootNode());
+                    reference.setValue(targetValue);
                 }
             }
 
@@ -154,15 +158,17 @@ final public class UpdaterSession implements HippoSession {
                             Value[] values = property.getValues();
                             for(int i=0; i<values.length; i++) {
                                 if(values[i].getString().equals(sourceUUID))
-                                    values[i] = valueFactory.createValue(targetUUID, PropertyType.REFERENCE);
+                                    values[i] = targetValue;
                             }
                             property.setValue(values);
+                            ((Property) property.origin).setValue(values);
                         } else {
-                            property.setValue(upstream.getRootNode());
+                            property.setValue(targetValue);
+                            ((Property) property.origin).setValue(targetValue);
                         }
                     } else {
-                        property.setValue(targetUUID);
-                        ((Property) property.origin).setValue(targetUUID);
+                        property.setValue(targetValue);
+                        ((Property) property.origin).setValue(targetValue);
                     }
                 }
                 assert (!references.containsKey(sourceUUID));
