@@ -29,6 +29,7 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.servlet.ServletContext;
 
+import org.apache.wicket.AbortException;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
@@ -311,19 +312,15 @@ public class Main extends WebApplication {
 
     private HippoRepository repository;
 
-    public HippoRepository getRepository() {
+    public HippoRepository getRepository() throws RepositoryException {
         if (repository == null) {
             String repositoryAddress = getConfigurationParameter(REPOSITORY_ADDRESS_PARAM, null);
             String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM,
                     DEFAULT_REPOSITORY_DIRECTORY);
-            try {
-                if (repositoryAddress != null && !repositoryAddress.trim().equals("")) {
-                    repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
-                } else {
-                    repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
-                }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
+            if (repositoryAddress != null && !repositoryAddress.trim().equals("")) {
+                repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
+            } else {
+                repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
             }
         }
         return repository;
