@@ -395,6 +395,10 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         }
     }
     
+    public List<String> getChildContentNames() {
+        return this.componentWindow.getChildWindowNames();
+    }
+    
     public void forward(String pathInfo) throws IOException {
         this.responseState.forward(pathInfo);
     }

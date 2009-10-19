@@ -306,4 +306,12 @@
             elements. Using this tag, each HstComponent can write unique name for its elements.
         </description>
     </tag>
+    
+    <tag>
+        <name>defineObjects</name>
+        <tag-class>org.hippoecm.hst.tag.DefineObjectsTag</tag-class>
+        <tei-class>org.hippoecm.hst.tag.DefineObjectsTag$TEI</tei-class>
+        <body-content>empty</body-content>
+    </tag>
+    
 </taglib>

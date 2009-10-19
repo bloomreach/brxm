@@ -15,11 +15,12 @@
  */
 package org.hippoecm.hst.mock;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.map.LinkedMap;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstResponseState;
@@ -35,8 +36,8 @@ public class MockHstComponentWindow implements HstComponentWindow {
     protected String serveResourcePath;
     protected HstComponentWindow parentWindow;
     protected List<HstComponentException> componentExceptions = new LinkedList<HstComponentException>();
-    protected Map<String, HstComponentWindow> childWindowMap = new HashMap<String, HstComponentWindow>();
-    protected Map<String, HstComponentWindow> childWindowMapByReferenceName = new HashMap<String, HstComponentWindow>();
+    protected LinkedMap childWindowMap = new LinkedMap();
+    protected LinkedMap childWindowMapByReferenceName = new LinkedMap();
     protected HstResponseState responseState;
 
     public void addComponentExcpetion(HstComponentException e) {
@@ -48,17 +49,25 @@ public class MockHstComponentWindow implements HstComponentWindow {
     }
 
     public HstComponentWindow getChildWindow(String name) {
-        return childWindowMap.get(name);
+        return (HstComponentWindow) childWindowMap.get(name);
     }
 
     public HstComponentWindow getChildWindowByReferenceName(String referenceName) {
-        return childWindowMapByReferenceName.get(referenceName);
+        return (HstComponentWindow)childWindowMapByReferenceName.get(referenceName);
     }
 
     public Map<String, HstComponentWindow> getChildWindowMap() {
         return childWindowMap;
     }
-
+    
+    public List<String> getChildWindowNames() {
+        if (this.childWindowMap == null) {
+            return Collections.emptyList();
+        } else {
+            return this.childWindowMap.asList();
+        }
+    }
+    
     public HstComponent getComponent() {
         return component;
     }

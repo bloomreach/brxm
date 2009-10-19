@@ -183,11 +183,21 @@ public interface HstResponse extends HttpServletResponse {
     
     /**
      * Flushes the buffer of child window.
+     * <P>
+     * <EM>Note: the child content can be flushed only once. 
+     * If it is already flushed, then the next invocations will not make any effect.</EM>
+     * </P>
      * 
      * @param name the name of the child window
      * @throws IOException
      */
     void flushChildContent(String name) throws IOException;
+    
+    /**
+     * Returns the flushable child content window names.
+     * @return
+     */
+    List<String> getChildContentNames();
 
     /**
      * Sends an error response to the client using the specified status.

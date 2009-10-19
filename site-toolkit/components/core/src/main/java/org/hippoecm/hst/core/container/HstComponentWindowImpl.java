@@ -15,11 +15,12 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.map.LinkedMap;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstResponseState;
@@ -38,8 +39,8 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected String serveResourcePath;
     protected HstComponentWindow parentWindow;
     protected List<HstComponentException> componentExceptions;
-    protected Map<String, HstComponentWindow> childWindowMap;
-    protected Map<String, HstComponentWindow> childWindowMapByReferenceName;
+    protected LinkedMap childWindowMap;
+    protected LinkedMap childWindowMapByReferenceName;
     
     protected HstResponseState responseState;
     
@@ -95,11 +96,19 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         return this.childWindowMap;
     }
     
+    public List<String> getChildWindowNames() {
+        if (this.childWindowMap == null) {
+            return Collections.emptyList();
+        } else {
+            return this.childWindowMap.asList();
+        }
+    }
+    
     public HstComponentWindow getChildWindow(String name) {
         HstComponentWindow childWindow = null;
         
         if (this.childWindowMap != null) {
-            childWindow = this.childWindowMap.get(name);
+            childWindow = (HstComponentWindow) this.childWindowMap.get(name);
         }
         
         return childWindow;
@@ -109,7 +118,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         HstComponentWindow childWindow = null;
         
         if (this.childWindowMapByReferenceName != null) {
-            childWindow = this.childWindowMapByReferenceName.get(referenceName);
+            childWindow = (HstComponentWindow) this.childWindowMapByReferenceName.get(referenceName);
         }
         
         return childWindow;
@@ -133,16 +142,18 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     public void addChildWindow(HstComponentWindow child) {
         if (this.childWindowMap == null) {
-            this.childWindowMap = new HashMap<String, HstComponentWindow>();
+            this.childWindowMap = new LinkedMap();
         }
         
-        HstComponentWindow old = this.childWindowMap.put(child.getName(), child);
-        if(old != null) {
+        HstComponentWindow old = (HstComponentWindow) this.childWindowMap.put(child.getName(), child);
+        
+        if (old != null) {
             log.warn("Ambiguous components configuration because component sibblings found with same name. " +
             		"The first one is replaced. Fix your configuration as this leads to unexpected behavior. Double name: '{}'", child.getName() );
         }
+        
         if (this.childWindowMapByReferenceName == null) {
-            this.childWindowMapByReferenceName = new HashMap<String, HstComponentWindow>();
+            this.childWindowMapByReferenceName = new LinkedMap();
         }
         
         this.childWindowMapByReferenceName.put(child.getReferenceName(), child);

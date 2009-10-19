@@ -111,6 +111,13 @@ public interface HstComponentWindow {
     Map<String, HstComponentWindow> getChildWindowMap();
     
     /**
+     * The child component window names contained in this component window.
+     * 
+     * @return the component window names contained in this component window
+     */
+    List<String> getChildWindowNames();
+    
+    /**
      * The child component window which can be accessed by the name.
      * 
      * @param name the name of the child component window
