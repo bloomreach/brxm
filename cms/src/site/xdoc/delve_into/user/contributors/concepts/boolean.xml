@@ -33,7 +33,7 @@ ________________________________________________________________________________
 
   <body>
     <section name="Boolean">
-      <span class="shortdesc">What is a boolean</span>
+      <span class="shortdesc">What is a boolean?</span>
 
     <p>A boolean is a yes or no question. A boolean has a name,
      identifying the question, and a value, which is the answer to the

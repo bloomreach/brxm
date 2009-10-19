@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Change field in document type</title>
+    <title>Change field</title>
   </properties>
 
   <body>
-    <section name="Change field in document type">
-      <span class="shortdesc">How to change a field in a document type.</span>
+    <section name="Change field">
+      <span class="shortdesc">How to change field properties of a field in all documents of a document type?</span>
 
    <script type="text/javascript">
     leftpx=450;
@@ -54,9 +54,14 @@ ________________________________________________________________________________
     the <a href='../concepts/field_properties_overview.html'>properties overview of the field.</a>
    </p>
 
+   <p>The changes will be available only after <a href='./update_all_content.html'>update all content</a>.
+      Read the warnings about it carefully. You may add or change more fields first.
+   </p>
+
   <subsection name='Next'>
    <ul>
     <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type (continue tour)</a>.</li>
+    <li><a href='./update_all_content.html'>Update all content</a>.</li>
     <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
     <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
     <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>

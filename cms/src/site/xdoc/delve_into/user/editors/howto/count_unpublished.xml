@@ -22,11 +22,11 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Count unpublished documents</title>
+    <title>Count unpublished</title>
   </properties>
 
   <body>
-    <section name="Count unpublished documents">
+    <section name="Count unpublished">
      <span class="shortdesc">How to get a count of all unpublished documents in a folder?</span>
 
    <script type="text/javascript">

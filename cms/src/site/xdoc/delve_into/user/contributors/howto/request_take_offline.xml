@@ -22,11 +22,11 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Request to take off line a document</title>
+    <title>Request take off line</title>
   </properties>
 
   <body>
-    <section name="Request to take off line a document">
+    <section name="Request take off line">
      <span class="shortdesc">How to ask the editor to take a document off line, i.e.
       to unpublish a published document?</span>
 

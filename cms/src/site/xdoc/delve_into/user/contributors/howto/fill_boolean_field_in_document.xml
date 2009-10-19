@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Fill boolean in Document</title>
+    <title>Supply Yes or No (Booleans)</title>
   </properties>
 
   <body>
-    <section name="Fill boolean field in Document">
-      <span class="shortdesc">How to answer a yes/no question in a document.</span>
+    <section name="Supply Yes or No (Booleans)">
+      <span class="shortdesc">How answer yes/no questions in a document, i.e. fill boolean fields?</span>
 
    <script type="text/javascript">
     leftpx=450;
@@ -39,7 +39,7 @@ ________________________________________________________________________________
     </div></div>
      <p>
         This document contains two <a href='../concepts/boolean.html'>boolean</a> inputfields,
-        'Indoors?' and 'Recurring?'. They stand for yes/no questions. 
+        'Indoors?' and 'Recurring?'. They stand for yes/no questions.
         The first was answered with 'no' by not checking that box, the second with
         'yes' by checking that box.
      </p>

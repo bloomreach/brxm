@@ -22,11 +22,11 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Editor</title>
+    <title>Login</title>
   </properties>
 
   <body>
-    <section name="Login as Editor">
+    <section name="Login">
       <span class="shortdesc">How to login to Hippo CMS as editor
                               to decide about publication of documents, images and/or files.</span>
 

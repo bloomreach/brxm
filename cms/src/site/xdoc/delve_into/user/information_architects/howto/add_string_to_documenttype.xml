@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Add string to document type</title>
+    <title>Add Strings</title>
   </properties>
 
   <body>
-    <section name="Add string to document type">
-      <span class="shortdesc">How to add a string field to a document type.</span>
+    <section name="Add Strings">
+      <span class="shortdesc">How to add a string field to all documents of a document type?</span>
 
    <script type="text/javascript">
     leftpx=450;
@@ -69,10 +69,15 @@ ________________________________________________________________________________
    </ul>
    </p>
 
+   <p>The new field will be available only after <a href='./update_all_content.html'>update all content</a>.
+      Read the warnings about it carefully. You may add more fields first.
+   </p>
+
   <subsection name='Next'>
    <ul>
     <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a> (continue tour).</li>
     <li><a href='../tour.html'>tour</a>.</li>
+    <li><a href='./update_all_content.html'>Update all content</a>.</li>
     <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
     <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
     <li><a href='./add_string_to_documenttype.html'>Add another string field to a document type</a>.</li>

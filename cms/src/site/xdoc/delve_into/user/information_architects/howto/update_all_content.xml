@@ -27,7 +27,7 @@ ________________________________________________________________________________
 
   <body>
     <section name="Update all content">
-      <span class="shortdesc">How to update all content</span>
+      <span class="shortdesc">How to make document type changes available to authors of documents?</span>
 
    <script type="text/javascript">
     leftpx=0;
@@ -69,6 +69,15 @@ ________________________________________________________________________________
     So, if you removed a field from the type, that field will be removed from all the documents. But users
     may have written content in it that they do not want to loose. They may have wished to move that content
     to another field.
+   </p>
+   <p class='warn'>A change of the size of a field or its caption will only affect the rendering of that field in the document
+      editor, so that will be save. Changing a field from mandatory to optional should work, but make a backup
+      first. Changing a field from optional to mandatory may lead to problems if the field is missing in
+      some documents.
+   </p>
+   <p class='warn'>You can not change the data type of a field. If you want a number field to become a string
+      field, you have to delete the number field and create a string field of the same name. Of course, all data
+      in occurrences of that number field would then be lost.
    </p>
 
   <subsection name='Next'>

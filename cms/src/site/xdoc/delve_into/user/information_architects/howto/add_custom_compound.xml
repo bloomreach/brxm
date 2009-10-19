@@ -22,13 +22,13 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Add custom compound</title>
+    <title>Add custom compounds</title>
   </properties>
 
   <body>
-    <section name="Add custom compound">
-     <span class="shortdesc">How to add a custom compound to a document type or other
-     custom compound?</span>
+    <section name="Add custom compounds">
+     <span class="shortdesc">How to add a group of fields (custom compound) to all documents of a document type
+     or to all documents using some other custom compound?</span>
 
    <script type="text/javascript">
     leftpx=450;
@@ -45,16 +45,21 @@ ________________________________________________________________________________
      </p>
    </div>
 
- <p>Note that after you
+  <p>Note that after you
     <a href='create_custom_compound.html'>create a custom compound</a>
       you have to run <a href='update_all_content.html'>update all content</a>
       to make it available for use in document types or other custom compounds.
   </p>
 
+   <p>The new field will be available only after <a href='./update_all_content.html'>update all content</a>.
+      Read the warnings about it carefully. You may add more fields first.
+   </p>
+
   <subsection name='Next'>
    <ul>
     <li><a href='./logout.html'>Logout</a> (continue tour).</li>
     <li><a href='../tour.html'>tour</a>.</li>
+    <li><a href='./update_all_content.html'>Update all content</a>.</li>
    </ul>
   </subsection>
    <subsection name='Alternative'>

@@ -27,7 +27,6 @@ ________________________________________________________________________________
 
   <body>
     <section name="Logout">
-      <span class="shortdesc">How to logout</span>
 
    <script type="text/javascript">
     leftpx=450;

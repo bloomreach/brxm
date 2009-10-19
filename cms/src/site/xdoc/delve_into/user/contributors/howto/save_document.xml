@@ -16,18 +16,18 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-    
+
 ____________________________________________________________________________________________
 
 -->
 <document>
   <properties>
-    <title>Save Document</title>
+    <title>Save</title>
   </properties>
 
   <body>
-    <section name="Save Document">
-      <span class="shortdesc">How to save the changes you made to a document.</span>
+    <section name="Save">
+      <span class="shortdesc">How to save the changes you made to a document?</span>
 
    <script type="text/javascript">
     leftpx=155;

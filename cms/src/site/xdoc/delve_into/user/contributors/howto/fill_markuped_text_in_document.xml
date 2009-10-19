@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Fill marked-up text in Document</title>
+    <title>Supply Marked-up texts</title>
   </properties>
 
   <body>
-    <section name="Fill marked-up text in Document">
-      <span class="shortdesc">How to write marked-up text in a document.</span>
+    <section name="Supply Marked-up texts">
+      <span class="shortdesc">How to write marked-up texts in a document?</span>
 
    <script type="text/javascript">
     leftpx=450;

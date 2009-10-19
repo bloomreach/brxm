@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Administrator</title>
+    <title>Login</title>
   </properties>
 
   <body>
-    <section name="Login as Administrator">
-      <span class="shortdesc">How to login to Hippo CMS as administrator.</span>
+    <section name="Login">
+      <span class="shortdesc">How to login to Hippo CMS as administrator, to configure CMS access?</span>
 
    <script type="text/javascript">
     leftpx=200;

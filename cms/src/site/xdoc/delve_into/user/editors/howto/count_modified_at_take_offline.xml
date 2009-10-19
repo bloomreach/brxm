@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Count modified document at take offline</title>
+    <title>Count modified at take offline</title>
   </properties>
 
   <body>
-    <section name="Count modified document at take offline">
-     <span class="shortdesc">Count modified document at take offline</span>
+    <section name="Count modified at take offline">
+     <span class="shortdesc">What does the count of modified documents mean, which is shown after take offline?</span>
 
    <script type="text/javascript">
     leftpx=0;

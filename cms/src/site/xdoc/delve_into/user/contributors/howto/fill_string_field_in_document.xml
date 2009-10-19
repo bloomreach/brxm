@@ -22,12 +22,12 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Fill string in Document</title>
+    <title>Supply Strings</title>
   </properties>
 
   <body>
-    <section name="Fill string in Document">
-      <span class="shortdesc">How to fill a string field in a document.</span>
+    <section name="Supply Strings">
+      <span class="shortdesc">How to fill string fields in a document?</span>
 
    <script type="text/javascript">
     leftpx=450;
