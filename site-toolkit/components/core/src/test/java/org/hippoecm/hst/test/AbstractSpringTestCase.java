@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.test;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
@@ -41,7 +43,7 @@ public abstract class AbstractSpringTestCase
 
     @Before
     public void setUp() throws Exception {
-        this.componentManager = new SpringComponentManager();
+        this.componentManager = new SpringComponentManager(getContainerConfiguration());
         ((SpringComponentManager) this.componentManager).setConfigurationResources(getConfigurations());
         
         this.componentManager.initialize();
@@ -70,5 +72,10 @@ public abstract class AbstractSpringTestCase
 
     protected <T> T getComponent(String name) {
         return getComponentManager().<T>getComponent(name);
+    }
+    
+    protected Configuration getContainerConfiguration() {
+        PropertiesConfiguration propConf = new PropertiesConfiguration();
+        return propConf;
     }
 }

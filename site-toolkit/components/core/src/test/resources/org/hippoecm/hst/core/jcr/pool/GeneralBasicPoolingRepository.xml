@@ -24,27 +24,12 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
   
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="properties">
-      <props>
-        <prop key="test.default.repository.address">target/storage</prop>
-        <prop key="test.default.repository.user.name">editor</prop>
-        <prop key="test.default.repository.password">editor</prop>
-      </props>
-    </property>
-    <property name="locations">
-      <list>
-        <value>${test.properties.resource}</value>
-      </list>
-    </property>
-  </bean>
-  
   <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
     <!-- delegated JCR repository -->
-    <property name="repositoryAddress" value="${test.default.repository.address}" />
-    <property name="defaultCredentialsUserID" value="${test.default.repository.user.name}" />
-    <property name="defaultCredentialsPassword" value="${test.default.repository.password}" />
+    <property name="repositoryAddress"><null/></property>
+    <property name="defaultCredentialsUserID" value="admin" />
+    <property name="defaultCredentialsPassword" value="admin" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="25" />
     <property name="maxIdle" value="5" />
@@ -62,9 +47,9 @@
   <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository.readOnly" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
     <!-- delegated JCR repository -->
-    <property name="repositoryAddress" value="${test.default.repository.address}" />
-    <property name="defaultCredentialsUserID" value="${test.default.repository.user.name}" />
-    <property name="defaultCredentialsPassword" value="${test.default.repository.password}" />
+    <property name="repositoryAddress"><null/></property>
+    <property name="defaultCredentialsUserID" value="admin" />
+    <property name="defaultCredentialsPassword" value="admin" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="25" />
     <property name="maxIdle" value="5" />

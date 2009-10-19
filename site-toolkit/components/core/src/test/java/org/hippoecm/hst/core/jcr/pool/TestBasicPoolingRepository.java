@@ -35,7 +35,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class TestBasicPoolingRepository extends AbstractSpringTestCase {
     
     protected BasicPoolingRepository poolingRepository;
@@ -125,7 +124,7 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
         }
     }
     
-   // @Test
+    @Test
     public void testSessionsRefreshed() throws Exception {
         Repository repository = poolingRepository;
 
@@ -247,13 +246,11 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
                 Session session = this.repository.login();
                 // forgot to invoke logout() to return the session to the pool by invoking the following:
                 //session.logout();
-            } catch (NoAvailableSessionException e) {
+            } catch (Exception e) {
                 long end = System.currentTimeMillis();
                 assertTrue("No waiting occurred.", (end - start) >= this.maxWait);
                 log.warn("NoAvailableSessionException occurred.");
                 log.warn("Current active sessions: " + poolingRepository.getNumActive() + " / " + poolingRepository.getMaxActive() + ", waiting time: " + (end - start));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
         }
     }

@@ -174,19 +174,20 @@
       <scope>test</scope>
     </dependency>
     
+    <!-- Hst test dependencies -->
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-test</artifactId>
+      <version>${pom.version}</version>
+      <scope>test</scope>
+      <classifier>tests</classifier>
+    </dependency>
+    
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
-    
-    <!--
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
-      <scope>test</scope>
-    </dependency>
-    -->
     
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
