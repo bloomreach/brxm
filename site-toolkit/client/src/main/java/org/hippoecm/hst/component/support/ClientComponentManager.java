@@ -19,11 +19,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import javax.servlet.ServletConfig;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.ServletConfigAware;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +36,16 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.web.context.support.ServletContextAwareProcessor;
 
-public class ClientComponentManager implements ComponentManager, BeanPostProcessor {
+public class ClientComponentManager implements ComponentManager, ServletConfigAware, BeanPostProcessor {
     
     Logger logger = LoggerFactory.getLogger(ClientComponentManager.class);
     
     protected AbstractRefreshableConfigApplicationContext applicationContext;
     protected String [] configurationResources;
     protected Configuration configuration;
+    protected ServletConfig servletConfig;
     
     public ClientComponentManager() {
         this(null);
@@ -48,6 +53,10 @@ public class ClientComponentManager implements ComponentManager, BeanPostProcess
     
     public ClientComponentManager(Configuration configuration) {
         this.configuration = configuration;
+    }
+    
+    public void setServletConfig(ServletConfig servletConfig) {
+        this.servletConfig = servletConfig;
     }
 
     public void initialize() {
@@ -58,6 +67,10 @@ public class ClientComponentManager implements ComponentManager, BeanPostProcess
             // this allows for registering special BeanPostProcessors.
             protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
                 beanFactory.addBeanPostProcessor(ClientComponentManager.this);
+                
+                if (servletConfig != null) {
+                    beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(servletConfig));
+                }
             }
         };
         

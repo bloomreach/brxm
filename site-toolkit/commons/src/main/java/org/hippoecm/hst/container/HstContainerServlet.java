@@ -27,6 +27,7 @@ import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.Pipeline;
+import org.hippoecm.hst.core.container.ServletConfigAware;
 import org.hippoecm.hst.site.HstServices;
 
 /**
@@ -117,6 +118,11 @@ public class HstContainerServlet extends HttpServlet {
         try {
             if (clientComponentManagerClassName != null && clientComponentManagerConfigurations != null && clientComponentManagerConfigurations.length > 0) {
                 clientComponentManager = (ComponentManager) Thread.currentThread().getContextClassLoader().loadClass(clientComponentManagerClassName).newInstance();
+                
+                if (clientComponentManager instanceof ServletConfigAware) {
+                    ((ServletConfigAware) clientComponentManager).setServletConfig(config);
+                }
+                
                 clientComponentManager.setConfigurationResources(clientComponentManagerConfigurations);
                 clientComponentManager.initialize();
                 clientComponentManager.start();

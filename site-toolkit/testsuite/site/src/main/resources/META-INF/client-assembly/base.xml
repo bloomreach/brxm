@@ -25,6 +25,27 @@
   <bean id="greeting" class="java.lang.String">
     <constructor-arg><value>Hello, HST-2!</value></constructor-arg>
   </bean>
-
+  
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="ignoreUnresolvablePlaceholders" value="true" />
+    <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_FALLBACK" />
+    <property name="locations">
+      <list>
+        <value>classpath:/test-config.properties</value>
+        <bean class="org.springframework.web.context.support.ServletContextResource">
+          <constructor-arg>
+            <bean class="org.springframework.web.context.support.ServletContextFactoryBean" />
+          </constructor-arg>
+          <constructor-arg><value>/WEB-INF/hst-config.properties</value></constructor-arg>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="exampleServletContextAwareBean" class="org.hippoecm.hst.springmvc.ExampleServletContextAwareBean">
+    <property name="greeting" value="${test.greeting}"/>
+    <property name="binariesPrefixPath" value="${binaries.prefix.path}"/>
+  </bean>
+  
 </beans>
 
