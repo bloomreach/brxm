@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +71,14 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "delete-16.png");
+            }
+            @Override
+            protected IModel getTitle() {
+                if (state.equals("rejected")) {
+                    return new StringResourceModel("drop-request", BasicRequestWorkflowPlugin.this, null);
+                } else {
+                    return new StringResourceModel("cancel-request", BasicRequestWorkflowPlugin.this, null);
+                }
             }
             @Override
             protected String execute(Workflow wf) throws Exception {
