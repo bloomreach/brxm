@@ -332,7 +332,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
                     this.enhanceIds();
                     this.prepareConfig();
-                    //this.config.linkedWithParent = true;
                 
                     var layout = new YAHOO.widget.Layout(this.id, this.config);
                     this.layout = layout;
@@ -469,6 +468,51 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         }
                     }
                 }
+                
+                //By default, yui-layout units don;t dynamically keep a maxWidth/minWidth with respect to their neighbors
+                //which means a user can render the UI useless. To prevent this we add a check right when the unit's 
+                //resize event finishes 
+                for(var i=0; i<this.config.units.length; i++) {
+                    var x = this.layout.getUnitByPosition(this.config.units[i].position);
+                    var me = this;
+                    x.on('endResize', function() {
+                        var newWidth = this.get('width');
+                        var sizes = this.get('parent').getSizes();
+                        
+                        //if the width of this unit is bigger than the layout width, it will
+                        //overlap neighboring units. A 20px margin is used.
+                        if((sizes.doc.w-20) < newWidth) {
+                            this.set('width', sizes.doc.w-20);
+                        } else {
+                            //else check if the new width isn't rendering nested layout's units invisible.
+                            //if a number less than zero is returned, it resembles the offset of the least 
+                            //visible unit. This offset + the new width will make the unit still invisible, so
+                            //we add 20 pixels to it to define the new width
+                            var diff = me.newWidthIsOk();
+                            if(diff < 0) {
+                                this.set('width', (newWidth-diff)+20);
+                            }
+                        }
+                    }, x, true);
+                }
+            },
+            
+            newWidthIsOk : function() {
+                var result = 0;
+                for(var i=0; i<this.config.units.length; i++) {
+                    var unit = this.layout.getUnitByPosition(this.config.units[i].position);
+                    var unitWidth = unit.get('width');
+                    if(unitWidth < result) {
+                        result = unitWidth;
+                    }
+                }
+                this.children.forEach(this, function(key, wireframe){
+                    var diff = wireframe.newWidthIsOk(); 
+                    if(diff < result) {
+                        result = diff;
+                    }
+                });
+                return result;
             },
             
             enhanceIds : function() {
@@ -713,10 +757,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
         YAHOO.extend(YAHOO.hippo.TabsWireframe, YAHOO.hippo.Wireframe, {
             afterRender : function() {
-                var id = this.id.substring(0, this.id.indexOf(':'));
-                var x = Dom.get(id + ':tabbed-panel-layout-center');
-                //Dom.setStyle(x, 'margin-left', '0px');
-                //Dom.setStyle(x, 'display', 'block');
                 YAHOO.hippo.TabsWireframe.superclass.prepareConfig.call(this);
             }
         });
