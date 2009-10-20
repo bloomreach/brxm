@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.widgets;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +90,10 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget {
         public Object getObject() {
             if (model != null) {
                 try {
-                    return model.getValue().getString();
+                    Value value = model.getValue();
+                    if (value != null) {
+                        return model.getValue().getString();
+                    }
                 } catch (RepositoryException e) {
                     log.error("An error occurred while trying to get password value", e);
                 }
