@@ -23,8 +23,11 @@
 [hippo:ntunstructured] > nt:unstructured
 
 [hippo:testdocument] > hippo:document
-+ * = hippo:ntunstructured multiple
++ * (nt:base) = hippo:ntunstructured multiple
 - *
+
+[hippo:realdocument] > hippo:document
++ hippo:mirror (hippo:facetselect) version
 
 [hippo:testderived] > hippo:derived mixin
 - hippo:c (Long) mandatory
@@ -38,3 +41,27 @@
 
 [hippo:baddocument] > hippo:document, mix:referenceable
 - hippo:x (String)
+
+[hippo:testmirror] > hippo:facetselect
+
+[hippo:subtypemirror] > hippo:mirror
+
+/*
+ * Node types used for nodescope free text searching and indexing
+ */
+
+[hippo:testhtml] > nt:base
+- hippo:testcontent (string) primary mandatory
++ * (hippo:facetselect)
+
+[hippo:testhtmltwo] > hippo:testhtml
+
+[hippo:testcompoundstructure] > nt:base
++ * (hippo:testhtml) = hippo:testhtml multiple
++ hippo:testresource (hippo:resource)
++ hippo:testpdfresource (hippo:resource) 
+- *
+
+[hippo:testsearchdocument] > hippo:document
++ * (hippo:testcompoundstructure) = hippo:testcompoundstructure multiple
+- * 
