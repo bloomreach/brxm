@@ -97,7 +97,6 @@ public class PersistentLoginPlugin extends LoginPlugin {
         public SignInForm(final String id) {
             super(id);
             javax.jcr.Session result = null;
-            HippoRepository repository = ((Main)Application.get()).getRepository();
             String username = credentials.getString("username");
             String password = credentials.getString("password");
             if (username != null && (password == null || password.equals("") || password.replaceAll("\\*", "").equals(""))) {
@@ -118,6 +117,7 @@ public class PersistentLoginPlugin extends LoginPlugin {
                     }
                 }
                 try {
+                    HippoRepository repository = ((Main)Application.get()).getRepository();
                     result = repository.login(username, password.toCharArray());
                     credentials.put("password", password);
                     if (result.getRootNode().hasNode("hippo:log")) {
