@@ -156,6 +156,7 @@ public class ExportDialog extends AbstractDialog {
                 }
             }
         });
+        downloadComponent.setEnabled(false);
         okComponent.setEnabled(false);
         okComponent.setOutputMarkupId(true);
         add(projectNameComponent = new Label("name", new PropertyModel(this, "projectName")));
@@ -165,6 +166,8 @@ public class ExportDialog extends AbstractDialog {
                 loadtree(target);
                 okComponent.setEnabled(true);
                 target.addComponent(okComponent);
+                downloadComponent.setEnabled(true);
+                target.addComponent(downloadComponent);
                 target.addComponent(ExportDialog.this);
             }
         });
