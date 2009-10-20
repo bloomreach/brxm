@@ -39,7 +39,7 @@ public class ContentService extends BaseHstContentService {
     @GET
     @Path("/node/{path:.*}")
     public HippoBeanContent getContentNode(@PathParam("path") List<PathSegment> pathSegments) {
-        StringBuilder pathBuilder = new StringBuilder(80);
+        StringBuilder pathBuilder = new StringBuilder(80).append(getSiteContentPath());
         
         for (PathSegment pathSegment : pathSegments) {
             pathBuilder.append('/').append(pathSegment.getPath());

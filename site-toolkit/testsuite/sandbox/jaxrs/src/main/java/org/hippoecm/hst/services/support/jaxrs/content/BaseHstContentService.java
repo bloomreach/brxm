@@ -52,6 +52,8 @@ import org.hippoecm.hst.persistence.ContentPersistenceManager;
 
 public class BaseHstContentService {
     
+    public static final String SITE_CONTENT_PATH = "org.hippoecm.hst.services.support.site.content.path"; 
+    
     private ObjectConverter objectConverter;
     
     @Context
@@ -85,6 +87,10 @@ public class BaseHstContentService {
         }
         
         return beanContent;
+    }
+    
+    protected String getSiteContentPath() {
+        return (String) servletRequest.getAttribute(BaseHstContentService.SITE_CONTENT_PATH);
     }
     
     protected void init() {

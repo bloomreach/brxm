@@ -43,6 +43,16 @@
     <constructor-arg ref="cxfServletConfig" />
   </bean>
   
+  <bean id="siteContentPathResolvingValve" 
+        class="org.hippoecm.hst.services.support.jaxrs.container.SiteContentPathResolvingValve">
+    <property name="sitesManagers">
+      <map>
+        <entry key="${preview.servlet.path}/services" value-ref="org.hippoecm.hst.configuration.HstSitesManager.preview" />
+        <entry key="${live.servlet.path}/services" value-ref="org.hippoecm.hst.configuration.HstSitesManager.live" />
+      </map>
+    </property>
+  </bean>
+  
   <bean id="jaxrsPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
     <property name="preInvokingValves">
       <list>
@@ -53,6 +63,7 @@
       <list>
         <ref bean="urlValve" />
         <ref bean="siteResolvingValve" />
+        <ref bean="siteContentPathResolvingValve" />
         <ref bean="securityValve" />
         <ref bean="cxfServletDelegatingValve" />
       </list>
