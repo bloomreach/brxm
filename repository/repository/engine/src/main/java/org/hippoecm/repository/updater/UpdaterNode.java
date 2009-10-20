@@ -380,15 +380,17 @@ final public class UpdaterNode extends UpdaterItem implements Node {
 
     private String resolveName(String relPath) {
         if (relPath.contains("/"))
-            relPath = relPath.substring(0, relPath.lastIndexOf("/"));
+            relPath = relPath.substring(relPath.lastIndexOf("/") + 1);
         if (relPath.contains("[") && relPath.endsWith("]"))
             relPath = relPath.substring(0, relPath.indexOf("["));
         return relPath;
     }
 
-    private int resolveIndex(String name) {
-        if (name.contains("["))
-            return Integer.parseInt(name.substring(name.indexOf("[") + 1, name.lastIndexOf("]")));
+    private int resolveIndex(String relPath) {
+        if (relPath.contains("/"))
+            relPath = relPath.substring(relPath.lastIndexOf("/") + 1);
+        if (relPath.contains("["))
+            return Integer.parseInt(relPath.substring(relPath.indexOf("[") + 1, relPath.lastIndexOf("]")));
         else
             return 0;
     }
@@ -689,7 +691,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         substantiate();
         try {
             if (resolveNode(relPath).children.containsKey(resolveName(relPath))) {
-                if (resolveIndex(resolveName(relPath)) < resolveNode(relPath).children.get(resolveName(relPath)).size())
+                if (resolveIndex(relPath) < resolveNode(relPath).children.get(resolveName(relPath)).size())
                     return true;
             }
         } catch(PathNotFoundException ex) {
@@ -702,7 +704,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         substantiate();
         try {
             if (resolveNode(relPath).children.containsKey(":" + resolveName(relPath))) {
-                if (resolveIndex(resolveName(relPath)) < resolveNode(relPath).children.get(":" + resolveName(relPath)).size())
+                if (resolveIndex(relPath) < resolveNode(relPath).children.get(":" + resolveName(relPath)).size())
                     return true;
             }
         } catch(PathNotFoundException ex) {
