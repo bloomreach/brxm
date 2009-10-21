@@ -126,6 +126,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         IValueMap properties = dialog.getProperties();
         setInitialHeight(properties.getInt("height", 455));
         setInitialWidth(properties.getInt("width", 850));
+        setResizable(properties.getBoolean("resizable"));
 
         IRequestTarget target = RequestCycle.get().getRequestTarget();
         if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
