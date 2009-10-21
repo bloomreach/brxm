@@ -157,10 +157,6 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         }
 
         /* FIXME: sometimes this test fails because of invalid earlier data in the repository */
-        for(int i=0; i<expected.size(); i++)
-            System.err.println("expected "+expected.get(i));
-        for(int i=0; i<versions.size(); i++)
-            System.err.println("observed "+versions.get(i));
         assertEquals(expected.size(), versions.size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i), versions.get(i));
