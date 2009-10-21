@@ -26,7 +26,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
-      <sv:value>repository-test.cnd</sv:value>
+      <sv:value>reviewedaction-test.cnd</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>10000.0</sv:value>
