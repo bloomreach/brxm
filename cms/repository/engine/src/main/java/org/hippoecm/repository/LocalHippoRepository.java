@@ -121,9 +121,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         "OR " + HippoNodeType.HIPPO_CONTENTDELETE + " IS NOT NULL) " +
         "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC";
 
-    /** The advised threshold on the number of modified nodes to hold in transient session state */
-    public static int BATCH_THRESHOLD = 96;
-
     /** hippo decorated root session */
     private HippoSession rootSession;
 
@@ -329,9 +326,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 Session migrateSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {})));
                 needsRestart = UpdaterEngine.migrate(migrateSession);
                 migrateSession.logout();
-                if (needsRestart) {
-                    return;
-                }
             }
 
             try {
@@ -648,7 +642,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
                             // verify that content root is not under the initialization node
                             String initPath = initializationNode.getPath();
-                            if (root.startsWith(initPath)) {
+                            if (root.length() > initPath.length() && root.substring(0, initPath.length()) == initPath) {
                                 log.error("Refusing to extract content to " + root);
                             } else {
                                 log.info("Initializing content from: " + contentName + " to " + root);
@@ -681,7 +675,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
                             // verify that content root is not under the initialization node
                             String initPath = initializationNode.getPath();
-                            if (root.length() > initPath.length() && root.substring(0, initPath.length()).equals(initPath)) {
+                            if (root.length() > initPath.length() && root.substring(0, initPath.length()) == initPath) {
                                 log.error("Refusing to extract content to " + root);
                             } else {
                                 log.info("Initializing content from: " + contentName + " to " + root);
