@@ -642,7 +642,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
                             // verify that content root is not under the initialization node
                             String initPath = initializationNode.getPath();
-                            if (root.length() > initPath.length() && root.substring(0, initPath.length()) == initPath) {
+                            if (root.startsWith(initPath)) {
                                 log.error("Refusing to extract content to " + root);
                             } else {
                                 log.info("Initializing content from: " + contentName + " to " + root);
@@ -675,7 +675,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
                             // verify that content root is not under the initialization node
                             String initPath = initializationNode.getPath();
-                            if (root.length() > initPath.length() && root.substring(0, initPath.length()) == initPath) {
+                            if (root.startsWith(initPath)) {
                                 log.error("Refusing to extract content to " + root);
                             } else {
                                 log.info("Initializing content from: " + contentName + " to " + root);
