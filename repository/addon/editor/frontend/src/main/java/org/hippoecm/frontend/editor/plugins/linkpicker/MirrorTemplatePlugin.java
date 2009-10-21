@@ -30,7 +30,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ClearableDialogLink;
-import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
@@ -142,7 +141,7 @@ public class MirrorTemplatePlugin extends RenderPlugin {
                 }
 
                 @Override
-                public boolean isClearVisable() {
+                public boolean isClearVisible() {
                     // Checking for string literals ain't pretty. It's probably better to create a better display model.
                     return !EMPTY_LINK_TEXT.equals((String) displayModel.getObject());
                 }

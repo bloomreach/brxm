@@ -143,7 +143,7 @@ public class LinkPickerPlugin extends RenderPlugin {
                 }
 
                 @Override
-                public boolean isClearVisable() {
+                public boolean isClearVisible() {
                     // Checking for string literals ain't pretty. It's probably better to create a better display model.
                     return !EMPTY_LINK_TEXT.equals((String) displayModel.getObject());
                 }

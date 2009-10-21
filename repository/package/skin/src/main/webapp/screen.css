@@ -822,8 +822,10 @@ font-size: 12px; line-height: 18px; background: transparent; border: none; color
 .hippo-editor-field input[type="submit"]{width: auto; background: none;}
 
 /* link pickers plugin */
-.hippo-editor-linkpicker-link a{display: block; padding: 4px;}
-.hippo-editor-linkpicker-link a:hover{background-color: #f2f2f2}
+.hippo-editor-linkpicker-link { display: block; height: 24px; }
+.hippo-editor-linkpicker-link:hover { background-color: #f2f2f2; }
+.hippo-editor-linkpicker-link div.hippo-editor-field-subfield { padding: 4px; }
+.hippo-editor-linkpicker-link a.linefill { display: block; }
 
 .hippo-gallery-field-picker{width: 100%}
 .hippo-editor .hippo-editor-threepane .hippo-gallery-field-picker tr td{vertical-align: middle}
@@ -1127,7 +1129,7 @@ div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top:
 
 .edit-16{background-image:url("images/icons/edit-16.png")}
 .delete-16{background-image:url("images/icons/edit-delete-16.png")}
-.clear-16{background-image:url("images/icons/edit-clear-16.png");margin-left:10px;padding-bottom:8px;}
+.clear-16{background-image:url("images/icons/edit-clear-16.png");margin-left:10px;}
 .add-16{background-image:url("images/icons/list-add-16.png")}
 .remove-16{background-image:url("images/icons/edit-delete-16.png")}
 

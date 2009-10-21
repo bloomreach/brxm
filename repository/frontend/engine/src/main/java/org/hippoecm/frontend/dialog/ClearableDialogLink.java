@@ -17,15 +17,18 @@ package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 abstract public class ClearableDialogLink extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-
+    
     private AjaxLink dialogLink;
     private AjaxLink clearLink;
 
@@ -43,6 +46,15 @@ abstract public class ClearableDialogLink extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 action.execute();
+            }
+            
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                
+                if(!isClearVisible()) {
+                    tag.addBehavior(new AttributeAppender("class", true, new Model("linefill"), " "));
+                }
             }
         };
         add(dialogLink);
@@ -63,7 +75,7 @@ abstract public class ClearableDialogLink extends Panel {
             
             @Override
             public boolean isVisible() {
-                return isClearVisable();
+                return isClearVisible();
             }
         };
         add(clearLink);
@@ -82,10 +94,10 @@ abstract public class ClearableDialogLink extends Panel {
     abstract public void onClear();
 
     public boolean canClear() {
-        return isClearVisable();
+        return isClearVisible();
     }
 
-    public boolean isClearVisable() {
+    public boolean isClearVisible() {
         return true;
     }
 }
