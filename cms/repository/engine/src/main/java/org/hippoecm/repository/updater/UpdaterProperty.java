@@ -231,7 +231,9 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
     public Value[] getValues() throws ValueFormatException, RepositoryException {
         if (values == null)
             throw new ValueFormatException();
-        return values;
+        Value[] result = new Value[values.length];
+        System.arraycopy(this.values, 0, result, 0, this.values.length);
+        return result;
     }
 
     public String getString() throws ValueFormatException, RepositoryException {
