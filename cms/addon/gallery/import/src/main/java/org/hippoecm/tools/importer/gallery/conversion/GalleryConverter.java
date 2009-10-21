@@ -15,6 +15,7 @@
  */
 package org.hippoecm.tools.importer.gallery.conversion;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -24,7 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.commons.configuration.Configuration;
-import org.hippoecm.gallery.tools.ImageUtils;
+import org.hippoecm.frontend.plugins.gallery.ImageUtils;
 import org.hippoecm.tools.importer.api.Content;
 import org.hippoecm.tools.importer.api.Context;
 import org.hippoecm.tools.importer.api.ImportException;
@@ -85,7 +86,7 @@ public class GalleryConverter extends AbstractConverter {
 
     private void makeThumbnail(Node node, InputStream resourceData, String mimeType) throws RepositoryException {
         if (mimeType.startsWith("image")) {
-            InputStream thumbNail = ImageUtils.createThumbnail(resourceData, thumbnailSize, mimeType);
+            InputStream thumbNail = new ImageUtils().createThumbnail(resourceData, thumbnailSize, mimeType);
             node.setProperty("jcr:data", thumbNail);
         } else {
             node.setProperty("jcr:data", resourceData);
