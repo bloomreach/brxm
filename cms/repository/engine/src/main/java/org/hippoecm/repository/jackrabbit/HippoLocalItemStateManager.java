@@ -24,7 +24,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
@@ -221,6 +220,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         if(!noUpdateChangeLog) {
             super.update(filteredChangeLog);
         }
+        deletedExternals.putAll(filteredChangeLog.deletedExternals);
     }
 
     @Override
@@ -408,6 +408,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     class FilteredChangeLog extends ChangeLog {
 
         private ChangeLog upstream;
+        Map<ItemId,Object> deletedExternals = new HashMap<ItemId,Object>();
 
         FilteredChangeLog(ChangeLog changelog) {
             upstream = changelog;
@@ -439,7 +440,8 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                         stateDestroyed(state);
                     }
                 } else if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
-                    if(!deletedExternals.containsKey(state.getId())) {
+                    if(!deletedExternals.containsKey(state.getId()) &&
+                       !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
                         ((NodeState)state).removeAllChildNodeEntries();
                         stateDestroyed((NodeState)state);
                     }
@@ -458,8 +460,10 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             for(Iterator iter = virtualStates.iterator(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();
                 // only repopulate ITEM_TYPE_EXTERNAL, not state that are ITEM_TYPE_EXTERNAL && ITEM_TYPE_VIRTUAL
-                if(( (isVirtual(state) & ITEM_TYPE_EXTERNAL)) != 0 && ((isVirtual(state) & ITEM_TYPE_VIRTUAL) == 0) &&
-                        !deleted(state.getId()) && !deletedExternals.containsKey(state.getId())) {
+                if(((isVirtual(state) & ITEM_TYPE_EXTERNAL)) != 0 && ((isVirtual(state) & ITEM_TYPE_VIRTUAL) == 0) &&
+                       !deleted(state.getId()) &&
+                       !deletedExternals.containsKey(state.getId()) &&
+                       !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
                     try {
                         virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate((NodeState)state);
                     } catch(RepositoryException ex) {
@@ -559,7 +563,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 return (current != null);
             }
             public boolean needsSkip(ItemState current) {
-                if (deletedExternals.containsKey(current.getId())) {
+                if (HippoLocalItemStateManager.this.deletedExternals.containsKey(current.getId())) {
                     return true;
                 }
                 if ((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0) {
