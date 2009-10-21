@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
@@ -50,15 +51,11 @@ public class BrowseLinkTarget extends JcrObject {
 
     public String getDisplayPath() {
         String path;
-        Node node = getNode();
-        if (node != null) {
-            try {
-                path = node.getPath();
-            } catch (RepositoryException e) {
-                log.error(e.getMessage(), e);
-                path = getNodeModel().getItemModel().getPath();
-            }
-        } else {
+        try {
+            Node node = getNode();
+            path = node.getPath();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
             path = getNodeModel().getItemModel().getPath();
         }
 
@@ -91,8 +88,21 @@ public class BrowseLinkTarget extends JcrObject {
         if (node != null) {
             try {
                 while (!node.isNodeType(HippoNodeType.NT_HANDLE) && !node.isNodeType("hippostd:folder")
-                        && !node.getPath().equals("/")) {
+                        && !node.isNodeType("nt:version") && !node.getPath().equals("/")) {
                     node = node.getParent();
+                }
+                if (node.isNodeType("nt:version")) {
+                    Node frozen = node.getNode("jcr:frozenNode");
+                    Node result = node.getSession().getRootNode();
+                    // use hippo:paths to find handle; then use the matching variant 
+                    if (frozen.hasProperty(HippoNodeType.HIPPO_PATHS)) {
+                        Value[] paths = frozen.getProperty(HippoNodeType.HIPPO_PATHS).getValues();
+                        if (paths.length > 1) {
+                            String handleUuid = paths[1].getString();
+                            result = node.getSession().getNodeByUUID(handleUuid);
+                        }
+                    }
+                    node = result;
                 }
                 return new JcrNodeModel(node);
             } catch (RepositoryException e) {

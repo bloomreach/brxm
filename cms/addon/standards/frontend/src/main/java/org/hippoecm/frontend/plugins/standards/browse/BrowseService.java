@@ -28,6 +28,7 @@ import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -250,9 +251,10 @@ public class BrowseService implements IBrowseService<JcrNodeModel>, IRefreshable
         if (nodeModel.getNode() != null) {
             try {
                 Node node = nodeModel.getNode();
-                if (node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory")
-                        || node.isNodeType("hipposysedit:namespace")
-                        || node.isNodeType(HippoNodeType.NT_FACETBASESEARCH)) {
+                if (node.isNodeType(HippoStdNodeType.NT_FOLDER) || node.isNodeType(HippoStdNodeType.NT_DIRECTORY)
+                        || node.isNodeType(HippoNodeType.NT_NAMESPACE)
+                        || node.isNodeType(HippoNodeType.NT_FACETBASESEARCH)
+                        || node.isNodeType("rep:root")) {
                     return true;
                 }
             } catch (RepositoryException ex) {

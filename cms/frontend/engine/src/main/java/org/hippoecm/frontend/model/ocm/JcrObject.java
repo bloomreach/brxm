@@ -17,6 +17,7 @@ package org.hippoecm.frontend.model.ocm;
 
 import java.util.Iterator;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -36,8 +37,6 @@ import org.slf4j.LoggerFactory;
  * <p>
  * All instances of a type that correspond to the same node are equivalent with respect
  * to the hashCode and equals methods.
- * <p>
- * Direct use of this class is discouraged; it may be abstract in the future.
  */
 abstract public class JcrObject implements IDetachable, IObservable {
     @SuppressWarnings("unused")
@@ -55,8 +54,12 @@ abstract public class JcrObject implements IDetachable, IObservable {
         this.nodeModel = nodeModel;
     }
 
-    protected Node getNode() {
-        return nodeModel.getNode();
+    protected Node getNode() throws ItemNotFoundException {
+        Node node = nodeModel.getNode();
+        if (node == null) {
+            throw new ItemNotFoundException("No node exists at " + nodeModel.getItemModel().getPath());
+        }
+        return node;
     }
 
     protected JcrNodeModel getNodeModel() {

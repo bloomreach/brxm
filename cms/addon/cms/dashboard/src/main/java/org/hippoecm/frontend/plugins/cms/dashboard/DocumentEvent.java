@@ -47,8 +47,8 @@ public class DocumentEvent extends JcrObject {
     }
 
     public String getDocumentPath() {
-        Node node = getNode();
         try {
+            Node node = getNode();
             Session session = node.getSession();
 
             // Best effort algoritm to create a 'browse' link to a document.

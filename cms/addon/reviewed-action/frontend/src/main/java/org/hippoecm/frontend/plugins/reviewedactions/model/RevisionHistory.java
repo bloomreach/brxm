@@ -80,15 +80,13 @@ public class RevisionHistory extends JcrObject {
     }
 
     VersionWorkflow getWorkflow() {
-        Node document = getNode();
-        if (document != null) {
-            try {
-                WorkflowManager workflowManager = ((HippoWorkspace) getNode().getSession().getWorkspace())
-                        .getWorkflowManager();
-                return (VersionWorkflow) workflowManager.getWorkflow("versioning", document);
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage(), ex);
-            }
+        try {
+            Node document = getNode();
+            WorkflowManager workflowManager = ((HippoWorkspace) getNode().getSession().getWorkspace())
+                    .getWorkflowManager();
+            return (VersionWorkflow) workflowManager.getWorkflow("versioning", document);
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage(), ex);
         }
         return null;
     }

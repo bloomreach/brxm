@@ -18,7 +18,9 @@ package org.hippoecm.frontend.plugins.cms.dashboard.todo;
 import java.util.Iterator;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -29,6 +31,12 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.ocm.JcrObject;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
@@ -98,17 +106,50 @@ public class TodoPlugin extends RenderPlugin {
                 }
             }));
 
+            String path = "/";
             try {
                 Node node = (Node) item.getModelObject();
-                String path = node.getPath();
-                BrowseLinkTarget target = new BrowseLinkTarget(path);
-                item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", new Model(target),
-                        new PropertyModel(target, "name")));
-                item.add(new Label("request-description", node.getProperty("type").getString()));
-                item.add(new Label("request-owner", node.getProperty("username").getString()));
+                path = node.getPath();
             } catch (RepositoryException e) {
-                item.add(new Label("request", e.getMessage()));
+                log.warn("unable to find path", e);
             }
+            BrowseLinkTarget target = new BrowseLinkTarget(path);
+            item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", new Model(target),
+                    new PropertyModel(target, "name")));
+
+            Request request = new Request((JcrNodeModel) item.getModel());
+            item.add(new Label("request-description", new PropertyModel(request, "type")));
+            item.add(new Label("request-owner", new PropertyModel(request, "username")));
+        }
+    }
+
+    static class Request extends JcrObject {
+        private static final long serialVersionUID = 1L;
+
+        Request(JcrNodeModel model) {
+            super(model);
+        }
+
+        String getType() {
+            try {
+                return getNode().getProperty("type").getString();
+            } catch (RepositoryException e) {
+                log.warn(e.getMessage());
+            }
+            return null;
+        }
+
+        String getUsername() {
+            try {
+                return getNode().getProperty("username").getString();
+            } catch (RepositoryException e) {
+                log.warn(e.getMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
         }
     }
 
