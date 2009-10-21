@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
@@ -58,7 +59,7 @@ public class Release72Updater implements UpdaterModule {
         {"field", "hippo:ordered", "hipposysedit_1_0:ordered"},
         {"field", "hippo:primary", "hipposysedit_1_0:primary"},
         {"type", "hippo:nodetype", "hipposysedit_1_0:nodetype"},
-        {"field", "hippo:type", "hipposysedit_1_0:type "},
+        {"field", "hippo:type", "hipposysedit_1_0:type"},
         {"field", "hippo:supertype", "hipposysedit_1_0:supertype"},
         {"field", "hippo:node", "hipposysedit_1_0:node"},
         {"field", "hippo:mixin", "hipposysedit_1_0:mixin"},
@@ -514,25 +515,41 @@ public class Release72Updater implements UpdaterModule {
                     }
                 }
                 for (String delete : new String[] {
-                            "hippoldap", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippostd-date", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippostd", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippolog", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "hippostd-queries", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hipposched", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "frontend", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippohtmlcleaner", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "editor", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "namespaces", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-hipposysedit", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-namespace.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-type-query.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "reporting", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippogallery", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippogallery-files", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippogallery-images", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippogallery-image", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "content", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hipposched", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hippoldap", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+
+                            /**
+                             * these namespace declarations, type definitions are explicitly handled by the next visitor 
+                             */
+                            /*
+                            "hippostd-date",
+                            "hippostd",
+                            "hippohtmlcleaner",
+                            "hippolog",
+                            "frontend",
+                            "editor",
+                            "reporting",
+                            */
+
+                            /**
+                             * don't reload content
+                             */
+                            /* 
+                             "content",
+                             */
+
+                            /**
+                             * gallery: re-import templates, gallery workflow
+                             */
+                            "hippogallery",
+                            "hippogallery-files",
+                            "hippogallery-images",
+                            "hippogallery-image",
 
                             /**
                              * Templates from the "system", hippo and hippostd namespaces have to be re-initialized
@@ -656,14 +673,23 @@ public class Release72Updater implements UpdaterModule {
             @Override
             public void entering(final Node node, int level) throws RepositoryException {
                 if (node.hasNode("hippo:namespaces")) {
-                    if (node.hasNode("hippo:namespaces/hippo"))
-                        node.getNode("hippo:namespaces/hippo").remove();
-                    if (node.hasNode("hippo:namespaces/system"))
-                        node.getNode("hippo:namespaces/system").remove();
-                    if (node.hasNode("hippo:namespaces/hippostd"))
-                        node.getNode("hippo:namespaces/hippostd").remove();
-                    if (node.hasNode("hippo:namespaces/hippogallery"))
-                        node.getNode("hippo:namespaces/hippogallery").remove();
+                    Node nsFolderNode = node.getNode("hippo:namespaces");
+                    String[][] remove = {
+                            {"hippo", "templatetype", "namespace", "field", "nodetype", "remodel", "query", "resource", "facetlink", "facetselect", "facetsearch", "facetsubsearch", "document" },
+                            {"system", "String", "Text", "Boolean", "Date", "Long", "Double", "Binary", "Docbase", "Link", "CssSize", "Password", "Html"},
+                            {"hippostd", "languagable", "publishable", "publishableSummary", "taggable", "folder", "directory", "html"},
+                            {"hippogallery", "asset", "image", "exampleImageSet", "exampleAssetSet"},
+                    };
+                    for (String[] namespace : remove) {
+                        if (nsFolderNode.hasNode(namespace[0])) {
+                            Node nsNode = nsFolderNode.getNode(namespace[0]);
+                            for (int i = 1; i < namespace.length; i++) {
+                                if (nsNode.hasNode(namespace[i])) {
+                                    nsNode.getNode(namespace[i]).remove();
+                                }
+                            }
+                        }
+                    }
                 }
 
                 // recreate workflow nodes
@@ -806,34 +832,32 @@ public class Release72Updater implements UpdaterModule {
                         rule = rules[j];
                         if ("field".equals(rule[0])) {
                             if (node.hasProperty(rule[1])) {
+                                Property property = node.getProperty(rule[1]);
                                 if (rule[2] != null) {
-                                    if (context.isMultiple(node.getProperty(rule[1]))) {
-                                        node.setProperty(rule[2], node.getProperty(rule[1]).getValues());
-                                    } else {
+                                    context.setName(property, rule[2]);
+                                    if (!context.isMultiple(property)) {
                                         // TODO: whenever property is a Name (or Path), see if there is a prefix
                                         // in there that we can remap.
                                         if (rule[2].equals("hipposys_1_0:value") || rule[2].equals("hipposys_1_0:nodetype")) {
-                                            String value = node.getProperty(rule[1]).getString();
+                                            String value = property.getString();
                                             for (int k = 0; k < rules.length; k++) {
                                                 if (rules[k][0].equals("type") && rules[k][1].equals(value)) {
                                                     value = rules[k][2];
                                                     // hipposys:value is a String property, so the prefix will not be remapped
                                                     String prefix = value.substring(0, value.indexOf('_'));
                                                     value = prefix + value.substring(value.indexOf(':'));
-                                                    System.out.println(" replacing at " + node.getPath() + ": " + rules[k][1] + " => " + value);
                                                     break;
                                                 }
                                             }
-                                            node.setProperty(rule[2], value);
+                                            property.setValue(value);
                                         } else if (rule[2].equals("hipposys_1_0:classname")) {
-                                            String value = node.getProperty(rule[1]).getString();
-                                            node.setProperty(rule[2], getNewClass(value));
-                                        } else {
-                                            node.setProperty(rule[2], node.getProperty(rule[1]).getValue());
+                                            String value = property.getString();
+                                            property.setValue(getNewClass(value));
                                         }
                                     }
+                                } else {
+                                    property.remove();
                                 }
-                                node.getProperty(rule[1]).remove();
                             }
                         } else if ("child".equals(rule[0])) {
                             for (NodeIterator iter = node.getNodes(rule[1]); iter.hasNext();) {
