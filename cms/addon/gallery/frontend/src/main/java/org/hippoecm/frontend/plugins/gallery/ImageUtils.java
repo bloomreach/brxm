@@ -40,6 +40,9 @@ public class ImageUtils {
     static final Logger log = LoggerFactory.getLogger(ImageUtils.class);
 
     private static final int FIRST_IMAGE_IN_FILE = 0;
+    
+    private static final String MIME_IMAGE_PJPEG = "image/pjpeg";
+    private static final String MIME_IMAGE_JPEG = "image/jpeg";
 
     /**
      * Creates a thumbnail version of an image.
@@ -62,6 +65,14 @@ public class ImageUtils {
         }
         if (imageData == null) {
             throw new IllegalArgumentException("We cannot create a thumbnail for a NULL input stream");
+        }
+        
+        //IE uploads jpeg files with the non-standard mimetype image/pjpeg for which ImageIO 
+        //doesn't have an ImageReader. Simply replacing the mimetype with image/jpeg solves this.
+        //For more info see http://www.iana.org/assignments/media-types/image/ and 
+        //http://groups.google.com/group/comp.infosystems.www.authoring.images/msg/7706603e4bd1d9d4?hl=en
+        if(mimeType.equals(MIME_IMAGE_PJPEG)) {
+            mimeType = MIME_IMAGE_JPEG;
         }
 
         ImageReader reader = null;
