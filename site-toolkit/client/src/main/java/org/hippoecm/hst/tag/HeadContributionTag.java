@@ -28,6 +28,7 @@ import org.dom4j.dom.DOMDocumentFactory;
 import org.dom4j.io.SAXReader;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,6 +121,10 @@ public class HeadContributionTag extends BodyTagSupport {
     
     public void setElement(org.w3c.dom.Element element) {
         this.element = element;
+    }
+    
+    public void setElementByBeanPath(String beanPath) {
+        this.element = (org.w3c.dom.Element) PageContextPropertyUtils.getProperty(pageContext, beanPath);
     }
     
     public org.w3c.dom.Element getElement() {

@@ -135,6 +135,12 @@
       <artifactId>hst-sandbox-persistency</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- Freemarker -->
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>2.3.15</version>
+    </dependency> 
   </dependencies>
 
   <build>

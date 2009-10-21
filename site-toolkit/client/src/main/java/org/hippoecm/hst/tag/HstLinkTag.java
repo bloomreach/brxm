@@ -37,6 +37,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,7 +217,11 @@ public class HstLinkTag extends TagSupport {
     public void setLink(HstLink hstLink) {
         this.link = hstLink;
     }
-
+    
+    public void setLinkByBeanPath(String beanPath) {
+        this.link = (HstLink) PageContextPropertyUtils.getProperty(pageContext, beanPath);
+    }
+    
     public void setExternal(boolean external) {
         this.external = external;
     }
@@ -227,6 +232,10 @@ public class HstLinkTag extends TagSupport {
     
     public void setHippobean(HippoBean hippoBean) {
         this.hippoBean = hippoBean;
+    }
+    
+    public void setHippobeanByBeanPath(String beanPath) {
+        this.hippoBean = (HippoBean) PageContextPropertyUtils.getProperty(pageContext, beanPath);
     }
     
     /**

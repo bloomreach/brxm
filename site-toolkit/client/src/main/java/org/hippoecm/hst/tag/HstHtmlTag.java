@@ -32,6 +32,7 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.hippoecm.hst.utils.SimpleHmlStringParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,6 +186,9 @@ public class HstHtmlTag extends TagSupport {
         this.hippoHtml = hippoHtml;
     }
     
+    public void setHippohtmlByBeanPath(String beanPath) {
+        this.hippoHtml = (HippoHtml) PageContextPropertyUtils.getProperty(pageContext, beanPath);
+    }
     
     /* -------------------------------------------------------------------*/
         
