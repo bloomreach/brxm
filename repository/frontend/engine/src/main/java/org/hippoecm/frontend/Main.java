@@ -220,9 +220,9 @@ public class Main extends WebApplication {
                     Node node = subSession.getRootNode().getNode(path);
                     return new JcrResourceRequestTarget(new JcrNodeModel(node));
                 } catch (PathNotFoundException e) {
-                    log.error("binary not found " + e.getMessage());
+                    log.info("binary not found " + e.getMessage());
                 } catch (javax.jcr.LoginException ex) {
-                    log.error(ex.getMessage());
+                    log.warn(ex.getMessage());
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
                 }
