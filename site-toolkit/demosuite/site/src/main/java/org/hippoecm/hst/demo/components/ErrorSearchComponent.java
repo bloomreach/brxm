@@ -32,6 +32,10 @@ public class ErrorSearchComponent extends AbstractSearchComponent {
         response.setStatus(HstResponse.SC_NOT_FOUND);
 
         String query = request.getRequestURI().substring(request.getRequestURI().lastIndexOf('/') + 1);
+        if (query == null || "".equals(query)) {
+            return;
+        }
+
         if (query.endsWith(".html")) {
             query = query.substring(0, query.indexOf(".html"));
         }
@@ -43,10 +47,6 @@ public class ErrorSearchComponent extends AbstractSearchComponent {
         }
 
         query = query.replace('+', ' ');
-
-        if (query == null) {
-            return;
-        }
 
         doSearch(request, response, query, null, null, DEFAULT_PAGE_SIZE, getSiteContentBaseBean(request));
         request.setAttribute("isError", Boolean.TRUE);
