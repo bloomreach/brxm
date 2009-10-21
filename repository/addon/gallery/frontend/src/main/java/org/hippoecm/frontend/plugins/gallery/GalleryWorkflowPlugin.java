@@ -36,6 +36,7 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -222,7 +223,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
         if (mimeType.startsWith("image")) {
             int thumbnailSize = GalleryWorkflowPlugin.this.getPluginConfig().getInt("gallery.thumbnail.size",
                     Gallery.DEFAULT_THUMBNAIL_SIZE);
-            InputStream thumbNail = ImageUtils.createThumbnail(resourceData, thumbnailSize, mimeType);
+            InputStream thumbNail = new ImageUtils().createThumbnail(resourceData, thumbnailSize, mimeType);
             node.setProperty("jcr:data", thumbNail);
         } else {
             node.setProperty("jcr:data", resourceData);

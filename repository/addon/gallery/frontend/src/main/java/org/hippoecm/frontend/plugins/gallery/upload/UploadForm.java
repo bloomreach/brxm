@@ -186,7 +186,7 @@ class UploadForm extends Form {
 
     private void makeThumbnail(Node node, InputStream resourceData, String mimeType) throws RepositoryException {
         if (mimeType.startsWith("image")) {
-            InputStream thumbNail = ImageUtils.createThumbnail(resourceData, uploadDialog.getThumbnailSize(), mimeType);
+            InputStream thumbNail = new ImageUtils().createThumbnail(resourceData, uploadDialog.getThumbnailSize(), mimeType);
             node.setProperty("jcr:data", thumbNail);
         } else {
             node.setProperty("jcr:data", resourceData);
