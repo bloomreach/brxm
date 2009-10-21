@@ -29,7 +29,6 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.servlet.ServletContext;
 
-import org.apache.wicket.AbortException;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
@@ -240,6 +239,8 @@ public class Main extends WebApplication {
             }
         });
 
+        resourceSettings.setLocalizer(new StagedLocalizer());
+
         if (Application.DEVELOPMENT.equals(getConfigurationType())) {
             // disable cache
             resourceSettings.getLocalizer().setEnableCache(false);
@@ -250,8 +251,6 @@ public class Main extends WebApplication {
             // don't show exception page
             getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_NO_EXCEPTION_PAGE);
         }
-        
-        resourceSettings.setLocalizer(new StagedLocalizer());
     }
 
     @Override
