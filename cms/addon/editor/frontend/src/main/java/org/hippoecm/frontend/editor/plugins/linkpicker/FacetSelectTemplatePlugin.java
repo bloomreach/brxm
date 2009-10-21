@@ -27,9 +27,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -41,7 +38,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ClearableDialogLink;
-import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
@@ -50,6 +46,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FacetSelectTemplatePlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -213,7 +211,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
                     }
 
                     @Override
-                    public boolean isClearVisable() {
+                    public boolean isClearVisible() {
                         // Checking for string literals ain't pretty. It's probably better to create a better display model.
                         return !EMPTY_LINK_TEXT.equals((String) displayModel.getObject());
                     }
