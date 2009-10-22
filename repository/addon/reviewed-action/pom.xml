@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon</artifactId>
-    <version>2.09.02-SNAPSHOT</version>
+    <version>2.10.00-SNAPSHOT</version>
   </parent>
 
   <name>Reviewed action addon</name>
