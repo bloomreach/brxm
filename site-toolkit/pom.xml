@@ -743,13 +743,13 @@
       <modules>
         <module>api</module>
         <module>commons</module>
+        <module>test</module>
         <module>content-beans</module>
         <module>ocm</module>
         <module>toolkit-resources</module>
         <module>components</module>
         <module>client</module>
         <module>dependencies</module>
-        <module>test</module>
         <module>maven</module>
         <module>testsuite</module>
         <module>demosuite</module>
