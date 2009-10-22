@@ -436,8 +436,8 @@
           <configuration>
           <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <scmCommentPrefix>HREPTWO-3153:</scmCommentPrefix>
-          <tag>Tag-HREPTWO-v2_09_00</tag>
+          <scmCommentPrefix>HREPTWO-3301:</scmCommentPrefix>
+          <tag>Tag-HREPTWO-v2_09_01</tag>
           <preparationGoals>clean</preparationGoals>
           <!-- commitByProject>true</commitByProject -->
           <!-- remoteTagging>true</remoteTagging -->
