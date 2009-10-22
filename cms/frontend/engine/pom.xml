@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-frontend</artifactId>
-    <version>2.09.02-SNAPSHOT</version>
+    <version>2.10.00-SNAPSHOT</version>
   </parent>
 
   <name>Frontend engine</name>
@@ -47,12 +47,12 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.09.02-SNAPSHOT</version>
+      <version>2.10.00-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.09.02-SNAPSHOT</version>
+      <version>2.10.00-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wicket</groupId>
