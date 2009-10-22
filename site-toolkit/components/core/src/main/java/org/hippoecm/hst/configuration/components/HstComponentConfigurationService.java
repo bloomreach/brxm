@@ -78,6 +78,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     private int autocreatedCounter = 0;
 
     private Map<String, String> parameters = new HashMap<String, String>();
+    private Map<String, String> localParameters = new HashMap<String, String>();
 
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
@@ -125,6 +126,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                 } else {
                     for (int i = 0; i < parameterNames.length; i++) {
                         this.parameters.put(parameterNames[i], parameterValues[i]);
+                        this.localParameters.put(parameterNames[i], parameterValues[i]);
                     }
                 }
             }
@@ -206,6 +208,15 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
     public Map<String, String> getParameters() {
         return Collections.unmodifiableMap(this.parameters);
     }
+    
+
+	public String getLocalParameter(String name) {
+		return this.localParameters.get(name);
+	}
+
+	public Map<String, String> getLocalParameters() {
+		return Collections.unmodifiableMap(this.localParameters);
+	}
 
     public String getId() {
         return this.id;
@@ -261,6 +272,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         copy.referenceComponent = child.referenceComponent;
         copy.serveResourcePath = child.serveResourcePath;
         copy.parameters = new HashMap<String, String>(child.parameters);
+        // localParameters have no merging, but for copy, the localParameters are copied 
+        copy.localParameters = new HashMap<String, String>(child.localParameters);
         List<String> copyToList = new ArrayList<String>();
         Collections.copy(copyToList, child.usedChildReferenceNames);
         copy.usedChildReferenceNames = copyToList;
@@ -451,4 +464,5 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             }
         }
     }
+
 }

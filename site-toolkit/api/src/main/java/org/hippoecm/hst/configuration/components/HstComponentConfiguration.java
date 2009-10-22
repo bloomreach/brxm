@@ -145,6 +145,16 @@ public interface HstComponentConfiguration {
     String getParameter(String name);
     
     /**
+     * Returns the parameter value <b>without inheritance</b> for the parameter <code>name</code> and <code>null</code> if not present.
+     * It returns the parameters configured directly on this HstComponentConfiguration, without the merged parameters from parent
+     * components (which have precedence, see {@link #getParameter(String)})
+     *
+     * @param name the name of the parameter
+     * @return the configured parameter value for this <code>name</code> and <code>null</code> if not existing
+     */
+    String getLocalParameter(String name);
+    
+    /**
      * Returns the map of all parameters. Also see {@link #getParameter(String)}.
      * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
      * client code changing configuration
@@ -155,6 +165,13 @@ public interface HstComponentConfiguration {
      * @return the map of all configured parameters, and an empty map if no parameters present
      */
     Map<String, String> getParameters();
+    
+    /**
+     * see {@link #getParameter(String)}, but now only parameters directly present on the HstConfigurationItem are returned. Thus, 
+     * no inheritance by parents involved
+     * @return the map of all configured parameters, and an empty map if no parameters present
+     */
+    Map<String, String> getLocalParameters();
     
     /**
      * Implementations should return an unmodifiable sorted map, for example {@link java.util.Collections$UnmodifiableSortedMap} to avoid 

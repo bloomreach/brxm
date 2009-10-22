@@ -104,12 +104,50 @@ public class BaseHstComponent extends GenericHstComponent {
         }
     }
 
+    /**
+     * Returns resolved parameter from HstComponentConfiguration : resolved means that possible property placeholders like
+     * ${1} or ${year}, where the first refers to the first wildcard matcher in a resolved sitemap item, and the latter
+     * to a resolved parameter in the resolved HstSiteMapItem
+     * 
+     * The parameter map used has inherited parameters from ancestor components, which have precedence over child components) 
+     * 
+     * @param name
+     * @param request
+     * @return the resolved parameter value for this name, or <code>null</null> if not present
+     */
     public String getParameter(String name, HstRequest request) {
         return (String)this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
     }
     
+    /**
+     * See {@link #getParameter(String, HstRequest)}, where we now return all resolved parameters (thus with inheritance of 
+     * ancestor components)
+     * @param request
+     * @return Map of all parameters, and when no parameters present, return empty map.
+     */
     public  Map<String,String> getParameters(HstRequest request){
         return this.getComponentConfiguration().getParameters(request.getRequestContext().getResolvedSiteMapItem());
+    }
+    
+    /**
+     * See {@link #getParameter(String, HstRequest)}, but now, only resolved parameters directly on the HstComponent are taken into
+     * acoount: in other words, no inheritance of parameters is applied
+     * @param name
+     * @param request
+     * @return the resolved parameter value for this name, or <code>null</null> if not present
+     */
+    public String getLocalParameter(String name, HstRequest request) {
+        return (String)this.getComponentConfiguration().getLocalParameter(name, request.getRequestContext().getResolvedSiteMapItem());
+    }
+    
+    /**
+     * See {@link #getParameters(HstRequest)}, but now, only resolved parameter map of parameters is returned that is directly on
+     * the HstComponenConfiguration, thus, no inheritance is applied
+     * @param request
+     * @return Map of all parameters, and when no parameters present, return empty map.
+     */
+    public  Map<String,String> getLocalParameters(HstRequest request){
+        return this.getComponentConfiguration().getLocalParameters(request.getRequestContext().getResolvedSiteMapItem());
     }
     
     public String getPublicRequestParameter(HstRequest request, String parameterName) {

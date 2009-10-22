@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public interface ComponentConfiguration {
 
-    /**
+	/**
      * Returns the property and if an expession exists it is resolved with the help of the ResolvedSiteMapItem
      */
     String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem);
@@ -35,6 +35,18 @@ public interface ComponentConfiguration {
      * 
      */
     Map<String, String> getParameters(ResolvedSiteMapItem hstResolvedSiteMapItem);
+    
+    /**
+     * Returns the property without inheritance and if an expession exists it is resolved with the help of the ResolvedSiteMapItem
+     */
+    String getLocalParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem);
+    
+    /**
+     * Returns all resolved parameters  without inheritance into a map
+     * @param hstResolvedSiteMapItem
+     * 
+     */
+    Map<String, String> getLocalParameters(ResolvedSiteMapItem hstResolvedSiteMapItem);
     
     /**
      * @return the location of the view renderer

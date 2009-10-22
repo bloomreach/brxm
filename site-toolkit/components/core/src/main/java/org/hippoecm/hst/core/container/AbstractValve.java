@@ -177,6 +177,8 @@ public abstract class AbstractValve implements Valve
                     public String getRenderPath() { return null; }
                     public String getServeResourcePath() { return null; }
                     public HstComponentConfiguration getParent() { return null; }
+					public String getLocalParameter(String name) {return null;}
+					public Map<String, String> getLocalParameters() {return null;}
                 };
                 
                 traceToolComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, compConfig, getComponentFactory(), parentWindow);

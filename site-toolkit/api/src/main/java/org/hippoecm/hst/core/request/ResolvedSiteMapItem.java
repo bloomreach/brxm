@@ -51,7 +51,8 @@ public interface ResolvedSiteMapItem {
     
     /**
      * Returns a property from the HstSiteMapItem configuration but should have replaced possible property placeholders. If a property 
-     * placeholder cannot be resolved, the implementation can return <code>null</code>. 
+     * placeholder cannot be resolved, the implementation can return <code>null</code>. Parameters are inherited from ancestor items,
+     * but in case of the same name, ancestor items have a lower precedence
      * 
      * @param name the name of the parameter
      * @return the value of the parameter and <code>null</code> if the parameter is not there or a property placeholder cannot be resolved
@@ -59,10 +60,24 @@ public interface ResolvedSiteMapItem {
     String getParameter(String name);
     
     /**
-     * Return the parameter map from the HstSiteMapItem configuration, but all values containing  property placeholders should be resolved
-     * @return the all the parameters as a Properties map, where all values containing property placeholders should their properties have resolved
+     * See {@link #getParameter(String)} only without inheritance of ancestor items
+     * @param name the name of the parameter
+     * @return the value of the parameter and <code>null</code> if the parameter is not there or a property placeholder cannot be resolved
+     */
+    String getLocalParameter(String name);
+    
+    /**
+     * Return the parameter map from the HstSiteMapItem configuration, but all values containing  property placeholders should be resolved.
+     * Parameters are inherited from ancestor items, but in case of the same name, ancestor items have a lower precedence
+     * @return the all the parameters as a Properties map, and an empty Properties object when no parameters defined or inherited, or the parameter values cannot be resolved
      */
     Properties getParameters();
+    
+    /**
+     * See {@link #getParameters()} only without inheritance of ancestor items
+     * @return the all the parameters as a Properties map, and an empty Properties object when no parameters defined, or the parameter values cannot be resolved
+     */
+    Properties getLocalParameters();
     
     /**
      * @return the <code>HstSiteMapItem</code> that is matched for this request

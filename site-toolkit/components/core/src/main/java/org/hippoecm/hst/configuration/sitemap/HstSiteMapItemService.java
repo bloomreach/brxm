@@ -74,8 +74,9 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private HstSiteMap hstSiteMap;
     
     private HstSiteMapItemService parentItem;
-    
+
     private Map<String,String> parameters = new HashMap<String,String>();
+    private Map<String,String> localParameters = new HashMap<String,String>();
     
     private List<HstSiteMapItemService> containsWildCardChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
     private List<HstSiteMapItemService> containsAnyChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
@@ -159,6 +160,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
            }  else {
                for(int i = 0; i < parameterNames.length ; i++) {
                    this.parameters.put(parameterNames[i], parameterValues[i]);
+                   this.localParameters.put(parameterNames[i], parameterValues[i]);
                }
            }
         }
@@ -263,6 +265,15 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     public Map<String, String> getParameters() {
         return Collections.unmodifiableMap(this.parameters);
     }
+    
+
+	public String getLocalParameter(String name) {
+		return this.localParameters.get(name);
+	}
+
+	public Map<String, String> getLocalParameters() {
+		return Collections.unmodifiableMap(this.localParameters);
+	}
 
     public int getStatusCode() {
         return this.statusCode;

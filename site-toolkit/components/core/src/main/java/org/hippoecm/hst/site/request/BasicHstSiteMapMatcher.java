@@ -285,6 +285,14 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         public Properties getParameters() {
             return null;
         }
+        
+        public String getLocalParameter(String name) {
+            return null;
+        }
+
+        public Properties getLocalParameters() {
+            return null;
+        }
 
         public String getRelativeContentPath() {
             return null;

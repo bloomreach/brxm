@@ -33,6 +33,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     private final static Logger log = LoggerFactory.getLogger(ResolvedSiteMapItemImpl.class);
     private HstSiteMapItem hstSiteMapItem;
     private Properties resolvedParameters;
+    private Properties localResolvedParameters;
     private String relativeContentPath;
     private HstComponentConfiguration hstComponentConfiguration;
     private HstComponentConfiguration portletHstComponentConfiguration;
@@ -69,8 +70,10 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
         */
        
        this.resolvedParameters = new Properties();
+       this.localResolvedParameters = new Properties();
        
        resolvedParameters.putAll(params);
+       localResolvedParameters.putAll(params);
        
        PropertyParser pp = new PropertyParser(params);
        
@@ -78,6 +81,12 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
            Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
            resolvedParameters.put(entry.getKey(), o);
        }
+       
+       for(Entry<String, String> entry : hstSiteMapItem.getLocalParameters().entrySet()) {
+           Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
+           localResolvedParameters.put(entry.getKey(), o);
+       }
+       
        relativeContentPath = (String)pp.resolveProperty("relativeContentPath", hstSiteMapItem.getRelativeContentPath());
 
     }
@@ -109,6 +118,16 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
     public Properties getParameters(){
         return this.resolvedParameters;
     }
+    
+
+	public String getLocalParameter(String name) {
+		return (String)localResolvedParameters.get(name);
+	}
+
+	public Properties getLocalParameters() {
+		return this.localResolvedParameters;
+	}
+
 
 
     public String getRelativeContentPath() {

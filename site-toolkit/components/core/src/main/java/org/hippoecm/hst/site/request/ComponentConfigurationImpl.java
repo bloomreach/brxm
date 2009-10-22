@@ -54,6 +54,24 @@ public class ComponentConfigurationImpl implements ComponentConfiguration{
         return parsedParamValue;
     }
     
+    public Map<String,String> getLocalParameters(ResolvedSiteMapItem hstResolvedSiteMapItem) {
+        Map<String,String> parameters = new HashMap<String, String>();
+        PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getParameters());
+        for(Entry<String, String> entry: componentConfiguration.getLocalParameters().entrySet()) {
+            String parsedParamValue = (String)pp.resolveProperty(entry.getKey(), entry.getValue());
+            parameters.put(entry.getKey(), parsedParamValue);
+        }
+        return parameters;
+    }
+    
+    public String getLocalParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
+        String paramValue = componentConfiguration.getLocalParameter(name);
+        PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getParameters());
+        String parsedParamValue = (String)pp.resolveProperty(name, paramValue);
+        log.debug("Return value '{}' for property '{}'", parsedParamValue, name);
+        return parsedParamValue;
+    }
+    
     public String getRenderPath() {
         return componentConfiguration.getRenderPath();
     }

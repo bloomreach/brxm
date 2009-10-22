@@ -139,9 +139,16 @@ public interface HstSiteMapItem {
      * value from the ancestor is overwritten. Thus, child items have precedence. Note that this is opposite to {@link HstComponentConfiguration#getParameter(String)}
      * 
      * @param name the name of the parameter
-     * @return the value of the parameter
+     * @return the value of the parameter or <code>null</code> when not present
      */
     String getParameter(String name);
+    
+    /**
+     * see {@link #getParameter(String)}, only this method returns parameters without inheritance
+     * @param name  the name of the parameter
+     * @return the value of the parameter or <code>null</code> when not present
+     */
+    String getLocalParameter(String name);
     
     /**
      * See {@link #getParameter(String)}, only now the parameters map is returned.
@@ -152,9 +159,15 @@ public interface HstSiteMapItem {
      * value from the ancestor is overwritten. Thus, child items have precedence. Note that this is opposite to {@link HstComponentConfiguration#getParameters()}
      * 
      * 
-     * @return the Map of parameters contained in this <code>HstSiteMapItem</code>
+     * @return the Map of parameters contained in this <code>HstSiteMapItem</code>. If no parameters present, and empty map is returned
      */
     Map<String, String> getParameters();
+    
+    /**
+     * see {@link #getParameters }, only this method returns parameters (unmodifiable map) without inheritance
+     * @return the Map of parameters contained in this <code>HstSiteMapItem</code>. If no parameters present, and empty map is returned
+     */
+    Map<String, String> getLocalParameters();
     
     /**
      * Returns parent <code>HstSiteMapItem</code> and <code>null</code> when the item does not have a parent (in other words, it is a
