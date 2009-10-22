@@ -94,11 +94,23 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     }
 
     void postSave(Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
-        derivedEngine.save(node);
+        if(derivedEngine != null) {
+            derivedEngine.save(node);
+        }
     }
 
     public void postValidation() throws ConstraintViolationException, RepositoryException {
         derivedEngine.validate();
+    }
+
+    public void postDerivedData(boolean enabled) {
+        if (enabled) {
+            if (derivedEngine == null) {
+                derivedEngine = new DerivedDataEngine(this);
+            }
+        } else {
+            derivedEngine = null;
+        }
     }
 
     public void postMountEnabled(boolean enabled) {
@@ -141,20 +153,22 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             VersionException, LockException, RepositoryException {
-        try {
-            derivedEngine.save();
-        } catch(VersionException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw ex;
-        } catch(LockException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw ex;
-        } catch(ConstraintViolationException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw ex;
-        } catch(RepositoryException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw ex;
+        if (derivedEngine != null) {
+            try {
+                derivedEngine.save();
+            } catch (VersionException ex) {
+                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                throw ex;
+            } catch (LockException ex) {
+                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                throw ex;
+            } catch (ConstraintViolationException ex) {
+                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                throw ex;
+            } catch (RepositoryException ex) {
+                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                throw ex;
+            }
         }
         super.save();
     }
