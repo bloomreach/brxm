@@ -27,9 +27,9 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class FieldPluginEditor extends Panel {
@@ -92,38 +92,23 @@ public class FieldPluginEditor extends Panel {
     private class CssProvider implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        final List<IModel> cssModels;
+        final List<CssModel> cssModels;
 
         CssProvider() {
             IPluginConfig config = (IPluginConfig) getModelObject();
-            final String[] classes = config.getStringArray("css");
+            final String[] classes = config.getStringArray(AbstractRenderService.CSS_ID);
             if (classes != null) {
-                cssModels = new ArrayList<IModel>(classes.length);
-                for (int i = 0; i < classes.length; i++) {
-                    final int index = i;
-                    cssModels.add(new IModel() {
-                        private static final long serialVersionUID = 1L;
-
-                        public void setObject(Object object) {
-                            classes[index] = (String) object;
-                            save();
-                        }
-
-                        public Object getObject() {
-                            return classes[index];
-                        }
-
-                        public void detach() {
-                        }
-                    });
+                cssModels = new ArrayList<CssModel>(classes.length);
+                for (String className : classes) {
+                    cssModels.add(new CssModel(className));
                 }
             } else {
-                cssModels = new ArrayList<IModel>();
+                cssModels = new ArrayList<CssModel>();
             }
         }
 
         Iterator<IModel> iterator() {
-            final Iterator<IModel> base = cssModels.iterator();
+            final Iterator<CssModel> base = cssModels.iterator();
             return new Iterator<IModel>() {
 
                 public boolean hasNext() {
@@ -138,7 +123,6 @@ public class FieldPluginEditor extends Panel {
                     base.remove();
                     save();
                 }
-
             };
         }
 
@@ -148,8 +132,7 @@ public class FieldPluginEditor extends Panel {
         }
 
         void addNew() {
-            cssModels.add(new Model(""));
-            save();
+            cssModels.add(new CssModel(""));
             detach();
         }
 
@@ -159,9 +142,30 @@ public class FieldPluginEditor extends Panel {
             for (int i = 0; i < cssModels.size(); i++) {
                 values[i] = (String) cssModels.get(i).getObject();
             }
-            config.put("css", values);
+            config.put(AbstractRenderService.CSS_ID, values);
         }
 
+        private class CssModel implements IModel {
+            private static final long serialVersionUID = 1L;
+
+            String className;
+
+            public CssModel(String className) {
+                this.className = className;
+            }
+
+            public void setObject(Object object) {
+                className = (String) object;
+                save();
+            }
+
+            public Object getObject() {
+                return className;
+            }
+
+            public void detach() {
+            }
+        }
     }
 
 }
