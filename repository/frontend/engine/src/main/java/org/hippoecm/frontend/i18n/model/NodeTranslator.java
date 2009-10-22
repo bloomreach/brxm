@@ -129,7 +129,7 @@ public class NodeTranslator extends NodeModelWrapper {
 
                     // when the node is not translated, return the decoded name at
                     // the time of version creation.  Fall back to handle name if necessary.
-                    if (node.isNodeType("nt:frozenNode")) {
+                    if (node.isNodeType("nt:frozenNode") && (node.getParent() instanceof Version)) {
                         try {
                             String historyUuid = ((Version) node.getParent()).getContainingHistory().getUUID();
                             Version parentVersion = JcrHelper.getVersionParent((Version) node.getParent());
