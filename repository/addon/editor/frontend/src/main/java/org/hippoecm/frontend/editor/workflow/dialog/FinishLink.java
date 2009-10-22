@@ -15,10 +15,11 @@
  */
 package org.hippoecm.frontend.editor.workflow.dialog;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.extensions.wizard.IWizardModel;
-import org.apache.wicket.markup.html.link.Link;
 
-public final class FinishLink extends Link {
+public final class FinishLink extends AjaxFallbackLink {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -41,7 +42,7 @@ public final class FinishLink extends Link {
     }
 
     @Override
-    public void onClick() {
+    public void onClick(AjaxRequestTarget target) {
         getWizardModel().finish();
     }
 
