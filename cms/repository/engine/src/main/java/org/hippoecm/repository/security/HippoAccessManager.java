@@ -374,7 +374,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
 
         // translate permissions to privileges according to 6.11.1.4 of JSR-283
-        String parentJcrPath = npRes.getJCRPath(absPath.getAncestor(1));
         Set<Privilege> privileges = new HashSet<Privilege>();
         if ((permissions & Permission.ADD_NODE) != 0) {
             privileges.add(privilegeFromName("jcr:addChildNodes"));
@@ -388,7 +387,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         if ((permissions & Permission.REMOVE_PROPERTY) != 0) {
             privileges.add(privilegeFromName("jcr:setProperties"));
         }
-        return hasPrivileges(parentJcrPath, privileges.toArray(new Privilege[privileges.size()]));
+        return hasPrivileges(absPath.getAncestor(1), privileges.toArray(new Privilege[privileges.size()]));
     }
 
 
@@ -872,27 +871,14 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
     /**
      * Get the <code>NodeId</code> for the absolute path. If the absolute path points
      * to a property return the NodeId of the parent.
-     * @param String the absolute path
-     * @return the NodeState of the node (holding the property)
-     * @throws PathNotFoundException
-     * @throws RepositoryException
-     */
-    private NodeId getNodeId(String absPath) throws PathNotFoundException, RepositoryException {
-        checkInitialized();
-        return getNodeId(npRes.getQPath(absPath));
-    }
-
-    /**
-     * Get the <code>NodeId</code> for the absolute path. If the absolute path points
-     * to a property return the NodeId of the parent.
-     * @param absPath the absolute path
+     * @param absPath the absolute Path
      * @return the NodeId of the node (holding the property)
      * @throws PathNotFoundException
      * @throws RepositoryException
      */
     private NodeId getNodeId(Path absPath) throws PathNotFoundException, RepositoryException {
         checkInitialized();
-
+        
         if (!absPath.isAbsolute()) {
             throw new RepositoryException("Absolute path expected, got " + npRes.getJCRPath(absPath));
         }
@@ -1208,6 +1194,16 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
      * @see AccessControlManager#hasPrivileges(String,Privilege[])
      */
     public boolean hasPrivileges(String absPath, Privilege[] privileges) throws PathNotFoundException,
+    RepositoryException {
+        return hasPrivileges(npRes.getQPath(absPath), privileges);
+    }
+    
+
+    /**
+     * Check the privileges based on a absolute Path rather than a String representation of a Path
+     * @see AccessControlManager#hasPrivileges(String,Privilege[])
+     */
+    public boolean hasPrivileges(Path absPath, Privilege[] privileges) throws PathNotFoundException,
             RepositoryException {
         checkInitialized();
 
@@ -1287,7 +1283,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
     public Privilege[] getPrivileges(String absPath) throws PathNotFoundException, RepositoryException {
         checkInitialized();
         
-        NodeId id = getNodeId(absPath);
+        NodeId id = getNodeId(npRes.getQPath(absPath));
         NodeState nodeState;
         try {
             nodeState = (NodeState) getItemState(id);
