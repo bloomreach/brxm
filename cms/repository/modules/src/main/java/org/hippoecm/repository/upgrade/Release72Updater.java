@@ -243,7 +243,7 @@ public class Release72Updater implements UpdaterModule {
         }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("rep:root") {
             @Override
-            public void entering(final Node node, int level) throws RepositoryException {
+            public void leaving(final Node node, int level) throws RepositoryException {
                 /*
                  * The removal of the entire /hippo:log tree seems to be appropriate.  This is relatively volatile data as
                  * this is a sliding log file with the oldest entries being removed automatically.  Combine this with the
@@ -255,21 +255,9 @@ public class Release72Updater implements UpdaterModule {
                 }
             }
         }.setAtomic());
-        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:namespacefolder") {
-            @Override
-            public void entering(final Node node, int level) throws RepositoryException {
-                context.setPrimaryNodeType(node, "hipposysedit_1_0:namespacefolder");
-                for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-                    Node child = iter.nextNode();
-                    if (child.isNodeType("hippo:namespace")) {
-                        context.setPrimaryNodeType(child, "hipposysedit_1_0:namespace");
-                    }
-                }
-            }
-        }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:templatetype") {
             @Override
-            public void entering(final Node node, int level) throws RepositoryException {
+            public void leaving(final Node node, int level) throws RepositoryException {
                 // Should a new nodetype descriptor be created?
                 boolean convert = false;
                 String prefix = node.getParent().getName();
@@ -351,13 +339,25 @@ public class Release72Updater implements UpdaterModule {
                 }
             }
         }.setAtomic());
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:namespacefolder") {
+            @Override
+            public void leaving(final Node node, int level) throws RepositoryException {
+                context.setPrimaryNodeType(node, "hipposysedit_1_0:namespacefolder");
+                for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
+                    Node child = iter.nextNode();
+                    if (child.isNodeType("hippo:namespace")) {
+                        context.setPrimaryNodeType(child, "hipposysedit_1_0:namespace");
+                    }
+                }
+            }
+        }.setAtomic());
         
         /**
          * reviewed-actions workflow update
          */
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:workflowcategory") {
             @Override
-            protected void entering(Node node, int level) throws RepositoryException {
+            protected void leaving(Node node, int level) throws RepositoryException {
                 if (node.getName().equals("versioning")) {
                     if (node.hasNode("version")) {
                         Node version = node.getNode("version");
@@ -386,7 +386,7 @@ public class Release72Updater implements UpdaterModule {
          */
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("frontend:workflow") {
             @Override
-            public void entering(final Node node, int level) throws RepositoryException {
+            public void leaving(final Node node, int level) throws RepositoryException {
                 // convert property to child node
                 if (node.hasProperty("frontend:renderer")) {
                     if (!node.hasNode("frontend:renderer")) {
@@ -419,7 +419,7 @@ public class Release72Updater implements UpdaterModule {
          */
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:domain") {
             @Override
-            public void entering(final Node node, int level) throws RepositoryException {
+            public void leaving(final Node node, int level) throws RepositoryException {
                 String name = node.getName();
                 if ("defaultwrite".equals(name)) {
                     if (node.hasNode("hippo-handle")) {
@@ -476,7 +476,7 @@ public class Release72Updater implements UpdaterModule {
          */
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:userfolder") {
             @Override
-            public void entering(final Node node, int level) throws RepositoryException {
+            public void leaving(final Node node, int level) throws RepositoryException {
                 if (node.hasNode("workflowuser")) {
                     node.getNode("workflowuser").setProperty("hipposys_1_0:system", true);
                 }
@@ -487,7 +487,7 @@ public class Release72Updater implements UpdaterModule {
          */
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("frontend:user") {
             @Override
-            public void entering(final Node node, int level) throws RepositoryException {
+            public void leaving(final Node node, int level) throws RepositoryException {
                 context.setPrimaryNodeType(node, "hippo:user");
                 node.setProperty("frontend:firstname", (String) null);
                 node.setProperty("frontend:lastname", (String) null);
@@ -496,7 +496,7 @@ public class Release72Updater implements UpdaterModule {
         }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:configuration") {
             @Override
-            public void entering(final Node node, int level) throws RepositoryException {
+            public void leaving(final Node node, int level) throws RepositoryException {
                 for (String[] delete : new String[][] {
                             {"hippo:temporary"}, // this removal is appropriate, any changes to this folder should be considered transient
                             {"hippo:documents", "embedded", "root"},
@@ -671,7 +671,7 @@ public class Release72Updater implements UpdaterModule {
         }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("rep:root") {
             @Override
-            public void entering(final Node node, int level) throws RepositoryException {
+            public void leaving(final Node node, int level) throws RepositoryException {
                 if (node.hasNode("hippo:namespaces")) {
                     Node nsFolderNode = node.getNode("hippo:namespaces");
                     String[][] remove = {

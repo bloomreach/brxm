@@ -18,6 +18,7 @@ package org.hippoecm.repository.updater;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -60,7 +62,6 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -74,20 +75,21 @@ import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 
+import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.Modules;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.impl.SessionDecorator;
+;
 
 public class UpdaterEngine {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     protected final static Logger log = LoggerFactory.getLogger(UpdaterEngine.class);
-
-    static protected int BATCH_THRESHOLD = 96;
 
     Session session;
     UpdaterSession updaterSession;
@@ -422,6 +424,7 @@ public class UpdaterEngine {
     private void close() throws RepositoryException {
         UpdaterException exception = null;
         NamespaceRegistryImpl nsreg = (NamespaceRegistryImpl) session.getWorkspace().getNamespaceRegistry();
+        log.info("migration close cycle");
         for (ModuleRegistration module : modules) {
             log.info("migration close cycle for module "+module.name);
             for (ItemVisitor visitor : module.visitors) {
@@ -429,9 +432,11 @@ public class UpdaterEngine {
                     if(visitor instanceof NamespaceVisitorImpl) {
                         NamespaceVisitorImpl remap = ((NamespaceVisitorImpl)visitor);
                         if(remap.oldPrefix != null) {
+                            log.info("migration close remapping "+remap.newPrefix+" -> "+remap.namespace+" -> "+remap.oldPrefix);
                             nsreg.externalRemap(remap.namespace, remap.oldPrefix, remap.oldURI);
                             nsreg.externalRemap(remap.newPrefix, remap.namespace, remap.newURI);
                         } else {
+                            log.info("migration closer remapping "+remap.newPrefix+" -> "+remap.namespace);
                             nsreg.externalRemap(remap.newPrefix, remap.namespace, remap.newURI);
                         }
                     }
@@ -479,7 +484,7 @@ public class UpdaterEngine {
         versionProperty.getParent().save();
     }
 
-    public static boolean migrate(Session session) {
+    public static boolean migrate(Session session) throws RepositoryException {
         boolean needsRestart = false;
         try {
             if(!session.getRootNode().hasNode(HippoNodeType.CONFIGURATION_PATH) ||
@@ -490,6 +495,7 @@ public class UpdaterEngine {
             boolean updates;
             do {
                 Session subSession = session.impersonate(new SimpleCredentials("system", new char[] {}));
+                ((org.hippoecm.repository.impl.SessionDecorator)subSession).postDerivedData(false);
                 UpdaterEngine engine = new UpdaterEngine(subSession);
                 updates = engine.prepare();
                 if (updates) {
@@ -521,8 +527,10 @@ public class UpdaterEngine {
             } catch(RepositoryException ignored) {
                 log.error("error in migration cycle: node still referenced: "+uuid);
             }
+            throw ex;
         } catch(RepositoryException ex) {
             log.error("error in migration cycle: "+ex.getClass().getName()+": "+ex.getMessage(), ex);
+            throw ex;
         }
         return needsRestart;
     }
@@ -548,10 +556,11 @@ public class UpdaterEngine {
         process();
         log.info("upgrade cycle traverse process commit");
         updaterSession.commit();
+        updaterSession.flush();
         log.info("upgrade cycle traverse process save");
         session.save();
         log.info("upgrade cycle iterated process");
-        Map<String,List<UpdaterItemVisitor>> totalBatch = new TreeMap<String,List<UpdaterItemVisitor>>();
+        Map<String,List<UpdaterItemVisitor>> totalBatch = new HashMap<String,List<UpdaterItemVisitor>>();
         UpdaterException exception = null;
         for (ModuleRegistration module : modules) {
             log.info("migration update cycle for module " + module.name);
@@ -569,7 +578,7 @@ public class UpdaterEngine {
                     }
                 }
                 if(nodeIter != null) {
-                    log.info("migration update iterated for module " + module.name + " (" + visitor.toString() + ")");
+                    log.info("migration update iterated for module " + module.name + " (" + visitor.toString() + ") "+nodeIter.getSize()+" nodes");
                     while(nodeIter.hasNext()) {
                         Node node = nodeIter.nextNode();
                         String path = node.getPath();
@@ -583,7 +592,8 @@ public class UpdaterEngine {
                 }
             }
         }
-        Collection<Map<String, List<UpdaterItemVisitor>>> partitionedBatch = partition(totalBatch);
+        Collection<SortedMap<String, List<UpdaterItemVisitor>>> partitionedBatch = partition(totalBatch, false);
+        log.info("upgrade cycle iterated process breath first iteration");
         for (Map<String, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
             for (Map.Entry<String, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
                 String path = entry.getKey();
@@ -593,7 +603,37 @@ public class UpdaterEngine {
                         node = node.getNode(path.substring(1));
                     }
                     for (UpdaterItemVisitor visitor : entry.getValue()) {
-                        node.accept(visitor);
+                        visitor.visit(node, 0, false);
+                    }
+                } catch (UpdaterException ex) {
+                    if (exception != null) {
+                        exception = ex;
+                    }
+                    log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
+                } catch (PathNotFoundException ex) {
+                    // deliberate ignore
+                } catch (InvalidItemStateException ex) {
+                    // deliberate ignore
+                }
+            }
+            log.info("upgrade cycle iterated process intermediate commit");
+            updaterSession.commit();
+            updaterSession.flush();
+            log.info("upgrade cycle iterated process intermediate save");
+            session.save();
+        }
+        partitionedBatch = partition(totalBatch, true);
+        log.info("upgrade cycle iterated process depth first iteration");
+        for (Map<String, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
+            for (Map.Entry<String, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
+                String path = entry.getKey();
+                Node node = updaterSession.getRootNode();
+                try {
+                    if (!path.equals("/")) {
+                        node = node.getNode(path.substring(1));
+                    }
+                    for (UpdaterItemVisitor visitor : entry.getValue()) {
+                        visitor.visit(node, 0, true);
                     }
                 } catch (UpdaterException ex) {
                     if (exception != null) {
@@ -622,15 +662,29 @@ public class UpdaterEngine {
         log.info("upgrade cycle saved");
     }
 
-    protected Collection<Map<String, List<UpdaterItemVisitor>>> partition(Map<String, List<UpdaterItemVisitor>> totalBatch) {
-        LinkedList<Map<String, List<UpdaterItemVisitor>>> partitionedBatch = new LinkedList<Map<String, List<UpdaterItemVisitor>>>();
-        Map<String, List<UpdaterItemVisitor>> currentBatch = null;
+    protected Collection<SortedMap<String, List<UpdaterItemVisitor>>> partition(Map<String, List<UpdaterItemVisitor>> totalBatch, boolean reverse) {
+        Comparator<String> comparator;
+        if(reverse) {
+            comparator = new Comparator<String>() {
+                public int compare(String o1, String o2) {
+                    return o2.compareTo(o1);
+                }
+            };
+        } else {
+            comparator = new Comparator<String>() {
+                public int compare(String o1, String o2) {
+                    return o1.compareTo(o2);
+                }
+            };
+        }
+        LinkedList<SortedMap<String, List<UpdaterItemVisitor>>> partitionedBatch = new LinkedList<SortedMap<String, List<UpdaterItemVisitor>>>();
+        SortedMap<String, List<UpdaterItemVisitor>> currentBatch = null;
         for (Map.Entry<String, List<UpdaterItemVisitor>> entry : totalBatch.entrySet()) {
             if(currentBatch == null) {
-                currentBatch = new TreeMap<String, List<UpdaterItemVisitor>>();
+                currentBatch = new TreeMap<String, List<UpdaterItemVisitor>>(comparator);
             }
             currentBatch.put(entry.getKey(), entry.getValue());
-            if(currentBatch.size() >= BATCH_THRESHOLD) {
+            if(currentBatch.size() >= LocalHippoRepository.BATCH_THRESHOLD) {
                 partitionedBatch.add(currentBatch);
                 currentBatch = null;
             }
@@ -685,24 +739,42 @@ public class UpdaterEngine {
     private void process() throws RepositoryException {
         UpdaterException exception = null;
         for (ModuleRegistration module : modules) {
+            log.info("migration update traverse for module "+module.name);
             for (ItemVisitor visitor : module.visitors) {
                 try {
-                    if(!(visitor instanceof UpdaterItemVisitor.Iterated)) {
-                        log.info("migration update traverse for module "+module.name+" ("+visitor.toString()+")");
-                        updaterSession.getRootNode().accept(visitor);
+                    NodeIterator nodeIter = null;
+                    if (visitor instanceof UpdaterItemVisitor.Iterated) {
+                        UpdaterItemVisitor.Iterated iteratedVisitor = (UpdaterItemVisitor.Iterated)visitor;
+                        if (iteratedVisitor.isAtomic()) {
+                            nodeIter = iteratedVisitor.iterator(updaterSession.upstream);
+                        }
+                    } else if (visitor instanceof NamespaceVisitorImpl) {
+                        NamespaceVisitorImpl namespaceVisitor = (NamespaceVisitorImpl)visitor;
+                        if (namespaceVisitor.isAtomic()) {
+                            nodeIter = namespaceVisitor.iterator(updaterSession.upstream);
+                        }
                     } else {
-                        UpdaterItemVisitor.Iterated iteratedVisitor = (UpdaterItemVisitor.Iterated) visitor;
-                        if(iteratedVisitor.isAtomic()) {
-                            log.info("migration update traverse iterated for module "+module.name+" ("+visitor.toString()+")");
-                            for (NodeIterator iter = iteratedVisitor.iterator(updaterSession.upstream); iter.hasNext();) {
-                                Node node = iter.nextNode();
+                        log.info("migration update traverse for module " + module.name + " (" + visitor.toString() + ")");
+                        updaterSession.getRootNode().accept(visitor);
+                        nodeIter = null;
+                    }
+                    if (nodeIter != null) {
+                        log.info("migration update traverse iterated for module " + module.name + " (" + visitor.toString() + ")");
+                        if (visitor instanceof NamespaceVisitorImpl && ((NamespaceVisitorImpl)visitor).isNotIterated()) {
+                            NamespaceVisitorImpl namespaceVisitor = (NamespaceVisitorImpl)visitor;
+                            namespaceVisitor.isCollecting = true;
+                            namespaceVisitor.isExecuting = true;
+                            updaterSession.getRootNode().accept(namespaceVisitor);
+                        } else {
+                            while (nodeIter.hasNext()) {
+                                Node node = nodeIter.nextNode();
                                 String path = node.getPath();
                                 node = updaterSession.getRootNode();
                                 if (!path.equals("/")) {
                                     node = node.getNode(path.substring(1));
                                 }
                                 try {
-                                    iteratedVisitor.visit(node);
+                                    visitor.visit(node);
                                 } catch (InvalidItemStateException ex) {
                                     // deliberate ignore
                                 }
@@ -824,7 +896,9 @@ public class UpdaterEngine {
         CompactNodeTypeDefReader cndReader;
         String cndName;
         UpdaterContext context;
-        private Set<Node> collection = null;
+        boolean isCollecting = false;
+        boolean isExecuting = false;
+        Set<Node> collection = collection = new HashSet<Node>();
 
         NamespaceVisitorImpl(NamespaceRegistry nsReg, NamespaceVisitor definition) throws RepositoryException, ParseException {
             this.namespace = definition.prefix;
@@ -848,9 +922,13 @@ public class UpdaterEngine {
             return "NamespaceVisitor["+namespace+"]";
         }
 
-        public boolean isAtomic() {
-            //return !cndName.equals("-"); FIXME
+        // FIXME: this method should return false, or rather be removed
+        public boolean isNotIterated() {
             return true;
+        }
+
+        public boolean isAtomic() {
+            return !cndName.equals("-") || isNotIterated();
         }
 
         protected boolean isMatch(Node node) throws RepositoryException {
@@ -871,14 +949,16 @@ public class UpdaterEngine {
                     ++i;
                 }
             }
-            return false;
+            return true; // FIXME: should return false
         }
 
         public NodeIterator iterator(Session session) throws RepositoryException {
-            collection = new HashSet<Node>();
+            isCollecting = true;
+            isExecuting = false;
             session.getRootNode().accept(this);
+            isCollecting = false;
+            isExecuting = true;
             final Iterator<Node> iterator = collection.iterator();
-            collection = null;
             return new NodeIterator() {
                 int position = 0;
                 public Node nextNode() {
@@ -889,7 +969,7 @@ public class UpdaterEngine {
                         next();
                 }
                 public long getSize() {
-                    return -1;
+                    return collection.size();
                 }
                 public long getPosition() {
                     return position;
@@ -898,13 +978,22 @@ public class UpdaterEngine {
                     return iterator.hasNext();
                 }
                 public Object next() {
+                    Object object = iterator.next();
                     ++position;
-                    return iterator.next();
+                    return object;
                 }
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
             };
+        }
+
+        @Override
+        public void visit(Property property) throws RepositoryException {
+            if ((isAtomic() && !isCollecting) || isExecuting) {
+                entering(property, currentLevel);
+                leaving(property, currentLevel);
+            }
         }
 
         @Override
@@ -914,40 +1003,65 @@ public class UpdaterEngine {
             }
             if (node instanceof HippoNode) {
                 Node canonical = ((HippoNode)node).getCanonicalNode();
-                if (canonical == null || canonical.isSame(node)) {
+                if (canonical == null || !canonical.isSame(node)) {
                     return;
                 }
             }
-            if(isAtomic() || collection == null) {
-                entering(node, currentLevel);
+            boolean isMatch = isMatch(node);
+            if (isMatch) {
+                if ((isAtomic() && !isCollecting) || isExecuting) {
+                    entering(node, currentLevel);
+                }
+                if (isCollecting) {
+                    collection.add(node);
+                }
             }
-            if(collection != null) {
-                collection.add(node);
-            }
-            if (isAtomic() || collection != null) {
-                ++currentLevel;
-                try {
+            ++currentLevel;
+            try {
+                if (isAtomic() || isCollecting) {
                     for (NodeIterator nodeIter = node.getNodes(); nodeIter.hasNext();) {
                         nodeIter.nextNode().accept(this);
                     }
+                }
+                if(((isAtomic() && !isCollecting) || isExecuting) && isMatch) {
                     for (PropertyIterator propIter = node.getProperties(); propIter.hasNext();) {
                         propIter.nextProperty().accept(this);
                     }
-                } catch (InvalidItemStateException ex) {
-                    // deliberate ignore
-                } catch (RepositoryException ex) {
-                    currentLevel = 0;
-                    throw ex;
                 }
-                --currentLevel;
+            } catch (InvalidItemStateException ex) {
+                // deliberate ignore
+            } catch (RepositoryException ex) {
+                currentLevel = 0;
+                throw ex;
             }
-            if (isAtomic() || collection == null) {
-                leaving(node, 0);
+            --currentLevel;
+            if (isMatch) {
+                if ((isAtomic() && !isCollecting) || isExecuting) {
+                    leaving(node, 0);
+                }
             }
         }
 
         @Override
         protected final void entering(Node node, int level) throws RepositoryException {
+            try {
+                try {
+                    node.addMixin("hipposys:unstructured");
+                } catch(NamespaceException ex) {
+                    // FIXME: should be removed
+                    node.addMixin("hipposys_1_0:unstructured");
+                }
+            } catch(RepositoryException ex) {
+            }
+        }
+
+        @Override
+        protected final void entering(Property property, int level) throws RepositoryException {
+        }
+
+        @Override
+        protected final void leaving(Node node, int level)
+                throws RepositoryException {
             if(node.hasProperty("jcr:primaryType")) {
                 String primaryType = node.getProperty("jcr:primaryType").getString();
                 if(primaryType.startsWith(namespace + ":")) {
@@ -969,17 +1083,16 @@ public class UpdaterEngine {
                 if (mixinsChanged) {
                     node.setProperty("jcr:mixinTypes", mixins);
                 }
+                try {
+                    try {
+                        node.removeMixin("hipposys:unstructured");
+                    } catch(NamespaceException ex) {
+                        // FIXME: should be removed
+                        node.addMixin("hipposys_1_0:unstructured");
+                    }
+                } catch(RepositoryException ex) {
+                }
             }
-        }
-
-        @Override
-        protected final void entering(Property property, int level)
-                throws RepositoryException {
-        }
-
-        @Override
-        protected final void leaving(Node node, int level)
-                throws RepositoryException {
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
                 if (child.getName().startsWith(namespace + ":")) {

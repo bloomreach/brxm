@@ -183,6 +183,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         boolean nodeTypesChanged;
         boolean nodeLocationChanged;
         boolean nodeRelinked = false;
+        String nodeName = getName();
 
         if (origin != null) {
             if (origin instanceof HippoNode) {
@@ -205,7 +206,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         if (origin == null || parent == null) {
             nodeLocationChanged = false;
         } else {
-            nodeLocationChanged = (!parent.origin.isSame(origin.getParent()) || !origin.getName().equals(getName()));
+            nodeLocationChanged = (!parent.origin.isSame(origin.getParent()) || !origin.getName().equals(nodeName));
         }
 
         if(UpdaterEngine.log.isDebugEnabled()) {
@@ -223,13 +224,13 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         if (nodeTypesChanged) {
             if (!hollow) {
                 oldOrigin = origin;
-                if (oldOrigin != null && (((Node)parent.origin).hasNode(getName())) &&
-                        ((Node)parent.origin).getNode(getName()).getDefinition().isAutoCreated() &&
-                        !((Node)parent.origin).getNode(getName()).getDefinition().allowsSameNameSiblings()) {
+                if (oldOrigin != null && (((Node)parent.origin).hasNode(nodeName)) &&
+                        ((Node)parent.origin).getNode(nodeName).getDefinition().isAutoCreated() &&
+                        !((Node)parent.origin).getNode(nodeName).getDefinition().allowsSameNameSiblings()) {
                     if(UpdaterEngine.log.isDebugEnabled()) {
                         UpdaterEngine.log.debug("commit autocreated "+origin.getPath());
                     }
-                    origin = ((Node)parent.origin).getNode(getName());
+                    origin = ((Node)parent.origin).getNode(nodeName);
                 } else {
                     if(UpdaterEngine.log.isDebugEnabled()) {
                         UpdaterEngine.log.debug("commit create "+getPath()+" in "+((Node)parent.origin).getPath()+" (primary type "+((Node)parent.origin).getProperty("jcr:primaryType").getString()+") type "+getInternalProperty("jcr:primaryType")[0]);
@@ -239,9 +240,9 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     }
                     String[] primaryType = getInternalProperty("jcr:primaryType");
                     if (primaryType != null && primaryType.length > 0) {
-                        origin = ((Node)parent.origin).addNode(getName(), primaryType[0]);
+                        origin = ((Node)parent.origin).addNode(nodeName, primaryType[0]);
                     } else {
-                        origin = ((Node)parent.origin).addNode(getName());
+                        origin = ((Node)parent.origin).addNode(nodeName);
                     }
                     if (oldOrigin != null) {
                         nodeRelinked = true;
@@ -249,12 +250,12 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                 }
             }
         } else if(nodeLocationChanged) {
-            String name = getName();
+            String name = nodeName;
             UpdaterEngine.log.debug("move unchanged node "+origin.getPath()+" to "+parent.origin.getPath()+"/"+name+" ("+((Node)parent.origin).getProperty("jcr:primaryType").getString()+")");
             if(!origin.getParent().isCheckedOut()) {
                 origin.getParent().checkout();
             }
-            origin.getSession().move(origin.getPath(), parent.origin.getPath()+"/"+name);
+            origin.getSession().move(origin.getPath(), (parent.origin.getPath().equals("/") ? "/"+name : parent.origin.getPath()+"/"+name));
             origin = null;
             for(NodeIterator findMoved = ((Node)parent.origin).getNodes(name); findMoved.hasNext(); ) {
                 origin = findMoved.nextNode();
@@ -286,7 +287,11 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     if(UpdaterEngine.log.isDebugEnabled()) {
                         UpdaterEngine.log.debug("commit addMixin "+origin.getPath()+" mixin "+mixin);
                     }
-                    ((Node)origin).addMixin(mixin);
+                    try {
+                        ((Node)origin).addMixin(mixin);
+                    } catch(ConstraintViolationException ex) {
+                        // deliberate ignore, node type already accepts any child node type
+                    }
                 }
             }
             if (nodeRelinked) {
@@ -443,8 +448,12 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             if (hasProperty("jcr:mixinTypes")) {
                 Value[] mixins = getProperty("jcr:mixinTypes").getValues();
                 for (int i = 0; i < mixins.length; i++) {
-                    nodeType = session.getNewType(mixins[i].getString());
-                    nodeTypes.add(nodeType);
+                    try {
+                        nodeType = session.getNewType(mixins[i].getString());
+                        nodeTypes.add(nodeType);
+                    } catch(NoSuchNodeTypeException ex) {
+                        // ignore
+                    }
                 }
             }
         } catch (PathNotFoundException ex) {
