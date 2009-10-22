@@ -47,6 +47,13 @@
       <scope>test</scope>
     </dependency>
     
+    <dependency>    
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-api</artifactId>
+      <version>${hippoecm.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
@@ -63,6 +70,12 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
       <version>${hippoecm.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
