@@ -42,29 +42,29 @@ public class NamespaceValidatorTest {
     }
     
     @Test
-    public void acceptAlphabeticName() throws Exception {
+    public void testAcceptableNames() throws Exception {
         NamespaceValidator.checkName("abc");
+        NamespaceValidator.checkName("Abc");
+        NamespaceValidator.checkName("A_c");
+        NamespaceValidator.checkName("A-c");
     }
 
     @Test
-    public void rejectNonAlphabeticName() {
+    public void testRejectableNames() {
         checkName("abc1");
-        checkName("x-y");
+        checkName("x+y");
         checkName("d:f");
     }
 
     @Test
-    public void acceptVersionedNamespace() throws Exception {
+    public void testValidNamespace() throws Exception {
         NamespaceValidator.checkURI("http://example.org/test/1.0");
     }
 
     @Test
-    public void rejectNonversionedNamespace() {
+    public void testInvalidNamespace() {
         checkURI("http://example.org/test");
-    }
-
-    @Test
-    public void rejectNonHttpNamespace() {
         checkURI("example.org/test/1.0");
+        checkURI("test");
     }
 }
