@@ -183,6 +183,9 @@ public class DerivedDataEngine {
             Node node = iter.nextNode();
             if(compute(valueFactory, derivatesFolder, node)) {
                 ++changedCount;
+                if((changedCount % LocalHippoRepository.BATCH_THRESHOLD) == 0) {
+                    session.save();
+                }
             }
         }
         logger.warn("Validated "+totalCount+" nodes, and reset "+changedCount+" nodes");
