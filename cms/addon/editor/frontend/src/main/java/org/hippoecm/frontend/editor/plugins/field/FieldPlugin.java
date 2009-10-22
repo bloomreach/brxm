@@ -134,6 +134,20 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
 
     protected abstract AbstractProvider<C> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type, P parentModel);
 
+    protected boolean canRemoveItem() {
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isMultiple()) {
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean canReorderItems() {
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || !field.isMultiple() || !field.isOrdered()) {
+            return false;
+        }
+        return true;
+    }
+
     public void onAddItem(AjaxRequestTarget target) {
         provider.addNew();
     }
