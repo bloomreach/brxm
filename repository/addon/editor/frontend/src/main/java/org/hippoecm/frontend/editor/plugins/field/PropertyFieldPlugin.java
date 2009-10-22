@@ -164,7 +164,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
                 onRemoveItem(model, target);
             }
         };
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || field.isMandatory() || !field.isMultiple()) {
+        if (!canRemoveItem()) {
             remove.setVisible(false);
         }
         item.add(remove);
@@ -178,7 +178,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
             }
         };
         boolean isFirst = (model.getIndex() == 0);
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isMultiple() || !field.isOrdered()) {
+        if (!canReorderItems()) {
             upLink.setVisible(false);
         }
         upLink.setEnabled(!isFirst);
@@ -195,7 +195,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
             }
         };
         boolean isLast = (model.getIndex() == provider.size() - 1);
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isMultiple() || !field.isOrdered()) {
+        if (!canReorderItems()) {
             downLink.setVisible(false);
         }
         downLink.setEnabled(!isLast);

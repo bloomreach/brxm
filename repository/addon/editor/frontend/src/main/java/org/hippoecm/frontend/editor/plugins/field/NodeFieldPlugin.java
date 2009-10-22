@@ -141,7 +141,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                 onRemoveItem(model, target);
             }
         };
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || field.isMandatory() || !field.isMultiple()) {
+        if (!canRemoveItem()) {
             remove.setVisible(false);
         }
         item.add(remove);
@@ -154,7 +154,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                 onMoveItemUp(model, target);
             }
         };
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || !field.isMultiple() || !field.isOrdered()) {
+        if (!canReorderItems()) {
             upLink.setVisible(false);
         }
         if (index == 0) {
@@ -176,7 +176,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                 }
             }
         };
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isMultiple() || !field.isOrdered()) {
+        if (!canReorderItems()) {
             downLink.setVisible(false);
         }
         boolean isLast = (index == provider.size() - 1);
