@@ -9,39 +9,21 @@ How to test and build Hippo Site Toolkit
 2. Requirements --
 
   (1) Java 1.5
-  (2) Maven 2.0.9
+  (2) Maven 2.0.9 or higher
   (3) [Optional] Tomcat 5.5 or 6.0 (if you want to deploy and run on Tomcat.)
       -- Note shared lib folder path, depending on your Tomcat version, in your build.properties.
   (4) [Optional] Apache Jetspeed 2.2 (if you want to deploy and run on Apache Jetspeed 2.2 Enterprise Portal.) 
       -- Note shared lib folder path, depending on the Jetspeed's Tomcat version, in your build.properties.
 
-3. Testing
+3. Build with Testing
 
   (1) Start a repository server with test contents (/testsuite/cms).
 
-  (2) Build and Run Tests
+  (2) Build with unit tests
   
-    - Copy build.properties-sample to build.properties in the project root folder.
-
-    $ mvn clean install -DskipTests
-    $ mvn test
+    $ mvn clean install
     
-    Note: If you run a unit test case in your IDE, 
-          you should set a Java system property, "test.properties.resource", 
-          to the absolute path of build.properties for your runtime or debugging environment of your IDE.
-          For example, you can set "VM Arguments" in Eclipse like the following:
-          
-            "-Dtest.properties.resource=file:/home/hstdev/hst-2/build.properties"
-
-4. Build
-
-  $ mvn clean install -DskipTests
-
-5. Website Generation
-
-  $ mvn -P website site
-
-6. Running an example site
+4. Running an example site
 
   (1) With Embedded Jetty
 
