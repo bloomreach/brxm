@@ -21,7 +21,7 @@ public class NamespaceValidator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final Pattern NAME_PATTERN = Pattern.compile("^[a-z]+$");
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z_-]+$");
     private static final Pattern URL_PATTERN = Pattern.compile("^http:.*/[0-9].[0-9]$");
 
     private NamespaceValidator() {
@@ -32,7 +32,7 @@ public class NamespaceValidator {
             throw new Exception("No name specified");
         }
         if (!NAME_PATTERN.matcher(name).matches()) {
-            throw new Exception("Invalid name; only a-z characters allowed");
+            throw new Exception("Invalid name; only alphabetic characters allowed in lower- or uppercase");
         }
     }
 
@@ -41,7 +41,7 @@ public class NamespaceValidator {
             throw new Exception("No URI specified");
         }
         if (!URL_PATTERN.matcher(name).matches()) {
-            throw new Exception("Invalid name; only a-z characters allowed");
+            throw new Exception("Invalid URL; ");
         }
     }
 
