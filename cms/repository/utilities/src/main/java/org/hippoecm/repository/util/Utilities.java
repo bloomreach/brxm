@@ -75,7 +75,7 @@ public class Utilities {
                 out.print("{ ");
                 for (int i = 0; i < values.length; i++) {
                     out.print(i > 0 ? ", " : "");
-                    if (values[i].getType() == PropertyType.BINARY) {
+                    if (values[i].getType() == PropertyType.BINARY || prop.getName().equals("jcr:data")) {
                         out.print("<<binary>>");
                     } else {
                         out.print(values[i].getString());
@@ -83,7 +83,7 @@ public class Utilities {
                 }
                 out.println(" } ");
             } else {
-                if (prop.getType() == PropertyType.BINARY) {
+                if (prop.getType() == PropertyType.BINARY || prop.getName().equals("jcr:data")) {
                     out.println("<<binary>>");
                 } else {
                     out.println(prop.getString());
