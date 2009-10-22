@@ -167,10 +167,12 @@ public class TabsPlugin extends RenderPlugin {
     void onClose(Tab tabbie, AjaxRequestTarget target) {
         IServiceReference<IRenderService> reference = getPluginContext().getReference(tabbie.renderer);
         IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
-        try {
-            editor.close();
-        } catch (EditorException ex) {
-            log.info("Failed to close editor: " + ex.getMessage());
+        if (editor != null) {
+            try {
+                editor.close();
+            } catch (EditorException ex) {
+                log.info("Failed to close editor: " + ex.getMessage());
+            }
         }
     }
 

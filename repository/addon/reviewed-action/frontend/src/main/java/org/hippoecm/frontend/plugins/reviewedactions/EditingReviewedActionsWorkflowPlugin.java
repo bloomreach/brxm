@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -44,6 +45,7 @@ import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
+import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -157,6 +159,16 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                             }
                         }
                         if (dirty) {
+                            List<IValidateService> validators = context.getServices(config.getString(IValidateService.VALIDATE_ID),
+                                    IValidateService.class);
+                            if (validators != null) {
+                                for (IValidateService validator : validators) {
+                                    validator.validate();
+                                    if (validator.hasError()) {
+                                        return null;
+                                    }
+                                }
+                            }
                             IDialogService dialogService = context.getService(IDialogService.class.getName(),
                                     IDialogService.class);
                             dialogService.show(new OnCloseDialog(actions, new JcrNodeModel(node), editor));
