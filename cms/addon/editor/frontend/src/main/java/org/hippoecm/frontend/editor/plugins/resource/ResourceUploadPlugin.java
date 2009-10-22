@@ -86,7 +86,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
                 String fileName = upload.getClientFileName();
                 String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
                 
-                String type = types.getString(extension);
+                String type = types.getString(extension.toLowerCase());
                 if (type != null) {
                     JcrNodeModel nodeModel = (JcrNodeModel) ResourceUploadPlugin.this.getModel();
                     Node node = nodeModel.getNode();
