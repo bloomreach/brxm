@@ -139,11 +139,16 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
                 }
             }
 
+            String childType = child.getProperty("jcr:frozenPrimaryType").getString();
+            // virtual nodes are checked with rep:root type
+            if ("rep:root".equals(childType)) {
+                continue;
+            }
             for (NodeType nt : nodeTypes) {
-                String childType = child.getProperty("jcr:frozenPrimaryType").getString();
                 if (nt.canAddChildNode(child.getName(), childType)) {
                     Node childTarget = target.addNode(child.getName(), childType);
                     restore(childTarget, child);
+                    break;
                 }
             }
         }
