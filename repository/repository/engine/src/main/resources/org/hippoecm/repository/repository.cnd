@@ -241,6 +241,13 @@
 
 [hipposys:applicationfolder] > nt:unstructured orderable
 
+// The hipposys type should be used for internal repository purposes
+// only, where a transative state is needed allowing any kind of child
+// node.  This mixin type should never exist for a longer period than
+// an action, typically an upgrade cycle.
+[hipposys:unstructured] mixin
++ * multiple
+
 // REPOSITORY: SECURITY
 
 [hipposys:accessmanager] > nt:base
@@ -256,7 +263,6 @@
 - hipposys:firstname (string)
 - hipposys:lastname (string)
 - hipposys:email (string)
-
 
 [hipposys:externaluser] > hipposys:user
 - hipposys:lastsync (date)

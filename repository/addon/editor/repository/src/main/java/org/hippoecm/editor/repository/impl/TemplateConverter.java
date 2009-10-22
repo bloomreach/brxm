@@ -68,7 +68,7 @@ public class TemplateConverter implements UpdaterModule {
         if (prefix != null) {
             context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor(HippoNodeType.NT_TEMPLATETYPE) {
                 @Override
-                protected void entering(Node node, int level) throws RepositoryException {
+                protected void leaving(Node node, int level) throws RepositoryException {
                     if (node.getParent().getName().equals(prefix)) {
                         Node draft = null, current = null;
                         String uri = node.getSession().getNamespaceURI(prefix);
@@ -168,7 +168,7 @@ public class TemplateConverter implements UpdaterModule {
                         }
                     }
                 }
-            });
+            }.setAtomic());
         }
     }
 }

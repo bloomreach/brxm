@@ -136,7 +136,7 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
                         }
                     });
                 }
-                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, prefix, cnd, new StringReader(cnd)));
+                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, prefix, "-", new StringReader(cnd)));
                 //context.registerVisitor(new UpdaterEngine.Cleaner(context));
             }
         };
@@ -156,7 +156,7 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
                 for (String nodeType : changesImpl.keySet()) {
                     context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor(nodeType) {
                         @Override
-                        protected void entering(Node n, int level) throws RepositoryException {
+                        protected void leaving(Node n, int level) throws RepositoryException {
                             UpdaterNode node = (UpdaterNode)n;
                             ChangeImpl.change(node, changesImpl);
                         }

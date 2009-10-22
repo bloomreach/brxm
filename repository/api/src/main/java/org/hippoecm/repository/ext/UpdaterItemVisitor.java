@@ -172,6 +172,11 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         }
     }
 
+    public void visit(Node node, int level, boolean leaving) throws RepositoryException {
+        visit(node);
+    }
+    
+
     /**
      * 
      */
@@ -257,8 +262,23 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             isAtomic = true;
             return this;
         }
-        public /*final*/ boolean isAtomic() {
+        public final boolean isAtomic() {
             return isAtomic;
+        }
+        @Override
+        public final void visit(Node node, int level, boolean leaving) throws RepositoryException {
+            if(leaving)
+                leaving(node, level);
+            else
+                entering(node, level);
+        }
+        @Override
+        protected final void entering(Node node, int level)
+                throws RepositoryException {
+        }
+        @Override
+        protected final void entering(Property property, int level)
+                throws RepositoryException {
         }
     }
 
