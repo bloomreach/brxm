@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 <'testproject'='http://www.hippoecm.org/hst/nt/testproject/1.0'>
-<'hippostd'='http://www.hippoecm.org/hippostd/nt/1.3'>
-<'hst'='http://www.hippoecm.org/hst/nt/1.2'>
-<'hippo'='http://www.hippoecm.org/nt/1.3'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<hst='http://www.hippoecm.org/hst/nt/1.2'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<'hippogallerypicker'='http://www.hippoecm.org/hippogallerypicker/nt/2.0'>
 
 [testproject:sitemenuitem] > hst:sitemenuitem
 - testproject:title 
 
-[testproject:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+[testproject:basedocument] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+
+[testproject:textpage] > testproject:basedocument
 + testproject:body (hippostd:html)
 - testproject:summary (string)
 - testproject:title (string)
 - testproject:date (date)
 
-[testproject:newspage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+[testproject:newspage] > testproject:basedocument
 + testproject:body (hippostd:html)
 - testproject:summary (string)
 - testproject:title (string)
 - testproject:date (date)
-
-[testproject:pagestyle] > hippostd:publishable, hippostd:publishableSummary, hippo:document
-- testproject:text (string)
 

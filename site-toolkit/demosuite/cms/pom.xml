@@ -56,12 +56,13 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-war</artifactId>
+      <version>${hippoecm.version}</version>
       <type>war</type>
     </dependency>
     
     <dependency>
       <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-      <artifactId>hst-addon-cnd_7_1</artifactId>
+      <artifactId>hst-addon-cnd_7_2</artifactId>
       <version>${pom.version}</version>
       <type>jar</type>
     </dependency>
@@ -106,7 +107,7 @@
     <dependency>
       <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
       <artifactId>gallerypicker</artifactId>
-      <version>1.02.02</version>
+      <version>1.03.00</version>
       <type>jar</type>
       <exclusions>
         <exclusion>
