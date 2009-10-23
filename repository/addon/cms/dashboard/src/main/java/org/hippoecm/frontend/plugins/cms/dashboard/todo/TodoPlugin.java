@@ -130,7 +130,7 @@ public class TodoPlugin extends RenderPlugin {
             super(model);
         }
 
-        String getType() {
+        public String getType() {
             try {
                 return getNode().getProperty("type").getString();
             } catch (RepositoryException e) {
@@ -139,7 +139,7 @@ public class TodoPlugin extends RenderPlugin {
             return null;
         }
 
-        String getUsername() {
+        public String getUsername() {
             try {
                 return getNode().getProperty("username").getString();
             } catch (RepositoryException e) {
