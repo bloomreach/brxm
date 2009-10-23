@@ -19,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.jcr.Session;
 import org.hippoecm.hst.test.AbstractHstTestCase;
-import org.hippoecm.repository.Utilities;
 import org.junit.Test;
 
 public class BasicHstTestCase extends AbstractHstTestCase{
