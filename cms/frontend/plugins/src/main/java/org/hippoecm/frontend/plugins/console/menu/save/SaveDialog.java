@@ -80,6 +80,7 @@ public class SaveDialog extends AbstractDialog {
     public void onOk() {
         try {
             ((UserSession) Session.get()).getJcrSession().save();
+            ((UserSession) Session.get()).getJcrSession().refresh(false);
         } catch (AccessDeniedException e) {
             error(e.getClass().getName() + ": " + e.getMessage());
         } catch (RepositoryException e) {
