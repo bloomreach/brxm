@@ -581,7 +581,7 @@
 
 Thank you for trying jetspeed profile.
 
-Deploying artifacts are done, but you need to the web.xml file in jetspeed.
+Deploying artifacts are done, but you need to edit the web.xml file in jetspeed.
 
 Add the following servlet definition in /jetspeed/WEB-INF/web.xml
 
