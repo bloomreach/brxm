@@ -234,7 +234,8 @@
     </sv:property>
   </sv:node>
   
-  <sv:node sv:name="demosite-facetproducts">
+  <!-- For now comment: as of ECM version 2.10.xx and higher, this block can be un-commented -->
+  <!--sv:node sv:name="demosite-facetproducts">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -247,7 +248,7 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/content/documents/demosite</sv:value>
     </sv:property>
-  </sv:node>
+  </sv:node-->
   
   <sv:node sv:name="demosite-products">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
