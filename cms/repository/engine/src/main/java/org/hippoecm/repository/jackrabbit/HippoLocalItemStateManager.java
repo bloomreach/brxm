@@ -245,7 +245,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
         ItemState state = super.getItemState(id);
         if(id instanceof HippoNodeId) {
-            if(!virtualNodes.containsKey(id)) {
+            if(!virtualNodes.containsKey((NodeId)id)) {
                 edit();
                 NodeState nodeState = (NodeState) state;
                 if(isEnabled()) {
@@ -278,7 +278,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
                     edit();
                     int type = isVirtual(nodeState);
-                    if ((type & ITEM_TYPE_EXTERNAL) != 0 && (type & ITEM_TYPE_VIRTUAL) != 0) {
+                    if ((type & ITEM_TYPE_EXTERNAL) != 0) {
                         nodeState.removeAllChildNodeEntries();
                     }
                     try {
