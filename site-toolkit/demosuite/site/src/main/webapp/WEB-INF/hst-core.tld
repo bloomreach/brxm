@@ -191,6 +191,38 @@
     </tag>
 
     <tag>
+        <name>facetnavigationlink</name>
+        <tag-class>org.hippoecm.hst.tag.HstFacetNavigationLinkTag</tag-class>
+        <tei-class>org.hippoecm.hst.tag.HstFacetNavigationLinkTag$TEI</tei-class>
+        <body-content>JSP</body-content>
+        <description>This tag can be used in faceted navigation as a helper. You can use the 'remove' attribute to 
+        remove a chosen facet-value combination from the current link. It returns a link according the 'link' tag
+        described above</description>
+        <attribute>
+            <name>var</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>The variable name of the facetnavigationlink tag</description>
+        </attribute>
+        <attribute>
+            <name>current</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation</type>
+            <description>A HippoFacetSubNavigation object. This is the current state of the faceted navigation, from 
+            which you for example want to remove one facet-value combi.</description>
+        </attribute>
+        <attribute>
+            <name>remove</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation</type>
+            <description>A HippoFacetSubNavigation object.</description>
+        </attribute>
+    </tag>
+
+    <tag>
         <name>html</name>
         <tag-class>org.hippoecm.hst.tag.HstHtmlTag</tag-class>
         <tei-class>org.hippoecm.hst.tag.HstHtmlTag$TEI</tei-class>
