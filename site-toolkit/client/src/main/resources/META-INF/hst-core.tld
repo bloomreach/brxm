@@ -148,7 +148,11 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>
-            <description>A bean path of HstLink object which can be retireved via pageContext.</description>
+            <description>
+              A bean path of HstLink object which can be retireved via pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
+                    JSP developers could ignore this attribute and use 'link' attribute instead directly with object property value.
+            </description>
         </attribute>
         <attribute>
             <name>path</name>
@@ -170,7 +174,11 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>
-            <description>A bean path of HippoBean object which can be retrieved via pageContext.</description>
+            <description>
+              A bean path of HippoBean object which can be retrieved via pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
+                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
+            </description>
         </attribute>
         <attribute>
             <name>external</name>
@@ -208,7 +216,11 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>
-            <description>A bean name of HippoHtml object which can be retrieved from pageContext.</description>
+            <description>
+              A bean name of HippoHtml object which can be retrieved from pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
+                    JSP developers could ignore this attribute and use 'hippohtml' attribute instead directly with object property value.
+            </description>
         </attribute>
     </tag>
 
@@ -298,6 +310,17 @@
                 element. Instead, it will use the passed DOM element by this attribute.
             </description>
         </attribute>
+        <attribute>
+            <name>elementByBeanPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              A bean name of Element object which can be retrieved from pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
+                    JSP developers could ignore this attribute and use 'element' attribute instead directly with object property value.
+            </description>
+        </attribute>
     </tag>
     
     <tag>
@@ -330,6 +353,17 @@
                 setting a DOM element by element attribute. If this attribute is set, then the
                 head-contribution tag will not try to parse the body content to create a DOM
                 element. Instead, it will use the passed DOM element by this attribute.
+            </description>
+        </attribute>
+        <attribute>
+            <name>elementByBeanPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              A bean name of Element object which can be retrieved from pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
+                    JSP developers could ignore this attribute and use 'element' attribute instead directly with object property value.
             </description>
         </attribute>
     </tag>
