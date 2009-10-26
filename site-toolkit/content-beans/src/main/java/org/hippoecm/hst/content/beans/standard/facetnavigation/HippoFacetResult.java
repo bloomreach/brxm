@@ -13,11 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.beans.standard;
+package org.hippoecm.hst.content.beans.standard.facetnavigation;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoFolder;
+import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
+import org.hippoecm.repository.api.HippoNodeType;
 
-@Node(jcrType="hippo:facetsearch")
-public class HippoFacetSearch extends HippoFolder{
+@Node(jcrType="hippo:facetresult")
+public class HippoFacetResult extends HippoFolder implements HippoResultSetBean {
 
+    public Long getCount() {
+        return this.getProperty(HippoNodeType.HIPPO_COUNT);
+    }
+    
+    
 }

@@ -130,6 +130,11 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     boolean isHippoFolderBean();
     
     /**
+     * @return <code>true</code> when the backing jcr Node has no child nodes
+     */
+    boolean isLeaf();
+    
+    /**
      * Returns <code>true</code> when this <code>HippoBean</code> is an ancestor of the <code>compare</code> HippoBean. 
      * Note that this is done by the jcr path of the backing jcr node. In case of a virtual node, the virtual path 
      * is taken. 

@@ -45,5 +45,14 @@
                 <sv:value>search</sv:value>
             </sv:property>
         </sv:node>
+        <sv:node sv:name="Faceted">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemenuitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+                <sv:value>faceted</sv:value>
+            </sv:property>
+        </sv:node>
     </sv:node>
+    
 </sv:node>

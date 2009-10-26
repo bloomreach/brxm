@@ -7,7 +7,6 @@
 
 [demosite:commentlink] > hippo:facetselect
 
-
 [demosite:textpage] > demosite:basedocument
   - demosite:summary (string)
   - demosite:title (string)
@@ -20,4 +19,11 @@
 [demosite:comment] > demosite:textpage
  - demosite:date (date)
  + demosite:commentlink (demosite:commentlink)
+ 
+ [demosite:product] > demosite:basedocument
+  - demosite:color (string)
+  - demosite:type (string)
+  - demosite:product (string)
+  - demosite:brand (string)
+  + demosite:body (hippostd:html)
  

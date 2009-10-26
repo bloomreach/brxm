@@ -31,7 +31,7 @@ public class LeftMenu extends BaseHstComponent {
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
-
+    
         HstSiteMenu menu = request.getRequestContext().getHstSiteMenus().getSiteMenu("main");
 
         EditableMenu editable = menu.getEditableMenu();
@@ -40,7 +40,7 @@ public class LeftMenu extends BaseHstComponent {
         if (item != null && item.isRepositoryBased() && item.getDepth() > 0) {
             HippoBean deepestMenuBean = this.getBeanForResolvedSiteMapItem(request, item.resolveToSiteMapItem(request));
 
-            if (deepestMenuBean.isHippoFolderBean()) {
+            if (deepestMenuBean != null && deepestMenuBean.isHippoFolderBean()) {
                 for (HippoFolderBean repoItem : ((HippoFolderBean) deepestMenuBean).getFolders()) {
                     EditableMenuItem repoMenuItem = new DemoRepoBasedMenuItem(repoItem, item, request, this
                             .getContentBean(request));

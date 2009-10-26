@@ -27,6 +27,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.beans.standard.HippoVirtualOnlyBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.provider.jcr.JCRUtilities;
@@ -84,20 +85,29 @@ public class BasicHstLinkCreator implements HstLinkCreator {
     }
 
     public HstLink create(HippoBean bean, HstRequestContext hstRequestContext) {
+        boolean onlyVirtual = false;
+        if(bean instanceof HippoVirtualOnlyBean) {
+            onlyVirtual = true;
+        }
         if(bean.getNode() == null) {
             log.debug("Jcr node is detached from bean. Trying to create a link with the detached path.");
             if(bean.getPath() != null) {
                 if(bean instanceof HippoDocumentBean) {
-                    return this.create(bean.getPath(), hstRequestContext.getResolvedSiteMapItem(), true);
+                    return this.create(bean.getPath(), hstRequestContext.getResolvedSiteMapItem(), true, onlyVirtual);
                 } else {
-                    return this.create(bean.getPath(), hstRequestContext.getResolvedSiteMapItem(), false);
+                    return this.create(bean.getPath(), hstRequestContext.getResolvedSiteMapItem(), false, onlyVirtual);
                 }
             } else {
                 log.warn("Cannot create link for bean. Return null");
             }
             return null;
         }
+        if(onlyVirtual) {
+            return this.create(bean.getNode(), hstRequestContext.getResolvedSiteMapItem(), true);
+        }
+        
         return this.create(bean.getNode(), hstRequestContext.getResolvedSiteMapItem());
+       
     }
 
     /**
@@ -105,79 +115,70 @@ public class BasicHstLinkCreator implements HstLinkCreator {
      * rewrite the link wrt hippo:handle, because a handle is the umbrella of a document
      */
     public HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem) {
-        // TODO link creation involves many jcr calls. Cache result possibly with as key hippo:uuid in case of virtual node, and 
-        // with jcr:uuid in case of normal referenceable node. This has a lightweight lookup.
         
-        try {
-            Node canonical = JCRUtilities.getCanonical(node);
-            
-            if(node.isNodeType(HippoNodeType.NT_RESOURCE)) {
-                
-                // now we test if this is a resource linked to from a document and is located below /content/gallery or /content/images
-                
-                if (canonical == null) {
-                    log.warn("Canonical cannot be null for hippo:resource. Cannot create a link for '{}'. Return null.", node.getPath());
-                    return null;
-                }
-                
-                if(!isBinaryLocation(canonical.getPath())) {
-                    /*
-                     * A hippo resource is not needed to be translated through the HstSiteMap but we create a binary link directly
-                     * Note that this is a Hippo Resource *in* a document outside /content/assets or /content/images. This means, that
-                     * you have a context aware resource: The live view is only allowed to view it when it is published for example. Therefor
-                     * we do not fallback to the canonical node, but return the link in context.
-                     *
-                     */ 
-                    // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
-                    return new HstLinkImpl(this.getBinariesPrefix()+node.getPath(), getHstSite(resolvedSiteMapItem), true);
-                
-                }
-                // if we get here, do normal linkrewriting for binary wrt canonical: it was linked to from /content/assets or /content/images
-                return new HstLinkImpl(this.getBinariesPrefix()+canonical.getPath(), getHstSite(resolvedSiteMapItem), true);
-            }
-            
-            if (canonical == null) {
-                log.debug("Canonical node not found. Trying to create a link for a virtual node");
-            } else if (!canonical.isSame(node)) {
-                log.debug("Trying to create link for the canonical equivalence of the node. ('{}' --> '{}')", node.getPath(), canonical.getPath());
-                node = canonical;
-                if(node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
-                    Node deref = JCRUtilities.getDeref(node);
-                    if(deref != null) {
-                        log.debug("Node was a mirror. Creating link for the dereferenced node.");
-                        node = deref;
+        Node canonical = JCRUtilities.getCanonical(node);
+        if(canonical == null) {
+            return create(node, resolvedSiteMapItem, true);
+        } else {
+            return create(canonical, resolvedSiteMapItem, false);
+        }
+        
+    }
+    
+    private HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, boolean onlyVirtual)  {
+        try {  
+              if(onlyVirtual) {
+                 return this.create(node.getPath(), resolvedSiteMapItem, false, true);
+              } else {
+                    if(node.isNodeType(HippoNodeType.NT_RESOURCE)) {
+                        
+                        if(!isBinaryLocation(node.getPath())) {
+                            /*
+                             * A hippo resource is not needed to be translated through the HstSiteMap but we create a binary link directly
+                             * Note that this is a Hippo Resource *in* a document outside /content/assets or /content/images. This means, that
+                             * you have a context aware resource: The live view is only allowed to view it when it is published for example. Therefor
+                             * we do not fallback to the canonical node, but return the link in context.
+                             *
+                             */ 
+                            // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
+                            return new HstLinkImpl(this.getBinariesPrefix()+node.getPath(), getHstSite(resolvedSiteMapItem), true);
+                        
+                        }
+                        // if we get here, do normal linkrewriting for binary wrt canonical: it was linked to from /content/assets or /content/images
+                        return new HstLinkImpl(this.getBinariesPrefix()+node.getPath(), getHstSite(resolvedSiteMapItem), true);
                     }
-                }
-            } else if(node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
-                Node deref = JCRUtilities.getDeref(node);
-                if(deref != null) {
-                    log.debug("Node was a mirror. Creating link for the dereferenced node.");
-                    node = deref;
-                }
-            } else {
-                log.debug("Node was not virtual");
-            }
-
-            if(node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                node = node.getParent();
-            }
-            
-            String nodePath = node.getPath();
-            
-            boolean representsDocument = false;
-            if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                representsDocument = true;
-            }
-            return this.create(nodePath, resolvedSiteMapItem, representsDocument);
-            
+                    
+                    if(node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
+                        Node deref = JCRUtilities.getDeref(node);
+                        if(deref != null) {
+                            log.debug("Node was a mirror. Creating link for the dereferenced node.");
+                            node = deref;
+                        }
+                    }
+        
+                    if(node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                        node = node.getParent();
+                    }
+                    
+                    String nodePath = node.getPath();
+                    
+                    boolean representsDocument = false;
+                    if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        representsDocument = true;
+                    }
+                    
+                    return this.create(nodePath, resolvedSiteMapItem, representsDocument, false);
+             
+               
+             }
         } catch (RepositoryException e) {
             log.error("Repository Exception during creating link", e);
         }
-        
         return null;
     }
     
-    private HstLink create(String path, ResolvedSiteMapItem resolvedSiteMapItem, boolean representsDocument) {
+    
+    private HstLink create(String path, ResolvedSiteMapItem resolvedSiteMapItem, boolean representsDocument, boolean onlyVirtual) {
         
         if(path == null) {
             log.warn("Cannot create HstLink for path null");
@@ -193,30 +194,34 @@ public class BasicHstLinkCreator implements HstLinkCreator {
         }
         
         if(hstSite.getLocationMapTree() instanceof BasicLocationMapTree) {
-            if(path.startsWith(((BasicLocationMapTree)hstSite.getLocationMapTree()).getCanonicalSiteContentPath())) {
-                // TODO make the canonical option as an argument. Now, hardcoded set to 'false'
-                ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite, representsDocument, resolvedSiteMapItem, false);
-                if(resolvedLocation != null && resolvedLocation.getPath() != null) {
-                    if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
-                    if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, resolvedLocation.getPath());
-                    return postProcess(new HstLinkImpl(resolvedLocation.getPath(), hstSite));
-                } else {
-                     if (log.isWarnEnabled()) {
-                        String msg = "";
-                        if(resolvedLocation != null) {
-                            msg = " We cannot create a pathInfo for resolved sitemap item : '" +resolvedLocation.getHstSiteMapItemId() +"'."   ;
-                        }
-                        log.warn("Unable to create a link for '{}' for HstSite '{}'. " +msg+ "  Return page not found HstLink to '"+this.pageNotFoundPath+"'", path, hstSite.getName());
-                        HstLink link =  new HstLinkImpl(pageNotFoundPath, hstSite);
-                        link.setNotFound(true);
-                        return link;
-                    }
-                }
+            if(!onlyVirtual && path.startsWith(((BasicLocationMapTree)hstSite.getLocationMapTree()).getCanonicalSiteContentPath())) {
+                path = path.substring(((BasicLocationMapTree)hstSite.getLocationMapTree()).getCanonicalSiteContentPath().length());
+            } else if (onlyVirtual && path.startsWith(hstSite.getContentPath())) { 
+                path = path.substring(hstSite.getContentPath().length());
             } else {
-                  // TODO try to link to another HstSite that has a matching 'content base path'
-                 log.warn("For HstSite '{}' we cannot create a link for node '{}' because it is outside the site scope", hstSite.getName(), path);
-               
+                log.warn("For HstSite '{}' we cannot create a link for node '{}' because it is outside the site scope", hstSite.getName(), path);
+                // TODO try subsites
+                return new HstLinkImpl(pageNotFoundPath, hstSite);
             }
+            
+            ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite, representsDocument, resolvedSiteMapItem, false);
+            if(resolvedLocation != null && resolvedLocation.getPath() != null) {
+                if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
+                if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, resolvedLocation.getPath());
+                return postProcess(new HstLinkImpl(resolvedLocation.getPath(), hstSite));
+            } else {
+                 if (log.isWarnEnabled()) {
+                    String msg = "";
+                    if(resolvedLocation != null) {
+                        msg = " We cannot create a pathInfo for resolved sitemap item : '" +resolvedLocation.getHstSiteMapItemId() +"'."   ;
+                    }
+                    log.warn("Unable to create a link for '{}' for HstSite '{}'. " +msg+ "  Return page not found HstLink to '"+this.pageNotFoundPath+"'", path, hstSite.getName());
+                    HstLink link =  new HstLinkImpl(pageNotFoundPath, hstSite);
+                    link.setNotFound(true);
+                    return link;
+                }
+            }
+          
         }
         return null;
     }

@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
 @Node(jcrType="hippostd:folder")
 public class HippoFolder extends HippoItem implements HippoFolderBean{
     private static Logger log = LoggerFactory.getLogger(HippoFolder.class);
-    private List<HippoFolderBean> hippoFolders;
-    private List<HippoDocumentBean> hippoDocuments;
+    protected List<HippoFolderBean> hippoFolders;
+    protected List<HippoDocumentBean> hippoDocuments;
     
     public List<HippoFolderBean> getFolders(){
          return this.getFolders(false);
@@ -52,7 +52,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
             while(nodes.hasNext()) {
                 javax.jcr.Node child = nodes.nextNode();
                 if(child == null) {continue;}
-                HippoFolder hippoFolder = getHippoFolder(child);
+                HippoFolderBean hippoFolder = getHippoFolder(child);
                 if(hippoFolder != null) {
                     this.hippoFolders.add(hippoFolder);
                 }
@@ -89,11 +89,13 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
         }
     }
     
-    public <T> List<T> getDocuments(Class<T> clazz) {
+  
+    
+    public <T> List<T> getDocuments(Class<T> beanMappingClass) {
         List<HippoDocumentBean> documents = getDocuments();
         List<T> documentOfClass = new ArrayList<T>();
         for(HippoDocumentBean bean : documents) {
-            if(clazz.isAssignableFrom(bean.getClass())) {
+            if(beanMappingClass.isAssignableFrom(bean.getClass())) {
                 documentOfClass.add((T)bean);
             }
         }
@@ -130,19 +132,12 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
     }
     
     
-    private HippoFolder getHippoFolder(javax.jcr.Node child) {
+    private HippoFolderBean getHippoFolder(javax.jcr.Node child) {
         try {
-            // folders inherit from HippoNodeType.NT_DOCUMENT
-            if(child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                Object o  = objectConverter.getObject(child);
-                if(o instanceof HippoFolder) {
-                    return (HippoFolder)o;
-                } else {
-                    log.warn("Cannot return HippoFolder for. Return null '{}'", child.getPath());
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Cannot return HippoFolder. Return null : {} " , e);
+            Object o  = objectConverter.getObject(child);
+            if(o instanceof HippoFolderBean) {
+                return (HippoFolderBean)o;
+            } 
         } catch (ObjectBeanManagerException e) {
             log.warn("Cannot return HippoFolder. Return null : {} " , e);
         }
@@ -161,7 +156,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean{
                     }
                 } 
                 return null;
-            } else if(child.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            } else if(child.getParent().isNodeType(HippoNodeType.NT_HANDLE) || child.getParent().isNodeType(HippoNodeType.NT_FACETRESULT)) {
                 Object o  = (HippoDocument)objectConverter.getObject(child);
                 if(o instanceof HippoDocument) {
                     return (HippoDocument)o;

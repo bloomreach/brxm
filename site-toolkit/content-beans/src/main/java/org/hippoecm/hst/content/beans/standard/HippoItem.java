@@ -260,6 +260,18 @@ public class HippoItem implements HippoBean{
         return false;
     }
 
+    public boolean isLeaf(){
+        if(this.getNode() == null) {
+            return true;
+        }
+        try {
+            return !(this.node.hasNodes());
+        } catch (RepositoryException e) {
+            log.error("Repository exception : ", e);
+            return true;
+        }
+    }
+    
     public boolean isDescendant(HippoBean compare) {
         if(this.getPath() == null || compare.getPath() == null){
             log.warn("Cannot compare the HippoBeans as one as a path that is null. Return false.");

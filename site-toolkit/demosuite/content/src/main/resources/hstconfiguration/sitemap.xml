@@ -133,4 +133,51 @@
             <sv:value>hst:components/portletprefseditor</sv:value>
         </sv:property>
     </sv:node>
+    <sv:node sv:name="faceted">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:pages/faceted</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
+            <sv:value>hst:components/bodyfaceted/content</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+            <sv:value>faceted</sv:value>
+        </sv:property>
+        <sv:node sv:name="_any_">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                <sv:value>hst:pages/faceted</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
+                <sv:value>hst:components/bodyfaceted/content</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                <sv:value>faceted/${1}</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    <sv:node sv:name="products">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:node sv:name="_any_.html">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                <sv:value>hst:pages/productpage</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:portletcomponentconfigurationid" sv:type="String">
+                <sv:value>hst:components/bodyproductpage/content</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                <sv:value>products/${1}</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
 </sv:node>

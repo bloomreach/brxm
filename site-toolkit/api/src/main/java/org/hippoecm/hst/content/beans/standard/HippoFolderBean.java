@@ -74,8 +74,9 @@ public interface HippoFolderBean extends HippoBean{
     /**
      * Facility method to get all documents directly below this folder that result in a HippoBean of class or subclass clazz. 
      * @param <T> Any Object that implements a HippoBean
-     * @param clazz a class implementing <code>{@link HippoBean}<code>. This functions as a filter
+     * @param beanMappingClass a class implementing <code>{@link HippoBean}<code>. This functions as a filter
      * @return the list of <code><T></code> where T must implement HippoBean below this <code>HippoFolderBean</code> and an empty list if no documents pass the filter
      */
-    <T> List<T> getDocuments(Class<T> clazz);
+    <T> List<T> getDocuments(Class<T> beanMappingClass);
+    
 }

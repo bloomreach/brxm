@@ -29,6 +29,8 @@ public class DemoRepoBasedMenuItem extends EditableMenuItemImpl {
         this.name = repoItem.getName();
         this.depth = parentItem.getDepth() - 1;
         this.repositoryBased = true;
+        this.properties = repoItem.getProperties();
+        
         this.hstLink = request.getRequestContext().getHstLinkCreator().create(repoItem, request.getRequestContext());
 
         if (repoItem.isAncestor(currentContentBean)) {

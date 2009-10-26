@@ -146,14 +146,7 @@ public class BasicLocationMapTree implements LocationMapTree{
 
     
     public ResolvedLocationMapTreeItem match(String path, HstSite hstSite,boolean representsDocument, ResolvedSiteMapItem resolvedSiteMapItem, boolean canonical) {
-        String origPath = path;
-      
-        if(!path.startsWith(this.getCanonicalSiteContentPath())){
-            log.debug("Cannot convert path '{}' for hstSite '{}' because the path does not start " +
-                    "with the content path of the hstSite. Return null", path, hstSite.getName());
-            return null;
-        }
-        path = path.substring(this.getCanonicalSiteContentPath().length());
+       
         // normalize leading and trailing slashes
         path = PathUtils.normalizePath(path);
      
@@ -192,7 +185,7 @@ public class BasicLocationMapTree implements LocationMapTree{
         }
 
         if(matchedLocationMapTreeItem == null || matchedLocationMapTreeItem.getHstSiteMapItems().size() == 0) {
-            log.warn("Unable to linkrewrite '{}' to any sitemap item", origPath);
+            log.warn("Unable to linkrewrite '{}' to any sitemap item", path);
             return null;
         }
         
@@ -257,7 +250,7 @@ public class BasicLocationMapTree implements LocationMapTree{
             return null;
         }
         
-        log.info("Succesfully rewrote path '{}' into new sitemap path '{}'", origPath, resolvedPath);
+        log.info("Succesfully rewrote path '{}' into new sitemap path '{}'", path, resolvedPath);
         
         ResolvedLocationMapTreeItem r = new ResolvedLocationMapTreeItemImpl(resolvedPath, hstSiteMapItem.getId());
         
