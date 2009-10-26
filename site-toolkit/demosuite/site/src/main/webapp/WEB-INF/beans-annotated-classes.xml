@@ -21,5 +21,4 @@
     <annotated-class>org.hippoecm.hst.demo.beans.CommentBean</annotated-class>
     <annotated-class>org.hippoecm.hst.demo.beans.CommentLinkBean</annotated-class>
     <annotated-class>org.hippoecm.hst.demo.beans.ImageLinkBean</annotated-class>
-    <annotated-class>org.hippoecm.hst.demo.beans.ImageBean</annotated-class>  
 </hst-content-beans>
