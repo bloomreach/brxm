@@ -17,6 +17,7 @@
 <hst-content-beans>
     <annotated-class>org.hippoecm.hst.demo.beans.TextBean</annotated-class>
     <annotated-class>org.hippoecm.hst.demo.beans.NewsBean</annotated-class>
+    <annotated-class>org.hippoecm.hst.demo.beans.ProductBean</annotated-class>
     <annotated-class>org.hippoecm.hst.demo.beans.CommentBean</annotated-class>
     <annotated-class>org.hippoecm.hst.demo.beans.CommentLinkBean</annotated-class>
     <annotated-class>org.hippoecm.hst.demo.beans.ImageLinkBean</annotated-class>
