@@ -20,11 +20,12 @@ import javax.jcr.NodeIterator;
 
 import org.junit.Test;
 import org.junit.Ignore;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.Utilities;
 
 public class FacetSelectTest extends TestCase {
     @SuppressWarnings("unused")
@@ -55,6 +56,51 @@ public class FacetSelectTest extends TestCase {
         "hippo:modes",        null
     };
 
+    String[] combineContent1 = new String[] {
+        "/test",              "nt:unstructured",
+        "/test/docs",         "hippo:testdocument",
+        "jcr:mixinTypes",     "hippo:harddocument",
+        "/test/docs/one",     "hippo:handle",
+        "jcr:mixinTypes",     "hippo:hardhandle",
+        "/test/docs/one/one", "hippo:testdocument",
+        "jcr:mixinTypes",     "hippo:harddocument",
+        "vehicle", "car",
+        "color", "red",
+        "/test/docs/two",     "hippo:handle",
+        "jcr:mixinTypes",     "hippo:hardhandle",
+        "/test/docs/two/two", "hippo:testdocument",
+        "jcr:mixinTypes",     "hippo:harddocument",
+        "vehicle", "car",
+        "color", "blue",
+        "/test/docs/three",     "hippo:handle",
+        "jcr:mixinTypes",     "hippo:hardhandle",
+        "/test/docs/three/three", "hippo:testdocument",
+        "jcr:mixinTypes",     "hippo:harddocument",
+        "vehicle", "bike",
+        "color", "red",
+        "/test/docs/four",     "hippo:handle",
+        "jcr:mixinTypes",     "hippo:hardhandle",
+        "/test/docs/four/four", "hippo:testdocument",
+        "jcr:mixinTypes",     "hippo:harddocument",
+        "vehicle", "bike",
+        "color", "blue"
+    };
+    String[] combineContent2 = new String[] {
+        "/test/filter1",      "hippo:facetselect",
+        "jcr:mixinTypes",     "mix:referenceable",
+        "hippo:docbase",      "/test/docs",
+        "hippo:facets",       "vehicle",
+        "hippo:values",       "car",
+        "hippo:modes",        "select"
+    };
+    String[] combineContent3 = new String[] {
+        "/test/filter2",      "hippo:facetselect",
+        "hippo:docbase",      "/test/filter1",
+        "hippo:facets",       "color",
+        "hippo:values",       "red",
+        "hippo:modes",        "select"
+    };
+
     @Test
     public void testBasics() throws Exception {
         build(session, content);
@@ -83,5 +129,21 @@ public class FacetSelectTest extends TestCase {
         while(iter.hasNext()) {
             fail("no child nodes allowed");
         }
+    }
+
+    @Test
+    public void testCombine() throws Exception {
+        build(session, combineContent1);
+        session.save();
+        build(session, combineContent2);
+        session.save();
+        build(session, combineContent3);
+        session.save();
+        session.refresh(false);
+        Utilities.dump(System.err, traverse(session, "/test"));
+        assertNotNull(traverse(session, "/test/filter2/one/one"));
+        assertNull(traverse(session, "/test/filter2/two/two"));
+        assertNull(traverse(session, "/test/filter2/three/three"));
+        assertNull(traverse(session, "/test/filter2/four/four"));
     }
 }
