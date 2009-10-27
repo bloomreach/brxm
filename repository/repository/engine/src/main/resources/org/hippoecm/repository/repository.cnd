@@ -77,6 +77,18 @@
 - hippo:facets (string) mandatory multiple
 + hippo:resultset (hippo:facetresult) = hippo:facetresult
 
+[hippo:abstractfacetnavigation]
+- hippo:count (long)
++ * (hippo:abstractfacetnavigation) multiple ignore
++ hippo:resultset (hippo:facetresult) = hippo:facetresult
+
+[hippo:facetnavigation] 
+- hippo:facets (string) mandatory multiple
+- hippo:facetnodenames (string) multiple
+- hippo:docbase (string) mandatory
+- hippo:modes (string) multiple
++ * (hippo:abstractfacetnavigation) multiple ignore
+
 [hippo:facetselect] > nt:base
 - hippo:docbase (string) mandatory
 - hippo:facets (string) mandatory multiple
@@ -177,6 +189,12 @@
 - hipposys:search (string) multiple
 + hippo:resultset (hippo:facetresult) = hippo:facetresult
 
+[hipposys:facetsavailablenavigation] > hippo:abstractfacetnavigation
+
+[hipposys:facetsubnavigation] > hippo:abstractfacetnavigation
+
+///////////////////////////////////////////////////////
+
 // REPOSITORY WORKFLOW, OCM AND QUERY
 
 [hipposys:type] > nt:base
@@ -263,6 +281,7 @@
 - hipposys:firstname (string)
 - hipposys:lastname (string)
 - hipposys:email (string)
+
 
 [hipposys:externaluser] > hipposys:user
 - hipposys:lastsync (date)

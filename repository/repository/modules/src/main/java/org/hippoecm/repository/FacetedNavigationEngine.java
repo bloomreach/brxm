@@ -217,6 +217,12 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
         private boolean resultRequested;
 
         /**
+         * when true, it is indicated through this boolean that only when the lucene hit has the property, it is returned in the count
+         * Default is false
+         */
+        private boolean countOnlyForFacetExists = false;
+        
+        /**
          * How many results should be returned.  Defaults to 10, large values imply slow responses.
          */
         private int limit = 10;
@@ -249,6 +255,14 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
         public void setResultRequested(boolean resultRequested) {
             this.resultRequested = resultRequested;
         }
+
+		public boolean isCountOnlyForFacetExists() {
+			return countOnlyForFacetExists;
+		}
+
+		public void setCountOnlyForFacetExists(boolean countOnlyForFacetExists) {
+			this.countOnlyForFacetExists = countOnlyForFacetExists;
+		}
     }
 
 
@@ -393,16 +407,8 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * facet-values, mapping to the number of documents matching the key-value
      * class.
      * The implementation should fill in or update this entire structure.
-     * @param futureFacetsQueries Given the already specified faceted search,
-     * attempt to evaluate the future faceted searches as indicated by the key
-     * of the first map.  If one would join the key of the futureFacetsQueries
-     * map with the facetsQuery then this would form the basis of the
-     * facetsQuery parameter of the future faceted view.  The value of the
-     * futureFacetsQueries map would take the place of the resultset parameter
-     * of the future view method call.
-     * An implementation may choose to completely ignore this field, or
-     * fill-in only parts of the structure.  It does not need to call an
-     * UnsupportedOperationException
+     * @param inheritedFilter the filter that needs to be applied because of parent
+     * having some filter, for example a facetselect
      * @param hitsRequested Whether the engine is requested to return a Result
      * objects from a Lucene search.
      * @return The Result object as returned by lucene when performing the
@@ -420,7 +426,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
     public Result view(String queryName, Q initialQuery, C authorization,
                Map<String,String> facetsQuery, Q openQuery,
                Map<String,Map<String,Count>> resultset,
-               Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
+               Map<Name,String> inheritedFilter,
                HitsRequested hitsRequested) throws UnsupportedOperationException;
 
     /**
@@ -429,7 +435,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      *   but used when the actual resultset is required.  In this case.
      */
     public Result view(String queryName, Q initialQuery, C authorization,
-               Map<String,String> facetsQuery, Q openQuery, HitsRequested hitsRequested);
+               Map<String,String> facetsQuery, Q openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested);
 
     /**
      * This method is used to build a Query object from a query encoded in a

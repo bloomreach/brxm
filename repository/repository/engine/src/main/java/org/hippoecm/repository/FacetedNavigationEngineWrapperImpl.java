@@ -70,19 +70,19 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     public Result view(String queryName, Q initialQuery, C authorization,
                        Map<String,String> facetsQuery, Q openQuery,
                        Map<String,Map<String,Count>> resultset,
-                       Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
+                       Map<Name,String> inheritedFilter,
                        HitsRequested hitsRequested) throws UnsupportedOperationException {
         Result result;
         // System.err.println("FacetedNavigationEngineWrapperImpl.view(\"" + queryName + "\"," + initialQuery + ",\"" + authorization + "\",\"" + facetsQuery + "\",\"..,..,..,"  + hitsRequested + ")");
         result = upstream.view(queryName, initialQuery, authorization, facetsQuery, openQuery, resultset,
-                               futureFacetsQueries, hitsRequested);
+        		inheritedFilter, hitsRequested);
         return result;
     }
 
     public Result view(String queryName, Q initialQuery, C authorization,
-                       Map<String,String> facetsQuery, Q openQuery, HitsRequested hitsRequested) {
+                       Map<String,String> facetsQuery, Q openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
         Result result;
-        result = upstream.view(queryName, initialQuery, authorization, facetsQuery, openQuery, hitsRequested);
+        result = upstream.view(queryName, initialQuery, authorization, facetsQuery, openQuery, inheritedFilter, hitsRequested);
         return result;
     }
 

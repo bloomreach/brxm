@@ -88,6 +88,7 @@ public class FacetResultCollector extends HitCollector {
             if (facetMap != null) {
                 final TermFreqVector tfv = reader.getTermFreqVector(docid, internalName);
                 if (tfv != null) {
+                    numhits++;
                     for (int i = 0; i < tfv.getTermFrequencies().length; i++) {
                         Count count = facetMap.get(tfv.getTerms()[i]);
                         if (count == null) {

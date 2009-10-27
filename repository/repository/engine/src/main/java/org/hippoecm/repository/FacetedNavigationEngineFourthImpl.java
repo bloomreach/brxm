@@ -161,7 +161,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
             Map<String, String> facetsQueryMap, QueryImpl openQuery, Map<String, Map<String, Count>> resultset,
-            Map<Map<String, String>, Map<String, Map<String, Count>>> futureFacetsQueries, HitsRequested hitsRequested)
+            Map<Name,String> inheritedFilter, HitsRequested hitsRequested)
             throws UnsupportedOperationException {
 
         NamespaceMappings nsMappings = getNamespaceMappings();
@@ -314,8 +314,8 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-            Map<String, String> facetsQuery, QueryImpl openQuery, HitsRequested hitsRequested) {
-        return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, null, hitsRequested);
+            Map<String, String> facetsQuery, QueryImpl openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
+        return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, inheritedFilter, hitsRequested);
     }
 
     public QueryImpl parse(String query) {
