@@ -63,12 +63,20 @@ public class FacetsQuery {
                             propertyName.append("/");
                             propertyName.append(nsMappings.translatePropertyName(pathElements[i].getName()));
                         }
-                        String internalName = ServicingNameFormat.getInternalFacetName(new String(propertyName), nsMappings);
+                        
+                        Query wq ;
+                        if(entry.getValue() == null) {
+                        	// only make sure the document contains at least the facet (propertyName)
+                        	wq = new FacetPropExistsQuery(entry.getKey() , new String(propertyName), indexingConfig).getQuery();
+                        } else {
                         /*
                          * TODO HREPTWO-652 : when lucene 2.3.x or higher is used, replace wildcardquery
                          * below with FixedScoreTermQuery without wildcard, and use payload to get the type
                          */
-                        Query wq = new WildcardQuery(new Term(internalName, entry.getValue() + "?"));
+                            String internalName = ServicingNameFormat.getInternalFacetName(new String(propertyName), nsMappings);
+                        	wq = new WildcardQuery(new Term(internalName, entry.getValue() + "?"));
+                        	
+                    	}
                         //Query q = new FixedScoreTermQuery(new Term(internalName, entry.getValue() + "?"));
                         this.query.add(wq, Occur.MUST);
                     } else {

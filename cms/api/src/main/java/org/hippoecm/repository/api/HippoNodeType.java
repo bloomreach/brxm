@@ -171,6 +171,23 @@ public interface HippoNodeType {
     /**
      * 
      */
+    final public static String NT_ABSTRACTFACETNAVIGATION = "hippo:abstractfacetnavigation";
+    /**
+     * 
+     */
+    final public static String NT_FACETNAVIGATION = "hippo:facetnavigation";
+    /**
+     * 
+     */
+    final public static String NT_FACETSAVAILABLENAVIGATION = "hipposys:facetsavailablenavigation";
+    /**
+     * 
+     */
+    final public static String NT_FACETSUBNAVIGATION = "hipposys:facetsubnavigation";
+    
+    /**
+     * 
+     */
     final public static String NT_FIELD = "hipposysedit:field";
     /**
      * 
@@ -382,6 +399,10 @@ public interface HippoNodeType {
      * 
      */
     final public static String HIPPO_FACETS = "hippo:facets";
+    /**
+     * 
+     */
+    final public static String HIPPO_FACETNODENAMES = "hippo:facetnodenames";
     /**
      * 
      */

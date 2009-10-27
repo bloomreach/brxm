@@ -50,7 +50,7 @@ public abstract class HippoVirtualProvider implements DataProviderModule
     private Name externalNodeName;
     private Name virtualNodeName;
 
-    protected final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
+    private final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
 
     protected final PropDef lookupPropDef(Name nodeTypeName, Name propName) throws RepositoryException {
         PropDef[] propDefs = stateMgr.getNodeTypeRegistry().getNodeTypeDef(nodeTypeName).getPropertyDefs();

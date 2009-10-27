@@ -162,7 +162,7 @@ public class FacetedNavigationEngineFirstImpl
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
                        Map<String,String> facetsQuery, QueryImpl openQuery,
                        Map<String,Map<String,Count>> resultset,
-                       Map<Map<String,String>,Map<String,Map<String,Count>>> futureFacetsQueries,
+                       Map<Name,String> inheritedFilter,
                        HitsRequested hitsRequested) throws UnsupportedOperationException {
         try {
             Session session = authorization.session;
@@ -199,7 +199,7 @@ public class FacetedNavigationEngineFirstImpl
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-                       Map<String,String> facetsQuery, QueryImpl openQuery, HitsRequested hitsRequested) {
+                       Map<String,String> facetsQuery, QueryImpl openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
         try {
             Session session = authorization.session;
             LinkedList<NodeId> list = new LinkedList<NodeId>();

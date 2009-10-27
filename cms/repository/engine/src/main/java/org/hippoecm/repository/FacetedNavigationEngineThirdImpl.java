@@ -45,6 +45,7 @@ import org.hippoecm.repository.query.lucene.FacetResultCollector;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
 import org.hippoecm.repository.query.lucene.FixedScoreSimilarity;
 import org.hippoecm.repository.query.lucene.FixedScoreTermQuery;
+import org.hippoecm.repository.query.lucene.InheritedFilterQuery;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
@@ -141,7 +142,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
             Map<String, String> facetsQueryMap, QueryImpl openQuery, Map<String, Map<String, Count>> resultset,
-            Map<Map<String, String>, Map<String, Map<String, Count>>> futureFacetsQueries, HitsRequested hitsRequested)
+            Map<Name,String> inheritedFilter, HitsRequested hitsRequested)
             throws UnsupportedOperationException {
 
         NamespaceMappings nsMappings = getNamespaceMappings();
@@ -150,6 +151,13 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
          * facetsQuery: get the query for the facets that are asked for
          */
         FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings,
+                (ServicingIndexingConfiguration) getIndexingConfig());
+        
+        /*
+         * inheritedFilter: get the query representation of the interited filters (for example from facetselect)
+         */
+        
+        InheritedFilterQuery inheritedFilterQuery = new InheritedFilterQuery(inheritedFilter, nsMappings,
                 (ServicingIndexingConfiguration) getIndexingConfig());
 
         /*
@@ -168,6 +176,9 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         BooleanQuery searchQuery = new BooleanQuery(true);
         if (facetsQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
+        }
+        if(inheritedFilterQuery.getQuery().clauses().size() > 0) {
+        	searchQuery.add(inheritedFilterQuery.getQuery(), Occur.MUST);
         }
         // TODO perhaps create cached user specific filter for authorisation to gain speed
         if (contextImpl.authorizationQuery.getQuery().clauses().size() > 0) {
@@ -197,15 +208,11 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                      * in the query without this facet. Therefor, first get the count query without
                      * FacetPropExistsQuery.
                      */
-                    long timestamp = 0;
-                    if (log.isDebugEnabled()) {
-                        timestamp = System.currentTimeMillis();
-                    }
-                    int numHits = searcher.search(searchQuery).length();
-                    if (log.isDebugEnabled()) {
-                        log.debug("lucene query no collector took: \t" + (System.currentTimeMillis() - timestamp)
-                                + " ms for #" + numHits + ". Query: " + searchQuery.toString());
-                    }
+                	int numHits = 0;
+                	if(!hitsRequested.isCountOnlyForFacetExists()) {
+                		numHits = searcher.search(searchQuery).length();
+                	}
+                	
                     StringBuffer propertyName = new StringBuffer();
                     Element[] pathElements = PathFactoryImpl.getInstance().create(facet).getElements();
                     propertyName.append(nsMappings.translatePropertyName(pathElements[pathElements.length-1].getName()));
@@ -218,19 +225,18 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                      */
                     FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, new String(propertyName),
                             (ServicingIndexingConfiguration) getIndexingConfig());
+                    
+                    BooleanQuery q = facetPropExists.getQuery();
+                    
                     searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
 
-                    if (log.isDebugEnabled()) {
-                        timestamp = System.currentTimeMillis();
-                    }
+                  
                     collector = new FacetResultCollector(indexReader, new String(propertyName), (facet != null ? resultset.get(facet) : null),
                             hitsRequested, nsMappings);
                     searcher.search(searchQuery, collector);
                     // set the numHits value
-                    collector.setNumhits(numHits);
-                    if (log.isDebugEnabled()) {
-                        log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - timestamp)
-                                + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
+                    if(!hitsRequested.isCountOnlyForFacetExists()) {
+                    	collector.setNumhits(numHits);
                     }
 
                 }
@@ -275,8 +281,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-            Map<String, String> facetsQuery, QueryImpl openQuery, HitsRequested hitsRequested) {
-        return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, null, hitsRequested);
+            Map<String, String> facetsQuery, QueryImpl openQuery,Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
+        return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, inheritedFilter, hitsRequested);
     }
 
     public QueryImpl parse(String query) {

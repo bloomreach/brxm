@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public class SubtypedDataProvider implements DataProviderModule {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    protected final Logger log = LoggerFactory.getLogger(SubtypedDataProvider.class);
+    private final Logger log = LoggerFactory.getLogger(SubtypedDataProvider.class);
 
     public SubtypedDataProvider() {
     }

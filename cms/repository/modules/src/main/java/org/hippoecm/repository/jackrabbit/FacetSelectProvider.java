@@ -28,7 +28,6 @@ public class FacetSelectProvider extends ViewVirtualProvider
     private final static String SVN_ID = "$Id$";
 
     ViewVirtualProvider subNodesProvider;
-    Name docbaseName;
     Name facetsName;
     Name valuesName;
     Name modesName;

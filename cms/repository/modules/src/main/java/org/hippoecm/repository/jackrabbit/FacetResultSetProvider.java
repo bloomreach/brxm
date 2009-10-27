@@ -45,29 +45,37 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
+    private final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
 
     private static Pattern facetPropertyPattern;
     static {
         facetPropertyPattern = Pattern.compile("^@([^=]+)='(.+)'$");
     }
 
-    protected class FacetResultSetNodeId extends HippoNodeId {
+    public class FacetResultSetNodeId extends HippoNodeId {
     	private static final long serialVersionUID = 1L;
         String queryname;
         String docbase;
         String[] search;
+        Map<String, String> preparedSearch;
         long count;
         FacetResultSetNodeId(NodeId parent, Name name) {
             super(FacetResultSetProvider.this, parent, name);
         }
-        FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, String[] search, long count) {
+        public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, String[] search, long count) {
             super(FacetResultSetProvider.this, parent, name);
             this.queryname = queryname;
             this.docbase = docbase;
             this.search = search;
             this.count = count;
         }
+		public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, Map<String, String> currentSearch, int count) {
+			super(FacetResultSetProvider.this, parent, name);
+            this.queryname = queryname;
+            this.docbase = docbase;
+            this.preparedSearch = currentSearch;
+            this.count = count;
+		}
     }
 
     ViewVirtualProvider subNodesProvider;
@@ -106,24 +114,48 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         String docbase = nodeId.docbase;
         String[] search = nodeId.search;
         long count = nodeId.count;
-
-        Map<String,String> currentFacetQuery = new TreeMap<String,String>();
-        for(int i=0; search != null && i < search.length; i++) {
-            Matcher matcher = facetPropertyPattern.matcher(search[i]);
-            if(matcher.matches() && matcher.groupCount() == 2) {
-                try {
-                    currentFacetQuery.put(resolvePath(matcher.group(1)).toString(), matcher.group(2));
-                } catch(IllegalNameException ex) {
-                    // FIXME: log a very serious error
-                    return state;
-                } catch(NamespaceException ex) {
-                    // FIXME: log a very serious error
-                    return state;
-                } catch(MalformedPathException ex) {
-                    // FIXME: log a very serious error
-                    return state;
-                }
-            }
+        
+        Map<Name,String> inheritedFilter = null;
+        boolean singledView = false;
+        LinkedHashMap<Name,String> view = null;
+        LinkedHashMap<Name,String> order = null;
+        
+        if (state.getParentId()!=null && state.getParentId() instanceof IFilterNodeId) {
+			IFilterNodeId filterNodeId = (IFilterNodeId)state.getParentId();
+			if(filterNodeId.getView() != null) {
+				inheritedFilter = new LinkedHashMap<Name,String>(filterNodeId.getView());
+				view =  new LinkedHashMap<Name,String>(filterNodeId.getView());
+			}
+			if(filterNodeId.getOrder() != null) {
+				order = new LinkedHashMap<Name,String>(filterNodeId.getOrder());
+			}
+			singledView = filterNodeId.isSingledView();
+        }
+        
+        /*
+         * if we have a preparedSearch, we do not need to get it from the search[] 
+         */
+        Map<String, String> currentFacetQuery = nodeId.preparedSearch;
+        
+        if(currentFacetQuery == null) {
+	        currentFacetQuery = new TreeMap<String,String>();
+	        for(int i=0; search != null && i < search.length; i++) {
+	            Matcher matcher = facetPropertyPattern.matcher(search[i]);
+	            if(matcher.matches() && matcher.groupCount() == 2) {
+	                try {
+	                    currentFacetQuery.put(resolvePath(matcher.group(1)).toString(), matcher.group(2));
+	                } catch(IllegalNameException ex) {
+	                    // FIXME: log a very serious error
+	                    return state;
+	                } catch(NamespaceException ex) {
+	                    // FIXME: log a very serious error
+	                    return state;
+	                } catch(MalformedPathException ex) {
+	                    // FIXME: log a very serious error
+	                    return state;
+	                }
+	            }
+	        }
         }
         FacetedNavigationEngine.Query initialQuery;
         initialQuery = facetedEngine.parse(docbase);
@@ -152,7 +184,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         long t1 = 0, t2;
         if(log.isDebugEnabled())
             t1 = System.currentTimeMillis();
-        facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, null,
+        facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, null, inheritedFilter,
                                            hitsRequested);
         if(log.isDebugEnabled()) {
             t2 = System.currentTimeMillis();
@@ -195,7 +227,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
              *  
              *  from parent NodeId, which is NOT a ViewNodeId, nor a MirrorNodeId
              */
-            state.addChildNodeEntry(name, subNodesProvider . new ViewNodeId(state.getNodeId(), upstream, name, new LinkedHashMap<Name,String>(), new LinkedHashMap<Name,String>(), false));
+            state.addChildNodeEntry(name, subNodesProvider . new ViewNodeId(state.getNodeId(), upstream, name, view, order , singledView));
         }
 
         return state;

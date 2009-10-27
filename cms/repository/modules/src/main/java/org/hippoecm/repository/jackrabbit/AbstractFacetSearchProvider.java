@@ -48,7 +48,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
+    private final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
 
     class FacetSearchNodeId extends HippoNodeId {
         private static final long serialVersionUID = 1L;

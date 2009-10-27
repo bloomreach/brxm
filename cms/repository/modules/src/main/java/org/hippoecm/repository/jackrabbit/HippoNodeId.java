@@ -32,10 +32,10 @@ public class HippoNodeId extends NodeId
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    final static Logger log = LoggerFactory.getLogger(HippoNodeId.class);
+    private final static Logger log = LoggerFactory.getLogger(HippoNodeId.class);
 
-    NodeId parentId;
-    Name name;
+    public NodeId parentId;
+    public Name name;
 
     HippoVirtualProvider provider;
 

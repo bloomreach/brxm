@@ -29,12 +29,16 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ViewVirtualProvider extends MirrorVirtualProvider
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private final Logger log = LoggerFactory.getLogger(ViewVirtualProvider.class);
+    
     Name handleName;
     Name requestName;
 
@@ -47,7 +51,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         requestName = resolveName(HippoNodeType.NT_REQUEST);
     }
     
-    protected NodeState populate(ViewVirtualProvider subProvider, NodeState state,String[] docbase, String[] newFacets, String[] newValues, String[] newModes, boolean newCriteria) throws RepositoryException {
+    protected NodeState populate(ViewVirtualProvider subProvider, NodeState state ,String[] docbase, String[] newFacets, String[] newValues, String[] newModes, boolean newCriteria) throws RepositoryException {
     	if(docbase == null || docbase.length == 0) {
             return state;
         }
@@ -68,19 +72,19 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
             LinkedHashMap<Name,String> view = new LinkedHashMap<Name,String>();
             LinkedHashMap<Name,String> order = null;
             
-            if (state.getParentId()!=null && state.getParentId() instanceof ViewNodeId) {
+            if (state.getParentId()!=null && state.getParentId() instanceof IFilterNodeId) {
             	// parent state is already virtual, inherit possible filter criteria
-                ViewNodeId viewNodeId = ((ViewNodeId)state.getParentId());
-                if(viewNodeId.view != null) {
-                    view.putAll(viewNodeId.view);
+            	IFilterNodeId filterNodeId = ((IFilterNodeId)state.getParentId());
+                if(filterNodeId.getView() != null) {
+                    view.putAll(filterNodeId.getView());
                 }
-                if(viewNodeId.order != null) {
+                if(filterNodeId.getOrder() != null) {
                     if(order == null) {
                         order = new LinkedHashMap<Name,String>();
                     }
-                    order.putAll(viewNodeId.order);
+                    order.putAll(filterNodeId.getOrder());
                 }
-                singledView = viewNodeId.singledView;
+                singledView = filterNodeId.isSingledView();
              }
             
             if(newCriteria) {
@@ -210,7 +214,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         }
    }
 
-    protected class ViewNodeId extends MirrorNodeId {
+    protected class ViewNodeId extends MirrorNodeId implements IFilterNodeId{
         private static final long serialVersionUID = 1L;
 
         /* The following fields MUST be immutable
@@ -290,5 +294,23 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
                 return 1;
             }
         }
+
+        public LinkedHashMap<Name, String> getOrder() {
+        	if(this.order != null) {
+        		return new LinkedHashMap<Name, String>(this.order);
+        	} 
+        	return null;
+		}
+
+		public LinkedHashMap<Name, String> getView() {
+			if(this.view != null) {
+				return new LinkedHashMap<Name, String>(this.view);
+			}
+			return null;
+		}
+
+		public boolean isSingledView() {
+			return this.singledView;
+		}
     }
 }
