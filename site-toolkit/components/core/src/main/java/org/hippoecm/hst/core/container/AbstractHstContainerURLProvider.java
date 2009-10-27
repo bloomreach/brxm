@@ -143,6 +143,12 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
                     String resourceWindowReferenceNamespace = requestInfos[1];
                     String resourceId = requestInfos.length > 2 ? requestInfos[2] : null;
                     
+                    if (resourceId != null) {
+                        // resource id is double-encoded because it can have slashes,
+                        // which can make a problem in Tomcat 6.
+                        resourceId = URLDecoder.decode(resourceId, characterEncoding);
+                    }
+                    
                     url.setResourceId(resourceId);
                     url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
                     
@@ -240,10 +246,17 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         } else if (containerURL.getResourceWindowReferenceNamespace() != null) {
             url.append(this.urlNamespacePrefixedPath);
             
+            String resourceId = containerURL.getResourceId();
+            // resource id should be double-encoded because it can have slashes,
+            // which can make a problem in Tomcat 6.
+            if (resourceId != null) {
+                resourceId = URLEncoder.encode(resourceId, characterEncoding);
+            }
+            
             String requestInfo = 
                 HstURL.RESOURCE_TYPE + REQUEST_INFO_SEPARATOR + 
                 containerURL.getResourceWindowReferenceNamespace() + REQUEST_INFO_SEPARATOR + 
-                (containerURL.getResourceId() != null ? containerURL.getResourceId() : "");
+                (resourceId != null ? resourceId : "");
             
             url.append(URLEncoder.encode(requestInfo, characterEncoding));
         }
@@ -354,17 +367,20 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         String temp = requestURI.substring(requestURI.indexOf(urlNamespacePrefixedPath));
         int offset = temp.indexOf('/', 1);
         String namespacedPathPart = temp.substring(0, offset);
+        String pathInfoFromURI = "";
 
         try {
             namespacedPathPart = URLDecoder.decode(namespacedPathPart, characterEncoding);
-        } catch (UnsupportedEncodingException ignore) {
+            pathInfoFromURI = URLDecoder.decode(temp.substring(offset), characterEncoding);
+        } catch (UnsupportedEncodingException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Invalid request uri: {}", requestURI, e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Invalid request uri: {}", requestURI);
+            }
         }
         
-        if (pathInfo.startsWith(namespacedPathPart)) {
-            pathInfo = pathInfo.substring(namespacedPathPart.length());
-        }
-        
-        return new String [] { namespacedPathPart, pathInfo };
+        return new String [] { namespacedPathPart, pathInfoFromURI };
     }
     
 }
