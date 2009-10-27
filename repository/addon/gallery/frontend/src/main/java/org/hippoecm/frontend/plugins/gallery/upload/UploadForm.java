@@ -21,6 +21,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
@@ -38,6 +39,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
+import org.hippoecm.frontend.plugins.gallery.GalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.ImageInfo;
 import org.hippoecm.frontend.plugins.gallery.ImageUtils;
 import org.hippoecm.frontend.session.UserSession;
@@ -123,15 +125,7 @@ class UploadForm extends Form {
             try {
                 String filename = upload.getClientFileName();
                 String mimetype;
-                if(filename.endsWith(".pdf")) {
-                    /*
-                     *  we make an exception for pdf to hardcode the mapping, as firefox might post the binary with the wrong mimetype,
-                     *  for example application/application-pdf, see HREPTWO-3168
-                     */
-                    mimetype = "application/pdf";
-                } else {
-                    mimetype = upload.getContentType();
-                }
+                mimetype = upload.getContentType();
                 InputStream istream = upload.getInputStream();
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 try {
@@ -140,33 +134,9 @@ class UploadForm extends Form {
                             .getWorkflowCategory(), galleryNode);
                     Document document = workflow.createGalleryItem(NodeNameCodec.encode(filename, true), type);
                     Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
-                    Item item = node.getPrimaryItem();
-                    if (item.isNode()) {
-                        Node primaryChild = (Node) item;
-                        if (primaryChild.isNodeType("hippo:resource")) {
-                            primaryChild.setProperty("jcr:mimeType", mimetype);
-                            primaryChild.setProperty("jcr:data", istream);
-                        }
-                        NodeDefinition[] childDefs = node.getPrimaryNodeType().getChildNodeDefinitions();
-                        for (int i = 0; i < childDefs.length; i++) {
-                            if (childDefs[i].getDefaultPrimaryType() != null
-                                    && childDefs[i].getDefaultPrimaryType().isNodeType("hippo:resource")) {
-                                if (!node.hasNode(childDefs[i].getName())) {
-                                    Node child = node.addNode(childDefs[i].getName());
-                                    child.setProperty("jcr:data", primaryChild.getProperty("jcr:data").getStream());
-                                    child.setProperty("jcr:mimeType", primaryChild.getProperty("jcr:mimeType")
-                                            .getString());
-                                    child.setProperty("jcr:lastModified", primaryChild.getProperty("jcr:lastModified")
-                                            .getDate());
-                                }
-                            }
-                        }
-                        description = ImageInfo.analyse(filename, primaryChild.getProperty("jcr:data").getStream());
-
-                        makeThumbnail(primaryChild, primaryChild.getProperty("jcr:data").getStream(), primaryChild
-                                .getProperty("jcr:mimeType").getString());
-                        node.getSession().save();
-                    }
+                    GalleryProcessor processor = ImageUtils.galleryProcessor(uploadDialog.pluginConfig);
+                    processor.makeImage(node, istream, mimetype, filename);
+                    node.getSession().save();
                     uploadDialog.getWizardModel().next();
                 } catch (MappingException ex) {
                     Gallery.log.error(ex.getMessage());
@@ -183,15 +153,4 @@ class UploadForm extends Form {
             error(new StringResourceModel("no-file-uploaded-label", this, null).getString());
         }
     }
-
-    private void makeThumbnail(Node node, InputStream resourceData, String mimeType) throws RepositoryException {
-        if (mimeType.startsWith("image")) {
-            InputStream thumbNail = new ImageUtils().createThumbnail(resourceData, uploadDialog.getThumbnailSize(), mimeType);
-            node.setProperty("jcr:data", thumbNail);
-        } else {
-            node.setProperty("jcr:data", resourceData);
-        }
-        node.setProperty("jcr:mimeType", mimeType);
-    }
-
 }
