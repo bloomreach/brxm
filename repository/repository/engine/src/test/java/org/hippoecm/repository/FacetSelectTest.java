@@ -18,6 +18,7 @@ package org.hippoecm.repository;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.Ignore;
 import static org.junit.Assert.assertNull;
@@ -100,6 +101,15 @@ public class FacetSelectTest extends TestCase {
         "hippo:values",       "red",
         "hippo:modes",        "select"
     };
+
+    @After
+    public void tearDown() throws Exception {
+        if(session.getRootNode().hasNode("test")) {
+	    session.getRootNode().getNode("test").remove();
+	}
+	session.save();
+	super.tearDown();
+    }
 
     @Test
     public void testBasics() throws Exception {
