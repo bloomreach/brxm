@@ -23,6 +23,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Calendar;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
@@ -31,10 +33,19 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageUtils {
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+
+public class ImageUtils implements GalleryProcessor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     static final Logger log = LoggerFactory.getLogger(ImageUtils.class);
@@ -43,6 +54,16 @@ public class ImageUtils {
     
     private static final String MIME_IMAGE_PJPEG = "image/pjpeg";
     private static final String MIME_IMAGE_JPEG = "image/jpeg";
+
+    protected IPluginConfig config;
+
+    public ImageUtils() {
+        config = new JavaPluginConfig();
+    }
+
+    public ImageUtils(IPluginConfig config) {
+        this.config = config;
+    }
 
     /**
      * Creates a thumbnail version of an image.
@@ -170,5 +191,85 @@ public class ImageUtils {
         public UnsupportedMimeTypeException(String mimeType) {
             super(mimeType + " mime type not supported");
         }
+    }
+
+    public static GalleryProcessor galleryProcessor(IPluginConfig pluginConfig) {
+        String className = pluginConfig.getString("gallery.postprocess");
+        GalleryProcessor postProcessor = null;
+        try {
+            if(className != null && !className.trim().equals("")) {
+                Object instance = Class.forName(className).getConstructor(new Class[] { IPluginConfig.class }).newInstance(pluginConfig);
+                if (instance != null || !(instance instanceof GalleryProcessor)) {
+                    postProcessor = (GalleryProcessor) instance;
+                }
+            }
+        } catch (NoSuchMethodException ex) {
+            log.warn(ex.getMessage(), ex);
+        } catch (InstantiationException ex) {
+            log.warn(ex.getMessage(), ex);
+        } catch (InvocationTargetException ex) {
+            log.warn(ex.getMessage(), ex);
+        } catch (IllegalAccessException ex) {
+            log.warn(ex.getMessage(), ex);
+        } catch (ClassNotFoundException ex) {
+            log.warn(ex.getMessage(), ex);
+        }
+        if (postProcessor == null) {
+            postProcessor = new ImageUtils(pluginConfig);
+        }
+        return postProcessor;
+    }
+
+    public void makeImage(Node node, InputStream istream, String mimeType, String filename) throws RepositoryException {
+        /*
+         *  we make an exception for pdf to hardcode the mapping, as firefox might post the binary with the wrong mimetype,
+         *  for example application/application-pdf, see HREPTWO-3168
+         */
+        if (filename.endsWith(".pdf")) {
+            mimeType = "application/pdf";
+        }
+        Node primaryChild = null;
+        try {
+            Item item = node.getPrimaryItem();
+            if (item.isNode()) {
+                primaryChild = (Node)item;
+            }
+        } catch (ItemNotFoundException ex) {
+            // deliberate ignore
+        }
+        if (primaryChild != null && primaryChild.isNodeType("hippo:resource")) {
+            primaryChild.setProperty("jcr:mimeType", mimeType);
+            primaryChild.setProperty("jcr:data", istream);
+        }
+        for (NodeDefinition childDef : node.getPrimaryNodeType().getChildNodeDefinitions()) {
+            if (childDef.getDefaultPrimaryType() != null && childDef.getDefaultPrimaryType().isNodeType("hippo:resource")) {
+                makeRegularImage(node, childDef.getName(),
+                        primaryChild.getProperty("jcr:data").getStream(),
+                        primaryChild.getProperty("jcr:mimeType").getString(),
+                        primaryChild.getProperty("jcr:lastModified").getDate());
+            }
+        }
+        String description = ImageInfo.analyse(filename, primaryChild.getProperty("jcr:data").getStream());
+        makeThumbnailImage(primaryChild, primaryChild.getProperty("jcr:data").getStream(), primaryChild.getProperty("jcr:mimeType").getString());
+    }
+
+    protected void makeRegularImage(Node node, String name, InputStream istream, String mimeType, Calendar lastModified) throws RepositoryException {
+        if (!node.hasNode(name)) {
+            Node child = node.addNode(name);
+            child.setProperty("jcr:data", istream);
+            child.setProperty("jcr:mimeType", mimeType);
+            child.setProperty("jcr:lastModified", lastModified);
+        }
+    }
+
+    protected void makeThumbnailImage(Node node, InputStream resourceData, String mimeType) throws RepositoryException {
+        int thumbnailSize = config.getInt("gallery.thumbnail.size", Gallery.DEFAULT_THUMBNAIL_SIZE);
+        if (mimeType.startsWith("image")) {
+            InputStream thumbNail = new ImageUtils().createThumbnail(resourceData, thumbnailSize, mimeType);
+            node.setProperty("jcr:data", thumbNail);
+        } else {
+            node.setProperty("jcr:data", resourceData);
+        }
+        node.setProperty("jcr:mimeType", mimeType);
     }
 }

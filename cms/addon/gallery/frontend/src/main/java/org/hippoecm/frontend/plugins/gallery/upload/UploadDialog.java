@@ -76,10 +76,6 @@ public class UploadDialog extends AbstractDialog {
         return new StringResourceModel(pluginConfig.getString("option.text", ""), this, null);
     }
 
-    int getThumbnailSize() {
-        return pluginConfig.getInt("gallery.thumbnail.size", Gallery.DEFAULT_THUMBNAIL_SIZE);
-    }
-
     void setGalleryNode(Node node) {
         setModel(new JcrNodeModel(node));
     }
