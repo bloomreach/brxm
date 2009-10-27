@@ -46,10 +46,14 @@ import org.quartz.spi.ClassLoadHelper;
 import org.quartz.spi.JobStore;
 import org.quartz.spi.SchedulerSignaler;
 import org.quartz.spi.TriggerFiredBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JCRJobStore implements JobStore {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
 
     public void initialize(ClassLoadHelper loadHelper, SchedulerSignaler signaler) throws SchedulerConfigException {
         signaler.signalSchedulingChange();
@@ -68,7 +72,6 @@ public class JCRJobStore implements JobStore {
         // FIXME
     }
 
-
     public void schedulerStarted() throws SchedulerException {
     }
 
@@ -81,8 +84,8 @@ public class JCRJobStore implements JobStore {
 
     public void storeJobAndTrigger(SchedulingContext ctxt, JobDetail newJob, Trigger newTrigger)
       throws ObjectAlreadyExistsException, JobPersistenceException {
-        if (SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if (log.isDebugEnabled()) {
+            log.trace("trace");
         }
         try {
             Node jobNode = ((JCRSchedulingContext)ctxt).getSession().getRootNode().getNode(newJob.getName().substring(1));
@@ -100,7 +103,7 @@ public class JCRJobStore implements JobStore {
             triggerNode.setProperty("hipposched:data", new ByteArrayInputStream(objectToBytes(newTrigger)));
             jobNode.getParent().save();
         } catch (RepositoryException ex) {
-            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new JobPersistenceException("Failure storing job and trigger", ex);
         }
     }
@@ -119,21 +122,21 @@ public class JCRJobStore implements JobStore {
 
     public void storeJob(SchedulingContext ctxt, JobDetail newJob, boolean replaceExisting)
       throws ObjectAlreadyExistsException, JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public boolean removeJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return false;
     }
 
     public JobDetail retrieveJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+       if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         try {
             Session session = getSession(ctxt);
@@ -150,13 +153,13 @@ public class JCRJobStore implements JobStore {
                 return job;
             }
         } catch(RepositoryException ex) {
-            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new JobPersistenceException("error while retrieving job", ex);
         } catch(IOException ex) {
-            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new JobPersistenceException("data format while retrieving job", ex);
         } catch(ClassNotFoundException ex) {
-            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new JobPersistenceException("cannot recreate job", ex);
         }
         return null;
@@ -164,194 +167,194 @@ public class JCRJobStore implements JobStore {
 
     public void storeTrigger(SchedulingContext ctxt, Trigger newTrigger, boolean replaceExisting)
       throws ObjectAlreadyExistsException, JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+       if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public boolean removeTrigger(SchedulingContext ctxt, String triggerName, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return false;
     }
 
     public boolean replaceTrigger(SchedulingContext ctxt, String triggerName, String groupName, Trigger newTrigger)
       throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return false;
     }
 
     public Trigger retrieveTrigger(SchedulingContext ctxt, String triggerName, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return null;
     }
 
     public void storeCalendar(SchedulingContext ctxt, String name, org.quartz.Calendar calendar, boolean replaceExisting,
                               boolean updateTriggers) throws ObjectAlreadyExistsException, JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public boolean removeCalendar(SchedulingContext ctxt, String calName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return false;
     }
 
     public org.quartz.Calendar retrieveCalendar(SchedulingContext ctxt, String calName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return null;
     }
 
     public int getNumberOfJobs(SchedulingContext ctxt) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return 0;
     }
 
     public int getNumberOfTriggers(SchedulingContext ctxt) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return 0;
     }
 
     public int getNumberOfCalendars(SchedulingContext ctxt) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return 0;
     }
 
     public String[] getJobNames(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return new String[0];
     }
 
     public String[] getTriggerNames(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return new String[0];
     }
 
     public String[] getJobGroupNames(SchedulingContext ctxt) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return new String[0];
     }
 
     public String[] getTriggerGroupNames(SchedulingContext ctxt) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return new String[0];
     }
 
     public String[] getCalendarNames(SchedulingContext ctxt) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return new String[0];
     }
 
     public Trigger[] getTriggersForJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return new Trigger[0];
     }
 
     public int getTriggerState(SchedulingContext ctxt, String triggerName, String triggerGroup) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return 0;
     }
 
     public void pauseTrigger(SchedulingContext ctxt, String triggerName, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public void pauseTriggerGroup(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public void pauseJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public void pauseJobGroup(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public void resumeTrigger(SchedulingContext ctxt, String triggerName, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public void resumeTriggerGroup(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public Set getPausedTriggerGroups(SchedulingContext ctxt) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return new HashSet();
     }
 
     public void resumeJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public void resumeJobGroup(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public void pauseAll(SchedulingContext ctxt) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public void resumeAll(SchedulingContext ctxt) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
     }
 
     public Trigger acquireNextTrigger(SchedulingContext ctxt, long noLaterThan) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("acquireNextTrigger({})",noLaterThan);
+        if(log.isDebugEnabled()) {
+            log.trace("acquireNextTrigger({})",noLaterThan);
         }
         try {
             Session session = getSession(ctxt);
@@ -381,27 +384,42 @@ public class JCRJobStore implements JobStore {
                 return (Trigger) o;
             }
         } catch(RepositoryException ex) {
-            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new JobPersistenceException("error acquiring next trigger", ex);
         } catch(IOException ex) {
-            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new JobPersistenceException("data format exception while acquiring next trigger", ex);
         } catch(ClassNotFoundException ex) {
-            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new JobPersistenceException("cannot recreate trigger", ex);
         }
         return null;
     }
 
     public void releaseAcquiredTrigger(SchedulingContext ctxt, Trigger trigger) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
+        }
+        String triggerName = trigger.getName();
+        Node triggerNode;
+        try {
+            Session session = getSession(ctxt);
+            if (triggerName.startsWith("/")) {
+                triggerNode = session.getRootNode().getNode(triggerName.substring(1));
+            } else {
+                triggerNode = session.getNodeByUUID(triggerName);
+            }
+            triggerNode.setProperty("hipposched:nextFireTime", triggerNode.getProperty("hipposched:fireTime").getValue());
+            triggerNode.save();
+        } catch(RepositoryException ex) {
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            throw new JobPersistenceException("error releasing acquired trigger", ex);
         }
     }
 
     public TriggerFiredBundle triggerFired(SchedulingContext ctxt, Trigger trigger) throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         return new TriggerFiredBundle(retrieveJob(ctxt, trigger.getJobName(), trigger.getJobGroup()),
                                       trigger, null, false,
@@ -411,8 +429,8 @@ public class JCRJobStore implements JobStore {
 
     public void triggeredJobComplete(SchedulingContext ctxt, Trigger trigger, JobDetail jobDetail, int triggerInstCode)
       throws JobPersistenceException {
-        if(SchedulerModule.log.isDebugEnabled()) {
-            SchedulerModule.log.trace("trace");
+        if(log.isDebugEnabled()) {
+            log.trace("trace");
         }
         try {
             Session session = getSession(ctxt);
@@ -454,7 +472,7 @@ public class JCRJobStore implements JobStore {
         } catch(PathNotFoundException ex) {
             // deliberate ignore
         } catch(RepositoryException ex) {
-            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new JobPersistenceException("error while marking job completed", ex);
         }
     }

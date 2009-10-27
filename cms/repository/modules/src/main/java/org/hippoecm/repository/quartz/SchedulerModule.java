@@ -45,7 +45,7 @@ public class SchedulerModule implements DaemonModule
     }
 
     public void initialize(Session session) {
-        this.session = session;
+        SchedulerModule.session = session;
         Properties properties = new Properties();
         try {
             properties.put("org.quartz.scheduler.instanceName","Hippo JCR Quartz Job Scheduler");
@@ -64,7 +64,7 @@ public class SchedulerModule implements DaemonModule
             scheduler = (JCRScheduler) schedFactory.getScheduler();
             scheduler.start();
         } catch (SchedulerException ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
     }
 
