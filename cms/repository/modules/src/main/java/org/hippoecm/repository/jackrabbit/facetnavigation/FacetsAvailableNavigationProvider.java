@@ -2,7 +2,6 @@ package org.hippoecm.repository.jackrabbit.facetnavigation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -22,6 +21,7 @@ import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.jackrabbit.FacetKeyValue;
 import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
 import org.hippoecm.repository.jackrabbit.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.KeyValue;
@@ -50,7 +50,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
     	NodeId nodeId = state.getNodeId();
     	if (nodeId instanceof FacetNavigationNodeId) {
     		FacetNavigationNodeId facetNavigationNodeId = (FacetNavigationNodeId)nodeId;
-    		Map<String, String> currentSearch = facetNavigationNodeId.currentSearch;
+    		List<KeyValue<String, String>> currentSearch = facetNavigationNodeId.currentSearch;
     		String currentFacet = facetNavigationNodeId.currentFacet;
     		String[] availableFacets = facetNavigationNodeId.availableFacets;
     	    String docbase = facetNavigationNodeId.docbase;
@@ -113,13 +113,14 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             
             for(FacetNavigationEntry entry : facetNavigationEntry) {
                 if (entry.facetValue.length() > 1) {
-                	Map<String, String> newSearch = new HashMap<String, String>(currentSearch);
+                    List<KeyValue<String,String>> newSearch = new ArrayList<KeyValue<String,String>>(currentSearch);
                 	
                     // nextTerm is the next facet value to search for (skip last char because this is the facet type constant)
                     String nextFacet = entry.facetValue.substring(0, entry.facetValue.length() - 1);
                     Character facetTypeConstant = entry.facetValue.charAt(entry.facetValue.length() - 1);
                     
-                    newSearch.put(resolvedFacet, nextFacet);
+                    newSearch.add(new FacetKeyValue(resolvedFacet, nextFacet));
+                    
                     List<KeyValue<String,String>> usedFacetValueCombis = new ArrayList<KeyValue<String,String>>(facetNavigationNodeId.usedFacetValueCombis);     
                     KeyValue<String, String> facetValueCombi = new FacetKeyValue(currentFacet, nextFacet);
                     
@@ -168,12 +169,10 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             // the result set nodes at least contain the facet
             
             Name resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
-            Map<String, String> resultSetSearch = new HashMap<String, String>(currentSearch);
+            List<KeyValue<String, String>> resultSetSearch = new ArrayList<KeyValue<String, String>>(currentSearch);
             // we add here the 'facet' without value, to make sure we only get results having at least the current facet as property
-            if(!resultSetSearch.containsKey(resolvedFacet)) {
-                resultSetSearch.put(resolvedFacet, null);
-            }
-            
+            resultSetSearch.add(new FacetKeyValue(resolvedFacet, null));
+           
             FacetResultSetProvider.FacetResultSetNodeId childNodeId;
             childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), resultSetChildName, null,
                     docbase, resultSetSearch, count);

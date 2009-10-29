@@ -15,9 +15,10 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,8 +58,9 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         String queryname;
         String docbase;
         String[] search;
-        Map<String, String> preparedSearch;
+        List<KeyValue<String, String>> preparedSearch;
         long count;
+        
         FacetResultSetNodeId(NodeId parent, Name name) {
             super(FacetResultSetProvider.this, parent, name);
         }
@@ -69,7 +71,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
             this.search = search;
             this.count = count;
         }
-		public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, Map<String, String> currentSearch, int count) {
+		public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, List<KeyValue<String, String>> currentSearch, int count) {
 			super(FacetResultSetProvider.this, parent, name);
             this.queryname = queryname;
             this.docbase = docbase;
@@ -135,23 +137,23 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         /*
          * if we have a preparedSearch, we do not need to get it from the search[] 
          */
-        Map<String, String> currentFacetQuery = nodeId.preparedSearch;
+        List<KeyValue<String, String>> currentFacetQuery = nodeId.preparedSearch;
         
         if(currentFacetQuery == null) {
-	        currentFacetQuery = new TreeMap<String,String>();
+	        currentFacetQuery = new ArrayList<KeyValue<String,String>>();
 	        for(int i=0; search != null && i < search.length; i++) {
 	            Matcher matcher = facetPropertyPattern.matcher(search[i]);
 	            if(matcher.matches() && matcher.groupCount() == 2) {
 	                try {
-	                    currentFacetQuery.put(resolvePath(matcher.group(1)).toString(), matcher.group(2));
+	                    currentFacetQuery.add(new FacetKeyValue(resolvePath(matcher.group(1)).toString(), matcher.group(2)));
 	                } catch(IllegalNameException ex) {
-	                    // FIXME: log a very serious error
+	                    log.error("Could not resolve path for: '{}'. Return unpopulated state", matcher.group(1));
 	                    return state;
 	                } catch(NamespaceException ex) {
-	                    // FIXME: log a very serious error
+	                    log.error("Could not resolve path for: '{}'. Return unpopulated state", matcher.group(1));
 	                    return state;
 	                } catch(MalformedPathException ex) {
-	                    // FIXME: log a very serious error
+	                    log.error("Could not resolve path for: '{}'. Return unpopulated state", matcher.group(1));
 	                    return state;
 	                }
 	            }

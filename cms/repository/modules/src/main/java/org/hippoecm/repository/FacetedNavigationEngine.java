@@ -26,6 +26,7 @@ import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.jackrabbit.KeyValue;
 
 /**
 
@@ -391,9 +392,9 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @param authorizationQuery A map from facet-key to facet-value pairs
      * representing the equality terms which should be OR'ed to compose the
      * authorization query as in the description of this interface.
-     * @param facetsQuery A map from facet-key to facet-value pairs
+     * @param facetsQuery A List from facet-key, facet-value pairs
      * representing the equality terms which should be AND'ed to compose the
-     * authorization query as in the description of this interface.  This map
+     * facets query as in the description of this interface.  This map
      * may be empty.
      * @param openQuery The open query as described in the description of this
      * interface.  This may be <code>null</code> indicating no open search
@@ -424,7 +425,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * returns <code>null</code>.
      */
     public Result view(String queryName, Q initialQuery, C authorization,
-               Map<String,String> facetsQuery, Q openQuery,
+               List<KeyValue<String, String>> facetsQuery, Q openQuery,
                Map<String,Map<String,Count>> resultset,
                Map<Name,String> inheritedFilter,
                HitsRequested hitsRequested) throws UnsupportedOperationException;
@@ -435,7 +436,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      *   but used when the actual resultset is required.  In this case.
      */
     public Result view(String queryName, Q initialQuery, C authorization,
-               Map<String,String> facetsQuery, Q openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested);
+             List<KeyValue<String, String>> facetsQuery, Q openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested);
 
     /**
      * This method is used to build a Query object from a query encoded in a
