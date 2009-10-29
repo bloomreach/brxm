@@ -15,7 +15,9 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -146,12 +148,12 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             facetSearchResult = new TreeMap<String, FacetedNavigationEngine.Count>();
             facetSearchResultMap.put(resolvePath(facets[0]).toString(), facetSearchResult);
 
-            Map<String, String> currentFacetQuery = new TreeMap<String, String>();
+            List<KeyValue<String, String>> currentFacetQuery = new ArrayList<KeyValue<String, String>>();
             for (int i = 0; search != null && i < search.length; i++) {
                 Matcher matcher = facetPropertyPattern.matcher(search[i]);
                 if (matcher.matches() && matcher.groupCount() == 2) {
                     try {
-                        currentFacetQuery.put(resolvePath(matcher.group(1)).toString(), matcher.group(2));
+                        currentFacetQuery.add(new FacetKeyValue(resolvePath(matcher.group(1)).toString(), matcher.group(2)));
                     } catch (IllegalNameException ex) {
                         log.error("intermediate facet search broken", ex);
                         return state;

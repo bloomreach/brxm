@@ -15,9 +15,11 @@
  */
 package org.hippoecm.repository.query.lucene;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.NamespaceException;
+
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path.Element;
@@ -29,6 +31,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.hippoecm.repository.jackrabbit.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,18 +49,18 @@ public class FacetsQuery {
      */
     private BooleanQuery query;
 
-    public FacetsQuery(Map<String, String> facetsQuery, NamespaceMappings nsMappings,
+    public FacetsQuery(List<KeyValue<String, String>> facetsQuery, NamespaceMappings nsMappings,
                        ServicingIndexingConfiguration indexingConfig) {
         this.query = new BooleanQuery(true);
 
         if (facetsQuery != null) {
-            for (Map.Entry<String, String> entry : facetsQuery.entrySet()) {
+            for (KeyValue<String, String> keyValue : facetsQuery ) {
                 Name nodeName;
                 try {
-                    nodeName = NameFactoryImpl.getInstance().create(entry.getKey());
+                    nodeName = NameFactoryImpl.getInstance().create(keyValue.getKey());
                     if (indexingConfig.isFacet(nodeName)) {
                         StringBuffer propertyName = new StringBuffer();
-                        Element[] pathElements = PathFactoryImpl.getInstance().create(entry.getKey()).getElements();
+                        Element[] pathElements = PathFactoryImpl.getInstance().create(keyValue.getKey()).getElements();
                         propertyName.append(nsMappings.translatePropertyName(pathElements[pathElements.length - 1].getName()));
                         for (int i = 0; i < pathElements.length - 1; i++) {
                             propertyName.append("/");
@@ -65,22 +68,22 @@ public class FacetsQuery {
                         }
                         
                         Query wq ;
-                        if(entry.getValue() == null) {
+                        if(keyValue.getValue() == null) {
                         	// only make sure the document contains at least the facet (propertyName)
-                        	wq = new FacetPropExistsQuery(entry.getKey() , new String(propertyName), indexingConfig).getQuery();
+                        	wq = new FacetPropExistsQuery(keyValue.getKey() , new String(propertyName), indexingConfig).getQuery();
                         } else {
                         /*
                          * TODO HREPTWO-652 : when lucene 2.3.x or higher is used, replace wildcardquery
                          * below with FixedScoreTermQuery without wildcard, and use payload to get the type
                          */
                             String internalName = ServicingNameFormat.getInternalFacetName(new String(propertyName), nsMappings);
-                        	wq = new WildcardQuery(new Term(internalName, entry.getValue() + "?"));
+                        	wq = new WildcardQuery(new Term(internalName, keyValue.getValue() + "?"));
                         	
                     	}
                         //Query q = new FixedScoreTermQuery(new Term(internalName, entry.getValue() + "?"));
                         this.query.add(wq, Occur.MUST);
                     } else {
-                        log.warn("Property " + entry.getKey() + " not allowed for facetted search. " + "Add the property to the indexing configuration to be defined as FACET");
+                        log.warn("Property " + keyValue.getKey() + " not allowed for facetted search. " + "Add the property to the indexing configuration to be defined as FACET");
                     }
                 } catch (IllegalNameException e) {
                     log.error(e.toString());

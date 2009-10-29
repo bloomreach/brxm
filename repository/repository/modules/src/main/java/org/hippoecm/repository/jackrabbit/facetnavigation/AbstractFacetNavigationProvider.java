@@ -16,10 +16,8 @@
 package org.hippoecm.repository.jackrabbit.facetnavigation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -98,8 +96,12 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
          */  
         String[] ancestorAndSelfSubNavNames;
         
+        /*
+         * usedFacetValueCombis is the same as currentSearch, only the current search has as keys the string value
+         * of org.apache.jackrabbit.spi.Path whereas the usedFacetValueCombis as keys has the orginal facet name
+         */
         List<KeyValue<String, String>> usedFacetValueCombis = new ArrayList<KeyValue<String, String>>();
-        Map<String, String> currentSearch = new HashMap<String, String>();
+        List<KeyValue<String, String>> currentSearch = new ArrayList<KeyValue<String, String>>();
         /*
          * the filter info to propagate
          */

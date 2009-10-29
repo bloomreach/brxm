@@ -16,6 +16,7 @@ import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.jackrabbit.FacetKeyValue;
 import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
 import org.hippoecm.repository.jackrabbit.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.KeyValue;
@@ -45,7 +46,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
     	NodeId nodeId = state.getNodeId();
     	if (nodeId instanceof FacetNavigationNodeId) {
     		FacetNavigationNodeId facetNavigationNodeId = (FacetNavigationNodeId)nodeId;
-    		Map<String, String> currentSearch = facetNavigationNodeId.currentSearch;
+    		List<KeyValue<String, String>> currentSearch = facetNavigationNodeId.currentSearch;
     		String[] availableFacets = facetNavigationNodeId.availableFacets;
     		String[] facetNodeNames = facetNavigationNodeId.facetNodeNames;
     	    String docbase = facetNavigationNodeId.docbase;
