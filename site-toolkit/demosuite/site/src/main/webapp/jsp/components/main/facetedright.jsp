@@ -31,6 +31,8 @@
 	               <c:choose>
 	                 <c:when test="${facetvalue.leaf}">
 	                    ${facetvalue.name} <b>(${facetvalue.count})</b>
+	                    <hst:facetnavigationlink var="remove" current="${facetnav}" remove="${facetvalue}"/>
+	                    [<a href="${remove}" style="color:red">X</a>]
 	                 </c:when>
 	                 <c:otherwise>
 	              	   <hst:link var="link" hippobean="${facetvalue}"/>
