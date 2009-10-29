@@ -39,6 +39,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
+import org.hippoecm.repository.jackrabbit.KeyValue;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetResultCollector;
@@ -141,7 +142,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
-            Map<String, String> facetsQueryMap, QueryImpl openQuery, Map<String, Map<String, Count>> resultset,
+            List<KeyValue<String, String>> facetsQueryList, QueryImpl openQuery, Map<String, Map<String, Count>> resultset,
             Map<Name,String> inheritedFilter, HitsRequested hitsRequested)
             throws UnsupportedOperationException {
 
@@ -150,7 +151,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         /*
          * facetsQuery: get the query for the facets that are asked for
          */
-        FacetsQuery facetsQuery = new FacetsQuery(facetsQueryMap, nsMappings,
+        FacetsQuery facetsQuery = new FacetsQuery(facetsQueryList, nsMappings,
                 (ServicingIndexingConfiguration) getIndexingConfig());
         
         /*
@@ -281,7 +282,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-            Map<String, String> facetsQuery, QueryImpl openQuery,Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
+             List<KeyValue<String, String>> facetsQuery, QueryImpl openQuery,Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
         return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, inheritedFilter, hitsRequested);
     }
 

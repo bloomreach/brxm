@@ -31,6 +31,7 @@ import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.jackrabbit.KeyValue;
 
 public class FacetedNavigationEngineFirstImpl
   implements FacetedNavigationEngine<FacetedNavigationEngineFirstImpl.QueryImpl,
@@ -130,15 +131,15 @@ public class FacetedNavigationEngineFirstImpl
         // deliberate ignore
     }
 
-    private static StringBuffer getSearchQuery(String initialQuery, Map<String,String> facetsQuery, String facet) {
+    private static StringBuffer getSearchQuery(String initialQuery, List<KeyValue<String,String>> facetsQuery, String facet) {
         StringBuffer searchquery = new StringBuffer();
-        for(Map.Entry<String,String> entry : facetsQuery.entrySet()) {
+        for(KeyValue<String,String> keyValue : facetsQuery ) {
             if(searchquery.length() > 0)
                 searchquery.append(",");
             searchquery.append("@");
-            searchquery.append(entry.getKey());
+            searchquery.append(keyValue.getKey());
             searchquery.append("='");
-            searchquery.append(entry.getValue());
+            searchquery.append(keyValue.getValue());
             searchquery.append("'");
         }
         if(facet != null) {
@@ -160,7 +161,7 @@ public class FacetedNavigationEngineFirstImpl
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-                       Map<String,String> facetsQuery, QueryImpl openQuery,
+                       List<KeyValue<String,String>> facetsQuery, QueryImpl openQuery,
                        Map<String,Map<String,Count>> resultset,
                        Map<Name,String> inheritedFilter,
                        HitsRequested hitsRequested) throws UnsupportedOperationException {
@@ -199,7 +200,7 @@ public class FacetedNavigationEngineFirstImpl
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-                       Map<String,String> facetsQuery, QueryImpl openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
+                       List<KeyValue<String,String>> facetsQuery, QueryImpl openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
         try {
             Session session = authorization.session;
             LinkedList<NodeId> list = new LinkedList<NodeId>();
