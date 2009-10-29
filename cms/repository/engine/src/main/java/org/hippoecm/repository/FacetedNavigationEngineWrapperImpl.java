@@ -23,6 +23,7 @@ import javax.jcr.Session;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.jackrabbit.KeyValue;
 
 public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngine.Query, C extends FacetedNavigationEngine.Context>
   implements FacetedNavigationEngine<Q,C>
@@ -68,7 +69,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     }
 
     public Result view(String queryName, Q initialQuery, C authorization,
-                       Map<String,String> facetsQuery, Q openQuery,
+                       List<KeyValue<String, String>> facetsQuery, Q openQuery,
                        Map<String,Map<String,Count>> resultset,
                        Map<Name,String> inheritedFilter,
                        HitsRequested hitsRequested) throws UnsupportedOperationException {
@@ -80,7 +81,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     }
 
     public Result view(String queryName, Q initialQuery, C authorization,
-                       Map<String,String> facetsQuery, Q openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
+                        List<KeyValue<String, String>> facetsQuery, Q openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
         Result result;
         result = upstream.view(queryName, initialQuery, authorization, facetsQuery, openQuery, inheritedFilter, hitsRequested);
         return result;
