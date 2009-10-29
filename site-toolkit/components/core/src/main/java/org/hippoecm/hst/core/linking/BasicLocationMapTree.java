@@ -267,8 +267,13 @@ public class BasicLocationMapTree implements LocationMapTree{
          
          checkedLocationMapTreeItems.add(locationMapTreeItem);
          if(position == elements.length) {
-            // we are ready
-            return locationMapTreeItem;
+            // we are ready if this locationMapTreeItem contains at least one HstSiteMapItem
+            if(locationMapTreeItem.getHstSiteMapItems().size() > 0) {
+               return locationMapTreeItem;
+            } 
+            // there was a matched locationMapTreeItem, but it did not have sitemap items attached to it. Continue searching after 
+            // a move up
+            return traverseUp(locationMapTreeItem, params, position, elements, checkedLocationMapTreeItems);
         }
         if(locationMapTreeItem.getChild(elements[position]) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(elements[position]))) {
             return traverseInToLocationMapTreeItem(locationMapTreeItem.getChild(elements[position]), params, ++position, elements, checkedLocationMapTreeItems);
