@@ -55,7 +55,7 @@ import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetNavigat
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetResult;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSearch;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
-import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetsLeftNavigation;
+import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetsAvailableNavigation;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentFatalException;
@@ -446,7 +446,7 @@ public class BaseHstComponent extends GenericHstComponent {
         // facet navigation parts:
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetNavigation.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetsLeftNavigation.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetsAvailableNavigation.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSubNavigation.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetResult.class, true);
         
