@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.demo.components;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -31,23 +28,22 @@ public class ErrorSearchComponent extends AbstractSearchComponent {
         // set 404 status
         response.setStatus(HstResponse.SC_NOT_FOUND);
 
-        String query = request.getRequestURI().substring(request.getRequestURI().lastIndexOf('/') + 1);
-        if (query == null || "".equals(query)) {
-            return;
-        }
-
-        if (query.endsWith(".html")) {
-            query = query.substring(0, query.indexOf(".html"));
+        
+        String query;
+        
+        if(request.getParameter("query") != null) {
+            query = request.getParameter("query");
+        } else {
+            query = request.getPathInfo().substring(request.getPathInfo().lastIndexOf('/') + 1);
+            if (query == null || "".equals(query)) {
+                return;
+            }
+    
+            if (query.endsWith(".html")) {
+                query = query.substring(0, query.indexOf(".html"));
+            }
         }
         
-        try {
-            query = URLDecoder.decode(query,"UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            log.warn("Could not decode requestUri with UTF-8, will pass urlencoded string to query");
-        }
-
-        query = query.replace('+', ' ');
-
         doSearch(request, response, query, null, null, DEFAULT_PAGE_SIZE, getSiteContentBaseBean(request));
         request.setAttribute("isError", Boolean.TRUE);
 
