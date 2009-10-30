@@ -98,7 +98,7 @@ public class EventLabelTest extends PluginTest {
         DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
         assertEquals("/test/testDocument", parser.getDocumentPath());
 
-        EventModel label = new EventModel(new JcrNodeModel(eventNode), new JcrNodeModel(parser.getDocumentPath()));
+        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName());
         TestLabel testLabel = new TestLabel(label);
         assertEquals("One minute ago, testUser called test method on testDocument", testLabel.getModelObject());
     }
@@ -117,7 +117,7 @@ public class EventLabelTest extends PluginTest {
         DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
         assertEquals("/test/testDocument", parser.getDocumentPath());
 
-        EventModel label = new EventModel(new JcrNodeModel(eventNode), new JcrNodeModel(parser.getDocumentPath()));
+        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName());
         TestLabel testLabel = new TestLabel(label);
         assertEquals("One minute ago, testUser called test method on testDocument", testLabel.getModelObject());
     }
@@ -141,7 +141,7 @@ public class EventLabelTest extends PluginTest {
         String path = parser.getDocumentPath();
         assertEquals("/test/testDocument", path);
 
-        EventModel label = new EventModel(new JcrNodeModel(eventNode), new JcrNodeModel(parser.getDocumentPath()));
+        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName());
         TestLabel testLabel = new TestLabel(label);
         assertEquals("One minute ago, testUser called test method on testDocument", testLabel.getModelObject());
     }

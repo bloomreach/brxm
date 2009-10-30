@@ -25,15 +25,12 @@ import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.StringResourceModel;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.tools.CndSerializer;
@@ -45,6 +42,7 @@ import org.hippoecm.frontend.editor.workflow.dialog.RemodelDialog;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
@@ -52,6 +50,8 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.Change;
 import org.hippoecm.repository.standardworkflow.ChangeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -109,9 +109,18 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     return ex.getClass().getName() + ": " + ex.getMessage();
                 }
             }
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new ResourceReference(StdWorkflow.class, "update-all-16.png");
+            }
         });
     }
 
+    public IEditorManager getEditorManager() {
+        return getPluginContext().getService(getPluginConfig().getString("editor.id", IEditorManager.class.getName()), IEditorManager.class);
+    }
+    
     public static Map<String, List<Change>> makeCargo(javax.jcr.Session session, String prefix) throws RepositoryException {
         Map<String, List<Change>> changes = new TreeMap<String, List<Change>>();
         String uri = null;

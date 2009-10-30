@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.dashboard;
 
 import java.util.Iterator;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -54,6 +55,8 @@ public class BrowseLinkTarget extends JcrObject {
         try {
             Node node = getNode();
             path = node.getPath();
+        } catch (ItemNotFoundException e) {
+            path = getNodeModel().getItemModel().getPath();
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
             path = getNodeModel().getItemModel().getPath();

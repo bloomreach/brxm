@@ -20,14 +20,16 @@ import java.util.List;
 
 import javax.jcr.ItemExistsException;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.StdWorkflow;
+import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
-import org.hippoecm.frontend.editor.workflow.NamespaceValidator;
+import org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin;
 import org.hippoecm.frontend.editor.workflow.TemplateFactory;
 import org.hippoecm.frontend.editor.workflow.dialog.CreateDocumentTypeDialog;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -46,7 +48,7 @@ public class NewDocumentTypeAction extends Action {
     public String layout;
     public List<String> mixins = new LinkedList<String>();
 
-    public NewDocumentTypeAction(CompatibilityWorkflowPlugin plugin, String id, StringResourceModel name,
+    public NewDocumentTypeAction(RemodelWorkflowPlugin plugin, String id, StringResourceModel name,
             ILayoutProvider layouts) {
         super(plugin, id, name);
         this.layoutProvider = layouts;
@@ -73,25 +75,31 @@ public class NewDocumentTypeAction extends Action {
         }
 
         String prefix = (String) workflow.hints().get("prefix");
-        JcrTypeStore typeStore = new JcrTypeStore();
 
+        JcrTypeStore typeStore = new JcrTypeStore();
         ITypeDescriptor typeDescriptor = typeStore.getTypeDescriptor(prefix + ":" + name);
         List<String> types = typeDescriptor.getSuperTypes();
         for (String mixin : mixins) {
             types.add(mixin);
         }
         typeDescriptor.setSuperTypes(types);
-
         typeStore.save(typeDescriptor);
-
 
         // create layout
         // FIXME: should be managed by template engine
         JcrTemplateStore templateStore = new JcrTemplateStore(typeStore);
         IClusterConfig template = new TemplateFactory().createTemplate(layoutProvider.getDescriptor(layout));
-        template.put("type", workflow.hints().get("prefix") + ":" + name);
+        template.put("type", prefix + ":" + name);
         templateStore.save(template);
+
+        openEditor(prefix + ":" + name);
 
         return null;
     }
+
+    @Override
+    protected ResourceReference getIcon() {
+        return new ResourceReference(StdWorkflow.class, "doctype-new-16.png");
+    }
+    
 }

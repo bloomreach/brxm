@@ -130,14 +130,7 @@ if (!YAHOO.hippo.TreeHelper) {
             },
             
             update: function(id) {
-                var el = Dom.get(id);
-                if(el.treeHelper.timeoutID != null) {
-                    window.clearTimeout(el.treeHelper.timeoutID);
-                }
-                var me = this;
-                el.treeHelper.timeoutID = window.setTimeout(function() {
-                    me.render(id);
-                }, this.timeoutLength);
+                this.render(id);
             },
             
             getLayoutMax : function(el) {

@@ -34,6 +34,13 @@ import org.hippoecm.frontend.widgets.AbstractView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Utility base class for list render services.  A {@link ServiceTracker} tracks
+ * the {@link IRenderService}s that register at the service name {@linkplain #getItemId()}.
+ * By default, the name that is available under key "item" is used.
+ * <p>
+ * The service redraws completely when a child service (dis)appears.
+ */
 public class ListViewService extends RenderService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

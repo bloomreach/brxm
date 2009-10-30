@@ -24,7 +24,9 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -101,23 +103,24 @@ public class CurrentActivityPlugin extends RenderPlugin {
                 }
             }));
 
-            DocumentEvent documentEvent = new DocumentEvent((JcrNodeModel) item.getModel());
+            final DocumentEvent documentEvent = new DocumentEvent((JcrNodeModel) item.getModel());
             String path = documentEvent.getDocumentPath();
+            IModel nameModel = documentEvent.getName();
             if (path != null) {
                 path = fixPathForRequests(path);
-                EventModel label = new EventModel((JcrNodeModel) item.getModel(), new JcrNodeModel(path));
+                EventModel label = new EventModel((JcrNodeModel) item.getModel(), nameModel);
                 BrowseLinkTarget target = new BrowseLinkTarget(path);
                 BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", new Model(target),
                         label);
                 item.add(link);
             } else {
-                EventModel label = new EventModel((JcrNodeModel) item.getModel());
+                EventModel label = new EventModel((JcrNodeModel) item.getModel(), nameModel);
                 Label entryLabel = new Label("entry", label);
                 entryLabel.setEscapeModelStrings(false);
                 item.add(entryLabel);
             }
         }
-        
+
         /**
          * FIXME: This is a temporary(?) best effort fix for not showing "hippo:request" in 
          * the activity view. 
@@ -128,17 +131,17 @@ public class CurrentActivityPlugin extends RenderPlugin {
             if (!path.endsWith("hippo:request")) {
                 return path;
             }
-            
+
             String[] pathElts = path.split("/");
             StringBuilder newPath = new StringBuilder();
             // build new path, strip last element, eg "hippo:request"
-            for (int i=0; i < pathElts.length - 1; i++) {
+            for (int i = 0; i < pathElts.length - 1; i++) {
                 if (pathElts[i].length() > 0) {
                     newPath.append("/").append(pathElts[i]);
                 }
             }
             // add last part again to point to document
-            newPath.append("/").append(pathElts[pathElts.length -2]);
+            newPath.append("/").append(pathElts[pathElts.length - 2]);
             return newPath.toString();
         }
     }

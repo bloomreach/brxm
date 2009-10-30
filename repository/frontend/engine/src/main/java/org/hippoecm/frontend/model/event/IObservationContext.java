@@ -17,29 +17,39 @@ package org.hippoecm.frontend.model.event;
 
 import org.apache.wicket.IClusterable;
 
+/**
+ * The context representing the observer registry to the observable.
+ * Framework clients should not implement this interface.
+ */
 public interface IObservationContext extends IClusterable {
     final static String SVN_ID = "$Id$";
 
     /**
      * Notify observers of events that pertain to an observable.
      * The events are dispatched to registered observers.
+     * <p>
+     * Implementations should minimize the number of calls to this method,
+     * as all observers will be notified.
      * 
-     * @param events The events to be dispatched to interested parties
+     * @param events The events to be dispatched to observers
      */
     void notifyObservers(EventCollection<? extends IEvent> events);
 
     /**
-     * Register an observer.
-     * Allows observables to delegate subscriptions to one another.
+     * Register an observer.  Allows observables to delegate subscriptions to one another.
+     * When an observable has been implemented in terms of another observable, it can
+     * translate events of the underlying observable into events that are appropriate for
+     * its own type.
      * 
      * @param observer
      */
     void registerObserver(IObserver observer);
 
     /**
-     * Unegister an observer.
+     * Unregister an observer.
      * 
      * @param observer
      */
     void unregisterObserver(IObserver observer);
+
 }

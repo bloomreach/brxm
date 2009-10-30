@@ -166,6 +166,10 @@ public class TabsPlugin extends RenderPlugin {
     
     void onClose(Tab tabbie, AjaxRequestTarget target) {
         IServiceReference<IRenderService> reference = getPluginContext().getReference(tabbie.renderer);
+        if (reference == null) {
+            log.error("Could not find render service for a tab");
+            return;
+        }
         IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
         if (editor != null) {
             try {

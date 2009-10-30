@@ -24,76 +24,107 @@ import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 import org.hippoecm.frontend.plugins.yui.header.templates.FinalTextTemplate;
 import org.onehippo.yui.YuiNamespace;
 
+/**
+ * This interface is used to render the following header elements: YUI-modules, javascript sources, css stylesheets,
+ * on-dom-load/on-win-load scripts, {@link DynamicTextTemplate}s and {@link FinalTextTemplate}s.  
+ * 
+ * Implementations are responsible for loading YUI-modules and filtering static resources from subsequent requests, to 
+ * minimize the response footprint.  
+ */
 public interface IYuiContext extends IHeaderContributor {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**
-     * Add a YUI module from the YAHOO namespace
-     * @param module YUI module name
+     * Load YUI module from the {@link org.onehippo.yui.YahooNamespace} context
+     * 
+     * @param module 
+     *            YUI module name
      */
     void addModule(String module);
 
     /**
-     * Add a YUI module from the specified namespace
-     * @param ns Namespace to load module from
-     * @param module Module name
+     * Load YUI module from the specified {@link org.onehippo.yui.YuiNamespace} context
+     * 
+     * @param module 
+     *            YUI module name
+     * @param namespace 
+     *            {@link org.onehippo.yui.YuiNamespace} to use as context for module
      */
-    void addModule(YuiNamespace ns, String module);
+    void addModule(YuiNamespace namespace, String module);
 
     /**
-     * Add a static template to the response. The model provided by the parameters map is final.
+     * Add a static {@link TextTemplate} to the response. The model provided by the parameters <code>Map</code> is final.
+     *
      * @param clazz
+     *            Class that acts as context
      * @param filename
+     *            Name of file relative to provided class
      * @param parameters
+     *            Parameters that will be interpolated with the {@link TextTemplate}
      */
     void addTemplate(Class<?> clazz, String filename, Map<String, Object> parameters);
 
     /**
+     * Add a static template to the response.
      * 
      * @param template
+     *            {@link TextTemplate} that will be added to the response.
      */
     void addTemplate(FinalTextTemplate template);
 
     /**
-     * Add a dynamic template to the response. The model will be refreshed upon every request.
+     * Add a {@link DynamicTextTemplate} to the response. The model will be refreshed upon every request.
+     * 
      * @param template
+     *            {@link DynamicTextTemplate} that will be added to the response.
      */
     void addTemplate(DynamicTextTemplate template);
 
     /**
-     * Add static javascript String that get's executed on pageLoad
-     * @param string String of javascript code which is evaluated on the client
+     * Add static javascript <code>String</code> that will be executed on the browsers' window-load event
+     * 
+     * @param onload 
+     *            <code>String</code> of javascript code that will be executed on the client.  
      */
-    void addOnWinLoad(String string);
+    void addOnWinLoad(String onload);
 
     /**
-     * Add dynamic javascript that get's executed on pageLoad
-     * @param string IModel that returns javascript code which is evaluated on the client
+     * Add dynamic javascript that will be executed on the browsers' window-load event.
+     * 
+     * @param model 
+     *            {@link IModel} which returns javascript code that will be executed on the client.
      */
     void addOnWinLoad(IModel model);
 
     /**
-     * Add static javascript String that get's executed on browsers DOM-ready-event
-     * @param string String of javascript code which is evaluated on the client
+     * Add static javascript <code>String</code> that will be executed on the browsers' dom-ready event
+     * 
+     * @param onload 
+     *            <code>String</code> of javascript code that will be executed on the client.  
      */
-    void addOnDomLoad(String string);
+    void addOnDomLoad(String onload);
 
     /**
-     * Add dynamic javascript that get's executed on browsers DOM-ready-event
-     * @param string IModel that returns javascript code which is evaluated on the client
+     * Add dynamic javascript that will be executed on the browsers' dom-ready event.
+     * 
+     * @param model 
+     *            {@link IModel} which returns javascript code that will be executed on the client.
      */
     void addOnDomLoad(IModel model);
     
     /**
      * Helper method for adding a javascript reference
+     * 
      * @param reference
+     *            {@link ResourceReference} that should be added to the head
      */
     void addJavascriptReference(ResourceReference reference);
 
     /**
      * Helper method for adding css reference
+     *
      * @param reference
+     *            {@link ResourceReference} that should be added to the head
      */
     void addCssReference(ResourceReference reference);
 

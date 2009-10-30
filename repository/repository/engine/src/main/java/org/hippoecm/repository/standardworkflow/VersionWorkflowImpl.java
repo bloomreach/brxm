@@ -251,19 +251,17 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
 
     private static final long serialVersionUID = 1L;
     @SuppressWarnings("unused")
-    private Session userSession;
     private Node subject;
     private Version version;
 
     public VersionWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException,
             RepositoryException {
         if (subject.isNodeType("nt:frozenNode")) {
-            this.subject = findSubject(subject);
-            this.version = (Version) subject.getParent();
+            this.subject = findSubject(rootSession.getRootNode().getNode(subject.getPath().substring(1)));
+            this.version = (Version) rootSession.getRootNode().getNode(subject.getParent().getPath().substring(1));
         } else {
-            this.subject = subject;
+            this.subject = rootSession.getRootNode().getNode(subject.getPath().substring(1));
         }
-        this.userSession = userSession;
     }
 
     public Map<String, Serializable> hints() {

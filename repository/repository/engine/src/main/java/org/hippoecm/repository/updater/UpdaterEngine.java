@@ -83,7 +83,6 @@ import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.impl.SessionDecorator;
-;
 
 public class UpdaterEngine {
     @SuppressWarnings("unused")
@@ -1044,7 +1043,7 @@ public class UpdaterEngine {
 
         @Override
         protected final void entering(Node node, int level) throws RepositoryException {
-            try {
+            /*try {
                 try {
                     node.addMixin("hipposys:unstructured");
                 } catch(NamespaceException ex) {
@@ -1052,7 +1051,7 @@ public class UpdaterEngine {
                     node.addMixin("hipposys_1_0:unstructured");
                 }
             } catch(RepositoryException ex) {
-            }
+            }*/
         }
 
         @Override
@@ -1083,15 +1082,15 @@ public class UpdaterEngine {
                 if (mixinsChanged) {
                     node.setProperty("jcr:mixinTypes", mixins);
                 }
-                try {
+                /*try {
                     try {
                         node.removeMixin("hipposys:unstructured");
                     } catch(NamespaceException ex) {
                         // FIXME: should be removed
-                        node.addMixin("hipposys_1_0:unstructured");
+                         node.removeMixin("hipposys_1_0:unstructured");
                     }
                 } catch(RepositoryException ex) {
-                }
+                }*/
             }
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();

@@ -82,12 +82,17 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
     }
 
     public TreeNode getChildAt(int i) {
+        if (i == -1) {
+            // this is an artifact of the DefaultAbstractTree.isNodeLast(TreeNode)
+            // in line: parent.getChildAt(parent.getChildCount() - 1).equals(node)
+            // if the parent doesn't have children
+            return new LabelTreeNode(this, "empty stub tree node");
+        }
         ensureChildrenLoaded();
-        if (i >= 0 && i < children.size()) {
+        if (i >= 0 && i < childCount) {
             return children.get(i);
         }
-        log.error("Invalid index: " + i + " of " + children.size() + " children [node "
-                + nodeModel.getItemModel().getPath() + "]");
+        log.warn("Invalid index: " + i + " of " + childCount + " children");
         return new LabelTreeNode(this, "invalid tree node");
     }
 
@@ -127,7 +132,6 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
     @Override
     public void detach() {
         reloadChildren = true;
-        //reloadChildCount = true;
         if (children != null) {
             for (TreeNode child : children) {
                 if (child instanceof IDetachable) {
@@ -166,12 +170,15 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
             reloadChildren = false;
             reloadChildCount = false;
             children = new ArrayList<TreeNode>();
-        } else if (reloadChildren) {
+            childCount = 0;
+        } else if (children == null || reloadChildren) {
             try {
                 children = loadChildren();
                 childCount = children.size();
             } catch (RepositoryException e) {
-                log.error(e.getMessage());
+                log.warn("Unable to load children, settting empty list: " + e.getMessage());
+                children = new ArrayList<TreeNode>();
+                childCount = 0;
             }
             reloadChildren = false;
             reloadChildCount = false;
@@ -188,13 +195,11 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
         }
         JcrTreeNode treeNode = (JcrTreeNode) object;
         return nodeModel.equals(treeNode.getNodeModel());
-        //return new EqualsBuilder().append(nodeModel, treeNode.nodeModel).isEquals();
     }
 
     @Override
     public int hashCode() {
         return nodeModel.hashCode();
-        //return new HashCodeBuilder(467, 17).append(nodeModel).toHashCode();
     }
 
     @Override

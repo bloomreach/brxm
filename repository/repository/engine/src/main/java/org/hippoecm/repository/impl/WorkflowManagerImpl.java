@@ -297,6 +297,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
 
                 String uuid = null;
+                String path = item.getPath();
                 /* The synchronized must operate on the core root session, because there is
                  * only one such session, while there may be many decorated ones.
                  */
@@ -356,7 +357,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             }
                         }
                         interfaces = (Class[])vector.toArray(new Class[vector.size()]);
-                        InvocationHandler handler = new WorkflowInvocationHandler(workflow, uuid, types);
+                        InvocationHandler handler = new WorkflowInvocationHandler(workflow, uuid, path, types);
                         Class proxyClass = Proxy.getProxyClass(workflow.getClass().getClassLoader(), interfaces);
                         workflow = (Workflow)proxyClass.getConstructor(new Class[] {InvocationHandler.class}).
                                 newInstance(new Object[] {handler});
@@ -451,14 +452,31 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
 
+    private String getPath(String uuid) {
+        if (uuid==null||uuid.equals("")) {
+            return null;
+        }
+        try {
+            Node node = session.getNodeByUUID(uuid);
+            return node.getPath();
+        } catch (ItemNotFoundException e) {
+            return null;
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
     class WorkflowInvocationHandler implements InvocationHandler {
         Workflow upstream;
         String uuid;
         Node types;
+        String path;
 
-        WorkflowInvocationHandler(Workflow upstream, String uuid, Node types) {
+        WorkflowInvocationHandler(Workflow upstream, String uuid, String path, Node types) {
             this.upstream = upstream;
             this.uuid = uuid;
+            this.path = path;
             this.types = types;
         }
 
@@ -473,7 +491,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
             rootSession.refresh(false);
 
             try {
-                String path = getPath(uuid);
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
                 synchronized (SessionDecorator.unwrap(rootSession)) {
                     returnObject = targetMethod.invoke(upstream, args);
@@ -558,21 +575,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 } else {
                     log.info(new String(sb));
                 }
-            }
-        }
-
-        String getPath(String uuid) {
-            if (uuid==null||uuid.equals("")) {
-                return null;
-            }
-            try {
-                Node node = session.getNodeByUUID(uuid);
-                return node.getPath();
-            } catch (ItemNotFoundException e) {
-                return null;
-            } catch (RepositoryException e) {
-                log.error(e.getMessage(), e);
-                return null;
             }
         }
     }

@@ -37,6 +37,18 @@ import org.onehippo.yui.YuiNamespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A Wicket Ajax request can generate a response containing additional javascript and css resources
+ * to be loaded on the client. Subsequently requesting a component that dependends on, for example,
+ * six YUI-modules that have to be loaded in a specific order as well, can lead to some heavy extra 
+ * data in the response, not to mention the IO and file parsing that is produced by the YUI module 
+ * loading mechanism.
+ * This class uses the {@link CachedYuiDependencyResolver} to retrieve the <code>Set</code> 
+ * of resources belonging to a YUI-module and caches them locally. {@link YuiContext}s will share
+ * a reference to the resources, making it possible to skip static resources that have already been
+ * loaded on the client. 
+ * 
+ */
 public class YuiHeaderCache implements IHeaderContributor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

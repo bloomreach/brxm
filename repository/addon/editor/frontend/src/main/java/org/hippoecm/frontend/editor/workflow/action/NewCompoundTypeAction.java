@@ -15,14 +15,16 @@
  */
 package org.hippoecm.frontend.editor.workflow.action;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.StdWorkflow;
+import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
-import org.hippoecm.frontend.editor.workflow.NamespaceValidator;
+import org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin;
 import org.hippoecm.frontend.editor.workflow.TemplateFactory;
 import org.hippoecm.frontend.editor.workflow.dialog.CreateCompoundTypeDialog;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -39,7 +41,7 @@ public class NewCompoundTypeAction extends Action {
     public String name;
     public String layout;
 
-    public NewCompoundTypeAction(CompatibilityWorkflowPlugin plugin, ILayoutProvider layouts) {
+    public NewCompoundTypeAction(RemodelWorkflowPlugin plugin, ILayoutProvider layouts) {
         super(plugin, "new-compound-type", new StringResourceModel("new-compound-type", plugin, null));
         this.layoutProvider = layouts;
     }
@@ -61,13 +63,23 @@ public class NewCompoundTypeAction extends Action {
         NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
         workflow.addType("compound", name);
 
+        String prefix = (String) workflow.hints().get("prefix");
+
         // create layout
         // FIXME: should be managed by template engine
         JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeStore());
         IClusterConfig template = new TemplateFactory().createTemplate(layoutProvider.getDescriptor(layout));
-        template.put("type", workflow.hints().get("prefix") + ":" + name);
+        template.put("type", prefix + ":" + name);
         templateStore.save(template);
+
+        openEditor(prefix + ":" + name);
 
         return null;
     }
+    
+    @Override
+    protected ResourceReference getIcon() {
+        return new ResourceReference(StdWorkflow.class, "compound-new-16.png");
+    }
+    
 }

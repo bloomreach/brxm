@@ -39,6 +39,11 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A Wicket {@link org.apache.wicket.Session} that maintains a reference
+ * to a JCR {@link javax.jcr.Session}.  It is available to plugins as a
+ * threadlocal variable during request processing.
+ */
 public class UserSession extends WebSession {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -62,6 +67,9 @@ public class UserSession extends WebSession {
         jcrSessionModel.logout();
     }
 
+    /**
+     * Retrieve the JCR {@link javax.jcr.Session} that is bound to the Wicket {@link org.apache.wicket.Session}.
+     */
     public Session getJcrSession() {
         return jcrSessionModel.getSession();
     }

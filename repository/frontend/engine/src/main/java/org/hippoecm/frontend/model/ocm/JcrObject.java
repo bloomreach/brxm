@@ -49,6 +49,7 @@ abstract public class JcrObject implements IDetachable, IObservable {
     private JcrNodeModel nodeModel;
     private IObserver observer;
     private IObservationContext obContext;
+    private boolean observing = false;
 
     public JcrObject(JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
@@ -89,7 +90,7 @@ abstract public class JcrObject implements IDetachable, IObservable {
     }
 
     protected IObservationContext getObservationContext() {
-        return obContext;
+        return observing? obContext : null;
     }
 
     /**
@@ -101,6 +102,7 @@ abstract public class JcrObject implements IDetachable, IObservable {
     abstract protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events);
 
     public void startObservation() {
+        observing = true;
         obContext.registerObserver(observer = new IObserver() {
             private static final long serialVersionUID = 1L;
 
@@ -117,6 +119,7 @@ abstract public class JcrObject implements IDetachable, IObservable {
 
     public void stopObservation() {
         obContext.unregisterObserver(observer);
+        observing = false;
     }
 
     @Override

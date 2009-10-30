@@ -31,6 +31,13 @@ import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
 
+/**
+ * Utility base class for GUI plugins.  Registers itself as an {@link IRenderService},
+ * tracks extensions, etcetera.  See {@link AbstractRenderService} for a description of the
+ * configuration options.
+ * <p>
+ * In addition, it has simple plugin-management capabilities.
+ */
 public class RenderPlugin extends RenderService implements IPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -76,6 +83,22 @@ public class RenderPlugin extends RenderService implements IPlugin {
         }
     }
 
+    /**
+     * Create a child Component with a specified id and configuration.  A cluster that
+     * contains the configured plugin is started.  The component from the render service
+     * of the plugin is returned, or null if no such service is available.
+     * <p>
+     * Only one plugin can be created with a specific component id.  When a plugin is created
+     * for an id that was already used before, the old plugin is stopped.
+     * <p>
+     * The created plugin inherits configuration from this render plugin.
+     * 
+     * @param id the Wicket id of the {@link Component}
+     * @param config
+     * @return a Component when the configuration specifies a plugin that registers an
+     *         {@link IRenderService} under its "wicket.id" key, or null when the plugin
+     *         does not.
+     */
     protected Component newPlugin(String id, IPluginConfig config) {
         if (config == null) {
             return new EmptyPanel(id);

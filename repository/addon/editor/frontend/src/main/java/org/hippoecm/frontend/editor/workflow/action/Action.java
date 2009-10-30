@@ -17,24 +17,46 @@ package org.hippoecm.frontend.editor.workflow.action;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
+import org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Action extends WorkflowAction {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static final Logger log = LoggerFactory.getLogger(Action.class);
+    
     private static final long serialVersionUID = 1L;
 
-    public Action(CompatibilityWorkflowPlugin plugin, String id, String name,
+    private RemodelWorkflowPlugin plugin;
+    
+    public Action(RemodelWorkflowPlugin plugin, String id, String name,
             ResourceReference iconModel) {
         plugin.super(id, name, iconModel);
+        this.plugin = plugin;
     }
 
-    public Action(CompatibilityWorkflowPlugin plugin, String id, StringResourceModel name) {
+    public Action(RemodelWorkflowPlugin plugin, String id, StringResourceModel name) {
         plugin.super(id, name);
+        this.plugin = plugin;
     }
 
+    protected void openEditor(String type) {
+        IEditorManager editorMgr = plugin.getEditorManager();
+        if (editorMgr != null) {
+            /* IEditor editor = */ try {
+                editorMgr.openEditor(new JcrNodeModel("/hippo:namespaces/" + type.replace(':', '/')));
+            } catch (ServiceException ex) {
+                log.warn("Unable to open editor", ex);
+            }
+        }
+    }
+    
     @Override
     public void execute() {
         try {

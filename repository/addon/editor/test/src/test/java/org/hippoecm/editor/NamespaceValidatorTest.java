@@ -13,8 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.workflow;
+package org.hippoecm.editor;
 
+import org.hippoecm.editor.NamespaceValidator;
 import org.junit.Test;
 
 public class NamespaceValidatorTest {
@@ -51,6 +52,8 @@ public class NamespaceValidatorTest {
 
     @Test
     public void testRejectableNames() {
+        checkName(null);
+        checkName("");
         checkName("abc1");
         checkName("x+y");
         checkName("d:f");
@@ -66,5 +69,7 @@ public class NamespaceValidatorTest {
         checkURI("http://example.org/test");
         checkURI("example.org/test/1.0");
         checkURI("test");
+        checkURI("");
+        checkURI(null);
     }
 }

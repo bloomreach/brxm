@@ -442,6 +442,12 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                         }
                         mergeInitializationNode.remove();
                         rootSession.save();
+                    } catch (PathNotFoundException ex) {
+                        log.error("Rejected old style configuration content", ex);
+                        for(NodeIterator removeTempIter = rootSession.getRootNode().getNode("hippo:configuration/hippo:temporary").getNodes(); removeTempIter.hasNext(); ) {
+                            removeTempIter.nextNode().remove();
+                        }
+                        rootSession.getRootNode().getNode("hippo:configuration/hippo:temporary").save();
                     } catch (AccessDeniedException ex) {
                         throw new RepositoryException("Could not initialize repository with configuration content", ex);
                     } catch (ConstraintViolationException ex) {

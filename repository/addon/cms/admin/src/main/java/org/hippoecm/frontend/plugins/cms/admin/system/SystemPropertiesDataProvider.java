@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.system;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +36,9 @@ public class SystemPropertiesDataProvider extends SortableDataProvider {
     
     private static final long serialVersionUID = 1L;
 
+    interface SystemProperty extends Map.Entry<String, String>, Serializable {
+    }
+
 //    SortedMap<String,String> info = new TreeMap<String,String>();
     List<Entry<String,String>> list = new ArrayList<Entry<String,String>>();
     
@@ -44,8 +48,10 @@ public class SystemPropertiesDataProvider extends SortableDataProvider {
             keys.add((String) o);
         }
         for (final String s : keys) {
-            list.add(new Map.Entry<String, String>()
+            list.add(new SystemProperty()
             {
+                private static final long serialVersionUID = 1L;
+
                 public String getKey()
                 {
                     return s;

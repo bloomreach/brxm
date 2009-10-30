@@ -15,12 +15,15 @@
  */
 package org.hippoecm.frontend;
 
+import org.apache.wicket.model.StringResourceModel;
+
 public class InvalidLoginPage extends Home {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     public InvalidLoginPage() {
         super();
-        info("Incorrect username or password. Please try again.");
+        
+        info(new StringResourceModel("invalid.login", this, null).getString());
     }
 }

@@ -34,6 +34,11 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Model for JCR {@link Item}s.  The model tracks the Item as well as it can, using the
+ * first referenceable ancestor plus a relative path as the identification/retrieval method.
+ * When the Item (or one of its ancestors) is moved, this is transparent.
+ */
 public class JcrItemModel extends LoadableDetachableModel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -262,7 +267,12 @@ public class JcrItemModel extends LoadableDetachableModel {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", getPath()).toString();
+        boolean isAttached = isAttached();
+        String string = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", getPath()).toString();
+        if (!isAttached) {
+            detach();
+        }
+        return string;
     }
 
     @Override

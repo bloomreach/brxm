@@ -20,15 +20,21 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.validation.validator.PatternValidator;
+import org.apache.wicket.validation.IErrorMessageSource;
+import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.IValidationError;
+import org.apache.wicket.validation.IValidator;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.editor.NamespaceValidator;
+import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -42,7 +48,6 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,29 +153,57 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     public class CopyModelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
         private static final long serialVersionUID = 1L;
 
+        private String name;
+
         public CopyModelDialog(CompatibilityWorkflowPlugin.WorkflowAction action) {
             action.super();
             WorkflowDescriptorModel workflowModel = (WorkflowDescriptorModel) EditmodelWorkflowPlugin.this.getModel();
             PropertyModel model = new PropertyModel(action, "name");
             try {
-                model.setObject(workflowModel.getNode().getName());
+                model.setObject(name = workflowModel.getNode().getName());
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
             TextFieldWidget widget = new TextFieldWidget("name", model);
-            ((FormComponent) widget.get("widget")).add(new PatternValidator("[a-z]+"));
+            ((FormComponent) widget.get("widget")).add(new IValidator() {
+                private static final long serialVersionUID = 1L;
+
+                public void validate(IValidatable validatable) {
+                    try {
+                        NamespaceValidator.checkName((String) validatable.getValue());
+                    } catch (Exception e) {
+                        validatable.error(new ExceptionError(e));
+                    }
+                }
+
+            }).setRequired(true);
             add(widget);
             setFocus(widget);
         }
 
         @Override
         public IModel getTitle() {
-            return new StringResourceModel("copy-model", this, null);
+            return new StringResourceModel("copy-model", this, null, new Object[] { new PropertyModel(this, "name") });
         }
 
         @Override
         public IValueMap getProperties() {
             return SMALL;
         }
+    }
+
+    private static class ExceptionError implements IValidationError, IClusterable {
+        private static final long serialVersionUID = 1L;
+
+        private Exception exception;
+        
+        ExceptionError(Exception e) {
+            this.exception = e;
+        }
+        
+        public String getErrorMessage(IErrorMessageSource messageSource) {
+            return exception.getLocalizedMessage();
+        }
+        
     }
 }

@@ -241,12 +241,8 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
         }
 
         public IModel getTitle() {
-            try {
-                return new StringResourceModel("close-document", this, null, new Object[] { new PropertyModel(
-                        ((WorkflowDescriptorModel)TemplateEditingWorkflowPlugin.this.getModel()).getNode(), "name") }, "Close {0}");
-            } catch(RepositoryException ex) {
-                return new StringResourceModel("close-document", this, null, new Object[] { });
-            }
+            return new StringResourceModel("close-document", this, null, new Object[] { new PropertyModel(
+                    TemplateEditingWorkflowPlugin.this, "model.node.name") }, "Close {0}");
         }
 
     }

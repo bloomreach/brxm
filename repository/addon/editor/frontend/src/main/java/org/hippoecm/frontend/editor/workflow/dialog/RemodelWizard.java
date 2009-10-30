@@ -84,9 +84,9 @@ public class RemodelWizard extends Wizard {
                         dialog.remodel();
                         result = new Label(id, new StringResourceModel("success", this, null));
                     } catch (Exception e) {
-                        log.error(e.getMessage(), e);
-                        String msg = "  ..FAILED!" + e.getClass().getName() + ": " + e.getMessage();
-                        result = new Label(id, msg);
+                        result = new Label(id, new StringResourceModel("failed", this, null));
+                        log.error("Error during workflow execution", e);
+                        error(e);
                     }
                     return result;
                 }

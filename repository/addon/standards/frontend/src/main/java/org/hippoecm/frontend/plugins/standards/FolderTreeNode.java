@@ -84,7 +84,7 @@ public class FolderTreeNode extends JcrTreeNode {
                     return 1;
                 }
             } catch (RepositoryException e) {
-                log.error(e.getMessage());
+                log.warn("Unable to get child count: " + e.getMessage());
             }
         }
         return super.getChildCount();

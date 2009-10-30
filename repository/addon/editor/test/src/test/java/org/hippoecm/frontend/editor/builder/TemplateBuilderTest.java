@@ -245,6 +245,43 @@ public class TemplateBuilderTest extends PluginTest {
 
     @Test
     // regression test for HREPTWO-3155
+    public void testRemoveLast() throws Exception {
+        // YUCK!
+        WebAppBehavior yuiWebApp = new WebAppBehavior(new WebAppSettings(new JavaPluginConfig()));
+        home.add(yuiWebApp);
+        context.registerService(yuiWebApp, "service.behavior.yui");
+        home.add(new PageLayoutPlugin(context, new JavaPluginConfig()));
+
+        Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces/test/test");
+        JcrNodeModel nodeModel = new JcrNodeModel(templateTypeNode);
+        ModelReference modelRef = new ModelReference("service.model", nodeModel);
+        modelRef.init(context);
+
+        TemplateEngineFactory factory = new TemplateEngineFactory();
+        context.registerService(factory, "service.engine");
+        ITemplateEngine engine = context.getService("service.engine", ITemplateEngine.class);
+
+        ITypeDescriptor type = engine.getType(nodeModel);
+        IClusterConfig template = engine.getTemplate(type, "view");
+        JavaPluginConfig parameters = new JavaPluginConfig();
+        parameters.put("wicket.id", "service.root");
+        parameters.put("wicket.model", "service.model");
+        parameters.put("engine", "service.engine");
+        parameters.put("mode", "edit");
+        IClusterControl cluster = context.newCluster(template, parameters);
+        cluster.start();
+
+        refreshPage();
+
+        // remove
+        tester.clickLink("root:extension.form:template:preview:view:1:item:remove");
+        
+        // remove
+        tester.clickLink("root:extension.form:template:preview:view:1:item:remove");
+    }
+
+    @Test
+    // regression test for HREPTWO-3155
     public void testMoveRemove() throws Exception {
         // YUCK!
         WebAppBehavior yuiWebApp = new WebAppBehavior(new WebAppSettings(new JavaPluginConfig()));

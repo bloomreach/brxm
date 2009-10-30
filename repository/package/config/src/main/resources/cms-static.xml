@@ -790,6 +790,7 @@
       <sv:value>service.logout</sv:value>
     </sv:property>
   </sv:node>
+
   <sv:node sv:name="adminPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -805,10 +806,43 @@
     </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.tabs</sv:value>
+      <sv:value>service.behavior.adminlayout</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.tab</sv:value>
     </sv:property>
+  </sv:node>
+  <sv:node sv:name="adminLayout">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.adminlayout</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
+    </sv:property>
+    <sv:node sv:name="yui.config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="center" sv:type="String">
+        <sv:value>id=hippo-controlpanel-perspective-center,body=hippo-controlpanel-perspective-center-body,scroll=true</sv:value>
+      </sv:property>
+      <sv:property sv:name="linked.with.parent" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="root.id" sv:type="String">
+        <sv:value>hippo-controlpanel-perspective-wrapper</sv:value>
+      </sv:property>
+      <sv:property sv:name="top" sv:type="String">
+        <sv:value>id=hippo-controlpanel-perspective-top,body=hippo-controlpanel-perspective-top-body,height=35</sv:value>
+      </sv:property>
+      <sv:property sv:name="units" sv:type="String">
+        <sv:value>top</sv:value>
+        <sv:value>center</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 </sv:node>
 

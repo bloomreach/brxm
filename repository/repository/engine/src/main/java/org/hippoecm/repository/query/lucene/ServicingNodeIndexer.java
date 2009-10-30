@@ -181,7 +181,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
             // TODO avoid hard-coded namespace
             hippo_ns_prefix = this.mappings.getPrefix("http://www.onehippo.org/jcr/hippo/nt/2.0");
         } catch (NamespaceException e) {
-            log.warn("Cannot get 'hippo' lucene prefix. ", e.getMessage());
+            //log.warn("Cannot get 'hippo' lucene prefix. ", e.getMessage());
             return;
         }
         String fieldName = hippo_ns_prefix + ":" + FieldNames.FULLTEXT_PREFIX + "_localname";

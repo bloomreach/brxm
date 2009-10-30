@@ -49,6 +49,8 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefiniti
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +117,8 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         private TypesDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
                 TableSelectionListener selectionListener, boolean triState, IPagingDefinition pagingDefinition) {
             super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+            
+            add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())));
         }
 
         void redraw(Item item) {

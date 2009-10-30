@@ -35,6 +35,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
 
 import org.slf4j.Logger;
@@ -59,8 +60,8 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
         this.subject = subject;
     }
 
-    public Map<String,Serializable> hints() {
-        return new TreeMap<String,Serializable>();
+    public Map<String, Serializable> hints() {
+        return new TreeMap<String, Serializable>();
     }
 
     public String edit() throws WorkflowException, MappingException, RepositoryException {
@@ -69,7 +70,8 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
 
         Node draft = null;
         if (subject.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
-            NodeIterator iter = subject.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+            NodeIterator iter = subject.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(
+                    HippoNodeType.HIPPOSYSEDIT_NODETYPE);
             while (iter.hasNext()) {
                 Node versionNode = iter.nextNode();
                 if (!versionNode.isNodeType(HippoNodeType.NT_REMODEL)) {
@@ -105,6 +107,12 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
         if (!subject.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
+        try {
+            NamespaceValidator.checkName(name);
+        } catch (Exception e) {
+            throw new WorkflowException("Invalid name " + name);
+        }
+
         String path = subject.getPath();
         path = path.substring(0, path.lastIndexOf("/") + 1);
         path += name;
@@ -115,7 +123,8 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
 
         // clean up
         if (target.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
-            NodeIterator nodes = target.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+            NodeIterator nodes = target.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(
+                    HippoNodeType.HIPPOSYSEDIT_NODETYPE);
             while (nodes.hasNext()) {
                 Node child = nodes.nextNode();
                 if (child.isNodeType(HippoNodeType.NT_REMODEL)) {
