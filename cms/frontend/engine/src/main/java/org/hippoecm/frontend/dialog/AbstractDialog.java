@@ -65,11 +65,16 @@ import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Utility class for implementing the {@link IDialogService.Dialog} interface.
+ * Provides OK and Cancel buttons by default, that can be manipulated.
+ */
 public abstract class AbstractDialog extends Form implements IDialogService.Dialog, IAjaxIndicatorAware {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
     protected final static IValueMap SMALL = new ValueMap("width=380,height=250");
@@ -121,6 +126,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     }
 
     protected class ExceptionFeedbackPanel extends FeedbackPanel {
+        private static final long serialVersionUID = 1L;
 
         boolean expanded;
 
@@ -131,6 +137,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         }
 
         protected class ExceptionLabel extends Panel {
+            private static final long serialVersionUID = 1L;
 
             private WebMarkupContainer details;
             private AjaxLink link;
@@ -139,6 +146,8 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
                 super(id);
                 setOutputMarkupId(true);
                 add(link = new AjaxLink("message") {
+                    private static final long serialVersionUID = 1L;
+
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
                         // the following does not work as the list is re-created
@@ -192,8 +201,11 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         @Override
         protected FeedbackMessagesModel newFeedbackMessagesModel() {
             return new FeedbackMessagesModel(this) {
-                private List messages;
+                private static final long serialVersionUID = 1L;
 
+                private List<FeedbackMessage> messages;
+
+                @SuppressWarnings("unchecked")
                 @Override
                 protected List processMessages(final List messages) {
                     this.messages = messages;
@@ -427,6 +439,8 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         dialogService.close();
     }
 
+    // button manipulation routines
+
     public void setNonAjaxSubmit() {
         ok.setAjax(false);
     }
@@ -471,6 +485,9 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         setFocus(cancel.getButton());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setDialogService(IDialogService dialogService) {
         this.dialogService = dialogService;
     }
@@ -479,6 +496,9 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         return "button";
     }
 
+    /**
+     * Add a {@link Button} to the button bar.  The id of the button must equal "button".
+     */
     protected void addButton(Button button) {
         if (getButtonId().equals(button.getId())) {
             buttons.addFirst(new ButtonWrapper(button));
@@ -487,6 +507,9 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         }
     }
 
+    /**
+     * Remove a button from the button bar.
+     */
     protected void removeButton(Button button) {
         for (ButtonWrapper bw : buttons) {
             if (bw.getButton().equals(button)) {
@@ -520,10 +543,16 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
     protected void onCancel() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Component getComponent() {
         return container;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void render(PluginRequestTarget target) {
         if (target != null) {
             target.addComponent(feedback);
@@ -540,9 +569,15 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void onClose() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public IValueMap getProperties() {
         return LARGE;
     }

@@ -36,6 +36,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
+import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
 
 public class AssetGalleryPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
@@ -83,6 +84,8 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
         public DraggableListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
                 TableSelectionListener selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
             super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+            
+            add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())));
         }
 
         @Override

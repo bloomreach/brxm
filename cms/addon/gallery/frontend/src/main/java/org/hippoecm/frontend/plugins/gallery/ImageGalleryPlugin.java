@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.gallery;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -25,6 +26,11 @@ import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
 
 public class ImageGalleryPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
@@ -49,6 +55,15 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
         columns.add(column);
 
         return new TableDefinition(columns);
+    }
+    
+    @Override
+    protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
+            ISortableDataProvider dataProvider, TableSelectionListener selectionListener, boolean triState,
+            ListPagingDefinition pagingDefinition) {
+        ListDataTable ldt = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+        ldt.add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())));
+        return ldt;
     }
 
 }

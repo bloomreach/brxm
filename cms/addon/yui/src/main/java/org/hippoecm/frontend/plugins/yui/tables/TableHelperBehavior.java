@@ -16,20 +16,29 @@
 
 package org.hippoecm.frontend.plugins.yui.tables;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
-public abstract class TableHelperBehavior extends AbstractYuiBehavior {
+public class TableHelperBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+    
+    Component comp;
 
     public TableHelperBehavior(IYuiManager manager) {
         super(manager);
+    }
+    
+    @Override
+    public void bind(Component component) {
+        super.bind(component);
+        this.comp = component;
     }
     
     @Override
@@ -40,10 +49,12 @@ public abstract class TableHelperBehavior extends AbstractYuiBehavior {
             
             @Override
             public Object getObject() {
-                return "YAHOO.hippo.TableHelper.setHeight('" + getMarkupId() + "')";
+                return "YAHOO.hippo.TableHelper.register('" + getMarkupId() + "')";
             }
         });
     }
     
-    public abstract String getMarkupId();
+    public String getMarkupId() {
+        return comp.getMarkupId();
+    }
 }

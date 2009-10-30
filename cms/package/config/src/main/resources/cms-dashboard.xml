@@ -72,13 +72,13 @@
         <sv:value>YAHOO.hippo.RelativeWireframe</sv:value>
       </sv:property>
       <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=left,width=33%,body=left-body,resize=true,gutter=1px 1px 1px 1px</sv:value>
+        <sv:value>id=left,width=33%,body=left-body,resize=false,gutter=1px 1px 1px 1px</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="right" sv:type="String">
-        <sv:value>id=right,width=33%,body=right-body,resize=true,scroll=true,gutter=1px 1px 1px 0px</sv:value>
+        <sv:value>id=right,width=33%,body=right-body,resize=false,scroll=true,gutter=1px 1px 1px 0px</sv:value>
       </sv:property>
       <sv:property sv:name="root.id" sv:type="String">
         <sv:value>dashboard-perspective-wrapper</sv:value>

@@ -17,6 +17,14 @@ package org.hippoecm.frontend.plugin;
 
 import org.apache.wicket.IClusterable;
 
+/**
+ * Marker interface for classes that can be instantiated as a plugin.
+ * There has to be a constructor with signature <init>(IPluginContext, IPluginConfig);
+ * <p>
+ * In general, the services that are available to a plugin may come and go at any moment,
+ * so the plugin lifecycle is rather minimal.  The {@link IActivator} interface may be
+ * implemented as well, it is provided to ease subclassing. 
+ */
 public interface IPlugin extends IClusterable {
     final static String SVN_ID = "$Id$";
 

@@ -205,7 +205,7 @@ public class LoginPlugin extends RenderPlugin {
                 }
             });
 
-            add(new FeedbackPanel("feedback"));
+            add(new FeedbackPanel("feedback").setEscapeModelStrings(false));
             add(userLabel = new Label("infouserlogin", ""));
             userLabel.setOutputMarkupId(true);
             Button submit = new Button("submit", new ResourceModel("submit-label"));

@@ -15,10 +15,9 @@
  */
 package org.hippoecm.editor.tools;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -140,7 +139,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     public Map<String, IFieldDescriptor> getFields() {
         attach();
-        return fields;
+        return Collections.unmodifiableMap(fields);
     }
 
     public Map<String, IFieldDescriptor> getDeclaredFields() {

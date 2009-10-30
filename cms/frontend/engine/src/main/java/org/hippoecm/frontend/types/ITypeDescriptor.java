@@ -66,7 +66,7 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
     /**
      * The map of fields that are declared in this type of any of its super types.
      * If the type is primitive, null will be returned.
-     * @return the list of fields in the type
+     * @return an immutable list of fields in the type
      */
     Map<String, IFieldDescriptor> getFields();
 

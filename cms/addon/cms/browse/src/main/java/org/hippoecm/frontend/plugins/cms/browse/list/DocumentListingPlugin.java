@@ -19,11 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.list.comparators.StateComparator;
@@ -104,14 +101,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
             //                }
             //            });
 
-            add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public String getMarkupId() {
-                    return DraggebleListDataTable.this.getMarkupId();
-                }
-            });
+            add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())));
         }
     }
 

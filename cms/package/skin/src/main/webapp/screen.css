@@ -122,10 +122,10 @@ background-repeat: no-repeat;
 background-position: 10px 5px;
 padding-left: 70px;
 min-height: 35px;
-height: 35px;
 padding-top: 8px;
+height: auto;
 }
-.hippo-login-feedback ul li{list-style-type: disc}
+.hippo-login-feedback ul li{list-style-type: disc; margin-bottom: 5px;}
 
 /* Hippo Modal feedback */
 
@@ -856,6 +856,10 @@ font-size: 12px; line-height: 18px; background: transparent; border: none; color
 .hippo-editor-field-html .htmlarea .xinha_iframe {margin-top: 3px;}
 .hippo-editor-field-html .htmlarea .xinha_fullscreen {margin-top: 0px; border: 1px solid #e3e3e3;}
 
+.hippo-editor-field-html-preview a { text-decoration: underline; }
+
+.default-textarea textarea { width: 500px; height: 150px; }
+
 /* Xinha modal windows */
 /*div.wicket-modal div.link-picker select { margin-bottom:10px;}
 div.wicket-modal div.link-picker div.internal-link-label {margin-bottom: 10px;}
@@ -966,13 +970,14 @@ margin-top: 10px;
 
 /* Control panel */
 /* ================================================ */
-.hippo-controlpanel {padding-top: 25px;}
+.hippo-controlpanel {margin-top: 25px;}
 .hippo-controlpanel-panel{padding: 15px;}
 
 .hippo-controlpanel .hippo-feedback{position: absolute; top: 15px; right: 15px; width: 500px;} 
 .hippo-controlpanel .hippo-feedback ul{margin-left: 0px; margin-right: 0px}
 
-.hippo-controlpanel-body{margin-left: 15%; margin-right: 15%; padding: 15px; position: relative;}
+table.hippo-controlpanel-body { height: 100%; width: 100%; margin-bottom: 25px; }
+
 .hippo-controlpanel-body h2{font-size: 20px; color: #0d496f; margin-top: 0px; margin-bottom: 15px;}
 .hippo-controlpanel-body h3{font-size: 12px; font-weight: bold; color: #0d496f;  margin-bottom: 5px;}
 
@@ -1213,9 +1218,17 @@ table.hippo-defaultcontent td {
 }
 
 /* Apply scrollbars to modern browsers */
-table.hippo-list-documents > tbody {
+table.hippo-list-details > tbody {
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.navigator-center-body table.hippo-list-documents, .navigator-center-body table.hippo-gallery-images, .navigator-center-body table.hippo-gallery-assets {
+  border-collapse: inherit;
+}
+
+table.hippo-currentactivity > tbody, table.hippo-todo > tbody {
+  display: table-row-group;
 }
 
 .hippo-accordion-unit-center {

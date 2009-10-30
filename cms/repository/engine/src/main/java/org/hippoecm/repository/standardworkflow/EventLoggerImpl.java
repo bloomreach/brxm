@@ -92,7 +92,11 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
                 if (args != null) {
                     String[] arguments = new String[args.length];
                     for (int i = 0; i < args.length; i++) {
-                        arguments[i] = args[i].toString();
+                        if (args[i] != null) {
+                            arguments[i] = args[i].toString();
+                        } else {
+                            arguments[i] = "<null>";
+                        }
                     }
                     logNode.setProperty("hippolog:eventArguments", arguments);
                 }

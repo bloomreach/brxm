@@ -23,12 +23,12 @@ import java.util.WeakHashMap;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemExistsException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -48,6 +48,7 @@ import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 import org.hippoecm.repository.HierarchyResolverImpl;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -250,14 +251,20 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
             destination = iter.nextNode();
         }
         if (destination != null) {
-            destination.accept(new TraversingItemVisitor() {
-                protected void entering(Property property, int level) throws RepositoryException {
-                }
-
-                protected void entering(Node node, int level) throws RepositoryException {
-                }
-
-                protected void leaving(Property property, int level) throws RepositoryException {
+            destination.accept(new TraversingItemVisitor.Default() {
+                public void visit(Node node) throws RepositoryException {
+                    if (node instanceof HippoNode) {
+                        try {
+                            Node canonical = ((HippoNode) node).getCanonicalNode();
+                            if (canonical == null || !canonical.isSame(node)) {
+                                return;
+                            }
+                        } catch (ItemNotFoundException e) {
+                            // canonical node no longer exists
+                            return;
+                        }
+                    }
+                    super.visit(node);
                 }
 
                 protected void leaving(Node node, int level) throws RepositoryException {

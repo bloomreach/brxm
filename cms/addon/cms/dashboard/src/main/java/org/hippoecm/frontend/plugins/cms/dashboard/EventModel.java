@@ -27,7 +27,6 @@ import org.apache.wicket.model.IComponentAssignedModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,13 +43,13 @@ public class EventModel implements IComponentAssignedModel {
     private String time;
     private String method;
     private String user;
-    private JcrNodeModel nodeModel;
+    private IModel nameModel;
 
     public EventModel(JcrNodeModel eventNode) {
         this(eventNode, null);
     }
 
-    public EventModel(JcrNodeModel eventNode, JcrNodeModel targetNode) {
+    public EventModel(JcrNodeModel eventNode, IModel nameModel) {
         Node node = eventNode.getNode();
         try {
             if (node == null || !node.isNodeType("hippolog:item")) {
@@ -74,7 +73,7 @@ public class EventModel implements IComponentAssignedModel {
             this.time = timestamp;
             this.method = node.getProperty("hippolog:eventMethod").getString();
             this.user = node.getProperty("hippolog:eventUser").getString();
-            this.nodeModel = targetNode;
+            this.nameModel = nameModel;
         } catch (RepositoryException ex) {
             log.error("Could not parse event node " + eventNode.getItemModel().getPath());
         }
@@ -93,8 +92,8 @@ public class EventModel implements IComponentAssignedModel {
     }
 
     public void detach() {
-        if (nodeModel != null) {
-            nodeModel.detach();
+        if (nameModel != null) {
+            nameModel.detach();
         }
     }
 
@@ -184,10 +183,9 @@ public class EventModel implements IComponentAssignedModel {
         }
 
         public Object getObject() {
-            if (nodeModel != null) {
-                String name = (String) new NodeTranslator(nodeModel).getNodeName().getObject();
+            if (nameModel != null) {
                 return new StringResourceModel(time, component, null, "").getString()
-                        + new StringResourceModel(method, component, null, new Object[] { user, name }).getString();
+                        + new StringResourceModel(method, component, null, new Object[] { user, nameModel.getObject() }).getString();
             } else {
                 return new StringResourceModel(time, component, null, "").getString()
                         + new StringResourceModel(method, component, null, new Object[] { user }).getString();

@@ -300,7 +300,7 @@
       <sv:value>hippo:initializefolder</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>tag209</sv:value>
+      <sv:value>v20902</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

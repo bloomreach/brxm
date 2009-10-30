@@ -29,6 +29,10 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Extension of Wicket's {@link AjaxRequestTarget} that filters the list of {@link Component}s that
+ * have been added.
+ */
 public class PluginRequestTarget extends AjaxRequestTarget implements AjaxRequestTarget.IListener {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

@@ -36,6 +36,24 @@
       <sv:property sv:name="wicket.skin" sv:type="String">
         <sv:value>skin/screen.css</sv:value>
       </sv:property>
+      <sv:property sv:name="wicket.behavior" sv:type="String">
+        <sv:value>service.behavior.browser.check</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="unsupportedBrowsersBehavior">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavior.id" sv:type="String">
+        <sv:value>service.behavior.browser.check</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.standards.behaviors.BrowserCheckPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="supported" sv:type="String">
+        <sv:value>ie 7 &gt;=</sv:value>
+        <sv:value>firefox 3 &gt;=</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>

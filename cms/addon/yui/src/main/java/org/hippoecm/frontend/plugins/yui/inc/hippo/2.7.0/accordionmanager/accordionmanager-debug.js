@@ -167,17 +167,7 @@ if (!YAHOO.hippo.AccordionManager) {
                 }
                 
                 this.calculated = false;
-                if(!this.cfg.throttleUpdate || bOverride) {
-                    this.render(this.current);
-                } else {
-                    if(this.timeoutID != null) {
-                        window.clearTimeout(this.timeoutID);
-                    }
-                    var me = this;
-                    this.timeoutID = window.setTimeout(function() {
-                        me.render(me.current);
-                    }, this.cfg.timeoutLength);
-                }
+                this.render(this.current);
             },
             
             findElement : function(parent, cls, tag) {

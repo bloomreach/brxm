@@ -20,6 +20,10 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
+/**
+ * Helper class for retrieving an {@link IYuiManager} from the provided {@link IPluginContext} and 
+ * an {@link IPluginConfig} instance with name "yui.config" from the provided {@link IPluginConfig} parent.  
+ */
 public class YuiPluginHelper {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -28,10 +32,27 @@ public class YuiPluginHelper {
     private static final String SERVICE_ID = "service.behavior.yui";
     private static final String CONFIG_ID = "yui.config";
 
+    /**
+     * Retrieve a {@link IYuiManager} instance from the context or null if none found.
+     * 
+     * @param context 
+     *            The {@link IPluginContext} that will be used for lookup.
+     *             
+     * @return An {@link IYuiManager} instance or null of not found 
+     */
     public static IYuiManager getManager(IPluginContext context) {
         return context.getService(SERVICE_ID, IYuiManager.class);
     }
 
+    /**
+     * Check if the provided {@link IPluginConfig} has a child {@link IPluginConfig} with 
+     * name "yui.config". If so, return it, else return null.
+     *  
+     * @param config
+     *            The {@link IPluginConfig} to will be used as lookup entrypoint.
+     *                               
+     * @return An {@link IPluginConfig} instance or null if not found
+     */
     public static IPluginConfig getConfig(IPluginConfig config) {
         IPluginConfig subConfig = config.getPluginConfig(CONFIG_ID);
         if (subConfig == null) {

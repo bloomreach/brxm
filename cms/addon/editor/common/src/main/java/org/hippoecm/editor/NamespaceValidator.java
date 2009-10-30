@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.workflow;
+package org.hippoecm.editor;
 
 import java.util.regex.Pattern;
 
@@ -28,7 +28,7 @@ public class NamespaceValidator {
     }
 
     public static void checkName(String name) throws Exception {
-        if (name == null) {
+        if (name == null || "".equals(name)) {
             throw new Exception("No name specified");
         }
         if (!NAME_PATTERN.matcher(name).matches()) {

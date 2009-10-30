@@ -46,17 +46,21 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
                     var yuiId = pathEls[1];
                     var children = [];
                     var traverse = function(node) {
-                        var value = node.getAttribute("yui:id");
-                        if (value && value == yuiId) {
-                            children[children.length] = node;
-                            return;
-                        }
-                        if (node.hasChildNodes()) {
-                            var childNodes = Dom.getChildrenBy(node,
-                                    YAHOO.hippo.Dom.isValidChildNode);
-                            for (var i = 0; i < childNodes.length; i++) {
-                                traverse(childNodes[i]);
+                        try {
+                            var value = node.getAttribute("yui:id", 2);
+                            if (value && value == yuiId) {
+                                children[children.length] = node;
+                                return;
                             }
+                            if (node.hasChildNodes()) {
+                                var childNodes = Dom.getChildrenBy(node,
+                                        YAHOO.hippo.Dom.isValidChildNode);
+                                for (var i = 0; i < childNodes.length; i++) {
+                                    traverse(childNodes[i]);
+                                }
+                            }
+                        }catch(e) {
+                            //ignore
                         }
                     };
                     traverse(element);

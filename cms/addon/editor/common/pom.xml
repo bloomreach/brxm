@@ -38,6 +38,7 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
       <version>2.10.00-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.jcr</groupId>
@@ -45,11 +46,11 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- FIXME: remove dependency -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
       <version>2.10.00-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

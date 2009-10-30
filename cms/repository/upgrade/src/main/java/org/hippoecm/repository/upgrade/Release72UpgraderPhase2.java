@@ -43,9 +43,9 @@ import org.hippoecm.repository.util.VersionNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Release72Updater implements UpdaterModule {
+public class Release72UpgraderPhase2 implements UpdaterModule {
 
-    static final Logger log = LoggerFactory.getLogger(Release72Updater.class);
+    static final Logger log = LoggerFactory.getLogger(Release72UpgraderPhase2.class);
     
     private static final String[][] rules = {
         {"type", "hippo:remodel", "hipposysedit_1_0:remodel"},
@@ -228,22 +228,11 @@ public class Release72Updater implements UpdaterModule {
     
     public void register(final UpdaterContext context) {
         context.registerName("upgrade");
-        context.registerStartTag("m13");
-        context.registerEndTag("tag209");
-        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:derived") {
-            @Override
-            protected void leaving(Node node, int level) throws RepositoryException {
-                if (node.hasProperty("hippo:related")) {
-                    node.getProperty("hippo:related").remove();
-                }
-                if (node.hasProperty("hippo:compute")) {
-                    node.getProperty("hippo:compute").remove();
-                }
-            }
-        }.setAtomic());
+        context.registerStartTag("v20902-phase1");
+        context.registerEndTag("v20902-phase2");
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("rep:root") {
             @Override
-            public void leaving(final Node node, int level) throws RepositoryException {
+            protected void leaving(final Node node, int level) throws RepositoryException {
                 /*
                  * The removal of the entire /hippo:log tree seems to be appropriate.  This is relatively volatile data as
                  * this is a sliding log file with the oldest entries being removed automatically.  Combine this with the
@@ -251,19 +240,21 @@ public class Release72Updater implements UpdaterModule {
                  * going to be removed quickly is unnecessary.
                  */
                 if (node.hasNode("hippo:log")) {
-                    node.getNode("hippo:log").remove();
+                    for(NodeIterator iter=node.getNode("hippo:log").getNodes(); iter.hasNext(); ) {
+                        iter.nextNode().remove();
+                    }
                 }
             }
         }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:templatetype") {
             @Override
-            public void leaving(final Node node, int level) throws RepositoryException {
+            protected void leaving(final Node node, int level) throws RepositoryException {
                 // Should a new nodetype descriptor be created?
                 boolean convert = false;
                 String prefix = node.getParent().getName();
                 String uri = null;
                 String newUri = null;
-                if (node.getDepth() > 0 && node.getParent().isNodeType("hipposysedit_1_0:namespace")
+                if (node.getDepth() > 0 && node.getParent().isNodeType("hippo:namespace")
                         && !"system".equals(prefix)) {
                     try {
                         uri = node.getSession().getNamespaceURI(prefix);
@@ -293,7 +284,7 @@ public class Release72Updater implements UpdaterModule {
                     }
                     version.accept(new TraversingItemVisitor.Default(true) {
                         @Override
-                        public void entering(final Node node, int level) throws RepositoryException {
+                        protected void entering(final Node node, int level) throws RepositoryException {
                             convert(node, context);
                         }
                     });
@@ -312,7 +303,7 @@ public class Release72Updater implements UpdaterModule {
                         context.setName(prototype, "hipposysedit_1_0:prototype");
                         prototype.accept(new TraversingItemVisitor.Default(true) {
                             @Override
-                            public void entering(final Node node, int level) throws RepositoryException {
+                            protected void entering(final Node node, int level) throws RepositoryException {
                                 convert(node, context);
                             }
                         });
@@ -329,7 +320,7 @@ public class Release72Updater implements UpdaterModule {
                         context.setName(template, "hipposysedit_1_0:template");
                         template.accept(new TraversingItemVisitor.Default(true) {
                             @Override
-                            public void entering(final Node node, int level) throws RepositoryException {
+                            protected void entering(final Node node, int level) throws RepositoryException {
                                 convert(node, context);
                             }
                         });
@@ -341,7 +332,7 @@ public class Release72Updater implements UpdaterModule {
         }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:namespacefolder") {
             @Override
-            public void leaving(final Node node, int level) throws RepositoryException {
+            protected void leaving(final Node node, int level) throws RepositoryException {
                 context.setPrimaryNodeType(node, "hipposysedit_1_0:namespacefolder");
                 for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
@@ -351,7 +342,7 @@ public class Release72Updater implements UpdaterModule {
                 }
             }
         }.setAtomic());
-        
+
         /**
          * reviewed-actions workflow update
          */
@@ -374,7 +365,16 @@ public class Release72Updater implements UpdaterModule {
                     if (node.hasNode("revert")) {
                         Node restore = node.getNode("revert");
                         context.setName(restore, "restore");
-                        restore.setProperty("editor.id", "${editor.id}");
+                        if (restore.getProperty("hippo:classname").getString().equals("org.hippoecm.repository.api.Document")) {
+                            restore.setProperty("hippo:classname",
+                                    "org.hippoecm.repository.standardworkflow.VersionWorkflowImpl");
+                        }
+                        context.setPrimaryNodeType(restore, "frontend:workflow");
+                        restore.setProperty("hippo:privileges", new String[] { "hippo:editor" });
+                        Node renderer = restore.addNode("frontend:renderer", "frontend:plugin");
+                        renderer.setProperty("plugin.class",
+                                "org.hippoecm.frontend.plugins.reviewedactions.VersionWorkflowPlugin");
+                        renderer.setProperty("editor.id", "${editor.id}");
                     }
                 }
             }
@@ -386,7 +386,7 @@ public class Release72Updater implements UpdaterModule {
          */
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("frontend:workflow") {
             @Override
-            public void leaving(final Node node, int level) throws RepositoryException {
+            protected void leaving(final Node node, int level) throws RepositoryException {
                 // convert property to child node
                 if (node.hasProperty("frontend:renderer")) {
                     if (!node.hasNode("frontend:renderer")) {
@@ -419,7 +419,7 @@ public class Release72Updater implements UpdaterModule {
          */
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:domain") {
             @Override
-            public void leaving(final Node node, int level) throws RepositoryException {
+            protected void leaving(final Node node, int level) throws RepositoryException {
                 String name = node.getName();
                 if ("defaultwrite".equals(name)) {
                     if (node.hasNode("hippo-handle")) {
@@ -476,7 +476,7 @@ public class Release72Updater implements UpdaterModule {
          */
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:userfolder") {
             @Override
-            public void leaving(final Node node, int level) throws RepositoryException {
+            protected void leaving(final Node node, int level) throws RepositoryException {
                 if (node.hasNode("workflowuser")) {
                     node.getNode("workflowuser").setProperty("hipposys_1_0:system", true);
                 }
@@ -487,7 +487,7 @@ public class Release72Updater implements UpdaterModule {
          */
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("frontend:user") {
             @Override
-            public void leaving(final Node node, int level) throws RepositoryException {
+            protected void leaving(final Node node, int level) throws RepositoryException {
                 context.setPrimaryNodeType(node, "hippo:user");
                 node.setProperty("frontend:firstname", (String) null);
                 node.setProperty("frontend:lastname", (String) null);
@@ -496,12 +496,10 @@ public class Release72Updater implements UpdaterModule {
         }.setAtomic());
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippo:configuration") {
             @Override
-            public void leaving(final Node node, int level) throws RepositoryException {
+            protected void leaving(final Node node, int level) throws RepositoryException {
                 for (String[] delete : new String[][] {
                             {"hippo:temporary"}, // this removal is appropriate, any changes to this folder should be considered transient
-                            {"hippo:documents", "embedded", "root"},
-                            {"hippo:queries"},
-                            {"hippo:frontend"}, // tracking changes in cms configuration deemed too expensive
+                            {"hippo:frontend"} // tracking changes in cms configuration deemed too expensive
                         }) {
                     for (NodeIterator it = node.getNode(delete[0]).getNodes(); it.hasNext();) {
                         Node child = it.nextNode();
@@ -514,14 +512,19 @@ public class Release72Updater implements UpdaterModule {
                             child.remove();
                     }
                 }
+                // see comment on removal of hippostd-queries in hippo:initialize
+                node.getNode("hippo:queries").getNode("hippo:templates").remove();
                 for (String delete : new String[] {
-                            "hippostd-queries", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            /* Preserving changes from this item is a bridge too far, but it does include some
+                             * important customization by users so must be clearly documented. */
+                            "hippostd-queries",
+
                             "namespaces", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-hipposysedit", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-namespace.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
                             "templateeditor-type-query.xml", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hipposched", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
-                            "hippoldap", // FIXME: comment on the appropriateness of removal or decide on not remove but convert
+                            "hipposched", // these items are never customized
+                            "hippoldap", // it is rare to customize these items, a re-import is safe
 
                             /**
                              * these namespace declarations, type definitions are explicitly handled by the next visitor 
@@ -615,7 +618,7 @@ public class Release72Updater implements UpdaterModule {
                              * At the moment, the imports below combine workflows from different projects.
                              * The upgrade is carried out by the frontend:workflow and workflowcategory iterators. 
                              */
-                            /*
+                            /*repository/modules/src/main/java/org/hippoecm/repository/upgrade/Release72Updater.java
                             "reviewedactions1",
                             "core-workflows",
                             "reviewedactions2",
@@ -663,7 +666,7 @@ public class Release72Updater implements UpdaterModule {
                 }
                 node.accept(new TraversingItemVisitor.Default(true) {
                     @Override
-                    public void entering(final Node node, int level) throws RepositoryException {
+                    protected void entering(final Node node, int level) throws RepositoryException {
                         convert(node, context);
                     }
                 });
@@ -766,7 +769,6 @@ public class Release72Updater implements UpdaterModule {
         skippedNamespaces.add("editor");
         skippedNamespaces.add("hipposched");
         skippedNamespaces.add("hippoldap");
-
         skippedNamespaces.addAll(knownNamespaces);
         NodeTypeManager ntMgr = workspace.getNodeTypeManager();
         boolean rerun;

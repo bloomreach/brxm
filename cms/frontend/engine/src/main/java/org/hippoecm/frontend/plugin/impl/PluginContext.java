@@ -170,7 +170,8 @@ public class PluginContext implements IPluginContext, IDetachable {
             list.add(service);
             manager.registerService(service, name);
         } else {
-            log.warn("registering a service when stopping down; ignoring");
+            log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
+                    + " is registering a service when stopping; ignoring");
         }
     }
 
@@ -181,7 +182,8 @@ public class PluginContext implements IPluginContext, IDetachable {
                 list.remove(service);
                 manager.unregisterService(service, name);
             } else {
-                log.warn("unregistering service that wasn't registered.");
+                log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
+                        + " is unregistering service at " + name + " that wasn't registered.");
             }
         }
     }
@@ -313,7 +315,7 @@ public class PluginContext implements IPluginContext, IDetachable {
 
     private void writeObject(ObjectOutputStream output) throws IOException {
         if (stopping) {
-            throw new WicketRuntimeException("Stopped plugin is still being referenced");
+//            throw new WicketRuntimeException("Stopped plugin is still being referenced");
         }
         output.defaultWriteObject();
     }

@@ -29,6 +29,14 @@ import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The model for a JCR {@link Node}.  It maintains a reference to a (possibly null)
+ * Node object.  In addition, it is {@link IObservable}, broadcasting JCR {@link Event}s
+ * for property changes and child node additions or removals.
+ * <p>
+ * In general, no guarantees are made on the existence of the Node.  I.e. the referenced
+ * node may disappear or it may even never have existed.
+ */
 public class JcrNodeModel extends ItemModelWrapper implements IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -54,6 +62,10 @@ public class JcrNodeModel extends ItemModelWrapper implements IObservable {
         super(path);
     }
 
+    /**
+     * Retrieve the node from the repository.  May return null when the node no longer exists or
+     * the model was initially created with a null object.
+     */
     public Node getNode() {
         return (Node) itemModel.getObject();
     }
@@ -107,13 +119,13 @@ public class JcrNodeModel extends ItemModelWrapper implements IObservable {
 
     public void startObservation() {
         if (itemModel.getObject() == null) {
-            log.warn("skipping observation for null node");
+            log.info("skipping observation for null node");
             return;
         }
         if (itemModel.getRelativePath() == null) {
             listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
-                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, "/", true,
-                    new String[] { itemModel.getUuid() }, null);
+                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, "/", true, new String[] { itemModel.getUuid() },
+                    null);
         } else {
             listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
                     | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, itemModel.getPath(), false, null, null);

@@ -230,17 +230,9 @@
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
         </sv:property>
-        <sv:node sv:name="cluster.options">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="cols" sv:type="String">
-            <sv:value>60</sv:value>
-          </sv:property>
-          <sv:property sv:name="rows" sv:type="String">
-            <sv:value>10</sv:value>
-          </sv:property>
-        </sv:node>
+        <sv:property sv:name="wicket.css" sv:type="String">
+          <sv:value>default-textarea</sv:value>
+        </sv:property>  
       </sv:node>
       <sv:node sv:name="body">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.service.render;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -44,6 +47,44 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Utility class that bundles a lot of the functionality needed for visual
+ * plugins.  It registers an {@link IRenderService}, with itself as the {@link Component}.
+ * <p>
+ * The configuration parameters are as follows, with the class of the expected
+ * service between brackets:
+ * <ul>
+ * <li><b>wicket.model (IModelReference)</b>
+ * The {@link IModel} that is available with the getModel() method, is the model
+ * that is provided by a {@link IModelReference} service.  The name for this service
+ * can be found in the configuration with the <code>wicket.model</code> key.  When
+ * the model is changed with setModel(), this change is propagated to the IModelReference
+ * service.  When another plugin changes the model or the model object changes, the
+ * Component#onModelChanged() method is invoked.  It is recommended to override this method to
+ * respond to changes.
+ * <li><b>wicket.id (IRenderService)</b>
+ * The primary task of the RenderPlugin is to provide an {@link IRenderService}
+ * implementation.
+ * <li><b>wicket.extensions (IRenderService)</b>
+ * A list of service names for child render services.  These child services will be
+ * added to the plugin directly.
+ * <li><b>wicket.behavior</b>
+ * A list of service names for {@link IBehaviorService}s.  The behaviors that are exposed
+ * by these services are added to the Component.
+ * <li><b>wicket.variant (Layout)</b>
+ * The layout variantion to use.  In contrast with Wickets default, the variation is not
+ * inherited from the parent.
+ * <li><b>wicket.skin (CSS stylesheet)</b>
+ * An array of stylesheets that will be added to the HTML head.
+ * <li><b>wicket.feedback (CSS)</b>
+ * An array of CSS class names that will be added to the {@link Component} that is provided
+ * by this render service.
+ * <li><b>translator.id (Localization)</b>
+ * It is possible to retrieve translations by invoking the {@link ITranslateService}.  This
+ * will be done when the <code>translator.id</code> service name is available.  The configured
+ * services (it is a multi-valued property) are invoked in order.
+ * </ul>
+ */
 public abstract class AbstractRenderService extends Panel implements IObserver, IRenderService, IStringResourceProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -232,14 +273,28 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
 
     // utility routines for subclasses
 
+    /**
+     * The {@link IPluginContext} that was used to create the service.
+     */
     protected IPluginContext getPluginContext() {
         return context;
     }
 
+    /**
+     * The {@link IPluginConfig} that was used to create the service.
+     */
     protected IPluginConfig getPluginConfig() {
         return config;
     }
 
+    /**
+     * Utility method for subclasses to redraw the complete {@link Panel}.
+     * When invoked during request processing or event handling, the service will
+     * be rendered during the rendering phase.
+     * <p>
+     * For more fine-grained redrawing, subclasses should override the
+     * {@link AbstractRenderService#render(PluginRequestTarget)} method.
+     */
     protected void redraw() {
         redraw = true;
     }
@@ -250,6 +305,9 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
         extPt.register();
     }
 
+    /**
+     * Create an extension point with the specified name.
+     */
     protected abstract ExtensionPoint createExtensionPoint(String extension);
 
     protected void removeExtensionPoint(String name) {
@@ -258,6 +316,10 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
         children.remove(name);
     }
 
+    /**
+     * Utility method to retrieve the {@link IDialogService}} from the plugin
+     * framework.  The dialog service is guaranteed to be available.
+     */
     protected IDialogService getDialogService() {
         return context.getService(IDialogService.class.getName(), IDialogService.class);
     }
@@ -275,10 +337,16 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
 
     // implement IRenderService
 
+    /**
+     * {@inheritDoc}
+     */
     public Component getComponent() {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void render(PluginRequestTarget target) {
         if (redraw) {
             if (target != null) {
@@ -293,8 +361,12 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void focus(IRenderService child) {
-        List<IFocusListener> listeners = context.getServices(context.getReference(this).getServiceId(), IFocusListener.class);
+        List<IFocusListener> listeners = context.getServices(context.getReference(this).getServiceId(),
+                IFocusListener.class);
         for (IFocusListener listener : listeners) {
             listener.onFocus(this);
         }
@@ -304,6 +376,9 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getId() {
         return wicketId;
@@ -311,7 +386,13 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
 
     @Override
     public String getMarkupId(boolean createIfDoesNotExist) {
-        return wicketServiceId;
+        try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            m.update(wicketServiceId.getBytes(), 0, wicketServiceId.length());
+            return new BigInteger(1, m.digest()).toString(16);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public void bind(IRenderService parent, String wicketId) {
@@ -324,6 +405,9 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
         wicketId = "service.render.unbound";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public IRenderService getParentService() {
         return parent;
     }
@@ -357,6 +441,10 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
         return null;
     }
 
+    /**
+     * Base class for extension points.  Registers as a {@link ServiceTracker} for a
+     * {@link IRenderService} extension.
+     */
     protected abstract class ExtensionPoint extends ServiceTracker<IRenderService> {
         private static final long serialVersionUID = 1L;
 
@@ -376,7 +464,7 @@ public abstract class AbstractRenderService extends Panel implements IObserver, 
         protected void unregister() {
             context.registerTracker(this, config.getString(extension));
         }
-        
+
         public List<IRenderService> getChildren() {
             return list;
         }

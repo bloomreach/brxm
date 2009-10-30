@@ -206,7 +206,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
                 this.registerEventListener(layoutUnit, layoutUnit, 'resize', obj, func, executeNow, timeoutLength);
             },
-            
+
             registerRenderListener : function(el, obj, func, executeNow) {
                 var layoutUnit = this.findLayoutUnit(el);
                 if(layoutUnit == null) {
@@ -217,7 +217,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             registerEventListener : function(target, unit, evt, obj, func, executeNow, timeoutLength) {
-                var myId = '[' + evt + ', ' + obj.id + ']';
+                var oid = Lang.isUndefined(obj.id) ? Dom.generateId() : obj.id;
+                
+                var myId = '[' + evt + ', ' + oid + ']';
                 if(executeNow) {
                     YAHOO.log('ExecuteNow' + myId, 'info', 'LayoutManager');
                     func.apply(obj, [unit.getSizes()]);
@@ -228,7 +230,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 var me = this;
                 
                 if(Lang.isUndefined(target[eventName + 'Subscribers'])) {
-                    target[eventName + 'Subscribers'] = new Array();
+                    target[eventName + 'Subscribers'] = new YAHOO.hippo.HashMap();
 
                     var callback = function() {
                         if(info.numberOfTimeouts == 0) {
@@ -236,7 +238,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                             info.absStart = new Date();
                         } else {
                             var prevTime = new Date().getTime() - info.relStart.getTime();
-                            YAHOO.log('Callback[' + evt + ', ' + obj.id + '] re-called after ' + prevTime + 'ms, timeouts=' + info.numberOfTimeouts, 'info', 'LayoutManager');
+                            YAHOO.log('Callback' + myId + ' re-called after ' + prevTime + 'ms, timeouts=' + info.numberOfTimeouts, 'info', 'LayoutManager');
                         }
                         var me = this;
                         var execute = function() {
@@ -245,8 +247,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                             info = { numberOfTimeouts:0, absStart: null, relStart: null };
                             
                             var evtStart = new Date();
-                            for(var i=0; i<target[eventName + 'Subscribers'].length; i++) {
-                                var f = target[eventName + 'Subscribers'][i];
+                            var values = target[eventName + 'Subscribers'].valueSet();
+                            for(var i=0; i<values.length; i++) {
+                                var f = values[i];
                                 f.apply(obj, [unit.getSizes()]);
                             }
 
@@ -256,7 +259,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                             info.relStart = new Date();
                             YAHOO.log('Throttle' + myId + ', timeoutLength=' + timeoutLength, 'info', 'LayoutManager');
                             info.numberOfTimeouts++;
-                            this.throttler.throttle(eventName + obj.id, timeoutLength, execute);
+
+                            timeoutLength = 10;
+                            this.throttler.throttle(eventName + oid, timeoutLength, execute);
                         } else {
                             execute();
                         }
@@ -264,32 +269,35 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     YAHOO.log('Register' + myId + ' on unit ' + target.get('id') + ', timeout=' + useTimeout, 'info', 'LayoutManager');
                     target.subscribe(evt, callback, null, this);
                 }
-                target[eventName + 'Subscribers'].push(func);
+                
+                obj['SubcribeId' + evt] = oid;
+                target[eventName + 'Subscribers'].put(oid, func);
             },
             
-            unregisterResizeListener : function (el, func) {
+            unregisterResizeListener : function (el, obj) {
                 var layoutUnit = this.findLayoutUnit(el);
                 if(layoutUnit == null) {
                     YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ']', 'error', 'LayoutManager');
                     return false;
                 }
-                return this.unregisterEventListener('resize', layoutUnit, func);
+                return this.unregisterEventListener('resize', layoutUnit, obj);
             },
 
-            unregisterRenderListener : function (el, func) {
+            unregisterRenderListener : function (el, obj) {
                 var layoutUnit = this.findLayoutUnit(el);
                 if(layoutUnit == null) {
                     YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ', can not unregister render event', 'error', 'LayoutManager');
                     return false;
                 }
-                return this.unregisterEventListener('render', layoutUnit.get('parent'), func);
+                return this.unregisterEventListener('render', layoutUnit.get('parent'), obj);
             },
 
-            unregisterEventListener : function (evt, target, func) {
-                var eventName = evt + 'CustomEvent';
-                if (!Lang.isUndefined(target[eventName]) 
-                        && !Lang.isNull(target[eventName])) {
-                    return target[eventName].unsubscribe(func);
+            unregisterEventListener : function (evt, target, obj) {
+                var oid = obj['SubcribeId' + evt];
+                var set = target[evt + 'CustomEventSubscribers'];
+                if(set != null && set.containsKey(oid)) {
+                    set.remove(oid);
+                    return true;
                 }
                 return false;
             },

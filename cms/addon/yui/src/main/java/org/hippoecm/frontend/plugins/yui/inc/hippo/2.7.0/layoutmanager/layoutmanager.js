@@ -206,7 +206,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
                 this.registerEventListener(layoutUnit, layoutUnit, 'resize', obj, func, executeNow, timeoutLength);
             },
-            
+
             registerRenderListener : function(el, obj, func, executeNow) {
                 var layoutUnit = this.findLayoutUnit(el);
                 if(layoutUnit == null) {
@@ -217,7 +217,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             registerEventListener : function(target, unit, evt, obj, func, executeNow, timeoutLength) {
-                var myId = '[' + evt + ', ' + obj.id + ']';
+                var oid = Lang.isUndefined(obj.id) ? Dom.generateId() : obj.id;
+                
+                var myId = '[' + evt + ', ' + oid + ']';
                 if(executeNow) {
                     func.apply(obj, [unit.getSizes()]);
                 }
@@ -228,50 +230,55 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 var me = this;
                 
                 if(Lang.isUndefined(target[eventName + 'Subscribers'])) {
-                    target[eventName + 'Subscribers'] = new Array();
+                    target[eventName + 'Subscribers'] = new YAHOO.hippo.HashMap();
 
                     var callback = function() {
                         var me = this;
                         var execute = function() {
-                            for(var i=0; i<target[eventName + 'Subscribers'].length; i++) {
-                                var f = target[eventName + 'Subscribers'][i];
+                            var values = target[eventName + 'Subscribers'].valueSet();
+                            for(var i=0; i<values.length; i++) {
+                                var f = values[i];
                                 f.apply(obj, [unit.getSizes()]);
                             }
                         }
                         if(useTimeout) {
-                            this.throttler.throttle(eventName + obj.id, timeoutLength, execute);
+                            timeoutLength = 10;
+                            this.throttler.throttle(eventName + oid, timeoutLength, execute);
                         } else {
                             execute();
                         }
                     };
                     target.subscribe(evt, callback, null, this);
                 }
-                target[eventName + 'Subscribers'].push(func);
+                
+                obj['SubcribeId' + evt] = oid;
+                target[eventName + 'Subscribers'].put(oid, func);
             },
             
-            unregisterResizeListener : function (el, func) {
+            unregisterResizeListener : function (el, obj) {
                 var layoutUnit = this.findLayoutUnit(el);
                 if(layoutUnit == null) {
                     YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ']', 'error', 'LayoutManager');
                     return false;
                 }
-                return this.unregisterEventListener('resize', layoutUnit, func);
+                return this.unregisterEventListener('resize', layoutUnit, obj);
             },
 
-            unregisterRenderListener : function (el, func) {
+            unregisterRenderListener : function (el, obj) {
                 var layoutUnit = this.findLayoutUnit(el);
                 if(layoutUnit == null) {
                     YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ', can not unregister render event', 'error', 'LayoutManager');
                     return false;
                 }
-                return this.unregisterEventListener('render', layoutUnit.get('parent'), func);
+                return this.unregisterEventListener('render', layoutUnit.get('parent'), obj);
             },
 
-            unregisterEventListener : function (evt, target, func) {
-                var eventName = evt + 'CustomEvent';
-                if (!Lang.isUndefined(target[eventName]) 
-                        && !Lang.isNull(target[eventName])) {
-                    return target[eventName].unsubscribe(func);
+            unregisterEventListener : function (evt, target, obj) {
+                var oid = obj['SubcribeId' + evt];
+                var set = target[evt + 'CustomEventSubscribers'];
+                if(set != null && set.containsKey(oid)) {
+                    set.remove(oid);
+                    return true;
                 }
                 return false;
             },

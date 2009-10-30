@@ -16,12 +16,25 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
     <div yui:id="hippo-controlpanel-perspective-wrapper" class="hippo-controlpanel">
-      <div yui:id="hippo-controlpanel-perspective-top" class="hippo-controlpanel-breadcrumbs">
-        <span class="hippo-controlpanel-breadcrumbs-backbutton" wicket:id="breadCrumbBar">bar</span>
+      <div yui:id="hippo-controlpanel-perspective-top">
+        <div yui:id="hippo-controlpanel-perspective-top-body" class="hippo-controlpanel-breadcrumbs">
+          <span class="hippo-controlpanel-breadcrumbs-backbutton" wicket:id="breadCrumbBar">bar</span>
+        </div>  
       </div>
       <div  yui:id="hippo-controlpanel-perspective-center">
-        <div yui:id="hippo-controlpanel-perspective-center-body" class="hippo-controlpanel-body">
-          <span wicket:id="panel">bar</span>
+        <div yui:id="hippo-controlpanel-perspective-center-body">
+          <table class="hippo-controlpanel-body" summary="">
+            <tr>
+              <td width="15%">&nbsp;</td>
+              <td wicket:id="panel" valign="top" width="70%">[ Admin panel ]</td>
+              <td width="15%">&nbsp;</td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <br/><br/>
+              </td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>

@@ -17,6 +17,8 @@ Xinha.Config.prototype.AutoResize =
 
 function AutoResize(editor) {
     this.editor = editor;
+    
+    this.id = this.editor._textArea.getAttribute("id") + 'AutoResize';
 
     this.initialized = false;
     this.timeout = null;

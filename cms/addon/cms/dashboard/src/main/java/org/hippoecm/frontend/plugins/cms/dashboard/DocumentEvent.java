@@ -25,6 +25,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
@@ -42,30 +45,29 @@ public class DocumentEvent extends JcrObject {
 
     static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
 
+    private String sourceVariant;
+    private boolean sourceVariantExists;
+    private String targetVariant;
+    private boolean targetVariantExists;
+
     public DocumentEvent(JcrNodeModel nodeModel) {
         super(nodeModel);
-    }
 
-    public String getDocumentPath() {
         try {
             Node node = getNode();
             Session session = node.getSession();
 
             // Best effort algoritm to create a 'browse' link to a document.
 
-            // The path to the document variant that was used as input for a Workflow step.
-            String sourceVariant = null;
-            boolean sourceVariantExists = false;
+            sourceVariant = null;
+            sourceVariantExists = false;
             if (node.hasProperty("hippolog:eventDocument")) {
                 sourceVariant = node.getProperty("hippolog:eventDocument").getValue().getString();
                 sourceVariantExists = session.itemExists(sourceVariant);
             }
 
-            //The path to the document variant that was returned by a Workflow step.
-            //Workflow steps can return a Document instance who's toString()
-            //value is stored as 'Document[uuid=...]'
-            String targetVariant = null;
-            boolean targetVariantExists = false;
+            targetVariant = null;
+            targetVariantExists = false;
             if (node.hasProperty("hippolog:eventReturnValue")) {
                 targetVariant = node.getProperty("hippolog:eventReturnValue").getValue().getString();
                 Pattern pattern = Pattern
@@ -97,41 +99,107 @@ public class DocumentEvent extends JcrObject {
                     targetVariant = null;
                     targetVariantExists = false;
                 }
-            } else if (node.getProperty("hippolog:eventMethod").getString().equals("delete")
+            } else if (sourceVariantExists && node.getProperty("hippolog:eventMethod").getString().equals("delete")
                     && node.hasProperty("hippolog:eventArguments")
                     && node.getProperty("hippolog:eventArguments").getValues().length > 0) {
-                targetVariant = node.getProperty("hippolog:eventArguments").getValues()[0].getString();
+                targetVariant = sourceVariant + "/"
+                        + node.getProperty("hippolog:eventArguments").getValues()[0].getString();
                 targetVariantExists = false;
-            }
-
-            //Try to create a link to the document variant
-            String path = null;
-            if (targetVariantExists) {
-                path = targetVariant;
-            } else if (sourceVariantExists) {
-                path = sourceVariant;
-            }
-
-            if (path != null) {
-                return path;
-            } else {
-                // Maybe both variants have been deleted, try to create a link to the handle
-                String handle;
-                if (targetVariant != null) {
-                    handle = StringUtils.substringBeforeLast(targetVariant, "/");
-                } else if (sourceVariant != null) {
-                    handle = StringUtils.substringBeforeLast(sourceVariant, "/");
-                } else {
-                    handle = null;
-                }
-                if (handle != null) {
-                    return handle;
-                }
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
         }
+    }
+    public String getMethod() {
+        try {
+            Node node = getNode();
+            if (node.hasProperty("hippolog:eventMethod")) {
+                return node.getProperty("hippolog:eventMethod").getValue().getString();
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        return null;
+    }
 
+    public String getDocument() {
+        try {
+            Node node = getNode();
+            if (node.hasProperty("hippolog:eventDocument")) {
+                return node.getProperty("hippolog:eventDocument").getValue().getString();
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        return null;
+    }
+
+    public String getArgument(int index) {
+        try {
+            Node node = getNode();
+            if (node.hasProperty("hippolog:eventArguments")
+                    && node.getProperty("hippolog:eventArguments").getValues().length > index) {
+                return node.getProperty("hippolog:eventArguments").getValues()[index].getString();
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return null;
+    }
+
+    public IModel getName() {
+        if ("delete".equals(getMethod())) {
+            return new LoadableDetachableModel() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected Object load() {
+                    return getArgument(0);
+                }
+
+                @Override
+                public void detach() {
+                    DocumentEvent.this.detach();
+                    super.detach();
+                }
+            };
+        } else if ("add".equals(getMethod())) {
+            return new NodeTranslator(new JcrNodeModel(targetVariant)).getNodeName();
+        } else {
+            String path = getDocumentPath();
+            if (path != null) {
+                return new NodeTranslator(new JcrNodeModel(path)).getNodeName();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public String getDocumentPath() {
+        //Try to create a link to the document variant
+        String path = null;
+        if (targetVariantExists) {
+            path = targetVariant;
+        } else if (sourceVariantExists) {
+            path = sourceVariant;
+        }
+
+        if (path != null) {
+            return path;
+        } else {
+            // Maybe both variants have been deleted, try to create a link to the handle
+            String handle;
+            if (targetVariant != null) {
+                handle = StringUtils.substringBeforeLast(targetVariant, "/");
+            } else if (sourceVariant != null) {
+                handle = StringUtils.substringBeforeLast(sourceVariant, "/");
+            } else {
+                handle = null;
+            }
+            if (handle != null) {
+                return handle;
+            }
+        }
         return null;
     }
 

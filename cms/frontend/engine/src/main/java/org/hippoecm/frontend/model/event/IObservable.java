@@ -17,17 +17,47 @@ package org.hippoecm.frontend.model.event;
 
 import org.apache.wicket.IClusterable;
 
+/**
+ * Interface implemented by observable objects.  When multiple different observables are
+ * equivalent according to their {@link #equals(Object)} method, observation is started on
+ * one instance.
+ * <p>
+ * This interface must be implemented by observable objects, but should not be invoked by
+ * plugins.
+ */
 public interface IObservable extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
+    /**
+     * Before observation is started on the observable, an observation context is injected by
+     * the observer registry.  This context can be used to notify listeners.
+     */
     void setObservationContext(IObservationContext context);
     
+    /**
+     * When the first {@link IObserver} of this observable is registered with the observer
+     * registry, observation is started.  Implementations must notify observers until observation
+     * is stopped.
+     * <p>
+     * An implementation should register listeners with external data sources, when appropriate.
+     * It is possible for an observable to register as an observer for another observable.
+     */
     void startObservation();
 
+    /**
+     * When the last {@link IObserver} unregisters, observation is stopped.  Any listeners
+     * or observers registered by the observable must be unregistered by the implementation.
+     */
     void stopObservation();
 
+    /**
+     * Equivalence of observables; observation will only be started on one instance.
+     */
     boolean equals(Object obj);
 
+    /**
+     * @see #equals(Object)
+     */
     int hashCode();
+
 }

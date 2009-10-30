@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.domains;
 
+import java.io.Serializable;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -46,7 +47,9 @@ public class Domain implements Comparable<Domain>, IClusterable {
 
     private SortedMap<String, AuthRole> authRoles = new TreeMap<String, AuthRole>();
 
-    public class AuthRole {
+    public class AuthRole implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         private final String role;
         private SortedSet<String> usernames = new TreeSet<String>();
         private SortedSet<String> groupnames = new TreeSet<String>();

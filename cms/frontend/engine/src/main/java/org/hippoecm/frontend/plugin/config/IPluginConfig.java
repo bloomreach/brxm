@@ -20,14 +20,41 @@ import java.util.Set;
 
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 
+/**
+ * The plugin configuration.  It is a map with some helper methods 
+ * inherited from the Wicket {@link IValueMap}.  Although the configuration
+ * is specific to the class that uses it, it is recommended to use standard
+ * keys for service names.  (e.g. the service name under which an {@link IRenderService}
+ * should be registered is <code>wicket.id</code>)
+ * <p>
+ * It is observable, and will broadcast {@link PluginConfigEvent}s for
+ * changes that occur at any depth in the reachable config hierarchy.
+ * <p>
+ * There are two implementations provided, {@link JcrPluginConfig}
+ * and {@link JavaPluginConfig}.
+ */
 public interface IPluginConfig extends IValueMap, IObservable, Serializable {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * The name of the configuration.  When the configuration is passed to a plugin,
+     * this name is unique within the system.  It can therefore be used to construct
+     * unique service names.
+     */
     String getName();
 
+    /**
+     * Retrieve a child config of a particular name.  In the JCR implementation, this
+     * corresponds to a child node of type frontend:pluginconfig.
+     */
     IPluginConfig getPluginConfig(Object key);
 
+    /**
+     * Retrieve a set of child plugin configurations.
+     */
     Set<IPluginConfig> getPluginConfigSet();
 
 }

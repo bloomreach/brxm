@@ -244,6 +244,8 @@ public class Main extends WebApplication {
         if (Application.DEVELOPMENT.equals(getConfigurationType())) {
             // disable cache
             resourceSettings.getLocalizer().setEnableCache(false);
+
+            getDebugSettings().setOutputMarkupContainerClassName(true);
         } else {
             // don't throw on missing resource
             resourceSettings.setThrowExceptionOnMissingResource(false);
@@ -292,7 +294,13 @@ public class Main extends WebApplication {
 
     @Override
     public ISessionStore newSessionStore() {
-        return new HttpSessionStore(this);
+        // in development mode, use disk page store to serialize page at the end of a request.
+        // in production, skip serialization for better performance.
+        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
+            return super.newSessionStore();
+        } else {
+            return new HttpSessionStore(this);
+        }
     }
 
     @Override

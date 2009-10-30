@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -49,6 +50,29 @@ public class SystemInfoDataProvider implements IDataProvider {
 
     private final static double MB = 1024 * 1024;
 
+    public class SystemInfoDataEntry implements Map.Entry<String, String>, Serializable {
+        private static final long serialVersionUID = 1L;
+
+        String key;
+        
+        public SystemInfoDataEntry(String key) {
+            this.key = key;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return info.get(key);
+        }
+
+        public String setValue(String value) {
+            throw new UnsupportedOperationException("SystemInfo is read only");
+        }
+        
+    }
+    
     Map<String, String> info = new LinkedHashMap<String, String>();
 
     public SystemInfoDataProvider() {
@@ -59,12 +83,13 @@ public class SystemInfoDataProvider implements IDataProvider {
         return info.entrySet().iterator();
     }
 
-    public IModel model(final Object object) {
+    public IModel model(Object object) {
+        final Map.Entry<String, String> entry = new SystemInfoDataEntry(((Map.Entry<String, String>) object).getKey());
         return new AbstractReadOnlyModel() {
             private static final long serialVersionUID = 1L;
 
             public Object getObject() {
-                return object;
+                return entry;
             }
         };
     }

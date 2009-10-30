@@ -17,15 +17,48 @@ package org.hippoecm.frontend.plugin.config;
 
 import java.util.List;
 
+import org.hippoecm.frontend.plugin.IClusterControl;
+import org.hippoecm.frontend.plugin.IPlugin;
+import org.hippoecm.frontend.service.IRenderService;
+
+/**
+ * Descriptor of a cluster of plugins.  These can interact with other plugins by declaring
+ * what services are consumed, what services are offered and what properties can be set.
+ * <p>
+ * Entries at the top level are available as variables to plugins when the cluster is instantiated.
+ * Suppose the cluster config has the key "mykey", value "myvalue".  A plugin config contains
+ * the key "pluginKey" with value "${mykey}.extra".  When the instantiated {@link IPlugin} invokes
+ * {@link IPluginConfig#getString("mykey")}, the value "myvalue.extra" will be returned.
+ * <p>
+ * In addition to these variables, the "cluster.id" variable has a value that is unique to the
+ * instantiated cluster.  It can be used to create cluster-specific service names.
+ * <p>
+ * When the configuration has been obtained from an instantiated cluster with
+ * {@link IClusterControl#getClusterConfig()}, all variable expansion has been applied.  The
+ * configuration is read-only in that case.
+ */
 public interface IClusterConfig extends IPluginConfig {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * The plugin configurations in the cluster.
+     */
     List<IPluginConfig> getPlugins();
 
+    /**
+     * The list of keys for services.  Since service types are not available, it is recommended to
+     * always use well-known keys when they exist.  I.e. use "wicket.id" to identify an {@link IRenderService}.
+     */
     List<String> getServices();
 
+    /**
+     * The keys for services that are used by plugins in the cluster.
+     */
     List<String> getReferences();
 
+    /**
+     * Properties that specify additional plugin behavior.
+     */
     List<String> getProperties();
 
 }

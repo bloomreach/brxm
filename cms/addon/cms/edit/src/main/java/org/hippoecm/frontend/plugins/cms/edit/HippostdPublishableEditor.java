@@ -82,6 +82,17 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
     @Override
     void refresh() {
         final JcrNodeModel handle = getModel();
+
+        // verify that the handle exists
+        if (handle.getNode() == null) {
+            try {
+                close();
+            } catch (EditorException ex) {
+                log.error("Could not close editor for removed handle");
+            }
+            return;
+        }
+
         // verify that a document exists, i.e. the document has not been deleted
         try {
             Mode newMode = getMode(handle);

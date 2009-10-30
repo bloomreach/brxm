@@ -64,7 +64,7 @@ public class RemodelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.Wo
     }
 
     void remodel() throws Exception {
-        onOk();
+        execute();
     }
 
     @Override
