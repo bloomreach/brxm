@@ -33,10 +33,10 @@ public class DemoRepoBasedMenuItem extends EditableMenuItemImpl {
         
         this.hstLink = request.getRequestContext().getHstLinkCreator().create(repoItem, request.getRequestContext());
 
-        if (repoItem.isAncestor(currentContentBean)) {
+        if (currentContentBean!= null && repoItem.isAncestor(currentContentBean)) {
             this.expanded = true;
         }
-        if (repoItem.isSelf(currentContentBean)) {
+        if (currentContentBean!= null &&  repoItem.isSelf(currentContentBean)) {
             this.expanded = true;
             this.selected = true;
             this.getEditableMenu().setSelectedMenuItem(this);
