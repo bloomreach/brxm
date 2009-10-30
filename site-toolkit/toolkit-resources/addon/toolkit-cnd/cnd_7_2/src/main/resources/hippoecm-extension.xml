@@ -28,7 +28,7 @@
       <sv:value>8990</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/hst/nt/1.2</sv:value>
+      <sv:value>http://www.hippoecm.org/hst/nt/1.4</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>hst-types.cnd</sv:value>
