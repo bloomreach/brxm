@@ -37,8 +37,8 @@
     
     <junit.version>4.5</junit.version>
     
-    <hst-configuration-editor.version>1.02.00</hst-configuration-editor.version>
-    <hippoecm.version>2.09.01</hippoecm.version>
+    <hst-configuration-editor.version>1.02.02</hst-configuration-editor.version>
+    <hippoecm.version>2.09.02</hippoecm.version>
     <hst.version>2.04.01-SNAPSHOT</hst.version>
     
     <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
