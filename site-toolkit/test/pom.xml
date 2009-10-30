@@ -58,11 +58,38 @@
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
       <version>${hippoecm.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-engine</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-package-config</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+    
+    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-editor-repository</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+    
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-frontend</artifactId>
       <version>${hippoecm.version}</version>
     </dependency>
+    
 
     <dependency>
       <groupId>org.hippoecm</groupId>
