@@ -98,7 +98,6 @@
         <source>
 &lt;param name="excerptProviderClass" value="org.apache.jackrabbit.core.query.lucene.DefaultHTMLExcerpt"/&gt;
 &lt;param name="supportHighlighting" value="true"/&gt;
-&lt;param name="spellCheckerClass" value="org.hippoecm.repository.query.lucene.LuceneSpellChecker$OneMinuteRefreshInterval"/&gt;
         </source>
 
         <p>
