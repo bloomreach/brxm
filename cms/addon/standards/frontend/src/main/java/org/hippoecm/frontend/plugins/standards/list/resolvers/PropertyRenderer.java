@@ -34,14 +34,10 @@ public class PropertyRenderer extends AbstractNodeRenderer {
         this.property = property;
     }
 
-
     @Override
     protected Component getViewer(String id, Node node) throws RepositoryException {
         String value = getValue(node);
-        if (value == null) {
-            return new Label(id, value);
-        }
-        return new Label(id);
+        return value != null ? new Label(id, value) : new Label(id);
     }
 
     private String getValue(Node node) throws RepositoryException {
