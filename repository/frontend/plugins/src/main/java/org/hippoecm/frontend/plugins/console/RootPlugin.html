@@ -21,25 +21,21 @@
     <link rel="shortcut icon" href="skin/images/hippo-console.ico" type="image/x-icon" /> 
   </wicket:head>
   <wicket:panel>
-    <div class="hippo-body-back-hack">
-      &nbsp;
+    <div class="hippo-console" id="doc3">
+      <div id="hd">
+        <div wicket:id="extension.top"/>
+      </div>
+      <div id="lt">
+        <div wicket:id="extension.left"/>
+      </div>
+      <div id="bd">
+        <div id="yui-main">
+          <div class="yui-b">
+            <div class="hippo-console-editor" wicket:id="extension.center"/>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="hippo-console">
-      <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>
-      <div class="hippo-console-check" wicket:id="extension.check"/>
-      <div class="hippo-console-logout" wicket:id="extension.logout"/>
-      <div class="hippo-console-menu" wicket:id="extension.menu"/>
-      <div class="hippo-console-breadcrumbs" wicket:id="extension.breadcrumb"/>          
-      <table class="hippo-global-fullwidth">
-        <tr>
-          <td class="hippo-console-leftpanel">
-            <div class="hippo-console-tree" wicket:id="extension.browser"/>
-          </td>
-          <td class="hippo-console-rightpanel">
-            <div class="hippo-console-editor" wicket:id="extension.editor"/>
-          </td>
-        </tr>
-      </table>
-    </div>
+    <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>  
   </wicket:panel>
 </html>

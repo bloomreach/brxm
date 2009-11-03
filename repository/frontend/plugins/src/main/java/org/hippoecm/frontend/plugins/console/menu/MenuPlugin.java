@@ -183,8 +183,8 @@ public class MenuPlugin extends RenderPlugin {
         };
         add(new DialogLink("check-inout-dialog", new Model("Check In/Out"), dialogFactory, dialogService));
 
-        sorter = new Sorter("sorter-panel");
-        add(sorter);
+//        sorter = new Sorter("sorter-panel");
+//        add(sorter);
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -215,15 +215,15 @@ public class MenuPlugin extends RenderPlugin {
 
     }
 
-    @Override
-    public void onModelChanged() {
-        sorter.setModel(getModel());
-    }
-
-    @Override
-    public void redraw() {
-        super.redraw();
-    }
+//    @Override
+//    public void onModelChanged() {
+//        sorter.setModel(getModel());
+//    }
+//
+//    @Override
+//    public void redraw() {
+//        super.redraw();
+//    }
 
     @Deprecated
     public void flushNodeModel(JcrNodeModel nodeModel) {
