@@ -49,9 +49,17 @@ public class PageLayoutSettings extends AjaxSettings {
     private static final BooleanSetting LEFT_SCROLL = new BooleanSetting("leftScroll");
     private static final BooleanSetting RIGHT_SCROLL = new BooleanSetting("rightScroll");
 
-    protected static final YuiType TYPE = new YuiType(AjaxSettings.TYPE, ROOT_ID, HEADER_HEIGHT, FOOTER_HEIGHT,
-            LEFT_WIDTH, RIGHT_WIDTH, HEADER_GUTTER, BODY_GUTTER, FOOTER_GUTTER, LEFT_GUTTER, RIGHT_GUTTER,
-            HEADER_SCROLL, FOOTER_SCROLL, LEFT_SCROLL, RIGHT_SCROLL, BODY_SCROLL);
+    private static final BooleanSetting HEADER_RESIZE = new BooleanSetting("headerResize");
+    private static final BooleanSetting FOOTER_RESIZE = new BooleanSetting("footerResize");
+    private static final BooleanSetting LEFT_RESIZE = new BooleanSetting("leftResize");
+    private static final BooleanSetting RIGHT_RESIZE = new BooleanSetting("rightResize");
+
+    
+    protected static final YuiType TYPE = new YuiType(AjaxSettings.TYPE, ROOT_ID, 
+            HEADER_HEIGHT, FOOTER_HEIGHT, LEFT_WIDTH, RIGHT_WIDTH, 
+            HEADER_GUTTER, BODY_GUTTER, FOOTER_GUTTER, LEFT_GUTTER, RIGHT_GUTTER,
+            HEADER_SCROLL, FOOTER_SCROLL, LEFT_SCROLL, RIGHT_SCROLL, BODY_SCROLL,
+            HEADER_RESIZE, FOOTER_RESIZE, LEFT_RESIZE, RIGHT_RESIZE);
 
     public PageLayoutSettings(IPluginConfig config) {
         super(TYPE, config);
