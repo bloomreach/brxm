@@ -1,22 +1,29 @@
 /* Console CSS */
 /* ================================================ */
-body{padding: 15px;}
-.hippo-root{font-size: 12px}
-.hippo-console{padding: 5px;}
-.hippo-console tr td{vertical-align: top}
-.hippo-body-back-hack{background: white; position: absolute; top: 0px; left: 0px; width: 100%; height: 150px; z-index: -9999}
+
+#lt { border-right: 1px solid #666666; border-left: 1px solid #666666; border-bottom: 1px solid #666666; }
+
+#layout-doc > div.yui-layout-unit-center > div.yui-layout-wrap { border-right: 1px solid #666666; border-bottom: 1px solid #666666; }
+
+.hippo-root{font-size: 12px; background: white;}
+
+.hippo-root em, .hippo-root strong {font-weight: bold;}
+
 .hippo-console-menu-advanced{position: absolute; top: 0px; right: 150px;}
-.hippo-console-tree-add {position: absolute; top: 41px; left: 25px;}
+.hippo-console-save{position: absolute; top: 37px; right: 5px;}
+.hippo-console-breadcrumbs{font-weight: normal; background: #32629b; padding-top: 10px; padding-bottom: 10px; padding-left: 563px; margin-top: 10px; height: 21px;}
+
+.hippo-console-tree-add {position: absolute; top: 38px; left: 5px;}
 .hippo-console-tree-add a{cursor: pointer}
-.hippo-console-save{position: absolute; top: 39px; right: 25px;}
 .hippo-console-tree-actions {width: 333px; height: 18px; position: absolute; top: 72px; background: white; left: 21px; border-bottom: 1px solid #666666; padding: 3px;}
-.hippo-console-tree-sorter {position: absolute; left: 20px; top: 71px; background: white; width: 461px; padding :2px; border-bottom: 1px solid #666666}
+.hippo-console-tree-sorter {height: 21px; background: white; padding :2px;}
 .hippo-console-tree-sorter li{float: right}
-.hippo-console-breadcrumbs{font-weight: normal; background: #32629b; padding-top: 10px; padding-bottom: 10px; padding-left: 576px; margin-top: 10px; height: 21px;}
 
-.hippo-console-editor{overflow: auto; height: 900px;}
+.navigator-center { border-top: 1px solid #666;}
 
-.hippo-console-tree .hippo-tree{overflow: auto; height: 900px; padding-bottom: 30px; font-size: 13px; width: 465px; padding-top: 24px;}
+.hippo-console-breadcrumbs{margin-top: 30px;}
+
+.hippo-console-tree .hippo-tree{ font-size: 13px; }
 
 /* Styling for tree in Dialog */
 .hippo-window .hippo-console-tree .hippo-tree{ height: 250px; width: 500px; padding-top: 0px; padding-bottom: 5px; border-bottom: 1px solid #e3e3e3;}
@@ -46,15 +53,15 @@ body{padding: 15px;}
 .hippo-console-menu-advanced li{float: left; margin-left: 10px; font-size: 11px;}
 .hippo-console-menu-advanced li a:hover{text-decoration: underline}
 
-.hippo-console-tree-add-property{margin-left: 9px;}
+.hippo-console-tree-add-property{margin-left: 16px;}
 
 .hippo-console-tree-add li{float: left; margin-right: 5px;}
 
-.hippo-console-tree-add .hippo-console-tree-add-delete{margin-right: 72px;}
+.hippo-console-tree-add .hippo-console-tree-add-delete{margin-right: 57px;}
 .hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a, .hippo-console-save a, .hippo-console-tree-add a {padding: 2px; color: white; border: 1px solid white; font-weight: bold; font-size: 11px; display: block; float: left; background: #4587d6}
 .hippo-console-tree-sorter li span em{padding:2px; border-color: #cccccc; background: #f2f2f2}
 .hippo-console-tree-sorter a:hover, .hippo-console-save a:hover, .hippo-console-tree-add a:hover{color: white; background: #32629b;}
-.hippo-console-tree-add{clear: left; margin-bottom: 25px;}
+.hippo-console-tree-add{clear: left;}
 .hippo-console-tree-add  li span {display: block; float: left; padding: 2px; }
 .hippo-console-tree-add  li span em{font-weight: bold; color: white; font-style: normal} 
 .hippo-console-tree-add-delete a:hover{background: red;}
@@ -66,10 +73,13 @@ body{padding: 15px;}
 
 .hippo-console-tree .hippo-tree-dropdown-icon:hover {background-position: 0px 0px;}
  
+.hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a{padding-left: 25px; padding-right: 25px;}
 
-.hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a{padding-left: 25px; padding-right: 25px; background: #abd5ff}
+/* Disabled sorter button */
+.hippo-console-tree-sorter li span em{ background: #abd5ff; border: 1px solid #fff;}
+/* Enabled sorter button */
+.hippo-console-tree-sorter a {background: #4587D6; }
 
-.hippo-console-menu{}
 .hippo-console tr td.hippo-global-align-bottom{vertical-align: bottom}
 .hippo-console-menu button{text-align: center; font-size: 12px; font-weight: bold;}
 .hippo-console-logout{position: absolute; right: 20px; top: 10px; font-size: 11px}
@@ -108,7 +118,7 @@ body{padding: 15px;}
 .hippo-tree div.wicket-tree div.row-selected a {font-weight: normal; color: black;}
 
 
-.hippo-projectexport-tree .hippo-tree {overflow: scroll; height: 305px; margin: 20px 20px 20px 20px; padding: 4px 4px 4px 4px; border-width: 2px; border-style: solid; font-size: 13px; width: 780px; }
+.hippo-projectexport-tree .hippo-tree {height: 305px; margin: 20px 20px 20px 20px; padding: 4px 4px 4px 4px; border-width: 2px; border-style: solid; font-size: 13px; width: 780px; }
 .hippo-projectexport-tree .wicket-tree a{color: #666666}
 .hippo-projectexport-tree .wicket-tree a:hover{color: #32629b}
 .hippo-projectexport-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}

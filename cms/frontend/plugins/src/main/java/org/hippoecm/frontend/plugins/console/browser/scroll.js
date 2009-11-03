@@ -14,52 +14,77 @@
  *  limitations under the License.
  */
 var Hippo_scroll_registered = false;
+var Hippo_scroll_element_id = null;
 
-function Hippo_scroll_savePosition(el) {
-	var offsetY = el.pageYOffset || el.scrollTop;
-	Hippo_scroll_setCookie('Hippo_scroll_offsetY', offsetY);
+function Hippo_scroll_setTreeId(id) {
+    Hippo_scroll_element_id = id;
 }
 
-function Hippo_scroll_loadPosition(el) {
-	var y = Hippo_scroll_getCookie('Hippo_scroll_offsetY');
-	if (y) {
-		el.scrollTop = y;
-		Hippo_scroll_deleteCookie('Hippo_scroll_offsetY');
-	}
+function Hippo_scroll_savePosition() {
+    var el = Hippo_scroll_getElement();
+    if(el == null) {
+        return;
+    }
+    var offsetX = el.pageXOffset || el.scrollLeft;
+    var offsetY = el.pageYOffset || el.scrollTop;
+    Hippo_scroll_setCookie('Hippo_scroll_offsetX', offsetX);
+    Hippo_scroll_setCookie('Hippo_scroll_offsetY', offsetY);
+}
+
+function Hippo_scroll_getElement() {
+    return YAHOO.hippo.LayoutManager.findLayoutUnit(YAHOO.util.Dom.get(Hippo_scroll_element_id)).body;
+}
+
+function Hippo_scroll_loadPosition() {
+    var el = Hippo_scroll_getElement();
+    if(el == null) {
+        return;
+    }
+    
+    var x = Hippo_scroll_getCookie('Hippo_scroll_offsetX');
+    if (x) {
+        el.scrollLeft = x;
+        Hippo_scroll_deleteCookie('Hippo_scroll_offsetX');
+    }
+    var y = Hippo_scroll_getCookie('Hippo_scroll_offsetY');
+    if (y) {
+        el.scrollTop = y;
+        Hippo_scroll_deleteCookie('Hippo_scroll_offsetY');
+    }
 }
 
 function Hippo_scroll_setCookie(name, value, expires, path, domain, secure) {
-	var curCookie = name + "=" + escape(value)
-			+ ((expires) ? "; expires=" + expires.toGMTString() : "")
-			+ ((path) ? "; path=" + path : "")
-			+ ((domain) ? "; domain=" + domain : "")
-			+ ((secure) ? "; secure" : "");
-	document.cookie = curCookie;
+    var curCookie = name + "=" + escape(value)
+            + ((expires) ? "; expires=" + expires.toGMTString() : "")
+            + ((path) ? "; path=" + path : "")
+            + ((domain) ? "; domain=" + domain : "")
+            + ((secure) ? "; secure" : "");
+    document.cookie = curCookie;
 }
 
 function Hippo_scroll_getCookie(name) {
-	var dc = document.cookie;
-	var prefix = name + "=";
-	var begin = dc.indexOf("; " + prefix);
-	if (begin == -1) {
-		begin = dc.indexOf(prefix);
-		if (begin != 0) {
-			return null;
-		}
-	} else {
-		begin += 2;
-	}
-	var end = document.cookie.indexOf(";", begin);
-	if (end == -1) {
-		end = dc.length;
-	}
-	return unescape(dc.substring(begin + prefix.length, end));
+    var dc = document.cookie;
+    var prefix = name + "=";
+    var begin = dc.indexOf("; " + prefix);
+    if (begin == -1) {
+        begin = dc.indexOf(prefix);
+        if (begin != 0) {
+            return null;
+        }
+    } else {
+        begin += 2;
+    }
+    var end = document.cookie.indexOf(";", begin);
+    if (end == -1) {
+        end = dc.length;
+    }
+    return unescape(dc.substring(begin + prefix.length, end));
 }
 
 function Hippo_scroll_deleteCookie(name, path, domain) {
-	if (Hippo_scroll_getCookie(name)) {
-		document.cookie = name + "=" + ((path) ? "; path=" + path : "")
-				+ ((domain) ? "; domain=" + domain : "")
-				+ "; expires=Thu, 01-Jan-70 00:00:01 GMT";
-	}
+    if (Hippo_scroll_getCookie(name)) {
+        document.cookie = name + "=" + ((path) ? "; path=" + path : "")
+                + ((domain) ? "; domain=" + domain : "")
+                + "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+    }
 }

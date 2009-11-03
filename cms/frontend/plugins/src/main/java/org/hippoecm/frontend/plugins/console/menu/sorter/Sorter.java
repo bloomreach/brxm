@@ -25,11 +25,10 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Sorter extends Panel {
+public abstract class Sorter extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -76,13 +75,13 @@ public class Sorter extends Panel {
                         up.setEnabled(position > 2);
                         down.setEnabled(true);
 
-                        MenuPlugin menu = (MenuPlugin) findParent(MenuPlugin.class);
-                        menu.redraw();
+                        redraw();
                     } catch (RepositoryException e) {
                         log.error(e.getMessage(), e);
                     }
                 }
             }
+            
         };
         add(up);
         up.setEnabled(false);
@@ -118,9 +117,8 @@ public class Sorter extends Panel {
 
                         up.setEnabled(true);
                         down.setEnabled(placedBefore != null);
-
-                        MenuPlugin menu = (MenuPlugin) findParent(MenuPlugin.class);
-                        menu.redraw();
+                        
+                        redraw();
                     } catch (RepositoryException e) {
                         log.error(e.getMessage(), e);
                     }
@@ -167,8 +165,9 @@ public class Sorter extends Panel {
                 log.error(e.getMessage(), e);
             }
         }
-        MenuPlugin plugin = (MenuPlugin) findParent(MenuPlugin.class);
-        plugin.redraw();
+        redraw();
     }
+
+    protected abstract void redraw();
 
 }

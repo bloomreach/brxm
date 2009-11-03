@@ -13,33 +13,37 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.console;
+package org.hippoecm.frontend.plugins.console.menu;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.console.menu.sorter.Sorter;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.widgets.Pinger;
 
-public class RootPlugin extends RenderPlugin {
+public class SortMenuPlugin extends RenderPlugin {
+    private static final long serialVersionUID = 1L;
+    
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+    
+    private Sorter sorter;
 
-    private static final long serialVersionUID = 1L;
-
-    public RootPlugin(IPluginContext context, IPluginConfig config) {
+    public SortMenuPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        add(new Pinger("pinger"));
-
-        if (config.getString(RenderService.MODEL_ID) != null) {
-            String modelId = config.getString(RenderService.MODEL_ID);
-            ModelReference modelService = new ModelReference(modelId, new JcrNodeModel("/"));
-            modelService.init(context);
-            // unregister: don't repaint root plugin when model changes.
-            context.unregisterService(this, modelId);
-        }
+        
+        add(sorter = new Sorter("sorter-panel") {
+            private static final long serialVersionUID = 1L;
+            
+            @Override
+            protected void redraw() {
+                SortMenuPlugin.this.redraw();
+            }
+            
+        });
+    }
+    
+    @Override
+    public void onModelChanged() {
+        sorter.setModel(getModel());
     }
 }

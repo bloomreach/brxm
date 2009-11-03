@@ -35,7 +35,11 @@ public class ScrollBehavior extends AbstractDefaultAjaxBehavior {
     private static final ResourceReference SCRIPT = new JavascriptResourceReference(ScrollBehavior.class, "scroll.js");
     private static final PackagedTextTemplate INIT = new PackagedTextTemplate(ScrollBehavior.class, "init_scroll.js");
     private final ParameterModel model = new ParameterModel();
-    
+
+    public ScrollBehavior() {
+        super();
+    }
+
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
@@ -47,7 +51,7 @@ public class ScrollBehavior extends AbstractDefaultAjaxBehavior {
     protected void respond(AjaxRequestTarget target) {
         // NOP
     }
-    
+
     class ParameterModel extends AbstractReadOnlyModel {
         private static final long serialVersionUID = 1L;
 
