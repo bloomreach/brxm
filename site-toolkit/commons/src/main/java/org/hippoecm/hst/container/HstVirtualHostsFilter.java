@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
@@ -80,9 +81,8 @@ public class HstVirtualHostsFilter implements Filter {
         
         try {
             if (!HstServices.isAvailable()) {
-                String msg = "The HST Container Services are not initialized yet.";
-                response.getWriter().println(msg);
-                response.flushBuffer();
+                ((HttpServletResponse)response).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                logger.error("The HST Container Services are not initialized yet.");
                 return;
             }
             

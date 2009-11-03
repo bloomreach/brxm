@@ -162,11 +162,8 @@ public class HstContainerServlet extends HttpServlet {
 
         try {
             if (!HstServices.isAvailable()) {
-                String msg = "The HST Container Services are not initialized yet.";
-                log(msg);
-                res.getWriter().println(msg);
-                res.flushBuffer();
-                
+                ((HttpServletResponse)res).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                log("The HST Container Services are not initialized yet.");
                 return;
             }
             
