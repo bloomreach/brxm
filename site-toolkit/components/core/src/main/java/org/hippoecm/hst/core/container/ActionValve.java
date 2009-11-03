@@ -44,7 +44,7 @@ public class ActionValve extends AbstractValve
         if (actionWindowReferenceNamespace != null) {
             HstContainerURL baseURL = requestContext.getBaseURL();
             HstComponentWindow window = null;
-            window = findActionWindow(context.getRootComponentWindow(), actionWindowReferenceNamespace);
+            window = findComponentWindow(context.getRootComponentWindow(), actionWindowReferenceNamespace);
             
             HstResponseState responseState = null;
             HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider(requestContext);
@@ -151,39 +151,5 @@ public class ActionValve extends AbstractValve
             // continue
             context.invokeNext();
         }
-    }
-    
-    protected HstComponentWindow findActionWindow(HstComponentWindow rootWindow, String actionWindowReferenceNamespace) {
-        HstComponentWindow actionWindow = null;
-        
-        String rootReferenceNamespace = rootWindow.getReferenceNamespace();
-        
-        if (rootReferenceNamespace.equals(actionWindowReferenceNamespace)) {
-            actionWindow = rootWindow;
-        } else {
-            String [] rootReferenceNamespaces = rootReferenceNamespace.split(getComponentWindowFactory().getReferenceNameSeparator());
-            String [] referenceNamespaces = actionWindowReferenceNamespace.split(getComponentWindowFactory().getReferenceNameSeparator());
-            int index = 0;
-            while (index < rootReferenceNamespaces.length && index < referenceNamespaces.length && rootReferenceNamespaces[index].equals(referenceNamespaces[index])) {
-                index++;
-            }
-            
-            if (index < referenceNamespaces.length) {
-                HstComponentWindow tempWindow = rootWindow;
-                for ( ; index < referenceNamespaces.length; index++) {
-                    if (tempWindow != null) {
-                        tempWindow = tempWindow.getChildWindowByReferenceName(referenceNamespaces[index]);
-                    } else {
-                        break;
-                    }
-                }
-                
-                if (index == referenceNamespaces.length) {
-                    actionWindow = tempWindow;
-                }
-            }
-        }
-        
-        return actionWindow;
     }
 }

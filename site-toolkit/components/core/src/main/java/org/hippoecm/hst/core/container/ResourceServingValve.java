@@ -45,7 +45,7 @@ public class ResourceServingValve extends AbstractValve {
             }
             
             if (window == null) {
-                window = findResourceServingWindow(context.getRootComponentWindow(), resourceWindowRef);
+                window = findComponentWindow(context.getRootComponentWindow(), resourceWindowRef);
             }
             
             if (window != null) {
@@ -71,34 +71,5 @@ public class ResourceServingValve extends AbstractValve {
         
         // continue
         context.invokeNext();
-    }
-
-    protected HstComponentWindow findResourceServingWindow(HstComponentWindow rootWindow, String resourceServingWindowReferenceNamespace) {
-        HstComponentWindow resourceServingWindow = null;
-        
-        String rootReferenceNamespace = rootWindow.getReferenceNamespace();
-        
-        if (rootReferenceNamespace.equals(resourceServingWindowReferenceNamespace)) {
-            resourceServingWindow = rootWindow;
-        } else {
-            String [] referenceNamespaces = resourceServingWindowReferenceNamespace.split(getComponentWindowFactory().getReferenceNameSeparator());
-            int start = ((referenceNamespaces.length > 0 && rootReferenceNamespace.equals(referenceNamespaces[0])) ? 1 : 0);
-            
-            HstComponentWindow tempWindow = rootWindow;
-            int index = start;
-            for ( ; index < referenceNamespaces.length; index++) {
-                if (tempWindow != null) {
-                    tempWindow = tempWindow.getChildWindowByReferenceName(referenceNamespaces[index]);
-                } else {
-                    break;
-                }
-            }
-            
-            if (index == referenceNamespaces.length) {
-                resourceServingWindow = tempWindow;
-            }
-        }
-        
-        return resourceServingWindow;
     }
 }

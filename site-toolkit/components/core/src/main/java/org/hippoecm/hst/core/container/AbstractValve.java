@@ -193,5 +193,39 @@ public abstract class AbstractValve implements Valve
         
         return traceToolComponentWindow;
     }
+    
+    protected HstComponentWindow findComponentWindow(HstComponentWindow rootWindow, String windowReferenceNamespace) {
+        HstComponentWindow componentWindow = null;
+        
+        String rootReferenceNamespace = rootWindow.getReferenceNamespace();
+        
+        if (rootReferenceNamespace.equals(windowReferenceNamespace)) {
+            componentWindow = rootWindow;
+        } else {
+            String [] rootReferenceNamespaces = rootReferenceNamespace.split(getComponentWindowFactory().getReferenceNameSeparator());
+            String [] referenceNamespaces = windowReferenceNamespace.split(getComponentWindowFactory().getReferenceNameSeparator());
+            int index = 0;
+            while (index < rootReferenceNamespaces.length && index < referenceNamespaces.length && rootReferenceNamespaces[index].equals(referenceNamespaces[index])) {
+                index++;
+            }
+            
+            if (index < referenceNamespaces.length) {
+                HstComponentWindow tempWindow = rootWindow;
+                for ( ; index < referenceNamespaces.length; index++) {
+                    if (tempWindow != null) {
+                        tempWindow = tempWindow.getChildWindowByReferenceName(referenceNamespaces[index]);
+                    } else {
+                        break;
+                    }
+                }
+                
+                if (index == referenceNamespaces.length) {
+                    componentWindow = tempWindow;
+                }
+            }
+        }
+        
+        return componentWindow;
+    }
 
 }

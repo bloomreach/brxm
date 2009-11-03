@@ -359,6 +359,9 @@ public class HstContainerPortlet extends GenericPortlet {
     }
 
     private void processMimeResponseRequest(PortletRequest request, MimeResponse response, String hstDispUrl, HstResponseState portletResponseState) throws PortletException, IOException {
+        
+        request.setAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE, response.getNamespace());
+        
         PortletRequestDispatcher dispatcher = this.portletContext.getRequestDispatcher(hstDispUrl);
         if (dispatcher != null) {
             dispatcher.include(request, response);
