@@ -23,8 +23,10 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
+import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -161,7 +163,7 @@ public class JcrPropertyValueModel extends Model {
     public void setValue(Value value) {
         load();
         this.value = value;
-        this.type = value.getType();
+        this.type = getType();
 
         PropertyDefinition propDef = getPropertyDefinition();
         if (propDef != null) {
@@ -173,7 +175,7 @@ public class JcrPropertyValueModel extends Model {
                         Value[] newValues = new Value[oldValues.length];
                         for (int i = 0; i < oldValues.length; i++) {
                             if (i == index) {
-                                newValues[i] = value;
+                                newValues[i] = (value == null ? createNullValue() : value);
                             } else {
                                 newValues[i] = oldValues[i];
                             }
@@ -182,7 +184,7 @@ public class JcrPropertyValueModel extends Model {
                     } else {
                         prop.setValue(value);
                     }
-                } else {
+                } else if (value != null) {
                     Node node = (Node) propertyModel.getItemModel().getParentModel().getObject();
                     String name;
                     if (propDef.getName().equals("*")) {
@@ -234,6 +236,12 @@ public class JcrPropertyValueModel extends Model {
     @Override
     public void setObject(final Serializable object) {
         load();
+        if (object == null) {
+            if (value != null) {
+                setValue(null);
+            }
+            return;
+        }
         try {
             ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
             int type = getType();
@@ -253,11 +261,17 @@ public class JcrPropertyValueModel extends Model {
                 value = factory.createValue((Long) object);
                 break;
             default:
-                String string = object == null ? "" : object.toString();
+                String string = object.toString();
                 value = factory.createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
             }
-        } catch (RepositoryException ex) {
-            log.info(ex.getMessage());
+        } catch (ValueFormatException ex) {
+            log.info("invalid value " + object + ": " + ex.getMessage());
+            return;
+        } catch (UnsupportedRepositoryOperationException e) {
+            log.error("repository is read-only", e);
+            return;
+        } catch (RepositoryException e) {
+            log.error("repository error when setting value", e);
             return;
         }
         setValue(value);
@@ -286,6 +300,12 @@ public class JcrPropertyValueModel extends Model {
         this.index = index;
     }
 
+    private Value createNullValue() throws UnsupportedRepositoryOperationException, RepositoryException {
+        ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
+        int type = getType();
+        return factory.createValue("", (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+    }
+    
     private void load() {
         if (!loaded) {
             if (propertyModel.getItemModel().exists()) {

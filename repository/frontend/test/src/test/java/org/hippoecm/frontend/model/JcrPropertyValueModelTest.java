@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
 
@@ -98,6 +100,29 @@ public class JcrPropertyValueModelTest extends PluginTest {
         JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:string");
         JcrPropertyValueModel valueModel = new JcrPropertyValueModel(propModel);
         valueModel.setObject("y");
+        assertTrue(test.hasProperty("frontendtest:string"));
+        assertEquals("y", test.getProperty("frontendtest:string").getString());
+    }
+
+    @Test
+    public void testSetNullRemovesSingleValuedProperty() throws Exception {
+        Node test = this.root.addNode("test", "frontendtest:model");
+        test.setProperty("frontendtest:string", "y");
+        JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:string");
+        JcrPropertyValueModel valueModel = new JcrPropertyValueModel(propModel);
+        valueModel.setObject(null);
+        assertFalse(test.hasProperty("frontendtest:string"));
+    }
+
+    @Test
+    public void testSetNullResetsMultiValuedProperty() throws Exception {
+        Node test = this.root.addNode("test", "frontendtest:model");
+        test.setProperty("frontendtest:strings", new Value[] {session.getValueFactory().createValue("y") });
+        JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:strings");
+        JcrPropertyValueModel valueModel = new JcrPropertyValueModel(0, propModel);
+        valueModel.setObject(null);
+        assertTrue(test.hasProperty("frontendtest:strings"));
+        assertEquals("", test.getProperty("frontendtest:strings").getValues()[0].getString());
     }
 
     @Test
