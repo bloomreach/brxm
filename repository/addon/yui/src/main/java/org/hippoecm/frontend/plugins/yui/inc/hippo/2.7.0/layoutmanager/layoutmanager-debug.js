@@ -557,7 +557,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             units.push(body);
             
             if(Lang.isNumber(config.headerHeight) && config.headerHeight > 0) {
-                var header = {position: 'top', body: 'hd', height: config.headerHeight, scroll: false, grids: true};
+                var header = {position: 'top', body: 'hd', height: config.headerHeight, scroll: config.headerScroll, resize: config.headerResize, grids: true};
                 if(config.headerGutter != null) {
                   header.gutter = config.headerGutter;
                 }
@@ -565,7 +565,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             }
             
             if(Lang.isNumber(config.leftWidth) && config.leftWidth > 0) {
-                var left = {position: 'left', body: 'lt', width: config.leftWidth, scroll: config.leftScroll};
+                var left = {position: 'left', body: 'lt', width: config.leftWidth, scroll: config.leftScroll, resize: config.leftResize };
                 if(config.leftGutter != null) {
                     left.gutter = config.leftGutter;
                 }
@@ -573,12 +573,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             }
             
             if(Lang.isNumber(config.rightWidth) && config.rightWidth > 0) {
-                var right = {position: 'right', body: 'rt', width: config.rightWidth, scroll: false};
+                var right = {position: 'right', body: 'rt', width: config.rightWidth, scroll: config.rightScroll, resize: config.rightResize };
                 units.push(right);
             }
 
             if(Lang.isNumber(config.footerHeight) && config.footerHeight > 0) {
-                var footer = {position: 'bottom', body: 'ft', height: config.footerHeight, scroll: false, grids: true};
+                var footer = {position: 'bottom', body: 'ft', height: config.footerHeight, scroll: config.footerScroll, resize: config.footerResize, grids: true};
                 if(config.footerGutter != null) {
                   footer.gutter = config.footerGutter;
                 }
