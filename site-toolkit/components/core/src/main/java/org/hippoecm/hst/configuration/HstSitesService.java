@@ -43,7 +43,7 @@ public class HstSitesService extends AbstractJCRService implements HstSites, Ser
     public HstSitesService(Node node) throws ServiceException {
         super(node);
         try {
-            if(node.isNodeType(Configuration.NODETYPE_HST_SITES)) {
+            if(node.isNodeType(HstNodeTypes.NODETYPE_HST_SITES)) {
                 this.sitesContentPath = node.getPath();
                 init(node);
                 /*
@@ -66,7 +66,7 @@ public class HstSitesService extends AbstractJCRService implements HstSites, Ser
     
     private void init(Node node) throws RepositoryException {
        QueryManager qryMng = node.getSession().getWorkspace().getQueryManager();
-       String query = "/jcr:root" + node.getPath()+"//element(*,"+Configuration.NODETYPE_HST_SITE+")";
+       String query = "/jcr:root" + node.getPath()+"//element(*,"+HstNodeTypes.NODETYPE_HST_SITE+")";
        QueryResult result = qryMng.createQuery(query, "xpath").execute();
        for(NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext();) {
            Node site = nodeIt.nextNode();

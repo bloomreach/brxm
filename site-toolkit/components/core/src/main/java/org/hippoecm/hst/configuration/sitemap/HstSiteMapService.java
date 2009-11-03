@@ -26,7 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
@@ -54,8 +54,8 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
         this.hstSite = hstSite;
         this.siteMapRootNodePath = siteMapNode.getPath();
         
-        if(!siteMapNode.isNodeType(Configuration.NODETYPE_HST_SITEMAP)) {
-            throw new ServiceException("Cannot create SitemapServiceImpl: Expected nodeType '"+Configuration.NODETYPE_HST_SITEMAP+"' but was '"+siteMapNode.getPrimaryNodeType().getName()+"'");
+        if(!siteMapNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAP)) {
+            throw new ServiceException("Cannot create SitemapServiceImpl: Expected nodeType '"+HstNodeTypes.NODETYPE_HST_SITEMAP+"' but was '"+siteMapNode.getPrimaryNodeType().getName()+"'");
         }
         
         // initialize all sitemap items
@@ -75,7 +75,7 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
                 log.warn("skipping null node");
                 continue;
             }
-            if(child.isNodeType(Configuration.NODETYPE_HST_SITEMAPITEM)) {
+            if(child.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
                 try {
                     HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, null, this);
                     rootSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
@@ -89,7 +89,7 @@ public class HstSiteMapService extends AbstractJCRService implements HstSiteMap,
                 
             } else {
                 if (log.isWarnEnabled()) {
-                    log.warn("Skipping node '{}' because is not of type {}", child.getPath(), Configuration.NODETYPE_HST_SITEMAPITEM);
+                    log.warn("Skipping node '{}' because is not of type {}", child.getPath(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
                 }
             }
         }

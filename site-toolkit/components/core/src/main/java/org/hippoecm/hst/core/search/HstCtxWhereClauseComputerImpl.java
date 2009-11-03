@@ -27,7 +27,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.jackrabbit.uuid.UUID;
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -78,10 +78,10 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             Node jcrRoot = session.getRootNode();
             while(!start.isSame(jcrRoot)) {
                 start = start.getParent();
-                if(start.isNodeType(Configuration.NODETYPE_HST_SITE)) {
+                if(start.isNodeType(HstNodeTypes.NODETYPE_HST_SITE)) {
                     // get the content mirror
-                   if(start.hasNode(Configuration.NODENAME_HST_CONTENTNODE)) {
-                       contentFacetSelectNode = start.getNode(Configuration.NODENAME_HST_CONTENTNODE);
+                   if(start.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE)) {
+                       contentFacetSelectNode = start.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
                        break;
                    } else {
                        throw new HstContextualizeException("Cannot create a Virtualizer for : " + scope.getPath());

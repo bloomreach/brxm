@@ -31,7 +31,7 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -159,11 +159,11 @@ public class HstSurfAndEditTag extends TagSupport {
                 if (editNode.isSame(rootNode)) {
                     log.warn("Cannot create a 'surf and edit' link for a jcr root node.");
                 } 
-                if (editNode.isNodeType(Configuration.NODETYPE_HST_SITES)) {
-                    log.warn("Cannot create a 'surf and edit' link for a jcr node of type '{}'.", Configuration.NODETYPE_HST_SITES);
+                if (editNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITES)) {
+                    log.warn("Cannot create a 'surf and edit' link for a jcr node of type '{}'.", HstNodeTypes.NODETYPE_HST_SITES);
                 }
-                if (editNode.isNodeType(Configuration.NODETYPE_HST_SITE)) {
-                    log.warn("Cannot create a 'surf and edit' link for a jcr node of type '{}'.", Configuration.NODETYPE_HST_SITE);
+                if (editNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITE)) {
+                    log.warn("Cannot create a 'surf and edit' link for a jcr node of type '{}'.", HstNodeTypes.NODETYPE_HST_SITE);
                 } 
                 
                 Node handleNode = getHandleNodeIfIsAncestor(editNode, rootNode);

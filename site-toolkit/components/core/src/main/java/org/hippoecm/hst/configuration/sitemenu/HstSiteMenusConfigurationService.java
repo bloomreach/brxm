@@ -25,7 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
     public HstSiteMenusConfigurationService(HstSite hstSite, Node siteMenusNode) throws ServiceException{
         this.hstSite = hstSite;
         try {
-            if (siteMenusNode.isNodeType(Configuration.NODETYPE_HST_SITEMENUS)) {
+            if (siteMenusNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENUS)) {
                 init(siteMenusNode);
             }
         } catch (RepositoryException e) {
@@ -60,7 +60,7 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
            if(siteMenu == null) {
                continue;
            }
-           if(siteMenu.isNodeType(Configuration.NODETYPE_HST_SITEMENU)) {
+           if(siteMenu.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENU)) {
                try {
                    HstSiteMenuConfiguration hstSiteMenuConfiguration = new HstSiteMenuConfigurationService(this, siteMenu);
                    HstSiteMenuConfiguration old = hstSiteMenuConfigurations.put(hstSiteMenuConfiguration.getName(), hstSiteMenuConfiguration);
@@ -71,7 +71,7 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
                    log.warn("Skipping HstSiteMenuConfiguration for '{}' because '{}'", siteMenu.getPath(), e.toString());
                }
            } else {
-               log.error("Skipping siteMenu '{}' because not of type '{}'", siteMenu.getPath(), Configuration.NODETYPE_HST_SITEMENU);
+               log.error("Skipping siteMenu '{}' because not of type '{}'", siteMenu.getPath(), HstNodeTypes.NODETYPE_HST_SITEMENU);
            }
        }
     }

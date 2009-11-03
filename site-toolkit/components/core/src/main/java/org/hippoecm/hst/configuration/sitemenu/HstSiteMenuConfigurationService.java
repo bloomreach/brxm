@@ -23,7 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,7 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
             if(siteMenuItem == null) {
                 continue;
             }
-            if(siteMenuItem.isNodeType(Configuration.NODETYPE_HST_SITEMENUITEM)) {
+            if(siteMenuItem.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENUITEM)) {
                 try {
                     HstSiteMenuItemConfiguration siteMenuItemConfiguration = new HstSiteMenuItemConfigurationService(siteMenuItem, null, this);
                     siteMenuItems.add(siteMenuItemConfiguration);
@@ -63,7 +63,7 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
                     log.warn("Skipping siteMenuItemConfiguration for '{}' : '{}'", siteMenuItem.getPath(), e.toString());
                 }
             } else {
-                log.error("Skipping siteMenuItem '{}' because not of type '{}'", siteMenuItem.getPath(), Configuration.NODETYPE_HST_SITEMENUITEM);
+                log.error("Skipping siteMenuItem '{}' because not of type '{}'", siteMenuItem.getPath(), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
             }
         }
     }

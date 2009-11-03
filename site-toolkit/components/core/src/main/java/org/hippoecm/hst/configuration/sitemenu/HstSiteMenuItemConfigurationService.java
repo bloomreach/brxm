@@ -24,7 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
@@ -62,22 +62,22 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
 
     private void init(Node siteMenuItem, HstSiteMap hstSiteMap) throws ServiceException{
         try {
-            if(siteMenuItem.hasProperty(Configuration.SITEMENUITEM_PROPERTY_EXTERNALLINK)) {
-                this.externalLink = siteMenuItem.getProperty(Configuration.SITEMENUITEM_PROPERTY_EXTERNALLINK).getString();
-            }else if(siteMenuItem.hasProperty(Configuration.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
+            if(siteMenuItem.hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK)) {
+                this.externalLink = siteMenuItem.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK).getString();
+            }else if(siteMenuItem.hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
                // siteMapItemPath can be an exact path to a sitemap item, but can also be a path to a sitemap item containing wildcards.
-               this.siteMapItemPath = siteMenuItem.getProperty(Configuration.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM).getString();
+               this.siteMapItemPath = siteMenuItem.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM).getString();
                
             } else {
                log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 
             }
             
-            if(siteMenuItem.hasProperty(Configuration.SITEMENUITEM_PROPERTY_REPOBASED)) {
-                this.repositoryBased = siteMenuItem.getProperty(Configuration.SITEMENUITEM_PROPERTY_REPOBASED).getBoolean();
+            if(siteMenuItem.hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED)) {
+                this.repositoryBased = siteMenuItem.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED).getBoolean();
             }
             
-            if(siteMenuItem.hasProperty(Configuration.SITEMENUITEM_PROPERTY_DEPTH)) {
-               this.depth = (int)siteMenuItem.getProperty(Configuration.SITEMENUITEM_PROPERTY_DEPTH).getLong();
+            if(siteMenuItem.hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_DEPTH)) {
+               this.depth = (int)siteMenuItem.getProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_DEPTH).getLong();
             }
             
             if( (this.repositoryBased && this.depth <= 0) || (!this.repositoryBased && this.depth > 0) ) {

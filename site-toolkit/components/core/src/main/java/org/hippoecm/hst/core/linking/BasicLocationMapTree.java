@@ -24,7 +24,7 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
@@ -68,12 +68,12 @@ public class BasicLocationMapTree implements LocationMapTree{
         while(index-- != 0) {
             HstSiteMapItemService s = (HstSiteMapItemService)ancestorItems.get(index);
             if(s.isWildCard()) {
-                params.put(String.valueOf(params.size()+1), Configuration.WILDCARD);
+                params.put(String.valueOf(params.size()+1), HstNodeTypes.WILDCARD);
             } else if(s.isAny()) {
-                params.put(String.valueOf(params.size()+1), Configuration.ANY);
+                params.put(String.valueOf(params.size()+1), HstNodeTypes.ANY);
             } else if( s.containsWildCard() ) {
                 // we assume a postfix containing a "." only meant for document url extension, disregard for linkmatching first
-                String paramVal = s.getPrefix()+Configuration.WILDCARD;
+                String paramVal = s.getPrefix()+HstNodeTypes.WILDCARD;
                 if(s.getPostfix().indexOf(".") > -1) {
                     String post = s.getPostfix().substring(0,s.getPostfix().indexOf("."));
                     if(!"".equals(post)) {
@@ -85,7 +85,7 @@ public class BasicLocationMapTree implements LocationMapTree{
                 params.put(String.valueOf(params.size()+1), paramVal);
             } else if( s.containsAny() ) {
                // we assume a postfix containing a "." only meant for document url extension, disregard for linkmatching first
-                String paramVal = s.getPrefix()+Configuration.ANY;
+                String paramVal = s.getPrefix()+HstNodeTypes.ANY;
                 if(s.getPostfix().indexOf(".") > -1) {
                     String post = s.getPostfix().substring(0,s.getPostfix().indexOf("."));
                     if(!"".equals(post)) {
@@ -167,7 +167,7 @@ public class BasicLocationMapTree implements LocationMapTree{
        // test for * matcher because we did not yet be able to resolve to a matching sitemap
         if(matchedLocationMapTreeItem == null) {
             params.clear();
-            locationMapTreeItem = this.getTreeItem(Configuration.WILDCARD);
+            locationMapTreeItem = this.getTreeItem(HstNodeTypes.WILDCARD);
             if(locationMapTreeItem != null) {
                 params.put(String.valueOf(params.size()+1), elements[0]);
                 matchedLocationMapTreeItem =  resolveMatchingSiteMap(locationMapTreeItem, params, 1, elements);
@@ -177,7 +177,7 @@ public class BasicLocationMapTree implements LocationMapTree{
        // test for ** matcher because we did not yet be able to resolve to a matching sitemap
         if(matchedLocationMapTreeItem == null) {
             params.clear();
-            locationMapTreeItem = this.getTreeItem(Configuration.ANY);
+            locationMapTreeItem = this.getTreeItem(HstNodeTypes.ANY);
             if(locationMapTreeItem != null) {
                 params.put(String.valueOf(params.size()+1), path);
                 matchedLocationMapTreeItem =  locationMapTreeItem;
@@ -277,10 +277,10 @@ public class BasicLocationMapTree implements LocationMapTree{
         }
         if(locationMapTreeItem.getChild(elements[position]) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(elements[position]))) {
             return traverseInToLocationMapTreeItem(locationMapTreeItem.getChild(elements[position]), params, ++position, elements, checkedLocationMapTreeItems);
-        } else if(locationMapTreeItem.getChild(Configuration.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(Configuration.WILDCARD))) {
+        } else if(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))) {
             params.put(String.valueOf(params.size()+1), elements[position]);
-            return traverseInToLocationMapTreeItem(locationMapTreeItem.getChild(Configuration.WILDCARD), params, ++position, elements, checkedLocationMapTreeItems);
-        } else if(locationMapTreeItem.getChild(Configuration.ANY) != null ) {
+            return traverseInToLocationMapTreeItem(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD), params, ++position, elements, checkedLocationMapTreeItems);
+        } else if(locationMapTreeItem.getChild(HstNodeTypes.ANY) != null ) {
             return getANYMatchingLocationMapTreeItem(locationMapTreeItem, params,position, elements);
         }  
         else {
@@ -297,16 +297,16 @@ public class BasicLocationMapTree implements LocationMapTree{
         }
         if(((BasicLocationMapTreeItem)locationMapTreeItem).isWildCard()) {
             // as this tree path did not result in a match, remove some params again
-            if(locationMapTreeItem.getChild(Configuration.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(Configuration.WILDCARD))){
+            if(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))){
                 return traverseInToLocationMapTreeItem(locationMapTreeItem, params, position, elements, checkedLocationMapTreeItems);
-            } else if(locationMapTreeItem.getChild(Configuration.ANY) != null) {
+            } else if(locationMapTreeItem.getChild(HstNodeTypes.ANY) != null) {
                 return traverseInToLocationMapTreeItem(locationMapTreeItem, params,position, elements, checkedLocationMapTreeItems);
             }
             params.remove(String.valueOf(params.size()));
             return traverseUp(locationMapTreeItem.getParentItem(),params, --position, elements, checkedLocationMapTreeItems );
-        } else if(locationMapTreeItem.getChild(Configuration.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(Configuration.WILDCARD))){
+        } else if(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))){
             return traverseInToLocationMapTreeItem(locationMapTreeItem, params, position, elements, checkedLocationMapTreeItems);
-        } else if(locationMapTreeItem.getChild(Configuration.ANY) != null ){
+        } else if(locationMapTreeItem.getChild(HstNodeTypes.ANY) != null ){
             return traverseInToLocationMapTreeItem(locationMapTreeItem, params,position, elements, checkedLocationMapTreeItems);
         } else {    
             return traverseUp(locationMapTreeItem.getParentItem(),params, --position, elements, checkedLocationMapTreeItems );
@@ -321,7 +321,7 @@ public class BasicLocationMapTree implements LocationMapTree{
                  remainder.append("/").append(elements[position]);
              }
              params.put(String.valueOf(params.size()+1), remainder.toString());
-             return locationMapTreeItem.getChild(Configuration.ANY);
+             return locationMapTreeItem.getChild(HstNodeTypes.ANY);
      }
     
     public String getCanonicalSiteContentPath() {

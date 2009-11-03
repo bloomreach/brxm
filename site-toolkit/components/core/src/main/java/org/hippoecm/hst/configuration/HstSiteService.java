@@ -65,11 +65,11 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
         try {
             this.name = site.getName();
             this.hstSites = hstSites;
-            if(site.hasNode(Configuration.NODENAME_HST_CONTENTNODE) && site.hasNode(Configuration.NODEPATH_HST_CONFIGURATION) ) {
+            if(site.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE) && site.hasNode(HstNodeTypes.NODEPATH_HST_CONFIGURATION) ) {
                 if(hstSites.getSites().get(name) != null) {
                     throw new ServiceException("Duplicate subsite with same name for '"+name+"'. Skipping this one");
                 } else {
-                    Node contentNode = site.getNode(Configuration.NODENAME_HST_CONTENTNODE);
+                    Node contentNode = site.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
                     contentPath = contentNode.getPath();
                     
                     // fetch the mandatory hippo:docbase property to retrieve the canonical node
@@ -99,7 +99,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
                         this.canonicalcontentPath = this.contentPath;
                     }
                     
-                    Node configurationNode = site.getNode(Configuration.NODEPATH_HST_CONFIGURATION);
+                    Node configurationNode = site.getNode(HstNodeTypes.NODEPATH_HST_CONFIGURATION);
                     configurationPath = configurationNode.getPath();
                     
                     init(configurationNode);
@@ -121,18 +121,18 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
     
     private void init(Node configurationNode) throws  RepositoryException, ServiceException {
        Map<String, String> templateRenderMap = new HashMap<String,String>();
-       Node hstTemplates = configurationNode.getNode(Configuration.NODENAME_HST_TEMPLATES);
+       Node hstTemplates = configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES);
        NodeIterator nodeIt = hstTemplates.getNodes();
        while(nodeIt.hasNext()){
            Node template = nodeIt.nextNode();
            if(template == null) {
                continue;
            }
-           if(!template.hasProperty(Configuration.TEMPLATE_PROPERTY_RENDERPATH) ) {
-               log.warn("Skipping template '{}' because missing '{}' property", template.getPath(), Configuration.TEMPLATE_PROPERTY_RENDERPATH);
+           if(!template.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH) ) {
+               log.warn("Skipping template '{}' because missing '{}' property", template.getPath(), HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
                continue;
            }
-           String renderpath = template.getProperty(Configuration.TEMPLATE_PROPERTY_RENDERPATH).getString();
+           String renderpath = template.getProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH).getString();
            if(renderpath != null && ! "".equals(renderpath)) {
                templateRenderMap.put(template.getName(), renderpath.trim());
            }
@@ -140,12 +140,12 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
         
        this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, templateRenderMap); 
       
-       Node siteMapNode = configurationNode.getNode(Configuration.NODENAME_HST_SITEMAP);
+       Node siteMapNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
        this.siteMapService = new HstSiteMapService(this, siteMapNode);   
        this.locationMapTree = this.createLocationMap();
        
-       if(configurationNode.hasNode(Configuration.NODENAME_HST_SITEMENUS)) {
-           Node siteMenusNode = configurationNode.getNode(Configuration.NODENAME_HST_SITEMENUS);
+       if(configurationNode.hasNode(HstNodeTypes.NODENAME_HST_SITEMENUS)) {
+           Node siteMenusNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMENUS);
            try {
            this.siteMenusConfigurations = new HstSiteMenusConfigurationService(this, siteMenusNode);
            } catch (ServiceException e) {

@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 public class BasicLocationMapTreeItem implements LocationMapTreeItem{
@@ -45,9 +45,9 @@ public class BasicLocationMapTreeItem implements LocationMapTreeItem{
             child = new BasicLocationMapTreeItem();
             this.children.put(pathFragment.get(0), child);
             child.setParentItem(this);
-            if(Configuration.WILDCARD.equals(pathFragment.get(0))){
+            if(HstNodeTypes.WILDCARD.equals(pathFragment.get(0))){
                 child.setIsWildCard(true);
-            } else if (Configuration.ANY.equals(pathFragment.get(0))){
+            } else if (HstNodeTypes.ANY.equals(pathFragment.get(0))){
                 child.setIsAny(true);
             }
         }

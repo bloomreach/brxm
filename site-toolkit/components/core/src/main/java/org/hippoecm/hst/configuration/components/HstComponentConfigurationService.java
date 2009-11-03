@@ -28,7 +28,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.provider.PropertyMap;
 import org.hippoecm.hst.service.AbstractJCRService;
@@ -100,11 +100,11 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         // id is the relative path wrt configuration components path
         this.id = getValueProvider().getPath().substring(configurationRootNodePath.length() + 1);
 
-        if (getValueProvider().isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
+        if (getValueProvider().isNodeType(HstNodeTypes.NODETYPE_HST_COMPONENT)) {
             this.name = getValueProvider().getName();
-            this.referenceName = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_REFERECENCENAME);
+            this.referenceName = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME);
             this.componentClassName = getValueProvider()
-                    .getString(Configuration.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
+                    .getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME);
             if (componentClassName == null) {
                 this.componentClassName = GenericHstComponent.class.getName();
             } else {
@@ -112,12 +112,12 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             }
 
             this.referenceComponent = getValueProvider().getString(
-                    Configuration.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
-            this.hstTemplate = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_TEMPLATE_);
-            this.serveResourcePath = getValueProvider().getString(Configuration.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
+                    HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
+            this.hstTemplate = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE_);
+            this.serveResourcePath = getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_SERVE_RESOURCE_PATH);
             this.propertyMap = getValueProvider().getPropertyMap();
-            String[] parameterNames = getValueProvider().getStrings(Configuration.COMPONENT_PROPERTY_PARAMETER_NAMES);
-            String[] parameterValues = getValueProvider().getStrings(Configuration.COMPONENT_PROPERTY_PARAMETER_VALUES);
+            String[] parameterNames = getValueProvider().getStrings(HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAMES);
+            String[] parameterValues = getValueProvider().getStrings(HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_VALUES);
 
             if (parameterNames != null && parameterValues != null) {
                 if (parameterNames.length != parameterValues.length) {
@@ -142,9 +142,9 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                     log.warn("skipping null node");
                     continue;
                 }
-                if (child.isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
-                    if (child.hasProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME)) {
-                        usedChildReferenceNames.add(child.getProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME)
+                if (child.isNodeType(HstNodeTypes.NODETYPE_HST_COMPONENT)) {
+                    if (child.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
+                        usedChildReferenceNames.add(child.getProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)
                                 .getString());
                     }
                     try {
@@ -167,7 +167,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                 } else {
                     if (log.isWarnEnabled()) {
                         log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(),
-                                (Configuration.NODETYPE_HST_COMPONENT));
+                                (HstNodeTypes.NODETYPE_HST_COMPONENT));
                     }
                 }
             }

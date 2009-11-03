@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.configuration;
 
-public class Configuration {
+public class HstNodeTypes {
  
     public static final String WILDCARD = "_default_";
     public static final String ANY = "_any_";

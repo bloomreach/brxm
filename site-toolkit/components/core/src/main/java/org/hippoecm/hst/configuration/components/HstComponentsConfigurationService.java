@@ -27,7 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -62,15 +62,15 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
         this.rootComponentConfigurations = new LinkedHashMap<String, HstComponentConfiguration>();
         this.childComponents = new ArrayList<HstComponentConfiguration>();
 
-        if (configurationNode.hasNode(Configuration.NODENAME_HST_COMPONENTS)) {
-            log.debug("Initializing the components for '{}'", Configuration.NODENAME_HST_COMPONENTS);
-            Node fragments = configurationNode.getNode(Configuration.NODENAME_HST_COMPONENTS);
+        if (configurationNode.hasNode(HstNodeTypes.NODENAME_HST_COMPONENTS)) {
+            log.debug("Initializing the components for '{}'", HstNodeTypes.NODENAME_HST_COMPONENTS);
+            Node fragments = configurationNode.getNode(HstNodeTypes.NODENAME_HST_COMPONENTS);
             init(fragments, configurationNode.getPath());
         }
 
-        if (configurationNode.hasNode(Configuration.NODENAME_HST_PAGES)) {
-            log.debug("Initializing the components for '{}'", Configuration.NODENAME_HST_PAGES);
-            Node pages = configurationNode.getNode(Configuration.NODENAME_HST_PAGES);
+        if (configurationNode.hasNode(HstNodeTypes.NODENAME_HST_PAGES)) {
+            log.debug("Initializing the components for '{}'", HstNodeTypes.NODENAME_HST_PAGES);
+            Node pages = configurationNode.getNode(HstNodeTypes.NODENAME_HST_PAGES);
             init(pages, configurationNode.getPath());
         }
 
@@ -155,10 +155,10 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
                 log.warn("skipping null node");
                 continue;
             }
-            if (child.isNodeType(Configuration.NODETYPE_HST_COMPONENT)) {
-                if (child.hasProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME)) {
+            if (child.isNodeType(HstNodeTypes.NODETYPE_HST_COMPONENT)) {
+                if (child.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
                     // add to the used referencenames set 
-                    usedReferenceNames.add(child.getProperty(Configuration.COMPONENT_PROPERTY_REFERECENCENAME)
+                    usedReferenceNames.add(child.getProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)
                             .getString());
                 }
                 try {
@@ -177,7 +177,7 @@ public class HstComponentsConfigurationService extends AbstractJCRService implem
             } else {
                 if (log.isWarnEnabled()) {
                     log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(),
-                            (Configuration.NODETYPE_HST_COMPONENT));
+                            (HstNodeTypes.NODETYPE_HST_COMPONENT));
                 }
             }
         }

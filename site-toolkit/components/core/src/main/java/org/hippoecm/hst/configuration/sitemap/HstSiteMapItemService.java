@@ -28,7 +28,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -101,8 +101,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         // currently, the value is always the nodename
         this.value = getValueProvider().getName();
 
-        this.statusCode = getValueProvider().getLong(Configuration.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
-        this.errorCode = getValueProvider().getLong(Configuration.SITEMAPITEM_PROPERTY_ERRORCODE).intValue();
+        this.statusCode = getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
+        this.errorCode = getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_ERRORCODE).intValue();
        
         if(this.value == null){
             log.error("The 'value' of a SiteMapItem is not allowed to be null: '{}'", nodePath);
@@ -114,18 +114,18 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         } else {
             parameterizedPath = "";
         }
-        if(Configuration.WILDCARD.equals(value)) {
+        if(HstNodeTypes.WILDCARD.equals(value)) {
             occurences++; 
             parameterizedPath = parameterizedPath + "${" + occurences + "}";
             this.isWildCard = true;
-        } else if(Configuration.ANY.equals(value)) {
+        } else if(HstNodeTypes.ANY.equals(value)) {
             occurences++;
             parameterizedPath = parameterizedPath + "${" + occurences + "}";
             this.isAny = true;
-        } else if(value.indexOf(Configuration.WILDCARD) > -1) {
+        } else if(value.indexOf(HstNodeTypes.WILDCARD) > -1) {
             this.containsWildCard = true;
-            this.postfix = value.substring(value.indexOf(Configuration.WILDCARD) + Configuration.WILDCARD.length());
-            this.prefix = value.substring(0, value.indexOf(Configuration.WILDCARD));
+            this.postfix = value.substring(value.indexOf(HstNodeTypes.WILDCARD) + HstNodeTypes.WILDCARD.length());
+            this.prefix = value.substring(0, value.indexOf(HstNodeTypes.WILDCARD));
             if(this.postfix.indexOf(".") > -1) {
                 this.extension = this.postfix.substring(this.postfix.indexOf("."));
             }
@@ -133,26 +133,26 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
                 ((HstSiteMapItemService)parentItem).addWildCardPrefixedChildSiteMapItems(this);
             }
             occurences++;
-            parameterizedPath = parameterizedPath + value.replace(Configuration.WILDCARD, "${"+occurences+"}" );
-        } else if(value.indexOf(Configuration.ANY) > -1) {
+            parameterizedPath = parameterizedPath + value.replace(HstNodeTypes.WILDCARD, "${"+occurences+"}" );
+        } else if(value.indexOf(HstNodeTypes.ANY) > -1) {
             this.containsAny = true;
-            this.postfix = value.substring(value.indexOf(Configuration.ANY) + Configuration.ANY.length());
+            this.postfix = value.substring(value.indexOf(HstNodeTypes.ANY) + HstNodeTypes.ANY.length());
             if(this.postfix.indexOf(".") > -1) {
                 this.extension = this.postfix.substring(this.postfix.indexOf("."));
             }
-            this.prefix = value.substring(0, value.indexOf(Configuration.ANY));
+            this.prefix = value.substring(0, value.indexOf(HstNodeTypes.ANY));
             if(parentItem != null) {
                 ((HstSiteMapItemService)parentItem).addAnyPrefixedChildSiteMapItems(this);
             }
             occurences++;
-            parameterizedPath = parameterizedPath + value.replace(Configuration.ANY, "${"+occurences+"}" );
+            parameterizedPath = parameterizedPath + value.replace(HstNodeTypes.ANY, "${"+occurences+"}" );
         }
         else {
             parameterizedPath = parameterizedPath + value;
         }
         
-        String[] parameterNames = getValueProvider().getStrings(Configuration.SITEMAPITEM_PROPERTY_PARAMETER_NAMES);
-        String[] parameterValues = getValueProvider().getStrings(Configuration.SITEMAPITEM_PROPERTY_PARAMETER_VALUES);
+        String[] parameterNames = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_PARAMETER_NAMES);
+        String[] parameterValues = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_PARAMETER_VALUES);
         
         if(parameterNames != null && parameterValues != null){
            if(parameterNames.length != parameterValues.length) {
@@ -174,12 +174,12 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             }
         }
         
-        this.relativeContentPath = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
-        this.componentConfigurationId = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
-        this.portletComponentConfigurationId = getValueProvider().getString(Configuration.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
+        this.relativeContentPath = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
+        this.componentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
+        this.portletComponentConfigurationId = getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
         
-        if(getValueProvider().hasProperty(Configuration.SITEMAPITEM_PROPERTY_ROLES)) {
-            String[] rolesProp = getValueProvider().getStrings(Configuration.SITEMAPITEM_PROPERTY_ROLES);
+        if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES)) {
+            String[] rolesProp = getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES);
             this.roles = Arrays.asList(rolesProp);
         } else if(this.parentItem != null){
             this.roles = parentItem.getRoles();
@@ -187,8 +187,8 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
             this.roles = new ArrayList<String>();
         }
         
-        if(getValueProvider().hasProperty(Configuration.SITEMAPITEM_PROPERTY_SECURED)) {
-            this.secured = getValueProvider().getBoolean(Configuration.SITEMAPITEM_PROPERTY_SECURED);
+        if(getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED)) {
+            this.secured = getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_SECURED);
         } else if(this.parentItem != null){
             this.secured = parentItem.isSecured();
         } 
@@ -204,7 +204,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
                     log.warn("skipping null node");
                     continue;
                 }
-                if(child.isNodeType(Configuration.NODETYPE_HST_SITEMAPITEM)) {
+                if(child.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
                     try {
                         HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, this, this.hstSiteMap);
                         childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
@@ -217,7 +217,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
                     }
                 } else {
                     if (log.isWarnEnabled()) {
-                        log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), Configuration.NODETYPE_HST_SITEMAPITEM);
+                        log.warn("Skipping node '{}' because is not of type '{}'", child.getPath(), HstNodeTypes.NODETYPE_HST_SITEMAPITEM);
                     }
                 }
             } 

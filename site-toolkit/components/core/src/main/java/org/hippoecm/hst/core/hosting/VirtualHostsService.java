@@ -22,7 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
@@ -66,13 +66,13 @@ public class VirtualHostsService extends AbstractJCRService implements VirtualHo
         super(virtualHostsNode);
         this.virtualHostsConfigured = true;
         this.jcrPath = this.getValueProvider().getPath();
-        this.portNumber = this.getValueProvider().getLong(Configuration.VIRTUALHOSTS_PROPERTY_PORT).intValue();
-        this.portVisible = this.getValueProvider().getBoolean(Configuration.VIRTUALHOSTS_PROPERTY_SHOWPORT);
-        this.contextPathInUrl = this.getValueProvider().getBoolean(Configuration.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
-        this.prefixExclusions = this.getValueProvider().getStrings(Configuration.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
-        this.suffixExclusions = this.getValueProvider().getStrings(Configuration.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
-        this.protocol = this.getValueProvider().getString(Configuration.VIRTUALHOSTS_PROPERTY_PROTOCOL);
-        this.defaultHostName  = this.getValueProvider().getString(Configuration.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
+        this.portNumber = this.getValueProvider().getLong(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PORT).intValue();
+        this.portVisible = this.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
+        this.contextPathInUrl = this.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
+        this.prefixExclusions = this.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
+        this.suffixExclusions = this.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
+        this.protocol = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PROTOCOL);
+        this.defaultHostName  = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
         if(protocol == null || "".equals(protocol)) {
             this.protocol = DEFAULT_PROTOCOL;
         }

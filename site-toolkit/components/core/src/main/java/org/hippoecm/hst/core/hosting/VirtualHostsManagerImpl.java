@@ -23,7 +23,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,8 +87,8 @@ public class VirtualHostsManagerImpl implements VirtualHostsManager{
                     return;
                 }
                 Node virtualHostsNode = (Node)item;
-                if(!virtualHostsNode.isNodeType(Configuration.NODETYPE_HST_VIRTUALHOSTS)) {
-                    log.error("Failed to retrieve virtual hosts configuration because '{}' is not pointing to a node of type '{}'", virtualHostsPath, Configuration.NODETYPE_HST_VIRTUALHOSTS);
+                if(!virtualHostsNode.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS)) {
+                    log.error("Failed to retrieve virtual hosts configuration because '{}' is not pointing to a node of type '{}'", virtualHostsPath, HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS);
                     return;
                 }
                 this.virtualHosts = new VirtualHostsService(virtualHostsNode);

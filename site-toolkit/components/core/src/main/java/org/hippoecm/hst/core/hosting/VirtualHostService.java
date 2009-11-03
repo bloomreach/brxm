@@ -26,7 +26,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.configuration.Configuration;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -62,15 +62,15 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
         this.id = this.getValueProvider().getPath();
         this.jcrPath = this.id;
         
-        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_SITENAME)) {
-            this.siteName = this.getValueProvider().getString(Configuration.VIRTUALHOST_PROPERTY_SITENAME);
+        if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SITENAME)) {
+            this.siteName = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_SITENAME);
         } else {
             if(parentHost != null) {
                 this.siteName = parentHost.siteName;
             } 
         }
-        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_PORT)) {
-            this.portNumber = this.getValueProvider().getLong(Configuration.VIRTUALHOST_PROPERTY_PORT).intValue();
+        if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_PORT)) {
+            this.portNumber = this.getValueProvider().getLong(HstNodeTypes.VIRTUALHOST_PROPERTY_PORT).intValue();
         } else {
             // try to get the one from the parent
             if(parentHost != null) {
@@ -79,8 +79,8 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
                 this.portNumber = virtualHosts.getPortNumber();
             }
         }
-        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_SHOWPORT)) {
-            this.portVisible = this.getValueProvider().getBoolean(Configuration.VIRTUALHOST_PROPERTY_SHOWPORT);
+        if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWPORT)) {
+            this.portVisible = this.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWPORT);
         } else {
             // try to get the one from the parent
             if(parentHost != null) {
@@ -89,8 +89,8 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
                 this.portVisible = virtualHosts.isPortVisible();
             }
         }
-        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
-            this.contextPathInUrl = this.getValueProvider().getBoolean(Configuration.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
+        if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
+            this.contextPathInUrl = this.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
         } else {
             // try to get the one from the parent
             if(parentHost != null) {
@@ -100,8 +100,8 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             }
         }
         
-        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_MAPPING)) {
-            this.hstMappings = this.getValueProvider().getStrings(Configuration.VIRTUALHOST_PROPERTY_MAPPING);
+        if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_MAPPING)) {
+            this.hstMappings = this.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOST_PROPERTY_MAPPING);
             this.mappings = createMappings();
         } else {
          // try to get the one from the parent
@@ -111,8 +111,8 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             }  
         }
         
-        if(this.getValueProvider().hasProperty(Configuration.VIRTUALHOST_PROPERTY_PROTOCOL)) {
-            this.protocol = this.getValueProvider().getString(Configuration.VIRTUALHOST_PROPERTY_PROTOCOL);
+        if(this.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_PROTOCOL)) {
+            this.protocol = this.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_PROTOCOL);
             if(this.protocol == null || "".equals(this.protocol)) {
                 this.protocol = VirtualHostsService.DEFAULT_PROTOCOL;
             }
