@@ -43,6 +43,7 @@ public class PageLayoutSettings extends AjaxSettings {
     private static final StringSetting LEFT_GUTTER = new StringSetting("leftGutter");
     private static final StringSetting RIGHT_GUTTER = new StringSetting("rightGutter");
 
+    private static final BooleanSetting BODY_SCROLL = new BooleanSetting("bodyScroll");
     private static final BooleanSetting HEADER_SCROLL = new BooleanSetting("headerScroll");
     private static final BooleanSetting FOOTER_SCROLL = new BooleanSetting("footerScroll");
     private static final BooleanSetting LEFT_SCROLL = new BooleanSetting("leftScroll");
@@ -50,7 +51,7 @@ public class PageLayoutSettings extends AjaxSettings {
 
     protected static final YuiType TYPE = new YuiType(AjaxSettings.TYPE, ROOT_ID, HEADER_HEIGHT, FOOTER_HEIGHT,
             LEFT_WIDTH, RIGHT_WIDTH, HEADER_GUTTER, BODY_GUTTER, FOOTER_GUTTER, LEFT_GUTTER, RIGHT_GUTTER,
-            HEADER_SCROLL, FOOTER_SCROLL, LEFT_SCROLL, RIGHT_SCROLL);
+            HEADER_SCROLL, FOOTER_SCROLL, LEFT_SCROLL, RIGHT_SCROLL, BODY_SCROLL);
 
     public PageLayoutSettings(IPluginConfig config) {
         super(TYPE, config);
