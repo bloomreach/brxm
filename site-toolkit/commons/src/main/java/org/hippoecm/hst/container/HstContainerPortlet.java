@@ -36,6 +36,7 @@ import javax.portlet.ResourceResponse;
 
 import org.hippoecm.hst.core.component.HstPortletResponseState;
 import org.hippoecm.hst.core.component.HstResponseState;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
 
@@ -246,6 +247,8 @@ public class HstContainerPortlet extends GenericPortlet {
     }
     
     protected void processRequest(PortletRequest request, PortletResponse response) throws PortletException, IOException {
+        
+        request.setAttribute(ContainerConstants.CONTEXT_NAMESPACE_ATTRIBUTE, response.getNamespace());
         
         boolean isEditMode = PortletMode.EDIT.equals(request.getPortletMode());
 
