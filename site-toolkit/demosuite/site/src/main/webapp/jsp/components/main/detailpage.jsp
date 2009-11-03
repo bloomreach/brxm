@@ -49,6 +49,7 @@
 </c:if>
 
 <div class="yui-u">
+  <hst:surfandedit hippobean="${document}"/>
   <div id="editable_cont" class="inline-editor-editable-container">
     <h2>${document.title}</h2>
     <p>

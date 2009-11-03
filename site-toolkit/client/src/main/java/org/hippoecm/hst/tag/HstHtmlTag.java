@@ -51,6 +51,8 @@ public class HstHtmlTag extends TagSupport {
     protected String scope;
 
     protected Boolean escapeXml = true;
+    
+    protected boolean skipTag;
         
     protected Map<String, List<String>> parametersMap = new HashMap<String, List<String>>();
     
@@ -59,7 +61,7 @@ public class HstHtmlTag extends TagSupport {
      */
     @Override
     public int doStartTag() throws JspException{
-    
+       
         if (var != null) {
             pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
         }
@@ -73,7 +75,9 @@ public class HstHtmlTag extends TagSupport {
      */
     @Override
     public int doEndTag() throws JspException{
-       
+        if(skipTag) {
+           return EVAL_PAGE;
+        }
         HstRequest request = (HstRequest) pageContext.getRequest().getAttribute(ContainerConstants.HST_REQUEST);
         HstResponse response = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
         
@@ -137,6 +141,7 @@ public class HstHtmlTag extends TagSupport {
         parametersMap.clear();
         var = null;
         scope = null;
+        skipTag = false;
         return EVAL_PAGE;
     }
     
@@ -188,6 +193,10 @@ public class HstHtmlTag extends TagSupport {
     
     public void setHippohtmlByBeanPath(String beanPath) {
         this.hippoHtml = (HippoHtml) PageContextPropertyUtils.getProperty(pageContext, beanPath);
+        if(this.hippoHtml == null) {
+            log.debug("No bean for '{}'. The tag will be skipped.", beanPath);
+            this.skipTag = true;
+        }
     }
     
     /* -------------------------------------------------------------------*/

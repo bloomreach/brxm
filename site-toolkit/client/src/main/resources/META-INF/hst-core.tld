@@ -149,7 +149,7 @@
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>
             <description>
-              A bean path of HstLink object which can be retireved via pageContext.
+              A bean path of HstLink object which can be retrieved via pageContext.
               NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
                     JSP developers could ignore this attribute and use 'link' attribute instead directly with object property value.
             </description>
@@ -219,6 +219,41 @@
             <rtexprvalue>true</rtexprvalue>
             <type>org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation</type>
             <description>A HippoFacetSubNavigation object.</description>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>surfandedit</name>
+        <tag-class>org.hippoecm.hst.tag.HstSurfAndEditTag</tag-class>
+        <tei-class>org.hippoecm.hst.tag.HstSurfAndEditTag$TEI</tei-class>
+        <body-content>JSP</body-content>
+        <description>This tag can be used to create an edit button to a cms url. Only in preview mode, the 
+        tag will output something. In live, it will be ignored.</description>
+        <attribute>
+            <name>var</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>The variable name of the surf and edit link plus image</description>
+        </attribute>
+        <attribute>
+            <name>hippobean</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
+            <description>A HippoBean object. This is typically one of your bean mapped
+            objects</description>
+        </attribute>
+        <attribute>
+            <name>hippobeanByBeanPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              A bean path of HippoBean object which can be retrieved via pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
+                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
+            </description>
         </attribute>
     </tag>
 

@@ -62,6 +62,7 @@ import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
@@ -89,8 +90,6 @@ import org.xml.sax.SAXException;
 public class BaseHstComponent extends GenericHstComponent {
 
     public static final String IS_PREVIEW_ATTRIBUTE = BaseHstComponent.class.getName() + ".isPreview";
-    
-    private static final String PREVIEW_REPOSITORY_ENTRY_PATH = "preview.repository.entry.path";
 
     private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);
 
@@ -189,7 +188,7 @@ public class BaseHstComponent extends GenericHstComponent {
         Boolean isPreview = (Boolean) hstRequestContext.getAttribute(IS_PREVIEW_ATTRIBUTE);
         
         if (isPreview == null) {
-            String previewRepositoryEntryPath = request.getRequestContext().getContainerConfiguration().getString(PREVIEW_REPOSITORY_ENTRY_PATH, "");
+            String previewRepositoryEntryPath = request.getRequestContext().getContainerConfiguration().getString(ContainerConstants.PREVIEW_REPOSITORY_ENTRY_PATH, "");
             isPreview = (getSiteContentBasePath(request).startsWith(previewRepositoryEntryPath) ? Boolean.TRUE : Boolean.FALSE);
             hstRequestContext.setAttribute(IS_PREVIEW_ATTRIBUTE, isPreview);
         }

@@ -63,6 +63,8 @@ public class HstLinkTag extends TagSupport {
     protected String scope;
     
     protected boolean external;
+    
+    protected boolean skipTag; 
 
     protected Boolean escapeXml = true;
         
@@ -87,7 +89,9 @@ public class HstLinkTag extends TagSupport {
      */
     @Override
     public int doEndTag() throws JspException{
-        
+        if(skipTag) {
+            return EVAL_PAGE;
+        }
         if(this.link == null && this.path == null && this.hippoBean == null) {
             log.warn("Cannot get a link because no link , path or node is set");
             return EVAL_PAGE;
@@ -173,6 +177,7 @@ public class HstLinkTag extends TagSupport {
         path = null;
         link = null;
         external = false;
+        skipTag = false;
         
         return EVAL_PAGE;
     }
@@ -236,6 +241,10 @@ public class HstLinkTag extends TagSupport {
     
     public void setHippobeanByBeanPath(String beanPath) {
         this.hippoBean = (HippoBean) PageContextPropertyUtils.getProperty(pageContext, beanPath);
+        if(this.hippoBean == null) {
+            log.debug("No bean for '{}'. The tag will be skipped.", beanPath);
+            skipTag = true;
+        }
     }
     
     /**
