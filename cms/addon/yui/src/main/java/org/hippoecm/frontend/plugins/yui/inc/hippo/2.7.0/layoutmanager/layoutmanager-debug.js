@@ -550,7 +550,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             YAHOO.hippo.GridsRootWireframe.superclass.constructor.apply(this, arguments); 
             
             var units = [];
-            var body = { position: 'center', body: 'bd', grids: true, scroll: false};
+            var body = { position: 'center', body: 'bd', grids: true, scroll: config.bodyScroll};
             if(config.bodyGutter != null) {
                 body.gutter = config.bodyGutter;
             }
@@ -674,14 +674,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                             dim.w -= margin.w;
                             dim.h -= margin.h;
                             
-                            if(this.config.parent != null) {
-                                var u = this.config.parent.getUnitById(parent.id);
+                            if(this.parent != null) {
+                                var u = this.parent.layout.getUnitById(parent.id);
                                 if(u != null) {
                                     dim.w -= (u._gutter.left + u._gutter.right);
                                     dim.h -= (u._gutter.top + u._gutter.bottom);
                                 }
                             }
-                            
                             return dim;
                         }
                         parent = parent.parentNode;
