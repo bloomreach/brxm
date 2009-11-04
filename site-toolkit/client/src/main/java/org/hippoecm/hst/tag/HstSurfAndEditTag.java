@@ -36,7 +36,6 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.utils.EncodingUtils;
@@ -139,14 +138,6 @@ public class HstSurfAndEditTag extends TagSupport {
             cmsBaseUrl = cmsBaseUrl.substring(0, cmsBaseUrl.length() -1);
         }
         
-        String surfAndEditImgSrc = hstRequestContext.getContainerConfiguration().getString(ContainerConstants.SURF_AND_EDIT_IMAGE_SRC);
-        if(surfAndEditImgSrc == null || "".equals(surfAndEditImgSrc)) {
-            log.debug("Surf & edit link will have no image because surf and edit image not configured: Configure '{}' property in your hst-config.properties.", ContainerConstants.SURF_AND_EDIT_IMAGE_SRC);
-        } else {
-            HstLink link = hstRequestContext.getHstLinkCreator().create(surfAndEditImgSrc, hstRequestContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite(), true);
-            surfAndEditImgSrc = link.toUrlForm(hstRequest, hstResponse, false);
-        }
-        
         HippoNode node = (HippoNode)this.hippoBean.getNode();
         String nodeLocation = null;
         try {
@@ -190,18 +181,12 @@ public class HstSurfAndEditTag extends TagSupport {
         
         String encodedPath = EncodingUtils.getEncodedPath(nodeLocation, request);
         
-        String button = "";
-        if(surfAndEditImgSrc != null) {
-            button = "<img src=\""+surfAndEditImgSrc+"\" alt=\"surf and edit\" />";
-        } else {
-            button = "[surf & edit]";
-        }
-        String surfAndEdit = "<a href=\""+cmsBaseUrl + "?path="+encodedPath+"\" class=\"surfandeditlink\">"+button+"</a>";
+        String surfAndEditLink = cmsBaseUrl + "?path="+encodedPath;
         
         if (var == null) {
             try {               
                 JspWriter writer = pageContext.getOut();
-                writer.print(surfAndEdit);
+                writer.print(surfAndEditLink);
             } catch (IOException ioe) {
                 throw new JspException(
                     "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
@@ -220,7 +205,7 @@ public class HstSurfAndEditTag extends TagSupport {
                 }
             }
             
-            pageContext.setAttribute(var, surfAndEdit, varScope);
+            pageContext.setAttribute(var, surfAndEditLink, varScope);
         }
         
         /*cleanup*/

@@ -223,18 +223,18 @@
     </tag>
 
     <tag>
-        <name>surfandedit</name>
+        <name>surfandeditlink</name>
         <tag-class>org.hippoecm.hst.tag.HstSurfAndEditTag</tag-class>
         <tei-class>org.hippoecm.hst.tag.HstSurfAndEditTag$TEI</tei-class>
         <body-content>JSP</body-content>
-        <description>This tag can be used to create an edit button to a cms url. Only in preview mode, the 
+        <description>This tag can be used to create a surfandedit cms url. Only in preview mode, the 
         tag will output something. In live, it will be ignored.</description>
         <attribute>
             <name>var</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>java.lang.String</type>
-            <description>The variable name of the surf and edit link plus image</description>
+            <description>The variable name of the surf and edit link</description>
         </attribute>
         <attribute>
             <name>hippobean</name>

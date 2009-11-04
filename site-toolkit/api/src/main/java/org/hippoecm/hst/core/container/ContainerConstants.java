@@ -85,9 +85,4 @@ public interface ContainerConstants {
      */
     String CMS_LOCATION = "cms.location";
     
-    /**
-     * The image location of the surf and edit image
-     */
-    String SURF_AND_EDIT_IMAGE_SRC = "surf.and.edit.image.src";
-    
 }

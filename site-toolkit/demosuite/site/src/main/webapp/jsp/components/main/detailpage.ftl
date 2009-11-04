@@ -49,7 +49,7 @@ ${document.title}
 </#if>
 
 <div class="yui-u">
-  <@hst.surfandedit hippobeanByBeanPath="document"/>
+  <a href="<@hst.surfandeditlink hippobeanByBeanPath="document"/>">[surf&edit]</a>
   <div id="editable_cont" class="inline-editor-editable-container">
     <h2>${document.title}</h2>
     <p>
