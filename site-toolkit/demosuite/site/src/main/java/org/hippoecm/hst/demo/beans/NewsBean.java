@@ -18,7 +18,6 @@ package org.hippoecm.hst.demo.beans;
 import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoImage;
 
 @Node(jcrType="demosite:newspage")
