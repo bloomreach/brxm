@@ -27,6 +27,9 @@
 + * (nt:base) = hippo:ntunstructured multiple
 - *
 
+[hippo:testtagdocument] > hippo:document
+- * (String) multiple
+
 [hippo:realdocument] > hippo:document
 + hippo:mirror (hippo:facetselect) version
 
