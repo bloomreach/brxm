@@ -43,19 +43,7 @@ public class NewsBean extends TextBean{
             return this.imageBean;
         }
         imagesLoaded = true;
-        HippoBean bean = getBean("demosite:image");
-        if(!(bean instanceof ImageLinkBean)) {
-            return null;
-        }
-        ImageLinkBean imageLinkBean = (ImageLinkBean)bean;
-        if(imageLinkBean == null) {
-            return null;
-        }
-        HippoBean referencedBean = imageLinkBean.getReferencedBean();
-        if(referencedBean == null || !(referencedBean instanceof HippoImage) ) {
-            return null;
-        }
-        this.imageBean = (HippoImage) imageLinkBean.getReferencedBean();
+        this.imageBean = this.getLinkedBean("demosite:image", HippoImage.class);
         return imageBean;
     }
  

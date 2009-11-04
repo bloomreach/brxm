@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippo:mirror")
-public class HippoMirror extends HippoFolder{
+public class HippoMirror extends HippoFolder implements HippoMirrorBean {
 
     private static Logger log = LoggerFactory.getLogger(HippoMirror.class);
     

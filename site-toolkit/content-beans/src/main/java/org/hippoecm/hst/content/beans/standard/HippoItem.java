@@ -141,6 +141,41 @@ public class HippoItem implements HippoBean{
         return null;
     }
     
+    public <T> T getBean(String relPath, Class<T> beanMappingClass) {
+        try {
+            Object o = this.objectConverter.getObject(node, relPath);
+            if(o == null) {
+                log.debug("Cannot get bean for relpath {} for current bean {}.", relPath, this.getPath());
+                return null;
+            }
+            if(!beanMappingClass.isAssignableFrom(o.getClass())) {
+                log.debug("Expected bean of type '{}' but found of type '{}'. Return null.", beanMappingClass.getName(), o.getClass().getName());
+                return null;
+            }
+            return (T)o;
+         }
+        catch (ObjectBeanManagerException e) {
+            log.warn("Cannot get Object at relPath '{}' for '{}'", relPath, this.getPath());
+        } 
+        return null;
+    }
+    
+    public <T> T getLinkedBean(String relPath, Class<T> beanMappingClass) {
+        HippoMirrorBean mirror = getBean(relPath, HippoMirrorBean.class);
+        if(mirror == null) {
+            return null;
+        }
+        HippoBean bean = mirror.getReferencedBean();
+        if(bean == null) {
+            return null;
+        } 
+        if(!beanMappingClass.isAssignableFrom(bean.getClass())) {
+            log.debug("Expected bean of type '{}' but found of type '{}'. Return null.", beanMappingClass.getName(), bean.getClass().getName());
+            return null;
+        }
+        return (T)bean;
+    }
+    
     public <T> List<T> getChildBeansByName(String childNodeName) {
        List<T> childBeans = new ArrayList<T>();
        NodeIterator nodes;
