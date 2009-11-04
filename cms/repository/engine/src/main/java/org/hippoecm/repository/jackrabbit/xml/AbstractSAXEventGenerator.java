@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -40,6 +41,7 @@ import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -190,7 +192,14 @@ abstract class AbstractSAXEventGenerator {
             throws RepositoryException, SAXException {
         // start namespace declarations
         final Set<String> prefixes = new HashSet();
-        startNode.accept(new TraversingItemVisitor.Default(true) {
+        startNode.accept(new TraversingItemVisitor.Default(false) {
+            @Override
+            public void visit(Node node) throws RepositoryException {
+                if (isVirtual(node)) {
+                    return;
+                }
+                super.visit(node);
+            }
             @Override
             protected void entering(Node node, int level) throws RepositoryException {
                 String name = node.getName();
@@ -258,7 +267,14 @@ abstract class AbstractSAXEventGenerator {
             throws RepositoryException {
         final Set<String> prefixes = new HashSet();
         prefixes.add(Name.NS_SV_PREFIX);
-        node.accept(new TraversingItemVisitor.Default(true) {
+        node.accept(new TraversingItemVisitor.Default(false) {
+            @Override
+            public void visit(Node node) throws RepositoryException {
+                if (isVirtual(node)) {
+                    return;
+                }
+                super.visit(node);
+            }
             @Override
             protected void entering(Node node, int level) throws RepositoryException {
                 String name = node.getName();
@@ -314,6 +330,21 @@ abstract class AbstractSAXEventGenerator {
         }
     }
 
+    protected boolean isVirtual(Node node) throws RepositoryException {
+        if (node instanceof HippoNode) {
+            try {
+                HippoNode hippoNode = (HippoNode) node;
+                Node canonical = hippoNode.getCanonicalNode();
+                if (canonical == null || !node.isSame(canonical)) {
+                    return true;
+                }
+            } catch (ItemNotFoundException ex) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * @param node
      * @param level
