@@ -92,7 +92,7 @@ public class Utilities {
         }
         for (NodeIterator iter = parent.getNodes(); iter.hasNext(); ) {
             Node node = iter.nextNode();
-            if (!node.getPath().equals("/jcr:system") && (!(node instanceof HippoNode) || node.isSame(((HippoNode)node).getCanonicalNode()))) {
+            if (!node.getPath().equals("/jcr:system") && (!(node instanceof HippoNode) || ( ((HippoNode)node).getCanonicalNode() != null && node.isSame(((HippoNode)node).getCanonicalNode())))) {
                 dump(out, node, level + 1);
             }
         }

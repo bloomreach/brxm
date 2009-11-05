@@ -28,12 +28,14 @@ public class FacetSelectProvider extends ViewVirtualProvider
     private final static String SVN_ID = "$Id$";
 
     ViewVirtualProvider subNodesProvider;
+    
     Name facetsName;
     Name valuesName;
     Name modesName;
-
+    
     protected void initialize() throws RepositoryException {
         this.subNodesProvider = (ViewVirtualProvider) lookup(ViewVirtualProvider.class.getName());
+        facetSelectName = resolveName(HippoNodeType.NT_FACETSELECT);
         register(resolveName(HippoNodeType.NT_FACETSELECT), null);
         docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
         facetsName = resolveName(HippoNodeType.HIPPO_FACETS);

@@ -41,12 +41,13 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
     
     Name handleName;
     Name requestName;
+    Name facetSelectName;
 
     @Override
     protected void initialize() throws RepositoryException {
         super.initialize();
-        
         register(resolveName(HippoNodeType.NT_MIRROR), null);
+        facetSelectName = resolveName(HippoNodeType.NT_FACETSELECT);
         handleName = resolveName(HippoNodeType.NT_HANDLE);
         requestName = resolveName(HippoNodeType.NT_REQUEST);
     }
@@ -72,7 +73,16 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
             LinkedHashMap<Name,String> view = new LinkedHashMap<Name,String>();
             LinkedHashMap<Name,String> order = null;
             
-            if (state.getParentId()!=null && state.getParentId() instanceof IFilterNodeId) {
+            if(state.getNodeId() instanceof IFilterNodeId) {
+                IFilterNodeId filterNodeId = (IFilterNodeId)state.getNodeId();
+                if(filterNodeId.getView() != null) {
+                    view.putAll(filterNodeId.getView());
+                }
+                if(filterNodeId.getOrder() != null) {
+                    order = new LinkedHashMap<Name,String>(filterNodeId.getOrder());
+                }
+                singledView = filterNodeId.isSingledView();
+            } else if (state.getParentId()!=null && state.getParentId() instanceof IFilterNodeId) {
             	// parent state is already virtual, inherit possible filter criteria
             	IFilterNodeId filterNodeId = ((IFilterNodeId)state.getParentId());
                 if(filterNodeId.getView() != null) {
@@ -88,9 +98,18 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
              }
             
             if(newCriteria) {
-            	if(newFacets == null || newValues == null || newModes == null || newFacets.length != newValues.length || newFacets.length != newModes.length) {
-                    throw new RepositoryException("Malformed definition of faceted selection: all must be of same length and must exist.");
+                
+                if(newFacets == null || newValues == null || newModes == null || newFacets.length != newValues.length || newFacets.length != newModes.length) {
+                    log.error("Malformed definition of faceted selection: all must be of same length and must exist. Cannot populate facetselect. Return unpopulated mirror");
+                    return state;
                 }
+                
+                if(dereference.getNodeTypeName().equals(facetSelectName)) {
+                    // This means this facetselect directly points to another facetselect. This is not allowed.
+                    log.error("Mirror of facetselect is not allowed to have as docbase the uuid of another mirror or facetselect.");
+                    return state;
+                }
+                
                 for(int i=0; i<newFacets.length; i++) {
                     if(newModes[i].equalsIgnoreCase("stick") || newModes[i].equalsIgnoreCase("select") ||
                        newModes[i].equalsIgnoreCase("single")) {
@@ -164,11 +183,14 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
             if(matching != null && matching.length > 0) {
                 if(value != null && !value.equals("") && !value.equals("*")) {
                     int i;
-                    for(i=0; i<matching.length; i++)
-                        if(matching[i].equals(value))
+                    for(i=0; i<matching.length; i++) {
+                        if(matching[i].equals(value)) {
                             break;
-                    if(i == matching.length)
+                        }
+                    }
+                    if(i == matching.length) {
                         return false;
+                    }
                 }
             }
         }
