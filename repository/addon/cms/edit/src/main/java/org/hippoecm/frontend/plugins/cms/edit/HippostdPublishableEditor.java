@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
+import java.rmi.RemoteException;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -24,9 +27,15 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
+import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,12 +73,58 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
 
     @Override
     protected JcrNodeModel getEditorModel() {
-        switch(getMode()) {
+        switch (getMode()) {
         case EDIT:
             return getDraftModel(super.getEditorModel());
         case VIEW:
         default:
             return getPreviewModel(super.getEditorModel());
+        }
+    }
+
+    @Override
+    public void setMode(Mode mode) throws EditorException {
+        JcrNodeModel editorModel = getEditorModel();
+        if (mode != getMode() && editorModel != null) {
+            WorkflowManager wflMgr = ((UserSession) Session.get()).getWorkflowManager();
+            try {
+                Workflow workflow = wflMgr.getWorkflow("default", editorModel.getNode());
+                if (workflow instanceof EditableWorkflow) {
+                    Map<IEditorFilter, Object> contexts = preClose();
+
+                    stop();
+
+                    postClose(contexts);
+
+                    try {
+                        switch (mode) {
+                        case EDIT:
+                            ((EditableWorkflow) workflow).obtainEditableInstance();
+                            break;
+                        case VIEW:
+                            ((EditableWorkflow) workflow).commitEditableInstance();
+                            break;
+                        }
+    
+                        super.setMode(mode);
+
+                    } finally {
+                        start();
+                    }
+                } else {
+                    throw new EditorException("No editable workflow available");
+                }
+            } catch (MappingException e) {
+                throw new EditorException("Workflow configuration error when setting editor mode", e);
+            } catch (RepositoryException e) {
+                throw new EditorException("Repository error when setting editor mode", e);
+            } catch (RemoteException e) {
+                throw new EditorException("Connection failure when setting editor mode", e);
+            } catch (WorkflowException e) {
+                throw new EditorException("Workflow error when setting editor mode", e);
+            } catch (CmsEditorException e) {
+                throw new EditorException("Could not start editor", e);
+            }
         }
     }
 
@@ -97,7 +152,7 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
         try {
             Mode newMode = getMode(handle);
             if (newMode != super.getMode()) {
-                setMode(newMode);
+                super.setMode(newMode);
             } else {
                 JcrNodeModel newModel = getEditorModel();
                 if (!newModel.equals(editorModel)) {
@@ -173,7 +228,8 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
                     Node child = iter.nextNode();
                     if (child.getName().equals(handleNode.getName())) {
                         if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)
-                                && child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString().equals(HippoStdNodeType.DRAFT)
+                                && child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString().equals(
+                                        HippoStdNodeType.DRAFT)
                                 && child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
                             return new JcrNodeModel(child);
                         }
