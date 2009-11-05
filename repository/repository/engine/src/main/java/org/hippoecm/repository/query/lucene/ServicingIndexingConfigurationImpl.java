@@ -237,4 +237,9 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     public Name getHippoRequestName() {
         return this.hippoRequest;
     }
+
+    public String getHippoNamespaceURI() {
+        // we know the hippo:handle is of namespace hippo, hence we can take the hippo namespace from here.
+        return getHippoHandleName().getNamespaceURI();
+    }
 }
