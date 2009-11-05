@@ -15,11 +15,14 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
+import java.net.URLDecoder;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.PathSegment;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -32,37 +35,11 @@ public class ContentService extends BaseHstContentService {
     
     private static Logger log = LoggerFactory.getLogger(ContentService.class);
     
+    @Context
+    private HttpServletRequest servletRequest;
+    
     public ContentService() {
         super();
-    }
-    
-    @GET
-    @Path("/node/{path:.*}")
-    public HippoBeanContent getContentNode(@PathParam("path") List<PathSegment> pathSegments) {
-        StringBuilder pathBuilder = new StringBuilder(80).append(getSiteContentPath());
-        
-        for (PathSegment pathSegment : pathSegments) {
-            pathBuilder.append('/').append(pathSegment.getPath());
-        }
-        
-        HippoBeanContent beanContent = new HippoBeanContent();
-        
-        try {
-            ContentPersistenceManager cpm = getContentPersistenceManager();
-            HippoBean bean = (HippoBean) cpm.getObject(pathBuilder.toString());
-            
-            if (bean != null) {
-                beanContent = createHippoContentBean(bean);
-            }
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve content bean.", e);
-            } else {
-                log.warn("Failed to retrieve content bean. {}", e.toString());
-            }
-        }
-        
-        return beanContent;
     }
     
     @GET
@@ -89,24 +66,27 @@ public class ContentService extends BaseHstContentService {
     }
     
     @GET
-    @Path("/property/{property}/{path:.*}")
-    public PropertyContent getContentProperty(@PathParam("path") List<PathSegment> pathSegments, @PathParam("property") String propertyName) {
-        PropertyContent propContent = new PropertyContent();
-        HippoBeanContent beanContent = getContentNode(pathSegments);
+    @Path("/node/{path:.*}")
+    public HippoBeanContent getContentNode(@PathParam("path") List<PathSegment> pathSegments) {
+        String itemPath = getContentItemPath(pathSegments);
+        HippoBeanContent beanContent = new HippoBeanContent();
         
-        if (beanContent.getBean() != null) {
-            try {
-                propContent = new PropertyContent(beanContent.getBean().getNode().getProperty(propertyName));
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Failed to retrieve content bean property.", e);
-                } else {
-                    log.warn("Failed to retrieve content bean property. {}", e.toString());
-                }
+        try {
+            ContentPersistenceManager cpm = getContentPersistenceManager();
+            HippoBean bean = (HippoBean) cpm.getObject(itemPath);
+            
+            if (bean != null) {
+                beanContent = createHippoContentBean(bean);
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
             }
         }
         
-        return propContent;
+        return beanContent;
     }
     
     @GET
@@ -128,6 +108,52 @@ public class ContentService extends BaseHstContentService {
         }
         
         return propContent;
+    }
+    
+    @GET
+    @Path("/property/{property}/{path:.*}")
+    public PropertyContent getContentProperty(@PathParam("path") List<PathSegment> pathSegments, @PathParam("property") String propertyName) {
+        PropertyContent propContent = new PropertyContent();
+        HippoBeanContent beanContent = getContentNode(pathSegments);
+        
+        if (beanContent.getBean() != null) {
+            try {
+                propContent = new PropertyContent(beanContent.getBean().getNode().getProperty(propertyName));
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to retrieve content bean property.", e);
+                } else {
+                    log.warn("Failed to retrieve content bean property. {}", e.toString());
+                }
+            }
+        }
+        
+        return propContent;
+    }
+    
+    private String getContentItemPath(final List<PathSegment> pathSegments) {
+        StringBuilder pathBuilder = new StringBuilder(80).append(getSiteContentPath());
+        
+        for (PathSegment pathSegment : pathSegments) {
+            pathBuilder.append('/').append(pathSegment.getPath());
+        }
+        
+        String path = pathBuilder.toString();
+        
+        String encoding = servletRequest.getCharacterEncoding();
+        
+        if (encoding == null)
+        {
+            encoding = "ISO-8859-1";
+        }
+        
+        try {
+            path = URLDecoder.decode(path, encoding);
+        } catch (Exception e) {
+            log.warn("Failed to decode. {}", path);
+        }
+        
+        return path;
     }
     
 }
