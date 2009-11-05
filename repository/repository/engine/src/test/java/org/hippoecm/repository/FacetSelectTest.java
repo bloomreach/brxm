@@ -18,15 +18,16 @@ package org.hippoecm.repository;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class FacetSelectTest extends TestCase {
@@ -96,15 +97,15 @@ public class FacetSelectTest extends TestCase {
         "hippo:values",       "car",
         "hippo:modes",        "select"
     };
-    String[] combineContent3a = new String[] {
-        "/test/filter2",      "hippo:facetselect",
+    String[] combineContentFilterPointsToFilter = new String[] {
+        "/test/filterTofilter",      "hippo:facetselect",
         "hippo:docbase",      "/test/filter1",
         "hippo:facets",       "color",
         "hippo:values",       "red",
         "hippo:modes",        "select"
     };
-    String[] combineContent3b = new String[] {
-        "/test/filter2",      "hippo:facetselect",
+    String[] combineContentFilterPointsToParentOfFilter = new String[] {
+        "/test/filterToParentOfFilter",      "hippo:facetselect",
         "hippo:docbase",      "/test",
         "hippo:facets",       "color",
         "hippo:values",       "red",
@@ -150,53 +151,48 @@ public class FacetSelectTest extends TestCase {
         }
     }
 
+    /*
+     * This test is to make sure, that a facetselect/mirror directly pointing to another mirror/facetselect is not allowed
+     * and will return an unpopulated facetselect/mirror with no children
+     * @throws Exception
+     */
     @Test
-    public void testCombineDirect() throws Exception {
+    public void testNotAllowedCombineDirect() throws Exception {
         build(session, combineContent1);
         session.save();
         build(session, combineContent2);
         session.save();
-        build(session, combineContent3a);
+        build(session, combineContentFilterPointsToFilter);
         session.save();
         session.refresh(true);
-	/* The following iteration loop, will make the test functional, but it shouldn't be required */
-        
-        Utilities.dump(session.getRootNode().getNode("test"));
-//	for(NodeIterator iter = traverse(session,"/test/filter1").getNodes(); iter.hasNext(); ) {
-//	    Node child = iter.nextNode();
-//	    child.getNodes();
-//	}
-       // assertNotNull(traverse(session, "/test/filter2/one/one"));
-        
-        try {
-           Node item1 = session.getRootNode().getNode("test").getNode("filter2").getNode("two").getNode("two");
-            
-           Node item =  (Node)session.getItem("/test/filter2/two/two");
-           System.out.println(item);
-        } catch (PathNotFoundException e) {
-            System.out.println("!!");
-        }
-        
-       // assertNull(traverse(session, "/test/filter2/two/two"));
-       // assertFalse(session.getRootNode().getNode("test/filter2/two").getNodes().hasNext());
-//        assertFalse(session.getRootNode().getNode("test/filter2/three").getNodes().hasNext());
-//        assertFalse(session.getRootNode().getNode("test/filter2/four").getNodes().hasNext());
+
+        assertTrue(session.getRootNode().getNode("test").hasNode("filterTofilter"));
+        assertFalse(session.getRootNode().getNode("test").getNode("filterTofilter").hasNodes());
+       
     }
 
-    @Ignore
+    @Test
     public void testCombineIndirect() throws Exception {
         build(session, combineContent1);
         session.save();
         build(session, combineContent2);
         session.save();
-        build(session, combineContent3b);
+        build(session, combineContentFilterPointsToParentOfFilter);
         session.save();
         session.refresh(false);
-        assertNotNull(traverse(session, "/test/filter2/filter1/one/one"));
-        assertNull(traverse(session, "/test/filter2/filter1/two/two"));
-        assertFalse(session.getRootNode().getNode("test/filter2/filter1/two").getNodes().hasNext());
-        assertFalse(session.getRootNode().getNode("test/filter2/filter1/three").getNodes().hasNext());
-        assertFalse(session.getRootNode().getNode("test/filter2/filter1/four").getNodes().hasNext());
+        
+        assertTrue(session.getRootNode().hasNode("test/filterToParentOfFilter/filter1/one/one"));
+        assertFalse(session.getRootNode().hasNode("test/filterToParentOfFilter/filter1/three/three"));
+        assertNotNull(traverse(session, "/test/filter1/two"));
+        assertNotNull(traverse(session, "/test/filter1/two/two"));
+        assertNotNull(traverse(session, "/test/filter1/three"));
+        assertNull(traverse(session, "/test/filter1/three/three"));
+        
+        assertNotNull(traverse(session, "/test/filterToParentOfFilter/filter1/one/one"));
+        assertNull(traverse(session, "/test/filterToParentOfFilter/filter1/two/two"));
+        assertFalse(session.getRootNode().getNode("test/filterToParentOfFilter/filter1/two").getNodes().hasNext());
+        assertFalse(session.getRootNode().getNode("test/filterToParentOfFilter/filter1/three").getNodes().hasNext());
+        assertFalse(session.getRootNode().getNode("test/filterToParentOfFilter/filter1/four").getNodes().hasNext());
     }
 
 }
