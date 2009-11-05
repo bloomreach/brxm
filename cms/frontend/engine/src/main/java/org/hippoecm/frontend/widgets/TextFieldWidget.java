@@ -28,8 +28,13 @@ public class TextFieldWidget extends AjaxUpdatingWidget {
     private String size;
 
     public TextFieldWidget(String id, IModel model) {
+        this(id, model, null);
+    }
+    
+    public TextFieldWidget(String id, IModel model, IModel labelModel) {
         super(id, model);
-        addFormField(new TextField("widget", this.getModel()) {
+        TextField t;
+        addFormField(t = new TextField("widget", this.getModel()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -40,6 +45,9 @@ public class TextFieldWidget extends AjaxUpdatingWidget {
                 super.onComponentTag(tag);
             }
         });
+        if (labelModel != null) {
+           t.setLabel(labelModel);
+        }
     }
 
     public void setSize(String size) {
