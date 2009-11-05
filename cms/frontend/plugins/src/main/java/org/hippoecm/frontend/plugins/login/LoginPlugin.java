@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -31,6 +32,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -140,10 +142,12 @@ public class LoginPlugin extends RenderPlugin {
         protected final RequiredTextField usernameTextField;
         protected final PasswordTextField passwordTextField; 
         private Label userLabel;
+        private Map parameters;
         
         public SignInForm(final String id) {
             super(id);
             
+            parameters = RequestCycle.get().getRequest().getParameterMap();
 
             // by default, use the user's browser settings for the locale
             selectedLocale = "en";
@@ -230,7 +234,15 @@ public class LoginPlugin extends RenderPlugin {
             userSession.setJcrSessionModel(new JcrSessionModel(credentials));
             userSession.setLocale(new Locale(selectedLocale));
             userSession.getJcrSession();
-            setResponsePage(new Home());
+            redirect();
+        }
+
+        protected void redirect() {
+            if (parameters != null) {
+                setResponsePage(Home.class, new PageParameters(parameters));
+            } else {
+                setResponsePage(Home.class);
+            }
         }
     }
 
