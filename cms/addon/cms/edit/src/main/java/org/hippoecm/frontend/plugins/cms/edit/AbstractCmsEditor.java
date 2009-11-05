@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.edit;
 
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
@@ -180,28 +181,37 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
 
     public void close() throws EditorException {
         if (context.getReference(this) != null) {
-            List<IEditorFilter> filters = context.getServices(context.getReference(this).getServiceId(),
-                    IEditorFilter.class);
-            IdentityHashMap<IEditorFilter, Object> filterContexts = new IdentityHashMap<IEditorFilter, Object>();
-            for (IEditorFilter filter : filters) {
-                Object filterContext = filter.preClose();
-                if (filterContext == null) {
-                    throw new EditorException("Close operation cancelled by filter");
-                }
-                filterContexts.put(filter, filterContext);
-            }
+            Map<IEditorFilter, Object> filterContexts = preClose();
 
             stop();
 
             onClose();
 
-            for (IEditorFilter filter : filters) {
-                filter.postClose(filterContexts.get(filter));
-            }
+            postClose(filterContexts);
         }
         manager.onClose(this);
     }
 
+    protected Map<IEditorFilter, Object> preClose() throws EditorException {
+        List<IEditorFilter> filters = context.getServices(context.getReference(this).getServiceId(),
+                IEditorFilter.class);
+        IdentityHashMap<IEditorFilter, Object> filterContexts = new IdentityHashMap<IEditorFilter, Object>();
+        for (IEditorFilter filter : filters) {
+            Object filterContext = filter.preClose();
+            if (filterContext == null) {
+                throw new EditorException("Close operation cancelled by filter");
+            }
+            filterContexts.put(filter, filterContext);
+        }
+        return filterContexts;
+    }
+    
+    protected void postClose(Map<IEditorFilter, Object> contexts) {
+        for (Map.Entry<IEditorFilter, Object> entry : contexts.entrySet()) {
+            entry.getKey().postClose(entry.getValue());
+        }
+    }
+    
     protected IPluginContext getPluginContext() {
         return context;
     }

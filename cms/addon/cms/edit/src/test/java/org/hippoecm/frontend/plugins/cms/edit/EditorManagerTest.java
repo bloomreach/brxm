@@ -38,6 +38,7 @@ import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
+import org.hippoecm.frontend.plugins.cms.edit.EditorManagerPlugin;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -48,6 +49,8 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.reviewedactions.PublishableDocument;
+import org.hippoecm.repository.standardworkflow.DefaultWorkflowImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -167,10 +170,14 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                     "editor.id", "${editor.id}"
     };
 
-    final static String[] testdocument = new String[] { "/${name}", "hippo:handle", "jcr:mixinTypes",
-            "hippo:hardhandle", "/${name}/${name}", "cmstest:document", "jcr:mixinTypes", "hippo:harddocument",
-            HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED, HippoStdNodeType.HIPPOSTD_STATESUMMARY,
-            HippoStdNodeType.NEW, };
+    final static String[] testdocument = new String[] {
+            "/${name}", "hippo:handle",
+                "jcr:mixinTypes", "hippo:hardhandle",
+                "/${name}/${name}", "cmstest:document",
+                    "jcr:mixinTypes", "hippo:harddocument",
+                    HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED,
+                    HippoStdNodeType.HIPPOSTD_STATESUMMARY, HippoStdNodeType.NEW,
+    };
 
     protected static String[] instantiate(String[] content, Map<String, String> parameters) {
         String[] result = new String[content.length];
@@ -287,6 +294,39 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         assertEquals(0, getEditors().size());
     }
 
+    @Test
+    public void testSetMode() throws Exception {
+
+        String[] workflowConfig = {
+                "/publishable", "hipposys:workflow",
+                    "hipposys:nodetype", "hippostd:publishable",
+                    "hipposys:classname", org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl.class.getName(),
+                    "hipposys:display", "publishable workflow",
+                    // "/publishable/hipposys:types", "hipposys:types", // autocreated
+                        "/publishable/hipposys:types/" + PublishableDocument.class.getName(), "hipposys:type",
+                            "hipposys:classname", PublishableDocument.class.getName(),
+                            "hipposys:display", "publisahble document",
+                            "hipposys:nodetype", "hippostd:publishable"
+        };
+        build(session, mount("/hippo:configuration/hippo:workflows/default", workflowConfig));
+        Node category = session.getRootNode().getNode("hippo:configuration/hippo:workflows/default");
+        category.orderBefore("publishable", category.getNodes().nextNode().getName());
+
+        createDocument("document");
+
+        session.save();
+
+        start(config);
+        IEditorManager editorMgr = context.getService("editor.manager", IEditorManager.class);
+        IEditor editor = editorMgr.openEditor(new JcrNodeModel("/test/content/document"));
+        assertEquals(1, getPreviews().size());
+        assertEquals(0, getEditors().size());
+
+        editor.setMode(IEditor.Mode.EDIT);
+        assertEquals(0, getPreviews().size());
+        assertEquals(1, getEditors().size());
+    }
+    
     @Test
     public void browserFollowsActiveEditor() throws Exception {
         createDocument("doc1");
