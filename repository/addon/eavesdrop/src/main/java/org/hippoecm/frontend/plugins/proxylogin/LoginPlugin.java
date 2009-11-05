@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.PageParameters;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.value.ValueMap;
@@ -135,7 +137,7 @@ public class LoginPlugin extends org.hippoecm.frontend.plugins.login.LoginPlugin
             });
             userSession.setLocale(new Locale(selectedLocale));
             userSession.getJcrSession();
-            setResponsePage(new Home());
+            setResponsePage(Home.class, new PageParameters(RequestCycle.get().getRequest().getParameterMap()));
         }
     }
 }

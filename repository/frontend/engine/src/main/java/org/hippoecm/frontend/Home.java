@@ -16,12 +16,15 @@
 package org.hippoecm.frontend;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.WicketAjaxReference;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.protocol.http.WicketURLDecoder;
 import org.hippoecm.frontend.behaviors.ContextMenuBehavior;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
@@ -41,6 +44,7 @@ import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.plugin.impl.PluginManager;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
@@ -109,6 +113,15 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
         IClusterControl clusterControl = context.newCluster(pluginCluster, null);
         clusterControl.start();
+
+        WebRequest request = (WebRequest) RequestCycle.get().getRequest();
+        String paths = request.getParameter("path");
+        if (paths != null) {
+            IBrowseService browseService = context.getService("service.browse", IBrowseService.class);
+            if (browseService != null) {
+                browseService.browse(new JcrNodeModel(WicketURLDecoder.PATH_INSTANCE.decode(paths)));
+            }
+        }
     }
 
     public Component getComponent() {

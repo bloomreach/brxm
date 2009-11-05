@@ -198,7 +198,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             userSession.setJcrSessionModel(sessionModel);
             ConcurrentLoginFilter.validateSession(((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true), usernameTextField.getModelObjectAsString(), false);
             userSession.setLocale(new Locale(selectedLocale));
-            setResponsePage(new Home());
+            redirect();
         }
     }
 

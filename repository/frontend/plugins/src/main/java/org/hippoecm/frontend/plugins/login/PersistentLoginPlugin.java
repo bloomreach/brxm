@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.protocol.http.WebRequest;
@@ -129,7 +130,7 @@ public class PersistentLoginPlugin extends LoginPlugin {
                     UserSession userSession = (UserSession)getSession();
                     userSession.setJcrSessionModel(new JcrSessionModel(credentials));
                     userSession.getJcrSession();
-                    throw new RestartResponseException(Home.class);
+                    throw new RestartResponseException(Home.class, new PageParameters(RequestCycle.get().getRequest().getParameterMap()));
                 } catch (LoginException ex) {
                     // deliberately ignored
                 } catch (RepositoryException ex) {
@@ -222,7 +223,7 @@ public class PersistentLoginPlugin extends LoginPlugin {
             });
             userSession.setLocale(new Locale(selectedLocale));
             userSession.getJcrSession();
-            setResponsePage(new Home());
+            redirect();
         }
     }
 }
