@@ -82,4 +82,9 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
      * @return true whether to index all properties in the parent node
      */
     public boolean isChildAggregate(Name childType);
+
+    /**
+     * @return  the hippo namespace URI 
+     */
+    String getHippoNamespaceURI();
 }
