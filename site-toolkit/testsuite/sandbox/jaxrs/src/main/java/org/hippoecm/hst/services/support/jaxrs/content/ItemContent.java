@@ -15,8 +15,11 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
+import java.net.URI;
+
 import javax.jcr.Item;
 import javax.jcr.RepositoryException;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "item")
@@ -24,15 +27,25 @@ public class ItemContent {
     
     private String name;
     private String path;
+    private URI url;
     
     public ItemContent() {
     }
     
-    public ItemContent(Item item) throws RepositoryException {
-        this.name = item.getName();
-        this.path = item.getPath();
+    public ItemContent(String name) {
+        this(name, null);
     }
     
+    public ItemContent(String name, String path) {
+        this.name = name;
+        this.path = path;
+    }
+    
+    public ItemContent(Item item) throws RepositoryException {
+        this(item.getName(), item.getPath());
+    }
+    
+    @XmlAttribute
     public String getName() {
         return name;
     }
@@ -41,12 +54,22 @@ public class ItemContent {
         this.name = name;
     }
     
+    @XmlAttribute
     public String getPath() {
         return path;
     }
     
     public void setPath(String path) {
         this.path = path;
+    }
+    
+    @XmlAttribute
+    public URI getUrl() {
+        return url;
+    }
+    
+    public void setUrl(URI url) {
+        this.url = url;
     }
     
 }

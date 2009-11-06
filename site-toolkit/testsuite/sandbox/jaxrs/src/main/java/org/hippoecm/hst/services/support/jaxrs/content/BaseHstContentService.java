@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,8 @@ import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.UriInfo;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -49,11 +52,15 @@ import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BaseHstContentService {
     
     public static final String SITE_CONTENT_PATH = "org.hippoecm.hst.services.support.site.content.path"; 
-    
+
+    private static Logger log = LoggerFactory.getLogger(BaseHstContentService.class);
+
     private ObjectConverter objectConverter;
     
     @Context
@@ -75,7 +82,7 @@ public class BaseHstContentService {
         return objectConverter;
     }
     
-    protected HippoBeanContent createHippoContentBean(HippoBean bean) throws RepositoryException {
+    protected HippoBeanContent createHippoBeanContent(HippoBean bean) throws RepositoryException {
         HippoBeanContent beanContent = null;
         
         if (bean instanceof HippoFolderBean) {
@@ -89,8 +96,53 @@ public class BaseHstContentService {
         return beanContent;
     }
     
+    protected String getContentItemPath(final HttpServletRequest servletRequest, final List<PathSegment> pathSegments) {
+        StringBuilder pathBuilder = new StringBuilder(80).append(getSiteContentPath());
+        
+        for (PathSegment pathSegment : pathSegments) {
+            pathBuilder.append('/').append(pathSegment.getPath());
+        }
+        
+        String path = pathBuilder.toString();
+        
+        String encoding = servletRequest.getCharacterEncoding();
+        
+        if (encoding == null) {
+            encoding = "ISO-8859-1";
+        }
+        
+        try {
+            path = URLDecoder.decode(path, encoding);
+        } catch (Exception e) {
+            log.warn("Failed to decode. {}", path);
+        }
+        
+        return path;
+    }
+    
     protected String getSiteContentPath() {
         return (String) servletRequest.getAttribute(BaseHstContentService.SITE_CONTENT_PATH);
+    }
+    
+    protected String getRelativeItemContentPath(final ItemContent itemContent) {
+        String itemContentPath = itemContent.getPath();
+        String siteContentPath = getSiteContentPath();
+        
+        if (itemContentPath != null && itemContentPath.startsWith(siteContentPath)) {
+            itemContentPath = itemContentPath.substring(siteContentPath.length());
+        }
+        
+        return itemContentPath;
+    }
+    
+    protected String getRequestURIBase(final UriInfo uriInfo) {
+        String base = uriInfo.getBaseUri().toString();
+        
+        if (base.endsWith("/")) {
+            base = base.substring(0, base.length() - 1);
+        }
+        
+        return base;
     }
     
     protected void init() {

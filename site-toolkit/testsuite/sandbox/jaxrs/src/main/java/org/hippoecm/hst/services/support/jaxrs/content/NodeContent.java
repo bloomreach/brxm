@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import javax.jcr.Node;
@@ -22,17 +25,28 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.commons.lang.StringUtils;
 
 @XmlRootElement(name = "node")
 public class NodeContent extends ItemContent {
     
     private String uuid;
-    private String [] property;
-    private ItemContent [] childNodes;
+    private PropertyContent [] propertyContents;
+    private NodeContent [] nodeContents;
     
     public NodeContent() {
         super();
+    }
+    
+    public NodeContent(String name) {
+        super(name);
+    }
+    
+    public NodeContent(String name, String path) {
+        super(name, path);
     }
     
     public NodeContent(Node node) throws RepositoryException {
@@ -42,30 +56,31 @@ public class NodeContent extends ItemContent {
             this.uuid = node.getUUID();
         }
         
-        ArrayList<String> propNames = new ArrayList<String>();
+        ArrayList<PropertyContent> propContentList = new ArrayList<PropertyContent>();
         
         for (PropertyIterator it = node.getProperties(); it.hasNext(); ) {
             Property prop = it.nextProperty();
-            propNames.add(prop.getName());
+            propContentList.add(new PropertyContent(prop.getName(), prop.getPath()));
         }
         
-        this.property = new String[propNames.size()];
-        this.property = propNames.toArray(this.property);
+        this.propertyContents = new PropertyContent[propContentList.size()];
+        this.propertyContents = propContentList.toArray(this.propertyContents);
         
-        ArrayList<ItemContent> itemContents = new ArrayList<ItemContent>();
+        ArrayList<NodeContent> nodeContentList = new ArrayList<NodeContent>();
         
         for (NodeIterator it = node.getNodes(); it.hasNext(); ) {
             Node childNode = it.nextNode();
             
             if (childNode != null) {
-                itemContents.add(new ItemContent(childNode));
+                nodeContentList.add(new NodeContent(childNode.getName(), childNode.getPath()));
             }
         }
         
-        childNodes = new ItemContent[itemContents.size()];
-        childNodes = itemContents.toArray(childNodes);
+        nodeContents = new NodeContent[nodeContentList.size()];
+        nodeContents = nodeContentList.toArray(nodeContents);
     }
     
+    @XmlAttribute
     public String getUuid() {
         return uuid;
     }
@@ -74,20 +89,61 @@ public class NodeContent extends ItemContent {
         this.uuid = uuid;
     }
     
-    public String [] getProperty() {
-        return property;
+    public PropertyContent [] getProperty() {
+        return propertyContents;
     }
     
-    public void setProperty(String [] property) {
-        this.property = property;
+    public void setProperty(PropertyContent [] propertyContents) {
+        this.propertyContents = propertyContents;
     }
     
-    public ItemContent [] getNode() {
-        return childNodes;
+    public NodeContent [] getNode() {
+        return nodeContents;
     }
     
-    public void setNode(ItemContent [] childNodes) {
-        this.childNodes = childNodes;
+    public void setNode(NodeContent [] nodeContents) {
+        this.nodeContents = nodeContents;
+    }
+    
+    public void buildUrl(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
+        if (encoding == null) {
+            encoding = "ISO-8859-1";
+        }
+        
+        String relativeContentPath = "";
+        
+        String path = getPath();
+        
+        if (path != null && path.startsWith(siteContentPath)) {
+            relativeContentPath = path.substring(siteContentPath.length());
+        }
+        
+        if (relativeContentPath != null) {
+            StringBuilder relativeContentPathBuilder = new StringBuilder(relativeContentPath.length());
+            String [] pathParts = StringUtils.splitPreserveAllTokens(StringUtils.removeStart(relativeContentPath, "/"), '/');
+            
+            for (String pathPart : pathParts) {
+                relativeContentPathBuilder.append('/').append(URLEncoder.encode(pathPart, encoding));
+            }
+            
+            relativeContentPath = relativeContentPathBuilder.toString();
+        }
+        
+        setUrl(URI.create(urlBase + relativeContentPath));
+    }
+    
+    public void buildChildUrls(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
+        if (propertyContents != null) {
+            for (PropertyContent propertyContent : propertyContents) {
+                propertyContent.buildUrl(urlBase, siteContentPath, encoding);
+            }
+        }
+        
+        if (nodeContents != null) {
+            for (NodeContent nodeContent : nodeContents) {
+                nodeContent.buildUrl(urlBase, siteContentPath, encoding);
+            }
+        }
     }
     
 }

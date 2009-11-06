@@ -15,14 +15,19 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.util.Calendar;
 
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,24 +38,30 @@ public class PropertyContent extends ItemContent {
     
     private int type;
     private String typeName;
-    
-    private boolean [] booleanValue;
-    private String [] stringValue;
-    private long [] longValue;
-    private double [] doubleValue;
-    private Calendar [] dateValue;
+    private String multiple;
+    private Object [] value;
     
     public PropertyContent() {
         super();
+    }
+    
+    public PropertyContent(String name) {
+        super(name);
+    }
+    
+    public PropertyContent(String name, String path) {
+        super(name, path);
     }
     
     public PropertyContent(Property property) throws RepositoryException {
         super(property);
         this.type = property.getType();
         this.typeName = PropertyType.nameFromValue(type);
+        this.multiple = Boolean.toString(property.getDefinition().isMultiple());
         loadPropertyValues(property);
     }
     
+    @XmlAttribute
     public String getType() {
         return typeName;
     }
@@ -60,114 +71,91 @@ public class PropertyContent extends ItemContent {
         this.typeName = typeName;
     }
     
-    public boolean [] getBooleanValue() {
-        return booleanValue;
+    @XmlAttribute
+    public String getMultiple() {
+        return multiple;
     }
     
-    public void setBooleanValue(boolean [] booleanValue) {
-        this.booleanValue = booleanValue;
+    public void setMultiple(String multiple) {
+        this.multiple = multiple;
     }
     
-    public String [] getStringValue() {
-        return stringValue;
+    public Object [] getValue() {
+        return value;
     }
     
-    public void setStringValue(String [] stringValue) {
-        this.stringValue = stringValue;
-    }
-    
-    public long [] getLongValue() {
-        return longValue;
-    }
-    
-    public void setLongValue(long [] longValue) {
-        this.longValue = longValue;
-    }
-    
-    public double [] getDoubleValue() {
-        return doubleValue;
-    }
-    
-    public void setDoubleValue(double [] doubleValue) {
-        this.doubleValue = doubleValue;
-    }
-    
-    public Calendar [] getDateValue() {
-        return dateValue;
-    }
-    
-    public void setDateValue(Calendar [] dateValue) {
-        this.dateValue = dateValue;
+    public void setValue(Object [] value) {
+        this.value = value;
     }
     
     private void loadPropertyValues(Property p) {
         try {
-            boolean multiple = p.getDefinition().isMultiple();
+            boolean isMultiple = p.getDefinition().isMultiple();
             
             switch (p.getType()) {
             case PropertyType.BOOLEAN: 
-                if (multiple) {
+                if (isMultiple) {
                     Value [] values = p.getValues();
-                    booleanValue = new boolean[values.length];
+                    this.value = new Boolean[values.length];
                     int i = 0;
                     for (Value val : values) {
-                        booleanValue[i] = val.getBoolean();
+                        this.value[i] = val.getBoolean();
                         i++;
                     }
                 } else {
-                    booleanValue = new boolean [] { p.getBoolean() };
+                    this.value = new Boolean [] { p.getBoolean() };
                 }
                 break;
             case PropertyType.STRING:
-                if (multiple) {
+                if (isMultiple) {
                     Value [] values = p.getValues();
-                    stringValue = new String[values.length];
+                    this.value = new String[values.length];
                     int i = 0;
                     for (Value val : values) {
-                        stringValue[i] = val.getString();
+                        this.value[i] = val.getString();
                         i++;
                     }
                 } else {
-                    stringValue = new String [] { p.getString() };
+                    this.value = new String [] { p.getString() };
                 }
                 break;
             case PropertyType.LONG :
-                if (multiple) {
+                if (isMultiple) {
                     Value [] values = p.getValues();
-                    longValue = new long[values.length];
+                    this.value = new Long[values.length];
                     int i = 0;
                     for (Value val : values) {
-                        longValue[i] = val.getLong();
+                        this.value[i] = val.getLong();
                         i++;
                     }
                 } else {
-                    longValue = new long [] { p.getLong() };
+                    this.value = new Long [] { p.getLong() };
                 }
                 break;
             case PropertyType.DOUBLE :
-                if (multiple) {
+                if (isMultiple) {
                     Value [] values = p.getValues();
-                    doubleValue = new double[values.length];
+                    this.value = new Double[values.length];
                     int i = 0;
                     for (Value val : values) {
-                        doubleValue[i] = val.getDouble();
+                        this.value[i] = val.getDouble();
                         i++;
                     }
                 } else {
-                    doubleValue = new double [] { p.getDouble() };
+                    this.value = new Double [] { p.getDouble() };
                 }
                 break;
             case PropertyType.DATE :
-                if (multiple) {
+                if (isMultiple) {
                     Value [] values = p.getValues();
-                    dateValue = new Calendar[values.length];
+                    this.value = new Calendar[values.length];
                     int i = 0;
                     for(Value val : values) {
-                        dateValue[i] = val.getDate();
+                        this.value[i] = val.getDate();
                         i++;
                     }
                 } else {
-                    dateValue = new Calendar [] { p.getDate() };
+                    this.value = new Calendar [] { p.getDate() };
                 }
                 break;
             }
@@ -176,6 +164,33 @@ public class PropertyContent extends ItemContent {
         }
         
         return ;
+    }
+
+    public void buildUrl(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
+        if (encoding == null) {
+            encoding = "ISO-8859-1";
+        }
+        
+        String relativeContentPath = "";
+        
+        String path = getPath();
+        
+        if (path != null && path.startsWith(siteContentPath)) {
+            relativeContentPath = path.substring(siteContentPath.length());
+        }
+        
+        if (relativeContentPath != null) {
+            StringBuilder relativeContentPathBuilder = new StringBuilder(relativeContentPath.length());
+            String [] pathParts = StringUtils.splitPreserveAllTokens(StringUtils.removeStart(relativeContentPath, "/"), '/');
+            
+            for (String pathPart : pathParts) {
+                relativeContentPathBuilder.append('/').append(URLEncoder.encode(pathPart, encoding));
+            }
+            
+            relativeContentPath = relativeContentPathBuilder.toString();
+        }
+        
+        setUrl(URI.create(urlBase + "/property" + relativeContentPath));
     }
 
 }

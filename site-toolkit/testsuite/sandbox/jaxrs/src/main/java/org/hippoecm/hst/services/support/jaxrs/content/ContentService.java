@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
-import java.net.URLDecoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +23,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.slf4j.Logger;
@@ -35,16 +36,13 @@ public class ContentService extends BaseHstContentService {
     
     private static Logger log = LoggerFactory.getLogger(ContentService.class);
     
-    @Context
-    private HttpServletRequest servletRequest;
-    
     public ContentService() {
         super();
     }
     
     @GET
-    @Path("/node/uuid/{uuid}/")
-    public HippoBeanContent getContentNodeByUUID(@PathParam("uuid") String uuid) {
+    @Path("/uuid/{uuid}/")
+    public HippoBeanContent getContentNodeByUUID(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("uuid") String uuid) {
         HippoBeanContent beanContent = new HippoBeanContent();
         
         try {
@@ -52,7 +50,10 @@ public class ContentService extends BaseHstContentService {
             HippoBean bean = (HippoBean) cpm.getObjectByUuid(uuid);
             
             if (bean != null) {
-                beanContent = createHippoContentBean(bean);
+                beanContent = createHippoBeanContent(bean);
+                String encoding = servletRequest.getCharacterEncoding();
+                beanContent.buildUrl(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
+                beanContent.buildChildUrls(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -66,9 +67,9 @@ public class ContentService extends BaseHstContentService {
     }
     
     @GET
-    @Path("/node/{path:.*}")
-    public HippoBeanContent getContentNode(@PathParam("path") List<PathSegment> pathSegments) {
-        String itemPath = getContentItemPath(pathSegments);
+    @Path("/{path:.*}")
+    public HippoBeanContent getContentNode(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments) {
+        String itemPath = getContentItemPath(servletRequest, pathSegments);
         HippoBeanContent beanContent = new HippoBeanContent();
         
         try {
@@ -76,7 +77,10 @@ public class ContentService extends BaseHstContentService {
             HippoBean bean = (HippoBean) cpm.getObject(itemPath);
             
             if (bean != null) {
-                beanContent = createHippoContentBean(bean);
+                beanContent = createHippoBeanContent(bean);
+                String encoding = servletRequest.getCharacterEncoding();
+                beanContent.buildUrl(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
+                beanContent.buildChildUrls(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -90,14 +94,16 @@ public class ContentService extends BaseHstContentService {
     }
     
     @GET
-    @Path("/property/{property}/uuid/{uuid}/")
-    public PropertyContent getContentPropertyByUUID(@PathParam("uuid") String uuid, @PathParam("property") String propertyName) {
+    @Path("/property/uuid/{uuid}/{property}")
+    public PropertyContent getContentPropertyByUUID(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("uuid") String uuid, @PathParam("property") String propertyName) {
         PropertyContent propContent = new PropertyContent();
-        HippoBeanContent beanContent = getContentNodeByUUID(uuid);
+        HippoBeanContent beanContent = getContentNodeByUUID(servletRequest, uriInfo, uuid);
         
         if (beanContent.getBean() != null) {
             try {
                 propContent = new PropertyContent(beanContent.getBean().getNode().getProperty(propertyName));
+                String encoding = servletRequest.getCharacterEncoding();
+                propContent.buildUrl(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     log.warn("Failed to retrieve content bean property.", e);
@@ -111,14 +117,20 @@ public class ContentService extends BaseHstContentService {
     }
     
     @GET
-    @Path("/property/{property}/{path:.*}")
-    public PropertyContent getContentProperty(@PathParam("path") List<PathSegment> pathSegments, @PathParam("property") String propertyName) {
+    @Path("/property/{path:.*}")
+    public PropertyContent getContentProperty(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments) {
         PropertyContent propContent = new PropertyContent();
-        HippoBeanContent beanContent = getContentNode(pathSegments);
+        
+        PathSegment propertyPathSegment = pathSegments.remove(pathSegments.size() - 1);
+        String propertyName = StringUtils.removeStart(propertyPathSegment.getPath(), "/");
+        
+        HippoBeanContent beanContent = getContentNode(servletRequest, uriInfo, pathSegments);
         
         if (beanContent.getBean() != null) {
             try {
                 propContent = new PropertyContent(beanContent.getBean().getNode().getProperty(propertyName));
+                String encoding = servletRequest.getCharacterEncoding();
+                propContent.buildUrl(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     log.warn("Failed to retrieve content bean property.", e);
@@ -129,31 +141,6 @@ public class ContentService extends BaseHstContentService {
         }
         
         return propContent;
-    }
-    
-    private String getContentItemPath(final List<PathSegment> pathSegments) {
-        StringBuilder pathBuilder = new StringBuilder(80).append(getSiteContentPath());
-        
-        for (PathSegment pathSegment : pathSegments) {
-            pathBuilder.append('/').append(pathSegment.getPath());
-        }
-        
-        String path = pathBuilder.toString();
-        
-        String encoding = servletRequest.getCharacterEncoding();
-        
-        if (encoding == null)
-        {
-            encoding = "ISO-8859-1";
-        }
-        
-        try {
-            path = URLDecoder.decode(path, encoding);
-        } catch (Exception e) {
-            log.warn("Failed to decode. {}", path);
-        }
-        
-        return path;
     }
     
 }

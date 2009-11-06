@@ -16,6 +16,7 @@
 package org.hippoecm.hst.services.support.jaxrs.content;
 
 import javax.jcr.RepositoryException;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -28,6 +29,14 @@ public class HippoBeanContent extends NodeContent {
     
     public HippoBeanContent() {
         super();
+    }
+    
+    public HippoBeanContent(String name) {
+        super(name);
+    }
+    
+    public HippoBeanContent(String name, String path) {
+        super(name, path);
     }
     
     public HippoBeanContent(HippoBean bean) throws RepositoryException {
@@ -44,6 +53,7 @@ public class HippoBeanContent extends NodeContent {
         return bean;
     }
     
+    @XmlAttribute
     public String getCanonicalUuid() {
         return canonicalUuid;
     }

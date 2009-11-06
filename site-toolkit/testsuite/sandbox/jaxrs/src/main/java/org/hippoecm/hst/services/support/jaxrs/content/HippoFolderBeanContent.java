@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import javax.jcr.RepositoryException;
@@ -26,49 +27,89 @@ import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 @XmlRootElement(name = "folder")
 public class HippoFolderBeanContent extends HippoBeanContent {
     
-    private ItemContent [] folder;
-    private ItemContent [] document;
+    private HippoFolderBeanContent [] folderBeanContents;
+    private HippoDocumentBeanContent [] documentBeanContents;
     
     public HippoFolderBeanContent() {
         super();
     }
     
+    public HippoFolderBeanContent(String name) {
+        super(name);
+    }
+    
+    public HippoFolderBeanContent(String name, String path) {
+        super(name, path);
+    }
+    
     public HippoFolderBeanContent(HippoFolderBean bean) throws RepositoryException {
         super(bean);
         
-        ArrayList<ItemContent> folderItemContents = new ArrayList<ItemContent>();
+        ArrayList<HippoFolderBeanContent> folderBeanContentList = new ArrayList<HippoFolderBeanContent>();
+        
         for (HippoFolderBean fldrBean : bean.getFolders()) {
             if (fldrBean != null) {
-                folderItemContents.add(new ItemContent(fldrBean.getNode()));
+                folderBeanContentList.add(new HippoFolderBeanContent(fldrBean.getName(), fldrBean.getPath()));
             }
         }
-        folder = new ItemContent[folderItemContents.size()];
-        folder = folderItemContents.toArray(folder);
         
-        ArrayList<ItemContent> documentItemContents = new ArrayList<ItemContent>();
+        folderBeanContents = new HippoFolderBeanContent[folderBeanContentList.size()];
+        folderBeanContents = folderBeanContentList.toArray(folderBeanContents);
+        
+        ArrayList<HippoDocumentBeanContent> documentBeanContentList = new ArrayList<HippoDocumentBeanContent>();
+        
         for (HippoDocumentBean docBean : bean.getDocuments()) {
             if (docBean != null) {
-                documentItemContents.add(new ItemContent(docBean.getNode()));
+                documentBeanContentList.add(new HippoDocumentBeanContent(docBean.getName(), docBean.getPath()));
             }
         }
-        document = new ItemContent[documentItemContents.size()];
-        document = documentItemContents.toArray(document);
+        
+        documentBeanContents = new HippoDocumentBeanContent[documentBeanContentList.size()];
+        documentBeanContents = documentBeanContentList.toArray(documentBeanContents);
     }
     
-    public ItemContent [] getFolder() {
-        return folder;
+    public HippoFolderBeanContent [] getFolder() {
+        return folderBeanContents;
     }
     
-    public void setFolder(ItemContent [] folder) {
-        this.folder = folder;
+    public void setFolder(HippoFolderBeanContent [] folderBeanContents) {
+        this.folderBeanContents = folderBeanContents;
     }
     
-    public ItemContent [] getDocument() {
-        return document;
+    public HippoDocumentBeanContent [] getDocument() {
+        return documentBeanContents;
     }
     
-    public void setDocument(ItemContent [] document) {
-        this.document = document;
+    public void setDocument(HippoDocumentBeanContent [] documentBeanContents) {
+        this.documentBeanContents = documentBeanContents;
+    }
+    
+    @Override
+    public void buildChildUrls(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
+        PropertyContent [] propertyContents = getProperty();
+        
+        if (propertyContents != null) {
+            for (PropertyContent propertyContent : propertyContents) {
+                propertyContent.buildUrl(urlBase, siteContentPath, encoding);
+            }
+        }
+        
+        if (folderBeanContents != null) {
+            for (HippoFolderBeanContent folderContent : folderBeanContents) {
+                folderContent.buildUrl(urlBase, siteContentPath, encoding);
+            }
+        }
+        
+        if (documentBeanContents != null) {
+            for (HippoDocumentBeanContent documentContent : documentBeanContents) {
+                documentContent.buildUrl(urlBase, siteContentPath, encoding);
+            }
+        }
+    }
+    
+    @Override
+    public NodeContent [] getNode() {
+        return null;
     }
     
 }
