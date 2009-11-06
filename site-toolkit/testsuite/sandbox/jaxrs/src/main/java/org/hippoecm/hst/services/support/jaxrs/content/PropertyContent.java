@@ -183,9 +183,12 @@ public class PropertyContent extends ItemContent {
             StringBuilder relativeContentPathBuilder = new StringBuilder(relativeContentPath.length());
             String [] pathParts = StringUtils.splitPreserveAllTokens(StringUtils.removeStart(relativeContentPath, "/"), '/');
             
-            for (String pathPart : pathParts) {
+            for (int i = 0; i < pathParts.length - 1; i++) {
+                String pathPart = pathParts[i];
                 relativeContentPathBuilder.append('/').append(URLEncoder.encode(pathPart, encoding));
             }
+            
+            relativeContentPathBuilder.append('/').append(pathParts[pathParts.length - 1]);
             
             relativeContentPath = relativeContentPathBuilder.toString();
         }
