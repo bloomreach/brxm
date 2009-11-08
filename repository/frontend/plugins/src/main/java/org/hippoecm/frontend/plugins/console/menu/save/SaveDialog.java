@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -46,7 +47,6 @@ public class SaveDialog extends AbstractDialog {
 
     public SaveDialog(MenuPlugin plugin) {
         this.plugin = plugin;
-
         Component message;
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         try {
@@ -67,13 +67,16 @@ public class SaveDialog extends AbstractDialog {
             } else {
                 message = new Label("message", "There are no pending changes");
                 setOkVisible(false);
+                setFocusOnCancel();
             }
         } catch (RepositoryException e) {
             log.error("Error while rendering save dialog", e);
             message = new Label("message", "exception: " + e.getMessage());
             setOkVisible(false);
+            setFocusOnCancel();
         }
         add(message);
+        setFocusOnOk();
     }
 
     @Override
@@ -91,6 +94,11 @@ public class SaveDialog extends AbstractDialog {
 
     public IModel getTitle() {
         return new Model("Save Session");
+    }
+    
+    @Override
+    public IValueMap getProperties() {
+        return MEDIUM;
     }
 
 }

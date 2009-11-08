@@ -32,12 +32,15 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -108,7 +111,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
         InitMaps();
         this.plugin = plugin;
         nodeModel = (JcrNodeModel) plugin.getModel();
-
+        
         DropDownChoice uuid = new DropDownChoice("uuidBehaviors", new PropertyModel(this, "uuidBehavior"), new ArrayList<String>(uuidOpts.values()));
         DropDownChoice merge = new DropDownChoice("mergeBehaviors", new PropertyModel(this, "mergeBehavior"), new ArrayList<String>(mergeOpts.values()));
         DropDownChoice reference = new DropDownChoice("derefBehaviors", new PropertyModel(this, "derefBehavior"), new ArrayList<String>(derefOpts.values()));
@@ -123,9 +126,13 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
         add(fileUploadField = new FileUploadField("fileInput"));
 
         setOkLabel("import");
+        setFocus(uuid);
 
         try {
-            info("Import content from a file to node: " + nodeModel.getNode().getPath());
+            String path = nodeModel.getNode().getPath();
+            add(new Label("message", new StringResourceModel("dialog.message", this, null, new Object[] {path})));
+
+            //info("Import content from a file to node: " + nodeModel.getNode().getPath());
         } catch (RepositoryException e) {
             log.error("Error getting node from model for contant import",e);
             throw new RuntimeException("Error getting node from model for contant import: " + e.getMessage());
@@ -185,7 +192,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
             }
         }
     }
-
+    
     public void setMergeBehavior(String mergeBehavior) {
         this.mergeBehavior = mergeBehavior;
     }
@@ -205,6 +212,11 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
     }
     public String getUuidBehavior() {
         return uuidBehavior;
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return MEDIUM;
     }
 
 }

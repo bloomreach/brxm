@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
 
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -40,7 +42,17 @@ public class DeleteDialog extends AbstractDialog {
 
     public DeleteDialog(MenuPlugin plugin) {
         this.plugin = plugin;
-        add(new Label("message", getTitle()));
+
+        String path;
+        try {
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+            path = nodeModel.getNode().getPath();
+        } catch (RepositoryException e) {
+            path = e.getMessage();
+        }
+        add(new Label("message", new StringResourceModel("delete.message", this, null, new Object[] {path})));
+        
+        setFocusOnOk();
     }
 
     @Override
@@ -48,28 +60,25 @@ public class DeleteDialog extends AbstractDialog {
         try {
             JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
             JcrNodeModel parentModel = nodeModel.getParentModel();
-
+            
             //The actual JCR remove
             nodeModel.getNode().remove();
 
             //set the parent model as current model
             plugin.setModel(parentModel);
-
         } catch (RepositoryException ex) {
             log.error("Error while deleting document", ex);
-            error(ex.getMessage());
+            error("Error while deleting document " + ex.getMessage());
         }
     }
 
     public IModel getTitle() {
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-        String title;
-        try {
-            title = "Delete " + nodeModel.getNode().getPath();
-        } catch (RepositoryException e) {
-            title = e.getMessage();
-        }
-        return new Model(title);
+        return new Model(getString("dialog.title"));
+    }
+    
+    @Override
+    public IValueMap getProperties() {
+        return SMALL;
     }
 
 }

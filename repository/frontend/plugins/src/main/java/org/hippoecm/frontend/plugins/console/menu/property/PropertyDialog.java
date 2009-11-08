@@ -31,6 +31,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -63,7 +64,7 @@ public class PropertyDialog extends AbstractDialog {
         ddChoice.setRequired(true);
         add(ddChoice);
 
-        add(new TextField("name", new PropertyModel(this, "name")));
+        add(setFocus(new TextField("name", new PropertyModel(this, "name"))));
         add(new TextArea("value", new PropertyModel(this, "value")));
     }
 
@@ -173,6 +174,11 @@ public class PropertyDialog extends AbstractDialog {
             log.info(ex.getMessage());
         }
         return null;
+    }
+    
+    @Override
+    public IValueMap getProperties() {
+        return SMALL;
     }
 
 }

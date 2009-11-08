@@ -55,21 +55,23 @@ public class WorkflowDialog extends AbstractDialog {
             ByteArrayOutputStream ostream = new ByteArrayOutputStream();
             PrintWriter out = new PrintWriter(ostream);
             Session session = subject.getSession();
-            WorkflowManager workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
+            WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
             Node categories = session.getRootNode().getNode("hippo:configuration/hippo:workflows");
 
-            for(NodeIterator iter = categories.getNodes(); iter.hasNext(); ) {
+            for (NodeIterator iter = categories.getNodes(); iter.hasNext();) {
                 Node category = iter.nextNode();
                 WorkflowDescriptor descriptor = workflowManager.getWorkflowDescriptor(category.getName(), subject);
-                out.println("Category "+category.getName()+": "+(descriptor != null ? descriptor.getDisplayName() : "none"));
+                out.println("Category " + category.getName() + ": "
+                        + (descriptor != null ? descriptor.getDisplayName() : "none"));
             }
             out.flush();
             dump.setModel(new Model(new String(ostream.toByteArray())));
-        } catch(RepositoryException ex) {
-            dump.setModel(new Model(ex.getClass().getName()+": "+ex.getMessage()));
+        } catch (RepositoryException ex) {
+            dump.setModel(new Model(ex.getClass().getName() + ": " + ex.getMessage()));
         }
 
         setCancelVisible(false);
+        setFocusOnOk();
     }
 
     @Override

@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -51,7 +52,7 @@ public class RenameDialog extends AbstractDialog {
             log.error(e.getMessage());
         }
 
-        add(new TextField("name", new PropertyModel(this, "name")));
+        add(setFocus(new TextField("name", new PropertyModel(this, "name"))));
         if (nodeModel.getNode() == null) {
             setOkVisible(false);
         }
@@ -94,5 +95,9 @@ public class RenameDialog extends AbstractDialog {
     public void setName(String name) {
         this.name = name;
     }
-
+    
+    @Override
+    public IValueMap getProperties() {
+        return SMALL;
+    }
 }

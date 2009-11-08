@@ -81,6 +81,7 @@ public class MoveDialog extends LookupDialog {
             add(new EmptyPanel("name"));
             setOkVisible(false);
         }
+        setFocusOnCancel();
     }
 
     public IModel getTitle() {

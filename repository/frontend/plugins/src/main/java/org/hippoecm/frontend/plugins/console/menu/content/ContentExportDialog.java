@@ -28,12 +28,14 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -54,8 +56,17 @@ public class ContentExportDialog extends AbstractDialog {
 
     public ContentExportDialog(MenuPlugin plugin) {
         setModel(plugin.getModel());
-
+        
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        try {
+            String path = nodeModel.getNode().getPath();
+            add(new Label("message", new StringResourceModel("dialog.message", this, null, new Object[] {path})));
+            //info("Export content from : " + );
+        } catch (RepositoryException e) {
+            log.error("Error getting node from model for contant import",e);
+            throw new RuntimeException("Error getting node from model for contant import: " + e.getMessage());
+        }
+
         IModel skipBinaryModel = new PropertyModel(this, "skipBinary");
         CheckBox skipBinaries = new CheckBox("skip-binaries", skipBinaryModel);
         skipBinaries.add(new Label("skip-binaries-text", new Model("Do not include binary properties in export")));
@@ -64,6 +75,7 @@ public class ContentExportDialog extends AbstractDialog {
         DownloadExportLink link = new DownloadExportLink("download-link", nodeModel, skipBinaryModel);
         link.add(new Label("download-link-text", "Download (or right click and choose \"Save as..\""));
         add(link);
+        setFocus(link);
 
         final MultiLineLabel dump = new MultiLineLabel("dump", "");
         dump.setOutputMarkupId(true);
@@ -83,6 +95,7 @@ public class ContentExportDialog extends AbstractDialog {
                 } catch (Exception e) {
                     export = e.getMessage();
                 }
+                dump.add(new AttributeAppender("class", true, new Model("activated"), " "));
                 dump.setModel(new Model(export));
                 target.addComponent(dump);
             }
@@ -91,13 +104,6 @@ public class ContentExportDialog extends AbstractDialog {
         add(viewLink);
 
         setOkVisible(false);
-
-        try {
-            info("Export content from : " + nodeModel.getNode().getPath());
-        } catch (RepositoryException e) {
-            log.error("Error getting node from model for contant import",e);
-            throw new RuntimeException("Error getting node from model for contant import: " + e.getMessage());
-        }
     }
 
     public IModel getTitle() {
