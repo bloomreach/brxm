@@ -26,11 +26,21 @@
 .hippo-console-tree .hippo-tree{ font-size: 13px; }
 
 /* Styling for tree in Dialog */
-.hippo-window .hippo-console-tree .hippo-tree{ height: 250px; width: 500px; padding-top: 0px; padding-bottom: 5px; border-bottom: 1px solid #e3e3e3;}
+.hippo-window .hippo-console-tree .hippo-tree{ padding-top: 0px; padding-bottom: 5px; }
 .hippo-window label { display: block; }
 
-.hippo-window .hippo-console-tree { float: left; width: 500px; border-right: 1px solid #e3e3e3; }
+.hippo-window .hippo-console-tree { float: left; width: 479px; border-right: 1px solid #e3e3e3; height: 270px; overflow: auto; border: 1px solid #e3e3e3;}
+.hippo-window .hippo-console-tree .hippo-tree div.wicket-tree {width: 463px;}
+.hippo-window .hippo-console-tree .hippo-tree div.wicket-tree {width: 100%;}
+
 .hippo-window .window-details { width:450px; float: left; padding-top: 10px; padding-left: 10px; clear:left}
+
+.hippo-window .xml-dump span.activated p { height: 270px; display:block; overflow: auto; border: 1px solid #666; border-bottom:0px; padding-left: 3px;}
+
+.hippo-window .cnd-export-dump span { height: 317px; display:block; overflow: auto; border: 1px solid #666; border-bottom:0px; padding-left: 3px; padding-bottom: 3px;}
+
+.hippo-window form .message { margin-bottom: 10px; font-size: 13px;}
+.hippo-window form fieldset {margin-bottom: 5px;}
 
 .hippo-console-tree .wicket-tree a{color: #666666}
 .hippo-console-tree .wicket-tree a:hover{color: #32629b}
@@ -128,3 +138,14 @@
   background: transparent; 
 }
 .hippo-projectexport-tree .hippo-tree-dropdown-icon:hover {background-position: 0px 0px;}
+
+.wicket-modal .hippo-root { padding: 10px; }
+
+.wicket-modal .hippo-modal-feedback ul { margin-left: 10px; margin-right: 10px; }
+
+.hippo-modal-feedback ul li.feedbackPanelERROR {display: block; margin:0;}
+
+body.hippo-root div.yui-log-container {
+  top: 72px;
+  right: 10px;
+}

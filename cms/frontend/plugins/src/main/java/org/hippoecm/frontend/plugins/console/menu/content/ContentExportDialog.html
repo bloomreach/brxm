@@ -15,24 +15,26 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:extend>
-        <div style="padding:10px;">
-            <input type="checkbox" wicket:id="skip-binaries"><span wicket:id="skip-binaries-text"/></input>
+        <div wicket:id="message" class="message"/>
+        <div style="padding-left:10px;padding-bottom:10px;">
+            <input type="checkbox" wicket:id="skip-binaries"> <span wicket:id="skip-binaries-text"/></input>
         </div>
         <ul>
             <li>
                 <a wicket:id="download-link">
-                    <span wicket:id="download-link-text"/>
+                    - <span wicket:id="download-link-text"/>
                 </a>
             </li>
-            <li>
-                <a wicket:id="view-link">
-                    <span wicket:id="view-link-text"/>
+            <li style="padding-top: 4px;">
+            <a wicket:id="view-link">
+                    - <span wicket:id="view-link-text"/>
                 </a>
             </li>
         </ul>
-        <hr/>
-        <pre>        
-            <span wicket:id="dump"></span>
-        </pre>
+        <div class="xml-dump">
+          <pre>
+            <span wicket:id="dump" />
+          </pre> 
+        </div>
     </wicket:extend>
 </html>

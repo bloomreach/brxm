@@ -22,11 +22,12 @@ import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.frontend.widgets.RequiredTextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +44,8 @@ public class NamespaceDialog  extends AbstractDialog implements ITitleDecorator 
     private String namespaceUri;
 
     public NamespaceDialog(MenuPlugin plugin) {
-        add(new TextFieldWidget("name", new PropertyModel(this, "namespaceName")));
-        add(new TextFieldWidget("uri", new PropertyModel(this, "namespaceUri")));
+        add(setFocus(new RequiredTextFieldWidget("name", new PropertyModel(this, "namespaceName"), new Model("namespace name"))));
+        add(new RequiredTextFieldWidget("uri", new PropertyModel(this, "namespaceUri"), new Model("namespace url")));
     }
 
     @Override
@@ -77,7 +78,7 @@ public class NamespaceDialog  extends AbstractDialog implements ITitleDecorator 
         }
 
     }
-
+    
     public IModel getTitle() {
         return new Model("Add namespace");
     }
@@ -96,5 +97,10 @@ public class NamespaceDialog  extends AbstractDialog implements ITitleDecorator 
 
     public void setNamespaceUri(String namespaceUri) {
         this.namespaceUri = namespaceUri;
+    }
+    
+    @Override
+    public IValueMap getProperties() {
+        return SMALL;
     }
 }

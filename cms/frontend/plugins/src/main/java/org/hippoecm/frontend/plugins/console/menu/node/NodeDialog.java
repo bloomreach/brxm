@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -39,7 +40,7 @@ public class NodeDialog extends AbstractDialog implements ITitleDecorator {
 
     public NodeDialog(MenuPlugin plugin) {
         this.plugin = plugin;
-        add(new TextField("name", new PropertyModel(this, "name")));
+        add(setFocus(new TextField("name", new PropertyModel(this, "name"))));
         add(new TextField("type", new PropertyModel(this, "type")));
     }
 
@@ -73,5 +74,10 @@ public class NodeDialog extends AbstractDialog implements ITitleDecorator {
 
     public String getType() {
         return type;
+    }
+    
+    @Override
+    public IValueMap getProperties() {
+        return SMALL;
     }
 }

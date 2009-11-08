@@ -43,8 +43,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
-import org.hippoecm.tools.projectexport.DownloadLink;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
+import org.hippoecm.tools.projectexport.DownloadLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,7 @@ public class CndExportDialog extends AbstractDialog {
     public CndExportDialog(MenuPlugin plugin) {
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
-        PropertyModel selectedNsModel = new PropertyModel(this, "selectedNs");
+        final PropertyModel selectedNsModel = new PropertyModel(this, "selectedNs");
 
         List<String> nsPrefixes = null;
         try {
@@ -77,7 +77,14 @@ public class CndExportDialog extends AbstractDialog {
         }
 
         // output for view
-        final MultiLineLabel dump = new MultiLineLabel("dump", "");
+        final MultiLineLabel dump = new MultiLineLabel("dump", "") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isVisible() {
+                return selectedNs != null && !getModelObjectAsString().equals("");
+            }
+        };
         dump.setOutputMarkupId(true);
         add(dump);
 
@@ -115,15 +122,18 @@ public class CndExportDialog extends AbstractDialog {
                     export = e.getMessage();
                 }
                 dump.setModel(new Model(export));
-                target.addComponent(dump);
+                target.addComponent(CndExportDialog.this);
             }
         });
 
         // Add download link
         DownloadLink link = new DownloadLink("download-link") {
+            private static final long serialVersionUID = 1L;
+
             protected String getFilename() {
                 return selectedNs + ".cnd";
             }
+
             protected InputStream getContent() {
                 String export = (String) dump.getModel().getObject();
                 ByteArrayOutputStream ostream = new ByteArrayOutputStream();
@@ -132,8 +142,14 @@ public class CndExportDialog extends AbstractDialog {
                 writer.flush();
                 return new ByteArrayInputStream(ostream.toByteArray());
             }
+
+            @Override
+            public boolean isVisible() {
+                return selectedNs != null && !dump.getModelObjectAsString().equals("");
+            }
         };
-        link.add(new Label("download-link-text", "Download"));
+        link.add(new Label("download-link-text", "Download (or right click and choose \"Save as..\""));
+        link.setOutputMarkupId(true);
         add(link);
         setCancelVisible(false);
     }
@@ -154,4 +170,5 @@ public class CndExportDialog extends AbstractDialog {
         Collections.sort(nsPrefixes);
         return nsPrefixes;
     }
+
 }

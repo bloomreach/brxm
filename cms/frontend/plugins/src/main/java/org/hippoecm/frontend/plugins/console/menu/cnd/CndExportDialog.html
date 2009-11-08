@@ -15,7 +15,7 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-        <div>
+        <div style="margin-bottom: 2px;">
             <strong>Choose namespace prefix to export: </strong>
             <select wicket:id="nsprefixes">
                 <option>nsprefix 1</option>
@@ -29,9 +29,10 @@
                 </a>
             </li>
         </ul>
-        <hr/>
-        <pre>
+        <div class="cnd-export-dump">
+          <pre>
             <span wicket:id="dump" style="text-align:left"></span>
-        </pre>
+          </pre>
+        </div>  
     </wicket:extend>
 </html>

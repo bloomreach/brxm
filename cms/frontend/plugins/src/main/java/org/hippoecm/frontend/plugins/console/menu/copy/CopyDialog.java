@@ -82,6 +82,7 @@ public class CopyDialog extends LookupDialog {
             add(new EmptyPanel("name"));
             setOkVisible(false);
         }
+        setFocusOnCancel();
     }
 
     public IModel getTitle() {

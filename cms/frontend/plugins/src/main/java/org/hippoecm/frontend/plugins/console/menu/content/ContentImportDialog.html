@@ -15,37 +15,40 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <p>
-      <legend>
-        <strong>UUID resolution: </strong>
-      </legend>
-      <fieldset>
-        <select wicket:id="uuidBehaviors"/>
-      </fieldset>
-    </p>
-    <p>
-      <legend>
-        <strong>Merge behavior: </strong>
-      </legend>
-      <fieldset>
-        <select wicket:id="mergeBehaviors"/>
-      </fieldset>
-    </p>
-    <p>
-      <legend>
-        <strong>References resolution: </strong>
-      </legend>
-      <fieldset>
-        <select wicket:id="derefBehaviors"/>
-      </fieldset>
-    </p>
-    <p>
-      <legend>
-        <strong>Select file: </strong>
-      </legend>
-      <fieldset>
-        <input wicket:id="fileInput" id="upload" type="file"/>
-      </fieldset>
-    </p>
+    <div wicket:id="message" class="message"/>
+    <div class="import-properties">
+      <p>
+        <legend>
+          <strong>UUID resolution: </strong>
+        </legend>
+        <fieldset>
+          <select wicket:id="uuidBehaviors"/>
+        </fieldset>
+      </p>
+      <p>
+        <legend>
+          <strong>Merge behavior: </strong>
+        </legend>
+        <fieldset>
+          <select wicket:id="mergeBehaviors"/>
+        </fieldset>
+      </p>
+      <p>
+        <legend>
+          <strong>References resolution: </strong>
+        </legend>
+        <fieldset>
+          <select wicket:id="derefBehaviors"/>
+        </fieldset>
+      </p>
+      <p>
+        <legend>
+          <strong>Select file: </strong>
+        </legend>
+        <fieldset>
+          <input wicket:id="fileInput" id="upload" type="file"/>
+        </fieldset>
+      </p>
+    </div>
   </wicket:extend>
 </html>

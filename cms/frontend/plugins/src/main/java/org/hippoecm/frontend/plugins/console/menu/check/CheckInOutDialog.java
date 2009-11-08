@@ -24,6 +24,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -116,6 +117,7 @@ public class CheckInOutDialog extends AbstractDialog implements ITitleDecorator 
 
         setOkLabel("Close");
         setCancelVisible(false);
+        setFocusOnOk(); 
     }
 
     public IModel getTitle() {
@@ -125,6 +127,11 @@ public class CheckInOutDialog extends AbstractDialog implements ITitleDecorator 
             log.warn("Unable to get node name from model for title", e);
             return new Model("Check In or Check Out a node");
         }
+    }
+    
+    @Override
+    public IValueMap getProperties() {
+        return SMALL;
     }
 
 }

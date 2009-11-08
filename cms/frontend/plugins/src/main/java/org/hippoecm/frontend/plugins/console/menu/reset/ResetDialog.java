@@ -24,6 +24,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -65,6 +66,7 @@ public class ResetDialog extends AbstractDialog {
             e.printStackTrace();
         }
         add(message);
+        setFocusOnOk();
     }
 
     @Override
@@ -83,5 +85,9 @@ public class ResetDialog extends AbstractDialog {
     public IModel getTitle() {
         return new Model("Refresh Session");
     }
-
+    
+    @Override
+    public IValueMap getProperties() {
+        return SMALL;
+    }
 }
