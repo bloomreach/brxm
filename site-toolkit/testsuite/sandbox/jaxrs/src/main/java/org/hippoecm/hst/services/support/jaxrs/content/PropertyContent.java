@@ -102,6 +102,8 @@ public class PropertyContent extends ItemContent {
                     this.values = new Boolean [] { p.getBoolean() };
                 }
                 break;
+            case PropertyType.NAME:
+            case PropertyType.REFERENCE:
             case PropertyType.STRING:
                 if (isMultiple) {
                     Value [] values = p.getValues();

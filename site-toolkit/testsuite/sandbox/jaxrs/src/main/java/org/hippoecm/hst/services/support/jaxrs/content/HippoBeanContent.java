@@ -15,11 +15,14 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.persistence.ContentPersistenceException;
+import org.hippoecm.repository.api.HippoNode;
 
 @XmlRootElement(name = "content")
 public class HippoBeanContent extends NodeContent {
@@ -60,5 +63,19 @@ public class HippoBeanContent extends NodeContent {
     
     public void setCanonicalUuid(String canonicalUuid) {
         this.canonicalUuid = canonicalUuid;
+    }
+    
+    public Node getCanonicalNode() throws RepositoryException {
+        Node node = getBean().getNode();
+        
+        if (node == null) {
+            return null;
+        }
+        
+        if (node instanceof HippoNode) {
+            return ((HippoNode) node).getCanonicalNode();
+        }
+        
+        return node;
     }
 }
