@@ -88,6 +88,17 @@
     </dependency>
     
     <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+    <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>hst-api</artifactId>
       <version>${pom.version}</version>
