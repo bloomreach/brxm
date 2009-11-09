@@ -49,11 +49,11 @@ public class CurrentActivityPlugin extends RenderPlugin {
     public CurrentActivityPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        if (!(getDefaultModel() instanceof IDataProvider)) {
+        if (!(getModel() instanceof IDataProvider)) {
             throw new IllegalArgumentException("CurrentActivityPlugin needs a model that is an IDataProvider.");
         }
 
-        add(new CurrentActivityView("view", getDefaultModel()));
+        add(new CurrentActivityView("view", getModel()));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class CurrentActivityPlugin extends RenderPlugin {
         @SuppressWarnings("unchecked")
         @Override
         protected Iterator getItemModels() {
-            final IDataProvider dataProvider = (IDataProvider) getDefaultModel();
+            final IDataProvider dataProvider = (IDataProvider) getModel();
             final Iterator iter = dataProvider.iterator(0, 0);
             return new Iterator() {
 

@@ -34,7 +34,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Session;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Frank van Lankvelt
  */
-public class JcrPropertyValueModel<T extends Serializable> implements IModel<T> {
+public class JcrPropertyValueModel extends Model {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -209,22 +209,22 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T> 
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public T getObject() {
+    @Override
+    public Object getObject() {
         try {
             load();
             if (value != null) {
                 switch (value.getType()) {
                 case PropertyType.BOOLEAN:
-                    return (T) Boolean.valueOf(value.getBoolean());
+                    return value.getBoolean();
                 case PropertyType.DATE:
-                    return (T) value.getDate().getTime();
+                    return value.getDate().getTime();
                 case PropertyType.DOUBLE:
-                    return (T) Double.valueOf(value.getDouble());
+                    return value.getDouble();
                 case PropertyType.LONG:
-                    return (T) Long.valueOf(value.getLong());
+                    return value.getLong();
                 default:
-                    return (T) value.getString();
+                    return value.getString();
                 }
             }
         } catch (RepositoryException ex) {
@@ -233,6 +233,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T> 
         return null;
     }
 
+    @Override
     public void setObject(final Serializable object) {
         load();
         if (object == null) {
@@ -276,11 +277,13 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T> 
         setValue(value);
     }
 
+    @Override
     public void detach() {
         loaded = false;
         value = null;
         propertyDefinition = null;
         propertyModel.detach();
+        super.detach();
     }
 
     public void setIndex(int index) {
@@ -337,13 +340,13 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T> 
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof JcrPropertyValueModel<?> == false) {
+        if (object instanceof JcrPropertyValueModel == false) {
             return false;
         }
         if (this == object) {
             return true;
         }
-        JcrPropertyValueModel<?> valueModel = (JcrPropertyValueModel<?>) object;
+        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) object;
         return new EqualsBuilder().append(propertyModel, valueModel.propertyModel).append(index, valueModel.index)
                 .isEquals();
     }

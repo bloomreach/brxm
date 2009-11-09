@@ -395,7 +395,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getModel();
                 return new WhereUsedDialog(wdm, getEditorManager());
             }
 
@@ -414,7 +414,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             @Override
             protected Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getModel();
                 return new HistoryDialog(wdm, getEditorManager());
             }
 
@@ -436,8 +436,8 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         super.onModelChanged();
         try {
             WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
-            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) getDefaultModel();
-            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) getDefaultModelObject();
+            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) getModel();
+            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) getModelObject();
             if (workflowDescriptor != null) {
                 Node documentNode = workflowDescriptorModel.getNode();
                 if (documentNode != null && documentNode.hasProperty("hippostd:stateSummary")) {
@@ -529,11 +529,11 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
     IModel getDocumentName() {
         try {
-            return (new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel) getDefaultModel()).getNode())))
+            return (new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel) getModel()).getNode())))
                     .getNodeName();
         } catch (RepositoryException ex) {
             try {
-                return new Model(((WorkflowDescriptorModel) getDefaultModel()).getNode().getName());
+                return new Model(((WorkflowDescriptorModel) getModel()).getNode().getName());
             } catch (RepositoryException e) {
                 return new StringResourceModel("unknown", this, null);
             }

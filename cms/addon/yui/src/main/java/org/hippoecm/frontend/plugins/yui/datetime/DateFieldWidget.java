@@ -15,12 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.yui.datetime;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DateFieldWidget extends Panel {
     @SuppressWarnings("unused")
@@ -28,14 +36,41 @@ public class DateFieldWidget extends Panel {
 
     private static final long serialVersionUID = 1L;
 
-    public DateFieldWidget(String id, IModel<Date> model, IPluginContext context, IPluginConfig config) {
+    private static final Logger log = LoggerFactory.getLogger(DateFieldWidget.class);
+
+    public DateFieldWidget(String id, IModel model, IPluginContext context, IPluginConfig config) {
         this(id, model, false, context, config);
     }
     
-    public DateFieldWidget(String id, IModel<Date> model, boolean todayLinkVisible, IPluginContext context, IPluginConfig config) {
+    public DateFieldWidget(String id, IModel model, boolean todayLinkVisible, IPluginContext context, IPluginConfig config) {
         super(id, model);
 
-        add(new AjaxDateTimeField("widget", model, todayLinkVisible, context, config));
+        final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
+        Date date;
+        try {
+            date = valueModel.getValue().getDate().getTime();
+        } catch (RepositoryException ex) {
+            // FIXME:  log error
+            date = null;
+        }
+
+        add(new AjaxDateTimeField("widget", new Model(date) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void setObject(Object object) {
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTime((Date) object);
+                try {
+                    valueModel.setValue(valueModel.getJcrPropertymodel().getProperty().getSession().getValueFactory()
+                            .createValue(calendar));
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage(), ex);
+                }
+                super.setObject(object);
+            }
+
+        }, todayLinkVisible, context, config));
     }
 
 }

@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
@@ -79,7 +78,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
                 ITypeDescriptor type;
                 try {
                     if (typeName == null) {
-                        type = engine.getType(getDefaultModel());
+                        type = engine.getType(getModel());
                     } else {
                         type = engine.getType(typeName);
                     }
@@ -107,9 +106,6 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         if (provider != null) {
             provider.detach();
         }
-        if (field instanceof IDetachable) {
-            ((IDetachable) field).detach();
-        }
         super.onDetach();
     }
 
@@ -117,7 +113,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         if (field != null) {
             ITemplateEngine engine = getTemplateEngine();
             if (engine != null) {
-                P model = (P) getDefaultModel();
+                P model = (P) getModel();
                 try {
                     ITypeDescriptor subType = engine.getType(field.getType());
                     provider = newProvider(field, subType, model);

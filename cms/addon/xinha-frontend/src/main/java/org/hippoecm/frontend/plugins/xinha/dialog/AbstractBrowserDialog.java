@@ -50,13 +50,13 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
     protected final IPluginContext context;
     protected final IPluginConfig config;
-    private ModelReference<Node> modelService;
+    private ModelReference<IModel> modelService;
     private IClusterControl control;
     protected IRenderService dialogRenderer;
 
-    private IModel<Node> lastModelVisited;
+    private IModel lastModelVisited;
 
-    public AbstractBrowserDialog(IPluginContext context, IPluginConfig config, IModel<Node> model) {
+    public AbstractBrowserDialog(IPluginContext context, IPluginConfig config, IModel model) {
         super(model);
 
         this.context = context;
@@ -88,7 +88,7 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
         }
         lastModelVisited = model;
         
-        modelService = new ModelReference<Node>(modelServiceId, model) {
+        modelService = new ModelReference<IModel>(modelServiceId, model) {
             private static final long serialVersionUID = 1L;
 
             @Override

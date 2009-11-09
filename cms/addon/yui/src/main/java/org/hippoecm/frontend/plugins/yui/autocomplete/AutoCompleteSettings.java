@@ -109,7 +109,7 @@ public final class AutoCompleteSettings extends AjaxSettings {
         return this;
     }
 
-    public AutoCompleteSettings setSchemaMetaFields(Map<String, Object> schemaMetaFields) {
+    public AutoCompleteSettings setSchemaMetaFields(Map<String, String> schemaMetaFields) {
         SCHEMA_META_FIELDS.set(schemaMetaFields, this);
         return this;
     }

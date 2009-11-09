@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.workflow.dialog;
 
-import java.util.Collection;
-
 import org.apache.wicket.extensions.wizard.WizardModel;
 import org.apache.wicket.extensions.wizard.WizardStep;
 import org.apache.wicket.markup.html.basic.Label;
@@ -51,21 +49,21 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
 
         TypeDetailStep(NewDocumentTypeAction action) {
             super(new ResourceModel("type-detail-title"), new ResourceModel("type-detail-summary"));
-            add(nameComponent = new TextFieldWidget("name", new PropertyModel<String>(action, "name")));
+            add(nameComponent = new TextFieldWidget("name", new PropertyModel(action, "name")));
 
-            CheckGroup<String> cg = new CheckGroup<String>("checkgroup", new PropertyModel<Collection<String>>(action, "mixins"));
+            CheckGroup cg = new CheckGroup("checkgroup", new PropertyModel(action, "mixins"));
             add(cg);
 
             JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeStore());
 
-            cg.add(new DataView<String>("mixins", new ListDataProvider<String>(templateStore.getAvailableMixins())) {
+            cg.add(new DataView("mixins", new ListDataProvider(templateStore.getAvailableMixins())) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void populateItem(Item<String> item) {
-                    String mixin = item.getModelObject();
-                    item.add(new Check<String>("check", item.getModel()));
-                    IModel<String> typeName = new TypeTranslator(new JcrNodeTypeModel(mixin)).getTypeName();
+                protected void populateItem(Item item) {
+                    String mixin = item.getModelObjectAsString();
+                    item.add(new Check("check", item.getModel()));
+                    IModel typeName = new TypeTranslator(new JcrNodeTypeModel(mixin)).getTypeName();
                     item.add(new Label("mixin", typeName));
                 }
 
@@ -76,7 +74,7 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
         public void applyState() {
             try {
                 // NamespaceValidator only allows programming by exception
-                NamespaceValidator.checkName(nameComponent.getModelObject());
+                NamespaceValidator.checkName((String) ((PropertyModel) nameComponent.getModel()).getObject());
                 setComplete(true);
             } catch (Exception ex) {
                 setComplete(false);
@@ -88,19 +86,17 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
         super(action, layouts);
 
         WizardModel wizardModel = new WizardModel() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public boolean isNextAvailable() {
                 return !isLastStep(getActiveStep());
             }
         };
         wizardModel.add(new TypeDetailStep(action));
-        wizardModel.add(new SelectLayoutStep(new PropertyModel<String>(action, "layout"), layouts));
+        wizardModel.add(new SelectLayoutStep(new PropertyModel(action, "layout"), layouts));
         init(wizardModel);
     }
 
-    public IModel<String> getTitle() {
+    public IModel getTitle() {
         return new StringResourceModel("new-document-type", this, null);
     }
 

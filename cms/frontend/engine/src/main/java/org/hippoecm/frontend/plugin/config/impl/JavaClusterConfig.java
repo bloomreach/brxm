@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.hippoecm.frontend.model.event.EventCollection;
-import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -55,12 +54,11 @@ public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfi
         this.properties = upstream.getProperties();
     }
 
-    @SuppressWarnings("unchecked")
     public void addPlugin(IPluginConfig config) {
         plugins.add(config);
-        IObservationContext<IClusterConfig> obContext = (IObservationContext<IClusterConfig>) getObservationContext();
+        IObservationContext obContext = getObservationContext();
         if (obContext != null) {
-            EventCollection<IEvent<IClusterConfig>> collection = new EventCollection<IEvent<IClusterConfig>>();
+            EventCollection<ClusterConfigEvent> collection = new EventCollection<ClusterConfigEvent>();
             collection.add(new ClusterConfigEvent(this, config, ClusterConfigEvent.EventType.PLUGIN_ADDED));
             obContext.notifyObservers(collection);
         }

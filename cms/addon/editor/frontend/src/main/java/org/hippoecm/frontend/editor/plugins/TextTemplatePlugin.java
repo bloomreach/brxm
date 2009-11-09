@@ -36,7 +36,7 @@ public class TextTemplatePlugin extends RenderPlugin {
     public TextTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getDefaultModel();
+        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
         String mode = config.getString("mode", "view");
         if (ITemplateEngine.EDIT_MODE.equals(mode)) {
             TextAreaWidget widget = new TextAreaWidget("value", valueModel);

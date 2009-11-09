@@ -17,7 +17,6 @@ package org.hippoecm.addon.workflow;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
@@ -30,14 +29,10 @@ public abstract class ActionDescription extends Panel {
     private static final long serialVersionUID = 1L;
 
     public abstract class ActionDisplay extends Fragment {
-        private static final long serialVersionUID = 1L;
-
         protected ActionDisplay(String id) {
-            super(id, id, ActionDescription.this, ActionDescription.this.getDefaultModel());
+            super(id, id, ActionDescription.this, ActionDescription.this.getModel());
         }
-
         abstract protected void initialize();
-
         void substantiate() {
             initialize();
         }
@@ -46,17 +41,17 @@ public abstract class ActionDescription extends Panel {
     public ActionDescription(String id) {
         super(id);
     }
-
+    
     public final MarkupContainer add(final Fragment component) {
         String id = component.getId();
-        if (get(id) != null) {
+        if(get(id) != null) {
             return addOrReplace(component);
         } else {
             return super.add(component);
         }
     }
 
-    Map<String, ActionDisplay> actions = new HashMap<String, ActionDisplay>();
+    Map<String,ActionDisplay> actions = new HashMap<String,ActionDisplay>();
 
     public final MarkupContainer add(final ActionDisplay component) {
         actions.put(component.getId(), component);
@@ -64,7 +59,7 @@ public abstract class ActionDescription extends Panel {
     }
 
     public Component getFragment(String id) {
-        if (actions.containsKey(id))
+        if(actions.containsKey(id))
             return actions.get(id);
         else
             return super.get(id);

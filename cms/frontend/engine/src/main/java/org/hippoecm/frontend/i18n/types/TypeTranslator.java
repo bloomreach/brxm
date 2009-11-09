@@ -49,16 +49,15 @@ public class TypeTranslator extends NodeTypeModelWrapper {
         name = new TypeNameModel();
     }
 
-    public IModel<String> getTypeName() {
+    public IModel getTypeName() {
         return name;
     }
 
-    public IModel<String> getValueName(String property, IModel<String> value) {
+    public IModel getValueName(String property, IModel value) {
         attach();
         return new PropertyValueModel(property, value);
     }
 
-    @Override
     public void detach() {
         if (attached) {
             super.detach();
@@ -87,11 +86,11 @@ public class TypeTranslator extends NodeTypeModelWrapper {
         return nodeModel;
     }
 
-    private class TypeNameModel extends LoadableDetachableModel<String> {
+    private class TypeNameModel extends LoadableDetachableModel {
         private static final long serialVersionUID = 1L;
 
         @Override
-        protected String load() {
+        protected Object load() {
             String name = getNodeTypeModel().getType();
             JcrNodeModel nodeModel = getNodeModel();
             if (nodeModel != null) {
@@ -130,20 +129,20 @@ public class TypeTranslator extends NodeTypeModelWrapper {
         }
     }
 
-    class PropertyValueModel extends LoadableDetachableModel<String> {
+    class PropertyValueModel extends LoadableDetachableModel {
         private static final long serialVersionUID = 1L;
 
         private String property;
-        private IModel<String> value;
+        private IModel value;
 
-        PropertyValueModel(String property, IModel<String> value) {
+        PropertyValueModel(String property, IModel value) {
             this.property = property;
             this.value = value;
         }
 
         @Override
-        protected String load() {
-            IModel<String> name = value;
+        protected Object load() {
+            IModel name = value;
             JcrNodeModel nodeModel = getNodeModel();
             if (nodeModel != null) {
                 Node node = nodeModel.getNode();

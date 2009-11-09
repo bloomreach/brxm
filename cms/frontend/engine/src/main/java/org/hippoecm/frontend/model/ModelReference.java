@@ -18,10 +18,11 @@ package org.hippoecm.frontend.model;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.plugin.IPluginContext;
 
-public class ModelReference<T> implements IModelReference<T> {
+public class ModelReference<T extends IModel> implements IModelReference<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -30,9 +31,9 @@ public class ModelReference<T> implements IModelReference<T> {
     private IPluginContext context;
     private IObservationContext observationContext;
     private String id;
-    private IModel<T> model;
+    private T model;
 
-    public ModelReference(String serviceId, IModel<T> model) {
+    public ModelReference(String serviceId, T model) {
         this.id = serviceId;
         this.model = model;
     }
@@ -46,32 +47,32 @@ public class ModelReference<T> implements IModelReference<T> {
         context.unregisterService(this, id);
     }
 
-    public IModel<T> getModel() {
+    public T getModel() {
         return model;
     }
 
-    public void setModel(final IModel<T> newModel) {
+    public void setModel(final T newModel) {
         if (newModel != this.model && (newModel == null || !newModel.equals(this.model))) {
-            final IModel<T> oldModel = this.model;
+            final T oldModel = this.model;
             this.model = newModel;
             if (observationContext == null) {
                 return;
             }
-            IEvent<IModelReference<T>> mce = new IModelChangeEvent<T>() {
+            IEvent mce = new IModelChangeEvent<T>() {
 
-                public IModel<T> getNewModel() {
+                public T getNewModel() {
                     return newModel;
                 }
 
-                public IModel<T> getOldModel() {
+                public T getOldModel() {
                     return oldModel;
                 }
 
-                public IModelReference<T> getSource() {
+                public IObservable getSource() {
                     return ModelReference.this;
                 }
             };
-            EventCollection<IEvent<IModelReference<T>>> collection = new EventCollection<IEvent<IModelReference<T>>>();
+            EventCollection<IEvent> collection = new EventCollection<IEvent>();
             collection.add(mce);
             observationContext.notifyObservers(collection);
         }

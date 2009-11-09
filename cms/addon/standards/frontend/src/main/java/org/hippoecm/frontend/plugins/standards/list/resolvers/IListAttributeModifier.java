@@ -19,10 +19,10 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
-public interface IListAttributeModifier<T> extends IClusterable {
+public interface IListAttributeModifier extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    public AttributeModifier[] getCellAttributeModifiers(IModel<T> model);
+    public AttributeModifier[] getCellAttributeModifiers(IModel model);
 
-    public AttributeModifier[] getColumnAttributeModifiers(IModel<T> model);
+    public AttributeModifier[] getColumnAttributeModifiers(IModel model);
 }

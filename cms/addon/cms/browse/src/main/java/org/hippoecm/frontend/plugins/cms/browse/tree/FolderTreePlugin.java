@@ -87,7 +87,7 @@ public class FolderTreePlugin extends RenderPlugin {
                     ContextWorkflowPlugin content = new ContextWorkflowPlugin(context, workflowConfig);
                     content.bind(FolderTreePlugin.this, id);
                     JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
-                    content.setDefaultModel(nodeModel);
+                    content.setModel(nodeModel);
                     return content;
                     /* FIMXE: the following section would be a better implementation, but plugins
                     loaded this way cannot instantiate plugins themselves.
@@ -151,7 +151,7 @@ public class FolderTreePlugin extends RenderPlugin {
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
                 IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
-                FolderTreePlugin.this.setDefaultModel(treeNodeModel.getNodeModel());
+                FolderTreePlugin.this.setModel(treeNodeModel.getNodeModel());
                 ITreeState state = getTreeState();
                 if (state.isNodeExpanded(clickedNode)) {
                     // super has already switched selection.
@@ -211,7 +211,7 @@ public class FolderTreePlugin extends RenderPlugin {
     public void onModelChanged() {
         super.onModelChanged();
 
-        JcrNodeModel model = (JcrNodeModel) getDefaultModel();
+        JcrNodeModel model = (JcrNodeModel) getModel();
 
         ITreeState treeState = tree.getTreeState();
         TreePath treePath = treeModel.lookup(model);

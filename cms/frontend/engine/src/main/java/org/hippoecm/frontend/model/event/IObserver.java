@@ -28,7 +28,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
  * with name IObserver.class.getName().  The observer registry will notify the observer
  * of any events sent by the observable.
  */
-public interface IObserver<T extends IObservable> extends EventListener, IClusterable {
+public interface IObserver extends EventListener, IClusterable {
     final static String SVN_ID = "$Id$";
 
     /**
@@ -36,12 +36,12 @@ public interface IObserver<T extends IObservable> extends EventListener, ICluste
      * change, w.r.t. the {@link IObservable#equals()} method, while the observer is
      * registered.
      */
-    T getObservable();
+    IObservable getObservable();
 
     /**
      * Callback that is invoked when the observable sends events.  The iterator is
      * guaranteed to be non-empty.
      */
-    void onEvent(Iterator<? extends IEvent<T>> events);
+    void onEvent(Iterator<? extends IEvent> events);
 
 }

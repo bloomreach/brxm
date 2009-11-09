@@ -32,13 +32,13 @@ public class LabelTreeNode implements TreeNode, Serializable {
     private static final long serialVersionUID = 1L;
 
     private TreeNode parentNode;
-    private IModel<String> label;
+    private IModel label;
 
     public LabelTreeNode(TreeNode parentNode, String label) {
-        this(parentNode, new Model<String>(label));
+        this(parentNode, new Model(label));
     }
 
-    public LabelTreeNode(TreeNode parentNode, IModel<String> label) {
+    public LabelTreeNode(TreeNode parentNode, IModel label) {
         this.parentNode = parentNode;
         this.label = label;
     }

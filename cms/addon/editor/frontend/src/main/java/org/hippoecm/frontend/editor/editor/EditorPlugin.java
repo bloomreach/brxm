@@ -73,7 +73,7 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
 
     @Override
     public void onModelChanged() {
-        if (!form.getModel().equals(getDefaultModel())) {
+        if (!form.getModel().equals(getModel())) {
             form.destroy();
             replace(form = newForm());
         }
@@ -89,7 +89,7 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
     }
 
     protected EditorForm newForm() {
-        return new EditorForm("form", (JcrNodeModel) getDefaultModel(), this, getPluginContext(), getPluginConfig());
+        return new EditorForm("form", (JcrNodeModel) getModel(), this, getPluginContext(), getPluginConfig());
     }
 
     public boolean hasError() {
@@ -97,7 +97,7 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
     }
 
     public void validate() {
-        form.doValidation();
+        form.validate();
     }
 
 }

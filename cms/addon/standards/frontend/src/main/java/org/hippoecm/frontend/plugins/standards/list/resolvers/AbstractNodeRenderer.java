@@ -25,7 +25,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractNodeRenderer implements IListCellRenderer<Node> {
+public abstract class AbstractNodeRenderer implements IListCellRenderer {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -33,7 +33,7 @@ public abstract class AbstractNodeRenderer implements IListCellRenderer<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractNodeRenderer.class);
 
-    public Component getRenderer(String id, IModel<Node> model) {
+    public Component getRenderer(String id, IModel model) {
         if (model instanceof JcrNodeModel) {
             try {
                 Node node = (Node) model.getObject();

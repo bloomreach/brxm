@@ -29,6 +29,7 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -91,14 +92,14 @@ public class TemplateBuilderTest extends PluginTest {
         final List<IPluginConfig> removed = new LinkedList<IPluginConfig>();
         final List<IPluginConfig> changed = new LinkedList<IPluginConfig>();
         final IClusterConfig config = builder.getTemplate();
-        context.registerService(new IObserver<IObservable>() {
+        context.registerService(new IObserver() {
             private static final long serialVersionUID = 1L;
 
             public IObservable getObservable() {
                 return config;
             }
 
-            public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
+            public void onEvent(Iterator<? extends IEvent> events) {
                 while (events.hasNext()) {
                     IEvent event = events.next();
                     if (event instanceof ClusterConfigEvent) {
@@ -146,14 +147,14 @@ public class TemplateBuilderTest extends PluginTest {
         // setup field removal detection
         final List<String> added = new LinkedList<String>();
         final List<String> removed = new LinkedList<String>();
-        context.registerService(new IObserver<IObservable>() {
+        context.registerService(new IObserver() {
             private static final long serialVersionUID = 1L;
 
             public IObservable getObservable() {
                 return type;
             }
 
-            public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
+            public void onEvent(Iterator<? extends IEvent> events) {
                 while (events.hasNext()) {
                     IEvent event = events.next();
                     if (event instanceof TypeDescriptorEvent) {

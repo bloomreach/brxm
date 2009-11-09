@@ -139,7 +139,7 @@ public class VersionPane extends RenderPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        JcrNodeModel model = (JcrNodeModel) getDefaultModel();
+        JcrNodeModel model = (JcrNodeModel) getModel();
         visible = false;
         if (model != null && model.getNode() != null) {
             try {
@@ -160,13 +160,13 @@ public class VersionPane extends RenderPlugin {
                     }
                 }
                 if (modelNode.isNodeType(HippoNodeType.NT_DOCUMENT) && !modelNode.isNodeType("hippostd:folder")) {
-                    documentComponent.setDefaultModel(new Model(NodeNameCodec.decode(modelNode.getName())));
-                    infoComponent.setDefaultModel(new Model("This is the current document"));
-                    versionComponent.setDefaultModel(new Model(""));
+                    documentComponent.setModel(new Model(NodeNameCodec.decode(modelNode.getName())));
+                    infoComponent.setModel(new Model("This is the current document"));
+                    versionComponent.setModel(new Model(""));
                     subModel.setModel(new JcrNodeModel(modelNode));
-                    createdComponent.setDefaultModel(new Model(""));
-                    expiredComponent.setDefaultModel(new Model(""));
-                    labeledComponent.setDefaultModel(new Model(""));
+                    createdComponent.setModel(new Model(""));
+                    expiredComponent.setModel(new Model(""));
+                    labeledComponent.setModel(new Model(""));
                     visible = true;
                 } else {
                     subModel.setModel(new JcrNodeModel((Node) null));
@@ -179,9 +179,9 @@ public class VersionPane extends RenderPlugin {
     }
 
     private void restoreVersion() {
-        JcrNodeModel model = (JcrNodeModel) VersionPane.this.getDefaultModel();
+        JcrNodeModel model = (JcrNodeModel) VersionPane.this.getModel();
         if (model != null) {
-            Object currentVersionObject = versionComponent.getDefaultModel().getObject();
+            Object currentVersionObject = versionComponent.getModel().getObject();
             int currentVersion = (currentVersionObject instanceof Integer ? ((Integer) currentVersionObject).intValue()
                     : -1);
             Node modelNode = model.getNode();
@@ -255,9 +255,9 @@ public class VersionPane extends RenderPlugin {
 
     private void browseVersion(int direction) {
         DateFormat dateFormat = DateFormat.getDateTimeInstance();
-        JcrNodeModel model = (JcrNodeModel) VersionPane.this.getDefaultModel();
+        JcrNodeModel model = (JcrNodeModel) VersionPane.this.getModel();
         if (model != null) {
-            Object currentVersionObj = versionComponent.getDefaultModel().getObject();
+            Object currentVersionObj = versionComponent.getModel().getObject();
             int currentVersion = (currentVersionObj instanceof Integer ? ((Integer) currentVersionObj).intValue() : -1);
             Node modelNode = model.getNode();
             try {
@@ -296,30 +296,30 @@ public class VersionPane extends RenderPlugin {
                         currentVersion = versions.size() - 1;
                     if (currentVersion < 0)
                         currentVersion = 0;
-                    versionComponent.setDefaultModel(new Model(new Integer(currentVersion)));
+                    versionComponent.setModel(new Model(new Integer(currentVersion)));
                     for (int i = 0; i < currentVersion; i++)
                         iter.next();
                     Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>) iter.next();
                     Date date = entry.getKey().getTime();
-                    createdComponent.setDefaultModel(new Model(dateFormat.format(date)));
+                    createdComponent.setModel(new Model(dateFormat.format(date)));
                     if (iter.hasNext()) {
                         date = ((Map.Entry<Calendar, Set<String>>) iter.next()).getKey().getTime();
-                        expiredComponent.setDefaultModel(new Model((dateFormat.format(date))));
+                        expiredComponent.setModel(new Model((dateFormat.format(date))));
                     } else
-                        expiredComponent.setDefaultModel(new Model("present"));
+                        expiredComponent.setModel(new Model("present"));
                     StringBuffer labels = new StringBuffer();
                     for (String label : entry.getValue()) {
                         if (labels.length() > 0)
                             labels.append(", ");
                         labels.append(label);
                     }
-                    labeledComponent.setDefaultModel(new Model(new String(labels)));
+                    labeledComponent.setModel(new Model(new String(labels)));
                     Document historicDocument = workflow.retrieve(entry.getKey());
                     if (historicDocument == null) {
-                        infoComponent.setDefaultModel(new Model("There was no document published during this period"));
+                        infoComponent.setModel(new Model("There was no document published during this period"));
                         subModel.setModel(null);
                     } else {
-                        infoComponent.setDefaultModel(new Model(""));
+                        infoComponent.setModel(new Model(""));
                         subModel.setModel(new JcrNodeModel(document.getSession().getNodeByUUID(
                                 historicDocument.getIdentity())));
                     }

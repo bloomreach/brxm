@@ -20,17 +20,17 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 
-public interface IModelReference<T> extends IDetachable, IObservable {
+public interface IModelReference<T extends IModel> extends IDetachable, IObservable {
     final static String SVN_ID = "$Id$";
 
-    interface IModelChangeEvent<T> extends IEvent<IModelReference<T>> {
+    interface IModelChangeEvent<T extends IModel> extends IEvent {
 
-        IModel<T> getOldModel();
+        T getOldModel();
 
-        IModel<T> getNewModel();
+        T getNewModel();
     }
 
-    IModel<T> getModel();
+    T getModel();
 
-    void setModel(IModel<T> model);
+    void setModel(T model);
 }

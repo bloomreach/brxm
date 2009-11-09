@@ -104,6 +104,11 @@ public class EditorForm extends Form {
     }
 
     @Override
+    public void validate() {
+        super.validate();
+    }
+
+    @Override
     public void onModelChanged() {
         super.onModelChanged();
         if (cluster != null) {
@@ -119,10 +124,6 @@ public class EditorForm extends Form {
         }
     }
 
-    public void doValidation() {
-        super.validate();
-    }
-    
     @Override
     protected void onDetach() {
         engineFactory.detach();

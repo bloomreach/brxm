@@ -227,7 +227,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
 
             @Override
             protected Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getModel();
                 return new WhereUsedDialog(wdm, getEditorManager());
             }
 
@@ -246,7 +246,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
 
             @Override
             protected Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getModel();
                 return new HistoryDialog(wdm, getEditorManager());
             }
 
@@ -268,8 +268,8 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
         super.onModelChanged();
         try {
             WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
-            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getDefaultModel();
-            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor)getDefaultModelObject();
+            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getModel();
+            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor)getModelObject();
             if(workflowDescriptor != null) {
                 Node documentNode = workflowDescriptorModel.getNode();
                 if(documentNode != null && documentNode.hasProperty("hippostd:stateSummary")) {

@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.jcr.Node;
@@ -151,7 +152,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig>, IDetachable {
                 Node node = getTemplateNode(typeStore.load(type), true);
 
                 JcrClusterConfig jcrConfig = new JcrClusterConfig(new JcrNodeModel(node));
-                for (Map.Entry<String, Object> entry : cluster.entrySet()) {
+                for (Map.Entry entry : (Set<Map.Entry>) ((Map) cluster).entrySet()) {
                     jcrConfig.put(entry.getKey(), entry.getValue());
                 }
 
@@ -159,7 +160,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig>, IDetachable {
                     String name = UUID.randomUUID().toString();
                     Node child = node.addNode(name, FrontendNodeType.NT_PLUGIN);
                     JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child));
-                    for (Map.Entry<String, Object> entry : plugin.entrySet()) {
+                    for (Map.Entry entry : (Set<Map.Entry>) ((Map) plugin).entrySet()) {
                         pluginConfig.put(entry.getKey(), entry.getValue());
                     }
                 }

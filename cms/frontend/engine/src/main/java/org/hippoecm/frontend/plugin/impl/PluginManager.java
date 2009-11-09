@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.IPlugin;
+import org.hippoecm.frontend.plugin.IServiceFactory;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;

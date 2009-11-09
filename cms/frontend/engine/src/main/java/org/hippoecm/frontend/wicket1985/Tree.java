@@ -16,7 +16,6 @@
  */
 package org.hippoecm.frontend.wicket1985;
 
-import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
@@ -84,9 +83,9 @@ public class Tree extends DefaultAbstractTree
 	 */
 	protected void populateTreeItem(WebMarkupContainer item, final int level)
 	{
-		final TreeNode node = (TreeNode)item.getDefaultModelObject();
+		final TreeNode node = (TreeNode)item.getModelObject();
 
-		item.add(newIndentation(item, "indent", (TreeNode)item.getDefaultModelObject(), level));
+		item.add(newIndentation(item, "indent", (TreeNode)item.getModelObject(), level));
 
 		item.add(newJunctionLink(item, "link", "image", node));
 

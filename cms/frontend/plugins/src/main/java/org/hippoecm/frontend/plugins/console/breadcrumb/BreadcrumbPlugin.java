@@ -47,7 +47,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        IModel model = getDefaultModel();
+        IModel model = getModel();
         if (model instanceof JcrNodeModel) {
             JcrNodeModel nodeModel = (JcrNodeModel) model;
             List<String> components = new LinkedList<String>();

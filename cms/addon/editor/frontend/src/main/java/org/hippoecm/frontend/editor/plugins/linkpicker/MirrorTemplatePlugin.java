@@ -27,7 +27,7 @@ import javax.jcr.ValueFormatException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ClearableDialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -40,7 +40,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MirrorTemplatePlugin extends RenderPlugin<Node> {
+public class MirrorTemplatePlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -49,18 +49,18 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     static final Logger log = LoggerFactory.getLogger(MirrorTemplatePlugin.class);
 
     private static final String EMPTY_LINK_TEXT = "[...]";
-
+    
     private final String mode;
 
     public MirrorTemplatePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        final IModel<String> displayModel = new LoadableDetachableModel<String>() {
+        final IModel displayModel = new Model() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected String load() {
-                Node node = MirrorTemplatePlugin.this.getModelObject();
+            public Object getObject() {
+                Node node = ((JcrNodeModel) MirrorTemplatePlugin.this.getModel()).getNode();
                 try {
                     if (node != null && node.hasProperty("hippo:docbase")) {
                         String docbaseUUID = node.getProperty("hippo:docbase").getString();
@@ -96,27 +96,27 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
             IDialogFactory dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
 
-                public AbstractDialog<String> createDialog() {
-                    JcrNodeModel jcrNodeModel = (JcrNodeModel) MirrorTemplatePlugin.this.getDefaultModel();
-                    final JcrPropertyValueModel<String> docbaseModel = new JcrPropertyValueModel<String>(
-                            new JcrPropertyModel<String>(jcrNodeModel.getItemModel().getPath() + "/hippo:docbase"));
-                    return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel<String>() {
+                public AbstractDialog createDialog() {
+                    JcrNodeModel jcrNodeModel = (JcrNodeModel) MirrorTemplatePlugin.this.getModel();
+                    final JcrPropertyValueModel docbaseModel = new JcrPropertyValueModel(new JcrPropertyModel(
+                            jcrNodeModel.getItemModel().getPath() + "/hippo:docbase"));
+                    return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel() {
                         private static final long serialVersionUID = 1L;
 
-                        public String getObject() {
+                        public Object getObject() {
                             return docbaseModel.getObject();
                         }
 
-                        public void setObject(String object) {
+                        public void setObject(Object object) {
                             docbaseModel.setObject(object);
                             redraw();
                         }
 
-                        public IModel<String> getChainedModel() {
+                        public IModel getChainedModel() {
                             return docbaseModel;
                         }
 
-                        public void setChainedModel(IModel<?> model) {
+                        public void setChainedModel(IModel model) {
                             throw new UnsupportedOperationException("Value model cannot be changed");
                         }
 
@@ -131,7 +131,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
                 @Override
                 public void onClear() {
-                    Node node = ((JcrNodeModel) MirrorTemplatePlugin.this.getDefaultModel()).getNode();
+                    Node node = ((JcrNodeModel) MirrorTemplatePlugin.this.getModel()).getNode();
                     try {
                         node.setProperty("hippo:docbase", node.getSession().getRootNode().getUUID());
                     } catch (RepositoryException e) {

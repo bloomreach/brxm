@@ -15,12 +15,10 @@
  */
 package org.hippoecm.frontend.model;
 
-import javax.jcr.Node;
-
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
-public abstract class NodeModelWrapper implements IChainingModel<Node> {
+public abstract class NodeModelWrapper implements IChainingModel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -38,21 +36,21 @@ public abstract class NodeModelWrapper implements IChainingModel<Node> {
 
     // Implement IChainingModel
 
-    public IModel<Node> getChainedModel() {
+    public IModel getChainedModel() {
         return nodeModel;
     }
 
-    public void setChainedModel(IModel<?> model) {
+    public void setChainedModel(IModel model) {
         if (model instanceof JcrNodeModel) {
             nodeModel = (JcrNodeModel) model;
         }
     }
 
-    public Node getObject() {
+    public Object getObject() {
         return nodeModel.getObject();
     }
 
-    public void setObject(Node object) {
+    public void setObject(Object object) {
         nodeModel.setObject(object);
     }
 

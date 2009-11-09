@@ -67,11 +67,6 @@
       <artifactId>wicket-datetime</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-ioc</artifactId>
-      <version>${wicket.version}</version>
-    </dependency>
-    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>

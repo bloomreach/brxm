@@ -84,7 +84,7 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getModel();
         schedule = null;
         if (model != null) {
             try {

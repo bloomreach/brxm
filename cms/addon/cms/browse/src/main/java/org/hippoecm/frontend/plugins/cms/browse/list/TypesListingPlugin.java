@@ -31,6 +31,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -71,35 +72,35 @@ public class TypesListingPlugin extends AbstractListingPlugin {
     }
 
     @Override
-    protected TableDefinition<Node> getTableDefinition() {
-        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
+    protected TableDefinition getTableDefinition() {
+        List<ListColumn> columns = new ArrayList<ListColumn>();
 
-        ListColumn<Node> column = new ListColumn<Node>(new Model(""), "icon");
+        ListColumn column = new ListColumn(new Model(""), "icon");
         column.setComparator(new TypeComparator());
-        column.setRenderer(new EmptyRenderer<Node>());
+        column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new IconAttributeModifier());
         columns.add(column);
 
-        column = new ListColumn<Node>(new StringResourceModel("typeslisting-name", this, null), "name");
+        column = new ListColumn(new StringResourceModel("typeslisting-name", this, null), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
 
-        column = new ListColumn<Node>(new StringResourceModel("typeslisting-type", this, null), null);
+        column = new ListColumn(new StringResourceModel("typeslisting-type", this, null), null);
         column.setRenderer(new TemplateTypeRenderer(typeStore));
         columns.add(column);
 
-        column = new ListColumn<Node>(new StringResourceModel("typeslisting-state", this, null), "state");
+        column = new ListColumn(new StringResourceModel("typeslisting-state", this, null), "state");
         column.setComparator(new StateComparator());
-        column.setRenderer(new EmptyRenderer<Node>());
+        column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new TemplateTypeIconAttributeModifier());
         columns.add(column);
 
-        return new TableDefinition<Node>(columns);
+        return new TableDefinition(columns);
     }
 
     @Override
-    protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
-            ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, final boolean triState,
+    protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
+            ISortableDataProvider dataProvider, TableSelectionListener selectionListener, final boolean triState,
             ListPagingDefinition pagingDefinition) {
         return new TypesDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
@@ -110,22 +111,22 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         super.onDetach();
     }
 
-    private class TypesDataTable extends ListDataTable<Node> {
+    private class TypesDataTable extends ListDataTable {
         private static final long serialVersionUID = 1L;
 
-        private TypesDataTable(String id, TableDefinition<Node> tableDefinition, ISortableDataProvider<Node> dataProvider,
-                TableSelectionListener<Node> selectionListener, boolean triState, IPagingDefinition pagingDefinition) {
+        private TypesDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
+                TableSelectionListener selectionListener, boolean triState, IPagingDefinition pagingDefinition) {
             super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
             
             add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())));
         }
 
-        void redraw(Item<Node> item) {
+        void redraw(Item item) {
             redrawItem(item);
         }
         
         @Override
-        protected IObserver newObserver(final Item<Node> item, IModel<Node> model) {
+        protected IObserver newObserver(final Item item, IModel model) {
             if (model instanceof JcrNodeModel) {
                 Node node = ((JcrNodeModel) model).getNode();
                 try {
@@ -142,24 +143,25 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         }
     }
 
-    private class TypeObserver implements IObserver<JcrNodeModel>, IDetachable {
+    private class TypeObserver implements IObserver, IDetachable {
         private static final long serialVersionUID = 7399282716376782006L;
 
         private TypesDataTable table;
-        private Item<Node> item;
+        private Item item;
         private JcrNodeModel nodeModel;
         
-        TypeObserver(TypesDataTable table, Item<Node> item, JcrNodeModel model) {
+        TypeObserver(TypesDataTable table, Item item, JcrNodeModel model) {
             this.table = table;
             this.item = item;
             this.nodeModel = model;
         }
         
-        public JcrNodeModel getObservable() {
+        public IObservable getObservable() {
             return nodeModel;
         }
 
-        public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> events) {
+        @SuppressWarnings("unchecked")
+        public void onEvent(Iterator<? extends IEvent> events) {
             table.redraw(item);
         }
 

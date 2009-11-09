@@ -15,23 +15,28 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.lang.reflect.Array;
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.wicket.util.value.ValueMap;
+import org.apache.wicket.util.string.StringValue;
+import org.apache.wicket.util.string.StringValueConversionException;
+import org.apache.wicket.util.time.Duration;
+import org.apache.wicket.util.time.Time;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.model.event.EventCollection;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigEvent;
 
-public class JavaPluginConfig extends ValueMap implements IPluginConfig {
+public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -41,7 +46,7 @@ public class JavaPluginConfig extends ValueMap implements IPluginConfig {
 
     private final int hashCode = new Object().hashCode();
     private String pluginInstanceName = null;
-    private IObservationContext<IPluginConfig> obContext;
+    private IObservationContext obContext;
 
     public JavaPluginConfig() {
         super();
@@ -75,7 +80,6 @@ public class JavaPluginConfig extends ValueMap implements IPluginConfig {
         return configSet;
     }
 
-    @SuppressWarnings("unchecked")
     public IPluginConfig getPluginConfig(Object key) {
         Object value = get(key);
         if (value instanceof List && ((List) value).size() > 0) {
@@ -84,9 +88,243 @@ public class JavaPluginConfig extends ValueMap implements IPluginConfig {
         return (IPluginConfig) value;
     }
 
-    @SuppressWarnings("unchecked")
+    public boolean isImmutable() {
+        return false;
+    }
+
+    public IValueMap makeImmutable() {
+        throw new UnsupportedOperationException("JavaPluginConfig is always mutable");
+    }
+
+    /**
+     * @see IValueMap#getBoolean(String)
+     */
+    public final boolean getBoolean(final String key) throws StringValueConversionException {
+        return getStringValue(key).toBoolean();
+    }
+
+    /**
+     * @see IValueMap#getDouble(String)
+     */
+    public final double getDouble(final String key) throws StringValueConversionException {
+        return getStringValue(key).toDouble();
+    }
+
+    /**
+     * @see IValueMap#getDouble(String, double)
+     */
+    public final double getDouble(final String key, final double defaultValue) throws StringValueConversionException {
+        return getStringValue(key).toDouble(defaultValue);
+    }
+
+    /**
+     * @see IValueMap#getDuration(String)
+     */
+    public final Duration getDuration(final String key) throws StringValueConversionException {
+        return getStringValue(key).toDuration();
+    }
+
+    /**
+     * @see IValueMap#getInt(String)
+     */
+    public final int getInt(final String key) throws StringValueConversionException {
+        return getStringValue(key).toInt();
+    }
+
+    /**
+     * @see IValueMap#getInt(String, int)
+     */
+    public final int getInt(final String key, final int defaultValue) throws StringValueConversionException {
+        return getStringValue(key).toInt(defaultValue);
+    }
+
+    /**
+     * @see IValueMap#getLong(String)
+     */
+    public final long getLong(final String key) throws StringValueConversionException {
+        return getStringValue(key).toLong();
+    }
+
+    /**
+     * @see IValueMap#getLong(String, long)
+     */
+    public final long getLong(final String key, final long defaultValue) throws StringValueConversionException {
+        return getStringValue(key).toLong(defaultValue);
+    }
+
+    /**
+     * @see IValueMap#getString(String, String)
+     */
+    public final String getString(final String key, final String defaultValue) {
+        final String value = getString(key);
+        return value != null ? value : defaultValue;
+    }
+
+    /**
+     * @see IValueMap#getString(String)
+     */
+    public final String getString(final String key) {
+        final Object o = get(key);
+        if (o == null) {
+            return null;
+        } else if (o.getClass().isArray() && Array.getLength(o) > 0) {
+            // if it is an array just get the first value
+            final Object arrayValue = Array.get(o, 0);
+            if (arrayValue == null) {
+                return null;
+            } else {
+                return arrayValue.toString();
+            }
+
+        } else {
+            return o.toString();
+        }
+    }
+
+    /**
+     * @see IValueMap#getCharSequence(String)
+     */
+    public final CharSequence getCharSequence(final String key) {
+        final Object o = get(key);
+        if (o == null) {
+            return null;
+        } else if (o.getClass().isArray() && Array.getLength(o) > 0) {
+            // if it is an array just get the first value
+            final Object arrayValue = Array.get(o, 0);
+            if (arrayValue == null) {
+                return null;
+            } else {
+                if (arrayValue instanceof CharSequence) {
+                    return (CharSequence) arrayValue;
+                }
+                return arrayValue.toString();
+            }
+
+        } else {
+            if (o instanceof CharSequence) {
+                return (CharSequence) o;
+            }
+            return o.toString();
+        }
+    }
+
+    /**
+     * @see IValueMap#getStringArray(String)
+     */
+    public String[] getStringArray(final String key) {
+        final Object o = get(key);
+        if (o == null) {
+            return null;
+        } else if (o instanceof String[]) {
+            return (String[]) o;
+        } else if (o.getClass().isArray()) {
+            int length = Array.getLength(o);
+            String[] array = new String[length];
+            for (int i = 0; i < length; i++) {
+                final Object arrayValue = Array.get(o, i);
+                if (arrayValue != null) {
+                    array[i] = arrayValue.toString();
+                }
+            }
+            return array;
+        }
+        return new String[] { o.toString() };
+    }
+
+    /**
+     * @see IValueMap#getStringValue(String)
+     */
+    public StringValue getStringValue(final String key) {
+        return StringValue.valueOf(getString(key));
+    }
+
+    /**
+     * @see IValueMap#getTime(String)
+     */
+    public final Time getTime(final String key) throws StringValueConversionException {
+        return getStringValue(key).toTime();
+    }
+
+    /**
+     * Adds the value to this <code>ValueMap</code> with the given key. If the key already is in
+     * the <code>ValueMap</code> it will combine the values into a <code>String</code> array,
+     * else it will just store the value itself.
+     *
+     * @param key
+     *            the key to store the value under
+     * @param value
+     *            the value that must be added/merged to the <code>ValueMap</code>
+     * @return the value itself if there was no previous value, or a <code>String</code> array
+     *         with the combined values
+     */
+    public final Object add(final String key, final String value) {
+        final Object o = get(key);
+        if (o == null) {
+            return put(key, value);
+        } else if (o.getClass().isArray()) {
+            int length = Array.getLength(o);
+            String destArray[] = new String[length + 1];
+            for (int i = 0; i < length; i++) {
+                final Object arrayValue = Array.get(o, i);
+                if (arrayValue != null) {
+                    destArray[i] = arrayValue.toString();
+                }
+            }
+            destArray[length] = value;
+
+            return put(key, destArray);
+        } else {
+            return put(key, new String[] { o.toString(), value });
+        }
+    }
+
+    public String getKey(final String key) {
+        Iterator iter = keySet().iterator();
+        while (iter.hasNext()) {
+            Object keyValue = iter.next();
+            if (keyValue instanceof String) {
+                String keyString = (String) keyValue;
+                if (key.equalsIgnoreCase(keyString)) {
+                    return keyString;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Generates a <code>String</code> representation of this object.
+     *
+     * @return <code>String</code> representation of this <code>ValueMap</code> consistent with
+     *         the tag-attribute style of markup elements. For example:
+     *         <code>a="x" b="y" c="z"</code>.
+     */
+    public String toString() {
+        final StringBuffer buffer = new StringBuffer();
+        for (final Iterator iterator = entrySet().iterator(); iterator.hasNext();) {
+            final Map.Entry entry = (Map.Entry) iterator.next();
+            buffer.append(entry.getKey());
+            buffer.append(" = \"");
+            final Object value = entry.getValue();
+            if (value == null) {
+                buffer.append("null");
+            } else if (value.getClass().isArray()) {
+                buffer.append(Arrays.asList((Object[]) value));
+            } else {
+                buffer.append(value);
+            }
+
+            buffer.append("\"");
+            if (iterator.hasNext()) {
+                buffer.append(' ');
+            }
+        }
+        return buffer.toString();
+    }
+
+
     @Override
-    public Object put(String key, Object value) {
+    public Object put(Object key, Object value) {
         if (value instanceof IPluginConfig) {
             value = new JavaPluginConfig((IPluginConfig) value);
         } else if (value instanceof List) {
@@ -98,7 +336,7 @@ public class JavaPluginConfig extends ValueMap implements IPluginConfig {
         }
         Object oldValue = super.put((String) key, value);
         if (obContext != null) {
-            EventCollection<IEvent<IPluginConfig>> collection = new EventCollection<IEvent<IPluginConfig>>();
+            EventCollection<PluginConfigEvent> collection = new EventCollection<PluginConfigEvent>();
             collection.add(new PluginConfigEvent(this, PluginConfigEvent.EventType.CONFIG_CHANGED));
             obContext.notifyObservers(collection);
         }
@@ -106,24 +344,24 @@ public class JavaPluginConfig extends ValueMap implements IPluginConfig {
     }
 
     @Override
-    public Set<Map.Entry<String, Object>> entrySet() {
-        final Set<Map.Entry<String, Object>> entries = super.entrySet();
-        return new AbstractSet<Map.Entry<String, Object>>() {
+    public Set entrySet() {
+        final Set<Map.Entry> entries = super.entrySet();
+        return new AbstractSet<Map.Entry>() {
 
             @Override
-            public Iterator<Map.Entry<String, Object>> iterator() {
-                final Iterator<Map.Entry<String, Object>> orig = entries.iterator();
-                return new Iterator<Map.Entry<String, Object>>() {
+            public Iterator<Map.Entry> iterator() {
+                final Iterator<Map.Entry> orig = entries.iterator();
+                return new Iterator<Map.Entry>() {
 
                     public boolean hasNext() {
                         return orig.hasNext();
                     }
 
-                    public Map.Entry<String, Object> next() {
-                        final Map.Entry<String, Object> entry = orig.next();
-                        return new Map.Entry<String, Object>() {
+                    public Map.Entry next() {
+                        final Map.Entry entry = orig.next();
+                        return new Map.Entry() {
 
-                            public String getKey() {
+                            public Object getKey() {
                                 return entry.getKey();
                             }
 
@@ -139,7 +377,8 @@ public class JavaPluginConfig extends ValueMap implements IPluginConfig {
                     }
 
                     public void remove() {
-                        orig.remove();
+                        // TODO Auto-generated method stub
+
                     }
 
                 };
@@ -165,12 +404,11 @@ public class JavaPluginConfig extends ValueMap implements IPluginConfig {
         return hashCode;
     }
 
-    @SuppressWarnings("unchecked")
-    public void setObservationContext(IObservationContext<? extends IObservable> context) {
-        this.obContext = (IObservationContext<IPluginConfig>) context;
+    public void setObservationContext(IObservationContext context) {
+        this.obContext = context;
     }
 
-    protected IObservationContext<? extends IPluginConfig> getObservationContext() {
+    protected IObservationContext getObservationContext() {
         return obContext;
     }
 

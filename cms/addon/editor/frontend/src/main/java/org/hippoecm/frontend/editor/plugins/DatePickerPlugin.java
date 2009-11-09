@@ -36,7 +36,7 @@ public class DatePickerPlugin extends RenderPlugin {
     public DatePickerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getDefaultModel();
+        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
         if ("edit".equals(config.getString("mode", "view"))) {
             add(new DateFieldWidget("value", valueModel, context, config));
         } else {

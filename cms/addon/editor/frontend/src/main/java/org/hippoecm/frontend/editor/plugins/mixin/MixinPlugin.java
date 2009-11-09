@@ -181,7 +181,7 @@ public class MixinPlugin extends RenderPlugin {
         }
 
         public Object getObject() {
-            JcrNodeModel nodeModel = (JcrNodeModel) MixinPlugin.this.getDefaultModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) MixinPlugin.this.getModel();
             try {
                 Node node = nodeModel.getNode();
                 if (node != null) {
@@ -197,7 +197,7 @@ public class MixinPlugin extends RenderPlugin {
 
         public void setObject(Object object) {
             Boolean value = (Boolean) object;
-            JcrNodeModel nodeModel = (JcrNodeModel) MixinPlugin.this.getDefaultModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) MixinPlugin.this.getModel();
             try {
                 Node node = nodeModel.getNode();
                 if (value) {
@@ -216,7 +216,7 @@ public class MixinPlugin extends RenderPlugin {
         }
 
         boolean isPrimaryNodeType() {
-            JcrNodeModel nodeModel = (JcrNodeModel) MixinPlugin.this.getDefaultModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) MixinPlugin.this.getModel();
             try {
                 Node node = nodeModel.getNode();
                 if (node.getPrimaryNodeType().isNodeType(realType)) {

@@ -53,7 +53,7 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
         String caption = config.getString("caption");
         add(new Label("listLabel", new Model(caption)));
 
-        JcrNodeModel rootModel = (JcrNodeModel) getDefaultModel();
+        JcrNodeModel rootModel = (JcrNodeModel) getModel();
         if (!rootModel.getNode().isNew()) {
             add(new GroupDropBehavior(context, config));
         }
@@ -67,7 +67,7 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
         final List<IModel> list = new ArrayList<IModel>();
         final String usersPath = "/hippo:configuration/hippo:users/";
 
-        JcrNodeModel rootModel = (JcrNodeModel) getDefaultModel();
+        JcrNodeModel rootModel = (JcrNodeModel) getModel();
         try {
             if (rootModel.getNode().hasProperty("hipposys:members")) {
                 Property property = rootModel.getNode().getProperty("hipposys:members");
@@ -94,7 +94,7 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
         public void onDrop(IModel model, Map<String, String[]> parameters, AjaxRequestTarget target) {
             if (model instanceof JcrNodeModel) {
                 JcrNodeModel droppedModel = (JcrNodeModel) model;
-                JcrNodeModel groupModel = (JcrNodeModel) getDefaultModel();
+                JcrNodeModel groupModel = (JcrNodeModel) getModel();
                 String userPath = droppedModel.getItemModel().getPath();
                 try {
                     String username = droppedModel.getNode().getName();

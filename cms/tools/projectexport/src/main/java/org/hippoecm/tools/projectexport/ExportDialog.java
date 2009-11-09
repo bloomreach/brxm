@@ -107,7 +107,7 @@ public class ExportDialog extends AbstractDialog {
                 ExportDialog.this.addOrReplace(feedback = new FeedbackPanel("tree"));
                 feedback.setOutputMarkupId(true);
                 treeComponent = null;
-                statusComponent.setDefaultModel(new Model("Operation completed; check log files in case of errors"));
+                statusComponent.setModel(new Model("Operation completed; check log files in case of errors"));
                 target.addComponent(ExportDialog.this);
                 // shameless/full hack
                 target.appendJavascript("Wicket.Window.unloadConfirmation=false;window.location.reload();");
@@ -179,20 +179,20 @@ public class ExportDialog extends AbstractDialog {
         treeComponent.setRootLess(true);
         treeComponent.getTreeState().setAllowSelectMultiple(false);
         treeComponent.getTreeState().addTreeStateListener(new ITreeStateListener() {
-            public void nodeSelected(Object node) {
+            public void nodeSelected(TreeNode node) {
                 ExportTreeModel treeModel = (ExportTreeModel) treeComponent.getModelObject();
-                TreeNode ancestor = treeModel.backingTreeNode((TreeNode) node);
+                TreeNode ancestor = treeModel.backingTreeNode(node);
                 projectName = ((Element.ProjectElement)treeModel.backingElement(ancestor)).projectName;
-                projectNameComponent.setDefaultModel(new Model(projectName));
+                projectNameComponent.setModel(new Model(projectName));
                 if(ancestor != null && ancestor != node) {
                     treeComponent.getTreeState().selectNode(ancestor, true);
                 }
             }
-            public void nodeUnselected(Object node) {
+            public void nodeUnselected(TreeNode node) {
             }
-            public void nodeExpanded(Object node) {
+            public void nodeExpanded(TreeNode node) {
             }
-            public void nodeCollapsed(Object node) {
+            public void nodeCollapsed(TreeNode node) {
             }
             public void allNodesCollapsed() {
             }       

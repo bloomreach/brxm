@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.widgets;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -34,7 +35,7 @@ public class AjaxDateTimeField extends DateTimeField {
 
     private static final long serialVersionUID = 1L;
 
-    public AjaxDateTimeField(String id, IModel<Date> model, boolean todayLinkVisible) {
+    public AjaxDateTimeField(String id, IModel model, boolean todayLinkVisible) {
         super(id, model);
 
         get("date").add(new ChangeBehaviour());
@@ -44,7 +45,7 @@ public class AjaxDateTimeField extends DateTimeField {
 
         setOutputMarkupId(true);
 
-        add(new AjaxLink<Date>("today") {
+        add(new AjaxLink("today") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -88,9 +89,8 @@ public class AjaxDateTimeField extends DateTimeField {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> FormComponent<T> getField(String id) {
-        return (FormComponent<T>) get(id);
+    private FormComponent getField(String id) {
+        return (FormComponent) get(id);
     }
 
     @Override

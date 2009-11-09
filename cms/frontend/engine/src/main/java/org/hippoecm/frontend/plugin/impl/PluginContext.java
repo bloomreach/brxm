@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -51,7 +52,7 @@ public class PluginContext implements IPluginContext, IDetachable {
     private IPluginConfig config;
     private IPlugin plugin;
     private Map<String, List<IClusterable>> services;
-    private Map<IServiceFactory<IClusterable>, IClusterable> instances;
+    private Map<IServiceFactory, IClusterable> instances;
     private Map<String, List<IServiceTracker<? extends IClusterable>>> listeners;
     private Map<String, ClusterControl> children;
     private PluginManager manager;
@@ -66,7 +67,7 @@ public class PluginContext implements IPluginContext, IDetachable {
         }
 
         this.services = new HashMap<String, List<IClusterable>>();
-        this.instances = new IdentityHashMap<IServiceFactory<IClusterable>, IClusterable>();
+        this.instances = new IdentityHashMap<IServiceFactory, IClusterable>();
         this.listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
         this.children = new TreeMap<String, ClusterControl>();
     }
@@ -114,7 +115,6 @@ public class PluginContext implements IPluginContext, IDetachable {
         return cluster;
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends IClusterable> T getService(String name, Class<T> clazz) {
         T service = manager.getService(name, clazz);
         if (service == null) {
@@ -136,7 +136,6 @@ public class PluginContext implements IPluginContext, IDetachable {
         return service;
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends IClusterable> List<T> getServices(String name, Class<T> clazz) {
         List<T> result = manager.getServices(name, clazz);
         List<IServiceFactory> list = manager.getServices(name, IServiceFactory.class);
@@ -271,7 +270,7 @@ public class PluginContext implements IPluginContext, IDetachable {
             }
             listeners.clear();
 
-            for (Map.Entry<IServiceFactory<IClusterable>, IClusterable> entry : instances.entrySet()) {
+            for (Map.Entry<IServiceFactory, IClusterable> entry : instances.entrySet()) {
                 entry.getKey().releaseService(this, entry.getValue());
             }
             instances.clear();
@@ -286,7 +285,7 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     public void detach() {
-        for (Map.Entry<IServiceFactory<IClusterable>, IClusterable> entry : instances.entrySet()) {
+        for (Map.Entry<IServiceFactory, IClusterable> entry : instances.entrySet()) {
             IClusterable service = entry.getValue();
             // FIXME: ugly!
             // should all services be IDetachable?

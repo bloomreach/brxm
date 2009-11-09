@@ -55,8 +55,8 @@ public class TabsTest extends PluginTest {
             context.registerService(decorator = new ITitleDecorator() {
                 private static final long serialVersionUID = 1L;
 
-                public IModel<String> getTitle() {
-                    return (IModel<String>) getDefaultModel();
+                public IModel getTitle() {
+                    return getModel();
                 }
 
             }, context.getReference(this).getServiceId());
@@ -101,7 +101,7 @@ public class TabsTest extends PluginTest {
         }
         
         void notifyObservers() {
-            EventCollection<IEvent<IObservable>> events = new EventCollection<IEvent<IObservable>>();
+            EventCollection<IEvent> events = new EventCollection<IEvent>();
             events.add(new IEvent() {
 
                 public IObservable getSource() {
@@ -147,7 +147,7 @@ public class TabsTest extends PluginTest {
         ContentPanel panel = context.getService(PANELS, ContentPanel.class);
         ObservableModel model = new ObservableModel();
         model.setObject("first");
-        panel.setDefaultModel(model);
+        panel.setModel(model);
 
         // re-render with panel
         refreshPage();
@@ -187,7 +187,7 @@ public class TabsTest extends PluginTest {
         IFocusListener[] listeners = new IFocusListener[2];
         int i = 0;
         for (ContentPanel panel : panels) {
-            panel.setDefaultModel(model);
+            panel.setModel(model);
             final int j = i;
             listeners[i++] = new IFocusListener() {
                 private static final long serialVersionUID = 1L;

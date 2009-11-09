@@ -37,7 +37,7 @@ public class EditorPlugin extends RenderPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        editor.setModel(getDefaultModel());
+        editor.setModel(getModel());
         redraw();
     }
 }

@@ -106,11 +106,9 @@ public abstract class AbstractXinhaDialog extends AbstractDialog {
     protected void onCloseDialog() {
     }
 
-    @Override
     protected void onRemove() {
         IPersistedMap link = (IPersistedMap) getModelObject();
         link.delete();
-        super.onRemove();
     }
     
     /**

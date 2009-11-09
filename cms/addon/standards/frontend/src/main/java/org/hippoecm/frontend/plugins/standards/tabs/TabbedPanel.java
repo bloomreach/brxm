@@ -56,7 +56,7 @@ public class TabbedPanel extends WebMarkupContainer {
     private transient boolean redraw = false;
 
     public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs) {
-        super(id, new Model<Integer>(Integer.valueOf(-1)));
+        super(id, new Model(Integer.valueOf(-1)));
 
         if (tabs == null) {
             throw new IllegalArgumentException("argument [tabs] cannot be null");
@@ -67,11 +67,11 @@ public class TabbedPanel extends WebMarkupContainer {
 
         setOutputMarkupId(true);
 
-        final IModel<Integer> tabCount = new AbstractReadOnlyModel<Integer>() {
+        final IModel tabCount = new AbstractReadOnlyModel() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Integer getObject() {
+            public Object getObject() {
                 return Integer.valueOf(TabbedPanel.this.tabs.size());
             }
         };
@@ -142,52 +142,57 @@ public class TabbedPanel extends WebMarkupContainer {
     // used by superclass to add title to the container
 
     protected WebMarkupContainer newLink(final int index) {
-        WebMarkupContainer container = new WebMarkupContainer("container", new Model<Integer>(Integer.valueOf(index)));
-        TabsPlugin.Tab tabbie = (TabsPlugin.Tab) getTabs().get(index);
-        final IModel<TabsPlugin.Tab> tabbieModel = new Model<TabsPlugin.Tab>(tabbie);
+        WebMarkupContainer container = new WebMarkupContainer("container", new Model(Integer.valueOf(index)));
+        final TabsPlugin.Tab tabbie = (TabsPlugin.Tab) getTabs().get(index);
         if (tabbie.canClose()) {
-            container.add(new AjaxFallbackLink<TabsPlugin.Tab>("close", tabbieModel) {
+            container.add(new AjaxFallbackLink("close") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
-                    plugin.onClose(getModelObject(), target);
+                    plugin.onClose(tabbie, target);
                 }
             });
         } else {
             container.add(new Label("close").setVisible(false));
         }
         Component link;
-        container.add(link = new AjaxFallbackLink<TabsPlugin.Tab>("link", tabbieModel) {
+        container.add(link = new AjaxFallbackLink("link") {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                plugin.onSelect(getModelObject(), target);
+                plugin.onSelect(tabbie, target);
             }
-        }.add(new Label("title", new LoadableDetachableModel<String>() {
+        }.add(new Label("title", new LoadableDetachableModel() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected String load() {
-                IModel<String> titleModel = tabbieModel.getObject().getTitle();
+            protected Object load() {
+                IModel titleModel = tabbie.getTitle();
                 if (titleModel != null) {
                     String title = (String) titleModel.getObject();
                     if (title.length() > maxTabLength) {
-                        // leave space for two .. then add them
-                        title = title.substring(0, maxTabLength - 2) + "..";
+                        title = title.substring(0, maxTabLength - 2) + ".."; // leave
+                        // space
+                        // for
+                        // two
+                        // ..
+                        // then
+                        // add
+                        // them
                     }
                     return title;
                 }
                 return "title";
             }
         })));
-        link.add(new AttributeAppender("title", new LoadableDetachableModel<String>() {
+        link.add(new AttributeAppender("title", new LoadableDetachableModel() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected String load() {
-                return tabbieModel.getObject().getTitle().getObject();
+            protected Object load() {
+                return tabbie.getTitle().getObject();
             }
 
         }, ""));
@@ -254,7 +259,7 @@ public class TabbedPanel extends WebMarkupContainer {
             return;
         }
 
-        setDefaultModelObject(Integer.valueOf(index));
+        setModelObject(Integer.valueOf(index));
 
         ITab tab = (ITab) tabs.get(index);
 
@@ -278,7 +283,7 @@ public class TabbedPanel extends WebMarkupContainer {
     }
 
     public final int getSelectedTab() {
-        return ((Integer) getDefaultModelObject()).intValue();
+        return ((Integer) getModelObject()).intValue();
     }
 
 }

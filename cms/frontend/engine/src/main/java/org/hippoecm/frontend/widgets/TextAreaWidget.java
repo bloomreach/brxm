@@ -20,7 +20,7 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 
-public class TextAreaWidget extends AjaxUpdatingWidget<String> {
+public class TextAreaWidget extends AjaxUpdatingWidget {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -28,11 +28,11 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
     private String rows;
     private String cols;
 
-    private TextArea<String> textArea;
+    private TextArea textArea;
 
-    public TextAreaWidget(String id, IModel<String> model) {
+    public TextAreaWidget(String id, IModel model) {
         super(id, model);
-        textArea = new TextArea<String>("widget", model) {
+        textArea = new TextArea("widget", this.getModel()) {
             private static final long serialVersionUID = 1L;
 
             @Override

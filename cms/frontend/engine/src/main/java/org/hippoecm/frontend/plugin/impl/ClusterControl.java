@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ClusterControl implements IClusterControl, IServiceTracker<IClusterable>, IDetachable {
+    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;

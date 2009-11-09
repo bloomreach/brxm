@@ -34,7 +34,7 @@ public class PasswordValueTemplatePlugin extends RenderPlugin {
     public PasswordValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getDefaultModel();
+        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
         add(new PasswordTextFieldWidget("value", valueModel));
 
         setOutputMarkupId(true);

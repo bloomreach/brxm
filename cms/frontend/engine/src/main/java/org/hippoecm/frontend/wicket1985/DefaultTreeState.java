@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.tree.TreeNode;
+
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.model.IDetachable;
@@ -94,7 +96,7 @@ public class DefaultTreeState implements ITreeState, IDetachable
 	/**
 	 * @see org.apache.wicket.markup.html.tree.ITreeState#collapseNode(javax.swing.tree.TreeNode)
 	 */
-	public void collapseNode(Object node)
+	public void collapseNode(TreeNode node)
 	{
 		if (nodesCollapsed == true)
 		{
@@ -140,7 +142,7 @@ public class DefaultTreeState implements ITreeState, IDetachable
 	/**
 	 * @see org.apache.wicket.markup.html.tree.ITreeState#expandNode(javax.swing.tree.TreeNode)
 	 */
-	public void expandNode(Object node)
+	public void expandNode(TreeNode node)
 	{
 		if (nodesCollapsed == false)
 		{
@@ -178,7 +180,7 @@ public class DefaultTreeState implements ITreeState, IDetachable
 	/**
 	 * @see org.apache.wicket.markup.html.tree.ITreeState#isNodeExpanded(javax.swing.tree.TreeNode)
 	 */
-	public boolean isNodeExpanded(Object node)
+	public boolean isNodeExpanded(TreeNode node)
 	{
 		if (nodesCollapsed == false)
 		{
@@ -193,7 +195,7 @@ public class DefaultTreeState implements ITreeState, IDetachable
 	/**
 	 * @see org.apache.wicket.markup.html.tree.ITreeState#isNodeSelected(javax.swing.tree.TreeNode)
 	 */
-	public boolean isNodeSelected(Object node)
+	public boolean isNodeSelected(TreeNode node)
 	{
 		return selectedNodes.contains(node);
 	}
@@ -207,16 +209,16 @@ public class DefaultTreeState implements ITreeState, IDetachable
 	}
 
 	/**
-	 * @see org.apache.wicket.markup.html.tree.ITreeState#selectNode(javax.swing.tree.Object,
+	 * @see org.apache.wicket.markup.html.tree.ITreeState#selectNode(javax.swing.tree.TreeNode,
 	 *      boolean)
 	 */
-	public void selectNode(Object node, boolean selected)
+	public void selectNode(TreeNode node, boolean selected)
 	{
 		if (isAllowSelectMultiple() == false && selectedNodes.size() > 0)
 		{
 			for (Iterator i = selectedNodes.iterator(); i.hasNext();)
 			{
-				Object current = (Object)i.next();
+				TreeNode current = (TreeNode)i.next();
 				if (current.equals(node) == false)
 				{
 					i.remove();

@@ -24,15 +24,14 @@ public class RequiredTextFieldWidget extends TextFieldWidget {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     
-    public RequiredTextFieldWidget(String id, IModel<String> model) {
+    public RequiredTextFieldWidget(String id, IModel model) {
         this(id, model, null);
     }
 
-    @SuppressWarnings("unchecked")
-    public RequiredTextFieldWidget(String id, IModel<String> model, IModel<String> labelModel) {
+    public RequiredTextFieldWidget(String id, IModel model, IModel labelModel) {
         super(id, model, labelModel);
         
-        TextField<String> t = (TextField<String>) get("widget");
+        TextField t = (TextField) get("widget");
         t.setRequired(true);
     }
 

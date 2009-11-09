@@ -41,9 +41,9 @@ public class InheritingPluginConfig extends AbstractPluginDecorator {
             }
         } else if (object instanceof IPluginConfig) {
             return new InheritingPluginConfig((IPluginConfig) object, fallback);
-        } else if (object instanceof List<?>) {
-            final List<?> list = (List<?>) object;
-            return new AbstractList<Object>() {
+        } else if (object instanceof List) {
+            final List list = (List) object;
+            return new AbstractList() {
                 @Override
                 public Object get(int index) {
                     return decorate(list.get(index));

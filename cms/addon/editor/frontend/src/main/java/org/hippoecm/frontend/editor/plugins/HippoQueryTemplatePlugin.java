@@ -60,7 +60,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
     public HippoQueryTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrNodeModel jcrNodeModel = (JcrNodeModel) getDefaultModel();
+        JcrNodeModel jcrNodeModel = (JcrNodeModel) getModel();
         Node queryNode = jcrNodeModel.getNode();
         try {
 
@@ -126,7 +126,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
     }
 
     private void storeQueryAsNode(AjaxRequestTarget target) {
-        Node queryNode = ((JcrNodeModel) getDefaultModel()).getNode();
+        Node queryNode = ((JcrNodeModel) getModel()).getNode();
 
         try {
             Node parentNode = queryNode.getParent();
@@ -151,7 +151,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
              * that result in an item exists exception. The only way is to keep the property
              * values in memory, remove the node, and store is again
              */
-            getDefaultModel().detach();
+            getModel().detach();
             queryNode.remove();
             if (query instanceof HippoQuery) {
                 ((HippoQuery) query).storeAsNode(parentNode.getPath() + "/" + nodeName, HippoNodeType.NT_QUERY);

@@ -40,7 +40,7 @@ public class FieldPluginEditor extends Panel {
 
     private CssProvider cssProvider;
 
-    public FieldPluginEditor(String id, IModel<IPluginConfig> model, final boolean editable) {
+    public FieldPluginEditor(String id, IModel model, final boolean editable) {
         super(id, model);
 
         setOutputMarkupId(true);
@@ -48,26 +48,26 @@ public class FieldPluginEditor extends Panel {
         cssProvider = new CssProvider();
 
         if (editable) {
-            add(new TextFieldWidget("caption-editor", new PropertyModel<String>(model, "caption")));
+            add(new TextFieldWidget("caption-editor", new PropertyModel(model, "caption")));
         } else {
-            add(new Label("caption-editor", new PropertyModel<String>(model, "caption")));
+            add(new Label("caption-editor", new PropertyModel(model, "caption")));
         }
-        add(new RefreshingView<String>("css") {
+        add(new RefreshingView("css") {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected Iterator<IModel<String>> getItemModels() {
+            protected Iterator<IModel> getItemModels() {
                 return cssProvider.iterator();
             }
 
             @Override
-            protected void populateItem(final Item<String> item) {
+            protected void populateItem(final Item item) {
                 if (editable) {
                     item.add(new TextFieldWidget("editor", item.getModel()));
                 } else {
                     item.add(new Label("editor", item.getModel()));
                 }
-                item.add(new AjaxLink<Void>("remove") {
+                item.add(new AjaxLink("remove") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -78,7 +78,7 @@ public class FieldPluginEditor extends Panel {
                 }.setVisible(editable));
             }
         });
-        add(new AjaxLink<Void>("add-css") {
+        add(new AjaxLink("add-css") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -95,7 +95,7 @@ public class FieldPluginEditor extends Panel {
         final List<CssModel> cssModels;
 
         CssProvider() {
-            IPluginConfig config = (IPluginConfig) getDefaultModelObject();
+            IPluginConfig config = (IPluginConfig) getModelObject();
             final String[] classes = config.getStringArray(AbstractRenderService.CSS_ID);
             if (classes != null) {
                 cssModels = new ArrayList<CssModel>(classes.length);
@@ -107,15 +107,15 @@ public class FieldPluginEditor extends Panel {
             }
         }
 
-        Iterator<IModel<String>> iterator() {
+        Iterator<IModel> iterator() {
             final Iterator<CssModel> base = cssModels.iterator();
-            return new Iterator<IModel<String>>() {
+            return new Iterator<IModel>() {
 
                 public boolean hasNext() {
                     return base.hasNext();
                 }
 
-                public IModel<String> next() {
+                public IModel next() {
                     return base.next();
                 }
 
@@ -137,7 +137,7 @@ public class FieldPluginEditor extends Panel {
         }
 
         void save() {
-            IPluginConfig config = (IPluginConfig) getDefaultModelObject();
+            IPluginConfig config = (IPluginConfig) getModelObject();
             String[] values = new String[cssModels.size()];
             for (int i = 0; i < cssModels.size(); i++) {
                 values[i] = (String) cssModels.get(i).getObject();
@@ -145,7 +145,7 @@ public class FieldPluginEditor extends Panel {
             config.put(AbstractRenderService.CSS_ID, values);
         }
 
-        private class CssModel implements IModel<String> {
+        private class CssModel implements IModel {
             private static final long serialVersionUID = 1L;
 
             String className;
@@ -154,12 +154,12 @@ public class FieldPluginEditor extends Panel {
                 this.className = className;
             }
 
-            public void setObject(String object) {
+            public void setObject(Object object) {
                 className = (String) object;
                 save();
             }
 
-            public String getObject() {
+            public Object getObject() {
                 return className;
             }
 

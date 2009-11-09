@@ -38,7 +38,7 @@ import org.hippoecm.frontend.service.IRenderService;
  * <p>
  * In addition, it has simple plugin-management capabilities.
  */
-public class RenderPlugin<T> extends RenderService<T> implements IPlugin {
+public class RenderPlugin extends RenderService implements IPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * first referenceable ancestor plus a relative path as the identification/retrieval method.
  * When the Item (or one of its ancestors) is moved, this is transparent.
  */
-public class JcrItemModel extends LoadableDetachableModel<Item> {
+public class JcrItemModel extends LoadableDetachableModel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -131,7 +131,7 @@ public class JcrItemModel extends LoadableDetachableModel<Item> {
     // LoadableDetachableModel
 
     @Override
-    protected Item load() {
+    protected Object load() {
         try {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             if (uuid != null) {

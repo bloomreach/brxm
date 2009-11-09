@@ -79,7 +79,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
 
             public Object preClose() {
                 try {
-                    Node node = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    Node node = ((WorkflowDescriptorModel) getModel()).getNode();
                     boolean dirty = node.isModified();
                     if (!dirty) {
                         HippoSession session = (HippoSession) node.getSession();
@@ -125,7 +125,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
     }
 
     void doRevert() throws Exception {
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) TemplateEditingWorkflowPlugin.this.getDefaultModel();
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) TemplateEditingWorkflowPlugin.this.getModel();
         model.getNode().refresh(false);
     }
 
@@ -149,7 +149,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
         validated = true;
         isvalid = true;
         try {
-            Node node = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+            Node node = ((WorkflowDescriptorModel) getModel()).getNode();
             if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                 NodeIterator ntNodes = node.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)
                         .getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
@@ -213,7 +213,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
                         closeDialog();
                         closeEditor();
                     } catch (Exception ex) {
-                        exceptionLabel.setDefaultModel(new Model(ex.getMessage()));
+                        exceptionLabel.setModel(new Model(ex.getMessage()));
                         target.addComponent(exceptionLabel);
                     }
                 }
@@ -231,7 +231,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
                         closeDialog();
                         closeEditor();
                     } catch (Exception ex) {
-                        exceptionLabel.setDefaultModel(new Model(ex.getMessage()));
+                        exceptionLabel.setModel(new Model(ex.getMessage()));
                         target.addComponent(exceptionLabel);
                     }
                 }

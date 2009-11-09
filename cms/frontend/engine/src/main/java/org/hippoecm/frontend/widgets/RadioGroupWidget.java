@@ -16,6 +16,7 @@
 
 package org.hippoecm.frontend.widgets;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -30,7 +31,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.string.AppendingStringBuffer;
 
-public class RadioGroupWidget<T> extends Panel {
+public class RadioGroupWidget extends Panel {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -47,19 +48,21 @@ public class RadioGroupWidget<T> extends Panel {
      *      Model that represents selected {@link Radio} item  
      *      
      */
-    public RadioGroupWidget(String id, List<? extends T> choices, IModel<T> model) {
+    public RadioGroupWidget(String id, List choices, IModel model) {
         super(id);
 
-        final RadioGroup<T> group = new RadioGroup<T>("widget", model);
+        final RadioGroup group = new RadioGroup("widget", model);
         group.setRenderBodyOnly(false);
 
-        group.add(new ListView<T>("choices", choices) {
+        group.add(new ListView("choices", choices) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem<T> item) {
+            protected void populateItem(ListItem item) {
 
-                final Radio<T> radio = new Radio<T>("radio", item.getModel());
+                final Serializable radioitem = (Serializable) item.getModelObject();
+                final Radio radio = new Radio("radio", new Model(radioitem));
+
                 radio.add(new AjaxEventBehavior("onchange") {
                     private static final long serialVersionUID = 1L;
 
@@ -78,8 +81,8 @@ public class RadioGroupWidget<T> extends Panel {
                 });
                 item.add(radio);
 
-                String label = item.getDefaultModelObjectAsString();
-                radio.setLabel(new Model<String>(getLocalizer().getString(label, this, label)));
+                String label = item.getModelObjectAsString();
+                radio.setLabel(new Model(getLocalizer().getString(label, this, label)));
                 item.add(new SimpleFormComponentLabel("label", radio));
 
                 RadioGroupWidget.this.populateItem(item);
@@ -94,7 +97,7 @@ public class RadioGroupWidget<T> extends Panel {
      * 
      * @param item
      */
-    protected void populateItem(ListItem<T> item) {
+    protected void populateItem(ListItem item) {
     }
 
     /**

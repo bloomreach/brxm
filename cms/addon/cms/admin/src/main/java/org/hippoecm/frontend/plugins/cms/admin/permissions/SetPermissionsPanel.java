@@ -122,7 +122,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
 
         protected void populateItem(final ListItem item) {
             item.setOutputMarkupId(true);
-            final String group = (String) item.getDefaultModelObjectAsString();
+            final String group = (String) item.getModelObjectAsString();
             item.add(new Label("group-label", group));
             item.add(new AjaxLinkLabel("group-remove", new ResourceModel("permissions-remove-action")) {
                 private static final long serialVersionUID = 1L;
@@ -156,7 +156,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
         }
 
         protected void populateItem(final ListItem item) {
-            String role = item.getDefaultModelObjectAsString();
+            String role = item.getModelObjectAsString();
             item.add(new Label("role", role));
             List<String> groups = new ArrayList<String>();
             for (Domain.AuthRole authRole : domain.getAuthRoles().values()) {

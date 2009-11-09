@@ -46,14 +46,14 @@ public class EditPerspective extends Perspective {
     }
 
     @Override
-    public IModel<String> getTitle() {
-        return new LoadableDetachableModel<String>() {
+    public IModel getTitle() {
+        return new LoadableDetachableModel() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected String load() {
-                JcrNodeModel nodeModel = (JcrNodeModel) EditPerspective.this.getDefaultModel();
-                IModel<String> nodeName = new NodeTranslator(nodeModel).getNodeName();
+            protected Object load() {
+                JcrNodeModel nodeModel = (JcrNodeModel) EditPerspective.this.getModel();
+                IModel nodeName = new NodeTranslator(nodeModel).getNodeName();
                 if (nodeModel != null) {
                     Node node = nodeModel.getNode();
                     if (node != null) {
@@ -64,6 +64,8 @@ public class EditPerspective extends Perspective {
                                 MessageFormat format = new MessageFormat("{0} {1,date} {1,time}", getLocale());
                                 return format.format(new Object[] { nodeName.getObject(), calendar.getTime() });
                             }
+                        } catch (javax.jcr.InvalidItemStateException e) {
+                            // deliberate ignore - the model update is broken by design
                         } catch (ValueFormatException e) {
                             log.error("Value is not a date", e);
                         } catch (PathNotFoundException e) {

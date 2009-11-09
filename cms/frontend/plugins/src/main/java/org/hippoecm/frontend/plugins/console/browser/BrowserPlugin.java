@@ -74,7 +74,7 @@ public class BrowserPlugin extends RenderPlugin {
     }
 
     protected void onSelect(final IJcrTreeNode treeNodeModel, AjaxRequestTarget target) {
-        setDefaultModel(treeNodeModel.getNodeModel());
+        setModel(treeNodeModel.getNodeModel());
     }
 
     @Override
@@ -87,7 +87,7 @@ public class BrowserPlugin extends RenderPlugin {
     public void onModelChanged() {
         super.onModelChanged();
 
-        JcrNodeModel model = (JcrNodeModel) getDefaultModel();
+        JcrNodeModel model = (JcrNodeModel) getModel();
         TreePath treePath = treeModel.lookup(model);
         ITreeState treeState = tree.getTreeState();
         for (Object node : (Object[]) treePath.getPath()) {
