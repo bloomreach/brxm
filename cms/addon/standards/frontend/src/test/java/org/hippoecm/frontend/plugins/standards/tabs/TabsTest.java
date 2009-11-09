@@ -101,7 +101,7 @@ public class TabsTest extends PluginTest {
         }
         
         void notifyObservers() {
-            EventCollection<IEvent> events = new EventCollection<IEvent>();
+            EventCollection<IEvent<IObservable>> events = new EventCollection<IEvent<IObservable>>();
             events.add(new IEvent() {
 
                 public IObservable getSource() {
