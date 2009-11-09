@@ -59,14 +59,14 @@ public class ContentService extends BaseHstContentService {
         HippoBeanContent beanContent = new HippoBeanContent();
         
         try {
-            ContentPersistenceManager cpm = getContentPersistenceManager();
+            ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
             HippoBean bean = (HippoBean) cpm.getObjectByUuid(uuid);
             
             if (bean != null) {
                 beanContent = createHippoBeanContent(bean);
                 String encoding = servletRequest.getCharacterEncoding();
-                beanContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(), encoding);
-                beanContent.buildChildUrls(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(), encoding);
+                beanContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
+                beanContent.buildChildUrls(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -86,23 +86,23 @@ public class ContentService extends BaseHstContentService {
         ItemContent itemContent = new ItemContent();
         
         try {
-            Item item = getHstRequestContext().getSession().getItem(itemPath);
+            Item item = getHstRequestContext(servletRequest).getSession().getItem(itemPath);
             
             if (item.isNode()) {
-                ContentPersistenceManager cpm = getContentPersistenceManager();
+                ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
                 HippoBean bean = (HippoBean) cpm.getObject(itemPath);
                 
                 if (bean != null) {
                     HippoBeanContent beanContent = createHippoBeanContent(bean);
                     String encoding = servletRequest.getCharacterEncoding();
-                    beanContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(), encoding);
-                    beanContent.buildChildUrls(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(), encoding);
+                    beanContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
+                    beanContent.buildChildUrls(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
                     itemContent = beanContent;
                 }
             } else {
                 PropertyContent propContent = new PropertyContent((Property) item);
                 String encoding = servletRequest.getCharacterEncoding();
-                propContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(), encoding);
+                propContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
                 itemContent = propContent;
             }
         } catch (Exception e) {
@@ -122,7 +122,7 @@ public class ContentService extends BaseHstContentService {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
-            ContentPersistenceManager cpm = getContentPersistenceManager();
+            ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
             HippoBean bean = (HippoBean) cpm.getObject(itemPath);
             
             if (bean == null) {
@@ -174,7 +174,7 @@ public class ContentService extends BaseHstContentService {
                 return Response.serverError().status(Response.Status.BAD_REQUEST).build();
             }
             
-            ContentPersistenceManager cpm = getContentPersistenceManager();
+            ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
             int offset = itemPath.lastIndexOf('/');
             String folderPath = itemPath.substring(0, offset);
             
@@ -206,7 +206,7 @@ public class ContentService extends BaseHstContentService {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
-            ContentPersistenceManager cpm = getContentPersistenceManager();
+            ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
             int offset = itemPath.lastIndexOf('/');
             String parentPath = itemPath.substring(0, offset);
             String nodeName = itemPath.substring(offset + 1);
@@ -251,7 +251,7 @@ public class ContentService extends BaseHstContentService {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
-            ContentPersistenceManager cpm = getContentPersistenceManager();
+            ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
             int offset = itemPath.lastIndexOf('/');
             String nodePath = itemPath.substring(0, offset);
             

@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
@@ -63,19 +62,16 @@ public class BaseHstContentService {
 
     private ObjectConverter objectConverter;
     
-    @Context
-    private HttpServletRequest servletRequest;
-    
     public BaseHstContentService() {
         init();
     }
     
-    protected HstRequestContext getHstRequestContext() {
+    protected HstRequestContext getHstRequestContext(HttpServletRequest servletRequest) {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
     
-    protected ContentPersistenceManager getContentPersistenceManager() throws LoginException, RepositoryException {
-        return new PersistableObjectBeanManagerWorkflowImpl(getHstRequestContext().getSession(), getObjectConverter());
+    protected ContentPersistenceManager getContentPersistenceManager(HttpServletRequest servletRequest) throws LoginException, RepositoryException {
+        return new PersistableObjectBeanManagerWorkflowImpl(getHstRequestContext(servletRequest).getSession(), getObjectConverter());
     }
     
     protected ObjectConverter getObjectConverter() {
@@ -97,7 +93,7 @@ public class BaseHstContentService {
     }
     
     protected String getContentItemPath(final HttpServletRequest servletRequest, final List<PathSegment> pathSegments) {
-        StringBuilder pathBuilder = new StringBuilder(80).append(getSiteContentPath());
+        StringBuilder pathBuilder = new StringBuilder(80).append(getSiteContentPath(servletRequest));
         
         for (PathSegment pathSegment : pathSegments) {
             pathBuilder.append('/').append(pathSegment.getPath());
@@ -120,13 +116,13 @@ public class BaseHstContentService {
         return path;
     }
     
-    protected String getSiteContentPath() {
+    protected String getSiteContentPath(HttpServletRequest servletRequest) {
         return (String) servletRequest.getAttribute(BaseHstContentService.SITE_CONTENT_PATH);
     }
     
-    protected String getRelativeItemContentPath(final ItemContent itemContent) {
+    protected String getRelativeItemContentPath(HttpServletRequest servletRequest, final ItemContent itemContent) {
         String itemContentPath = itemContent.getPath();
-        String siteContentPath = getSiteContentPath();
+        String siteContentPath = getSiteContentPath(servletRequest);
         
         if (itemContentPath != null && itemContentPath.startsWith(siteContentPath)) {
             itemContentPath = itemContentPath.substring(siteContentPath.length());
