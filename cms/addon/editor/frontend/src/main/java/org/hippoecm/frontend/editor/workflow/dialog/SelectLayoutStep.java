@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.editor.layout.ILayoutDescriptor;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
@@ -36,9 +36,9 @@ public class SelectLayoutStep extends WizardStep {
     private static final long serialVersionUID = 1L;
 
     private final ILayoutProvider layoutProvider;
-    private final IModel/*<String>*/layoutModel;
+    private final IModel<String> layoutModel;
 
-    public SelectLayoutStep(IModel layoutModel, ILayoutProvider layouts) {
+    public SelectLayoutStep(IModel<String> layoutModel, ILayoutProvider layouts) {
         super(new ResourceModel("select-layout-title"), new ResourceModel("select-layout-summary"));
 
         this.layoutModel = layoutModel;
@@ -46,14 +46,14 @@ public class SelectLayoutStep extends WizardStep {
 
         setOutputMarkupId(true);
 
-        add(new ListView("layouts", layoutProvider.getLayouts()) {
+        add(new ListView<String>("layouts", layoutProvider.getLayouts()) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem item) {
-                final String layout = item.getModelObjectAsString();
-                AjaxLink link = new AjaxLink("link") {
+            protected void populateItem(ListItem<String> item) {
+                final String layout = item.getModelObject();
+                AjaxLink<Void> link = new AjaxLink<Void>("link") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -68,11 +68,11 @@ public class SelectLayoutStep extends WizardStep {
                 link.add(new Label("layout", descriptor.getName()));
                 item.add(link);
 
-                item.add(new CssClassAppender(new Model() {
+                item.add(new CssClassAppender(new LoadableDetachableModel<String>() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    public Object getObject() {
+                    protected String load() {
                         if (layout.equals(SelectLayoutStep.this.layoutModel.getObject())) {
                             return "selected";
                         }

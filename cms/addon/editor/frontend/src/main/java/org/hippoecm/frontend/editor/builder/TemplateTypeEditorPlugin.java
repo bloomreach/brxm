@@ -41,7 +41,7 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateTypeEditorPlugin extends RenderPlugin {
+public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -49,7 +49,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateTypeEditorPlugin.class);
 
-    private class TemplateObserver implements IObserver {
+    private class TemplateObserver implements IObserver<IObservable> {
         private static final long serialVersionUID = 1L;
 
         private final IObservable template;
@@ -62,7 +62,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
             return (IObservable) template;
         }
 
-        public void onEvent(Iterator<? extends IEvent> event) {
+        public void onEvent(Iterator<? extends IEvent<IObservable>> event) {
             modelChanged();
         }
 
@@ -97,7 +97,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin {
         final ModelReference selectedExtPtService = new ModelReference(selectedExtPtId, null);
         selectedExtPtService.init(getPluginContext());
 
-        IModel nodeModel = getModel();
+        IModel nodeModel = getDefaultModel();
         try {
             Node node = (Node) nodeModel.getObject();
             String typeName = node.getParent().getName() + ":" + node.getName();

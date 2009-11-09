@@ -46,7 +46,7 @@ public class NodeNamePlugin extends RenderPlugin {
             add(new Label("name", ""));
         }
 
-        JcrNodeModel nodeModel = (JcrNodeModel)getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel)getDefaultModel();
         try {
             add(new Label("field", nodeModel.getNode().getName()));
         } catch (RepositoryException e) {

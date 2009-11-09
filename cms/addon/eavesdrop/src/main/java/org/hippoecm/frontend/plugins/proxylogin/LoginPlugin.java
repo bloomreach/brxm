@@ -25,16 +25,11 @@ import java.util.Locale;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.util.value.ValueMap;
-
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
@@ -43,10 +38,12 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.proxyrepository.ProxyHippoRepository;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.proxyrepository.ProxyHippoRepository;
 import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoginPlugin extends org.hippoecm.frontend.plugins.login.LoginPlugin {
     @SuppressWarnings("unused")
@@ -68,11 +65,11 @@ public class LoginPlugin extends org.hippoecm.frontend.plugins.login.LoginPlugin
     protected class SignInForm extends org.hippoecm.frontend.plugins.login.LoginPlugin.SignInForm {
         private static final long serialVersionUID = 1L;
 
-        private TextField dumpComponent;
+        private TextField<String> dumpComponent;
 
         public SignInForm(final String id) {
             super(id);
-            add(dumpComponent = new TextField("dump", new StringPropertyModel(credentials, "dump")));
+            add(dumpComponent = new TextField<String>("dump", new StringPropertyModel(credentials, "dump")));
         }
        
         @Override
@@ -89,7 +86,7 @@ public class LoginPlugin extends org.hippoecm.frontend.plugins.login.LoginPlugin
                         String username = credentials.getString("username");
                         String password = credentials.getString("password");
                         String dumpname = credentials.getString("dump");
-                        dumpname = dumpComponent.getModelObjectAsString();
+                        dumpname = dumpComponent.getDefaultModelObjectAsString();
 
                         if (repository != null && username != null && password != null) {
                             if (dumpname != null && !dumpname.trim().equals("")) {

@@ -48,7 +48,7 @@ public class BrowseLink extends Panel {
             @SuppressWarnings("unchecked")
             @Override
             public void onClick(AjaxRequestTarget target) {
-                final JcrNodeModel nodeModel = ((BrowseLinkTarget) BrowseLink.this.getModelObject()).getBrowseModel();
+                final JcrNodeModel nodeModel = ((BrowseLinkTarget) BrowseLink.this.getDefaultModelObject()).getBrowseModel();
                 String browserId = config.getString("browser.id");
                 IBrowseService browseService = context.getService(browserId, IBrowseService.class);
                 if (browseService != null) {
@@ -67,7 +67,7 @@ public class BrowseLink extends Panel {
 
             @Override
             public boolean isEnabled() {
-                return ((BrowseLinkTarget) BrowseLink.this.getModelObject()).getBrowseModel() != null;
+                return ((BrowseLinkTarget) BrowseLink.this.getDefaultModelObject()).getBrowseModel() != null;
             }
         };
         add(link);
@@ -76,7 +76,7 @@ public class BrowseLink extends Panel {
         linkLabel.setEscapeModelStrings(false);
         link.add(linkLabel);
 
-        link.add(new AttributeModifier("title", true, new PropertyModel(getModel(), "displayPath")));
+        link.add(new AttributeModifier("title", true, new PropertyModel(getDefaultModel(), "displayPath")));
     }
 
 }

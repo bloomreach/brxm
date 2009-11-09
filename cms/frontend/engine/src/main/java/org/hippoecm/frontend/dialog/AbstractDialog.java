@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * Utility class for implementing the {@link IDialogService.Dialog} interface.
  * Provides OK and Cancel buttons by default, that can be manipulated.
  */
-public abstract class AbstractDialog extends Form implements IDialogService.Dialog, IAjaxIndicatorAware {
+public abstract class AbstractDialog<T> extends Form<T> implements IDialogService.Dialog, IAjaxIndicatorAware {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -192,7 +192,7 @@ public abstract class AbstractDialog extends Form implements IDialogService.Dial
                 return label;
             } else {
                 Label label = new Label(id);
-                label.setModel(new Model(serializable == null ? "" : serializable.toString()));
+                label.setDefaultModel(new Model(serializable == null ? "" : serializable.toString()));
                 label.setEscapeModelStrings(ExceptionFeedbackPanel.this.getEscapeModelStrings());
                 return label;
             }

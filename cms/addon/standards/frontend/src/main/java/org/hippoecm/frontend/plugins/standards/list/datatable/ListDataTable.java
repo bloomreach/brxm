@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -49,24 +49,24 @@ import org.hippoecm.frontend.widgets.ManagedReuseStrategy;
  * with a {@link TableDefinition}.  This component can be used with any data type, i.e. it is
  * not bound to JcrNodeModels.
  */
-public class ListDataTable extends DataTable {
+public class ListDataTable<T> extends DataTable<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     private IPluginContext context;
-    private Map<Item, IObserver> observers;
-    private Set<Item> dirty;
-    private TableSelectionListener selectionListener;
-    private final IDataProvider provider;
+    private Map<Item<T>, IObserver> observers;
+    private Set<Item<T>> dirty;
+    private TableSelectionListener<T> selectionListener;
+    private final IDataProvider<T> provider;
 
-    public interface TableSelectionListener extends IClusterable {
+    public interface TableSelectionListener<T> extends IClusterable {
 
-        void selectionChanged(IModel model);
+        void selectionChanged(IModel<T> model);
     }
 
-    public ListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
-            TableSelectionListener selectionListener, final boolean triState, IPagingDefinition pagingDefinition) {
+    public ListDataTable(String id, TableDefinition<T> tableDefinition, ISortableDataProvider<T> dataProvider,
+            TableSelectionListener<T> selectionListener, final boolean triState, IPagingDefinition pagingDefinition) {
         super(id, tableDefinition.getColumns(), dataProvider, pagingDefinition.getPageSize());
         setOutputMarkupId(true);
         setVersioned(false);
@@ -98,8 +98,8 @@ public class ListDataTable extends DataTable {
     }
 
     @Override
-    public Component setModel(IModel model) {
-        IModel currentModel = getModel();
+    public MarkupContainer setDefaultModel(IModel<?> model) {
+        IModel<?> currentModel = getDefaultModel();
         if (currentModel != null && model != null && !model.equals(currentModel)) {
             for (Item it : observers.keySet()) {
                 IModel checkModel = it.getModel();
@@ -108,13 +108,27 @@ public class ListDataTable extends DataTable {
                 }
             }
         }
-        return super.setModel(model);
+        return super.setDefaultModel(model);
     }
 
+    @SuppressWarnings("unchecked")
+    public IModel<T> getModel() {
+        return (IModel<T>) getDefaultModel();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public T getModelObject() {
+        return (T) getDefaultModelObject();
+    }
+    
+    public void setModel(IModel<T> model) {
+        setDefaultModel(model);
+    }
+    
     public void init(IPluginContext context) {
         this.context = context;
-        this.dirty = new HashSet<Item>();
-        this.observers = new HashMap<Item, IObserver>();
+        this.dirty = new HashSet<Item<T>>();
+        this.observers = new HashMap<Item<T>, IObserver>();
     }
 
     public void destroy() {
@@ -150,15 +164,15 @@ public class ListDataTable extends DataTable {
     }
 
     private boolean doesPageContainModel(int page) {
-        IModel selected = getModel();
+        IModel<T> selected = (IModel<T>) getDefaultModel();
         int count = getRowsPerPage();
         int offset = page * getRowsPerPage();
         if (offset + count > provider.size()) {
             count = provider.size() - offset;
         }
-        Iterator<?> iter = provider.iterator(offset, count);
+        Iterator<? extends T> iter = provider.iterator(offset, count);
         while (iter.hasNext()) {
-            IModel model = provider.model(iter.next());
+            IModel<T> model = provider.model(iter.next());
             if (model.equals(selected)) {
                 return true;
             }
@@ -175,7 +189,7 @@ public class ListDataTable extends DataTable {
             private static final long serialVersionUID = 1L;
 
             public Object getObject() {
-                IModel selected = ListDataTable.this.getModel();
+                IModel selected = ListDataTable.this.getDefaultModel();
                 if (selected != null && selected.equals(model)) {
                     return "hippo-list-selected";
                 } else {
@@ -213,16 +227,15 @@ public class ListDataTable extends DataTable {
         dirty.add(item);
     }
 
-    protected IObserver newObserver(final Item item, final IModel model) {
-        return new IObserver() {
+    protected IObserver newObserver(final Item<T> item, final IModel<T> model) {
+        return new IObserver<IObservable>() {
             private static final long serialVersionUID = 1L;
 
             public IObservable getObservable() {
                 return (IObservable) model;
             }
 
-            @SuppressWarnings("unchecked")
-            public void onEvent(Iterator<? extends IEvent> event) {
+            public void onEvent(Iterator<? extends IEvent<IObservable>> event) {
                 redrawItem(item);
             }
         };

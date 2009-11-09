@@ -46,7 +46,7 @@ import org.hippoecm.frontend.model.event.JcrEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider, IObservable {
+public class JcrPropertyModel<T> extends ItemModelWrapper implements IDataProvider<T>, IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -140,7 +140,8 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider,
     // IDataProvider implementation for use in DataViews
     // (lists and tables)
 
-    public Iterator<IndexedValue> iterator(int first, int count) {
+    // FIXME: iterator should return domain objects (Value holders)
+    public Iterator iterator(int first, int count) {
         List<IndexedValue> list = new ArrayList<IndexedValue>();
         try {
             Property prop = getProperty();
@@ -161,7 +162,7 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider,
         return list.iterator();
     }
 
-    public IModel model(Object object) {
+    public IModel<T> model(Object object) {
         IndexedValue indexedValue = (IndexedValue) object;
         if (indexedValue.index == JcrPropertyValueModel.NO_INDEX) {
             return new JcrPropertyValueModel(this);
@@ -192,14 +193,14 @@ public class JcrPropertyModel extends ItemModelWrapper implements IDataProvider,
 
     public void startObservation() {
         parentModel = new JcrNodeModel(getItemModel().getParentModel());
-        observer = new IObserver() {
+        observer = new IObserver<JcrNodeModel>() {
             private static final long serialVersionUID = 1L;
 
-            public IObservable getObservable() {
+            public JcrNodeModel getObservable() {
                 return parentModel;
             }
 
-            public void onEvent(Iterator<? extends IEvent> events) {
+            public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> events) {
                 EventCollection<JcrEvent> filtered = new EventCollection<JcrEvent>();
                 while (events.hasNext()) {
                     JcrEvent jcrEvent = (JcrEvent) events.next();

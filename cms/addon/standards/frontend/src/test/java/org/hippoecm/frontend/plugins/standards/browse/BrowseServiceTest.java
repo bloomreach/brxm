@@ -23,7 +23,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
-import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.IModelReference;
@@ -51,11 +50,11 @@ public class BrowseServiceTest extends PluginTest {
                 "model.document", DOCUMENT_SERVICE,
     };
 
-    IModelReference<JcrNodeModel> getFolderService() {
+    IModelReference<Node> getFolderService() {
         return context.getService(FOLDER_SERVICE, IModelReference.class);
     }
 
-    IModelReference<JcrNodeModel> getDocumentService() {
+    IModelReference<Node> getDocumentService() {
         return context.getService(DOCUMENT_SERVICE, IModelReference.class);
     }
 
@@ -90,7 +89,7 @@ public class BrowseServiceTest extends PluginTest {
         BrowseService service = new BrowseService(context, new JcrPluginConfig(new JcrNodeModel("/test/config")),
                 new JcrNodeModel("/test/content/document"));
 
-        IModelReference<JcrNodeModel> docService = getDocumentService();
+        IModelReference<Node> docService = getDocumentService();
         docService.setModel(new JcrNodeModel((Node) null));
         assertEquals(new JcrNodeModel("/test/content"), getFolderService().getModel());
     }
@@ -124,7 +123,7 @@ public class BrowseServiceTest extends PluginTest {
         Node handle = root.getNode("test/content/document");
         handle.checkin();
         Version base = handle.getBaseVersion();
-        IModelReference<JcrNodeModel> docService = getDocumentService();
+        IModelReference<Node> docService = getDocumentService();
         docService.setModel(new JcrNodeModel(base));
         assertEquals(new JcrNodeModel("/test/content"), getFolderService().getModel());
     }

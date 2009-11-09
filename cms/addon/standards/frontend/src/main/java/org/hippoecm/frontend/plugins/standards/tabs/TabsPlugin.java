@@ -191,12 +191,12 @@ public class TabsPlugin extends RenderPlugin {
         return null;
     }
 
-    class Tab implements ITab, IObserver {
+    class Tab implements ITab, IObserver<IObservable> {
         private static final long serialVersionUID = 1L;
 
         ServiceTracker<ITitleDecorator> decoratorTracker;
         ITitleDecorator decorator;
-        IModel titleModel;
+        IModel<String> titleModel;
         IRenderService renderer;
         int lastSelected;
 
@@ -261,14 +261,13 @@ public class TabsPlugin extends RenderPlugin {
             return (IObservable) titleModel;
         }
 
-        @SuppressWarnings("unchecked")
-        public void onEvent(Iterator<? extends IEvent> events) {
+        public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
             tabbedPanel.redraw();
         }
 
         // implement ITab interface
 
-        public IModel getTitle() {
+        public IModel<String> getTitle() {
             if (titleModel == null && decorator != null) {
                 titleModel = decorator.getTitle();
                 if (titleModel instanceof IObservable) {
@@ -309,6 +308,10 @@ public class TabsPlugin extends RenderPlugin {
             if (titleModel != null) {
                 titleModel.detach();
             }
+        }
+
+        public boolean isVisible() {
+            return true;
         }
     }
 }

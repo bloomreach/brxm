@@ -57,8 +57,8 @@ public abstract class AddNodeWidget extends AjaxEditableLabel {
 
     @Override
     protected void onEdit(AjaxRequestTarget target) {
-        label = (String) getModel().getObject();
-        setModel(new Model(""));
+        label = (String) getDefaultModel().getObject();
+        setDefaultModel(new Model(""));
         super.onEdit(target);
     }
 
@@ -81,7 +81,7 @@ public abstract class AddNodeWidget extends AjaxEditableLabel {
 
     @Override
     protected void onCancel(AjaxRequestTarget target) {
-        setModel(new Model(label));
+        setDefaultModel(new Model(label));
         super.onCancel(target);
     }
 
@@ -91,7 +91,7 @@ public abstract class AddNodeWidget extends AjaxEditableLabel {
         super.onSubmit(target);
 
         // FIXME: use FolderWorkflow
-        String nodeName = (String) getModel().getObject();
+        String nodeName = (String) getDefaultModel().getObject();
         try {
             Node node = null;
             if (parentNodeModel.getNode().hasNode(nodeName)) {
@@ -110,7 +110,7 @@ public abstract class AddNodeWidget extends AjaxEditableLabel {
             log.error("An error occurred while trying to create or select node[" + nodeName + "]", e);
         }
 
-        setModel(new Model(label));
+        setDefaultModel(new Model(label));
     }
 
     protected abstract void onAddNode(AjaxRequestTarget target, Node node);

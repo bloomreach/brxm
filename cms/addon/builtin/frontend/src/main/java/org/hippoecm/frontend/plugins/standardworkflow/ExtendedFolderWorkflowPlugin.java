@@ -241,7 +241,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             this.title = dialogTitle;
 
             try {
-                Node folder = (ExtendedFolderWorkflowPlugin.this.getModel() instanceof WorkflowDescriptorModel ? ((WorkflowDescriptorModel)ExtendedFolderWorkflowPlugin.this.getModel()).getNode() : null);
+                Node folder = (ExtendedFolderWorkflowPlugin.this.getDefaultModel() instanceof WorkflowDescriptorModel ? ((WorkflowDescriptorModel)ExtendedFolderWorkflowPlugin.this.getDefaultModel()).getNode() : null);
                 if (query != null) {
                     ((HippoQuery)query).bindValue("basefolder", folder.getSession().getValueFactory().createValue(folder.getPath()));
                     QueryResult result = ((HippoQuery)query).execute();
@@ -262,17 +262,17 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             }
 
             Label textComponent = new Label("text");
-            textComponent.setModel(dialogText);
+            textComponent.setDefaultModel(dialogText);
             add(textComponent);
             
             add(new Label("counttext", dialogSubText));
             
             Label countComponent = new Label("count");
-            countComponent.setModel(new Model(Integer.toString(documents.size())));
+            countComponent.setDefaultModel(new Model(Integer.toString(documents.size())));
             add(countComponent);
             
             Label locationComponent = new Label("location");
-            locationComponent.setModel(new Model((String) folderName.getObject()));
+            locationComponent.setDefaultModel(new Model((String) folderName.getObject()));
             add(locationComponent);
 
             affectedComponent = new Label("affected");
@@ -295,7 +295,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             setOkVisible(false);
             setCancelLabel(new StringResourceModel("done-label", ConfirmDialog.this, null));
             onOk();
-            affectedComponent.setModel(new Model(Integer.toString(processed)));
+            affectedComponent.setDefaultModel(new Model(Integer.toString(processed)));
             affectedComponent.setVisible(true);
             AjaxRequestTarget.get().addComponent(this);
        }

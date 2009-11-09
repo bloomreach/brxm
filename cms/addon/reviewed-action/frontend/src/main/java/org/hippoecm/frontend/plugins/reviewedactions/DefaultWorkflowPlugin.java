@@ -83,7 +83,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                Node docNode = ((WorkflowDescriptorModel) DefaultWorkflowPlugin.this.getModel()).getNode();
+                Node docNode = ((WorkflowDescriptorModel) DefaultWorkflowPlugin.this.getDefaultModel()).getNode();
                 IEditorManager editorMgr = getPluginContext().getService(
                         getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
                 if (editorMgr != null) {
@@ -226,7 +226,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     public void onModelChanged() {
         try {
             super.onModelChanged();
-            WorkflowDescriptorModel model = (WorkflowDescriptorModel) getModel();
+            WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
             if (model != null) {
                 Node documentNode = model.getNode();
                 if (documentNode != null) {

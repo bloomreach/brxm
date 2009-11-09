@@ -49,7 +49,7 @@ public class DatePickerPlugin extends RenderPlugin {
     public DatePickerPlugin(IPluginContext context, IPluginConfig config) throws RepositoryException {
         super(context, config);
 
-        Node dateNode = ((JcrNodeModel) getModel()).getNode();
+        Node dateNode = ((JcrNodeModel) getDefaultModel()).getNode();
         JcrPropertyValueModel valueModel = new JcrPropertyValueModel(new JcrPropertyModel(dateNode
                 .getProperty("hippostd:date")));
         MarkupContainer panel;

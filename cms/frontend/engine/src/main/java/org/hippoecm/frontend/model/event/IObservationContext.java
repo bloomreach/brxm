@@ -21,7 +21,7 @@ import org.apache.wicket.IClusterable;
  * The context representing the observer registry to the observable.
  * Framework clients should not implement this interface.
  */
-public interface IObservationContext extends IClusterable {
+public interface IObservationContext<T extends IObservable> extends IClusterable {
     final static String SVN_ID = "$Id$";
 
     /**
@@ -33,7 +33,7 @@ public interface IObservationContext extends IClusterable {
      * 
      * @param events The events to be dispatched to observers
      */
-    void notifyObservers(EventCollection<? extends IEvent> events);
+    void notifyObservers(EventCollection<IEvent<T>> events);
 
     /**
      * Register an observer.  Allows observables to delegate subscriptions to one another.
@@ -43,13 +43,13 @@ public interface IObservationContext extends IClusterable {
      * 
      * @param observer
      */
-    void registerObserver(IObserver observer);
+    void registerObserver(IObserver<?> observer);
 
     /**
      * Unregister an observer.
      * 
      * @param observer
      */
-    void unregisterObserver(IObserver observer);
+    void unregisterObserver(IObserver<?> observer);
 
 }

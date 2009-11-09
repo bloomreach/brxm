@@ -47,7 +47,7 @@ public class AjaxSettings extends YuiObject {
         CALLBACK_FUNCTION.set(function, this);
     }
 
-    public void setCallbackParameters(Map<String, String> map) {
+    public void setCallbackParameters(Map<String, Object> map) {
         CALLBACK_PARAMETERS.set(map, this);
     }
 

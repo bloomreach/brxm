@@ -60,7 +60,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
     public PropertyFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        nodeModel = (JcrNodeModel) getModel();
+        nodeModel = (JcrNodeModel) getDefaultModel();
 
         // use caption for backwards compatibility; i18n should use field name
         IModel nameModel;
@@ -87,18 +87,18 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
 
     protected void subscribe() {
         if (!field.getPath().equals("*")) {
-            JcrItemModel itemModel = new JcrItemModel(((JcrNodeModel) getModel()).getItemModel().getPath() + "/"
+            JcrItemModel itemModel = new JcrItemModel(((JcrNodeModel) getDefaultModel()).getItemModel().getPath() + "/"
                     + field.getPath());
             propertyModel = new JcrPropertyModel(itemModel);
             nrValues = propertyModel.size();
-            getPluginContext().registerService(propertyObserver = new IObserver() {
+            getPluginContext().registerService(propertyObserver = new IObserver<JcrPropertyModel>() {
                 private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
+                public JcrPropertyModel getObservable() {
                     return propertyModel;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> events) {
+                public void onEvent(Iterator<? extends IEvent<JcrPropertyModel>> events) {
                     if (propertyModel.size() != nrValues || field.isOrdered()) { //Only redraw if number of properties has changed.
                         nrValues = propertyModel.size();
                         updateProvider();
@@ -134,7 +134,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
     public void onModelChanged() {
         // filter out changes in the node model itself.
         // The property model observation takes care of that.
-        if (!nodeModel.equals(getModel())) {
+        if (!nodeModel.equals(getDefaultModel())) {
             if (field != null) {
                 unsubscribe();
                 subscribe();

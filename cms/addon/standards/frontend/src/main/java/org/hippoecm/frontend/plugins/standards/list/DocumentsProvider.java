@@ -36,20 +36,20 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentsProvider extends SortableDataProvider {
+public class DocumentsProvider extends SortableDataProvider<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DocumentsProvider.class);
 
-    protected List<IModel> entries = new ArrayList<IModel>();
-    private Map<String, Comparator<IModel>> comparators;
+    protected List<IModel<Node>> entries = new ArrayList<IModel<Node>>();
+    private Map<String, Comparator<Node>> comparators;
 
-    public DocumentsProvider(JcrNodeModel model, DocumentListFilter filter, Map<String, Comparator<IModel>> comparators) {
+    public DocumentsProvider(IModel<Node> model, DocumentListFilter filter, Map<String, Comparator<Node>> comparators) {
         this.comparators = comparators;
-        List<IModel> documents = new ArrayList<IModel>();
-        Node node = model.getNode();
+        List<IModel<Node>> documents = new ArrayList<IModel<Node>>();
+        Node node = model.getObject();
         if (node != null) {
             try {
                 NodeIterator subNodes = filter.filter(node, node.getNodes());
@@ -70,13 +70,19 @@ public class DocumentsProvider extends SortableDataProvider {
         entries = Collections.unmodifiableList(documents);
     }
 
-    public Iterator<IModel> iterator(int first, int count) {
-        List<IModel> displayedList = new ArrayList<IModel>(entries);
+    public Iterator<Node> iterator(int first, int count) {
+        List<Node> displayedList = new ArrayList<Node>();
+        for (IModel<Node> model : entries) {
+            Node node = model.getObject();
+            if (node != null) {
+                displayedList.add(node);
+            }
+        }
         SortState sortState = getSortState();
         if (sortState != null && sortState.isSorted()) {
             String sortProperty = sortState.getProperty();
             if (sortProperty != null) {
-                Comparator<IModel> comparator = comparators.get(sortProperty);
+                Comparator<Node> comparator = comparators.get(sortProperty);
                 if (comparator != null) {
                     Collections.sort(displayedList, comparator);
                     if (sortState.isDescending()) {
@@ -89,8 +95,8 @@ public class DocumentsProvider extends SortableDataProvider {
         return displayedList.subList(first, first + count).iterator();
     }
 
-    public IModel model(Object object) {
-        return (IModel) object;
+    public IModel<Node> model(Node object) {
+        return new JcrNodeModel(object);
     }
 
     public int size() {
@@ -98,7 +104,7 @@ public class DocumentsProvider extends SortableDataProvider {
     }
 
     public void detach() {
-        for (IModel entry : entries) {
+        for (IModel<Node> entry : entries) {
             entry.detach();
         }
     }

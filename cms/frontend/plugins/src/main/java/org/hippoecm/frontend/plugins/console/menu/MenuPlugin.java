@@ -26,8 +26,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.console.menu.check.CheckInOutDialog;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog;
-import org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog;
-
 import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;

@@ -100,9 +100,9 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                             public void revert() {
                                 try {
                                     UserSession session = (UserSession) org.apache.wicket.Session.get();
-                                    WorkflowDescriptor descriptor = (WorkflowDescriptor) plugin.getModelObject();
+                                    WorkflowDescriptor descriptor = (WorkflowDescriptor) plugin.getDefaultModelObject();
                                     WorkflowManager manager = session.getWorkflowManager();
-                                    Node handleNode = ((WorkflowDescriptorModel) plugin.getModel()).getNode();
+                                    Node handleNode = ((WorkflowDescriptorModel) plugin.getDefaultModel()).getNode();
                                     if (handleNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                                         handleNode = handleNode.getParent();
                                     }
@@ -122,7 +122,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                             public void save() {
                                 try {
                                     UserSession userSession = (UserSession) org.apache.wicket.Session.get();
-                                    WorkflowDescriptor descriptor = (WorkflowDescriptor) plugin.getModelObject();
+                                    WorkflowDescriptor descriptor = (WorkflowDescriptor) plugin.getDefaultModelObject();
                                     WorkflowManager manager = userSession.getWorkflowManager();
                                     ((EditableWorkflow) manager.getWorkflow(descriptor)).commitEditableInstance();
                                     userSession.getJcrSession().refresh(true);
@@ -149,7 +149,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                             }
                         };
 
-                        Node node = ((WorkflowDescriptorModel) getModel()).getNode();
+                        Node node = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                         boolean dirty = node.isModified();
                         if (!dirty) {
                             HippoSession session = ((HippoSession) node.getSession());
@@ -205,9 +205,9 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 session.getJcrSession().refresh(false);
 
                 // get new instance of the workflow, previous one may have invalidated itself
-                EditingReviewedActionsWorkflowPlugin.this.getModel().detach();
+                EditingReviewedActionsWorkflowPlugin.this.getDefaultModel().detach();
                 WorkflowDescriptor descriptor = (WorkflowDescriptor) (EditingReviewedActionsWorkflowPlugin.this
-                        .getModel().getObject());
+                        .getDefaultModel().getObject());
                 session.getJcrSession().refresh(true);
                 WorkflowManager manager = session.getWorkflowManager();
                 workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow(descriptor);

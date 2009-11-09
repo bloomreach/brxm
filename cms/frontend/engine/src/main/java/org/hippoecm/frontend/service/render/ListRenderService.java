@@ -18,26 +18,23 @@ package org.hippoecm.frontend.service.render;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ListRenderService extends AbstractRenderService {
+public class ListRenderService extends AbstractRenderService<Void> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(ListRenderService.class);
-
     public ListRenderService(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
     }
 
+    @Override
     protected ExtensionPoint createExtensionPoint(String extension) {
         return new ExtensionPoint(extension);
     }
 
-    protected class ExtensionPoint extends AbstractRenderService.ExtensionPoint {
+    protected class ExtensionPoint extends AbstractRenderService<Void>.ExtensionPoint {
         private static final long serialVersionUID = 1L;
 
 

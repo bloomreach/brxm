@@ -35,11 +35,11 @@ public interface ITemplateEngine extends IClusterable {
 
     ITypeDescriptor getType(String type) throws TemplateEngineException;
 
-    ITypeDescriptor getType(IModel model) throws TemplateEngineException;
+    ITypeDescriptor getType(IModel<?> model) throws TemplateEngineException;
 
     IClusterConfig getTemplate(ITypeDescriptor type, String mode) throws TemplateEngineException;
 
-    IModel getPrototype(ITypeDescriptor type) throws TemplateEngineException;
+    IModel<?> getPrototype(ITypeDescriptor type) throws TemplateEngineException;
 
     List<String> getEditableTypes();
 

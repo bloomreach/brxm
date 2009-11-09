@@ -73,7 +73,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                return new RemodelDialog(this, (WorkflowDescriptorModel) RemodelWorkflowPlugin.this.getModel());
+                return new RemodelDialog(this, (WorkflowDescriptorModel) RemodelWorkflowPlugin.this.getDefaultModel());
             }
 
             @Override
