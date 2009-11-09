@@ -220,6 +220,7 @@ public class ContentBuilder implements IClusterable {
             }
             
             String rootPath = folderPath;
+            depth++;
             for (String newNode : newNodes) {
                 settings.folderUUID = path2uuid(rootPath + "/" + newNode);
 
@@ -228,8 +229,7 @@ public class ContentBuilder implements IClusterable {
                     createDocuments(settings.document);
                 }
 
-                if (depth < settings.depth) {
-                    depth++;
+                if (depth <= settings.depth) {
                     createFolders(settings, depth);
                 }
 
