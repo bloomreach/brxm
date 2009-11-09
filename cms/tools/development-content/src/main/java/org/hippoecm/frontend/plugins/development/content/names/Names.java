@@ -6,16 +6,20 @@
 
 package org.hippoecm.frontend.plugins.development.content.names;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 
-/** A class for generating random names based on existing ones. */
-public class Names {
+import org.apache.wicket.IClusterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Names implements IClusterable {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 
-    // -- Constants --
+    static final Logger log = LoggerFactory.getLogger(Names.class);
 
     /** Marker for beginning and end of words. */
     protected static final char MARKER = '/';
@@ -65,7 +69,7 @@ public class Names {
      *
      * @param source Construct names based on the names from the given source.
      */
-    public Names(HashSet<String> names){
+    public Names(HashSet<String> names) {
         this(names, new HashSet<String>(), DEFAULT_WIDTH);
     }
 
@@ -105,8 +109,7 @@ public class Names {
 
     /** Generates a random name. */
     public String generate() {
-        if (debug)
-            log("generate: begin name generation");
+        log.debug("generate: begin name generation");
         StringBuffer sb = new StringBuffer();
         for (int iter = 0; iter < MAX_ITERATIONS; iter++) {
             sb.setLength(0);
@@ -116,19 +119,18 @@ public class Names {
             while (sb.length() < maxLen + width) {
                 // tuple for N-1 letters
                 String tuple = sb.substring(sb.length() - width + 1);
-                if (debug)
-                    log("generate: [" + tuple + "] " + sb);
+                log.debug("generate: [" + tuple + "] " + sb);
                 int sum = sums[getIndex(tuple)];
                 int ci = (int) (sum * Math.random());
-                if (debug) {
-                    log("generate:   sum=" + sum);
-                    log("generate:   ci=" + ci);
+                if (log.isDebugEnabled()) {
+                    log.debug("generate:   sum=" + sum);
+                    log.debug("generate:   ci=" + ci);
                     int total = 0;
                     for (int i = 0; i <= 26; i++) {
                         char cc = i == 26 ? MARKER : (char) ('a' + i);
                         int q = counts[getIndex(tuple + cc)];
                         total += q;
-                        log("generate:     count['" + cc + "']=" + q + " (" + total + ")");
+                        log.debug("generate:     count['" + cc + "']=" + q + " (" + total + ")");
                     }
                 }
                 char c = 'a' - 1;
@@ -140,9 +142,7 @@ public class Names {
                 }
                 if (c > 'z') {
                     // successfully reached a terminating tuple
-                    if (debug) {
-                        log("generate: [" + tuple.substring(1) + MARKER + "] " + sb);
-                    }
+                    log.debug("generate: [" + tuple.substring(1) + MARKER + "] " + sb);
                     success = true;
                     break;
                 }
@@ -151,17 +151,14 @@ public class Names {
             if (success) {
                 String name = sb.substring(width - 1);
                 if (!allowSourceNames && names.contains(name)) {
-                    if (debug)
-                        log("generate: discarded source name: " + name);
+                    log.debug("generate: discarded source name: " + name);
                     continue;
                 }
                 if (no.contains(name)) {
-                    if (debug)
-                        log("generate: discarded forbidden name: " + name);
+                    log.debug("generate: discarded forbidden name: " + name);
                     continue;
                 }
-                if (debug)
-                    log("generate: name = " + name);
+                log.debug("generate: name = " + name);
                 return name;
             }
             // name too long; try again...
@@ -254,33 +251,6 @@ public class Names {
             ndx += q;
         }
         return ndx;
-    }
-
-    /** Simple logging routine. */
-    protected void log(String msg) {
-        System.out.println(msg);
-    }
-
-    // -- Main method --
-
-    /** Tests the name generation algorithm. */
-    public static void main(String[] args) throws IOException {
-        if (args.length < 4) {
-            System.out.println("Usage: java restless.namegen.Names " + "namefile.txt width max_length num_names");
-            System.exit(1);
-        }
-        String source = args[0];
-        int width = Integer.parseInt(args[1]);
-        int length = Integer.parseInt(args[2]);
-        int num = Integer.parseInt(args[3]);
-        if (args.length > 4)
-            debug = true;
-
-//        Names n = new Names(new File(source).toURI().toURL(), null, width);
-//        n.setMaximumLength(length);
-//        String[] names = n.generate(num);
-//        for (int i = 0; i < num; i++)
-//            System.out.println(names[i]);
     }
 
 }

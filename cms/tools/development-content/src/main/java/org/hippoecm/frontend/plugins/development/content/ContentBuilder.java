@@ -140,7 +140,7 @@ public class ContentBuilder implements IClusterable {
     private static final String NEW_DOCUMENT_CATEGORY = "new-document";
 
     String folderPath;
-    FolderWorkflow folderWorkflow;
+    //FolderWorkflow folderWorkflow;
     Names names;
 
     Collection<String> docTypes;
@@ -165,16 +165,17 @@ public class ContentBuilder implements IClusterable {
             settings.nodeTypes.types = getDocumentTypes(settings.folderUUID);
         }
 
+        FolderWorkflow folderWorkflow = getFolderWorkflow(settings.folderUUID);
         if (folderWorkflow != null) {
             String[] typeAr = settings.nodeTypes.types.toArray(new String[settings.nodeTypes.types.size()]);
 
             for (int i = 0; i < settings.amount; i++) {
-                createNode(NEW_DOCUMENT_CATEGORY, typeAr, settings.naming);
+                createNode(NEW_DOCUMENT_CATEGORY, typeAr, settings.naming, folderWorkflow);
             }
         }
     }
 
-    private String createNode(String category, String[] typeAr, NameSettings settings) {
+    private String createNode(String category, String[] typeAr, NameSettings settings, FolderWorkflow folderWorkflow) {
         int index = generator.nextInt(typeAr.length);
         String prototype = typeAr[index];
         String targetName = generateName(settings.minLength, settings.maxLength);
@@ -195,6 +196,10 @@ public class ContentBuilder implements IClusterable {
     }
 
     public void createFolders(FolderSettings settings, int depth) {
+        createFolders(settings, depth, getFolderWorkflow(settings.folderUUID));
+    }
+    
+    public void createFolders(FolderSettings settings, int depth, FolderWorkflow workflow) {
         updateFolder(settings.folderUUID);
 
         if (settings.nodeTypes.random) {
@@ -205,7 +210,7 @@ public class ContentBuilder implements IClusterable {
             return;
         }
 
-        if (folderWorkflow != null) {
+        if (workflow != null) {
             String[] nodeTypes = settings.nodeTypes.types.toArray(new String[settings.nodeTypes.types.size()]);
 
             int amount = settings.minimumChildNodes;
@@ -216,9 +221,9 @@ public class ContentBuilder implements IClusterable {
 
             List<String> newNodes = new LinkedList<String>();
             for (int i = 0; i < amount; i++) {
-                newNodes.add(createNode(NEW_FOLDER_CATEGORY, nodeTypes, settings.naming));
+                newNodes.add(createNode(NEW_FOLDER_CATEGORY, nodeTypes, settings.naming, workflow));
             }
-            
+
             String rootPath = folderPath;
             depth++;
             for (String newNode : newNodes) {
@@ -232,24 +237,22 @@ public class ContentBuilder implements IClusterable {
                 if (depth <= settings.depth) {
                     createFolders(settings, depth);
                 }
-
-
             }
         }
     }
 
     public Collection<String> getFolderTypes(String folderUUID) {
         updateFolder(folderUUID);
-        return getTypes(NEW_FOLDER_CATEGORY, new LinkedList<String>());
+        return getTypes(NEW_FOLDER_CATEGORY, new LinkedList<String>(), getFolderWorkflow(folderUUID));
     }
 
     public Collection<String> getDocumentTypes(String folderUUID) {
         updateFolder(folderUUID);
-        return getTypes(NEW_DOCUMENT_CATEGORY, new LinkedList<String>());
+        return getTypes(NEW_DOCUMENT_CATEGORY, new LinkedList<String>(), getFolderWorkflow(folderUUID));
     }
 
     @SuppressWarnings("unchecked")
-    private Collection<String> getTypes(String category, List<String> types) {
+    private Collection<String> getTypes(String category, List<String> types, FolderWorkflow folderWorkflow) {
         if (folderWorkflow != null) {
             Map<String, Serializable> hints;
             try {
@@ -272,42 +275,6 @@ public class ContentBuilder implements IClusterable {
             }
         }
         return types;
-    }
-
-    private boolean updateFolder(String folderUUID) {
-        String folder = uuid2path(folderUUID);
-        if (folder != null && (folderPath == null || !folderPath.equals(folder))) {
-            folderPath = folder;
-            reloadWorkflow();
-            return true;
-        }
-        return false;
-    }
-
-    private void reloadWorkflow() {
-
-        Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-        WorkflowDescriptor folderWorkflowDescriptor = null;
-        Node node = null;
-
-        try {
-            node = jcrSession.getRootNode().getNode(folderPath.startsWith("/") ? folderPath.substring(1) : folderPath);
-
-            WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
-            folderWorkflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, node);
-            Workflow workflow = (folderWorkflowDescriptor != null ? manager.getWorkflow(folderWorkflowDescriptor)
-                    : null);
-            if (workflow instanceof FolderWorkflow) {
-                folderWorkflow = (FolderWorkflow) workflow;
-            }
-        } catch (MappingException ex) {
-            log.warn("failure to initialize shortcut", ex);
-            node = null;
-        } catch (RepositoryException ex) {
-            log.warn("failure to initialize shortcut", ex);
-            node = null;
-        }
-
     }
 
     public String generateName(int minLength, int maxLength) {
@@ -334,6 +301,36 @@ public class ContentBuilder implements IClusterable {
             }
         }
         return newName;
+    }
+
+    private void updateFolder(String folderUUID) {
+        String folder = uuid2path(folderUUID);
+        if (folder != null && (folderPath == null || !folderPath.equals(folder))) {
+            folderPath = folder;
+        }
+    }
+
+    private FolderWorkflow getFolderWorkflow(String folderUUID) {
+        updateFolder(folderUUID);
+        Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        WorkflowDescriptor folderWorkflowDescriptor = null;
+        Node node = null;
+
+        try {
+            node = jcrSession.getRootNode().getNode(folderPath.startsWith("/") ? folderPath.substring(1) : folderPath);
+            WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
+            folderWorkflowDescriptor = manager.getWorkflowDescriptor(workflowCategory, node);
+            Workflow workflow = (folderWorkflowDescriptor != null ? manager.getWorkflow(folderWorkflowDescriptor)
+                    : null);
+            if (workflow instanceof FolderWorkflow) {
+                return (FolderWorkflow) workflow;
+            }
+        } catch (MappingException ex) {
+            log.warn("Error while fetching FolderWorkflow: {}", ex.getMessage());
+        } catch (RepositoryException ex) {
+            log.warn("Error while fetching FolderWorkflow: {}", ex.getMessage());
+        }
+        return null;
     }
 
     private String uuid2path(String uuid) {
@@ -369,5 +366,4 @@ public class ContentBuilder implements IClusterable {
         }
         return null;
     }
-
 }
