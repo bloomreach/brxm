@@ -20,7 +20,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -35,8 +34,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.xinha.XinhaPlugin;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.preferences.IPreferencesStore;
-import org.hippoecm.frontend.service.preferences.PreferencesStore;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,17 +93,16 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
             @Override
             public void setModel(IModel model) {
-                JcrNodeModel newModel = findNewModel(model);
-                if (newModel != null) {
+                if (model != null) {
                     DocumentLink link = (DocumentLink) getModelObject();
                     JcrNodeModel currentModel = link.getNodeModel();
-                    if (!newModel.equals(currentModel)) {
-                        link.setNodeModel(newModel);
+                    if (!model.equals(currentModel)) {
+                        link.setNodeModel((JcrNodeModel) model);
                         checkState();
                     }
                 } 
                 lastModelVisited = model;
-                super.setModel(newModel);
+                super.setModel(model);
             }
         };
         modelService.init(context);
@@ -167,7 +163,5 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
             }
         }
     }
-
-    protected abstract JcrNodeModel findNewModel(IModel model);
 
 }
