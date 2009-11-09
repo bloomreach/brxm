@@ -21,20 +21,17 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNode;
 
-public abstract class NodeComparator implements Comparator<IModel>, IClusterable {
+public abstract class NodeComparator implements Comparator<Node>, IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
-    public int compare(IModel o1, IModel o2) {
-        if (!(o1 instanceof JcrNodeModel) || !(o2 instanceof JcrNodeModel)) {
-            return 0;
-        }
-        return compare((JcrNodeModel)o1, (JcrNodeModel)o2);
+    public int compare(Node o1, Node o2) {
+        return compare(new JcrNodeModel(o1), new JcrNodeModel(o2));
     }
 
     protected Node getCanonicalNode(JcrNodeModel model) throws RepositoryException {

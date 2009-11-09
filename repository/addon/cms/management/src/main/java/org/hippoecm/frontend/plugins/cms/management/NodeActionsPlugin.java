@@ -93,7 +93,7 @@ public class NodeActionsPlugin extends RenderPlugin {
     }
 
     private void executeBuiltinAction(AjaxRequestTarget target, String operation) {
-        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) getDefaultModel();
         if (operation.equals(ACTION_OK)) {
             try {
                 Node node = nodeModel.getNode();

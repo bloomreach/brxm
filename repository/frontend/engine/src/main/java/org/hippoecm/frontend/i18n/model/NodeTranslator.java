@@ -64,11 +64,11 @@ public class NodeTranslator extends NodeModelWrapper {
         name = new NodeNameModel();
     }
 
-    public IModel getNodeName() {
+    public IModel<String> getNodeName() {
         return name;
     }
 
-    public IModel getPropertyName(String property) {
+    public IModel<String> getPropertyName(String property) {
         attach();
         if (!properties.containsKey(property)) {
             properties.put(property, new Property(property));
@@ -76,7 +76,7 @@ public class NodeTranslator extends NodeModelWrapper {
         return properties.get(property).name;
     }
 
-    public IModel getValueName(String property, String value) {
+    public IModel<String> getValueName(String property, String value) {
         attach();
         if (!properties.containsKey(property)) {
             properties.put(property, new Property(property));
@@ -97,14 +97,14 @@ public class NodeTranslator extends NodeModelWrapper {
         }
     }
 
-    private class NodeNameModel extends LoadableDetachableModel implements IObservable {
+    private class NodeNameModel extends LoadableDetachableModel<String> implements IObservable {
         private static final long serialVersionUID = 1L;
 
-        private IObservationContext obContext;
-        private IObserver observer;
+        private IObservationContext<NodeNameModel> obContext;
+        private IObserver<JcrNodeModel> observer;
 
         @Override
-        protected Object load() {
+        protected String load() {
             Node node = nodeModel.getNode();
             String name = "node name";
             if (node != null) {
@@ -187,21 +187,31 @@ public class NodeTranslator extends NodeModelWrapper {
             NodeTranslator.this.detach();
         }
 
-        public void setObservationContext(IObservationContext context) {
-            this.obContext = context;
+        @SuppressWarnings("unchecked")
+        public void setObservationContext(IObservationContext<?> context) {
+            this.obContext = (IObservationContext<NodeNameModel>) context;
         }
 
         public void startObservation() {
             final JcrNodeModel parentModel = nodeModel.getParentModel();
-            obContext.registerObserver(observer = new IObserver() {
+            obContext.registerObserver(observer = new IObserver<JcrNodeModel>() {
                 private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
+                public JcrNodeModel getObservable() {
                     return parentModel;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> events) {
-                    obContext.notifyObservers(new EventCollection<IEvent>(events));
+                public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> events) {
+                    IEvent<NodeNameModel> event = new IEvent<NodeNameModel>() {
+
+                        public NodeNameModel getSource() {
+                            return NodeNameModel.this;
+                        }
+                        
+                    };
+                    EventCollection<IEvent<NodeNameModel>> collection = new EventCollection<IEvent<NodeNameModel>>();
+                    collection.add(event);
+                    obContext.notifyObservers(collection);
                 }
 
             });
@@ -227,7 +237,7 @@ public class NodeTranslator extends NodeModelWrapper {
             attached = true;
         }
 
-        IModel getValue(String name) {
+        IModel<String> getValue(String name) {
             if (values == null) {
                 values = new TreeMap<String, PropertyValueModel>();
             }
@@ -254,11 +264,11 @@ public class NodeTranslator extends NodeModelWrapper {
             }
         }
 
-        class PropertyNameModel extends LoadableDetachableModel {
+        class PropertyNameModel extends LoadableDetachableModel<String> {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected Object load() {
+            protected String load() {
                 Property.this.attach();
                 String name = property;
                 Node node = nodeModel.getNode();
@@ -297,7 +307,7 @@ public class NodeTranslator extends NodeModelWrapper {
             }
         }
 
-        class PropertyValueModel extends LoadableDetachableModel {
+        class PropertyValueModel extends LoadableDetachableModel<String> {
             private static final long serialVersionUID = 1L;
 
             private String value;
@@ -307,7 +317,7 @@ public class NodeTranslator extends NodeModelWrapper {
             }
 
             @Override
-            protected Object load() {
+            protected String load() {
                 Property.this.attach();
                 String name = property;
                 Node node = nodeModel.getNode();

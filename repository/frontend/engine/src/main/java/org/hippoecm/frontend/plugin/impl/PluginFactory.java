@@ -122,12 +122,12 @@ public class PluginFactory implements IClusterable {
             this.stream = stream;
         }
 
-        public String getCacheKey(MarkupContainer container, Class containerClass) {
+        public String getCacheKey(MarkupContainer container, Class<?> containerClass) {
             return getPluginConfig().getString(IPlugin.CLASSNAME);
         }
 
         // implement IMarkupResourceStreamProvider.
-        public IResourceStream getMarkupResourceStream(MarkupContainer container, Class containerClass) {
+        public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<?> containerClass) {
             return stream;
         }
     }

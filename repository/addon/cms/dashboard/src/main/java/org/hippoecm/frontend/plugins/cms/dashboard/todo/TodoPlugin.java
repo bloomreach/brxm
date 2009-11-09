@@ -51,10 +51,10 @@ public class TodoPlugin extends RenderPlugin {
 
     public TodoPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        if (!(getModel() instanceof IDataProvider)) {
+        if (!(getDefaultModel() instanceof IDataProvider)) {
             throw new IllegalArgumentException("TodoPlugin needs an IDataProvider as Plugin model.");
         }
-        add(new TodoView("view", getModel()));
+        add(new TodoView("view", getDefaultModel()));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class TodoPlugin extends RenderPlugin {
 
         @Override
         protected Iterator getItemModels() {
-            final IDataProvider dataProvider = (IDataProvider) getModel();
+            final IDataProvider dataProvider = (IDataProvider) getDefaultModel();
             final Iterator iter = dataProvider.iterator(0, 0);
             return new Iterator() {
 

@@ -43,7 +43,7 @@ public class PasswordWidget extends AjaxUpdatingWidget {
         label = new Label("label", labelModel);
         add(label);
         
-        field = new PasswordTextField("widget", this.getModel());
+        field = new PasswordTextField("widget", (IModel<String>) this.getDefaultModel());
         field.setRequired(false);
         addFormField(field);
     }

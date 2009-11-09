@@ -66,7 +66,7 @@ public class DisplayDocument extends RenderPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        JcrNodeModel model = (JcrNodeModel)getModel();
+        JcrNodeModel model = (JcrNodeModel)getDefaultModel();
         if (model!=null) {
             Node document = model.getNode();
             try {
@@ -77,7 +77,7 @@ public class DisplayDocument extends RenderPlugin {
                             primaryItem = ((Node)primaryItem).getPrimaryItem();
                         } while (primaryItem.isNode());
                         String data = ((Property)primaryItem).getString();
-                        content.setModel(new Model(data));
+                        content.setDefaultModel(new Model(data));
                     } else if (document.isNodeType("nt:frozenNode")) {
                         do {
                             String primaryType = ((Node)primaryItem).getProperty("jcr:frozenPrimaryType").getString();
@@ -88,20 +88,20 @@ public class DisplayDocument extends RenderPlugin {
                                 else
                                     primaryItem = ((Node)primaryItem).getNode(nodeType.getPrimaryItemName());
                             } else {
-                                content.setModel(new Model("selected item has no default content to display"));
+                                content.setDefaultModel(new Model("selected item has no default content to display"));
                             }
                         } while (primaryItem.isNode());
                         String data = ((Property)primaryItem).getString();
-                        content.setModel(new Model(data));
+                        content.setDefaultModel(new Model(data));
                     } else {
-                        content.setModel(new Model("selected item is not a document"));
+                        content.setDefaultModel(new Model("selected item is not a document"));
                     }
                 } catch (ItemNotFoundException ex) {
-                    content.setModel(new Model("selected item has no default content to display"));
+                    content.setDefaultModel(new Model("selected item has no default content to display"));
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                content.setModel(new Model(""));
+                content.setDefaultModel(new Model(""));
             }
         }
     }

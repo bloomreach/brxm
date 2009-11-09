@@ -32,7 +32,6 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.model.AbstractProvider;
 import org.hippoecm.frontend.editor.model.NodeTemplateProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -92,7 +91,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     }
 
     @Override
-    public void onEvent(Iterator<? extends IEvent> events) {
+    public void onEvent(Iterator events) {
         // filter events
         if (field == null) {
             return;

@@ -66,8 +66,8 @@ public abstract class JcrTree extends Tree {
     @Override
     public void onDetach() {
         ITreeState treeState = getTreeState();
-        Collection<TreeNode> collection = treeState.getSelectedNodes();
-        for (TreeNode object : collection) {
+        Collection<Object> collection = treeState.getSelectedNodes();
+        for (Object object : collection) {
             if (object instanceof IDetachable) {
                 ((IDetachable) object).detach();
             }

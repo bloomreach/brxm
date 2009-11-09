@@ -69,7 +69,7 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
                     actions.revert();
                     closeDialog();
                 } catch (Exception ex) {
-                    exceptionLabel.setModel(new Model(ex.getMessage()));
+                    exceptionLabel.setDefaultModel(new Model(ex.getMessage()));
                     target.addComponent(exceptionLabel);
                 }
             }
@@ -87,7 +87,7 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
                     actions.save();
                     closeDialog();
                 } catch (Exception ex) {
-                    exceptionLabel.setModel(new Model(ex.getMessage()));
+                    exceptionLabel.setDefaultModel(new Model(ex.getMessage()));
                     target.addComponent(exceptionLabel);
                 }
             }

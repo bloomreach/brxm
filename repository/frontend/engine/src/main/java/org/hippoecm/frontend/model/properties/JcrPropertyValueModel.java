@@ -34,7 +34,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Session;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Frank van Lankvelt
  */
-public class JcrPropertyValueModel extends Model {
+public class JcrPropertyValueModel<T extends Serializable> implements IModel<T> {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -209,22 +209,22 @@ public class JcrPropertyValueModel extends Model {
         }
     }
 
-    @Override
-    public Object getObject() {
+    @SuppressWarnings("unchecked")
+    public T getObject() {
         try {
             load();
             if (value != null) {
                 switch (value.getType()) {
                 case PropertyType.BOOLEAN:
-                    return value.getBoolean();
+                    return (T) Boolean.valueOf(value.getBoolean());
                 case PropertyType.DATE:
-                    return value.getDate().getTime();
+                    return (T) value.getDate().getTime();
                 case PropertyType.DOUBLE:
-                    return value.getDouble();
+                    return (T) Double.valueOf(value.getDouble());
                 case PropertyType.LONG:
-                    return value.getLong();
+                    return (T) Long.valueOf(value.getLong());
                 default:
-                    return value.getString();
+                    return (T) value.getString();
                 }
             }
         } catch (RepositoryException ex) {
@@ -233,7 +233,6 @@ public class JcrPropertyValueModel extends Model {
         return null;
     }
 
-    @Override
     public void setObject(final Serializable object) {
         load();
         if (object == null) {
@@ -277,13 +276,11 @@ public class JcrPropertyValueModel extends Model {
         setValue(value);
     }
 
-    @Override
     public void detach() {
         loaded = false;
         value = null;
         propertyDefinition = null;
         propertyModel.detach();
-        super.detach();
     }
 
     public void setIndex(int index) {
@@ -340,13 +337,13 @@ public class JcrPropertyValueModel extends Model {
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof JcrPropertyValueModel == false) {
+        if (object instanceof JcrPropertyValueModel<?> == false) {
             return false;
         }
         if (this == object) {
             return true;
         }
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) object;
+        JcrPropertyValueModel<?> valueModel = (JcrPropertyValueModel<?>) object;
         return new EqualsBuilder().append(propertyModel, valueModel.propertyModel).append(index, valueModel.index)
                 .isEquals();
     }

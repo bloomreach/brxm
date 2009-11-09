@@ -29,7 +29,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -56,20 +56,20 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         private static final long serialVersionUID = 1L;
 
         String extension;
-        IModel focusModel;
+        IModel<String> focusModel;
         boolean focussed;
         boolean selected;
-        AbstractRenderService.ExtensionPoint extPt;
+        AbstractRenderService<?>.ExtensionPoint extPt;
 
         Section(String extension) {
             this.extension = extension;
             this.focussed = false;
             this.extPt = children.get(extension);
-            this.focusModel = new Model() {
+            this.focusModel = new LoadableDetachableModel<String>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public Object getObject() {
+                protected String load() {
                     if (focussed) {
                         if (selected) {
                             return "select focus";
@@ -123,15 +123,13 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
             findSectionForInitialFocus = true;
         }
 
-        add(new ListView("list", sections) {
-
+        add(new ListView<Section>("list", sections) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem item) {
-                final Section section = (Section) item.getModelObject();
-                AjaxLink link;
-                link = new AjaxLink("link") {
+            protected void populateItem(ListItem<Section> item) {
+                final Section section = item.getModelObject();
+                AjaxLink<Void> link = new AjaxLink<Void>("link") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -142,7 +140,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                                     .getServiceId(), IModelReference.class);
                             if (modelService != null) {
                                 IModel sectionModel = modelService.getModel();
-                                SectionTreePlugin.this.setModel(sectionModel);
+                                SectionTreePlugin.this.setDefaultModel(sectionModel);
                             } else {
                                 focusSection(section, true);
                             }
@@ -227,7 +225,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     }
 
     private IRenderService findFocus() {
-        JcrNodeModel model = (JcrNodeModel) getModel();
+        JcrNodeModel model = (JcrNodeModel) getDefaultModel();
         if (model == null || model.getItemModel() == null || model.getItemModel().getPath() == null) {
             return null;
         }

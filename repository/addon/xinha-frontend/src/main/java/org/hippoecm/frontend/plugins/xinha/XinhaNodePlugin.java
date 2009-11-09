@@ -40,7 +40,7 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
     }
 
     protected JcrPropertyValueModel getValueModel() {
-        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) getDefaultModel();
         try {
             Node node = nodeModel.getNode();
             if (node == null) {

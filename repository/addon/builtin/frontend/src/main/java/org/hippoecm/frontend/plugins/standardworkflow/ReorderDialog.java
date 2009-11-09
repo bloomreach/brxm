@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
@@ -32,7 +33,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -69,11 +70,11 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
     private WorkflowDescriptorModel model;
     private List<String> mapping;
 
-    static class ListItem extends AbstractReadOnlyModel {
+    static class ListItem implements IDetachable {
         private static final long serialVersionUID = 1L;
 
         private String name;
-        private IModel displayName;
+        private IModel<String> displayName;
         private AttributeModifier cellModifier;
         private AttributeModifier columnModifier;
         private JcrNodeModel nodeModel;
@@ -91,7 +92,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
             }
         }
 
-        public IModel getDisplayName() {
+        public IModel<String> getDisplayName() {
             return displayName;
         }
 
@@ -107,20 +108,14 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
             return columnModifier;
         }
 
-        @Override
         public void detach() {
             nodeModel.detach();
         }
 
         @Override
-        public Object getObject() {
-            return this;
-        }
-
-        @Override
         public boolean equals(Object other) {
             if (other instanceof ListItem) {
-                ListItem otherItem = (ListItem)other;
+                ListItem otherItem = (ListItem) other;
                 try {
                     return otherItem.nodeModel.getNode().isSame(nodeModel.getNode());
                 } catch (RepositoryException e) {
@@ -138,18 +133,18 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
         }
     }
 
-    static class ReorderDataProvider extends SortableDataProvider {
+    static class ReorderDataProvider extends SortableDataProvider<ListItem> {
         private static final long serialVersionUID = 1L;
 
         private LinkedList<ListItem> listItems;
 
         ReorderDataProvider(DocumentsProvider documents) {
             listItems = new LinkedList<ListItem>();
-            Iterator<IModel> it = documents.iterator(0, documents.size());
+            Iterator<Node> it = documents.iterator(0, documents.size());
             while (it.hasNext()) {
-                IModel entry = it.next();
+                IModel<Node> entry = documents.model(it.next());
                 if (entry instanceof JcrNodeModel) {
-                    listItems.add(new ListItem((JcrNodeModel)entry));
+                    listItems.add(new ListItem((JcrNodeModel) entry));
                 }
             }
         }
@@ -158,8 +153,8 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
             return listItems.subList(first, first + count).iterator();
         }
 
-        public IModel model(Object object) {
-            return (IModel)object;
+        public IModel<ListItem> model(ListItem object) {
+            return new Model<ListItem>(object);
         }
 
         public int size() {
@@ -167,7 +162,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
         }
 
         public void detach() {
-            for (IModel item : listItems) {
+            for (ListItem item : listItems) {
                 item.detach();
             }
         }
@@ -197,93 +192,87 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
         }
     }
 
-    class ReorderPanel extends WebMarkupContainer implements TableSelectionListener {
+    class ReorderPanel extends WebMarkupContainer implements TableSelectionListener<ListItem> {
         private static final long serialVersionUID = 1L;
 
-        private TableDefinition tableDefinition;
+        private TableDefinition<ListItem> tableDefinition;
         private ReorderDataProvider dataProvider;
-        private ListDataTable dataTable;
+        private ListDataTable<ListItem> dataTable;
         private ListPagingDefinition pagingDefinition;
-        private AjaxLink up;
-        private AjaxLink down;
+        private AjaxLink<Void> up;
+        private AjaxLink<Void> down;
 
         public ReorderPanel(String id, JcrNodeModel model, DocumentListFilter filter) {
             super(id);
             setOutputMarkupId(true);
 
-            List<ListColumn> columns = new ArrayList<ListColumn>();
+            List<ListColumn<ListItem>> columns = new ArrayList<ListColumn<ListItem>>();
 
-            ListColumn column = new ListColumn(new Model(""), "icon");
-            column.setRenderer(new EmptyRenderer());
-            column.setAttributeModifier(new IListAttributeModifier() {
+            ListColumn<ListItem> column = new ListColumn<ListItem>(new Model<String>(""), "icon");
+            column.setRenderer(new EmptyRenderer<ListItem>());
+            column.setAttributeModifier(new IListAttributeModifier<ListItem>() {
                 private static final long serialVersionUID = 1L;
 
-                public AttributeModifier[] getCellAttributeModifiers(IModel model) {
-                    if (model instanceof ListItem) {
-                        ListItem item = (ListItem)model.getObject();
-                        return new AttributeModifier[] {item.getCellModifier()};
-                    }
-                    return null;
+                public AttributeModifier[] getCellAttributeModifiers(IModel<ListItem> model) {
+                    ListItem item = (ListItem) model.getObject();
+                    return new AttributeModifier[] { item.getCellModifier() };
                 }
 
-                public AttributeModifier[] getColumnAttributeModifiers(IModel model) {
-                    if (model instanceof ListItem) {
-                        ListItem item = (ListItem)model.getObject();
-                        return new AttributeModifier[] {item.getColumnModifier()};
-                    }
-                    return null;
+                public AttributeModifier[] getColumnAttributeModifiers(IModel<ListItem> model) {
+                    ListItem item = (ListItem) model.getObject();
+                    return new AttributeModifier[] { item.getColumnModifier() };
                 }
             });
             columns.add(column);
 
-            column = new ListColumn(new Model(""), "name");
-            column.setRenderer(new IListCellRenderer() {
+            column = new ListColumn<ListItem>(new Model<String>(""), "name");
+            column.setRenderer(new IListCellRenderer<ListItem>() {
                 private static final long serialVersionUID = 1L;
 
-                public Component getRenderer(String id, IModel model) {
-                    if (model instanceof ListItem) {
-                        ListItem item = (ListItem)model;
-                        return new Label(id, item.getDisplayName());
-                    }
-                    return new Label(id);
+                public Component getRenderer(String id, IModel<ListItem> model) {
+                    ListItem item = (ListItem) model;
+                    return new Label(id, item.getDisplayName());
                 }
             });
             columns.add(column);
 
-            tableDefinition = new TableDefinition(columns, false);
-            DocumentsProvider documents = new DocumentsProvider(model, filter, new HashMap<String, Comparator<IModel>>());
+            tableDefinition = new TableDefinition<ListItem>(columns, false);
+            DocumentsProvider documents = new DocumentsProvider(model, filter, new HashMap<String, Comparator<Node>>());
             dataProvider = new ReorderDataProvider(documents);
 
             pagingDefinition = new ListPagingDefinition();
             pagingDefinition.setPageSize(dataProvider.size() > 0 ? dataProvider.size() : 1);
-            add(dataTable = new ListDataTable("table", tableDefinition, dataProvider, this, false, pagingDefinition));
+            add(dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, this, false,
+                    pagingDefinition));
 
-            up = new AjaxLink("up") {
+            up = new AjaxLink<Void>("up") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
-                    ListItem selection = (ListItem)dataTable.getModel();
-                    dataProvider.shiftUp(selection);
+                    IModel<ListItem> selection = dataTable.getModel();
+                    dataProvider.shiftUp(selection.getObject());
 
                     ReorderPanel panel = ReorderPanel.this;
-                    dataTable = new ListDataTable("table", tableDefinition, dataProvider, panel, false, pagingDefinition);
+                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, panel, false,
+                            pagingDefinition);
                     panel.replace(dataTable);
                     selectionChanged(selection);
                 }
             };
             add(up);
 
-            down = new AjaxLink("down") {
+            down = new AjaxLink<Void>("down") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
-                    ListItem selection = (ListItem)dataTable.getModel();
-                    dataProvider.shiftDown(selection);
+                    IModel<ListItem> selection = dataTable.getModel();
+                    dataProvider.shiftDown(selection.getObject());
 
                     ReorderPanel panel = ReorderPanel.this;
-                    dataTable = new ListDataTable("table", tableDefinition, dataProvider, panel, false, pagingDefinition);
+                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, panel, false,
+                            pagingDefinition);
                     panel.replace(dataTable);
                     selectionChanged(selection);
                 }
@@ -292,15 +281,15 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
 
             if (dataProvider.size() > 0) {
                 ListItem selection = dataProvider.iterator(0, 1).next();
-                selectionChanged(selection);
+                selectionChanged(dataProvider.model(selection));
             } else {
                 up.setEnabled(false);
                 down.setEnabled(false);
             }
         }
 
-        public void selectionChanged(IModel model) {
-            ListItem item = (ListItem)model;
+        public void selectionChanged(IModel<ListItem> model) {
+            ListItem item = model.getObject();
             long position = -1;
             int size = dataProvider.size();
             Iterator<ListItem> siblings = dataProvider.iterator(0, size);
@@ -321,7 +310,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
             dataTable.setModel(model);
             IRequestTarget target = RequestCycle.get().getRequestTarget();
             if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
-                ((AjaxRequestTarget)target).addComponent(this);
+                ((AjaxRequestTarget) target).addComponent(this);
             }
         }
 
@@ -330,7 +319,8 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
         }
     }
 
-    ReorderDialog(CompatibilityWorkflowPlugin.WorkflowAction action, IPluginConfig pluginConfig, WorkflowDescriptorModel model, List<String> mapping) {
+    ReorderDialog(CompatibilityWorkflowPlugin.WorkflowAction action, IPluginConfig pluginConfig,
+            WorkflowDescriptorModel model, List<String> mapping) {
         action.super();
         this.model = model;
         this.mapping = mapping;
@@ -345,7 +335,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
             log.error(e.getMessage(), e);
             name = "";
         }
-        add(new Label("message", new StringResourceModel("reorder-message", this, null, new Object[] {name})));
+        add(new Label("message", new StringResourceModel("reorder-message", this, null, new Object[] { name })));
     }
 
     @Override

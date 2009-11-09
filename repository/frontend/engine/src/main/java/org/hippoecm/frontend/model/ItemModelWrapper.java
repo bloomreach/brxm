@@ -20,7 +20,7 @@ import javax.jcr.Item;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
-public abstract class ItemModelWrapper implements IChainingModel {
+public abstract class ItemModelWrapper<T extends Item> implements IChainingModel<T> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -46,21 +46,22 @@ public abstract class ItemModelWrapper implements IChainingModel {
 
     // Implement IChainingModel
 
-    public IModel getChainedModel() {
+    public IModel<Item> getChainedModel() {
         return itemModel;
     }
 
-    public void setChainedModel(IModel model) {
+    public void setChainedModel(IModel<?> model) {
         if (model instanceof JcrItemModel) {
             itemModel = (JcrItemModel) model;
         }
     }
 
-    public Object getObject() {
-        return itemModel.getObject();
+    @SuppressWarnings("unchecked")
+    public T getObject() {
+        return (T) itemModel.getObject();
     }
 
-    public void setObject(Object object) {
+    public void setObject(T object) {
         throw new UnsupportedOperationException("Cannot alter the item of an " + getClass());
     }
 

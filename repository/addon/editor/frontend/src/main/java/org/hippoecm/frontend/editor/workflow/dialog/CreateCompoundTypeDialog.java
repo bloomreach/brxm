@@ -46,7 +46,7 @@ public class CreateCompoundTypeDialog extends CreateTypeDialog {
         public void applyState() {
             try {
                 // NamespaceValidator only allows programming by exception
-                NamespaceValidator.checkName((String)((PropertyModel)nameComponent.getModel()).getObject());
+                NamespaceValidator.checkName((String)((PropertyModel)nameComponent.getDefaultModel()).getObject());
                 setComplete(true);
             } catch (Exception ex) {
                 setComplete(false);

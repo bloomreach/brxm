@@ -157,7 +157,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         public CopyModelDialog(CompatibilityWorkflowPlugin.WorkflowAction action) {
             action.super();
-            WorkflowDescriptorModel workflowModel = (WorkflowDescriptorModel) EditmodelWorkflowPlugin.this.getModel();
+            WorkflowDescriptorModel workflowModel = (WorkflowDescriptorModel) EditmodelWorkflowPlugin.this.getDefaultModel();
             PropertyModel model = new PropertyModel(action, "name");
             try {
                 model.setObject(name = workflowModel.getNode().getName());

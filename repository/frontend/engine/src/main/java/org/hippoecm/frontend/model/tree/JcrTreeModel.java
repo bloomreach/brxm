@@ -28,13 +28,12 @@ import javax.swing.tree.TreePath;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.event.JcrEvent;
+import org.hippoecm.frontend.model.tree.ObservableTreeModel.ObservableTreeModelEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrTreeModel implements IJcrTreeModel, IObserver {
+public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -50,15 +49,15 @@ public class JcrTreeModel implements IJcrTreeModel, IObserver {
         listeners = new LinkedList<TreeModelListener>();
     }
 
-    public IObservable getObservable() {
+    public ObservableTreeModel getObservable() {
         return jcrTreeModel;
     }
 
-    public void onEvent(Iterator<? extends IEvent> iter) {
+    public void onEvent(Iterator<? extends IEvent<ObservableTreeModel>> iter) {
         while (iter.hasNext()) {
-            IEvent event = iter.next();
-            if (event instanceof JcrEvent) {
-                Event jcrEvent = ((JcrEvent) event).getEvent();
+            IEvent<ObservableTreeModel> event = iter.next();
+            if (event instanceof ObservableTreeModelEvent) {
+                Event jcrEvent = ((ObservableTreeModelEvent) event).getJcrEvent().getEvent();
                 try {
                     TreeModelEvent tme = newTreeModelEvent(jcrEvent);
                     if (tme != null) {

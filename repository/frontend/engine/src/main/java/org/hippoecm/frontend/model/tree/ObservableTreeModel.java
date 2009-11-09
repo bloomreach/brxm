@@ -28,8 +28,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.model.event.JcrEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +49,27 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
 
     private static final long serialVersionUID = 1L;
 
+    public class ObservableTreeModelEvent implements IEvent<ObservableTreeModel> {
+
+        private JcrEvent jcrEvent;
+
+        public ObservableTreeModelEvent(JcrEvent event) {
+            this.jcrEvent = event;
+        }
+
+        public JcrEvent getJcrEvent() {
+            return jcrEvent;
+        }
+
+        public ObservableTreeModel getSource() {
+            return ObservableTreeModel.this;
+        }
+
+    }
+
     final static Logger log = LoggerFactory.getLogger(ObservableTreeModel.class);
 
-    private IObservationContext observationContext;
+    private IObservationContext<ObservableTreeModel> observationContext;
     private JcrEventListener listener;
     protected final IJcrTreeNode root;
 
@@ -89,13 +111,33 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
         root.detach();
     }
 
-    public void setObservationContext(IObservationContext context) {
-        this.observationContext = context;
+    @SuppressWarnings("unchecked")
+    public void setObservationContext(IObservationContext<? extends IObservable> context) {
+        this.observationContext = (IObservationContext<ObservableTreeModel>) context;
     }
 
     public void startObservation() {
-        listener = new JcrEventListener(observationContext, Event.NODE_ADDED | Event.NODE_REMOVED, root.getNodeModel()
-                .getItemModel().getPath(), true, null, null);
+        listener = new JcrEventListener(new IObservationContext<JcrNodeModel>() {
+            private static final long serialVersionUID = 1L;
+
+            public void notifyObservers(EventCollection<IEvent<JcrNodeModel>> events) {
+                EventCollection<IEvent<ObservableTreeModel>> treeModelEvents = new EventCollection<IEvent<ObservableTreeModel>>();
+                for (IEvent<JcrNodeModel> event : events) {
+                    IEvent<ObservableTreeModel> treeModelEvent = new ObservableTreeModelEvent((JcrEvent) event);
+                    treeModelEvents.add(treeModelEvent);
+                }
+                observationContext.notifyObservers(treeModelEvents);
+            }
+
+            public void registerObserver(IObserver<?> observer) {
+                observationContext.registerObserver(observer);
+            }
+
+            public void unregisterObserver(IObserver<?> observer) {
+                observationContext.registerObserver(observer);
+
+            }
+        }, Event.NODE_REMOVED | Event.NODE_ADDED, root.getNodeModel().getItemModel().getPath(), true, null, null);
         listener.start();
     }
 
@@ -115,7 +157,7 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
     public void removeTreeModelListener(TreeModelListener l) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ObservableTreeModel) {
@@ -128,5 +170,5 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
     public int hashCode() {
         return new HashCodeBuilder(13, 67).append(root).toHashCode();
     }
-    
+
 }

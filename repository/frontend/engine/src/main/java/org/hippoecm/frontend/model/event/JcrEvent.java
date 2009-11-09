@@ -22,7 +22,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrEvent implements IEvent {
+public class JcrEvent implements IEvent<JcrNodeModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -38,7 +38,7 @@ public class JcrEvent implements IEvent {
         return event;
     }
     
-    public IObservable getSource() {
+    public JcrNodeModel getSource() {
         try {
             return new JcrNodeModel(event.getPath());
         } catch (RepositoryException ex) {

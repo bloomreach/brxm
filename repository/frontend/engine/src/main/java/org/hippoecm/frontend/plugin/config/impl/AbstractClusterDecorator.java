@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
@@ -33,7 +32,7 @@ public abstract class AbstractClusterDecorator extends AbstractPluginDecorator i
 
     private static final long serialVersionUID = 1L;
 
-    private IObserver observer;
+    private IObserver<IClusterConfig> observer;
     
     public AbstractClusterDecorator(IClusterConfig upstream) {
         super(upstream);
@@ -43,6 +42,7 @@ public abstract class AbstractClusterDecorator extends AbstractPluginDecorator i
         return (IClusterConfig) upstream;
     }
 
+    @SuppressWarnings("unchecked")
     public List<IPluginConfig> getPlugins() {
         return (List<IPluginConfig>) wrap(getUpstream().getPlugins());
     }
@@ -59,28 +59,34 @@ public abstract class AbstractClusterDecorator extends AbstractPluginDecorator i
         return getUpstream().getServices();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    protected IObservationContext<IClusterConfig> getObservationContext() {
+        return (IObservationContext<IClusterConfig>) super.getObservationContext();
+    }
+    
     @Override
     public void startObservation() {
         super.startObservation();
-        IObservationContext obContext = getObservationContext();
-        obContext.registerObserver(observer = new IObserver() {
+        final IObservationContext<IClusterConfig> obContext = getObservationContext();
+        obContext.registerObserver(observer = new IObserver<IClusterConfig>() {
             private static final long serialVersionUID = 1L;
 
-            public IObservable getObservable() {
-                return upstream;
+            public IClusterConfig getObservable() {
+                return getUpstream();
             }
 
-            public void onEvent(Iterator<? extends IEvent> events) {
-                EventCollection<ClusterConfigEvent> collection = new EventCollection<ClusterConfigEvent>();
+            public void onEvent(Iterator<? extends IEvent<IClusterConfig>> events) {
+                EventCollection<IEvent<IClusterConfig>> collection = new EventCollection<IEvent<IClusterConfig>>();
                 while (events.hasNext()) {
-                    IEvent event = events.next();
+                    IEvent<IClusterConfig> event = events.next();
                     if (event instanceof ClusterConfigEvent) {
                         ClusterConfigEvent cce = (ClusterConfigEvent) event;
                         collection.add(new ClusterConfigEvent(AbstractClusterDecorator.this, wrapConfig(cce.getPlugin()), cce.getType()));
                     }
                 }
                 if (collection.size() > 0) {
-                    getObservationContext().notifyObservers(collection);
+                    obContext.notifyObservers(collection);
                 }
             }
             
@@ -89,7 +95,7 @@ public abstract class AbstractClusterDecorator extends AbstractPluginDecorator i
 
     @Override
     public void stopObservation() {
-        IObservationContext obContext = getObservationContext();
+        IObservationContext<IClusterConfig> obContext = getObservationContext();
         obContext.unregisterObserver(observer);
         super.stopObservation();
     }
