@@ -16,8 +16,6 @@
 package org.hippoecm.hst.services.support.jaxrs.content;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import javax.jcr.Node;
@@ -27,8 +25,6 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.commons.lang.StringUtils;
 
 @XmlRootElement(name = "node")
 public class NodeContent extends ItemContent {
@@ -103,33 +99,6 @@ public class NodeContent extends ItemContent {
     
     public void setNode(NodeContent [] nodeContents) {
         this.nodeContents = nodeContents;
-    }
-    
-    public void buildUrl(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
-        if (encoding == null) {
-            encoding = "ISO-8859-1";
-        }
-        
-        String relativeContentPath = "";
-        
-        String path = getPath();
-        
-        if (path != null && path.startsWith(siteContentPath)) {
-            relativeContentPath = path.substring(siteContentPath.length());
-        }
-        
-        if (relativeContentPath != null) {
-            StringBuilder relativeContentPathBuilder = new StringBuilder(relativeContentPath.length());
-            String [] pathParts = StringUtils.splitPreserveAllTokens(StringUtils.removeStart(relativeContentPath, "/"), '/');
-            
-            for (String pathPart : pathParts) {
-                relativeContentPathBuilder.append('/').append(URLEncoder.encode(pathPart, encoding));
-            }
-            
-            relativeContentPath = relativeContentPathBuilder.toString();
-        }
-        
-        setUrl(URI.create(urlBase + relativeContentPath));
     }
     
     public void buildChildUrls(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {

@@ -17,6 +17,8 @@ package org.hippoecm.hst.services.support.jaxrs.content;
 
 import java.util.List;
 
+import javax.jcr.Item;
+import javax.jcr.Property;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -33,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 @Path("/contentservice/")
 public class ContentService extends BaseHstContentService {
+    
+    private static final String SERVICE_PATH = StringUtils.removeEnd(ContentService.class.getAnnotation(Path.class).value(), "/");
     
     private static Logger log = LoggerFactory.getLogger(ContentService.class);
     
@@ -52,8 +56,8 @@ public class ContentService extends BaseHstContentService {
             if (bean != null) {
                 beanContent = createHippoBeanContent(bean);
                 String encoding = servletRequest.getCharacterEncoding();
-                beanContent.buildUrl(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
-                beanContent.buildChildUrls(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
+                beanContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(), encoding);
+                beanContent.buildChildUrls(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(), encoding);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -68,19 +72,29 @@ public class ContentService extends BaseHstContentService {
     
     @GET
     @Path("/{path:.*}")
-    public HippoBeanContent getContentNode(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments) {
+    public ItemContent getContentItem(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
-        HippoBeanContent beanContent = new HippoBeanContent();
+        ItemContent itemContent = new ItemContent();
         
         try {
-            ContentPersistenceManager cpm = getContentPersistenceManager();
-            HippoBean bean = (HippoBean) cpm.getObject(itemPath);
+            Item item = getHstRequestContext().getSession().getItem(itemPath);
             
-            if (bean != null) {
-                beanContent = createHippoBeanContent(bean);
+            if (item.isNode()) {
+                ContentPersistenceManager cpm = getContentPersistenceManager();
+                HippoBean bean = (HippoBean) cpm.getObject(itemPath);
+                
+                if (bean != null) {
+                    HippoBeanContent beanContent = createHippoBeanContent(bean);
+                    String encoding = servletRequest.getCharacterEncoding();
+                    beanContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(), encoding);
+                    beanContent.buildChildUrls(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(), encoding);
+                    itemContent = beanContent;
+                }
+            } else {
+                PropertyContent propContent = new PropertyContent((Property) item);
                 String encoding = servletRequest.getCharacterEncoding();
-                beanContent.buildUrl(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
-                beanContent.buildChildUrls(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
+                propContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(), encoding);
+                itemContent = propContent;
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -90,57 +104,7 @@ public class ContentService extends BaseHstContentService {
             }
         }
         
-        return beanContent;
-    }
-    
-    @GET
-    @Path("/property/uuid/{uuid}/{property}")
-    public PropertyContent getContentPropertyByUUID(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("uuid") String uuid, @PathParam("property") String propertyName) {
-        PropertyContent propContent = new PropertyContent();
-        HippoBeanContent beanContent = getContentNodeByUUID(servletRequest, uriInfo, uuid);
-        
-        if (beanContent.getBean() != null) {
-            try {
-                propContent = new PropertyContent(beanContent.getBean().getNode().getProperty(propertyName));
-                String encoding = servletRequest.getCharacterEncoding();
-                propContent.buildUrl(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Failed to retrieve content bean property.", e);
-                } else {
-                    log.warn("Failed to retrieve content bean property. {}", e.toString());
-                }
-            }
-        }
-        
-        return propContent;
-    }
-    
-    @GET
-    @Path("/property/{path:.*}")
-    public PropertyContent getContentProperty(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments) {
-        PropertyContent propContent = new PropertyContent();
-        
-        PathSegment propertyPathSegment = pathSegments.remove(pathSegments.size() - 1);
-        String propertyName = StringUtils.removeStart(propertyPathSegment.getPath(), "/");
-        
-        HippoBeanContent beanContent = getContentNode(servletRequest, uriInfo, pathSegments);
-        
-        if (beanContent.getBean() != null) {
-            try {
-                propContent = new PropertyContent(beanContent.getBean().getNode().getProperty(propertyName));
-                String encoding = servletRequest.getCharacterEncoding();
-                propContent.buildUrl(getRequestURIBase(uriInfo) + "/contentservice", getSiteContentPath(), encoding);
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Failed to retrieve content bean property.", e);
-                } else {
-                    log.warn("Failed to retrieve content bean property. {}", e.toString());
-                }
-            }
-        }
-        
-        return propContent;
+        return itemContent;
     }
     
 }

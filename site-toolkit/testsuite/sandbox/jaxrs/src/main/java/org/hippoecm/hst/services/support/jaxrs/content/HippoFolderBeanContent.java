@@ -17,18 +17,24 @@ package org.hippoecm.hst.services.support.jaxrs.content;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
+import org.hippoecm.repository.api.HippoNodeType;
 
 @XmlRootElement(name = "folder")
 public class HippoFolderBeanContent extends HippoBeanContent {
     
     private HippoFolderBeanContent [] folderBeanContents;
     private HippoDocumentBeanContent [] documentBeanContents;
+    private NodeContent [] nodeContents;
     
     public HippoFolderBeanContent() {
         super();
@@ -45,27 +51,50 @@ public class HippoFolderBeanContent extends HippoBeanContent {
     public HippoFolderBeanContent(HippoFolderBean bean) throws RepositoryException {
         super(bean);
         
+        Set<String> childNodePathSet = new HashSet<String>();
+        
         ArrayList<HippoFolderBeanContent> folderBeanContentList = new ArrayList<HippoFolderBeanContent>();
         
         for (HippoFolderBean fldrBean : bean.getFolders()) {
             if (fldrBean != null) {
                 folderBeanContentList.add(new HippoFolderBeanContent(fldrBean.getName(), fldrBean.getPath()));
+                childNodePathSet.add(fldrBean.getPath());
             }
         }
         
-        folderBeanContents = new HippoFolderBeanContent[folderBeanContentList.size()];
-        folderBeanContents = folderBeanContentList.toArray(folderBeanContents);
+        if (!folderBeanContentList.isEmpty()) {
+            folderBeanContents = new HippoFolderBeanContent[folderBeanContentList.size()];
+            folderBeanContents = folderBeanContentList.toArray(folderBeanContents);
+        }
         
         ArrayList<HippoDocumentBeanContent> documentBeanContentList = new ArrayList<HippoDocumentBeanContent>();
         
         for (HippoDocumentBean docBean : bean.getDocuments()) {
             if (docBean != null) {
                 documentBeanContentList.add(new HippoDocumentBeanContent(docBean.getName(), docBean.getPath()));
+                childNodePathSet.add(docBean.getPath());
             }
         }
         
-        documentBeanContents = new HippoDocumentBeanContent[documentBeanContentList.size()];
-        documentBeanContents = documentBeanContentList.toArray(documentBeanContents);
+        if (!documentBeanContentList.isEmpty()) {
+            documentBeanContents = new HippoDocumentBeanContent[documentBeanContentList.size()];
+            documentBeanContents = documentBeanContentList.toArray(documentBeanContents);
+        }
+
+        ArrayList<NodeContent> nodeContentList = new ArrayList<NodeContent>();
+        
+        for (NodeIterator nodeIt = bean.getNode().getNodes(); nodeIt.hasNext(); ) {
+            Node childNode = nodeIt.nextNode();
+            
+            if (childNode != null && !childNode.isNodeType(HippoNodeType.NT_HANDLE) && !childNodePathSet.contains(childNode.getPath())) {
+                nodeContentList.add(new NodeContent(childNode.getName(), childNode.getPath()));
+            }
+        }
+        
+        if (!nodeContentList.isEmpty()) {
+            nodeContents = new NodeContent[nodeContentList.size()];
+            nodeContents = nodeContentList.toArray(nodeContents);
+        }
     }
     
     public HippoFolderBeanContent [] getFolder() {
@@ -109,7 +138,7 @@ public class HippoFolderBeanContent extends HippoBeanContent {
     
     @Override
     public NodeContent [] getNode() {
-        return null;
+        return nodeContents;
     }
     
 }

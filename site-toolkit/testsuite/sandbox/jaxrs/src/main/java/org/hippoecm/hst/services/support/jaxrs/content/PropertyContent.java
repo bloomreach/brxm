@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLEncoder;
 import java.util.Calendar;
 
 import javax.jcr.Property;
@@ -27,7 +24,6 @@ import javax.jcr.Value;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,36 +160,6 @@ public class PropertyContent extends ItemContent {
         }
         
         return ;
-    }
-
-    public void buildUrl(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
-        if (encoding == null) {
-            encoding = "ISO-8859-1";
-        }
-        
-        String relativeContentPath = "";
-        
-        String path = getPath();
-        
-        if (path != null && path.startsWith(siteContentPath)) {
-            relativeContentPath = path.substring(siteContentPath.length());
-        }
-        
-        if (relativeContentPath != null) {
-            StringBuilder relativeContentPathBuilder = new StringBuilder(relativeContentPath.length());
-            String [] pathParts = StringUtils.splitPreserveAllTokens(StringUtils.removeStart(relativeContentPath, "/"), '/');
-            
-            for (int i = 0; i < pathParts.length - 1; i++) {
-                String pathPart = pathParts[i];
-                relativeContentPathBuilder.append('/').append(URLEncoder.encode(pathPart, encoding));
-            }
-            
-            relativeContentPathBuilder.append('/').append(pathParts[pathParts.length - 1]);
-            
-            relativeContentPath = relativeContentPathBuilder.toString();
-        }
-        
-        setUrl(URI.create(urlBase + "/property" + relativeContentPath));
     }
 
 }
