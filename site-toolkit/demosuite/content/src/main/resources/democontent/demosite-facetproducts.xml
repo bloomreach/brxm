@@ -20,10 +20,22 @@
     <sv:property sv:name="hippo:docbase" sv:type="String">
         <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:facets" sv:type="String">
-        <sv:value>demosite:brand</sv:value>
-        <sv:value>demosite:type</sv:value>
-        <sv:value>demosite:color</sv:value>
-        <sv:value>demosite:product</sv:value>
-    </sv:property>
+        <sv:property sv:name="hippo:facets" sv:type="String">
+            <sv:value>demosite:brand</sv:value>
+            <sv:value>demosite:type</sv:value>
+            <sv:value>demosite:color</sv:value>
+            <sv:value>demosite:product</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:facets" sv:type="String">
+            <sv:value>demosite:brand</sv:value>
+            <sv:value>demosite:type</sv:value>
+            <sv:value>demosite:color</sv:value>
+            <sv:value>demosite:product</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:facetnodenames" sv:type="String">
+            <sv:value>brand</sv:value>
+            <sv:value>type</sv:value>
+            <sv:value>color</sv:value>
+            <sv:value>product</sv:value>
+        </sv:property>
 </sv:node>
