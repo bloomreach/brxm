@@ -35,7 +35,7 @@ public class PropertyContent extends ItemContent {
     private int type;
     private String typeName;
     private String multiple;
-    private Object [] value;
+    private Object [] values;
     
     public PropertyContent() {
         super();
@@ -76,12 +76,12 @@ public class PropertyContent extends ItemContent {
         this.multiple = multiple;
     }
     
-    public Object [] getValue() {
-        return value;
+    public Object [] getValues() {
+        return values;
     }
     
-    public void setValue(Object [] value) {
-        this.value = value;
+    public void setValues(Object [] values) {
+        this.values = values;
     }
     
     private void loadPropertyValues(Property p) {
@@ -92,66 +92,66 @@ public class PropertyContent extends ItemContent {
             case PropertyType.BOOLEAN: 
                 if (isMultiple) {
                     Value [] values = p.getValues();
-                    this.value = new Boolean[values.length];
+                    this.values = new Boolean[values.length];
                     int i = 0;
                     for (Value val : values) {
-                        this.value[i] = val.getBoolean();
+                        this.values[i] = val.getBoolean();
                         i++;
                     }
                 } else {
-                    this.value = new Boolean [] { p.getBoolean() };
+                    this.values = new Boolean [] { p.getBoolean() };
                 }
                 break;
             case PropertyType.STRING:
                 if (isMultiple) {
                     Value [] values = p.getValues();
-                    this.value = new String[values.length];
+                    this.values = new String[values.length];
                     int i = 0;
                     for (Value val : values) {
-                        this.value[i] = val.getString();
+                        this.values[i] = val.getString();
                         i++;
                     }
                 } else {
-                    this.value = new String [] { p.getString() };
+                    this.values = new String [] { p.getString() };
                 }
                 break;
             case PropertyType.LONG :
                 if (isMultiple) {
                     Value [] values = p.getValues();
-                    this.value = new Long[values.length];
+                    this.values = new Long[values.length];
                     int i = 0;
                     for (Value val : values) {
-                        this.value[i] = val.getLong();
+                        this.values[i] = val.getLong();
                         i++;
                     }
                 } else {
-                    this.value = new Long [] { p.getLong() };
+                    this.values = new Long [] { p.getLong() };
                 }
                 break;
             case PropertyType.DOUBLE :
                 if (isMultiple) {
                     Value [] values = p.getValues();
-                    this.value = new Double[values.length];
+                    this.values = new Double[values.length];
                     int i = 0;
                     for (Value val : values) {
-                        this.value[i] = val.getDouble();
+                        this.values[i] = val.getDouble();
                         i++;
                     }
                 } else {
-                    this.value = new Double [] { p.getDouble() };
+                    this.values = new Double [] { p.getDouble() };
                 }
                 break;
             case PropertyType.DATE :
                 if (isMultiple) {
                     Value [] values = p.getValues();
-                    this.value = new Calendar[values.length];
+                    this.values = new Calendar[values.length];
                     int i = 0;
                     for(Value val : values) {
-                        this.value[i] = val.getDate();
+                        this.values[i] = val.getDate();
                         i++;
                     }
                 } else {
-                    this.value = new Calendar [] { p.getDate() };
+                    this.values = new Calendar [] { p.getDate() };
                 }
                 break;
             }

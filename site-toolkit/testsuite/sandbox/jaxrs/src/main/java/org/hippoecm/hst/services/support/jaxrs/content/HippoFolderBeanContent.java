@@ -17,12 +17,15 @@ package org.hippoecm.hst.services.support.jaxrs.content;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
@@ -32,9 +35,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 @XmlRootElement(name = "folder")
 public class HippoFolderBeanContent extends HippoBeanContent {
     
-    private HippoFolderBeanContent [] folderBeanContents;
-    private HippoDocumentBeanContent [] documentBeanContents;
-    private NodeContent [] nodeContents;
+    private Collection<HippoFolderBeanContent> childFolderBeanContents;
+    private Collection<HippoDocumentBeanContent> childDocumentBeanContents;
+    private Collection<NodeContent> childNodeContents;
     
     public HippoFolderBeanContent() {
         super();
@@ -53,69 +56,56 @@ public class HippoFolderBeanContent extends HippoBeanContent {
         
         Set<String> childNodePathSet = new HashSet<String>();
         
-        ArrayList<HippoFolderBeanContent> folderBeanContentList = new ArrayList<HippoFolderBeanContent>();
+        childFolderBeanContents = new ArrayList<HippoFolderBeanContent>();
         
         for (HippoFolderBean fldrBean : bean.getFolders()) {
             if (fldrBean != null) {
-                folderBeanContentList.add(new HippoFolderBeanContent(fldrBean.getName(), fldrBean.getPath()));
+                childFolderBeanContents.add(new HippoFolderBeanContent(fldrBean.getName(), fldrBean.getPath()));
                 childNodePathSet.add(fldrBean.getPath());
             }
         }
         
-        if (!folderBeanContentList.isEmpty()) {
-            folderBeanContents = new HippoFolderBeanContent[folderBeanContentList.size()];
-            folderBeanContents = folderBeanContentList.toArray(folderBeanContents);
-        }
-        
-        ArrayList<HippoDocumentBeanContent> documentBeanContentList = new ArrayList<HippoDocumentBeanContent>();
+        childDocumentBeanContents = new ArrayList<HippoDocumentBeanContent>();
         
         for (HippoDocumentBean docBean : bean.getDocuments()) {
             if (docBean != null) {
-                documentBeanContentList.add(new HippoDocumentBeanContent(docBean.getName(), docBean.getPath()));
+                childDocumentBeanContents.add(new HippoDocumentBeanContent(docBean.getName(), docBean.getPath()));
                 childNodePathSet.add(docBean.getPath());
             }
         }
-        
-        if (!documentBeanContentList.isEmpty()) {
-            documentBeanContents = new HippoDocumentBeanContent[documentBeanContentList.size()];
-            documentBeanContents = documentBeanContentList.toArray(documentBeanContents);
-        }
 
-        ArrayList<NodeContent> nodeContentList = new ArrayList<NodeContent>();
+        childNodeContents = new ArrayList<NodeContent>();
         
         for (NodeIterator nodeIt = bean.getNode().getNodes(); nodeIt.hasNext(); ) {
             Node childNode = nodeIt.nextNode();
             
             if (childNode != null && !childNode.isNodeType(HippoNodeType.NT_HANDLE) && !childNodePathSet.contains(childNode.getPath())) {
-                nodeContentList.add(new NodeContent(childNode.getName(), childNode.getPath()));
+                childNodeContents.add(new NodeContent(childNode.getName(), childNode.getPath()));
             }
         }
-        
-        if (!nodeContentList.isEmpty()) {
-            nodeContents = new NodeContent[nodeContentList.size()];
-            nodeContents = nodeContentList.toArray(nodeContents);
-        }
     }
     
-    public HippoFolderBeanContent [] getFolder() {
-        return folderBeanContents;
+    @XmlElements(@XmlElement(name="folder"))
+    public Collection<HippoFolderBeanContent> getChildFolderBeanContents() {
+        return childFolderBeanContents;
     }
     
-    public void setFolder(HippoFolderBeanContent [] folderBeanContents) {
-        this.folderBeanContents = folderBeanContents;
+    public void setChildFolderBeanContents(Collection<HippoFolderBeanContent> childFolderBeanContents) {
+        this.childFolderBeanContents = childFolderBeanContents;
     }
     
-    public HippoDocumentBeanContent [] getDocument() {
-        return documentBeanContents;
+    @XmlElements(@XmlElement(name="document"))
+    public Collection<HippoDocumentBeanContent> getChildDocumentBeanContents() {
+        return childDocumentBeanContents;
     }
     
-    public void setDocument(HippoDocumentBeanContent [] documentBeanContents) {
-        this.documentBeanContents = documentBeanContents;
+    public void setChildDocumentBeanContents(Collection<HippoDocumentBeanContent> childDocumentBeanContents) {
+        this.childDocumentBeanContents = childDocumentBeanContents;
     }
     
     @Override
     public void buildChildUrls(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
-        PropertyContent [] propertyContents = getProperty();
+        Collection<PropertyContent> propertyContents = getPropertyContents();
         
         if (propertyContents != null) {
             for (PropertyContent propertyContent : propertyContents) {
@@ -123,22 +113,22 @@ public class HippoFolderBeanContent extends HippoBeanContent {
             }
         }
         
-        if (folderBeanContents != null) {
-            for (HippoFolderBeanContent folderContent : folderBeanContents) {
+        if (childFolderBeanContents != null) {
+            for (HippoFolderBeanContent folderContent : childFolderBeanContents) {
                 folderContent.buildUrl(urlBase, siteContentPath, encoding);
             }
         }
         
-        if (documentBeanContents != null) {
-            for (HippoDocumentBeanContent documentContent : documentBeanContents) {
+        if (childDocumentBeanContents != null) {
+            for (HippoDocumentBeanContent documentContent : childDocumentBeanContents) {
                 documentContent.buildUrl(urlBase, siteContentPath, encoding);
             }
         }
     }
     
     @Override
-    public NodeContent [] getNode() {
-        return nodeContents;
+    public Collection<NodeContent> getChildNodeContents() {
+        return childNodeContents;
     }
     
 }

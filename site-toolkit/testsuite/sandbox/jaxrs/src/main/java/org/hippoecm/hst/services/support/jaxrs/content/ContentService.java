@@ -21,10 +21,12 @@ import javax.jcr.Item;
 import javax.jcr.Property;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
@@ -105,6 +107,27 @@ public class ContentService extends BaseHstContentService {
         }
         
         return itemContent;
+    }
+    
+    @POST
+    @Path("/{path:.*}")
+    public Response addDocument(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, HippoDocumentBeanContent documentBeanContent) {
+        String itemPath = getContentItemPath(servletRequest, pathSegments);
+        
+        try {
+            ContentPersistenceManager cpm = getContentPersistenceManager();
+            int offset = itemPath.lastIndexOf('/');
+            String folderPath = itemPath.substring(0, offset);
+            cpm.create(folderPath, "collab:wikipage", documentBeanContent.getName(), true);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve save bean.", e);
+            } else {
+                log.warn("Failed to retrieve save bean. {}", e.toString());
+            }
+        }
+        
+        return Response.ok(documentBeanContent).build();
     }
     
 }

@@ -17,6 +17,8 @@ package org.hippoecm.hst.services.support.jaxrs.content;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -24,14 +26,16 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "node")
 public class NodeContent extends ItemContent {
     
     private String uuid;
-    private PropertyContent [] propertyContents;
-    private NodeContent [] nodeContents;
+    private Collection<PropertyContent> propertyContents;
+    private Collection<NodeContent> childNodeContents;
     
     public NodeContent() {
         super();
@@ -52,28 +56,22 @@ public class NodeContent extends ItemContent {
             this.uuid = node.getUUID();
         }
         
-        ArrayList<PropertyContent> propContentList = new ArrayList<PropertyContent>();
+        propertyContents = new ArrayList<PropertyContent>();
         
         for (PropertyIterator it = node.getProperties(); it.hasNext(); ) {
             Property prop = it.nextProperty();
-            propContentList.add(new PropertyContent(prop.getName(), prop.getPath()));
+            propertyContents.add(new PropertyContent(prop.getName(), prop.getPath()));
         }
         
-        this.propertyContents = new PropertyContent[propContentList.size()];
-        this.propertyContents = propContentList.toArray(this.propertyContents);
-        
-        ArrayList<NodeContent> nodeContentList = new ArrayList<NodeContent>();
+        childNodeContents = new ArrayList<NodeContent>();
         
         for (NodeIterator it = node.getNodes(); it.hasNext(); ) {
             Node childNode = it.nextNode();
             
             if (childNode != null) {
-                nodeContentList.add(new NodeContent(childNode.getName(), childNode.getPath()));
+                childNodeContents.add(new NodeContent(childNode.getName(), childNode.getPath()));
             }
         }
-        
-        nodeContents = new NodeContent[nodeContentList.size()];
-        nodeContents = nodeContentList.toArray(nodeContents);
     }
     
     @XmlAttribute
@@ -85,20 +83,22 @@ public class NodeContent extends ItemContent {
         this.uuid = uuid;
     }
     
-    public PropertyContent [] getProperty() {
+    @XmlElements(@XmlElement(name="property"))
+    public Collection<PropertyContent> getPropertyContents() {
         return propertyContents;
     }
     
-    public void setProperty(PropertyContent [] propertyContents) {
+    public void setPropertyContents(Collection<PropertyContent> propertyContents) {
         this.propertyContents = propertyContents;
     }
     
-    public NodeContent [] getNode() {
-        return nodeContents;
+    @XmlElements(@XmlElement(name="node"))
+    public Collection<NodeContent> getChildNodeContents() {
+        return childNodeContents;
     }
     
-    public void setNode(NodeContent [] nodeContents) {
-        this.nodeContents = nodeContents;
+    public void setChildNodeContents(List<NodeContent> childNodeContents) {
+        this.childNodeContents = childNodeContents;
     }
     
     public void buildChildUrls(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
@@ -108,8 +108,8 @@ public class NodeContent extends ItemContent {
             }
         }
         
-        if (nodeContents != null) {
-            for (NodeContent nodeContent : nodeContents) {
+        if (childNodeContents != null) {
+            for (NodeContent nodeContent : childNodeContents) {
                 nodeContent.buildUrl(urlBase, siteContentPath, encoding);
             }
         }
