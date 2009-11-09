@@ -61,7 +61,7 @@ class ReferenceEditor extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget requestTarget) {
                         EditorPlugin plugin = (EditorPlugin) findParent(EditorPlugin.class);
-                        plugin.setDefaultModel((JcrNodeModel) getModel());
+                        plugin.setModel((JcrNodeModel) getModel());
                     }
                 };
                 add(link);

@@ -36,14 +36,14 @@ public class DateFieldWidget extends Panel {
 
     private static final Logger log = LoggerFactory.getLogger(DateFieldWidget.class);
 
-    public DateFieldWidget(String id, IModel<Date> model) {
+    public DateFieldWidget(String id, IModel model) {
         this(id, model, false);
     }
     
-    public DateFieldWidget(String id, IModel<Date> model, boolean todayLinkVisible) {
+    public DateFieldWidget(String id, IModel model, boolean todayLinkVisible) {
         super(id, model);
 
-        final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getDefaultModel();
+        final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
         Date date;
         try {
             date = valueModel.getValue().getDate().getTime();
@@ -52,13 +52,13 @@ public class DateFieldWidget extends Panel {
             date = null;
         }
 
-        add(new AjaxDateTimeField("widget", new Model<Date>(date) {
+        add(new AjaxDateTimeField("widget", new Model(date) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void setObject(Date object) {
+            public void setObject(Object object) {
                 Calendar calendar = new GregorianCalendar();
-                calendar.setTime(object);
+                calendar.setTime((Date) object);
                 try {
                     valueModel.setValue(valueModel.getJcrPropertymodel().getProperty().getSession().getValueFactory()
                             .createValue(calendar));

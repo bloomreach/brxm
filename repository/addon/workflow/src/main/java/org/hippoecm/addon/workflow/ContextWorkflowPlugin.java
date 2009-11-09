@@ -52,8 +52,8 @@ public final class ContextWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private void populate() {
         Set<Node> nodeSet = new LinkedHashSet<Node>();
-        if(getDefaultModel() instanceof JcrNodeModel) {
-            Node node = ((JcrNodeModel)getDefaultModel()).getNode();
+        if(getModel() instanceof JcrNodeModel) {
+            Node node = ((JcrNodeModel)getModel()).getNode();
             if(node != null) {
                 nodeSet.add(node);
             }

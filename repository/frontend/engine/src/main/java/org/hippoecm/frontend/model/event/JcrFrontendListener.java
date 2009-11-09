@@ -34,9 +34,9 @@ public class JcrFrontendListener extends NodeModelWrapper {
     static final Logger log = LoggerFactory.getLogger(JcrFrontendListener.class);
 
     private JcrEventListener listener;
-    private IObservationContext<JcrNodeModel> obContext;
+    private IObservationContext obContext;
 
-    public JcrFrontendListener(IObservationContext<JcrNodeModel> obContext, JcrNodeModel nodeModel) {
+    public JcrFrontendListener(IObservationContext obContext, JcrNodeModel nodeModel) {
         super(nodeModel);
         this.obContext = obContext;
     }

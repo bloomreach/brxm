@@ -18,6 +18,7 @@ package org.hippoecm.frontend.service.render;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The service redraws completely when a child service (dis)appears.
  */
-public class ListViewService extends RenderService<Void> {
+public class ListViewService extends RenderService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -50,7 +51,7 @@ public class ListViewService extends RenderService<Void> {
 
     public static final String ITEM = "item";
 
-    private static class RenderServiceModel extends Model<IRenderService> {
+    private static class RenderServiceModel extends Model {
         private static final long serialVersionUID = 1L;
 
         RenderServiceModel(IRenderService service) {
@@ -71,7 +72,7 @@ public class ListViewService extends RenderService<Void> {
         }
     }
 
-    private static class EvenOddModel extends Model<String> {
+    private static class EvenOddModel extends Model {
         private static final long serialVersionUID = 1L;
 
         public EvenOddModel(int index) {
@@ -86,27 +87,27 @@ public class ListViewService extends RenderService<Void> {
 
     private List<IRenderService> services;
     private ServiceTracker<IRenderService> tracker;
-    private AbstractView<IRenderService> view;
+    private AbstractView view;
 
     public ListViewService(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
         services = new LinkedList<IRenderService>();
 
-        final IDataProvider<IRenderService> provider = new ListDataProvider<IRenderService>(services) {
+        final IDataProvider provider = new ListDataProvider(services) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public IModel<IRenderService> model(IRenderService object) {
-                return new RenderServiceModel(object);
+            public IModel model(Object object) {
+                return new RenderServiceModel((IRenderService) object);
             }
         };
 
-        view = new AbstractView<IRenderService>("view", provider) {
+        view = new AbstractView("view", provider) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(Item<IRenderService> item) {
-                IRenderService renderer = item.getModelObject();
+            protected void populateItem(Item item) {
+                IRenderService renderer = (IRenderService) item.getModelObject();
                 renderer.bind(ListViewService.this, "item");
                 item.add(renderer.getComponent());
                 ListViewService.this.onAddRenderService(item, renderer);
@@ -114,9 +115,10 @@ public class ListViewService extends RenderService<Void> {
             }
 
             @Override
-            protected void destroyItem(Item<IRenderService> item) {
-                IRenderService renderer = item.getModelObject();
-                item.remove(renderer.getComponent());
+            protected void destroyItem(Item item) {
+                // FIXME: this assumes that the IRenderService is the Component itself
+                IRenderService renderer = (IRenderService) item.get("item");
+                item.remove((Component) renderer);
                 ListViewService.this.onRemoveRenderService(item, renderer);
                 renderer.unbind();
             }
@@ -165,9 +167,9 @@ public class ListViewService extends RenderService<Void> {
         }
     }
 
-    protected void onAddRenderService(Item<IRenderService> item, IRenderService renderer) {
+    protected void onAddRenderService(Item item, IRenderService renderer) {
     }
 
-    protected void onRemoveRenderService(Item<IRenderService> item, IRenderService renderer) {
+    protected void onRemoveRenderService(Item item, IRenderService renderer) {
     }
 }

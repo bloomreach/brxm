@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * In general, no guarantees are made on the existence of the Node.  I.e. the referenced
  * node may disappear or it may even never have existed.
  */
-public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable {
+public class JcrNodeModel extends ItemModelWrapper implements IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -45,7 +45,7 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
 
     static final Logger log = LoggerFactory.getLogger(JcrNodeModel.class);
 
-    private IObservationContext<JcrNodeModel> context;
+    private IObservationContext context;
     private JcrEventListener listener;
     private transient boolean parentCached = false;
     private transient JcrNodeModel parent;
@@ -70,11 +70,6 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
         return (Node) itemModel.getObject();
     }
 
-    @Override
-    public Node getObject() {
-        return super.getObject();
-    }
-    
     public JcrNodeModel getParentModel() {
         if (!parentCached) {
             JcrItemModel parentModel = itemModel.getParentModel();
@@ -118,9 +113,8 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
 
     // implement IObservable
 
-    @SuppressWarnings("unchecked")
-    public void setObservationContext(IObservationContext<? extends IObservable> context) {
-        this.context = (IObservationContext<JcrNodeModel>) context;
+    public void setObservationContext(IObservationContext context) {
+        this.context = context;
     }
 
     public void startObservation() {

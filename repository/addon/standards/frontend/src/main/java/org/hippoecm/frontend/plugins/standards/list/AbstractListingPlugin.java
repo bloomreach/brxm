@@ -24,6 +24,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -38,17 +39,17 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractListingPlugin extends RenderPlugin<Node> implements TableSelectionListener<Node>, IActivator {
+public abstract class AbstractListingPlugin extends RenderPlugin implements TableSelectionListener, IActivator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
 
-    private final IModelReference<Node> documentReference;
-    private ListDataTable<Node> dataTable;
+    private final IModelReference documentReference;
+    private ListDataTable dataTable;
     private ListPagingDefinition pagingDefinition;
-    private ISortableDataProvider<Node> provider;
-    private IObserver<?> providerObserver;
+    private ISortableDataProvider provider;
+    private IObserver providerObserver;
 
     public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -56,14 +57,14 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
         if (config.getString("model.document") != null) {
             documentReference = context.getService(config.getString("model.document"), IModelReference.class);
             if (documentReference != null) {
-                context.registerService(new IObserver<IModelReference<Node>>() {
+                context.registerService(new IObserver() {
                     private static final long serialVersionUID = 1L;
 
-                    public IModelReference<Node> getObservable() {
+                    public IObservable getObservable() {
                         return documentReference;
                     }
 
-                    public void onEvent(Iterator<? extends IEvent<IModelReference<Node>>> event) {
+                    public void onEvent(Iterator<? extends IEvent> event) {
                         updateSelection(documentReference.getModel());
                     }
 
@@ -93,24 +94,24 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
     public void stop() {
     }
 
-    protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
-            ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, final boolean triState,
+    protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
+            ISortableDataProvider dataProvider, TableSelectionListener selectionListener, final boolean triState,
             ListPagingDefinition pagingDefinition) {
-        return new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+        return new ListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
-    private ISortableDataProvider<Node> getDataProvider() {
+    private ISortableDataProvider getDataProvider() {
         if (provider == null) {
             provider = newDataProvider();
             if (provider instanceof IObservable) {
-                providerObserver = new IObserver<IObservable>() {
+                providerObserver = new IObserver() {
                     private static final long serialVersionUID = 1L;
 
                     public IObservable getObservable() {
                         return (IObservable) provider;
                     }
 
-                    public void onEvent(Iterator<? extends IEvent<IObservable>> event) {
+                    public void onEvent(Iterator<? extends IEvent> event) {
                         redraw();
                     }
 
@@ -131,13 +132,12 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected ISortableDataProvider<Node> newDataProvider() {
-        return new DocumentsProvider((IModel<Node>) getDefaultModel(), new DocumentListFilter(getPluginConfig()),
+    protected ISortableDataProvider newDataProvider() {
+        return new DocumentsProvider((JcrNodeModel) getModel(), new DocumentListFilter(getPluginConfig()),
                 getTableDefinition().getComparators());
     }
 
-    protected abstract TableDefinition<Node> getTableDefinition();
+    protected abstract TableDefinition getTableDefinition();
 
     @SuppressWarnings("unchecked")
     public void selectionChanged(IModel model) {
@@ -147,7 +147,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
                     IModelReference.class);
             if (documentService != null) {
                 documentService.setModel(model);
-                if (model != dataTable.getDefaultModel() && (model == null || !model.equals(dataTable.getDefaultModel()))) {
+                if (model != dataTable.getModel() && (model == null || !model.equals(dataTable.getModel()))) {
                     log.info("Did not receive model change notification for model.document ({})", config
                             .getString("model.document"));
                     updateSelection(model);
@@ -160,12 +160,12 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
         }
     }
 
-    private void updateSelection(IModel<Node> model) {
-        dataTable.setDefaultModel(model);
+    private void updateSelection(IModel model) {
+        dataTable.setModel(model);
         onSelectionChanged(model);
     }
 
-    protected void onSelectionChanged(IModel<Node> model) {
+    protected void onSelectionChanged(IModel model) {
     }
 
     @Override
@@ -184,7 +184,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
             IModelReference<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
                     IModelReference.class);
             if (documentService != null) {
-                dataTable.setDefaultModel(documentService.getModel());
+                dataTable.setModel(documentService.getModel());
             }
         }
         redraw();
@@ -196,14 +196,15 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
         dataTable.render(target);
     }
 
-    @SuppressWarnings("unchecked")
     private boolean isOrderable() {
-        IModel<Node> model = (IModel<Node>) getDefaultModel();
-        try {
-            Node node = (Node) model.getObject();
-            return node == null ? false : node.getPrimaryNodeType().hasOrderableChildNodes();
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
+        IModel model = getModel();
+        if (model instanceof JcrNodeModel) {
+            try {
+                Node node = (Node) model.getObject();
+                return node == null ? false : node.getPrimaryNodeType().hasOrderableChildNodes();
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
         }
         return false;
     }

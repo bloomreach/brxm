@@ -37,7 +37,7 @@ public class ValueTemplatePlugin extends RenderPlugin {
     public ValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getDefaultModel();
+        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
         String mode = config.getString("mode", "view");
         StringConverter stringModel = new StringConverter(valueModel);
         if (ITemplateEngine.EDIT_MODE.equals(mode)) {

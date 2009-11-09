@@ -18,14 +18,14 @@ package org.hippoecm.frontend.widgets;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
 
-public class BooleanFieldWidget extends AjaxUpdatingWidget<Boolean> {
+public class BooleanFieldWidget extends AjaxUpdatingWidget {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    public BooleanFieldWidget(String id, IModel<Boolean> model) {
+    public BooleanFieldWidget(String id, IModel model) {
         super(id, model);
-        addFormField(new CheckBox("widget", model));
+        addFormField(new CheckBox("widget", this.getModel()));
     }
 }

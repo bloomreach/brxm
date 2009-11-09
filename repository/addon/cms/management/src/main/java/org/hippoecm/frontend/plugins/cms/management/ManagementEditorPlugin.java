@@ -33,7 +33,7 @@ public class ManagementEditorPlugin extends EditorPlugin {
 
     @Override
     protected EditorForm newForm() {
-        JcrNodeModel jcrModel = (JcrNodeModel) getDefaultModel();
+        JcrNodeModel jcrModel = (JcrNodeModel) getModel();
         EditorForm form = new EditorForm("form", jcrModel, this, getPluginContext(), getPluginConfig());
         return form;
     }

@@ -76,7 +76,7 @@ public class JcrObjectTest extends PluginTest {
         }
     }
 
-    class TestObserver extends Observer<IObservable> {
+    class TestObserver extends Observer {
         private static final long serialVersionUID = 1L;
 
         int count = 0;
@@ -85,7 +85,7 @@ public class JcrObjectTest extends PluginTest {
             super(observable);
         }
 
-        public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
+        public void onEvent(Iterator<? extends IEvent> events) {
             count++;
         }
     };

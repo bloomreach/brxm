@@ -22,30 +22,21 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-public abstract class AjaxUpdatingWidget<T> extends Panel {
+public abstract class AjaxUpdatingWidget extends Panel {
     private static final long serialVersionUID = 1L;
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private FormComponent<? extends T> focus;
+    private FormComponent focus;
 
-    public AjaxUpdatingWidget(String id, IModel<T> model) {
+    public AjaxUpdatingWidget(String id, IModel model) {
         super(id, model);
-    }
-
-    @SuppressWarnings("unchecked")
-    public IModel<T> getModel() {
-        return (IModel<T>) getDefaultModel();
-    }
-
-    public T getModelObject() {
-        return getModel().getObject();
     }
 
     /**
      * Adds an ajax updating form component
      */
-    protected void addFormField(FormComponent<? extends T> component) {
+    protected void addFormField(FormComponent component) {
         add(focus = component);
         component.setOutputMarkupId(true);
         component.add(new AjaxFormComponentUpdatingBehavior("onChange") {

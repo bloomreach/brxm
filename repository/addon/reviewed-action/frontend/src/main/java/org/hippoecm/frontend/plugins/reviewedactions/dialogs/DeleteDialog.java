@@ -50,7 +50,7 @@ public class DeleteDialog extends WorkflowAction.WorkflowDialog implements ITitl
         this.title = title;
 
         try {
-            WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) action.getDefaultModel();
+            WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) action.getModel();
             ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(wdm.getNode()), true);
             MarkupContainer rdv = new ReferringDocumentsView("links", provider, editorMgr) {
                 private static final long serialVersionUID = 1L;

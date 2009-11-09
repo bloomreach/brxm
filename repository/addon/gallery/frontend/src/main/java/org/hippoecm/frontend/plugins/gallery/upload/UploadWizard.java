@@ -87,11 +87,6 @@ public class UploadWizard extends Wizard {
         return new ButtonBar(id, this);
     }
 
-    @SuppressWarnings("unchecked")
-    protected IModel<Node> getModel() {
-        return (IModel<Node>) getDefaultModel();
-    }
-    
     private class Step0 extends WizardStep {
         private static final long serialVersionUID = 1L;
 
@@ -102,11 +97,12 @@ public class UploadWizard extends Wizard {
             IClusterControl control = uploadDialog.pluginContext.newCluster(cluster, uploadDialog.pluginConfig.getPluginConfig("cluster.options"));
             IClusterConfig decorated = control.getClusterConfig();
             String modelServiceId = decorated.getString("wicket.model.folder");
-            ModelReference<Node> modelService = new ModelReference<Node>(modelServiceId, UploadWizard.this.getModel()) {
+            ModelReference modelService;
+            modelService = new ModelReference<IModel>(modelServiceId, getModel()) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void setModel(IModel<Node> model) {
+                public void setModel(IModel model) {
                     if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel)model).getNode() != null) {
                         Step0.this.setComplete(true);
                         uploadDialog.setGalleryNode((Node) model.getObject());
@@ -142,7 +138,7 @@ public class UploadWizard extends Wizard {
         public Step2() {
             super();
             add(new Label("status", new StringResourceModel("upload-successful-label", this, null)));
-            add(new MultiLineLabel("description", new PropertyModel<String>(form, "description")));
+            add(new MultiLineLabel("description", new PropertyModel(form, "description")));
             add(new Label("message", new StringResourceModel("upload-another-label", this, null)));
         }
     }

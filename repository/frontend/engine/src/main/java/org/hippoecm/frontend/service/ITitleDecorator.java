@@ -21,5 +21,5 @@ import org.apache.wicket.model.IModel;
 public interface ITitleDecorator extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    IModel<String> getTitle();
+    IModel/*<String>*/ getTitle();
 }

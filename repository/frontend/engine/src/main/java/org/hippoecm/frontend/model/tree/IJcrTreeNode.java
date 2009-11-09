@@ -22,6 +22,7 @@ import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public interface IJcrTreeNode extends TreeNode, IDetachable {
+    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     JcrNodeModel getNodeModel();

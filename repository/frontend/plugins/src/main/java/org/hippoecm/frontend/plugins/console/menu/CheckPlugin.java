@@ -57,7 +57,7 @@ public class CheckPlugin extends RenderPlugin {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 String result = CheckPlugin.this.check();
-                message.setDefaultModel(new Model(result));
+                message.setModel(new Model(result));
                 setModel(new Model(result));
                 target.addComponent(message);
             }

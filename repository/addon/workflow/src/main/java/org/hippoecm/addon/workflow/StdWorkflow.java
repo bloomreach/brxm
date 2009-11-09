@@ -108,7 +108,7 @@ public abstract class StdWorkflow extends ActionDescription {
 
         protected void invoke() {
             try {
-                WorkflowDescriptor descriptor = (WorkflowDescriptor)enclosingPlugin.getDefaultModelObject();
+                WorkflowDescriptor descriptor = (WorkflowDescriptor)enclosingPlugin.getModelObject();
                 Session session = ((UserSession)getSession()).getJcrSession();
                 session.refresh(true);
                 session.save();

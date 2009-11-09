@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
@@ -86,7 +85,7 @@ import org.slf4j.LoggerFactory;
  * services (it is a multi-valued property) are invoked in order.
  * </ul>
  */
-public abstract class AbstractRenderService<T> extends Panel implements IObserver, IRenderService, IStringResourceProvider {
+public abstract class AbstractRenderService extends Panel implements IObserver, IRenderService, IStringResourceProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -131,14 +130,13 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         if (properties.getString(MODEL_ID) != null) {
             modelReference = context.getService(properties.getString(MODEL_ID), IModelReference.class);
             if (modelReference != null) {
-                context.registerService(new IObserver<IModelReference<?>>() {
-                    private static final long serialVersionUID = 1L;
+                context.registerService(new IObserver() {
 
-                    public IModelReference<?> getObservable() {
+                    public IObservable getObservable() {
                         return modelReference;
                     }
 
-                    public void onEvent(Iterator<? extends IEvent<IModelReference<?>>> event) {
+                    public void onEvent(Iterator<? extends IEvent> event) {
                         updateModel(modelReference.getModel());
                     }
 
@@ -147,7 +145,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         } else {
             modelReference = null;
         }
-        if (getDefaultModel() instanceof IObservable) {
+        if (getModel() instanceof IObservable) {
             context.registerService(this, IObserver.class.getName());
         }
 
@@ -232,22 +230,10 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         context.registerService(this, config.getString("wicket.id"));
     }
 
-    // utility methods
-
-    @SuppressWarnings("unchecked")
-    public IModel<T> getModel() {
-        return (IModel<T>) getDefaultModel();
-    }
-
-    @SuppressWarnings("unchecked")
-    public T getModelObject() {
-        return (T) getDefaultModelObject();
-    }
-
     // override model change methods
 
     @Override
-    public MarkupContainer setDefaultModel(IModel<?> model) {
+    public Component setModel(IModel model) {
         if (modelReference != null) {
             modelReference.setModel(model);
         } else {
@@ -257,20 +243,20 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
     }
 
     public final void updateModel(IModel model) {
-        if (getDefaultModel() instanceof IObservable) {
+        if (getModel() instanceof IObservable) {
             context.unregisterService(this, IObserver.class.getName());
         }
-        super.setDefaultModel(model);
-        if (getDefaultModel() instanceof IObservable) {
+        super.setModel(model);
+        if (getModel() instanceof IObservable) {
             context.registerService(this, IObserver.class.getName());
         }
     }
 
     public IObservable getObservable() {
-        return (IObservable) getDefaultModel();
+        return (IObservable) getModel();
     }
 
-    public void onEvent(Iterator event) {
+    public void onEvent(Iterator<? extends IEvent> event) {
         modelChanged();
     }
 

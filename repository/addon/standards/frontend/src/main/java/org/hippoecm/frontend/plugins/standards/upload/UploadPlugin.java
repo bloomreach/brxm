@@ -44,14 +44,14 @@ public class UploadPlugin extends RenderPlugin {
         super(context, properties);
 
         // Add upload form with ajax progress bar
-        form = new FileUploadForm("form", (JcrNodeModel) getDefaultModel());
+        form = new FileUploadForm("form", (JcrNodeModel) getModel());
         form.add(new UploadProgressBar("progress", form));
         add(form);
     }
 
     @Override
     public void onModelChanged() {
-        JcrNodeModel newModel = (JcrNodeModel) getDefaultModel();
+        JcrNodeModel newModel = (JcrNodeModel) getModel();
         form.setModel(newModel);
     }
 

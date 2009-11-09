@@ -49,7 +49,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
 import org.joda.time.format.DateTimeFormat;
 
-public class DateTimeField extends FormComponentPanel<Date> {
+public class DateTimeField extends FormComponentPanel {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -67,15 +67,15 @@ public class DateTimeField extends FormComponentPanel<Date> {
     private MutableDateTime date;
     private DateTextField dateField;
     private Integer hours;
-    private TextField<Integer> hoursField;
+    private TextField hoursField;
     private Integer minutes;
-    private TextField<Integer> minutesField;
+    private TextField minutesField;
 
-    public DateTimeField(String id, IModel<Date> model, IPluginContext context, IPluginConfig config)
+    public DateTimeField(String id, IModel model, IPluginContext context, IPluginConfig config)
     {
         super(id, model);
         setType(Date.class);
-        PropertyModel<Date> dateFieldModel = new PropertyModel<Date>(this, "date");
+        PropertyModel dateFieldModel = new PropertyModel(this, "date");
         add(dateField = newDateTextField("date", dateFieldModel));
         
         YuiDatePickerSettings settings = new YuiDatePickerSettings(config);
@@ -236,7 +236,6 @@ public class DateTimeField extends FormComponentPanel<Date> {
      * 
      * @see org.apache.wicket.markup.html.form.FormComponent#convertInput()
      */
-    @Override
     protected void convertInput() {
         Object dateFieldInput = dateField.getConvertedInput();
         if (dateFieldInput != null) {
@@ -287,14 +286,13 @@ public class DateTimeField extends FormComponentPanel<Date> {
      *            model that should be used by the {@link DateTextField}
      * @return a new date text field instance
      */
-    protected DateTextField newDateTextField(String id, IModel<Date> dateFieldModel) {
+    protected DateTextField newDateTextField(String id, PropertyModel dateFieldModel) {
         return new DateTextField(id, dateFieldModel, new StyleDateConverter(false));
     }
 
     /**
      * @see org.apache.wicket.Component#onBeforeRender()
      */
-    @Override
     protected void onBeforeRender() {
         dateField.setRequired(isRequired());
         hoursField.setRequired(isRequired());

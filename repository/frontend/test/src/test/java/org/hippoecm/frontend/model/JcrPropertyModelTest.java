@@ -27,6 +27,7 @@ import javax.jcr.observation.Event;
 
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
@@ -58,14 +59,14 @@ public class JcrPropertyModelTest extends PluginTest {
 
         final List<IEvent> received = new ArrayList<IEvent>();
         final JcrPropertyModel propModel = new JcrPropertyModel(prop);
-        context.registerService(new IObserver<JcrPropertyModel>() {
+        context.registerService(new IObserver() {
             private static final long serialVersionUID = 1L;
 
-            public JcrPropertyModel getObservable() {
+            public IObservable getObservable() {
                 return propModel;
             }
 
-            public void onEvent(Iterator<? extends IEvent<JcrPropertyModel>> events) {
+            public void onEvent(Iterator<? extends IEvent> events) {
                 while (events.hasNext()) {
                     received.add(events.next());
                 }

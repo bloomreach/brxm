@@ -19,7 +19,7 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
-public class TextFieldWidget extends AjaxUpdatingWidget<String> {
+public class TextFieldWidget extends AjaxUpdatingWidget {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -27,14 +27,14 @@ public class TextFieldWidget extends AjaxUpdatingWidget<String> {
 
     private String size;
 
-    public TextFieldWidget(String id, IModel<String> model) {
+    public TextFieldWidget(String id, IModel model) {
         this(id, model, null);
     }
     
-    public TextFieldWidget(String id, IModel<String> model, IModel<String> labelModel) {
+    public TextFieldWidget(String id, IModel model, IModel labelModel) {
         super(id, model);
-        TextField<String> t;
-        addFormField(t = new TextField<String>("widget", model) {
+        TextField t;
+        addFormField(t = new TextField("widget", this.getModel()) {
             private static final long serialVersionUID = 1L;
 
             @Override

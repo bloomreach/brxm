@@ -113,7 +113,7 @@ public class NodeListWidgetPlugin extends RenderPlugin {
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        NodeListWidgetPlugin.this.setDefaultModel(nodeModel);
+                        NodeListWidgetPlugin.this.setModel(nodeModel);
                     }
 
                 }.add(new Label("name", name)));
@@ -138,7 +138,7 @@ public class NodeListWidgetPlugin extends RenderPlugin {
         listContainer.add(listView);
         add(listContainer);
 
-        IModel<String> label = new StringResourceModel(config.getString("label"), this, null);
+        IModel label = new StringResourceModel(config.getString("label"), this, null);
         String nodeType = config.getString("nodeType");
         add(new AddNodeWidget("newNode", label, parentNodeModel, nodeType) {
             private static final long serialVersionUID = 1L;
@@ -151,7 +151,7 @@ public class NodeListWidgetPlugin extends RenderPlugin {
                     log.error("Error getting name from nodes", e);
                 }
                 JcrNodeModel nodeModel = new JcrNodeModel(node);
-                NodeListWidgetPlugin.this.setDefaultModel(nodeModel);
+                NodeListWidgetPlugin.this.setModel(nodeModel);
                 target.addComponent(listContainer);
             }
         });
@@ -161,7 +161,7 @@ public class NodeListWidgetPlugin extends RenderPlugin {
 
     @Override
     protected void onModelChanged() {
-        JcrNodeModel serviceModel = (JcrNodeModel) getDefaultModel();
+        JcrNodeModel serviceModel = (JcrNodeModel) getModel();
         String nodePath = serviceModel.getItemModel().getPath();
         String parentNodePath = getPluginConfig().getString("parentNodePath");
         if (nodePath.indexOf(parentNodePath) == 0) {

@@ -94,7 +94,7 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
 
     private String getUsername() {
         if (username == null) {
-            JcrNodeModel nodeModel = (JcrNodeModel) getDefaultModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) getModel();
             try {
                 username = nodeModel.getNode().getName();
             } catch (RepositoryException e) {

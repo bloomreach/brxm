@@ -55,9 +55,9 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
         this.values = new TreeMap<String, Object>();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Object put(String strKey, Object value) {
+    public Object put(Object key, Object value) {
+        String strKey = (String) key;
         List<String>[] lists = new List[] { 
                 ((IClusterConfig) upstream).getProperties(),
                 ((IClusterConfig) upstream).getServices(),
@@ -70,7 +70,7 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
         }
         return super.put(strKey, value);
     }
-
+    
     @Override
     public Object get(Object key) {
         if (values.containsKey(key)) {

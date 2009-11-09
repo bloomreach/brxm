@@ -41,7 +41,7 @@ public class ToggleVersionPlugin extends RenderPlugin {
 
     @Override
     protected void onModelChanged() {
-        JcrNodeModel model = (JcrNodeModel) getDefaultModel();
+        JcrNodeModel model = (JcrNodeModel) getModel();
         if (model != null && model.getNode() != null) {
             try {
                 Node node = model.getNode();

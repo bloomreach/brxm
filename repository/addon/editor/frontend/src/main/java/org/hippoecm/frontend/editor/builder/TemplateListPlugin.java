@@ -35,7 +35,6 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -56,7 +55,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
+public class TemplateListPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -64,7 +63,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateListPlugin.class);
 
-    abstract class Category implements IDataProvider<ITypeDescriptor> {
+    abstract class Category implements IDataProvider {
         private static final long serialVersionUID = 1L;
 
         private final ITemplateEngine engine;
@@ -80,7 +79,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
         void load() {
             if (list == null) {
-                ITypeDescriptor containingType = TemplateListPlugin.this.getModelObject();
+                ITypeDescriptor containingType = (ITypeDescriptor) TemplateListPlugin.this.getModelObject();
                 SortedMap<String, ITypeDescriptor> types = new TreeMap<String, ITypeDescriptor>();
                 for (String type : editableTypes) {
                     try {
@@ -121,8 +120,8 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
             return list.subList(first, toIndex).listIterator();
         }
 
-        public IModel<ITypeDescriptor> model(ITypeDescriptor object) {
-            return new Model<ITypeDescriptor>(object);
+        public IModel model(Object object) {
+            return new Model((ITypeDescriptor) object);
         }
 
         public int size() {
@@ -139,7 +138,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
         }
     }
 
-    private final class CategoryView extends AbstractView<ITypeDescriptor> {
+    private final class CategoryView extends AbstractView {
         private static final long serialVersionUID = 1L;
 
         private CategoryView(String id, Category category) {
@@ -147,14 +146,14 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
         }
 
         @Override
-        public void populateItem(Item<ITypeDescriptor> item) {
-            final ITypeDescriptor type = item.getModelObject();
-            AjaxLink<Void> link = new AjaxLink<Void>("template") {
+        public void populateItem(Item item) {
+            final ITypeDescriptor type = (ITypeDescriptor) item.getModelObject();
+            AjaxLink link = new AjaxLink("template") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
-                    ITypeDescriptor containingType = TemplateListPlugin.this.getModelObject();
+                    ITypeDescriptor containingType = (ITypeDescriptor) TemplateListPlugin.this.getModelObject();
                     String prefix = containingType.getName();
                     if (prefix.indexOf(':') > 0) {
                         prefix = prefix.substring(0, prefix.indexOf(':'));
@@ -184,7 +183,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
         }
 
         @Override
-        public void destroyItem(Item<ITypeDescriptor> item) {
+        public void destroyItem(Item item) {
             // nothing
         }
     }
@@ -216,21 +215,21 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     ITemplateEngine.class);
             final List<String> editableTypes = engine.getEditableTypes();
             if (editableTypes instanceof IObservable) {
-                context.registerService(new IObserver<IObservable>() {
+                context.registerService(new IObserver() {
                     private static final long serialVersionUID = 1L;
 
                     public IObservable getObservable() {
                         return (IObservable) editableTypes;
                     }
 
-                    public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
+                    public void onEvent(Iterator<? extends IEvent> events) {
                         redraw();
                     }
 
                 }, IObserver.class.getName());
             }
 
-            ITypeDescriptor containingType = TemplateListPlugin.this.getModelObject();
+            ITypeDescriptor containingType = (ITypeDescriptor) TemplateListPlugin.this.getModelObject();
             String typeName = containingType.getName();
             final String prefix = typeName.substring(0, typeName.indexOf(':'));
 
@@ -270,14 +269,14 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
             });
             active = categories.get(0);
 
-            fragment.add(new ListView<Category>("categories", categories) {
+            fragment.add(new ListView("categories", categories) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void populateItem(ListItem<Category> item) {
-                    final Category category = item.getModelObject();
+                protected void populateItem(ListItem item) {
+                    final Category category = (Category) item.getModelObject();
 
-                    AbstractView<ITypeDescriptor> templateView = new CategoryView("templates", category);
+                    AbstractView templateView = new CategoryView("templates", category);
                     templateView.populate();
                     MarkupContainer container = new WebMarkupContainer("container") {
                         private static final long serialVersionUID = 1L;
@@ -291,7 +290,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     container.add(templateView);
                     item.add(container);
 
-                    AjaxLink<Void> link = new AjaxLink<Void>("link") {
+                    AjaxLink link = new AjaxLink("link") {
                         private static final long serialVersionUID = 1L;
 
                         @Override
@@ -301,11 +300,11 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                         }
                     };
                     link.add(new Label("category", new ResourceModel(category.getName())));
-                    link.add(new CssClassAppender(new LoadableDetachableModel<String>() {
+                    link.add(new CssClassAppender(new Model() {
                         private static final long serialVersionUID = 1L;
 
                         @Override
-                        protected String load() {
+                        public Object getObject() {
                             if (active == category) {
                                 return "focus";
                             }

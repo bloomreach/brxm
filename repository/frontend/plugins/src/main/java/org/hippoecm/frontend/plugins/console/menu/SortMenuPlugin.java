@@ -44,6 +44,6 @@ public class SortMenuPlugin extends RenderPlugin {
     
     @Override
     public void onModelChanged() {
-        sorter.setDefaultModel(getDefaultModel());
+        sorter.setModel(getModel());
     }
 }

@@ -28,7 +28,6 @@ import javax.jcr.Value;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.event.EventCollection;
-import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -99,7 +98,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
         String name = field.getName();
         fields.put(name, field);
         if (obContext != null) {
-            EventCollection<IEvent<ITypeDescriptor>> collection = new EventCollection<IEvent<ITypeDescriptor>>();
+            EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
             collection.add(new TypeDescriptorEvent(this, field, TypeDescriptorEvent.EventType.FIELD_ADDED));
             obContext.notifyObservers(collection);
         }

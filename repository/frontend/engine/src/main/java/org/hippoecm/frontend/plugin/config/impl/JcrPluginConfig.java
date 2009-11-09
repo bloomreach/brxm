@@ -46,10 +46,8 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.JcrEventListener;
-import org.hippoecm.frontend.model.map.AbstractValueMap;
 import org.hippoecm.frontend.model.map.IHippoMap;
 import org.hippoecm.frontend.model.map.JcrMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -57,7 +55,7 @@ import org.hippoecm.frontend.plugin.config.PluginConfigEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, IDetachable {
+public class JcrPluginConfig extends AbstractMap implements IPluginConfig, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -86,7 +84,6 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         }
     }
 
-    @SuppressWarnings("unchecked")
     private class SerializableList extends AbstractList implements Serializable {
         private static final long serialVersionUID = 1L;
 
@@ -182,7 +179,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
     }
 
     protected final JcrNodeModel nodeModel;
-    private IObservationContext<IPluginConfig> obContext;
+    private IObservationContext obContext;
     private JcrEventListener listener;
     private JcrMap map;
     private Map<JcrNodeModel, JcrPluginConfig> childConfigs;
@@ -228,7 +225,6 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return null;
     }
 
-    @Override
     public boolean getBoolean(String key) throws StringValueConversionException {
         try {
             Property property = getProperty(key);
@@ -241,12 +237,10 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return false;
     }
 
-    @Override
     public double getDouble(String key) throws StringValueConversionException {
         return getDouble(key, 0.0);
     }
 
-    @Override
     public double getDouble(String key, double defaultValue) throws StringValueConversionException {
         try {
             Property property = getProperty(key);
@@ -259,12 +253,10 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return defaultValue;
     }
 
-    @Override
     public int getInt(String key) throws StringValueConversionException {
         return getInt(key, 0);
     }
 
-    @Override
     public int getInt(String key, int defaultValue) throws StringValueConversionException {
         try {
             Property property = getProperty(key);
@@ -277,12 +269,10 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return defaultValue;
     }
 
-    @Override
     public long getLong(String key) throws StringValueConversionException {
         return getLong(key, 0);
     }
 
-    @Override
     public long getLong(String key, long defaultValue) throws StringValueConversionException {
         try {
             Property property = getProperty(key);
@@ -295,7 +285,6 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return defaultValue;
     }
 
-    @Override
     public String getKey(String key) {
         try {
             Property property = getProperty(key);
@@ -312,12 +301,10 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return null;
     }
 
-    @Override
     public String getString(String key) {
         return getKey(key);
     }
 
-    @Override
     public String getString(String key, String defaultValue) {
         String result = getKey(key);
         if (result == null) {
@@ -326,7 +313,6 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return result;
     }
 
-    @Override
     public String[] getStringArray(String key) {
         try {
             Property property = getProperty(key);
@@ -349,7 +335,6 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return null;
     }
 
-    @Override
     public StringValue getStringValue(String key) {
         return StringValue.valueOf(getString(key));
     }
@@ -388,30 +373,25 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return configs;
     }
 
-    @Override
     public CharSequence getCharSequence(String key) {
         // TODO implement me
         throw new UnsupportedOperationException("not implemented yet");
     }
 
-    @Override
     public Duration getDuration(String key) throws StringValueConversionException {
         // TODO implement me
         throw new UnsupportedOperationException("not implemented yet");
     }
 
-    @Override
     public Time getTime(String key) throws StringValueConversionException {
         // TODO implement me
         throw new UnsupportedOperationException("not implemented yet");
     }
 
-    @Override
     public boolean isImmutable() {
         return false;
     }
 
-    @Override
     public IValueMap makeImmutable() {
         // TODO implement me
         throw new UnsupportedOperationException("not implemented yet");
@@ -448,7 +428,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
     }
 
     @Override
-    public Object put(String key, Object value) {
+    public Object put(Object key, Object value) {
         entries = null;
         return map.put((String) key, unwrap(value));
     }
@@ -512,7 +492,6 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     protected Object wrap(Object value) {
         if (value instanceof JcrMap) {
             JcrMap map = (JcrMap) value;
@@ -523,7 +502,6 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return value;
     }
 
-    @SuppressWarnings("unchecked")
     protected Object unwrap(Object value) {
         if (value instanceof IPluginConfig) {
             return unwrapConfig((IPluginConfig) value);
@@ -537,16 +515,14 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return value;
     }
 
-    @SuppressWarnings("unchecked")
-    public void setObservationContext(IObservationContext<? extends IObservable> context) {
-        this.obContext = (IObservationContext<IPluginConfig>) context;
+    public void setObservationContext(IObservationContext context) {
+        this.obContext = context;
     }
 
-    protected IObservationContext<? extends IPluginConfig> getObservationContext() {
+    protected IObservationContext getObservationContext() {
         return obContext;
     }
 
-    @SuppressWarnings("unchecked")
     public void startObservation() {
         IObservationContext obContext = getObservationContext();
         String path = getNodeModel().getItemModel().getPath();

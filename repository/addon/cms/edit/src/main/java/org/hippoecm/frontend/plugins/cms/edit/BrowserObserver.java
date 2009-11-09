@@ -25,10 +25,10 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -39,7 +39,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
+class BrowserObserver implements IObserver, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -51,7 +51,7 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
 
     // map physical handle -> virtual parent
     private Map<JcrNodeModel, JcrNodeModel> lastReferences;
-    private final IModelReference<Node> modelReference;
+    private final IModelReference<JcrNodeModel> modelReference;
     private transient boolean active = false;
 
     @SuppressWarnings("unchecked")
@@ -68,7 +68,7 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
         context.registerService(this, IObserver.class.getName());
     }
 
-    IModel<Node> getModel() {
+    JcrNodeModel getModel() {
         try {
             return getEditorModel(modelReference.getModel());
         } catch (RepositoryException e) {
@@ -90,16 +90,16 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
         }
     }
 
-    public IModelReference<Node> getObservable() {
+    public IObservable getObservable() {
         return modelReference;
     }
 
-    public void onEvent(Iterator<? extends IEvent<IModelReference<Node>>> event) {
+    public void onEvent(Iterator<? extends IEvent> event) {
         if (!active) {
             active = true;
             try {
-                IModel<Node> nodeModel = getEditorModel(modelReference.getModel());
-                if (nodeModel != null && nodeModel.getObject() != null) {
+                JcrNodeModel nodeModel = getEditorModel((JcrNodeModel) modelReference.getModel());
+                if (nodeModel != null && nodeModel.getNode() != null) {
                     AbstractCmsEditor<JcrNodeModel> editor = editorMgr.getEditor(nodeModel);
                     if (editor == null) {
                         editor = editorMgr.openPreview(nodeModel);
@@ -123,12 +123,12 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
         }
     }
 
-    private IModel<Node> getEditorModel(IModel<Node> nodeModel) throws RepositoryException {
+    private JcrNodeModel getEditorModel(JcrNodeModel nodeModel) throws RepositoryException {
         // find physical node
         if (nodeModel == null) {
             return null;
         }
-        Node node = nodeModel.getObject();
+        Node node = nodeModel.getNode();
         if (node == null) {
             return null;
         }
@@ -149,7 +149,7 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
 
                     // put in LRU map for reverse lookup when editor is selected
                     JcrNodeModel canonicalModel = new JcrNodeModel(canonical);
-                    lastReferences.put(canonicalModel, new JcrNodeModel(node.getParent()));
+                    lastReferences.put(canonicalModel, nodeModel.getParentModel());
 
                     return new JcrNodeModel(canonical);
                 }

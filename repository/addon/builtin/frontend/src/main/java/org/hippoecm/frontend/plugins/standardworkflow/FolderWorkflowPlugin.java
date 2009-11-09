@@ -121,7 +121,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             
             @Override
             protected Dialog createRequestDialog() {
-                return new ReorderDialog(this, config, (WorkflowDescriptorModel) FolderWorkflowPlugin.this.getDefaultModel(),
+                return new ReorderDialog(this, config, (WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel(),
                         order);
             }
 
@@ -144,7 +144,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 StringResourceModel messageModel;
                 try {
                     final IModel folderName = new NodeTranslator(new JcrNodeModel(
-                            ((WorkflowDescriptorModel) FolderWorkflowPlugin.this.getDefaultModel()).getNode())).getNodeName();
+                            ((WorkflowDescriptorModel) FolderWorkflowPlugin.this.getModel()).getNode())).getNodeName();
                     // FIXME: no longer necessary in Wicket-1.4.x; see WICKET-2381
                     messageModel = new StringResourceModel("delete-message-extended", FolderWorkflowPlugin.this, null,
                             new Object[] { folderName }) {
@@ -195,9 +195,9 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
     @Override
     public void onModelChanged() {
         try {
-            IModel model = getDefaultModel();
+            IModel model = getModel();
             if (model instanceof WorkflowDescriptorModel) {
-                WorkflowDescriptorModel descriptorModel = (WorkflowDescriptorModel) getDefaultModel();
+                WorkflowDescriptorModel descriptorModel = (WorkflowDescriptorModel) getModel();
                 Node folderNode = descriptorModel.getNode();
                 List<StdWorkflow> list = new LinkedList<StdWorkflow>();
                 WorkflowDescriptor descriptor = (WorkflowDescriptor) model.getObject();

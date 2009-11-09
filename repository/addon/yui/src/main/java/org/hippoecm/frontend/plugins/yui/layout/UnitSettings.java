@@ -15,7 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import org.apache.wicket.util.value.IValueMap;
+import java.util.Map;
+
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.javascript.BooleanSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.IntSetting;
@@ -68,7 +69,7 @@ public class UnitSettings extends YuiObject {
         POSITION.set(position, this);
     }
 
-    public UnitSettings(String position, IValueMap options) {
+    public UnitSettings(String position, Map<String, String> options) {
         super(TYPE);
         POSITION.set(position, this);
         updateValues(options);

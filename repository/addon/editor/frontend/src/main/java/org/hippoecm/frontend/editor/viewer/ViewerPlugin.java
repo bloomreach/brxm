@@ -70,7 +70,7 @@ public class ViewerPlugin extends RenderPlugin {
     }
 
     protected void createTemplate() {
-        IModel model = getDefaultModel();
+        IModel model = getModel();
         if (model != null && model.getObject() != null) {
             try {
                 ITypeDescriptor type = engine.getType(model);

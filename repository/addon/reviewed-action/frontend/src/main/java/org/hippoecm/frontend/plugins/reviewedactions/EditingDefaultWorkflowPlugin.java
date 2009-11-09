@@ -49,7 +49,7 @@ public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
             public Object preClose() {
                 try {
-                    ((WorkflowDescriptorModel) getDefaultModel()).getNode().save();
+                    ((WorkflowDescriptorModel) getModel()).getNode().save();
                     return new Object();
                 } catch (RepositoryException ex) {
                     log.info(ex.getMessage());
@@ -61,7 +61,7 @@ public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
         add(new WorkflowAction("save", new StringResourceModel("save", this, null, "Save").getString(), null) {
             @Override
             protected String execute(Workflow wf) throws Exception {
-                ((WorkflowDescriptorModel) getDefaultModel()).getNode().save();
+                ((WorkflowDescriptorModel) getModel()).getNode().save();
                 return null;
             }
         });

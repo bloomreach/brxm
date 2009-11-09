@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class YuiObject implements IClusterable {
@@ -56,11 +55,10 @@ public class YuiObject implements IClusterable {
         return type;
     }
 
-    public void updateValues(IValueMap options) {
+    public void updateValues(Map<String, String> options) {
         for (Setting<?> setting : settings.keySet()) {
             if (options.containsKey(setting.getKey())) {
-                // FIXME: remove the fromString(.. toString) construction
-                setting.setFromString(options.get(setting.getKey()).toString(), this);
+                setting.setFromString(options.get(setting.getKey()), this);
             }
         }
     }

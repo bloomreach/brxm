@@ -88,7 +88,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
                 
                 String type = types.getString(extension.toLowerCase());
                 if (type != null) {
-                    JcrNodeModel nodeModel = (JcrNodeModel) ResourceUploadPlugin.this.getDefaultModel();
+                    JcrNodeModel nodeModel = (JcrNodeModel) ResourceUploadPlugin.this.getModel();
                     Node node = nodeModel.getNode();
                     try {
                         node.setProperty("jcr:mimeType", type);

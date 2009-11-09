@@ -16,8 +16,9 @@
 package org.hippoecm.frontend.types;
 
 import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
 
-public class TypeDescriptorEvent implements IEvent<ITypeDescriptor> {
+public class TypeDescriptorEvent implements IEvent {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -43,7 +44,7 @@ public class TypeDescriptorEvent implements IEvent<ITypeDescriptor> {
         return field;
     }
 
-    public ITypeDescriptor getSource() {
+    public IObservable getSource() {
         return descriptor;
     }
 

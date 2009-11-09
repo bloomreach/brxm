@@ -29,7 +29,7 @@ import org.apache.wicket.validation.validator.AbstractValidator;
 
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 
-public class PasswordTextFieldWidget extends AjaxUpdatingWidget<String> {
+public class PasswordTextFieldWidget extends AjaxUpdatingWidget {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -39,19 +39,19 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget<String> {
 
     private MyModel myModel;
 
-    public PasswordTextFieldWidget(final String id, final IModel<String> model) {
+    public PasswordTextFieldWidget(final String id, final IModel model) {
         super(id, model);
 
         myModel = new MyModel(model);
 
         final PasswordTextField pwd = new PasswordTextField("widget", myModel);
         pwd.setRequired(false);
-        pwd.add(new AbstractValidator<String>() {
+        pwd.add(new AbstractValidator() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onValidate(IValidatable<String> validatable) {
-                String modelValue = myModel.getObject() != null ? myModel.getObject() : "";
+            protected void onValidate(IValidatable validatable) {
+                String modelValue = myModel.getObject() != null ? (String) myModel.getObject() : "";
                 String formValue = validatable.getValue() != null ? (String) validatable.getValue() : "";
                 if (modelValue.length() == 0 && formValue.length() == 0)
                     PasswordTextFieldWidget.this.error("Password is required");
@@ -65,21 +65,20 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget<String> {
         addFormField(pwd);
     }
 
-    static class MyModel implements IChainingModel<String> {
+    static class MyModel implements IChainingModel {
         private static final long serialVersionUID = 1L;
 
         private JcrPropertyValueModel model;
 
-        public MyModel(IModel<String> model) {
+        public MyModel(IModel model) {
             setChainedModel(model);
         }
 
-        @SuppressWarnings("unchecked")
-        public IModel<String> getChainedModel() {
-            return (IModel<String>) model;
+        public IModel getChainedModel() {
+            return model;
         }
 
-        public void setChainedModel(IModel<?> model) {
+        public void setChainedModel(IModel model) {
             if (model instanceof JcrPropertyValueModel)
                 this.model = (JcrPropertyValueModel) model;
         }
@@ -88,7 +87,7 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget<String> {
             model.detach();
         }
 
-        public String getObject() {
+        public Object getObject() {
             if (model != null) {
                 try {
                     Value value = model.getValue();
@@ -107,7 +106,7 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget<String> {
          * (non-Javadoc)
          * @see org.apache.wicket.model.IModel#setObject(java.lang.Object)
          */
-        public void setObject(String object) {
+        public void setObject(Object object) {
             if (object == null)
                 return;
 

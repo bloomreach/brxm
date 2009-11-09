@@ -18,7 +18,6 @@ package org.hippoecm.addon.workflow;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -52,15 +51,15 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
                     IModelReference.class);
             if (modelReference != null) {
                 //updateModel(modelReference.getModel());
-                context.registerService(new IObserver<IModelReference>() {
+                context.registerService(new IObserver() {
 
                     private static final long serialVersionUID = 1L;
 
-                    public IModelReference getObservable() {
+                    public IObservable getObservable() {
                         return modelReference;
                     }
 
-                    public void onEvent(Iterator<? extends IEvent<IModelReference>> event) {
+                    public void onEvent(Iterator<? extends IEvent> event) {
                         updateModel(modelReference.getModel());
                     }
                 }, IObserver.class.getName());
@@ -84,8 +83,8 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
             handleModel = null;
         }
         try {
-            if (getDefaultModel() instanceof JcrNodeModel) {
-                Node node = ((JcrNodeModel)getDefaultModel()).getNode();
+            if (getModel() instanceof JcrNodeModel) {
+                Node node = ((JcrNodeModel)getModel()).getNode();
                 if (node != null) {
                     if (node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                         Node handle = node.getParent();
@@ -96,11 +95,11 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
                             }
                         }
                         handleModel = new JcrNodeModel(handle);
-                        getPluginContext().registerService(handleObserver = new IObserver<JcrNodeModel>() {
-                            public JcrNodeModel getObservable() {
+                        getPluginContext().registerService(handleObserver = new IObserver() {
+                            public IObservable getObservable() {
                                 return handleModel;
                             }
-                            public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> event) {
+                            public void onEvent(Iterator<? extends IEvent> event) {
                                 onModelChanged();
                             }
                         }, IObserver.class.getName());
