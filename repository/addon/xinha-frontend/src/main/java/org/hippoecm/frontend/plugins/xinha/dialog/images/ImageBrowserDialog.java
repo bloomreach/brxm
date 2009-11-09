@@ -19,9 +19,6 @@ package org.hippoecm.frontend.plugins.xinha.dialog.images;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -29,7 +26,6 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
@@ -87,28 +83,6 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
         add(align);
 
         checkState();
-    }
-
-    @Override
-    protected JcrNodeModel findNewModel(IModel model) {
-        if (model == null) {
-            return null;
-        }
-
-        JcrNodeModel nodeModel = (JcrNodeModel) model;
-        Node node = nodeModel.getNode();
-        if (node != null) {
-            try {
-                if (node.getPrimaryNodeType().getName().equals("hippo:handle")) {
-                    return new JcrNodeModel(node.getPath() + "/" + node.getName());
-                } else {
-                    return nodeModel;
-                }
-            } catch (RepositoryException e) {
-                log.error("Error during hippo:handle check", e);
-            }
-        }
-        return null;
     }
 
     @Override
