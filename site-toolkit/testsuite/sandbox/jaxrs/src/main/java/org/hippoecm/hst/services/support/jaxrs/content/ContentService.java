@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.servlet.http.HttpServletRequest;
@@ -145,14 +144,6 @@ public class ContentService extends BaseHstContentService {
                 cpm.save();
                 return Response.ok(beanContent).build();
             }
-        } catch (PathNotFoundException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("The path is not found: " + itemPath, e);
-            } else {
-                log.warn("The path is not found: {}. {}", itemPath, e.toString());
-            }
-            
-            throw new WebApplicationException(e);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -213,7 +204,7 @@ public class ContentService extends BaseHstContentService {
     }
     
     @POST
-    @Path("/{path:.*}")
+    @Path("/node/{path:.*}")
     public Response createContentNode(@PathParam("path") List<PathSegment> pathSegments, NodeContent nodeContent) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         

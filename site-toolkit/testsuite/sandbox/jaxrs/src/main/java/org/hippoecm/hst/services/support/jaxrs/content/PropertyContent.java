@@ -22,6 +22,8 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.slf4j.Logger;
@@ -76,6 +78,7 @@ public class PropertyContent extends ItemContent {
         this.multiple = multiple;
     }
     
+    @XmlElements(@XmlElement(name="value"))
     public Object [] getValues() {
         return values;
     }
