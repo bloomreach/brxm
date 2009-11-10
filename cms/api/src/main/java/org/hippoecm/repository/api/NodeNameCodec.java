@@ -93,6 +93,7 @@ public final class NodeNameCodec {
      * namespace, the prefix is not encoded but returned as-is.</p>
      * <p>Calling encode multiple times on the same string will return
      * the same result as encoding the string once.</p>
+     * <p>An IllegalArgumentException is thrown when the name is empty or null.</p>
      * @param name the name to encode
      * @return the encoded name
      */
@@ -118,6 +119,7 @@ public final class NodeNameCodec {
      * encoding colons.</p>
      * <p>Calling encode multiple times on the same string will return
      * the same result as encoding the string once.</p>
+     * <p>An IllegalArgumentException is thrown when the name is empty or null.</p>
      * @param name the name to encode
      * @param forceSimpleName force the name to be interpreted as a simple (non prefixed) name
      * @return the encoded name
