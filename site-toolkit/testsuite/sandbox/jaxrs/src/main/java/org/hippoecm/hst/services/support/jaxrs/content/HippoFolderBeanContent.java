@@ -104,24 +104,24 @@ public class HippoFolderBeanContent extends HippoBeanContent {
     }
     
     @Override
-    public void buildChildUrls(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
+    public void buildChildUris(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
         Collection<PropertyContent> propertyContents = getPropertyContents();
         
         if (propertyContents != null) {
             for (PropertyContent propertyContent : propertyContents) {
-                propertyContent.buildUrl(urlBase, siteContentPath, encoding);
+                propertyContent.buildUri(urlBase, siteContentPath, encoding);
             }
         }
         
         if (childFolderBeanContents != null) {
             for (HippoFolderBeanContent folderContent : childFolderBeanContents) {
-                folderContent.buildUrl(urlBase, siteContentPath, encoding);
+                folderContent.buildUri(urlBase, siteContentPath, encoding);
             }
         }
         
         if (childDocumentBeanContents != null) {
             for (HippoDocumentBeanContent documentContent : childDocumentBeanContents) {
-                documentContent.buildUrl(urlBase, siteContentPath, encoding);
+                documentContent.buildUri(urlBase, siteContentPath, encoding);
             }
         }
     }

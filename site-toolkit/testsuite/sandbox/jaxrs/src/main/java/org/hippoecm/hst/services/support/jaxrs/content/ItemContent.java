@@ -31,7 +31,8 @@ public class ItemContent {
     
     private String name;
     private String path;
-    private URI url;
+    private URI uri;
+    private transient Item item;
     
     public ItemContent() {
     }
@@ -47,6 +48,10 @@ public class ItemContent {
     
     public ItemContent(Item item) throws RepositoryException {
         this(item.getName(), item.getPath());
+    }
+    
+    public Item getItem() {
+        return item;
     }
     
     @XmlAttribute
@@ -68,15 +73,15 @@ public class ItemContent {
     }
     
     @XmlAttribute
-    public URI getUrl() {
-        return url;
+    public URI getUri() {
+        return uri;
     }
     
-    public void setUrl(URI url) {
-        this.url = url;
+    public void setUri(URI uri) {
+        this.uri = uri;
     }
     
-    public void buildUrl(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
+    public void buildUri(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
         if (encoding == null) {
             encoding = "ISO-8859-1";
         }
@@ -109,7 +114,7 @@ public class ItemContent {
             relativeContentPath = relativeContentPathBuilder.toString();
         }
         
-        setUrl(URI.create(urlBase + relativeContentPath));
+        setUri(URI.create(urlBase + relativeContentPath));
     }
     
 }

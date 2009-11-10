@@ -101,16 +101,16 @@ public class NodeContent extends ItemContent {
         this.childNodeContents = childNodeContents;
     }
     
-    public void buildChildUrls(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
+    public void buildChildUris(String urlBase, String siteContentPath, String encoding) throws UnsupportedEncodingException {
         if (propertyContents != null) {
             for (PropertyContent propertyContent : propertyContents) {
-                propertyContent.buildUrl(urlBase, siteContentPath, encoding);
+                propertyContent.buildUri(urlBase, siteContentPath, encoding);
             }
         }
         
         if (childNodeContents != null) {
             for (NodeContent nodeContent : childNodeContents) {
-                nodeContent.buildUrl(urlBase, siteContentPath, encoding);
+                nodeContent.buildUri(urlBase, siteContentPath, encoding);
             }
         }
     }

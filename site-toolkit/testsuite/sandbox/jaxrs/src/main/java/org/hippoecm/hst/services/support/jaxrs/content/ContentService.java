@@ -28,8 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
@@ -49,13 +51,19 @@ public class ContentService extends BaseHstContentService {
     
     private static Logger log = LoggerFactory.getLogger(ContentService.class);
     
+    @Context
+    private HttpServletRequest servletRequest;
+    
+    @Context
+    private UriInfo uriInfo;
+    
     public ContentService() {
         super();
     }
     
     @GET
     @Path("/uuid/{uuid}/")
-    public HippoBeanContent getContentNodeByUUID(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("uuid") String uuid) {
+    public HippoBeanContent getContentNodeByUUID(@PathParam("uuid") String uuid) {
         HippoBeanContent beanContent = new HippoBeanContent();
         
         try {
@@ -65,8 +73,8 @@ public class ContentService extends BaseHstContentService {
             if (bean != null) {
                 beanContent = createHippoBeanContent(bean);
                 String encoding = servletRequest.getCharacterEncoding();
-                beanContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
-                beanContent.buildChildUrls(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
+                beanContent.buildUri(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
+                beanContent.buildChildUris(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -74,6 +82,8 @@ public class ContentService extends BaseHstContentService {
             } else {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
+            
+            throw new WebApplicationException(e);
         }
         
         return beanContent;
@@ -81,7 +91,7 @@ public class ContentService extends BaseHstContentService {
     
     @GET
     @Path("/{path:.*}")
-    public ItemContent getContentItem(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments) {
+    public ItemContent getContentItem(@PathParam("path") List<PathSegment> pathSegments) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         ItemContent itemContent = new ItemContent();
         
@@ -95,14 +105,14 @@ public class ContentService extends BaseHstContentService {
                 if (bean != null) {
                     HippoBeanContent beanContent = createHippoBeanContent(bean);
                     String encoding = servletRequest.getCharacterEncoding();
-                    beanContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
-                    beanContent.buildChildUrls(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
+                    beanContent.buildUri(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
+                    beanContent.buildChildUris(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
                     itemContent = beanContent;
                 }
             } else {
                 PropertyContent propContent = new PropertyContent((Property) item);
                 String encoding = servletRequest.getCharacterEncoding();
-                propContent.buildUrl(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
+                propContent.buildUri(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
                 itemContent = propContent;
             }
         } catch (Exception e) {
@@ -111,6 +121,8 @@ public class ContentService extends BaseHstContentService {
             } else {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
+            
+            throw new WebApplicationException(e);
         }
         
         return itemContent;
@@ -118,7 +130,7 @@ public class ContentService extends BaseHstContentService {
     
     @DELETE
     @Path("/{path:.*}")
-    public Response deleteContentNode(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments) {
+    public Response deleteContentNode(@PathParam("path") List<PathSegment> pathSegments) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
@@ -140,7 +152,7 @@ public class ContentService extends BaseHstContentService {
                 log.warn("The path is not found: {}. {}", itemPath, e.toString());
             }
             
-            return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            throw new WebApplicationException(e);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -148,13 +160,13 @@ public class ContentService extends BaseHstContentService {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
             
-            return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            throw new WebApplicationException(e);
         }
     }
     
     @POST
     @Path("/{path:.*}")
-    public Response createContentDocument(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, HippoDocumentBeanContent documentBeanContent) {
+    public Response createContentDocument(@PathParam("path") List<PathSegment> pathSegments, HippoDocumentBeanContent documentBeanContent) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
@@ -187,7 +199,7 @@ public class ContentService extends BaseHstContentService {
                 return Response.serverError().status(Response.Status.NOT_FOUND).build();
             } else {
                 documentBeanContent = (HippoDocumentBeanContent) createHippoBeanContent(bean);
-                return Response.ok(documentBeanContent).build();
+                return Response.status(Response.Status.CREATED).entity(documentBeanContent).build();
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -196,13 +208,13 @@ public class ContentService extends BaseHstContentService {
                 log.warn("Failed to save document. {}", e.toString());
             }
             
-            return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            throw new WebApplicationException(e);
         }
     }
     
     @POST
-    @Path("/node/{path:.*}")
-    public Response createContentNode(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, NodeContent nodeContent) {
+    @Path("/{path:.*}")
+    public Response createContentNode(@PathParam("path") List<PathSegment> pathSegments, NodeContent nodeContent) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
@@ -232,7 +244,8 @@ public class ContentService extends BaseHstContentService {
                 
                 bean = (HippoBean) cpm.getObject(parentPath);
                 beanContent = createHippoBeanContent(bean);
-                return Response.ok(beanContent).build();
+                
+                return Response.status(Response.Status.CREATED).entity(beanContent).build();
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -241,34 +254,64 @@ public class ContentService extends BaseHstContentService {
                 log.warn("Failed to save document. {}", e.toString());
             }
             
-            return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            throw new WebApplicationException(e);
         }
     }
     
-    @POST
-    @Path("/property/{path:.*}")
-    public Response setContentProperty(@Context HttpServletRequest servletRequest, @Context UriInfo uriInfo, @PathParam("path") List<PathSegment> pathSegments, PropertyContent propertyContent) {
+    @PUT
+    @Path("/{path:.*}")
+    public Response updateContentItem(@PathParam("path") List<PathSegment> pathSegments, ItemContent itemContent) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
             ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
-            int offset = itemPath.lastIndexOf('/');
-            String nodePath = itemPath.substring(0, offset);
             
-            HippoBean bean = (HippoBean) cpm.getObject(nodePath);
-            
-            if (bean == null) {
-                return Response.serverError().status(Response.Status.NOT_FOUND).build();
-            } else {
-                HippoBeanContent beanContent = createHippoBeanContent(bean);
-                setPropertyValue(beanContent.getCanonicalNode(), propertyContent);
-                cpm.update(bean);
-                cpm.save();
+            if (itemContent instanceof PropertyContent) {
+                PropertyContent propertyContent = (PropertyContent) itemContent;
+                int offset = itemPath.lastIndexOf('/');
+                String nodePath = itemPath.substring(0, offset);
                 
-                bean = (HippoBean) cpm.getObject(nodePath);
-                beanContent = (HippoBeanContent) createHippoBeanContent(bean);
-                return Response.ok(beanContent).build();
+                HippoBean bean = (HippoBean) cpm.getObject(nodePath);
+                
+                if (bean == null) {
+                    return Response.serverError().status(Response.Status.NOT_FOUND).build();
+                } else {
+                    HippoBeanContent beanContent = createHippoBeanContent(bean);
+                    setPropertyValue(beanContent.getCanonicalNode(), propertyContent);
+                    cpm.update(bean);
+                    cpm.save();
+                    
+                    bean = (HippoBean) cpm.getObject(nodePath);
+                    beanContent = (HippoBeanContent) createHippoBeanContent(bean);
+                    
+                    return Response.status(Response.Status.ACCEPTED).entity(beanContent).build();
+                }
+            } else if (itemContent instanceof HippoBeanContent) {
+                HippoBean bean = (HippoBean) cpm.getObject(itemPath);
+                
+                if (bean == null) {
+                    return Response.serverError().status(Response.Status.NOT_FOUND).build();
+                } else {
+                    HippoBeanContent beanContent = createHippoBeanContent(bean);
+                    Collection<PropertyContent> propertyContents = ((HippoBeanContent) itemContent).getPropertyContents();
+                    
+                    if (propertyContents != null) {
+                        for (PropertyContent propertyContent : propertyContents) {
+                            setPropertyValue(beanContent.getCanonicalNode(), propertyContent);
+                        }
+                    }
+                    
+                    cpm.update(bean);
+                    cpm.save();
+                    
+                    bean = (HippoBean) cpm.getObject(itemPath);
+                    beanContent = (HippoBeanContent) createHippoBeanContent(bean);
+                    
+                    return Response.status(Response.Status.ACCEPTED).entity(beanContent).build();
+                }
             }
+            
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve save bean.", e);
@@ -276,7 +319,7 @@ public class ContentService extends BaseHstContentService {
                 log.warn("Failed to retrieve save bean. {}", e.toString());
             }
             
-            return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            throw new WebApplicationException(e);
         }
     }
     
