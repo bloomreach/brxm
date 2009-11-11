@@ -16,7 +16,6 @@
 package org.hippoecm.hst.services.support.jaxrs.content;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -47,6 +46,11 @@ import org.springframework.mock.web.MockServletContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * TestContentService
+ * 
+ * @version $Id$
+ */
 public class TestContentService extends AbstractHstTestCase {
     
     private static final String PREVIEW_SITE_CONTENT_PATH = "/testpreview/testproject/hst:content";
@@ -105,7 +109,9 @@ public class TestContentService extends AbstractHstTestCase {
     
     @Test
     public void testDemo() throws Exception {
-        // retrieves customer json data...
+        /* 
+         * retrieves customer json data...
+         */
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setProtocol("http");
         request.setServerName("localhost");
@@ -124,7 +130,9 @@ public class TestContentService extends AbstractHstTestCase {
         assertNotNull(response.getContentAsString());
         assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", response.getContentAsString());
         
-        // updating the existing customer...
+        /*
+         * updating the existing customer...
+         */
         request = new MockHttpServletRequest(servletContext);
         request.setProtocol("http");
         request.setServerName("localhost");
@@ -143,7 +151,9 @@ public class TestContentService extends AbstractHstTestCase {
         
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         
-        // adding a new customer...
+        /*
+         * adding a new customer...
+         */
         request = new MockHttpServletRequest(servletContext);
         request.setProtocol("http");
         request.setServerName("localhost");
@@ -165,7 +175,9 @@ public class TestContentService extends AbstractHstTestCase {
         assertTrue(response.getContentAsString().startsWith("{\"Customer\":"));
         assertTrue(response.getContentAsString().contains("\"name\":\"Jisung Park\""));
         
-        // deleting a new customer...
+        /*
+         * deleting a new customer...
+         */
         request = new MockHttpServletRequest(servletContext);
         request.setProtocol("http");
         request.setServerName("localhost");
@@ -185,6 +197,9 @@ public class TestContentService extends AbstractHstTestCase {
     
     @Test
     public void testGetContentNodeByUUID() throws Exception {
+        /*
+         * Retrieves folder xml by uuid
+         */
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
         request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
@@ -212,6 +227,9 @@ public class TestContentService extends AbstractHstTestCase {
     
     @Test
     public void testGetContentItem() throws Exception {
+        /*
+         * Retrieves document xml by path
+         */
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
         request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
@@ -242,6 +260,9 @@ public class TestContentService extends AbstractHstTestCase {
         assertEquals("http://localhost:8085/testapp/preview/services/contentservice/Products/HippoCMS/HippoCMS/testproject:title",
                 expr.evaluate(document));
         
+        /*
+         * Retrieves property xml by path
+         */
         request = new MockHttpServletRequest(servletContext);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
         request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
@@ -266,6 +287,9 @@ public class TestContentService extends AbstractHstTestCase {
         expr = xpath.compile("string(/property/value)");
         assertEquals("Hippo CMS", expr.evaluate(document));
         
+        /*
+         * Retrieves child node xml of a document by path
+         */
         request = new MockHttpServletRequest(servletContext);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
         request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
@@ -286,11 +310,14 @@ public class TestContentService extends AbstractHstTestCase {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
         root = document.getDocumentElement();
-        assertEquals("content", root.getNodeName());
+        assertEquals("node", root.getNodeName());
     }
     
     @Test
     public void testDeleteContentNode() throws Exception {
+        /*
+         * Delete a document by path
+         */
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
         request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
@@ -310,6 +337,9 @@ public class TestContentService extends AbstractHstTestCase {
         
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         
+        /*
+         * Check if the deleted document is not found.
+         */
         request = new MockHttpServletRequest(servletContext);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
         request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
@@ -327,22 +357,226 @@ public class TestContentService extends AbstractHstTestCase {
         
         jaxrsServlet.service(request, response);
 
-        assertFalse(Response.Status.OK.getStatusCode() == response.getStatus());
-    }
-    
-    @Test
-    public void testCreateContentDocument() throws Exception {
-        // TODO:
+        assertTrue(Response.Status.OK.getStatusCode() != response.getStatus());
     }
     
     @Test
     public void testCreateContentNode() throws Exception {
-        // TODO:
+        /*
+         * Create a textpage document
+         */
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
+        request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
+        request.setProtocol("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("POST");
+        request.setRequestURI("/testapp/preview/services/contentservice/Solutions");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/contentservice/Solutions");
+        request.setContentType("application/xml");
+        String content = 
+            "<document name=\"SolutionsPage2\">" +
+            "<property name=\"jcr:primaryType\" typeName=\"String\">" +
+            "<value>testproject:textpage</value>" +
+            "</property>" +
+            "</document>";
+        request.setContent(content.getBytes());
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        jaxrsServlet.service(request, response);
+        
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        
+        /*
+         * Check if the created document is found.
+         */
+        request = new MockHttpServletRequest(servletContext);
+        request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
+        request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
+        request.setProtocol("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/contentservice/Solutions/SolutionsPage2");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/contentservice/Solutions/SolutionsPage2");
+        
+        response = new MockHttpServletResponse();
+        
+        jaxrsServlet.service(request, response);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        
+        /*
+         * Check if the created document has body child node.
+         */
+        request = new MockHttpServletRequest(servletContext);
+        request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
+        request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
+        request.setProtocol("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/contentservice/Solutions/SolutionsPage2/SolutionsPage2/testproject:body");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/contentservice/Solutions/SolutionsPage2/SolutionsPage2/testproject:body");
+        
+        response = new MockHttpServletResponse();
+        
+        jaxrsServlet.service(request, response);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        /*
+         * Create a node under the context relative root node.
+         */
+        request = new MockHttpServletRequest(servletContext);
+        request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
+        request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
+        request.setProtocol("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("POST");
+        request.setRequestURI("/testapp/preview/services/contentservice/node/jcr:root/testcontent/documents/testproject");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/contentservice/node/jcr:root/testcontent/documents/testproject");
+        request.setContentType("application/xml");
+        content = "<node primaryNodeTypeName=\"hippostd:folder\" name=\"afolder\"/>";
+        request.setContent(content.getBytes());
+        
+        response = new MockHttpServletResponse();
+        
+        jaxrsServlet.service(request, response);
+
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        
+        /*
+         * Check if the created node
+         */
+        request = new MockHttpServletRequest(servletContext);
+        request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
+        request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
+        request.setProtocol("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/contentservice/afolder");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/contentservice/afolder");
+        
+        response = new MockHttpServletResponse();
+        
+        jaxrsServlet.service(request, response);
+
+        assertTrue(Response.Status.OK.getStatusCode() == response.getStatus());
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
+        Element root = document.getDocumentElement();
+        assertEquals("folder", root.getNodeName());
     }
     
     @Test
     public void testUpdateContentItem() throws Exception {
-        // TODO:
+        /*
+         * Retrieves document xml by path
+         */
+        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
+        request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
+        request.setProtocol("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/contentservice/News/News1/News1");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/contentservice/News/News1/News1");
+        request.setQueryString("pv=testproject:title&pv=testproject:summary");
+        
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        jaxrsServlet.service(request, response);
+        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
+        Element root = document.getDocumentElement();
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        XPathExpression expr = xpath.compile("string(/document/property[@name='testproject:title']/value)");
+        assertEquals("News Item 1", expr.evaluate(document).trim());
+        expr = xpath.compile("string(/document/property[@name='testproject:summary']/value)");
+        assertEquals("Summary about news item 1", expr.evaluate(document));
+        
+        /*
+         * Update properties 
+         */
+        request = new MockHttpServletRequest(servletContext);
+        request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
+        request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
+        request.setProtocol("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("PUT");
+        request.setRequestURI("/testapp/preview/services/contentservice/News/News1/News1");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/contentservice/News/News1/News1");
+        request.setQueryString(null);
+        request.setContentType("application/xml");
+        String content = 
+            "<property name=\"testproject:title\" typeName=\"String\">" +
+            "<value>News Item 1 - updated</value>" +
+            "</property>";
+        request.setContent(content.getBytes());
+        
+        response = new MockHttpServletResponse();
+        
+        jaxrsServlet.service(request, response);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        
+        /*
+         * Check the changes again.
+         */
+        request = new MockHttpServletRequest(servletContext);
+        request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, hstRequestContext);
+        request.setAttribute(BaseHstContentService.SITE_CONTENT_PATH, PREVIEW_SITE_CONTENT_PATH);
+        request.setProtocol("http");
+        request.setServerName("localhost");
+        request.setServerPort(8085);
+        request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        request.setMethod("GET");
+        request.setRequestURI("/testapp/preview/services/contentservice/News/News1/News1");
+        request.setContextPath("/testapp");
+        request.setServletPath("/preview/services");
+        request.setPathInfo("/contentservice/News/News1/News1");
+        request.setQueryString("pv=testproject:title&pv=testproject:summary");
+        
+        response = new MockHttpServletResponse();
+        
+        jaxrsServlet.service(request, response);
+        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(response.getContentAsByteArray()));
+        root = document.getDocumentElement();
+        xpath = XPathFactory.newInstance().newXPath();
+        expr = xpath.compile("string(/document/property[@name='testproject:title']/value)");
+        assertEquals("News Item 1 - updated", expr.evaluate(document));
+        expr = xpath.compile("string(/document/property[@name='testproject:summary']/value)");
+        assertEquals("Summary about news item 1", expr.evaluate(document));
     }
     
 }

@@ -26,6 +26,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * ItemContent
+ * 
+ * @version $Id$
+ */
 @XmlRootElement(name = "item")
 public class ItemContent {
     

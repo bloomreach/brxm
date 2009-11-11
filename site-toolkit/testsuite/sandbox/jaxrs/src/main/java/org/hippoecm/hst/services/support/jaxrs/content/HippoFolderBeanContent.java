@@ -32,6 +32,11 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.repository.api.HippoNodeType;
 
+/**
+ * HippoFolderBeanContent
+ * 
+ * @version $Id$
+ */
 @XmlRootElement(name = "folder")
 public class HippoFolderBeanContent extends HippoBeanContent {
     
@@ -52,7 +57,11 @@ public class HippoFolderBeanContent extends HippoBeanContent {
     }
     
     public HippoFolderBeanContent(HippoFolderBean bean) throws RepositoryException {
-        super(bean);
+        this(bean, null);
+    }
+    
+    public HippoFolderBeanContent(HippoFolderBean bean,  final Set<String> propertyNamesFilledWithValues) throws RepositoryException {
+        super(bean, propertyNamesFilledWithValues);
         
         Set<String> childNodePathSet = new HashSet<String>();
         

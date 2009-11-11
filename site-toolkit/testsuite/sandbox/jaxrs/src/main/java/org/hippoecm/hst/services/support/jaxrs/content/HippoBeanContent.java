@@ -15,16 +15,22 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
+import java.util.Set;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.persistence.ContentPersistenceException;
 import org.hippoecm.repository.api.HippoNode;
 
-@XmlRootElement(name = "content")
+/**
+ * HippoBeanContent
+ * 
+ * @version $Id$
+ */
+@XmlRootElement(name = "node")
 public class HippoBeanContent extends NodeContent {
     
     private HippoBean bean;
@@ -43,7 +49,11 @@ public class HippoBeanContent extends NodeContent {
     }
     
     public HippoBeanContent(HippoBean bean) throws RepositoryException {
-        super(bean.getNode());
+        this(bean, null);
+    }
+    
+    public HippoBeanContent(HippoBean bean, final Set<String> propertyNamesFilledWithValues) throws RepositoryException {
+        super(bean.getNode(), propertyNamesFilledWithValues);
         
         this.bean = bean;
         

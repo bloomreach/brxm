@@ -18,6 +18,7 @@ package org.hippoecm.hst.services.support.jaxrs.content;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -30,6 +31,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.PathSegment;
@@ -43,6 +45,11 @@ import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * ContentService
+ * 
+ * @version $Id$
+ */
 @Path("/contentservice/")
 public class ContentService extends BaseHstContentService {
     
@@ -62,7 +69,7 @@ public class ContentService extends BaseHstContentService {
     
     @GET
     @Path("/uuid/{uuid}/")
-    public HippoBeanContent getContentNodeByUUID(@PathParam("uuid") String uuid) {
+    public HippoBeanContent getContentNodeByUUID(@PathParam("uuid") String uuid, @QueryParam("pv") Set<String> propertyNamesFilledWithValues) {
         HippoBeanContent beanContent = new HippoBeanContent();
         
         try {
@@ -70,7 +77,7 @@ public class ContentService extends BaseHstContentService {
             HippoBean bean = (HippoBean) cpm.getObjectByUuid(uuid);
             
             if (bean != null) {
-                beanContent = createHippoBeanContent(bean);
+                beanContent = createHippoBeanContent(bean, propertyNamesFilledWithValues);
                 String encoding = servletRequest.getCharacterEncoding();
                 beanContent.buildUri(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
                 beanContent.buildChildUris(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
@@ -90,7 +97,7 @@ public class ContentService extends BaseHstContentService {
     
     @GET
     @Path("/{path:.*}")
-    public ItemContent getContentItem(@PathParam("path") List<PathSegment> pathSegments) {
+    public ItemContent getContentItem(@PathParam("path") List<PathSegment> pathSegments, @QueryParam("pv") Set<String> propertyNamesFilledWithValues) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         ItemContent itemContent = new ItemContent();
         
@@ -102,7 +109,7 @@ public class ContentService extends BaseHstContentService {
                 HippoBean bean = (HippoBean) cpm.getObject(itemPath);
                 
                 if (bean != null) {
-                    HippoBeanContent beanContent = createHippoBeanContent(bean);
+                    HippoBeanContent beanContent = createHippoBeanContent(bean, propertyNamesFilledWithValues);
                     String encoding = servletRequest.getCharacterEncoding();
                     beanContent.buildUri(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
                     beanContent.buildChildUris(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
@@ -137,13 +144,14 @@ public class ContentService extends BaseHstContentService {
             HippoBean bean = (HippoBean) cpm.getObject(itemPath);
             
             if (bean == null) {
-                return Response.serverError().status(Response.Status.NOT_FOUND).build();
-            } else {
-                HippoBeanContent beanContent = createHippoBeanContent(bean);
-                cpm.remove(bean);
-                cpm.save();
-                return Response.ok(beanContent).build();
+                throw new WebApplicationException(new IllegalArgumentException("Invalid item path: " + itemPath), Response.Status.NOT_FOUND);
             }
+            
+            HippoBeanContent beanContent = createHippoBeanContent(bean, null);
+            cpm.remove(bean);
+            cpm.save();
+            
+            return Response.ok().build();
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -158,40 +166,28 @@ public class ContentService extends BaseHstContentService {
     @POST
     @Path("/{path:.*}")
     public Response createContentDocument(@PathParam("path") List<PathSegment> pathSegments, HippoDocumentBeanContent documentBeanContent) {
-        String itemPath = getContentItemPath(servletRequest, pathSegments);
+        String parentPath = getContentItemPath(servletRequest, pathSegments);
+        String itemPath = parentPath + "/" + documentBeanContent.getName();
         
         try {
-            String primaryType = null;
-            Collection<PropertyContent> propertyContents = documentBeanContent.getPropertyContents();
-            
-            if (propertyContents != null) {
-                for (PropertyContent propertyContent : propertyContents) {
-                    if ("jcr:primaryType".equals(propertyContent.getName())) {
-                        primaryType = propertyContent.getValues()[0].toString();
-                        break;
-                    }
-                }
-            }
-            
-            if (primaryType == null) {
-                return Response.serverError().status(Response.Status.BAD_REQUEST).build();
-            }
-            
             ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
-            int offset = itemPath.lastIndexOf('/');
-            String folderPath = itemPath.substring(0, offset);
+            PropertyContent primaryTypePropertyContent = documentBeanContent.getPropertyContent("jcr:primaryType");
             
-            cpm.create(folderPath, primaryType, documentBeanContent.getName(), true);
+            if (primaryTypePropertyContent == null) {
+                throw new WebApplicationException(new IllegalArgumentException("primary node type name not found."), Response.Status.BAD_REQUEST);
+            }
+            
+            cpm.create(parentPath, (String) primaryTypePropertyContent.getValue(), documentBeanContent.getName(), true);
             cpm.save();
             
             HippoBean bean = (HippoBean) cpm.getObject(itemPath);
             
             if (bean == null) {
-                return Response.serverError().status(Response.Status.NOT_FOUND).build();
-            } else {
-                documentBeanContent = (HippoDocumentBeanContent) createHippoBeanContent(bean);
-                return Response.status(Response.Status.CREATED).entity(documentBeanContent).build();
+                throw new WebApplicationException(new IllegalArgumentException("Invalid item path: " + itemPath), Response.Status.NOT_FOUND);
             }
+            
+            documentBeanContent = (HippoDocumentBeanContent) createHippoBeanContent(bean, null);
+            return Response.status(Response.Status.CREATED).entity(documentBeanContent).build();
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to save document.", e);
@@ -206,22 +202,28 @@ public class ContentService extends BaseHstContentService {
     @POST
     @Path("/node/{path:.*}")
     public Response createContentNode(@PathParam("path") List<PathSegment> pathSegments, NodeContent nodeContent) {
-        String itemPath = getContentItemPath(servletRequest, pathSegments);
+        String parentPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
             ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
-            int offset = itemPath.lastIndexOf('/');
-            String parentPath = itemPath.substring(0, offset);
-            String nodeName = itemPath.substring(offset + 1);
-            
             HippoBean bean = (HippoBean) cpm.getObject(parentPath);
-            HippoBeanContent beanContent = createHippoBeanContent(bean);
             
             if (bean == null) {
-                return Response.serverError().status(Response.Status.NOT_FOUND).build();
-            } else {
-                Node canonicalParentNode = beanContent.getCanonicalNode();
-                Node node = canonicalParentNode.addNode(nodeName);
+                throw new WebApplicationException(new IllegalArgumentException("Invalid item path: " + parentPath), Response.Status.NOT_FOUND);
+            }
+            
+            HippoBeanContent beanContent = createHippoBeanContent(bean, null);
+            Node canonicalParentNode = beanContent.getCanonicalNode();
+            Node node = null;
+            
+            if (nodeContent != null) {
+                String primaryNodeTypeName = nodeContent.getPrimaryNodeTypeName();
+                
+                if (primaryNodeTypeName != null) {
+                    node = canonicalParentNode.addNode(nodeContent.getName());
+                } else {
+                    node = canonicalParentNode.addNode(nodeContent.getName(), primaryNodeTypeName);
+                }
                 
                 Collection<PropertyContent> propertyContents = nodeContent.getPropertyContents();
                 
@@ -230,14 +232,13 @@ public class ContentService extends BaseHstContentService {
                         setPropertyValue(node, propertyContent);
                     }
                 }
-                
-                node.getSession().save();
-                
-                bean = (HippoBean) cpm.getObject(parentPath);
-                beanContent = createHippoBeanContent(bean);
-                
-                return Response.status(Response.Status.CREATED).entity(beanContent).build();
             }
+            
+            node.getSession().save();
+            bean = (HippoBean) cpm.getObject(parentPath);
+            beanContent = createHippoBeanContent(bean, null);
+            
+            return Response.status(Response.Status.CREATED).entity(beanContent).build();
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to save document.", e);
@@ -251,58 +252,26 @@ public class ContentService extends BaseHstContentService {
     
     @PUT
     @Path("/{path:.*}")
-    public Response updateContentItem(@PathParam("path") List<PathSegment> pathSegments, ItemContent itemContent) {
+    public Response updateContentProperty(@PathParam("path") List<PathSegment> pathSegments, PropertyContent propertyContent) {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
             ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
             
-            if (itemContent instanceof PropertyContent) {
-                PropertyContent propertyContent = (PropertyContent) itemContent;
-                int offset = itemPath.lastIndexOf('/');
-                String nodePath = itemPath.substring(0, offset);
-                
-                HippoBean bean = (HippoBean) cpm.getObject(nodePath);
-                
-                if (bean == null) {
-                    return Response.serverError().status(Response.Status.NOT_FOUND).build();
-                } else {
-                    HippoBeanContent beanContent = createHippoBeanContent(bean);
-                    setPropertyValue(beanContent.getCanonicalNode(), propertyContent);
-                    cpm.update(bean);
-                    cpm.save();
-                    
-                    bean = (HippoBean) cpm.getObject(nodePath);
-                    beanContent = (HippoBeanContent) createHippoBeanContent(bean);
-                    
-                    return Response.status(Response.Status.ACCEPTED).entity(beanContent).build();
-                }
-            } else if (itemContent instanceof HippoBeanContent) {
-                HippoBean bean = (HippoBean) cpm.getObject(itemPath);
-                
-                if (bean == null) {
-                    return Response.serverError().status(Response.Status.NOT_FOUND).build();
-                } else {
-                    HippoBeanContent beanContent = createHippoBeanContent(bean);
-                    Collection<PropertyContent> propertyContents = ((HippoBeanContent) itemContent).getPropertyContents();
-                    
-                    if (propertyContents != null) {
-                        for (PropertyContent propertyContent : propertyContents) {
-                            setPropertyValue(beanContent.getCanonicalNode(), propertyContent);
-                        }
-                    }
-                    
-                    cpm.update(bean);
-                    cpm.save();
-                    
-                    bean = (HippoBean) cpm.getObject(itemPath);
-                    beanContent = (HippoBeanContent) createHippoBeanContent(bean);
-                    
-                    return Response.status(Response.Status.ACCEPTED).entity(beanContent).build();
-                }
+            HippoBean bean = (HippoBean) cpm.getObject(itemPath);
+            
+            if (bean == null) {
+                throw new WebApplicationException(new IllegalArgumentException("Invalid item path: " + itemPath), Response.Status.NOT_FOUND);
             }
             
-            return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
+            HippoBeanContent beanContent = createHippoBeanContent(bean, null);
+            
+            setPropertyValue(beanContent.getCanonicalNode(), propertyContent);
+            
+            cpm.update(bean);
+            cpm.save();
+            
+            return Response.ok().build();
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve save bean.", e);
@@ -315,46 +284,53 @@ public class ContentService extends BaseHstContentService {
     }
     
     private void setPropertyValue(Node canonicalNode, PropertyContent propertyContent) throws Exception {
+        int type = propertyContent.getType();
         boolean isMultiple = Boolean.parseBoolean(propertyContent.getMultiple());
-        int propertyType = PropertyType.valueFromName(propertyContent.getType());
         Object [] values = propertyContent.getValues();
+        Object [] args = null;
         
-        switch (propertyType) {
-        case PropertyType.BOOLEAN: 
+        if (!isMultiple) {
+            args = new Object [] { propertyContent.getName(), values[0] };
+        } else {
+            args = new Object [] { propertyContent.getName(), propertyContent.getValuesAsString(), new Integer(type) };
+        }
+        
+        switch (type) {
+        case PropertyType.BOOLEAN:
             if (isMultiple) {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", values, new Class [] { boolean [].class });
+                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String [].class, int.class });
             } else {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", values, new Class [] { boolean.class });
+                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, boolean.class });
             }
             break;
         case PropertyType.NAME:
         case PropertyType.REFERENCE:
         case PropertyType.STRING:
             if (isMultiple) {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", values, new Class [] { String [].class });
+                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String [].class });
             } else {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", values, new Class [] { String.class });
+                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String.class });
             }
             break;
         case PropertyType.LONG :
             if (isMultiple) {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", values, new Class [] { long [].class });
+                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String [].class, int.class });
             } else {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", values, new Class [] { long.class });
+                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, long.class });
             }
             break;
         case PropertyType.DOUBLE :
             if (isMultiple) {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", values, new Class [] { double [].class });
+                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String [].class, int.class });
             } else {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", values, new Class [] { double.class });
+                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, double.class });
             }
             break;
         case PropertyType.DATE :
             if (isMultiple) {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", values, new Class [] { Calendar [].class });
+                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String [].class, int.class });
             } else {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", values, new Class [] { Calendar.class });
+                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, Calendar.class });
             }
             break;
         }

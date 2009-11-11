@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
@@ -54,6 +55,11 @@ import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * BaseHstContentService
+ * 
+ * @version $Id$
+ */
 public class BaseHstContentService {
     
     public static final String SITE_CONTENT_PATH = "org.hippoecm.hst.services.support.site.content.path"; 
@@ -78,25 +84,33 @@ public class BaseHstContentService {
         return objectConverter;
     }
     
-    protected HippoBeanContent createHippoBeanContent(HippoBean bean) throws RepositoryException {
+    protected HippoBeanContent createHippoBeanContent(HippoBean bean, final Set<String> propertyNamesFilledWithValues) throws RepositoryException {
         HippoBeanContent beanContent = null;
         
         if (bean instanceof HippoFolderBean) {
-            beanContent = new HippoFolderBeanContent((HippoFolderBean) bean);
+            beanContent = new HippoFolderBeanContent((HippoFolderBean) bean, propertyNamesFilledWithValues);
         } else if (bean instanceof HippoDocumentBean) {
-            beanContent = new HippoDocumentBeanContent((HippoDocumentBean) bean);
+            beanContent = new HippoDocumentBeanContent((HippoDocumentBean) bean, propertyNamesFilledWithValues);
         } else {
-            beanContent = new HippoBeanContent(bean);
+            beanContent = new HippoBeanContent(bean, propertyNamesFilledWithValues);
         }
         
         return beanContent;
     }
     
     protected String getContentItemPath(final HttpServletRequest servletRequest, final List<PathSegment> pathSegments) {
-        StringBuilder pathBuilder = new StringBuilder(80).append(getSiteContentPath(servletRequest));
+        StringBuilder pathBuilder = new StringBuilder(80);
         
-        for (PathSegment pathSegment : pathSegments) {
-            pathBuilder.append('/').append(pathSegment.getPath());
+        if (pathSegments.size() > 0 && "jcr:root".equals(pathSegments.get(0).getPath())) {
+            for (int i = 1; i < pathSegments.size(); i++) {
+                pathBuilder.append('/').append(pathSegments.get(i).getPath());
+            }
+        } else {
+            pathBuilder.append(getSiteContentPath(servletRequest));
+            
+            for (PathSegment pathSegment : pathSegments) {
+                pathBuilder.append('/').append(pathSegment.getPath());
+            }
         }
         
         String path = pathBuilder.toString();

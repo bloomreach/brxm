@@ -15,12 +15,19 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
+import java.util.Set;
+
 import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 
+/**
+ * HippoDocumentBeanContent
+ * 
+ * @version $Id$
+ */
 @XmlRootElement(name = "document")
 public class HippoDocumentBeanContent extends HippoBeanContent {
     
@@ -39,7 +46,11 @@ public class HippoDocumentBeanContent extends HippoBeanContent {
     }
     
     public HippoDocumentBeanContent(HippoDocumentBean bean) throws RepositoryException {
-        super(bean);
+        this(bean, null);
+    }
+    
+    public HippoDocumentBeanContent(HippoDocumentBean bean, final Set<String> propertyNamesFilledWithValues) throws RepositoryException {
+        super(bean, propertyNamesFilledWithValues);
         
         this.canonicalHandleUuid = bean.getCanonicalHandleUUID();
     }

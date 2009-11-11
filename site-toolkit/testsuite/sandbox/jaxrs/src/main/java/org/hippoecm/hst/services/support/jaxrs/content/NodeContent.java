@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -30,9 +31,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * NodeContent
+ * 
+ * @version $Id$
+ */
 @XmlRootElement(name = "node")
 public class NodeContent extends ItemContent {
     
+    private String primaryNodeTypeName;
     private String uuid;
     private Collection<PropertyContent> propertyContents;
     private Collection<NodeContent> childNodeContents;
@@ -50,7 +57,13 @@ public class NodeContent extends ItemContent {
     }
     
     public NodeContent(Node node) throws RepositoryException {
+        this(node, null);
+    }
+    
+    public NodeContent(Node node, final Set<String> propertyNamesFilledWithValues) throws RepositoryException {
         super(node);
+        
+        primaryNodeTypeName = node.getPrimaryNodeType().getName(); 
         
         if (node.isNodeType("mix:referenceable")) {
             this.uuid = node.getUUID();
@@ -60,7 +73,12 @@ public class NodeContent extends ItemContent {
         
         for (PropertyIterator it = node.getProperties(); it.hasNext(); ) {
             Property prop = it.nextProperty();
-            propertyContents.add(new PropertyContent(prop.getName(), prop.getPath()));
+            
+            if (propertyNamesFilledWithValues != null && propertyNamesFilledWithValues.contains(prop.getName())) {
+                propertyContents.add(new PropertyContent(prop));
+            } else {
+                propertyContents.add(new PropertyContent(prop.getName(), prop.getPath()));
+            }
         }
         
         childNodeContents = new ArrayList<NodeContent>();
@@ -72,6 +90,15 @@ public class NodeContent extends ItemContent {
                 childNodeContents.add(new NodeContent(childNode.getName(), childNode.getPath()));
             }
         }
+    }
+    
+    @XmlAttribute
+    public String getPrimaryNodeTypeName() {
+        return primaryNodeTypeName;
+    }
+    
+    public void setPrimaryNodeTypeName(String primaryNodeTypeName) {
+        this.primaryNodeTypeName = primaryNodeTypeName;
     }
     
     @XmlAttribute
@@ -90,6 +117,18 @@ public class NodeContent extends ItemContent {
     
     public void setPropertyContents(Collection<PropertyContent> propertyContents) {
         this.propertyContents = propertyContents;
+    }
+    
+    public PropertyContent getPropertyContent(String propertyName) {
+        if (propertyContents != null) {
+            for (PropertyContent propertyContent : propertyContents) {
+                if (propertyContent.getName().equals(propertyName)) {
+                    return propertyContent;
+                }
+            }
+        }
+        
+        return null;
     }
     
     @XmlElements(@XmlElement(name="node"))
