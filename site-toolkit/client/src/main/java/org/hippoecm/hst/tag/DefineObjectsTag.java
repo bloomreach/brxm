@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.tag;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagData;
@@ -26,7 +26,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.util.HstRequestUtils;
 
 public class DefineObjectsTag extends TagSupport {
     
@@ -56,20 +56,10 @@ public class DefineObjectsTag extends TagSupport {
      */
     public int doStartTag() throws JspException {
         
-        ServletRequest servletRequest = pageContext.getRequest();
-        ServletResponse servletResponse = pageContext.getResponse();
-        
-        HstRequest hstRequest = (HstRequest) servletRequest.getAttribute(ContainerConstants.HST_REQUEST);
-        
-        if (hstRequest == null && servletRequest instanceof HstRequest) {
-            hstRequest = (HstRequest) servletRequest;
-        }
-        
-        HstResponse hstResponse = (HstResponse) servletRequest.getAttribute(ContainerConstants.HST_RESPONSE);
-        
-        if (hstResponse == null && servletResponse instanceof HstResponse) {
-            hstResponse = (HstResponse) servletResponse;
-        }
+        HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+        HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
+        HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
         
         // set attribute hstRequest
         setAttribute(hstRequest, "hstRequest");

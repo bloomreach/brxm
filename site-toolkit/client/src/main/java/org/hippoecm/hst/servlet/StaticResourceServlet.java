@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,11 +99,7 @@ public class StaticResourceServlet extends HttpServlet {
         String path = null;
         
         // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
-        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
-
-        if (hstRequest == null && request instanceof HstRequest) {
-            hstRequest = (HstRequest) request;
-        }
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
 
         if (hstRequest != null) {
             path = hstRequest.getResourceID();

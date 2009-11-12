@@ -25,9 +25,9 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
 public class SiteMapItemRedirectView extends RedirectView {
@@ -42,16 +42,8 @@ public class SiteMapItemRedirectView extends RedirectView {
 
     protected void renderMergedOutputModel(Map model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
-        HstResponse hstResponse = (HstResponse) request.getAttribute(ContainerConstants.HST_RESPONSE);
-        
-        if (hstRequest == null && request instanceof HstRequest) {
-            hstRequest = (HstRequest) request;
-        }
-        
-        if (hstResponse == null && response instanceof HstResponse) {
-            hstResponse = (HstResponse) response;
-        }
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
+        HstResponse hstResponse = HstRequestUtils.getHstResponse(request, response);
         
         if (hstRequest != null && hstResponse != null) {
             String resolvedSiteMapItemId = null;

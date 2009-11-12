@@ -39,8 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -244,11 +244,7 @@ public class BinariesServlet extends HttpServlet {
         Session session = null;
         
         // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
-        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
-        
-        if (hstRequest == null && request instanceof HstRequest) {
-            hstRequest = (HstRequest) request;
-        }
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
         
         if (hstRequest != null) {
             session = hstRequest.getRequestContext().getSession();
@@ -274,11 +270,7 @@ public class BinariesServlet extends HttpServlet {
     
     private void releaseSession(HttpServletRequest request, Session session) {
         // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
-        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
-        
-        if (hstRequest == null && request instanceof HstRequest) {
-            hstRequest = (HstRequest) request;
-        }
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
 
         if (hstRequest == null) {
             try {
@@ -292,11 +284,7 @@ public class BinariesServlet extends HttpServlet {
         String path = null;
         
         // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
-        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
-        
-        if (hstRequest == null && request instanceof HstRequest) {
-            hstRequest = (HstRequest) request;
-        }
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
         
         if (hstRequest != null) {
             path = hstRequest.getResourceID();

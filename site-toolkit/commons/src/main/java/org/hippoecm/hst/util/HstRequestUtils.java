@@ -29,7 +29,11 @@ import org.hippoecm.hst.core.container.ContainerConstants;
  */
 public class HstRequestUtils {
     
-    public HstRequest getHstRequest(HttpServletRequest servletRequest) {
+    private HstRequestUtils() {
+        
+    }
+    
+    public static HstRequest getHstRequest(HttpServletRequest servletRequest) {
         HstRequest hstRequest = (HstRequest) servletRequest.getAttribute(ContainerConstants.HST_REQUEST);
         
         if (hstRequest == null && servletRequest instanceof HstRequest) {
@@ -39,7 +43,7 @@ public class HstRequestUtils {
         return hstRequest;
     }
     
-    public HstResponse getHstResponse(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+    public static HstResponse getHstResponse(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         HstResponse hstResponse = (HstResponse) servletRequest.getAttribute(ContainerConstants.HST_RESPONSE);
         
         if (hstResponse == null && servletResponse instanceof HstResponse) {

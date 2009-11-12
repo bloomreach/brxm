@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.util.HstRequestUtils;
 
 public class HstMockJspServlet extends HttpServlet {
     
@@ -51,11 +51,7 @@ public class HstMockJspServlet extends HttpServlet {
         // add children here.
 
         // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
-        HstRequest hstRequest = (HstRequest) req.getAttribute(ContainerConstants.HST_REQUEST);
-
-        if (hstRequest == null && req instanceof HstRequest) {
-            hstRequest = (HstRequest) req;
-        }
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(req);
 
         if (hstRequest != null) {
             HstComponentWindow myWindow = ((HstRequestImpl) hstRequest).getComponentWindow();

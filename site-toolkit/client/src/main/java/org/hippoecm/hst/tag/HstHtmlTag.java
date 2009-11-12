@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -31,7 +33,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.hippoecm.hst.utils.SimpleHmlStringParser;
 import org.slf4j.Logger;
@@ -78,22 +80,18 @@ public class HstHtmlTag extends TagSupport {
         if(skipTag) {
            return EVAL_PAGE;
         }
-        HstRequest request = (HstRequest) pageContext.getRequest().getAttribute(ContainerConstants.HST_REQUEST);
-        HstResponse response = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
         
-        if (response == null && pageContext.getResponse() instanceof HstResponse) {
-            response = (HstResponse) pageContext.getResponse();
-        }
-        if (request == null && pageContext.getRequest() instanceof HstRequest) {
-            request = (HstRequest)pageContext.getRequest();
-        }
+        HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+        HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
+        HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
         
-        if(response == null || request == null) {
+        if(hstRequest == null || hstResponse == null) {
             log.error("Cannot continue HstHtmlTag because response/request not an instance of hst response/request");
             return EVAL_PAGE;
         }
         
-        String characterEncoding = response.getCharacterEncoding();
+        String characterEncoding = hstResponse.getCharacterEncoding();
         
         if (characterEncoding == null) {
             characterEncoding = "UTF-8";
@@ -107,7 +105,7 @@ public class HstHtmlTag extends TagSupport {
         String html = hippoHtml.getContent();
        
         if(hippoHtml.getNode() != null) {
-            html = SimpleHmlStringParser.parse(hippoHtml.getNode(), html, request, (HstResponse)response);
+            html = SimpleHmlStringParser.parse(hippoHtml.getNode(), html, hstRequest, hstResponse);
         } else {
             log.warn("Node should be a HippoNode and response a HstResponse");
         }

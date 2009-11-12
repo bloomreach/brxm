@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -33,10 +34,10 @@ import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,24 +98,15 @@ public class HstLinkTag extends TagSupport {
             return EVAL_PAGE;
         }
         
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        // if hst request/response is retrieved, then this servlet has been dispatched by hst component.
-        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
-        HstResponse hstResponse = (HstResponse) request.getAttribute(ContainerConstants.HST_RESPONSE);
-        
-        if (hstRequest == null && pageContext.getRequest() instanceof HstRequest) {
-            hstRequest = (HstRequest) pageContext.getRequest();
-        }
+        HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+        HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
+        HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
 
         if(hstRequest == null) {
             log.warn("The request is not an HstRequest. Cannot create an HstLink outside the hst request processing. Return");
             return EVAL_PAGE;
         }
-        
-        if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
-            hstResponse = (HstResponse) pageContext.getResponse();
-        }
-
         
         HstRequestContext reqContext = hstRequest.getRequestContext();
         if(this.hippoBean != null) {

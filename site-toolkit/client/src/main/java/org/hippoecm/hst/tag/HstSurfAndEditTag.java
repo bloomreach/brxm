@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -37,6 +38,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.utils.EncodingUtils;
 import org.hippoecm.hst.utils.PageContextPropertyUtils;
@@ -95,23 +97,14 @@ public class HstSurfAndEditTag extends TagSupport {
             return EVAL_PAGE;
         }
         
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        // if hst request/response is retrieved, then this servlet has been dispatched by hst component.
-        
-        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
-        HstResponse hstResponse = (HstResponse) request.getAttribute(ContainerConstants.HST_RESPONSE);
-        
-        if (hstRequest == null && pageContext.getRequest() instanceof HstRequest) {
-            hstRequest = (HstRequest) pageContext.getRequest();
-        }
+        HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+        HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
+        HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
 
         if(hstRequest == null) {
             log.warn("Cannot create a surf & edit link outside the hst request processing for '{}'", this.hippoBean.getPath());
             return EVAL_PAGE;
-        }
-        
-        if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
-            hstResponse = (HstResponse) pageContext.getResponse();
         }
 
         HstRequestContext hstRequestContext = hstRequest.getRequestContext();
@@ -179,7 +172,7 @@ public class HstSurfAndEditTag extends TagSupport {
             return EVAL_PAGE;
         }
         
-        String encodedPath = EncodingUtils.getEncodedPath(nodeLocation, request);
+        String encodedPath = EncodingUtils.getEncodedPath(nodeLocation, hstRequest);
         
         String surfAndEditLink = cmsBaseUrl + "?path="+encodedPath;
         

@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -46,11 +46,7 @@ public class HstDispatcherServlet extends DispatcherServlet {
     
     @Override
     protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        HstRequest hstRequest = (HstRequest) request.getAttribute(ContainerConstants.HST_REQUEST);
-        
-        if (hstRequest == null && request instanceof HstRequest) {
-            hstRequest = (HstRequest) request;
-        }
+        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
         
         boolean isActionPhase = (hstRequest != null && HstRequest.ACTION_PHASE.equals(hstRequest.getLifecyclePhase()));
         boolean renderable = true;
