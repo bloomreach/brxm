@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
-import java.util.Calendar;
-
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -26,10 +24,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.jackrabbit.util.ISO8601;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
 /**
  * PropertyContent
@@ -44,7 +40,7 @@ public class PropertyContent extends ItemContent {
     private int type;
     private String typeName;
     private String multiple;
-    private Object [] values;
+    private ValueContent [] valueContents;
     
     public PropertyContent() {
         super();
@@ -63,7 +59,20 @@ public class PropertyContent extends ItemContent {
         this.type = property.getType();
         this.typeName = PropertyType.nameFromValue(type);
         this.multiple = Boolean.toString(property.getDefinition().isMultiple());
-        loadPropertyValues(property);
+        
+        try {
+            if (property.getDefinition().isMultiple()) {
+                Value [] valueObjects = property.getValues();
+                this.valueContents = new ValueContent[valueObjects.length];
+                for (int i = 0; i < valueObjects.length; i++) {
+                    this.valueContents[i] = new ValueContent(valueObjects[i]);
+                }
+            } else {
+                this.valueContents = new ValueContent [] { new ValueContent(property.getValue()) };
+            }
+        } catch (Exception e) {
+            logger.warn("Failed to retrieve property value: {}", e.toString());
+        }
     }
     
     @XmlAttribute
@@ -96,170 +105,20 @@ public class PropertyContent extends ItemContent {
     }
     
     @XmlElements(@XmlElement(name="value"))
-    public Object [] getValues() {
-        return values;
+    public ValueContent [] getValueContents() {
+        return valueContents;
     }
     
-    public void setValues(Object [] values) {
-        this.values = values;
-        
-        if (this.values != null) {
-            for (int i = 0; i < this.values.length; i++) {
-                if (this.values[i] instanceof Element) {
-                    String textContent = ((Element) this.values[i]).getTextContent();
-                    
-                    if (textContent != null) {
-                        this.values[i] = convertPropertyValue(textContent, type);
-                    }
-                }
-            }
-        }
+    public void setValueContents(ValueContent [] valueContents) {
+        this.valueContents = valueContents;
     }
     
-    public Object getValue() {
-        if (values != null && values.length > 0) {
-            return values[0];
+    public ValueContent getFirstValueContent() {
+        if (valueContents != null && valueContents.length > 0) {
+            return valueContents[0];
         }
         
         return null;
     }
     
-    public String [] getValuesAsString() {
-        if (values == null) {
-            return null;
-        }
-        
-        String [] stringValues = new String[values.length];
-        
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] instanceof Calendar) {
-                stringValues[i] = ISO8601.format((Calendar) values[i]);
-            } else {
-                stringValues[i] = values[i].toString();
-            }
-        }
-        
-        return stringValues;
-    }
-    
-    public String getValueAsString() {
-        Object value = getValue();
-        
-        if (value == null) {
-            return null;
-        }
-        
-        if (value instanceof Calendar) {
-            return ISO8601.format((Calendar) value);
-        } else {
-            return value.toString();
-        }
-    }
-    
-    private Object convertPropertyValue(String textContent, int type) {
-        Object value = null;
-        
-        switch (type) {
-        case PropertyType.BOOLEAN: 
-            value = Boolean.valueOf(textContent);
-            break;
-        case PropertyType.NAME:
-        case PropertyType.REFERENCE:
-        case PropertyType.STRING:
-            value = textContent;
-            break;
-        case PropertyType.LONG :
-            value = Long.valueOf(textContent);
-            break;
-        case PropertyType.DOUBLE :
-            value = Double.valueOf(textContent);
-            break;
-        case PropertyType.DATE :
-            value = ISO8601.parse(textContent);
-            break;
-        }
-        
-        return value;
-    }
-    
-    private void loadPropertyValues(Property p) {
-        try {
-            boolean isMultiple = p.getDefinition().isMultiple();
-            
-            switch (p.getType()) {
-            case PropertyType.BOOLEAN: 
-                if (isMultiple) {
-                    Value [] values = p.getValues();
-                    this.values = new Boolean[values.length];
-                    int i = 0;
-                    for (Value val : values) {
-                        this.values[i] = val.getBoolean();
-                        i++;
-                    }
-                } else {
-                    this.values = new Boolean [] { p.getBoolean() };
-                }
-                break;
-            case PropertyType.NAME:
-            case PropertyType.REFERENCE:
-            case PropertyType.STRING:
-                if (isMultiple) {
-                    Value [] values = p.getValues();
-                    this.values = new String[values.length];
-                    int i = 0;
-                    for (Value val : values) {
-                        this.values[i] = val.getString();
-                        i++;
-                    }
-                } else {
-                    this.values = new String [] { p.getString() };
-                }
-                break;
-            case PropertyType.LONG :
-                if (isMultiple) {
-                    Value [] values = p.getValues();
-                    this.values = new Long[values.length];
-                    int i = 0;
-                    for (Value val : values) {
-                        this.values[i] = val.getLong();
-                        i++;
-                    }
-                } else {
-                    this.values = new Long [] { p.getLong() };
-                }
-                break;
-            case PropertyType.DOUBLE :
-                if (isMultiple) {
-                    Value [] values = p.getValues();
-                    this.values = new Double[values.length];
-                    int i = 0;
-                    for (Value val : values) {
-                        this.values[i] = val.getDouble();
-                        i++;
-                    }
-                } else {
-                    this.values = new Double [] { p.getDouble() };
-                }
-                break;
-            case PropertyType.DATE :
-                if (isMultiple) {
-                    Value [] values = p.getValues();
-                    this.values = new Calendar[values.length];
-                    int i = 0;
-                    for(Value val : values) {
-                        this.values[i] = val.getDate();
-                        i++;
-                    }
-                } else {
-                    this.values = new Calendar [] { p.getDate() };
-                }
-                break;
-            }
-        } catch (Exception e) {
-            logger.warn("Failed to retrieve property value: {}", e.toString());
-        }
-        
-        return ;
-    }
-
 }

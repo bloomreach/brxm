@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.services.support.jaxrs.content;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +22,6 @@ import java.util.Set;
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Property;
-import javax.jcr.PropertyType;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -177,7 +175,7 @@ public class ContentService extends BaseHstContentService {
                 throw new WebApplicationException(new IllegalArgumentException("primary node type name not found."), Response.Status.BAD_REQUEST);
             }
             
-            cpm.create(parentPath, (String) primaryTypePropertyContent.getValue(), documentBeanContent.getName(), true);
+            cpm.create(parentPath, (String) primaryTypePropertyContent.getFirstValueContent().getString(), documentBeanContent.getName(), true);
             cpm.save();
             
             HippoBean bean = (HippoBean) cpm.getObject(itemPath);
@@ -286,53 +284,21 @@ public class ContentService extends BaseHstContentService {
     private void setPropertyValue(Node canonicalNode, PropertyContent propertyContent) throws Exception {
         int type = propertyContent.getType();
         boolean isMultiple = Boolean.parseBoolean(propertyContent.getMultiple());
-        Object [] values = propertyContent.getValues();
+        ValueContent [] valueContents = propertyContent.getValueContents();
         Object [] args = null;
         
         if (!isMultiple) {
-            args = new Object [] { propertyContent.getName(), values[0] };
+            args = new Object [] { propertyContent.getName(), valueContents[0].getValue(), new Integer(type) };
+            MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String.class, int.class });
         } else {
-            args = new Object [] { propertyContent.getName(), propertyContent.getValuesAsString(), new Integer(type) };
-        }
-        
-        switch (type) {
-        case PropertyType.BOOLEAN:
-            if (isMultiple) {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String [].class, int.class });
-            } else {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, boolean.class });
+            String [] values = new String[valueContents.length];
+            
+            for (int i = 0; i < valueContents.length; i++) {
+                values[i] = valueContents[i].getValue();
             }
-            break;
-        case PropertyType.NAME:
-        case PropertyType.REFERENCE:
-        case PropertyType.STRING:
-            if (isMultiple) {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String [].class });
-            } else {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String.class });
-            }
-            break;
-        case PropertyType.LONG :
-            if (isMultiple) {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String [].class, int.class });
-            } else {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, long.class });
-            }
-            break;
-        case PropertyType.DOUBLE :
-            if (isMultiple) {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String [].class, int.class });
-            } else {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, double.class });
-            }
-            break;
-        case PropertyType.DATE :
-            if (isMultiple) {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String [].class, int.class });
-            } else {
-                MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, Calendar.class });
-            }
-            break;
+            
+            args = new Object [] { propertyContent.getName(), values, new Integer(type) };
+            MethodUtils.invokeExactMethod(canonicalNode, "setProperty", args, new Class [] { String.class, String [].class, int.class });
         }
     }
     
