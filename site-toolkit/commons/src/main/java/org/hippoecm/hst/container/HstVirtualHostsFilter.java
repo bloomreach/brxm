@@ -33,6 +33,7 @@ import org.hippoecm.hst.core.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HstRequestUtils;
 
 public class HstVirtualHostsFilter implements Filter {
 
@@ -112,7 +113,7 @@ public class HstVirtualHostsFilter implements Filter {
             if (request.getAttribute(FILTER_DONE_KEY) == null) {
                 request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
                 
-                MatchedMapping matchedMapping = vHosts.findMapping(req.getServerName(), pathInfo);
+                MatchedMapping matchedMapping = vHosts.findMapping(HstRequestUtils.getRequestServerName(req), pathInfo);
                 if(matchedMapping == null) {
                     if(vHosts.getDefaultHostName() != null) {
                         matchedMapping = vHosts.findMapping(vHosts.getDefaultHostName(), pathInfo);

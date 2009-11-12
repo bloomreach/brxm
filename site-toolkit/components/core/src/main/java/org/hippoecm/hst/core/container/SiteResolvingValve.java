@@ -16,8 +16,10 @@
 package org.hippoecm.hst.core.container;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.core.hosting.VirtualHosts;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
+import org.hippoecm.hst.util.HstRequestUtils;
 
 public class SiteResolvingValve extends AbstractValve {
     
@@ -29,13 +31,20 @@ public class SiteResolvingValve extends AbstractValve {
         MatchedMapping matchedMapping = requestContext.getMatchedMapping();
         
         if (matchedMapping == null) {
-            String hostName = context.getServletRequest().getServerName();
+            String hostName = HstRequestUtils.getRequestServerName(context.getServletRequest());
             
-            if (this.virtualHostsManager.getVirtualHosts() == null) {
+            VirtualHosts vHosts = this.virtualHostsManager.getVirtualHosts();
+            
+            if (vHosts == null) {
                 throw new ContainerException("Hosts are not properly initialized");
             }
             
-            matchedMapping = this.virtualHostsManager.getVirtualHosts().findMapping(hostName, baseURL.getServletPath() + baseURL.getPathInfo());
+            String contextRelativePath = baseURL.getServletPath() + baseURL.getPathInfo();
+            matchedMapping = vHosts.findMapping(hostName, contextRelativePath);
+            
+            if (matchedMapping == null && vHosts.getDefaultHostName() != null) {
+                matchedMapping = vHosts.findMapping(vHosts.getDefaultHostName(), contextRelativePath);
+            }
             
             if (matchedMapping == null) {
                 throw new ContainerException("No proper configuration found for host : " + hostName);

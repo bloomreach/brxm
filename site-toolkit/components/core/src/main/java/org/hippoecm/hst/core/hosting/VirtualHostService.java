@@ -30,6 +30,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -259,12 +260,12 @@ public class VirtualHostService extends AbstractJCRService implements VirtualHos
             protocol = "http";
         }
         
-        String serverName = request.getServerName();
+        String serverName = HstRequestUtils.getRequestServerName(request);
         
         int port = this.getPortNumber();
         
         if (port == 0) {
-            port = request.getServerPort();
+            port = HstRequestUtils.getRequestServerPort(request);
         }
         
         if ((port == 80 && "http".equals(protocol)) || (port == 443 && "https".equals(protocol))) {
