@@ -62,6 +62,7 @@
     <log4j.version>1.2.14</log4j.version>
 
     <junit.version>4.5</junit.version>
+    <easymock.version>2.4</easymock.version>
 
     <dom4j.version>1.6.1</dom4j.version>
 
@@ -689,7 +690,14 @@
         <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
       <!--
       <dependency>
         <groupId>org.hippoecm</groupId>

@@ -133,6 +133,18 @@
     		<param-name>primaryitem</param-name>
     		<param-value>hippogallery:picture</param-value>
     	</init-param>
+        <init-param>
+            <param-name>contentDispositionContentTypes</param-name>
+            <param-value>
+                 application/pdf
+                 application/rtf
+                 application/excel
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>contentDispositionFilenameProperty</param-name>
+            <param-value>demosite:filename</param-value>
+        </init-param>
     </servlet>
   
     <servlet>

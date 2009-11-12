@@ -19,11 +19,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
@@ -37,7 +40,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.configuration.HstSitesManager;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -46,25 +50,72 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Serves binary files from the repository. Binary files are represented by nodes.
+ *
+ * <p/>This servlet has the ability to set the "Content-Disposition" header in the HTTP response to tell browsers to
+ * download a binary file instead of trying to display the file directly. This needs some configuration, which is
+ * described below.
+ *
+ * <h2>Content disposition configuration</h2>
+ * To configure which mime types to enable content dispositioning for, set the "contentDispositionContentTypes" init
+ * param in the web.xml in which this servlet is defined. Example:
+ * <pre>
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;contentDispositionContentTypes&lt;/param-name&gt;
+ *     &lt;param-value&gt;
+ *         application/pdf
+ *         application/rtf
+ *         application/excel
+ *     &lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * </pre>
+ *
+ * Also, you can configure the JCR property to get the file name from. The file name is used to send along in the
+ * HTTP response for content dispositioning. To configure this, set the "contentDispositionFilenameProperty" init
+ * param in the web.xml in which this servlet is defined. Example:
+ *
+ * <pre>
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;contentDispositionFilenameProperty&lt;/param-name&gt;
+ *     &lt;param-value&gt;demosite:filename&lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * </pre>
+ *
+ * @author Tom van Zummeren
+ * @version $Id$
+ */
 public class BinariesServlet extends HttpServlet {
 
-    public static final String BASE_BINARIES_CONTENT_PATH_INIT_PARAM = "baseBinariesContentPath";
-    public static final String PRIMARYITEM_INIT_PARAM = "primaryitem";
-    public static final String DEFAULT_BASE_BINARIES_CONTENT_PATH = "";
+    private static Logger log = LoggerFactory.getLogger(BinariesServlet.class);
+
+    private static final String BASE_BINARIES_CONTENT_PATH_INIT_PARAM = "baseBinariesContentPath";
+
+    private static final String PRIMARYITEM_INIT_PARAM = "primaryitem";
+
+    private static final String CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM = "contentDispositionContentTypes";
+
+    private static final String CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM = "contentDispositionFilenameProperty";
+
+    private static final String DEFAULT_BASE_BINARIES_CONTENT_PATH = "";
 
     private static final long serialVersionUID = 1L;
-    
-    private static Logger log = LoggerFactory.getLogger(BinariesServlet.class);
-    
-    protected Repository repository;
-    protected Credentials defaultCredentials;
-    
-    protected HstSitesManager hstSitesManager;
-    
-    protected String baseBinariesContentPath = DEFAULT_BASE_BINARIES_CONTENT_PATH;
 
-    protected String primaryItem;
+    private Repository repository;
     
+    private Credentials defaultCredentials;
+    
+    String baseBinariesContentPath = DEFAULT_BASE_BINARIES_CONTENT_PATH;
+
+    String primaryItem;
+    
+    Set<String> contentDispositionContentTypes;
+
+    String contentDispositionFilenameProperty;
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -77,6 +128,14 @@ public class BinariesServlet extends HttpServlet {
         
         primaryItem = config.getInitParameter(PRIMARYITEM_INIT_PARAM);
         
+        contentDispositionFilenameProperty = config.getInitParameter(CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM);
+
+        // Parse mime types from init-param
+        contentDispositionContentTypes = new HashSet<String>();
+        String mimeTypesString = config.getInitParameter(CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM);
+        if (mimeTypesString != null) {
+            contentDispositionContentTypes.addAll(Arrays.asList(StringUtils.split(mimeTypesString)));
+        }
     }
 
     @Override
@@ -186,6 +245,9 @@ public class BinariesServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType(mimeType);
 
+            // Add the Content-Disposition header for configured content types
+            addContentDispositionHeader(request, response, mimeType, node);
+
             // TODO add a configurable factor + default minimum for expires. Ideally, this value is
             // stored in the repository
             if (node.hasProperty("jcr:lastModified")) {
@@ -239,8 +301,62 @@ public class BinariesServlet extends HttpServlet {
             }
         }
     }
+
+    /**
+     * Adds a Content-Disposition header to the given <code>binaryFileNode</code>. The HTTP header is only set when the
+     * content type matches one of the configured <code>contentDispositionContentTypes</code>.
+     *
+     * <p/>When the Content-Disposition header is set, the filename is retrieved from the <code>binaryFileNode</code>
+     * and added to the header value. The property in which the filename is stored should be configured using
+     * <code>contentDispositionFilenameProperty</code>.
+     *
+     * @param request             HTTP request
+     * @param response            HTTP response to set header in
+     * @param responseContentType content type of the binary file
+     * @param binaryFileNode      the node representing the binary file that is streamed to the client
+     * @throws javax.jcr.RepositoryException when something goes wrong during repository access
+     */
+    void addContentDispositionHeader(HttpServletRequest request, HttpServletResponse response, String responseContentType, Node binaryFileNode) throws RepositoryException {
+        if (contentDispositionContentTypes.contains(responseContentType)) {
+            // The response content type matches one of the configured content types so add a Content-Disposition
+            // header to the response
+            StringBuilder headerValue = new StringBuilder("attachment");
+            
+            if (contentDispositionFilenameProperty != null
+                    && binaryFileNode.hasProperty(contentDispositionFilenameProperty)) {
+                // A filename is set for the binary node, so add this to the Content-Disposition header value
+                String filename = binaryFileNode.getProperty(contentDispositionFilenameProperty).getString();
+                
+                // TODO: shouldn't it be encoded??
+                //String encodedFilename = encodeContentDispositionFileName(request, filename);
+                headerValue.append("; filename=\"").append(filename).append("\"");
+            }
+            
+            response.addHeader("Content-Disposition", headerValue.toString());
+        }
+    }
     
-    private Session getSession(HttpServletRequest request) throws LoginException, RepositoryException {
+    private String encodeContentDispositionFileName(HttpServletRequest request, String fileName) {
+        String userAgent = request.getHeader("User-Agent");
+        
+        try {
+            if (userAgent != null && (userAgent.contains("MSIE") || userAgent.contains("Opera"))) {
+                return URLEncoder.encode(fileName, "UTF-8");
+            } else {
+                return "=?UTF-8?B?" + new String(Base64.encodeBase64(fileName.getBytes("UTF-8")), "UTF-8") + "?=";
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to encode filename.", e);
+            } else {
+                log.warn("Failed to encode filename. {}", e.toString());
+            }
+        }
+        
+        return fileName;
+    }
+    
+    private Session getSession(HttpServletRequest request) throws RepositoryException {
         Session session = null;
         
         // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
@@ -315,5 +431,4 @@ public class BinariesServlet extends HttpServlet {
         return path;
     }
     
-  
 }
