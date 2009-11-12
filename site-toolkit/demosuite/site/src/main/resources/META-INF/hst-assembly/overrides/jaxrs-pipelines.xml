@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:lang="http://www.springframework.org/schema/lang" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+  
+  
+  <bean id="cxfServlet" class="org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet" />
+  
+  <bean id="cxfServletConfig" 
+        class="org.hippoecm.hst.core.container.ServletDelegatingValve$ServletConfigImpl">
+    <constructor-arg value="CXFNonSpringJaxrsServlet" />
+    <constructor-arg>
+      <bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="location" value="classpath:/jaxrs.properties" />
+      </bean>
+    </constructor-arg>
+  </bean>
+  
+  <bean id="cxfServletDelegatingValve" parent="abstractValve" 
+        class="org.hippoecm.hst.core.container.ServletDelegatingValve">
+    <constructor-arg ref="cxfServlet" />
+    <constructor-arg ref="cxfServletConfig" />
+  </bean>
+  
+  <bean id="siteContentPathResolvingValve" 
+        class="org.hippoecm.hst.services.support.jaxrs.container.SiteContentPathResolvingValve">
+    <property name="sitesManagers">
+      <map>
+        <entry key="${preview.servlet.path}/services" value-ref="org.hippoecm.hst.configuration.HstSitesManager.preview" />
+        <entry key="${live.servlet.path}/services" value-ref="org.hippoecm.hst.configuration.HstSitesManager.live" />
+      </map>
+    </property>
+  </bean>
+  
+  <bean id="jaxrsPipeline" class="org.hippoecm.hst.core.container.HstSitePipeline">
+    <property name="preInvokingValves">
+      <list>
+        <ref bean="initializationValve" />
+      </list>
+    </property>
+    <property name="invokingValves">
+      <list>
+        <ref bean="urlValve" />
+        <ref bean="siteResolvingValve" />
+        <ref bean="siteContentPathResolvingValve" />
+        <ref bean="securityValve" />
+        <ref bean="cxfServletDelegatingValve" />
+      </list>
+    </property>
+    <property name="postInvokingValves">
+      <list>
+        <ref bean="cleanupValve" />
+      </list>
+    </property>
+  </bean>
+  
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject">
+      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+        <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
+        <property name="propertyPath" value="pipelines"/>
+      </bean>
+    </property>
+    <property name="targetMethod" value="put" />
+    <property name="arguments">
+      <list>
+        <value>JaxrsPipeline</value>
+        <ref local="jaxrsPipeline" />
+      </list>
+    </property>
+  </bean>
+  
+</beans>
+

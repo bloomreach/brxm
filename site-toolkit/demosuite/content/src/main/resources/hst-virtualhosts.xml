@@ -60,6 +60,8 @@
             <sv:value>hst:virtualhost</sv:value>
         </sv:property>
         <sv:property sv:name="hst:mapping" sv:type="String">
+            <sv:value>/preview/services/* --> /preview/services/${1}</sv:value>
+            <sv:value>/services/* --> /live/services/${1}</sv:value>
             <sv:value>/preview/* --> /preview/${1}</sv:value>
             <sv:value>/* --> /live/${1}</sv:value>
         </sv:property>
@@ -73,6 +75,8 @@
             <sv:value>hst:virtualhost</sv:value>
         </sv:property>
         <sv:property sv:name="hst:mapping" sv:type="String">
+            <sv:value>/preview/services/* --> /preview/services/${1}</sv:value>
+            <sv:value>/services/* --> /live/services/${1}</sv:value>
             <sv:value>/preview/* --> /preview/${1}</sv:value>
             <sv:value>/* --> /live/${1}</sv:value>
         </sv:property>
