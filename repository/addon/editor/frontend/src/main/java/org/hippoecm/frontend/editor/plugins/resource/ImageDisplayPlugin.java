@@ -22,9 +22,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -55,10 +57,11 @@ public class ImageDisplayPlugin extends RenderPlugin {
                     fragment = new Fragment("fragment", "image", this);
                     fragment.add(new NonCachingImage("image", new JcrResource(resource)));
                 } else {
-                    ResourceLink link = new ResourceLink("link", new JcrResource(resource));
-                    link.add(new Label("name", "download"));
                     fragment = new Fragment("fragment", "embed", this);
-                    fragment.add(link);
+                    fragment.add(new Label("filename", new Model(resource.getNode().getParent().getName())));
+                    fragment.add(new Label("filesize", new Model(new ByteSizeFormatter().format(resource.length()))));
+                    fragment.add(new Label("mimetype", new Model(resource.getContentType())));
+                    fragment.add(new ResourceLink("link", new JcrResource(resource)));
                 }
             }
         } catch (RepositoryException ex) {

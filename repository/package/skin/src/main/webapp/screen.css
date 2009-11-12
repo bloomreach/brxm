@@ -1264,3 +1264,10 @@ body.hippo-root div.yui-log-container {
   right: 5px;
 }
 
+.simple-values { padding: 10px; font-size: 12px; }
+.hippo-preview-document .simple-values { padding-left: 0px; }
+.simple-values label { width: 110px; display: block; float: left; }
+.simple-values .simple-editor-value { float: left; color: #666; }
+.simple-values a { text-decoration: underline; }
+.simple-values input[type="submit"] {  padding-left: 0px; padding-top: 0px;}
+

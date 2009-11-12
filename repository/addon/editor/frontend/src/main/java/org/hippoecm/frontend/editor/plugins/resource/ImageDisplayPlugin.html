@@ -14,16 +14,24 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:panel>
+  <wicket:panel>
+    <div class="simple-values">
       <wicket:container wicket:id="fragment"/>
-    </wicket:panel>
-    <wicket:fragment wicket:id="image">
-      <img wicket:id="image" />
-    </wicket:fragment>
-    <wicket:fragment wicket:id="embed">
-      <a wicket:id="link"><span wicket:id="name" /></a>
-      <!-- embed style="width: 400px; height: 300px;" src="http://localhost:8080/cms/deque/binaries/content/assets/Hippo.pdf/Hippo.pdf" name="plugin" type="application/pdf" -->
-    </wicket:fragment>
-    <wicket:fragment wicket:id="unknown">
-    </wicket:fragment>
+    </div>  
+  </wicket:panel>
+
+  <wicket:fragment wicket:id="image">
+    <img wicket:id="image" />
+  </wicket:fragment>
+
+  <wicket:fragment wicket:id="embed">
+    <label class="simple-editor-label"><wicket:message key="filename.label">Filename: </wicket:message></label><span wicket:id="filename" class="simple-editor-value"></span><br/>
+    <label class="simple-editor-label"><wicket:message key="mimetype.label">Mimetype: </wicket:message></label><span wicket:id="mimetype" class="simple-editor-value"></span><br/>
+    <label class="simple-editor-label"><wicket:message key="filesize.label">Filesize: </wicket:message></label><span wicket:id="filesize" class="simple-editor-value"></span><br/>
+    <label class="simple-editor-label"><wicket:message key="download.label">Download: </wicket:message></label><a wicket:id="link" class="simple-editor-value"><wicket:message key="download.link">link</wicket:message></a><br/>
+  </wicket:fragment>
+
+  <wicket:fragment wicket:id="unknown">
+  </wicket:fragment>
+  
 </html>
