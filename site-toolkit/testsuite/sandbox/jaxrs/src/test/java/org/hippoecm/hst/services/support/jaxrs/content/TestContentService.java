@@ -86,7 +86,7 @@ public class TestContentService extends AbstractHstTestCase {
                 if ("getSession".equals(method.getName())) {
                     return session;
                 }
-                throw new UnsupportedOperationException("Unsupported: " + method);
+                return null;
             }
         };
         

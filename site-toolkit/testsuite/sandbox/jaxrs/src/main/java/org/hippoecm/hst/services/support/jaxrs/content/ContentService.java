@@ -77,8 +77,9 @@ public class ContentService extends BaseHstContentService {
             if (bean != null) {
                 beanContent = createHippoBeanContent(bean, propertyNamesFilledWithValues);
                 String encoding = servletRequest.getCharacterEncoding();
-                beanContent.buildUri(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
-                beanContent.buildChildUris(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
+                String urlBase = getRequestURIBase(uriInfo, servletRequest) + SERVICE_PATH;
+                beanContent.buildUri(urlBase, getSiteContentPath(servletRequest), encoding);
+                beanContent.buildChildUris(urlBase, getSiteContentPath(servletRequest), encoding);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -86,7 +87,7 @@ public class ContentService extends BaseHstContentService {
             } else {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
-            
+            e.printStackTrace();
             throw new WebApplicationException(e);
         }
         
@@ -109,14 +110,16 @@ public class ContentService extends BaseHstContentService {
                 if (bean != null) {
                     HippoBeanContent beanContent = createHippoBeanContent(bean, propertyNamesFilledWithValues);
                     String encoding = servletRequest.getCharacterEncoding();
-                    beanContent.buildUri(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
-                    beanContent.buildChildUris(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
+                    String urlBase = getRequestURIBase(uriInfo, servletRequest) + SERVICE_PATH;
+                    beanContent.buildUri(urlBase, getSiteContentPath(servletRequest), encoding);
+                    beanContent.buildChildUris(urlBase, getSiteContentPath(servletRequest), encoding);
                     itemContent = beanContent;
                 }
             } else {
                 PropertyContent propContent = new PropertyContent((Property) item);
                 String encoding = servletRequest.getCharacterEncoding();
-                propContent.buildUri(getRequestURIBase(uriInfo) + SERVICE_PATH, getSiteContentPath(servletRequest), encoding);
+                String urlBase = getRequestURIBase(uriInfo, servletRequest) + SERVICE_PATH;
+                propContent.buildUri(urlBase, getSiteContentPath(servletRequest), encoding);
                 itemContent = propContent;
             }
         } catch (Exception e) {

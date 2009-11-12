@@ -51,11 +51,17 @@
     <sv:property sv:name="hst:protocol" sv:type="String">
         <sv:value>http</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:defaulthostname" sv:type="String">
+        <sv:value>127.0.0.1</sv:value>
+    </sv:property>
+    
     <sv:node sv:name="127.0.0.1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:virtualhost</sv:value>
         </sv:property>
         <sv:property sv:name="hst:mapping" sv:type="String">
+            <sv:value>/preview/services/* --> /preview/services/${1}</sv:value>
+            <sv:value>/services/* --> /live/services/${1}</sv:value>
             <sv:value>/preview/* --> /preview/${1}</sv:value>
             <sv:value>/* --> /live/${1}</sv:value>
         </sv:property>
@@ -72,6 +78,8 @@
             <sv:value>hst:virtualhost</sv:value>
         </sv:property>
         <sv:property sv:name="hst:mapping" sv:type="String">
+            <sv:value>/preview/services/* --> /preview/services/${1}</sv:value>
+            <sv:value>/services/* --> /live/services/${1}</sv:value>
             <sv:value>/preview/* --> /preview/${1}</sv:value>
             <sv:value>/* --> /live/${1}</sv:value>
         </sv:property>

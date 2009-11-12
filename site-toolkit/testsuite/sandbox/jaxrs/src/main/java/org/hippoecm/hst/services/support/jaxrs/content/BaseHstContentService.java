@@ -50,7 +50,9 @@ import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSearch;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,14 +147,65 @@ public class BaseHstContentService {
         return itemContentPath;
     }
     
-    protected String getRequestURIBase(final UriInfo uriInfo) {
+    protected String getRequestURIBase(final UriInfo uriInfo, final HttpServletRequest servletRequest) {
         String base = uriInfo.getBaseUri().toString();
         
         if (base.endsWith("/")) {
             base = base.substring(0, base.length() - 1);
         }
         
+        if (base.startsWith("http://") || base.startsWith("https://")) {
+            int offset = base.indexOf('/', 8);
+            
+            if (offset != -1) {
+                String hostAddress = base.substring(0, offset);
+                String path = base.substring(offset);
+                String defaultContextServletPath = servletRequest.getContextPath() + servletRequest.getServletPath();
+                
+                if (path.startsWith(defaultContextServletPath)) {
+                    path = getVirtualizedContextPath(servletRequest) + getVirtualizedServletPath(servletRequest) + path.substring(defaultContextServletPath.length());
+                    base = hostAddress + path;
+                }
+            }
+        }
+        
         return base;
+    }
+    
+    protected String getVirtualizedContextPath(HttpServletRequest servletRequest) {
+        String virtualizedContextPath = servletRequest.getContextPath();
+        HstRequestContext requestContext = getHstRequestContext(servletRequest);
+        
+        if (requestContext != null) {
+            VirtualHost virtualHost = requestContext.getVirtualHost();
+            
+            if (virtualHost != null && !virtualHost.isContextPathInUrl()) {
+                virtualizedContextPath = "";
+            }
+        }
+        
+        return virtualizedContextPath;
+    }
+    
+    protected String getVirtualizedServletPath(HttpServletRequest servletRequest) {
+        String virtualizedServletPath = servletRequest.getServletPath();
+        HstRequestContext requestContext = getHstRequestContext(servletRequest);
+        
+        if (requestContext != null) {
+            MatchedMapping matchedMapping = requestContext.getMatchedMapping();
+            
+            if (matchedMapping != null) {
+                virtualizedServletPath = matchedMapping.getMapping().getUriPrefix();
+                
+                if (virtualizedServletPath == null) {
+                    virtualizedServletPath = "";
+                } else if (virtualizedServletPath.endsWith("/")) {
+                    virtualizedServletPath = virtualizedServletPath.substring(0, virtualizedServletPath.length() - 1);
+                }
+            }
+        }
+        
+        return virtualizedServletPath;
     }
     
     protected void init() {
