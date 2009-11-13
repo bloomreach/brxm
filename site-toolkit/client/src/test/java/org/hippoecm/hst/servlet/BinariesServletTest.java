@@ -12,12 +12,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.servlet.ServletConfig;
 
+import org.apache.james.mime4j.codec.DecoderUtil;
+import org.apache.james.mime4j.util.MimeUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -132,8 +135,10 @@ public class BinariesServletTest {
         replay(binaryFileNode, filenameProperty);
         binariesServlet.addContentDispositionHeader(request, response, "application/pdf", binaryFileNode);
         verify(binaryFileNode, filenameProperty);
-
-        assertEquals("attachment; filename=\"filename.pdf\"", response.getHeader("Content-Disposition"));
+        
+        Map<String, String> headerParams = MimeUtil.getHeaderParams((String) response.getHeader("Content-Disposition"));
+        assertEquals("attachment", headerParams.get(""));
+        assertEquals("filename.pdf", DecoderUtil.decodeEncodedWords(headerParams.get("filename")));
     }
 
     /**

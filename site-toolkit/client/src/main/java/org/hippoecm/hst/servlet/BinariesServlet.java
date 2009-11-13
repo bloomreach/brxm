@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,8 +41,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.apache.james.mime4j.codec.EncoderUtil;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -325,25 +326,26 @@ public class BinariesServlet extends HttpServlet {
             if (contentDispositionFilenameProperty != null
                     && binaryFileNode.hasProperty(contentDispositionFilenameProperty)) {
                 // A filename is set for the binary node, so add this to the Content-Disposition header value
-                String filename = binaryFileNode.getProperty(contentDispositionFilenameProperty).getString();
-                
-                // TODO: shouldn't it be encoded??
-                //String encodedFilename = encodeContentDispositionFileName(request, filename);
-                headerValue.append("; filename=\"").append(filename).append("\"");
+                String fileName = binaryFileNode.getProperty(contentDispositionFilenameProperty).getString();
+                if (!StringUtils.isBlank(fileName)) {
+                    String encodedFilename = encodeContentDispositionFileName(request, response, fileName);
+                    headerValue.append("; filename=\"").append(encodedFilename).append("\"");
+                }
             }
             
             response.addHeader("Content-Disposition", headerValue.toString());
         }
     }
     
-    private String encodeContentDispositionFileName(HttpServletRequest request, String fileName) {
+    private String encodeContentDispositionFileName(HttpServletRequest request, HttpServletResponse response, String fileName) {
         String userAgent = request.getHeader("User-Agent");
         
         try {
             if (userAgent != null && (userAgent.contains("MSIE") || userAgent.contains("Opera"))) {
-                return URLEncoder.encode(fileName, "UTF-8");
+                String responseEncoding = response.getCharacterEncoding();
+                return URLEncoder.encode(fileName, responseEncoding != null ? responseEncoding : "UTF-8");
             } else {
-                return "=?UTF-8?B?" + new String(Base64.encodeBase64(fileName.getBytes("UTF-8")), "UTF-8") + "?=";
+                return EncoderUtil.encodeEncodedWord(fileName, EncoderUtil.Usage.WORD_ENTITY, 0, Charset.forName("UTF-8"), EncoderUtil.Encoding.B);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {

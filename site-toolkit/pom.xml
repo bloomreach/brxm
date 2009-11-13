@@ -97,6 +97,7 @@
     <spring.js.version>2.0.5.RELEASE</spring.js.version>
     
     <cxf.version>2.2.4</cxf.version>
+    <mime4j.version>0.6</mime4j.version>
 
     <!-- use UTF-8 encoding for filtered file copy -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -515,12 +516,24 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring-beans</artifactId>
         <version>${spring.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-context</artifactId>
         <version>${spring.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     
       <dependency>
@@ -682,6 +695,18 @@
         </exclusions>
       </dependency>
       
+      <dependency>
+        <groupId>org.apache.james</groupId>
+        <artifactId>apache-mime4j</artifactId>
+        <version>${mime4j.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      
       <!-- Test dependencies -->
     
       <dependency>
@@ -697,7 +722,7 @@
         <version>${easymock.version}</version>
         <scope>test</scope>
       </dependency>
-
+      
       <!--
       <dependency>
         <groupId>org.hippoecm</groupId>
