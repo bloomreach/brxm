@@ -30,35 +30,34 @@ import org.slf4j.LoggerFactory;
  */
 public class ByteSizeFormatter implements IClusterable {
     private static final long serialVersionUID = 1L;
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     static final Logger log = LoggerFactory.getLogger(ByteSizeFormatter.class);
-    
+
     private static final long ONE_KB = 1024;
     private static final long ONE_MB = ONE_KB * ONE_KB;
     private static final long ONE_GB = ONE_KB * ONE_KB * ONE_KB;
-    
+
     private String gigabyteSuffix;
     private String megabyteSuffix;
     private String kilobyteSuffix;
     private String byteSuffix;
-    
-    private NumberFormatter formatter; 
+
+    private NumberFormatter formatter;
 
     public ByteSizeFormatter() {
         this(" GB", " MB", " KB", " B", 2);
     }
 
-    public ByteSizeFormatter(String gigabyteSuffix, String megabyteSuffix, String kilobyteSuffix, 
-        String byteSuffix, int decimalPlaces) 
-    {
+    public ByteSizeFormatter(String gigabyteSuffix, String megabyteSuffix, String kilobyteSuffix, String byteSuffix,
+            int decimalPlaces) {
         this.gigabyteSuffix = gigabyteSuffix;
         this.megabyteSuffix = megabyteSuffix;
         this.kilobyteSuffix = kilobyteSuffix;
         this.byteSuffix = byteSuffix;
-        
+
         String numberFormat = decimalPlaces > 0 ? "0.0" : "0";
         for (int i = 1; i < decimalPlaces; i++) {
             numberFormat += "0";
@@ -73,14 +72,14 @@ public class ByteSizeFormatter implements IClusterable {
             } else if (byteSize > ONE_MB) {
                 return formatter.valueToString(new Double(byteSize / ONE_MB)) + megabyteSuffix;
             } else if (byteSize > ONE_KB) {
-                return formatter.valueToString(new Double(byteSize / ONE_KB)) + kilobyteSuffix;                    
-            } 
+                return formatter.valueToString(new Double(byteSize / ONE_KB)) + kilobyteSuffix;
+            }
         } catch (ParseException e) {
             if (log.isErrorEnabled()) {
                 log.error("Unable to format byte size " + byteSize, e);
             }
         }
         return byteSize + byteSuffix;
-    }    
+    }
 
 }
