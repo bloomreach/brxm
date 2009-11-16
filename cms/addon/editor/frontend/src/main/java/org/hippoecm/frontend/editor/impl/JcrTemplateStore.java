@@ -177,9 +177,6 @@ public class JcrTemplateStore implements IStore<IClusterConfig>, IDetachable {
         }
     }
 
-    public void close() {
-    }
-
     public void delete(IClusterConfig object) {
     }
 
