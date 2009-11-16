@@ -42,6 +42,7 @@ import org.hippoecm.frontend.editor.impl.BuiltinTemplateStore;
 import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
+import org.hippoecm.frontend.editor.validator.ITypeValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -356,6 +357,11 @@ public class TemplateBuilder implements IDetachable, IObservable {
             return typeDescriptor.hashCode();
         }
 
+        public List<ITypeValidator> getValidators() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
     }
 
     private IFieldDescriptor wrap(final IFieldDescriptor descriptor) {
@@ -475,9 +481,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
         jcrTypeStore.setTypeLocator(locator);
         IStore<ITypeDescriptor> fieldTypeStore = new IStore<ITypeDescriptor>() {
             private static final long serialVersionUID = 1L;
-
-            public void close() {
-            }
 
             public void delete(ITypeDescriptor object) throws StoreException {
                 throw new UnsupportedOperationException("Read-only store does not support deleting types");

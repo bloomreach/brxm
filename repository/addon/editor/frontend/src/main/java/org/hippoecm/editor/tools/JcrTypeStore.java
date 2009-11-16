@@ -101,9 +101,6 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         return new JcrNamespace(getJcrSession(), prefix).getUpdate(locator);
     }
 
-    public void close() {
-    }
-
     public void delete(ITypeDescriptor object) {
     }
 

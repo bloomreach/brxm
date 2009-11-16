@@ -21,8 +21,6 @@ import java.util.Map;
 
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BuiltinTypeStore implements ITypeStore {
     @SuppressWarnings("unused")
@@ -30,8 +28,7 @@ public class BuiltinTypeStore implements ITypeStore {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(BuiltinTypeStore.class);
-
+    @SuppressWarnings("unchecked")
     public ITypeDescriptor getTypeDescriptor(String type) {
         BuiltinTypeDescriptor result = new BuiltinTypeDescriptor(type, new TypeLocator(new IStore[] { this }));
         if (result.isValid()) {
@@ -42,9 +39,6 @@ public class BuiltinTypeStore implements ITypeStore {
 
     public List<ITypeDescriptor> getTypes(String namespace) {
         return null;
-    }
-
-    public void close() {
     }
 
     public void delete(ITypeDescriptor object) {
