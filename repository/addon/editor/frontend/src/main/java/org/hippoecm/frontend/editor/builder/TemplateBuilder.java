@@ -42,7 +42,6 @@ import org.hippoecm.frontend.editor.impl.BuiltinTemplateStore;
 import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
-import org.hippoecm.frontend.editor.validator.ITypeValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -355,11 +354,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
         @Override
         public int hashCode() {
             return typeDescriptor.hashCode();
-        }
-
-        public List<ITypeValidator> getValidators() {
-            // TODO Auto-generated method stub
-            return null;
         }
 
     }
