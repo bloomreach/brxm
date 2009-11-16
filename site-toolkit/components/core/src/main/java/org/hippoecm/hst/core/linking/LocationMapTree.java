@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.core.linking;
 
-import org.hippoecm.hst.configuration.HstSite;
-import org.hippoecm.hst.core.linking.ResolvedLocationMapTreeItem;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 
 /**
@@ -66,6 +63,6 @@ public interface LocationMapTree {
     * @return the resolvedLocationMapTreeItem that contains a rewritten path and the hstSiteMapId which is the unique id of the
     * HstSiteMapItem that returned the best match. If no match can be made, <code>null</code> is returned 
     */ 
-   ResolvedLocationMapTreeItem match(String path, HstSite hstSite, boolean representsDocument, ResolvedSiteMapItem resolvedSiteMapItem, boolean canonical);
+   //ResolvedLocationMapTreeItem match(String path, HstSite hstSite, boolean representsDocument, ResolvedSiteMapItem resolvedSiteMapItem, boolean canonical);
    
 }

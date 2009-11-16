@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 public interface LocationMapTreeItem {
 
     /**
-     * @return List of <code>HstSiteMapItem</code>'s belonging to this LocationMapTreeItem
+     * @return List of <code>HstSiteMapItem</code>'s belonging to this LocationMapTreeItem. When no HstSiteMapItem belong to this item, an 
+     * empty list is returned
      */
     List<HstSiteMapItem> getHstSiteMapItems();
     

@@ -193,9 +193,9 @@ public class BasicHstLinkCreator implements HstLinkCreator {
             return new HstLinkImpl(this.getBinariesPrefix()+path, hstSite, true);
         }
         
-        if(hstSite.getLocationMapTree() instanceof BasicLocationMapTree) {
-            if(!onlyVirtual && path.startsWith(((BasicLocationMapTree)hstSite.getLocationMapTree()).getCanonicalSiteContentPath())) {
-                path = path.substring(((BasicLocationMapTree)hstSite.getLocationMapTree()).getCanonicalSiteContentPath().length());
+        if(hstSite.getLocationMapTree() instanceof LocationMapTreeImpl) {
+            if(!onlyVirtual && path.startsWith(((LocationMapTreeImpl)hstSite.getLocationMapTree()).getCanonicalSiteContentPath())) {
+                path = path.substring(((LocationMapTreeImpl)hstSite.getLocationMapTree()).getCanonicalSiteContentPath().length());
             } else if (onlyVirtual && path.startsWith(hstSite.getContentPath())) { 
                 path = path.substring(hstSite.getContentPath().length());
             } else {
@@ -204,7 +204,13 @@ public class BasicHstLinkCreator implements HstLinkCreator {
                 return new HstLinkImpl(pageNotFoundPath, hstSite);
             }
             
-            ResolvedLocationMapTreeItem resolvedLocation = hstSite.getLocationMapTree().match(path, hstSite, representsDocument, resolvedSiteMapItem, false);
+            
+            LocationMapResolver resolver = new LocationMapResolver(hstSite.getLocationMapTree());
+            resolver.setRepresentsDocument(representsDocument);
+            resolver.setCanonical(false);
+            resolver.setResolvedSiteMapItem(resolvedSiteMapItem);
+            ResolvedLocationMapTreeItem resolvedLocation = resolver.resolve(path);
+          
             if(resolvedLocation != null && resolvedLocation.getPath() != null) {
                 if (log.isDebugEnabled()) log.debug("Creating a link for node '{}' succeeded", path);
                 if (log.isInfoEnabled()) log.info("Succesfull linkcreation for nodepath '{}' to new path '{}'", path, resolvedLocation.getPath());

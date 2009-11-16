@@ -71,6 +71,18 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     
     private boolean isAny;
     
+    /*
+     * Internal only: used for linkrewriting: when true, it indicates, that this HstSiteMapItem can only be used in linkrewriting
+     * when the current context helps to resolve some wildcards
+     */
+    private boolean useableInRightContextOnly = false;
+    /*
+     * Internal only: needed for context aware linkrewriting
+     */
+    private Map<String, String> keyToPropertyPlaceHolderMap = new HashMap<String,String>();
+    
+    private int depth;
+    
     private HstSiteMap hstSiteMap;
     
     private HstSiteMapItemService parentItem;
@@ -86,10 +98,11 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
     private String extension;
     private String prefix; 
     
-    public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMapItem parentItem, HstSiteMap hstSiteMap) throws ServiceException{
+    public HstSiteMapItemService(Node jcrNode, String siteMapRootNodePath, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         super(jcrNode);
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap; 
+        this.depth = depth;
         String nodePath = getValueProvider().getPath();
         if(!getValueProvider().getPath().startsWith(siteMapRootNodePath)) {
             throw new ServiceException("Node path of the sitemap cannot start without the global sitemap root path. Skip SiteMapItem");
@@ -206,7 +219,7 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
                 }
                 if(child.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
                     try {
-                        HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, this, this.hstSiteMap);
+                        HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, this, this.hstSiteMap, ++depth);
                         childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                     } catch (ServiceException e) {
                         if (log.isDebugEnabled()) {
@@ -411,4 +424,23 @@ public class HstSiteMapItemService extends AbstractJCRService implements HstSite
         return this.containsAny;
     }
 
+    public void setUseableInRightContextOnly(boolean useableInRightContextOnly) {
+        this.useableInRightContextOnly = useableInRightContextOnly;
+    }
+
+    public boolean isUseableInRightContextOnly() {
+        return this.useableInRightContextOnly;
+    }
+
+    public void setKeyToPropertyPlaceHolderMap(Map<String, String> keyToPropertyPlaceHolderMap) {
+       this.keyToPropertyPlaceHolderMap = keyToPropertyPlaceHolderMap; 
+    }
+    
+    public Map<String, String> getKeyToPropertyPlaceHolderMap() {
+        return this.keyToPropertyPlaceHolderMap;
+    }
+    
+    public int getDepth() {
+        return this.depth;
+    }
 }

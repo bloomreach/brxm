@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.Map;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
-public class BasicLocationMapTreeItem implements LocationMapTreeItem{
+public class LocationMapTreeItemImpl implements LocationMapTreeItem{
 
     private List<HstSiteMapItem> hstSiteMapItems = new ArrayList<HstSiteMapItem>();
     
@@ -34,15 +34,15 @@ public class BasicLocationMapTreeItem implements LocationMapTreeItem{
     private boolean isWildCard;
     private boolean isAny;
     
-    public void add(List<String> pathFragment, HstSiteMapItem hstSiteMapItem){
+    public void addSiteMapItem(List<String> pathFragment, HstSiteMapItem hstSiteMapItem){
         if(pathFragment.isEmpty()) {
             // when the pathFragments are empty, the entire relative content path is processed.
             this.hstSiteMapItems.add(hstSiteMapItem);
             return;
         }
-        BasicLocationMapTreeItem child = (BasicLocationMapTreeItem) getChild(pathFragment.get(0));
+        LocationMapTreeItemImpl child = (LocationMapTreeItemImpl) getChild(pathFragment.get(0));
         if(child == null) {
-            child = new BasicLocationMapTreeItem();
+            child = new LocationMapTreeItemImpl();
             this.children.put(pathFragment.get(0), child);
             child.setParentItem(this);
             if(HstNodeTypes.WILDCARD.equals(pathFragment.get(0))){
@@ -52,7 +52,7 @@ public class BasicLocationMapTreeItem implements LocationMapTreeItem{
             }
         }
         pathFragment.remove(0);
-        child.add(pathFragment , hstSiteMapItem);
+        child.addSiteMapItem(pathFragment , hstSiteMapItem);
     }
     
     

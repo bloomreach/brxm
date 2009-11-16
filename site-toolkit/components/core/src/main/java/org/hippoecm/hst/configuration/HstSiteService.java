@@ -28,16 +28,14 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
-import org.hippoecm.hst.core.linking.BasicLocationMapTree;
+import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
-import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,7 +140,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
       
        Node siteMapNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
        this.siteMapService = new HstSiteMapService(this, siteMapNode);   
-       this.locationMapTree = this.createLocationMap();
+       this.locationMapTree = new LocationMapTreeImpl(canonicalcontentPath, this.getSiteMap().getSiteMapItems());
        
        if(configurationNode.hasNode(HstNodeTypes.NODENAME_HST_SITEMENUS)) {
            Node siteMenusNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMENUS);
@@ -155,26 +153,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
            log.info("There is no configuration for 'hst:sitemenus' for this HstSite. The clien cannot use the HstSiteMenusConfiguration");
        }
     }
-
-    private LocationMapTree createLocationMap() {
-
-        BasicLocationMapTree locMap  = new BasicLocationMapTree(canonicalcontentPath);
-        for(HstSiteMapItem siteMapItem : this.getSiteMap().getSiteMapItems()){
-            add2LocationMap(locMap,siteMapItem);
-        }
-        return locMap;
-    }
-
-    private void add2LocationMap(BasicLocationMapTree locMap, HstSiteMapItem siteMapItem) {
-        String normPath = PathUtils.normalizePath(siteMapItem.getRelativeContentPath());
-        if( !(normPath == null || "".equals(normPath))) {
-            locMap.add(normPath, siteMapItem);
-        }
-        for(HstSiteMapItem child : siteMapItem.getChildren()) {
-           add2LocationMap(locMap, child);
-        }
-    }
-
+   
     public HstComponentsConfiguration getComponentsConfiguration() {
         return this.componentsConfigurationService;
     }
