@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class SimpleHmlStringParser {
 
     private final static Logger log = LoggerFactory.getLogger(SimpleHmlStringParser.class);
-    public static final String[] EXTERNALS = {"http:", "https:", "webdav:", "ftp:", "mailto:"};
+    public static final String[] EXTERNALS = {"http:", "https:", "webdav:", "ftp:", "mailto:", "#"};
     public static final String LINK_TAG = "<a";
     public static final String IMG_TAG = "<img";
     public static final String END_TAG = ">";
