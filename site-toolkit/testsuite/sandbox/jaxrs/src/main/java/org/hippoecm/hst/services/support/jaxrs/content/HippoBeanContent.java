@@ -83,7 +83,11 @@ public class HippoBeanContent extends NodeContent {
         }
         
         if (node instanceof HippoNode) {
-            return ((HippoNode) node).getCanonicalNode();
+            Node canonicalNode = ((HippoNode) node).getCanonicalNode();
+            
+            if (canonicalNode != null) {
+                return canonicalNode;
+            }
         }
         
         return node;
