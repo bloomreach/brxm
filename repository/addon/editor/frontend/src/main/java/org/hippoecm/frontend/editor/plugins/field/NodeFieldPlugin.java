@@ -42,7 +42,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
+public class NodeFieldPlugin extends AbstractFieldPlugin<JcrNodeModel, JcrNodeModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -53,6 +53,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     public NodeFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
+        IFieldDescriptor field = getFieldHelper().getField();
         // use caption for backwards compatibility; i18n should use field name
         String captionKey = field != null ? field.getName() : config.getString("caption");
         add(new Label("name", new StringResourceModel(captionKey, this, null, config.getString("caption"))));
@@ -93,6 +94,8 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
 
     @Override
     public void onEvent(Iterator<? extends IEvent> events) {
+        IFieldDescriptor field = getFieldHelper().getField();
+
         // filter events
         if (field == null) {
             return;
@@ -167,6 +170,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
+                IFieldDescriptor field = getFieldHelper().getField();
                 String name = field.getPath();
                 JcrNodeModel parent = model.getParentModel();
                 if (parent != null) {
@@ -185,6 +189,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     }
 
     protected Component createAddLink() {
+        IFieldDescriptor field = getFieldHelper().getField();
         if (ITemplateEngine.EDIT_MODE.equals(mode) && (field != null) && field.isMultiple()) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;

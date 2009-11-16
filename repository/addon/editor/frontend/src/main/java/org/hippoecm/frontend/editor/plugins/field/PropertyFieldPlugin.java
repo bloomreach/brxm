@@ -44,7 +44,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyValueModel> {
+public class PropertyFieldPlugin extends AbstractFieldPlugin<JcrNodeModel, JcrPropertyValueModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -67,11 +67,12 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
         if (config.getString("caption") != null) {
             nameModel = new Model(config.getString("caption"));
         } else {
-            nameModel = new StringResourceModel(fieldName, this, null);
+            nameModel = new StringResourceModel(getFieldHelper().getField().getName(), this, null);
         }
         add(new Label("name", nameModel));
 
         Label required = new Label("required", "*");
+        IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
             subscribe();
             if (!field.isMandatory()) {
@@ -86,6 +87,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
     }
 
     protected void subscribe() {
+        final IFieldDescriptor field = getFieldHelper().getField();
         if (!field.getPath().equals("*")) {
             JcrItemModel itemModel = new JcrItemModel(((JcrNodeModel) getModel()).getItemModel().getPath() + "/"
                     + field.getPath());
@@ -111,6 +113,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
     }
 
     protected void unsubscribe() {
+        IFieldDescriptor field = getFieldHelper().getField();
         if (!field.getPath().equals("*")) {
             getPluginContext().unregisterService(propertyObserver, IObserver.class.getName());
             propertyModel = null;
@@ -135,6 +138,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
         // filter out changes in the node model itself.
         // The property model observation takes care of that.
         if (!nodeModel.equals(getModel())) {
+            IFieldDescriptor field = getFieldHelper().getField();
             if (field != null) {
                 unsubscribe();
                 subscribe();
@@ -205,6 +209,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
     // privates
 
     protected Component createAddLink() {
+        IFieldDescriptor field = getFieldHelper().getField();
         if (ITemplateEngine.EDIT_MODE.equals(mode) && (field != null) && field.isMultiple()) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
