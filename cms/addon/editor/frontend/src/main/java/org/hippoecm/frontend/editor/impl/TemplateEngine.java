@@ -65,9 +65,6 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
         typeStore = new IStore<ITypeDescriptor>() {
             private static final long serialVersionUID = 1L;
 
-            public void close() {
-            }
-
             public void delete(ITypeDescriptor object) throws StoreException {
                 throw new UnsupportedOperationException("Type store is read only");
             }

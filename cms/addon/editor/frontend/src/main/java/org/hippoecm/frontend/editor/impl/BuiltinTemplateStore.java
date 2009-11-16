@@ -62,9 +62,6 @@ public class BuiltinTemplateStore implements IStore<IClusterConfig> {
         throw new UnsupportedOperationException("Builtin template store is read only");
     }
 
-    public void close() {
-    }
-
     public void delete(IClusterConfig object) {
         throw new UnsupportedOperationException("Builtin template store is read only");
     }
