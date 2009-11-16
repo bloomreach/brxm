@@ -153,6 +153,8 @@ public class ContentService extends BaseHstContentService {
             cpm.save();
             
             return Response.ok().build();
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
@@ -189,6 +191,8 @@ public class ContentService extends BaseHstContentService {
             
             documentBeanContent = (HippoDocumentBeanContent) createHippoBeanContent(bean, null);
             return Response.status(Response.Status.CREATED).entity(documentBeanContent).build();
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to save document.", e);
@@ -215,6 +219,11 @@ public class ContentService extends BaseHstContentService {
             
             HippoBeanContent beanContent = createHippoBeanContent(bean, null);
             Node canonicalParentNode = beanContent.getCanonicalNode();
+            
+            if (canonicalParentNode == null) {
+                throw new WebApplicationException(new IllegalArgumentException("Cannot create a node because there is no canonical node for '" + beanContent.getPath() + "'"));
+            }
+            
             Node node = null;
             
             if (nodeContent != null) {
@@ -240,6 +249,8 @@ public class ContentService extends BaseHstContentService {
             beanContent = createHippoBeanContent(bean, null);
             
             return Response.status(Response.Status.CREATED).entity(beanContent).build();
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to save document.", e);
@@ -266,13 +277,20 @@ public class ContentService extends BaseHstContentService {
             }
             
             HippoBeanContent beanContent = createHippoBeanContent(bean, null);
+            Node canonicalNode = beanContent.getCanonicalNode();
             
-            setPropertyValue(beanContent.getCanonicalNode(), propertyContent);
+            if (canonicalNode == null) {
+                throw new WebApplicationException(new IllegalArgumentException("Cannot update the property because there is no canonical node for '" + beanContent.getPath() + "'"));
+            }
+            
+            setPropertyValue(canonicalNode, propertyContent);
             
             cpm.update(bean);
             cpm.save();
             
             return Response.ok().build();
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve save bean.", e);
