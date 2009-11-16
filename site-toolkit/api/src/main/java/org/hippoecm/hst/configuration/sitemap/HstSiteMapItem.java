@@ -172,7 +172,7 @@ public interface HstSiteMapItem {
     /**
      * Returns parent <code>HstSiteMapItem</code> and <code>null</code> when the item does not have a parent (in other words, it is a
      * root <code>HstSiteMapItem</code>)
-     * @return the parent <code>HstSiteMapItem</code> 
+     * @return the parent <code>HstSiteMapItem</code> and <code>null</code> when the item does not have a parent
      */
     HstSiteMapItem getParentItem();
     
