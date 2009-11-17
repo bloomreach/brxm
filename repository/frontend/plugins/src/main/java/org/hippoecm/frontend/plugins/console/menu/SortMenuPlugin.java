@@ -15,10 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.console.menu;
 
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.console.menu.sorter.Sorter;
+import org.hippoecm.frontend.plugins.standards.sort.NodeSortPanel;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SortMenuPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
@@ -26,24 +33,30 @@ public class SortMenuPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     
-    private Sorter sorter;
+    static final Logger log = LoggerFactory.getLogger(SortMenuPlugin.class);
+    
+    private NodeSortPanel sorter;
 
     public SortMenuPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
         
-        add(sorter = new Sorter("sorter-panel") {
+        add(sorter = new NodeSortPanel("sorter-panel") {
             private static final long serialVersionUID = 1L;
             
             @Override
-            protected void redraw() {
-                SortMenuPlugin.this.redraw();
+            protected void onNodeSorted(AjaxRequestTarget target) {
+                try {
+                    ((UserSession) Session.get()).getJcrSession().save();
+                } catch (RepositoryException e) {
+                    log.error("Error saving session after changing order: {}", e);
+                }                
             }
-            
         });
     }
     
     @Override
     public void onModelChanged() {
         sorter.setModel(getModel());
+        redraw();
     }
 }
