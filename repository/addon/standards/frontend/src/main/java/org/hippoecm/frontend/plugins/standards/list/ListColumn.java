@@ -18,12 +18,14 @@ package org.hippoecm.frontend.plugins.standards.list;
 import java.util.Comparator;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
 
 /**
  * Definition of a column in a {@link ListDataTable}.  Can be used to define sorting,
@@ -31,45 +33,45 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
  * By default, the renderer used is the {@link NameRenderer}, that renders the (translated)
  * name of a JCR node.
  */
-public class ListColumn extends AbstractColumn {
+public class ListColumn<T> extends AbstractColumn<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private Comparator<IModel> comparator;
-    private IListCellRenderer renderer;
-    private IListAttributeModifier attributeModifier;
+    private Comparator<T> comparator;
+    private IListCellRenderer<T> renderer;
+    private IListAttributeModifier<T> attributeModifier;
 
-    public ListColumn(IModel displayModel, String sortProperty) {
+    public ListColumn(IModel<String> displayModel, String sortProperty) {
         super(displayModel, sortProperty);
     }
 
-    public void setComparator(Comparator<IModel> comparator) {
+    public void setComparator(Comparator<T> comparator) {
         this.comparator = comparator;
     }
 
-    public Comparator<IModel> getComparator() {
+    public Comparator<T> getComparator() {
         return comparator;
     }
 
-    public void setRenderer(IListCellRenderer renderer) {
+    public void setRenderer(IListCellRenderer<T> renderer) {
         this.renderer = renderer;
     }
 
-    public IListCellRenderer getRenderer() {
+    public IListCellRenderer<T> getRenderer() {
         return renderer;
     }
 
-    public void setAttributeModifier(IListAttributeModifier attributeModifier) {
+    public void setAttributeModifier(IListAttributeModifier<T> attributeModifier) {
         this.attributeModifier = attributeModifier;
     }
 
-    public IListAttributeModifier getAttributeModifier() {
+    public IListAttributeModifier<T> getAttributeModifier() {
         return attributeModifier;
     }
 
-    public void populateItem(Item item, String componentId, IModel model) {
+    public void populateItem(Item<ICellPopulator<T>> item, String componentId, IModel<T> model) {
         if (attributeModifier != null) {
             AttributeModifier[] columnModifiers = attributeModifier.getColumnAttributeModifiers(model);
             if (columnModifiers != null) {

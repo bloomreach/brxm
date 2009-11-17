@@ -55,9 +55,9 @@ public class ContentExportDialog extends AbstractDialog {
     private boolean skipBinary = false;
 
     public ContentExportDialog(MenuPlugin plugin) {
-        setModel(plugin.getModel());
-        
-        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        setModel(plugin.getDefaultModel());
+
+        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         try {
             String path = nodeModel.getNode().getPath();
             add(new Label("message", new StringResourceModel("dialog.message", this, null, new Object[] {path})));
@@ -96,7 +96,7 @@ public class ContentExportDialog extends AbstractDialog {
                     export = e.getMessage();
                 }
                 dump.add(new AttributeAppender("class", true, new Model("activated"), " "));
-                dump.setModel(new Model(export));
+                dump.setDefaultModel(new Model(export));
                 target.addComponent(dump);
             }
         };

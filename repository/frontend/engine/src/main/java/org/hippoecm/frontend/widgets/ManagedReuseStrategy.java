@@ -24,25 +24,27 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.model.IModel;
 
-public abstract class ManagedReuseStrategy extends ReuseIfModelsEqualStrategy {
+public abstract class ManagedReuseStrategy<T> extends ReuseIfModelsEqualStrategy {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    @Override
     @SuppressWarnings("unchecked")
-    public Iterator getItems(final IItemFactory factory, final Iterator newModels, final Iterator existingItems) {
-        List<IModel> models = new LinkedList<IModel>();
+    @Override
+    // Q == T, but supertype does not have type parameter
+    public <Q> Iterator<Item<Q>> getItems(final IItemFactory<Q> factory, final Iterator<IModel<Q>> newModels,
+            final Iterator<Item<Q>> existingItems) {
+        List<IModel<Q>> models = new LinkedList<IModel<Q>>();
         while (newModels.hasNext()) {
-            models.add((IModel) newModels.next());
+            models.add(newModels.next());
         }
 
-        List<Item> items = new LinkedList<Item>();
+        List<Item<Q>> items = new LinkedList<Item<Q>>();
         while (existingItems.hasNext()) {
-            Item item = (Item) existingItems.next();
+            Item<Q> item = existingItems.next();
             if (!models.contains(item.getModel())) {
-                destroyItem(item);
+                destroyItem((Item<T>) item);
             } else {
                 items.add(item);
             }
@@ -50,6 +52,6 @@ public abstract class ManagedReuseStrategy extends ReuseIfModelsEqualStrategy {
         return super.getItems(factory, models.iterator(), items.iterator());
     }
 
-    public abstract void destroyItem(Item item);
+    public abstract void destroyItem(Item<T> item);
 
 }

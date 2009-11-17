@@ -40,7 +40,7 @@ public abstract class AbstractXinhaDialog extends AbstractDialog {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                onRemove();
+                onRemoveLink();
                 if (!hasError()) {
                     closeDialog();
                 }
@@ -106,7 +106,7 @@ public abstract class AbstractXinhaDialog extends AbstractDialog {
     protected void onCloseDialog() {
     }
 
-    protected void onRemove() {
+    protected void onRemoveLink() {
         IPersistedMap link = (IPersistedMap) getModelObject();
         link.delete();
     }

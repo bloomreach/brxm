@@ -38,7 +38,6 @@
     <module>dashboard</module>
     <module>browse</module>
     <module>edit</module>
-    <module>management</module>
     <module>admin</module>
   </modules>
 </project>

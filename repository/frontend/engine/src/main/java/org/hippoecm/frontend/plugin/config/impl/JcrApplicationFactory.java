@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IServiceFactory;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

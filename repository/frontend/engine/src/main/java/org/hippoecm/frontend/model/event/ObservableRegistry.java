@@ -34,7 +34,8 @@ public class ObservableRegistry implements IPlugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ObservableRegistry.class);
-    
+
+    @SuppressWarnings("unchecked")
     private class ObservationContext implements IObservationContext {
         private static final long serialVersionUID = 1L;
 
@@ -70,7 +71,7 @@ public class ObservableRegistry implements IPlugin {
             }
         }
 
-        public void notifyObservers(EventCollection<? extends IEvent> events) {
+        public void notifyObservers(EventCollection events) {
             for (IObserver observer : new ArrayList<IObserver>(observers)) {
                 if (observers.contains(observer)) {
                     observer.onEvent(events.iterator());
@@ -98,6 +99,7 @@ public class ObservableRegistry implements IPlugin {
     private IPluginContext pluginContext;
     private List<ObservationContext> contexts;
 
+    @SuppressWarnings("unchecked")
     public ObservableRegistry(IPluginContext context, IPluginConfig config) {
         this.pluginContext = context;
 
@@ -119,6 +121,7 @@ public class ObservableRegistry implements IPlugin {
         }, IObserver.class.getName());
     }
 
+    @SuppressWarnings("unchecked")
     void addObserver(IObserver service) {
         IObservable observable = service.getObservable();
         ObservationContext obContext = getContext(observable);
@@ -129,7 +132,8 @@ public class ObservableRegistry implements IPlugin {
         }
         obContext.addObserver(service);
     }
-    
+
+    @SuppressWarnings("unchecked")
     void removeObserver(IObserver service) {
         IObservable observable = service.getObservable();
         ObservationContext obContext = getContext(observable);
@@ -143,7 +147,7 @@ public class ObservableRegistry implements IPlugin {
             obContext.dispose();
         }
     }
-    
+
     ObservationContext getContext(IObservable observable) {
         for (ObservationContext context : contexts) {
             if (context.observable.equals(observable)) {

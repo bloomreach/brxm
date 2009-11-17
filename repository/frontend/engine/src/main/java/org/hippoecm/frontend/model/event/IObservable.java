@@ -32,7 +32,7 @@ public interface IObservable extends IClusterable {
      * Before observation is started on the observable, an observation context is injected by
      * the observer registry.  This context can be used to notify listeners.
      */
-    void setObservationContext(IObservationContext context);
+    void setObservationContext(IObservationContext<? extends IObservable> context);
     
     /**
      * When the first {@link IObserver} of this observable is registered with the observer

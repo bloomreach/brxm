@@ -18,6 +18,8 @@ package org.hippoecm.frontend.editor.editor;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -35,13 +37,10 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.validation.IValidateService;
-import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditorForm extends Form {
+public class EditorForm extends Form<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -105,27 +104,6 @@ public class EditorForm extends Form {
         if (cluster != null) {
             cluster.stop();
             modelService.destroy();
-        }
-    }
-
-    @Override
-    protected void onSubmit() {
-        super.onSubmit();
-
-        // do the validation
-        IValidateService validator = context.getService(config.getString(IValidateService.VALIDATE_ID),
-                IValidateService.class);
-        if (validator != null) {
-            try {
-                IValidationResult result = validator.validate();
-                if (!result.isValid()) {
-                    log.debug("Invalid model {}", getModel());
-                }
-            } catch (ValidationException e) {
-                log.warn("Failed to validate " + getModel());
-            }
-        } else {
-            log.info("No validator configured");
         }
     }
 

@@ -47,10 +47,10 @@ public class NodeDialog extends AbstractDialog implements ITitleDecorator {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
             Node node = nodeModel.getNode().addNode(getName(), getType());
 
-            plugin.setModel(new JcrNodeModel(node));
+            plugin.setDefaultModel(new JcrNodeModel(node));
         } catch (RepositoryException ex) {
             error(ex.getMessage());
         }

@@ -18,8 +18,6 @@ package org.hippoecm.frontend.editor.layout;
 import org.hippoecm.frontend.editor.builder.BuilderContext;
 import org.hippoecm.frontend.editor.builder.ILayoutAware;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Context for layout editing plugins.  It implements the ILayoutControl interface
@@ -30,8 +28,6 @@ public class LayoutControl implements ILayoutControl {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(LayoutControl.class);
 
     protected final BuilderContext builder;
     protected final ILayoutPad pad;

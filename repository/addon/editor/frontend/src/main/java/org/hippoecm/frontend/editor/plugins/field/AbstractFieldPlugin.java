@@ -120,7 +120,7 @@ public abstract class AbstractFieldPlugin<P extends IModel, C extends IModel> ex
         if (field != null) {
             ITemplateEngine engine = getTemplateEngine();
             if (engine != null) {
-                P model = (P) getModel();
+                P model = (P) getDefaultModel();
                 try {
                     ITypeDescriptor subType = engine.getType(field.getType());
                     provider = newProvider(field, subType, model);

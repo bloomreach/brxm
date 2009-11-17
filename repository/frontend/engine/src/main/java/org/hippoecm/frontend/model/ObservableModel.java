@@ -26,18 +26,18 @@ import org.hippoecm.frontend.model.event.IObservationContext;
 /**
  * An {@link IModel} that is observable by plugins.
  */
-public class ObservableModel extends Model implements IObservable {
+public class ObservableModel<T extends Serializable> extends Model<T> implements IObservable {
     private static final long serialVersionUID = 1L;
 
     private IObservationContext obContext;
     private boolean observing = false;
 
-    public ObservableModel(Serializable object) {
+    public ObservableModel(T object) {
         super(object);
     }
 
     @Override
-    public void setObject(Object object) {
+    public void setObject(T object) {
         super.setObject(object);
         notifyObservers(new EventCollection());
     }

@@ -62,7 +62,7 @@ public class EditorPlugin extends RenderPlugin {
 
     @Override
     public void onModelChanged() {
-        if (!form.getModel().equals(getModel())) {
+        if (!form.getModel().equals(getDefaultModel())) {
             form.destroy();
             replace(form = newForm());
         }
@@ -78,7 +78,7 @@ public class EditorPlugin extends RenderPlugin {
     }
 
     protected EditorForm newForm() {
-        return new EditorForm("form", (JcrNodeModel) getModel(), this, getPluginContext(), getPluginConfig());
+        return new EditorForm("form", (JcrNodeModel) getDefaultModel(), this, getPluginContext(), getPluginConfig());
     }
 
 }

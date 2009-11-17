@@ -24,7 +24,6 @@ import org.apache.wicket.IClusterable;
  * child render service registers.  It allows the child to reposition itself.
  */
 public interface ILayoutPad extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

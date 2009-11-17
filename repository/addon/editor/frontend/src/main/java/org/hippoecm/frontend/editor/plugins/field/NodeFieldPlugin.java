@@ -30,9 +30,8 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.AbstractProvider;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ChildNodeProvider;
-import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -93,7 +92,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<JcrNodeModel, JcrNodeMo
     }
 
     @Override
-    public void onEvent(Iterator<? extends IEvent> events) {
+    public void onEvent(Iterator events) {
         IFieldDescriptor field = getFieldHelper().getField();
 
         // filter events

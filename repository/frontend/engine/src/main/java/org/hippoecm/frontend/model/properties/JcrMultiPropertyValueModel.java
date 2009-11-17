@@ -35,7 +35,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Session;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * Wicket components that edit multiple property values directy, i.e. without a 
  * surrounding repeater, for instance a multiselect list.  
  */
-public class JcrMultiPropertyValueModel extends Model {
+public class JcrMultiPropertyValueModel<T extends Serializable> implements IModel<List<T>> {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -100,8 +100,8 @@ public class JcrMultiPropertyValueModel extends Model {
         return itemModel;
     }
 
-    @Override
-    public Object getObject() {
+    @SuppressWarnings("unchecked")
+    public List<T> getObject() {
         try {
             load();
 
@@ -117,25 +117,25 @@ public class JcrMultiPropertyValueModel extends Model {
                 for (int i = 0; i < values.size(); i++) {
                     booleans.add(values.get(i).getBoolean());
                 }
-                return booleans;
+                return (List<T>) booleans;
             case PropertyType.DATE:
                 List<Date> dates = new ArrayList<Date>(values.size());
                 for (int i = 0; i < values.size(); i++) {
                     dates.add(values.get(i).getDate().getTime());
                 }
-                return dates;
+                return (List<T>) dates;
             case PropertyType.DOUBLE:
                 List<Double> doubles = new ArrayList<Double>(values.size());
                 for (int i = 0; i < values.size(); i++) {
                     doubles.add(values.get(i).getDouble());
                 }
-                return doubles;
+                return (List<T>) doubles;
             case PropertyType.LONG:
                 List<Long> longs = new ArrayList<Long>(values.size());
                 for (int i = 0; i < values.size(); i++) {
                     longs.add(values.get(i).getLong());
                 }
-                return longs;
+                return (List<T>) longs;
             default:
                 List<String> strings = new ArrayList<String>(values.size());
                 for (int i = 0; i < values.size(); i++) {
@@ -144,7 +144,7 @@ public class JcrMultiPropertyValueModel extends Model {
                         strings.add(values.get(i).getString());
                     }
                 }
-                return strings;
+                return (List<T>) strings;
             }
         }
         catch (RepositoryException ex) {
@@ -153,20 +153,13 @@ public class JcrMultiPropertyValueModel extends Model {
         return null;
     }
 
-    @Override
-    public void setObject(final Serializable object) {
+    public void setObject(final List<T> objects) {
         load();
 
-        if (object == null) {
+        if (objects == null) {
             setValues(new ArrayList<Value>(0));
         }
         else {
-            if (!(object instanceof List)) {
-                throw new IllegalArgumentException("object argument is not a List but "
-                        + object.getClass().getName());
-            }
-
-            List<Object> objects = (List<Object>) object;
             List<Value> values = new ArrayList<Value>(objects.size());
             try {
                 ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
@@ -204,12 +197,10 @@ public class JcrMultiPropertyValueModel extends Model {
         }
     }
 
-    @Override
     public void detach() {
         loaded = false;
         values = null;
         itemModel.detach();
-        super.detach();
     }
 
     private void setValues(List<Value> values) {
@@ -267,7 +258,7 @@ public class JcrMultiPropertyValueModel extends Model {
                                 + " is not multiple");
                     }
 
-                    values = (List<Value>) Arrays.asList(prop.getValues());
+                    values = Arrays.asList(prop.getValues());
                 }
                 catch (RepositoryException ex) {
                     log.error(ex.getMessage());
@@ -286,6 +277,7 @@ public class JcrMultiPropertyValueModel extends Model {
                 itemModel.getPath()).append("values", values).toString();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object object) {
         if (object instanceof JcrMultiPropertyValueModel == false) {

@@ -58,14 +58,14 @@ public class DeleteDialog extends AbstractDialog {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
             JcrNodeModel parentModel = nodeModel.getParentModel();
             
             //The actual JCR remove
             nodeModel.getNode().remove();
 
             //set the parent model as current model
-            plugin.setModel(parentModel);
+            plugin.setDefaultModel(parentModel);
         } catch (RepositoryException ex) {
             log.error("Error while deleting document", ex);
             error("Error while deleting document " + ex.getMessage());

@@ -27,16 +27,12 @@ import org.hippoecm.frontend.WebApplicationHelper;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PluginConfigFactory implements IPluginConfigService {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(PluginConfigFactory.class);
 
     private IPluginConfigService pluginConfigService;
 

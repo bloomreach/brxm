@@ -79,8 +79,8 @@ public class JavaLayoutDescriptor implements ILayoutDescriptor {
         return null;
     }
 
-    public IModel getName() {
-        return new Model(name);
+    public IModel<String> getName() {
+        return new Model<String>(name);
     }
     
 }

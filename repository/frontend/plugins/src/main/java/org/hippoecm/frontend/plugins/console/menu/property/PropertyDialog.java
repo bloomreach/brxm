@@ -71,7 +71,7 @@ public class PropertyDialog extends AbstractDialog {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
             Node node = nodeModel.getNode();
 
             Value jcrValue = getJcrValue();
@@ -86,7 +86,7 @@ public class PropertyDialog extends AbstractDialog {
             }
 
             JcrNodeModel newNodeModel = new JcrNodeModel(node);
-            plugin.setModel(newNodeModel);
+            plugin.setDefaultModel(newNodeModel);
         } catch (RepositoryException ex) {
             error(ex.getMessage());
         }

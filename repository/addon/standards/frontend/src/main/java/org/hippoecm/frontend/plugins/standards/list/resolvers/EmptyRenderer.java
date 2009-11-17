@@ -15,20 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 
-public class EmptyRenderer extends AbstractNodeRenderer {
+public class EmptyRenderer<T> implements IListCellRenderer<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    @Override
-    protected Component getViewer(String id, Node node) throws RepositoryException {
+    public Component getRenderer(String id, IModel<T> model) {
         return new Label(id);
     }
 

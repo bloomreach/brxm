@@ -40,7 +40,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinkPickerDialog extends AbstractDialog {
+public class LinkPickerDialog extends AbstractDialog<String> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -53,11 +53,11 @@ public class LinkPickerDialog extends AbstractDialog {
     protected final IPluginContext context;
     protected final IPluginConfig config;
     protected IRenderService dialogRenderer;
-    private ModelReference<IModel> modelService;
+    private ModelReference<Node> modelService;
     private IClusterControl control;
-    private IModel selectedNode;
+    private IModel<Node> selectedNode;
 
-    public LinkPickerDialog(IPluginContext context, IPluginConfig config, IModel model, List<String> nodetypes) {
+    public LinkPickerDialog(IPluginContext context, IPluginConfig config, IModel<String> model, List<String> nodetypes) {
         super(model);
 
         this.context = context;
@@ -72,9 +72,9 @@ public class LinkPickerDialog extends AbstractDialog {
         add(createContentPanel("content"));
     }
 
-    protected IModel getInitialNode() {
+    protected IModel<Node> getInitialNode() {
         try {
-            String uuid = getModelObjectAsString();
+            String uuid = getModelObject();
             if (uuid != null && !"".equals(uuid)) {
                 return new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(uuid));
             }
@@ -84,11 +84,11 @@ public class LinkPickerDialog extends AbstractDialog {
         return null;
     }
 
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         return new StringResourceModel("link-picker", this, null);
     }
 
-    protected boolean isValidSelection(IModel targetModel) {
+    protected boolean isValidSelection(IModel<Node> targetModel) {
         boolean isLinkable;
         boolean validType = false;
 
@@ -97,7 +97,7 @@ public class LinkPickerDialog extends AbstractDialog {
         }
 
         try {
-            Node targetNode = (Node) targetModel.getObject();
+            Node targetNode = targetModel.getObject();
 
             Node testNode = targetNode;
             if (targetNode.isNodeType(HippoNodeType.NT_HANDLE) && targetNode.hasNode(targetNode.getName())) {
@@ -142,11 +142,11 @@ public class LinkPickerDialog extends AbstractDialog {
         IClusterConfig clusterConfig = control.getClusterConfig();
         //save modelServiceId and dialogServiceId in cluster config
         String modelServiceId = clusterConfig.getString("wicket.model");
-        modelService = new ModelReference<IModel>(modelServiceId, selectedNode) {
+        modelService = new ModelReference<Node>(modelServiceId, selectedNode) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void setModel(IModel model) {
+            public void setModel(IModel<Node> model) {
                 if (isValidSelection(model)) {
                     selectedNode = model;
                     setOkEnabled(true);

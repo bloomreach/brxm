@@ -41,7 +41,6 @@ import org.hippoecm.frontend.editor.layout.LayoutControl;
 import org.hippoecm.frontend.editor.layout.LayoutHelper;
 import org.hippoecm.frontend.editor.layout.RenderContext;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -83,20 +82,20 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
         final boolean editable = (builderContext.getMode() == Mode.EDIT);
 
         // add transitions from parent container
-        add(new RefreshingView("transitions") {
+        add(new RefreshingView<ILayoutTransition>("transitions") {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected Iterator<IModel> getItemModels() {
+            protected Iterator<IModel<ILayoutTransition>> getItemModels() {
                 final Iterator<ILayoutTransition> transitionIter = getTransitionIterator();
-                return new Iterator<IModel>() {
+                return new Iterator<IModel<ILayoutTransition>>() {
 
                     public boolean hasNext() {
                         return transitionIter.hasNext();
                     }
 
-                    public IModel next() {
-                        return new Model(transitionIter.next());
+                    public IModel<ILayoutTransition> next() {
+                        return new Model<ILayoutTransition>(transitionIter.next());
                     }
 
                     public void remove() {
@@ -107,9 +106,9 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
             }
 
             @Override
-            protected void populateItem(Item item) {
-                final ILayoutTransition transition = (ILayoutTransition) item.getModelObject();
-                AjaxLink link = (AjaxLink) new AjaxLink("link") {
+            protected void populateItem(Item<ILayoutTransition> item) {
+                final ILayoutTransition transition = item.getModelObject();
+                AjaxLink<Void> link = new AjaxLink<Void>("link") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -122,8 +121,9 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
                         return new EventStoppingDecorator(super.getAjaxCallDecorator());
                     }
 
-                }.setVisible(editable);
-                link.add(new AttributeAppender("class", new Model(transition.getName()), " "));
+                };
+                link.setVisible(editable);
+                link.add(new AttributeAppender("class", new Model<String>(transition.getName()), " "));
                 item.add(link);
             }
 
@@ -198,14 +198,14 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
 
     public void start() {
         final IPluginConfig editedConfig = builderContext.getEditablePluginConfig();
-        getPluginContext().registerService(configObserver = new IObserver() {
+        getPluginContext().registerService(configObserver = new IObserver<IPluginConfig>() {
             private static final long serialVersionUID = 1L;
 
-            public IObservable getObservable() {
+            public IPluginConfig getObservable() {
                 return editedConfig;
             }
 
-            public void onEvent(Iterator<? extends IEvent> events) {
+            public void onEvent(Iterator<? extends IEvent<IPluginConfig>> events) {
                 updatePreview();
             }
 

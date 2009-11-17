@@ -38,7 +38,7 @@ public class BooleanValueTemplatePlugin extends RenderPlugin {
     public BooleanValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
+        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getDefaultModel();
         if ("edit".equals(config.getString("mode", "view"))) {
             add(new BooleanFieldWidget("value", valueModel));
         } else {

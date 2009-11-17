@@ -90,7 +90,7 @@
     <xerces.version>2.8.1</xerces.version>
     <cglib.version>2.1_3</cglib.version>
     <lucene.version>2.2.0</lucene.version>
-    <wicket.version>1.3.5</wicket.version>
+    <wicket.version>1.4.3</wicket.version>
     <nekohtml.version>1.9.13</nekohtml.version>
 
     <!-- use UTF-8 encoding for filtered file copy -->

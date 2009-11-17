@@ -47,7 +47,7 @@ public class CheckInOutDialog extends AbstractDialog implements ITitleDecorator 
     private Label statusLabel;
 
     public CheckInOutDialog(MenuPlugin plugin) {
-        model = (JcrNodeModel) plugin.getModel();
+        model = (JcrNodeModel) plugin.getDefaultModel();
 
         PropertyModel actionModel = new PropertyModel(this, "action");
         actionLabel = new Label("action-link-text", actionModel);

@@ -76,7 +76,7 @@ public class NodeSortPanel extends Panel {
 
     @Override
     public void onModelChanged() {
-        IModel model = getModel();
+        IModel model = getDefaultModel();
         if (model instanceof JcrNodeModel) {
             sorter.setModel((JcrNodeModel) model);
         }

@@ -23,7 +23,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RenderService extends AbstractRenderService {
+public class RenderService<T> extends AbstractRenderService<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -48,7 +48,7 @@ public class RenderService extends AbstractRenderService {
      * part of the path, i.e. the id, is used to get the service id from the plugin
      * configuration.
      */
-    protected class ExtensionPoint extends AbstractRenderService.ExtensionPoint {
+    protected class ExtensionPoint extends AbstractRenderService<T>.ExtensionPoint {
         private static final long serialVersionUID = 1L;
 
         private String path;

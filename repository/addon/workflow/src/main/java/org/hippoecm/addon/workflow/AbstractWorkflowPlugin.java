@@ -105,7 +105,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                     } else if(pluginRenderer.startsWith("/")) {
                                         plugin = (Panel) plugins.startRenderer(new JcrPluginConfig(new JcrNodeModel(documentNode.getSession().getRootNode().getNode(pluginRenderer.substring(1)))));
                                         if(plugin != null) {
-                                            plugin.setModel(pluginModel);
+                                            plugin.setDefaultModel(pluginModel);
                                         } else {
                                             log.error("No plugin found on {}",pluginRenderer);
                                         }
@@ -113,7 +113,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
                                         Class pluginClass = Class.forName(pluginRenderer);
                                         if(Panel.class.isAssignableFrom(pluginClass)) {
                                             plugin = (Panel) pluginClass.getConstructor(new Class[]{String.class, WorkflowDescriptorModel.class}).newInstance(new Object[]{"item", pluginModel});
-                                            plugin.setModel(pluginModel);
+                                            plugin.setDefaultModel(pluginModel);
                                         } else {
                                             plugin = new Panel("id");
                                         }
@@ -162,10 +162,12 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
             }
         }
 
-        addOrReplace(view = new AbstractView("view", new ListDataProvider(list)) {
+        addOrReplace(view = new AbstractView<Panel>("view", new ListDataProvider<Panel>(list)) {
+            private static final long serialVersionUID = 1L;
+
             @Override
-            protected void populateItem(Item item) {
-                item.add((Panel) item.getModelObject());
+            protected void populateItem(Item<Panel> item) {
+                item.add(item.getModelObject());
             }
         });
         view.populate();

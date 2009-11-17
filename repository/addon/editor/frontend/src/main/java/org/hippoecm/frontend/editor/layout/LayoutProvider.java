@@ -48,6 +48,7 @@ public class LayoutProvider implements ILayoutProvider {
     static final Logger log = LoggerFactory.getLogger(LayoutProvider.class);
 
     private static class LayoutEntry implements Serializable {
+        private static final long serialVersionUID = 1L;
 
         String plugin;
         String variant;
@@ -73,12 +74,12 @@ public class LayoutProvider implements ILayoutProvider {
     }
 
     private Map<String, LayoutEntry> layouts;
-    private IModel classLoaderModel;
+    private IModel<ClassLoader> classLoaderModel;
 
-    public LayoutProvider(IModel loaderModel) {
+    public LayoutProvider(IModel<ClassLoader> loaderModel) {
         this.classLoaderModel = loaderModel;
 
-        ClassLoader loader = (ClassLoader) classLoaderModel.getObject();
+        ClassLoader loader = classLoaderModel.getObject();
         layouts = new TreeMap<String, LayoutEntry>();
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

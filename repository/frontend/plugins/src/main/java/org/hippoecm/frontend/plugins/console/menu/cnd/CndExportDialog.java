@@ -65,7 +65,7 @@ public class CndExportDialog extends AbstractDialog {
     String selectedNs;
 
     public CndExportDialog(MenuPlugin plugin) {
-        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
 
         final PropertyModel selectedNsModel = new PropertyModel(this, "selectedNs");
 
@@ -82,7 +82,7 @@ public class CndExportDialog extends AbstractDialog {
 
             @Override
             public boolean isVisible() {
-                return selectedNs != null && !getModelObjectAsString().equals("");
+                return selectedNs != null && !getDefaultModelObjectAsString().equals("");
             }
         };
         dump.setOutputMarkupId(true);
@@ -121,7 +121,7 @@ public class CndExportDialog extends AbstractDialog {
                     log.error("IOException while exporting NodeType Definitions of namespace : " + selectedNs, e);
                     export = e.getMessage();
                 }
-                dump.setModel(new Model(export));
+                dump.setDefaultModel(new Model(export));
                 target.addComponent(CndExportDialog.this);
             }
         });
@@ -135,7 +135,7 @@ public class CndExportDialog extends AbstractDialog {
             }
 
             protected InputStream getContent() {
-                String export = (String) dump.getModel().getObject();
+                String export = (String) dump.getDefaultModel().getObject();
                 ByteArrayOutputStream ostream = new ByteArrayOutputStream();
                 PrintWriter writer = new PrintWriter(ostream);
                 writer.print(export);
@@ -145,7 +145,7 @@ public class CndExportDialog extends AbstractDialog {
 
             @Override
             public boolean isVisible() {
-                return selectedNs != null && !dump.getModelObjectAsString().equals("");
+                return selectedNs != null && !dump.getDefaultModelObjectAsString().equals("");
             }
         };
         link.add(new Label("download-link-text", "Download (or right click and choose \"Save as..\""));

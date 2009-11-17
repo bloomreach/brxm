@@ -87,7 +87,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
-                JcrNodeModel model = (JcrNodeModel) FolderShortcutPlugin.this.getModel();
+                JcrNodeModel model = (JcrNodeModel) FolderShortcutPlugin.this.getDefaultModel();
                 dialogService.show(new FolderShortcutPlugin.Dialog(context, config, (model != null ? model.getNode()
                         : null), defaultDropLocation));
             }

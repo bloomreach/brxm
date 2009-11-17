@@ -15,9 +15,13 @@
  */
 package org.hippoecm.frontend;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -99,16 +103,17 @@ public class Main extends WebApplication {
         });
 
         getPageSettings().setVersionPagesByDefault(false);
-        
+
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
         try {
             String cfgParam = getConfigurationParameter(MAXUPLOAD_PARAM, null);
-            if(cfgParam != null && cfgParam.trim().length() > 0) {
+            if (cfgParam != null && cfgParam.trim().length() > 0) {
                 getApplicationSettings().setDefaultMaximumUploadSize(Bytes.valueOf(cfgParam));
             }
-        } catch(StringValueConversionException ex) {
-            log.warn("Unable to parse number as specified by "+MAXUPLOAD_PARAM, ex);
+        } catch (StringValueConversionException ex) {
+            log.warn("Unable to parse number as specified by " + MAXUPLOAD_PARAM, ex);
         }
+        final IClassResolver originalResolver = getApplicationSettings().getClassResolver();
         getApplicationSettings().setClassResolver(new IClassResolver() {
             public Class resolveClass(String name) throws ClassNotFoundException {
                 if (Session.exists()) {
@@ -118,7 +123,30 @@ public class Main extends WebApplication {
                         return session.getClassLoader().loadClass(name);
                     }
                 }
-                return Thread.currentThread().getContextClassLoader().loadClass(name);
+                return originalResolver.resolveClass(name);
+            }
+
+            public Iterator<URL> getResources(String name) {
+                List<URL> resources = new LinkedList<URL>();
+                for (Iterator<URL> iter = originalResolver.getResources(name); iter.hasNext();) {
+                    resources.add(iter.next());
+                }
+                if (Session.exists()) {
+                    UserSession session = (UserSession) Session.get();
+                    ClassLoader loader = session.getClassLoader();
+                    if (loader != null) {
+                        try {
+                            for (Enumeration<URL> resourceEnum = session.getClassLoader().getResources(name); resourceEnum
+                                    .hasMoreElements();) {
+                                resources.add(resourceEnum.nextElement());
+                            }
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                return resources.iterator();
             }
         });
 
@@ -215,7 +243,9 @@ public class Main extends WebApplication {
                 ValueMap credentials = session.getCredentials();
                 javax.jcr.Session subSession = null;
                 try {
-                    subSession = session.getJcrSession().impersonate(new javax.jcr.SimpleCredentials(credentials.getString("username"), credentials.getString("password").toCharArray()));
+                    subSession = session.getJcrSession().impersonate(
+                            new javax.jcr.SimpleCredentials(credentials.getString("username"), credentials.getString(
+                                    "password").toCharArray()));
                     Node node = subSession.getRootNode().getNode(path);
                     return new JcrResourceRequestTarget(new JcrNodeModel(node));
                 } catch (PathNotFoundException e) {

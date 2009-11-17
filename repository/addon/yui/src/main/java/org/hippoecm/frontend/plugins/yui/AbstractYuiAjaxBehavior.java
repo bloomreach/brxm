@@ -66,7 +66,7 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
      * Provide custom callbackParameters
      * @return JavascriptObjectMap containing key/value pairs that should be used as callbackParameters
      */
-    protected Map<String, String> getCallbackParameters() {
+    protected Map<String, Object> getCallbackParameters() {
         return null;
     }
 

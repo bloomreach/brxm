@@ -47,7 +47,7 @@ public abstract class Sorter extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                IModel model = Sorter.this.getModel();
+                IModel model = Sorter.this.getDefaultModel();
                 if (model instanceof JcrNodeModel) {
                     JcrNodeModel nodeModel = (JcrNodeModel) model;
                     Node node = nodeModel.getNode();
@@ -91,7 +91,7 @@ public abstract class Sorter extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                IModel model = Sorter.this.getModel();
+                IModel model = Sorter.this.getDefaultModel();
                 if (model instanceof JcrNodeModel) {
                     JcrNodeModel nodeModel = (JcrNodeModel) model;
                     Node node = nodeModel.getNode();
@@ -132,7 +132,7 @@ public abstract class Sorter extends Panel {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        IModel model = getModel();
+        IModel model = getDefaultModel();
         if (model instanceof JcrNodeModel) {
             try {
                 JcrNodeModel newModel = (JcrNodeModel) model;

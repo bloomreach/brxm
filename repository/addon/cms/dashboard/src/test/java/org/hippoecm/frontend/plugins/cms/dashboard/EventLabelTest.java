@@ -49,6 +49,10 @@ public class EventLabelTest extends PluginTest {
             super("label", model);
         }
 
+        public String getModelObject() {
+            return getDefaultModelObjectAsString();
+        }
+        
     }
 
     @Before

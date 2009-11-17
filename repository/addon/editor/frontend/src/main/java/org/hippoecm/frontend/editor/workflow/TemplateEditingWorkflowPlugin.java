@@ -72,7 +72,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             public Object preClose() {
                 try {
-                    Node node = ((WorkflowDescriptorModel) getModel()).getNode();
+                    Node node = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                     boolean dirty = node.isModified();
                     if (!dirty) {
                         HippoSession session = (HippoSession) node.getSession();
@@ -118,7 +118,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
     }
 
     void doRevert() throws Exception {
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) TemplateEditingWorkflowPlugin.this.getModel();
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) TemplateEditingWorkflowPlugin.this.getDefaultModel();
         model.getNode().refresh(false);
     }
 
@@ -152,7 +152,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                         closeDialog();
                         closeEditor();
                     } catch (Exception ex) {
-                        exceptionLabel.setModel(new Model(ex.getMessage()));
+                        exceptionLabel.setDefaultModel(new Model(ex.getMessage()));
                         target.addComponent(exceptionLabel);
                     }
                 }
@@ -170,7 +170,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                         closeDialog();
                         closeEditor();
                     } catch (Exception ex) {
-                        exceptionLabel.setModel(new Model(ex.getMessage()));
+                        exceptionLabel.setDefaultModel(new Model(ex.getMessage()));
                         target.addComponent(exceptionLabel);
                     }
                 }
