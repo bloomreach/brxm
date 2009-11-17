@@ -29,9 +29,9 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
-import org.hippoecm.frontend.editor.model.AbstractProvider;
-import org.hippoecm.frontend.editor.model.NodeTemplateProvider;
+import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -74,7 +74,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<JcrNodeModel, JcrNodeMo
             JcrNodeModel nodeModel) {
         try {
             JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
-            NodeTemplateProvider provider = new NodeTemplateProvider(descriptor, prototype, nodeModel.getItemModel());
+            ChildNodeProvider provider = new ChildNodeProvider(descriptor, prototype, nodeModel.getItemModel());
             if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
                 provider.addNew();
             }

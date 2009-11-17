@@ -15,16 +15,23 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import java.util.Iterator;
+
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.IValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * Helper class for field plugins. It reads the field
  * descriptor and produces a JcrItemModel.
  */
-public class FieldPluginHelper implements IClusterable {
+public abstract class FieldPluginHelper implements IClusterable {
 
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
@@ -80,11 +87,41 @@ public class FieldPluginHelper implements IClusterable {
                 log.error("No template engine available for " + fieldName);
             }
         }
+
+        // FIXME: don't validate in "view" mode?
+        if (config.containsKey("validator.model")) {
+            IModelReference modelRef = context.getService(config.getString("validator.model"), IModelReference.class);
+            if (modelRef != null) {
+                final IModel model = modelRef.getModel();
+                if (model instanceof IObservable) {
+                    context.registerService(new IObserver() {
+                        private static final long serialVersionUID = 1L;
+
+                        public IObservable getObservable() {
+                            return (IObservable) model;
+                        }
+
+                        public void onEvent(Iterator<? extends IEvent> events) {
+                            onValidation((IValidationResult) model.getObject());
+                        }
+
+                    }, IObserver.class.getName());
+                } else {
+                    log.info("Validator model is not observable, status will not be updated for " + fieldName);
+                }
+            } else {
+                log.info("No validator model found, will not be able to indicate status of " + fieldName);
+            }
+        } else {
+            log.debug("No validator model configured for " + fieldName);
+        }
     }
 
     public IFieldDescriptor getField() {
         return field;
     }
+
+    abstract void onValidation(IValidationResult result);
 
     protected IPluginConfig getPluginConfig() {
         return config;

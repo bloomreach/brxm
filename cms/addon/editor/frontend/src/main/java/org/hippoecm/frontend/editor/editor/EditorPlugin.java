@@ -24,19 +24,14 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
-import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class EditorPlugin extends RenderPlugin implements IValidateService {
+public class EditorPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(EditorPlugin.class);
 
     private EditorForm form;
     private YuiFeedbackPanel feedback;
@@ -51,8 +46,8 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
 
             public boolean accept(FeedbackMessage message) {
                 if (config.getString(RenderService.FEEDBACK) != null) {
-                    List<IFeedbackMessageFilter> filters = context.getServices(config.getString(RenderService.FEEDBACK),
-                            IFeedbackMessageFilter.class);
+                    List<IFeedbackMessageFilter> filters = context.getServices(
+                            config.getString(RenderService.FEEDBACK), IFeedbackMessageFilter.class);
                     for (IFeedbackMessageFilter filter : filters) {
                         if (filter.accept(message)) {
                             return true;
@@ -63,12 +58,6 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
             }
         }, context);
         add(feedback);
-
-        if (config.getString(IValidateService.VALIDATE_ID) != null) {
-            context.registerService(this, config.getString(IValidateService.VALIDATE_ID));
-        } else {
-            log.info("No validator id {} specified", IValidateService.VALIDATE_ID);
-        }
     }
 
     @Override
@@ -90,14 +79,6 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
 
     protected EditorForm newForm() {
         return new EditorForm("form", (JcrNodeModel) getModel(), this, getPluginContext(), getPluginConfig());
-    }
-
-    public boolean hasError() {
-        return form.hasError();
-    }
-
-    public void validate() {
-        form.validate();
     }
 
 }

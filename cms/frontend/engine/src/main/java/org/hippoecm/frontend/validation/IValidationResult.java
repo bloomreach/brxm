@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2009 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,18 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.service;
+package org.hippoecm.frontend.validation;
+
+import java.util.Set;
 
 import org.apache.wicket.IClusterable;
 
-public interface IValidateService extends IClusterable {
-    @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+/**
+ * The model that is constructed during validation.  Maintains state about
+ * what fields are invalid.
+ */
+public interface IValidationResult extends IClusterable {
 
-    String VALIDATE_ID = "validator.id";
+    Set<Violation> getViolations();
 
-    void validate();
-
-    boolean hasError();
+    boolean isValid();
 
 }

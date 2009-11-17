@@ -163,23 +163,28 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
             case PropertyType.BOOLEAN:
                 return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(false);
             case PropertyType.DATE:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(Calendar.getInstance());
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(
+                        Calendar.getInstance());
             case PropertyType.DOUBLE:
                 return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(0.0);
             case PropertyType.LONG:
                 return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(0L);
             case PropertyType.NAME:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("", PropertyType.NAME);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("",
+                        PropertyType.NAME);
             case PropertyType.PATH:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("/", PropertyType.PATH);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("/",
+                        PropertyType.PATH);
             case PropertyType.REFERENCE:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(UUID.randomUUID().toString(), PropertyType.REFERENCE);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(
+                        UUID.randomUUID().toString(), PropertyType.REFERENCE);
             case PropertyType.STRING:
             case PropertyType.UNDEFINED:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("", PropertyType.STRING);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("",
+                        PropertyType.STRING);
             default:
                 return null;
-           }
+            }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
             return null;
@@ -205,11 +210,11 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
             throw new UnsupportedOperationException("type is immutable");
         }
     }
-    
+
     public boolean isMutable() {
         return mutable;
     }
-    
+
     public void setMutable(boolean mutable) {
         this.mutable = mutable;
     }

@@ -37,7 +37,9 @@ public interface IFieldDescriptor extends IClusterable, IObservable {
 
     boolean isMultiple();
 
-    boolean isBinary();
+    boolean isAutoCreated();
+
+    void setAutoCreated(boolean autocreated);
 
     boolean isProtected();
 
@@ -54,5 +56,11 @@ public interface IFieldDescriptor extends IClusterable, IObservable {
     Set<String> getExcluded();
 
     void setExcluded(Set<String> set);
+
+    Set<String> getValidators();
+
+    void addValidator(String validator);
+
+    void removeValidator(String validator);
 
 }

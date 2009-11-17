@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.model;
+package org.hippoecm.frontend.model;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,26 +25,30 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.model.JcrItemModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
+/**
+ * An {@link IDataProvider} that provides a list of models for child nodes, based
+ * on a {@link IFieldDescriptor} and a {@link JcrNodeModel}.  A prototype is used to
+ * add new child nodes.
+ */
+public class ChildNodeProvider extends AbstractProvider<JcrNodeModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(NodeTemplateProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(ChildNodeProvider.class);
 
     private IFieldDescriptor descriptor;
     private JcrNodeModel prototype;
 
-    public NodeTemplateProvider(IFieldDescriptor descriptor, JcrNodeModel prototype, JcrItemModel itemModel) {
+    public ChildNodeProvider(IFieldDescriptor descriptor, JcrNodeModel prototype, JcrItemModel itemModel) {
         super(itemModel);
         this.descriptor = descriptor;
         this.prototype = prototype;

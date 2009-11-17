@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.types;
 
+import java.util.Collections;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import org.hippoecm.frontend.model.event.EventCollection;
@@ -32,9 +34,10 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
     private String path;
 
     private Set<String> excluded;
+    private Set<String> validators = new TreeSet<String>();
 
     private boolean multiple;
-    private boolean binary;
+    private boolean autocreated;
     private boolean protect;
     private boolean mandatory;
     private boolean ordered;
@@ -48,7 +51,7 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
         this.excluded = null;
         this.name = UUID.randomUUID().toString();
 
-        multiple = protect = binary = mandatory = ordered = primary = false;
+        multiple = protect = autocreated = mandatory = ordered = primary = false;
     }
 
     public JavaFieldDescriptor(IFieldDescriptor source) {
@@ -56,7 +59,7 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
         this.path = source.getPath();
         this.excluded = source.getExcluded();
 
-        this.binary = source.isBinary();
+        this.autocreated = source.isAutoCreated();
         this.mandatory = source.isMandatory();
         this.multiple = source.isMultiple();
         this.ordered = source.isOrdered();
@@ -85,20 +88,28 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
         notifyObservers();
     }
 
-    public void setMultiple(boolean multiple) {
-        this.multiple = multiple;
-    }
-
     public boolean isMultiple() {
         return multiple;
     }
 
-    public boolean isBinary() {
-        return binary;
+    public void setMultiple(boolean multiple) {
+        this.multiple = multiple;
     }
 
+    public boolean isAutoCreated() {
+        return autocreated;
+    }
+
+    public void setAutoCreated(boolean autocreated) {
+        this.autocreated = autocreated;
+    }
+    
     public boolean isProtected() {
         return protect;
+    }
+
+    public void setProtected(boolean protect) {
+        this.protect = protect;
     }
 
     public boolean isMandatory() {
@@ -149,5 +160,17 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
             collection.add(new TypeDescriptorEvent(null, this, TypeDescriptorEvent.EventType.FIELD_CHANGED));
         }
     }
-    
+
+    public Set<String> getValidators() {
+        return Collections.unmodifiableSet(validators);
+    }
+
+    public void addValidator(String validator) {
+        validators.add(validator);
+    }
+
+    public void removeValidator(String validator) {
+        validators.remove(validator);
+    }
+
 }

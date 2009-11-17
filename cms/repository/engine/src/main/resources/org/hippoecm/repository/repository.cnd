@@ -20,7 +20,7 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hipposys='http://www.onehippo.org/jcr/hipposys/nt/1.0'>
-<hipposysedit='http://www.onehippo.org/jcr/hipposysedit/nt/1.0'>
+<hipposysedit='http://www.onehippo.org/jcr/hipposysedit/nt/1.1'>
 
 [rep:jarFile] mixin
 - rep:jarExpanded (date) mandatory copy
@@ -140,20 +140,23 @@
 - hipposysedit:uri (string) mandatory
 
 [hipposysedit:field] > nt:base
-- hipposysedit:name (string)
+- hipposysedit:name (string) // deprecated, use node name instead
 - hipposysedit:path (string)
 - hipposysedit:type (string)
 - hipposysedit:multiple (boolean)
 - hipposysedit:mandatory (boolean)
 - hipposysedit:ordered (boolean)
 - hipposysedit:primary (boolean)
+- hipposysedit:autocreated (boolean)
+- hipposysedit:protected (boolean)
+- hipposysedit:validators (string) multiple
 
 [hipposysedit:nodetype] > hippo:document orderable
 - hipposysedit:type (string)
 - hipposysedit:supertype (string) multiple
 - hipposysedit:node (boolean)
 - hipposysedit:mixin (boolean)
-+ hipposysedit:field (hipposysedit:field) multiple
++ * (hipposysedit:field) multiple // multiple is required to support deprecated hipposysedit:field name
 
 [hipposysedit:prototypeset]
 + hipposysedit:prototype (nt:base) multiple

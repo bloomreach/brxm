@@ -25,7 +25,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
  * ITypeDescriptor implementations to be able to do their own lookup.
  * It should not be used by store implementations.
  */
-public class TypeLocator implements IClusterable {
+public class TypeLocator implements ITypeLocator, IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

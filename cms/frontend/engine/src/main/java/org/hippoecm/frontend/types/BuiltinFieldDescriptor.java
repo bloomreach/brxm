@@ -39,14 +39,13 @@ class BuiltinFieldDescriptor extends JavaFieldDescriptor {
         if (definition instanceof NodeDefinition) {
             NodeDefinition ntDef = (NodeDefinition) definition;
             setMultiple(ntDef.allowsSameNameSiblings());
-            setMandatory(ntDef.isMandatory());
         } else {
             PropertyDefinition propDef = (PropertyDefinition) definition;
             setMultiple(propDef.isMultiple());
-            setMandatory(propDef.isMandatory());
         }
-
         setMandatory(definition.isMandatory());
+        setProtected(definition.isProtected());
+        setAutoCreated(definition.isAutoCreated());
 
         if (isMultiple()) {
             if (definition.getDeclaringNodeType().hasOrderableChildNodes()) {
