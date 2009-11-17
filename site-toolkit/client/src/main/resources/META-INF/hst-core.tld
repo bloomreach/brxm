@@ -176,7 +176,7 @@
             <type>java.lang.String</type>
             <description>
               A bean path of HippoBean object which can be retrieved via pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean path.
                     JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
             </description>
         </attribute>
@@ -207,11 +207,22 @@
         </attribute>
         <attribute>
             <name>current</name>
-            <required>true</required>
+            <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation</type>
             <description>A HippoFacetSubNavigation object. This is the current state of the faceted navigation, from 
             which you for example want to remove one facet-value combi.</description>
+        </attribute>
+        <attribute>
+            <name>currentByBeanPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              A bean path of a HippoFacetSubNavigation object which can be retrieved via pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean path.
+                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
+            </description>
         </attribute>
         <attribute>
             <name>remove</name>
@@ -219,6 +230,17 @@
             <rtexprvalue>true</rtexprvalue>
             <type>org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation</type>
             <description>A HippoFacetSubNavigation object.</description>
+        </attribute>
+        <attribute>
+            <name>removeByBeanPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              A bean path of a HippoFacetSubNavigation object which can be retrieved via pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean path.
+                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
+            </description>
         </attribute>
     </tag>
 

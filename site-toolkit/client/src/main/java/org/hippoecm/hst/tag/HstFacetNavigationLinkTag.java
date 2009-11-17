@@ -30,12 +30,14 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +54,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
 
     protected HippoFacetSubNavigation current;
     protected HippoFacetSubNavigation remove;
+    protected boolean skipTag; 
    
     protected String var;
     
@@ -76,7 +79,9 @@ public class HstFacetNavigationLinkTag extends TagSupport {
      */
     @Override
     public int doEndTag() throws JspException{
-        
+        if(skipTag) {
+            return EVAL_PAGE;
+        }
         if(this.current == null || this.remove == null) {
             log.warn("Cannot remove a facet-value combi because 'current' of 'remove' is null");
             return EVAL_PAGE;
@@ -162,13 +167,27 @@ public class HstFacetNavigationLinkTag extends TagSupport {
         this.current = current;
     }
     
+    public void setCurrentByBeanPath(String beanPath) {
+        this.current = (HippoFacetSubNavigation) PageContextPropertyUtils.getProperty(pageContext, beanPath);
+        if(this.current == null) {
+            log.debug("No bean for '{}'. The tag will be skipped.", beanPath);
+            skipTag = true;
+        }
+    }
+    
     public HippoFacetSubNavigation getRemove(){
         return this.remove;
     }
     
-    
     public void setRemove(HippoFacetSubNavigation remove) {
         this.remove = remove;
+    }
+    public void setRemoveByBeanPath(String beanPath) {
+        this.remove = (HippoFacetSubNavigation) PageContextPropertyUtils.getProperty(pageContext, beanPath);
+        if(this.remove == null) {
+            log.debug("No bean for '{}'. The tag will be skipped.", beanPath);
+            skipTag = true;
+        }
     }
     
    
