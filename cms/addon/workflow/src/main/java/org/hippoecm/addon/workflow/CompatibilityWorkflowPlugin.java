@@ -64,7 +64,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Deprecated
-public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin implements IActivator {
+public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin<T> implements IActivator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: AbstractWorkflowPlugin.java 16815 2009-03-11 16:09:10Z fvlankvelt $";
 
@@ -83,6 +83,16 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
     public void stop() {
     }
 
+    @SuppressWarnings("unchecked")
+    public IModel<T> getModel() {
+        return (IModel<T>) getDefaultModel();
+    }
+
+    @SuppressWarnings("unchecked")
+    public T getModelObject() {
+        return (T) getDefaultModelObject();
+    }
+    
     @Deprecated
     public class WorkflowAction extends StdWorkflow {
         ResourceReference iconModel;
@@ -107,7 +117,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
         @Override
         protected IModel initModel() {
-            return CompatibilityWorkflowPlugin.this.getModel();
+            return CompatibilityWorkflowPlugin.this.getDefaultModel();
         }
 
         protected Dialog createRequestDialog() {
@@ -157,7 +167,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         }
 
         protected void execute() throws Exception {
-            execute((WorkflowDescriptorModel<T>) CompatibilityWorkflowPlugin.this.getModel());
+            execute((WorkflowDescriptorModel<T>) CompatibilityWorkflowPlugin.this.getDefaultModel());
         }
 
         protected void execute(WorkflowDescriptorModel<T> model) throws Exception {
@@ -189,7 +199,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
          * @throws RepositoryException
          */
         protected String getInputNodeName() {
-            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) getModel();
+            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) getDefaultModel();
             try {
                 return new NodeTranslator(new JcrNodeModel(workflowDescriptorModel.getNode())).getNodeName()
                         .getObject().toString();
@@ -212,7 +222,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             public WorkflowDialog(IModel message) {
                 Label notification = new Label("notification");
                 if (message != null) {
-                    notification.setModel(message);
+                    notification.setDefaultModel(message);
                 } else {
                     notification.setVisible(false);
                 }
@@ -243,7 +253,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
              * the action to be performed when the dialog's ok button is clicked.
              */
             protected final void execute() throws Exception {
-                WorkflowAction.this.execute((WorkflowDescriptorModel<T>) CompatibilityWorkflowPlugin.this.getModel());
+                WorkflowAction.this.execute((WorkflowDescriptorModel<T>) CompatibilityWorkflowPlugin.this.getDefaultModel());
             }
         }
 
@@ -299,14 +309,14 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
                 String modelServiceId = decorated.getString("wicket.model.folder");
                 final IModelReference modelRef = context.getService(modelServiceId, IModelReference.class);
-                context.registerService(new IObserver() {
+                context.registerService(new IObserver<IModelReference>() {
                     private static final long serialVersionUID = 1L;
 
-                    public IObservable getObservable() {
+                    public IModelReference getObservable() {
                         return modelRef;
                     }
 
-                    public void onEvent(Iterator<? extends IEvent> events) {
+                    public void onEvent(Iterator<? extends IEvent<IModelReference>> events) {
                         IModel model = modelRef.getModel();
                         if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
                             destination.setChainedModel(model);

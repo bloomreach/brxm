@@ -22,9 +22,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -36,12 +36,11 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -51,7 +50,7 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BreadcrumbPlugin extends RenderPlugin {
+public class BreadcrumbPlugin extends RenderPlugin<Node> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -63,7 +62,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
     private final AjaxButton up;
 
     private MaxLengthStringFormatter format;
-    final IModelReference folderReference;
+    final IModelReference<Node> folderReference;
 
     private List<NodeItem> nodeitems;
 
@@ -86,14 +85,14 @@ public class BreadcrumbPlugin extends RenderPlugin {
 
         folderReference = context.getService(config.getString("model.folder"), IModelReference.class);
         if (folderReference != null) {
-            context.registerService(new IObserver() {
+            context.registerService(new IObserver<IModelReference<Node>>() {
                 private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
+                public IModelReference<Node> getObservable() {
                     return folderReference;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> event) {
+                public void onEvent(Iterator<? extends IEvent<IModelReference<Node>>> event) {
                     update((JcrNodeModel) folderReference.getModel());
                 }
 
@@ -138,7 +137,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
 
     protected void update(JcrNodeModel model) {
         replace(getListView(model));
-        setModel(model);
+        setDefaultModel(model);
 
         JcrNodeModel parentModel = model.getParentModel();
         if (parentModel == null || roots.contains(model.getItemModel().getPath())) {
@@ -149,7 +148,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
         AjaxRequestTarget.get().addComponent(this);
     }
 
-    private ListView getListView(JcrNodeModel model) {
+    private ListView<NodeItem> getListView(JcrNodeModel model) {
         nodeitems = new LinkedList<NodeItem>();
         if (model != null) {
             //add current folder as disabled
@@ -167,42 +166,49 @@ public class BreadcrumbPlugin extends RenderPlugin {
             }
         }
         Collections.reverse(nodeitems);
-        ListView listview = new ListView("crumbs", nodeitems) {
+        ListView<NodeItem> listview = new ListView<NodeItem>("crumbs", nodeitems) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(final ListItem item) {
-                final NodeItem nodeItem = (NodeItem) item.getModelObject();
-                AjaxLink link = new AjaxLink("link") {
+            protected void populateItem(final ListItem<NodeItem> item) {
+                AjaxLink<NodeItem> link = new AjaxLink<NodeItem>("link", item.getModel()) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        folderReference.setModel(nodeItem.model);
+                        folderReference.setModel(getModelObject().model);
                     }
 
                 };
 
-                link.add(new Label("name", new AbstractReadOnlyModel() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public Object getObject() {
-                        return (nodeItem.name != null ? format.parse(nodeItem.name) : null);
-                    }
-
-                }));
-                link.add(new AttributeAppender("title", true, new Model(nodeItem.getDecodedName()), " "));
-
-                link.setEnabled(nodeItem.enabled);
-                item.add(link);
-
-                IModel css = new Model() {
+                link.add(new Label("name", new AbstractReadOnlyModel<String>() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public String getObject() {
-                        String css = nodeItem.enabled ? "enabled" : "disabled";
+                        NodeItem nodeItem = item.getModelObject();
+                        return (nodeItem.name != null ? format.parse(nodeItem.name) : null);
+                    }
+
+                }));
+                link.add(new AttributeAppender("title", true, new LoadableDetachableModel<String>() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected String load() {
+                        return item.getModelObject().getDecodedName();
+                    }
+                }, " "));
+
+                link.setEnabled(item.getModelObject().enabled);
+                item.add(link);
+
+                IModel<String> css = new LoadableDetachableModel<String>() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected String load() {
+                        String css = item.getModelObject().enabled ? "enabled" : "disabled";
 
                         if (nodeitems.size() == 1) {
                             css += " firstlast";

@@ -59,12 +59,12 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
     private static final String FIELD_PLUGIN_EDITOR = "fieldPluginEditor";
     private static final String FIELD_EDITOR = "fieldEditor";
 
-    class PropertyEditor extends RenderService {
+    class PropertyEditor extends RenderService<IPluginConfig> {
         private static final long serialVersionUID = 1L;
 
         private ITypeDescriptor type;
         private IPluginConfig edited;
-        private IModel fieldModel;
+        private IModel<IFieldDescriptor> fieldModel;
         private boolean shown = true;
 
         public PropertyEditor(IPluginContext context, IPluginConfig properties, IPluginConfig edited,
@@ -73,24 +73,24 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
             this.type = type;
             this.edited = edited;
-            context.registerService(new IObserver() {
+            context.registerService(new IObserver<IPluginConfig>() {
                 private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
+                public IPluginConfig getObservable() {
                     return PropertyEditor.this.edited;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> events) {
+                public void onEvent(Iterator<? extends IEvent<IPluginConfig>> events) {
                     updatePreview();
                 }
 
             }, IObserver.class.getName());
 
-            fieldModel = new LoadableDetachableModel() {
+            fieldModel = new LoadableDetachableModel<IFieldDescriptor>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected Object load() {
+                protected IFieldDescriptor load() {
                     if (PropertyEditor.this.type != null) {
                         return PropertyEditor.this.type.getField(PropertyEditor.this.edited.getString("field"));
                     }
@@ -99,17 +99,18 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
             };
             add(new FieldEditor(FIELD_EDITOR, type, fieldModel, edit));
-            add(new FieldPluginEditor(FIELD_PLUGIN_EDITOR, new Model(edited), edit));
+            add(new FieldPluginEditor(FIELD_PLUGIN_EDITOR, new Model<IPluginConfig>(edited), edit));
 
-            context.registerService(new IObserver() {
+            context.registerService(new IObserver<ITypeDescriptor>() {
+                private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
+                public ITypeDescriptor getObservable() {
                     return PropertyEditor.this.type;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> events) {
+                public void onEvent(Iterator<? extends IEvent<ITypeDescriptor>> events) {
                     while (events.hasNext()) {
-                        IEvent event = events.next();
+                        IEvent<ITypeDescriptor> event = events.next();
                         if (event instanceof TypeDescriptorEvent) {
                             TypeDescriptorEvent tde = (TypeDescriptorEvent) event;
                             IFieldDescriptor field = tde.getField();
@@ -160,7 +161,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
             }
         }
 
-        private IModel getClusterParameters(boolean edit) {
+        private IModel<IPluginConfig> getClusterParameters(boolean edit) {
             if (edit && edited.getPluginConfig("cluster.options") == null) {
                 edited.put("cluster.options", new JavaPluginConfig());
                 try {
@@ -169,7 +170,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                     log.error("failed to add child node to plugin config", ex);
                 }
             }
-            return new Model(edited.getPluginConfig("cluster.options"));
+            return new Model<IPluginConfig>(edited.getPluginConfig("cluster.options"));
         }
 
     }

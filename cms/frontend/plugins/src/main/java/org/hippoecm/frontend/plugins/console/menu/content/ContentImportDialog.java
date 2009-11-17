@@ -110,7 +110,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
     public ContentImportDialog(MenuPlugin plugin) {
         InitMaps();
         this.plugin = plugin;
-        nodeModel = (JcrNodeModel) plugin.getModel();
+        nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         
         DropDownChoice uuid = new DropDownChoice("uuidBehaviors", new PropertyModel(this, "uuidBehavior"), new ArrayList<String>(uuidOpts.values()));
         DropDownChoice merge = new DropDownChoice("mergeBehaviors", new PropertyModel(this, "mergeBehavior"), new ArrayList<String>(mergeOpts.values()));
@@ -163,7 +163,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
                 ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
                 info("Import done.");
 
-                plugin.setModel(nodeModel);
+                plugin.setDefaultModel(nodeModel);
 
             } catch (PathNotFoundException ex) {
                 log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);

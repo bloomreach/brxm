@@ -98,8 +98,8 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
         state = "unknown";
         try {
             WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
-            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getModel();
-            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor)getModelObject();
+            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getDefaultModel();
+            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor)getDefaultModelObject();
             if (workflowDescriptor != null) {
                 Node documentNode = workflowDescriptorModel.getNode();
 

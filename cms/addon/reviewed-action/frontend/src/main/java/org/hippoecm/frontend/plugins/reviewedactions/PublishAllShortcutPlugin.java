@@ -84,7 +84,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         link.setModel(new StringResourceModel(config.getString("label.link"), this, null));
         add(link);
         Label label = new Label("label");
-        label.setModel(new StringResourceModel(config.getString("label.link"), this, null));
+        label.setDefaultModel(new StringResourceModel(config.getString("label.link"), this, null));
         link.add(label);
     }
 
@@ -138,7 +138,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
             }
 
             Label countLabel = new Label("count");
-            countLabel.setModel(new Model(Integer.toString(documents.size())));
+            countLabel.setDefaultModel(new Model(Integer.toString(documents.size())));
             add(countLabel);
         }
 

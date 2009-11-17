@@ -94,11 +94,12 @@ public class ObservationTest extends PluginTest {
     private class TestObservable implements IObservable {
         private static final long serialVersionUID = 1L;
 
-        private IObservationContext context;
+        private IObservationContext<IObservable> context;
         int identity = 12345;
 
-        public void setObservationContext(IObservationContext context) {
-            this.context = context;
+        @SuppressWarnings("unchecked")
+        public void setObservationContext(IObservationContext<?> context) {
+            this.context = (IObservationContext<IObservable>) context;
         }
 
         public void startObservation() {
@@ -108,8 +109,8 @@ public class ObservationTest extends PluginTest {
         }
 
         void fire() {
-            EventCollection<IEvent> collection = new EventCollection<IEvent>();
-            collection.add(new IEvent() {
+            EventCollection<IEvent<IObservable>> collection = new EventCollection<IEvent<IObservable>>();
+            collection.add(new IEvent<IObservable>() {
 
                 public IObservable getSource() {
                     return TestObservable.this;
@@ -130,7 +131,7 @@ public class ObservationTest extends PluginTest {
         }
     }
 
-    private class TestObserver implements IObserver {
+    private class TestObserver implements IObserver<IObservable> {
         private static final long serialVersionUID = 1L;
 
         private List<IEvent> events;
@@ -145,7 +146,7 @@ public class ObservationTest extends PluginTest {
             return model;
         }
 
-        public void onEvent(Iterator<? extends IEvent> iter) {
+        public void onEvent(Iterator<? extends IEvent<IObservable>> iter) {
             while (iter.hasNext()) {
                 events.add(iter.next());
             }
@@ -407,10 +408,10 @@ public class ObservationTest extends PluginTest {
         private static final long serialVersionUID = 1L;
 
         int count = 0;
-        JcrEventListener listener = new JcrEventListener(new IObservationContext() {
+        JcrEventListener listener = new JcrEventListener(new IObservationContext<JcrNodeModel>() {
             private static final long serialVersionUID = 1L;
 
-            public void notifyObservers(EventCollection<? extends IEvent> event) {
+            public void notifyObservers(EventCollection<IEvent<JcrNodeModel>> event) {
                 count++;
             }
 
@@ -473,10 +474,10 @@ public class ObservationTest extends PluginTest {
         session.save();
 
         final List<IEvent> events = new LinkedList<IEvent>();
-        JcrEventListener listener = new JcrEventListener(new IObservationContext() {
+        JcrEventListener listener = new JcrEventListener(new IObservationContext<JcrNodeModel>() {
             private static final long serialVersionUID = 1L;
 
-            public void notifyObservers(EventCollection<? extends IEvent> collection) {
+            public void notifyObservers(EventCollection<IEvent<JcrNodeModel>> collection) {
                 for (IEvent event : collection) {
                     events.add(event);
                 }
@@ -582,14 +583,14 @@ public class ObservationTest extends PluginTest {
         session.save();
 
         final JcrNodeModel model = new JcrNodeModel(testNode);
-        IObserver observer = new IObserver() {
+        IObserver observer = new IObserver<JcrNodeModel>() {
             private static final long serialVersionUID = 1L;
 
-            public IObservable getObservable() {
+            public JcrNodeModel getObservable() {
                 return model;
             }
 
-            public void onEvent(Iterator<? extends IEvent> iter) {
+            public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> iter) {
                 Node node = model.getNode();
                 try {
                     Thread.sleep(10);

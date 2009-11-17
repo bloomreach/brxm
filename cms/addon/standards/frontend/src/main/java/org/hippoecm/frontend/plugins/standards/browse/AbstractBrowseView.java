@@ -22,10 +22,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -65,28 +65,23 @@ public abstract class AbstractBrowseView implements IBrowseService<JcrNodeModel>
         browseService = new BrowseService(context, config, document);
 
         @SuppressWarnings("unchecked")
-        final IModelReference<JcrNodeModel> folderReference = context.getService(config.getString("model.folder"),
+        final IModelReference<Node> folderReference = context.getService(config.getString("model.folder"),
                 IModelReference.class);
         if (folderReference != null) {
-            context.registerService(new IObserver() {
+            context.registerService(new IObserver<IModelReference<Node>>() {
                 private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
+                public IModelReference<Node> getObservable() {
                     return folderReference;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> event) {
+                public void onEvent(Iterator<? extends IEvent<IModelReference<Node>>> event) {
                     onFolderChanged(folderReference.getModel());
                 }
 
             }, IObserver.class.getName());
-        }
 
-        @SuppressWarnings("unchecked")
-        IModelReference<JcrNodeModel> modelService = context.getService(config.getString("model.folder"),
-                IModelReference.class);
-        if (modelService != null) {
-            JcrNodeModel model = modelService.getModel();
+            IModel<Node> model = folderReference.getModel();
             if (model != null) {
                 onFolderChanged(model);
             }
@@ -118,10 +113,10 @@ public abstract class AbstractBrowseView implements IBrowseService<JcrNodeModel>
         return false;
     }
 
-    protected void onFolderChanged(JcrNodeModel model) {
+    protected void onFolderChanged(IModel<Node> model) {
         boolean shown = false;
         try {
-            Node node = ((JcrNodeModel) model).getNode();
+            Node node = model.getObject();
             if (node == null) {
                 return;
             }

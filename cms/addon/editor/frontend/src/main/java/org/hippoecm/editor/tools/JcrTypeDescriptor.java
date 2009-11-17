@@ -404,14 +404,14 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     private void subscribe(final IFieldDescriptor field) {
         final IObservationContext obContext = getObservationContext();
-        IObserver observer = new IObserver() {
+        IObserver<IFieldDescriptor> observer = new IObserver<IFieldDescriptor>() {
             private static final long serialVersionUID = 1L;
 
-            public IObservable getObservable() {
+            public IFieldDescriptor getObservable() {
                 return field;
             }
 
-            public void onEvent(Iterator<? extends IEvent> events) {
+            public void onEvent(Iterator<? extends IEvent<IFieldDescriptor>> events) {
                 EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
                 while (events.hasNext()) {
                     IEvent event = events.next();

@@ -24,7 +24,7 @@ public class CssClassAppender extends AttributeModifier {
 
     private static final long serialVersionUID = 1L;
 
-    public CssClassAppender(IModel model) {
+    public CssClassAppender(IModel<String> model) {
         super("class", true, model);
     }
 

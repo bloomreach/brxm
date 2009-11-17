@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,9 +24,6 @@ import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.Cookie;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
@@ -39,8 +35,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
-
-import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrSessionModel;
@@ -52,13 +46,15 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RememberMeLoginPlugin extends LoginPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
 
     /** Algorithm to use for creating the passkey secret.
@@ -73,13 +69,14 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
     @Override
     protected LoginPlugin.SignInForm createSignInForm(String id) {
-        boolean rememberme = false;;
-        Cookie[] cookies = ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
-        if(cookies != null) {
+        boolean rememberme = false;
+        ;
+        Cookie[] cookies = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
+        if (cookies != null) {
             for (int i = 0; i < cookies.length; i++) {
                 if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())) {
                     String passphrase = cookies[i].getValue();
-                    if(passphrase != null && passphrase.contains("$")) {
+                    if (passphrase != null && passphrase.contains("$")) {
                         String username = Base64.decode(passphrase.split("\\$")[1]);
                         credentials.put("username", username);
                         credentials.put("password", "********");
@@ -101,17 +98,21 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         public void setRememberme(boolean value) {
             rememberme = value;
         }
+
         public boolean getRememberme() {
             return rememberme;
         }
-        
+
         public SignInForm(final String id, boolean rememberme) {
             super(id);
             this.rememberme = rememberme;
-            if(rememberme) {
-                add(new AttributeModifier("autocomplete", true, new Model("off")));
+            if (rememberme) {
+                add(new AttributeModifier("autocomplete", true, new Model<String>("off")));
             }
-            add(new AjaxCheckBox("rememberme", new PropertyModel(this, "rememberme")) {
+            add(new AjaxCheckBox("rememberme", new PropertyModel<Boolean>(this, "rememberme")) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     target.addComponent(SignInForm.this);
                     target.addComponent(this);
@@ -121,21 +122,24 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
         @Override
         public final void onSubmit() {
-            UserSession userSession = (UserSession)getSession();
+            UserSession userSession = (UserSession) getSession();
             JcrSessionModel sessionModel = new JcrSessionModel(credentials) {
+                private static final long serialVersionUID = 1L;
+
                 @Override
                 protected Object load() {
                     javax.jcr.Session result = null;
                     try {
-                        Main main = (Main)Application.get();
+                        Main main = (Main) Application.get();
                         HippoRepository repository = main.getRepository();
 
                         if (!rememberme) {
-                            Cookie[] cookies = ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
+                            Cookie[] cookies = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest()
+                                    .getCookies();
                             for (int i = 0; i < cookies.length; i++) {
-                                if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName()) ||
-                                        getClass().getName().equals(cookies[i].getName())) {
-                                    ((WebResponse)RequestCycle.get().getResponse()).clearCookie(cookies[i]);
+                                if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())
+                                        || getClass().getName().equals(cookies[i].getName())) {
+                                    ((WebResponse) RequestCycle.get().getResponse()).clearCookie(cookies[i]);
                                 }
                             }
                             return super.load();
@@ -144,12 +148,13 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                         String username = credentials.getString("username");
                         String password = credentials.getString("password");
                         if (password == null || password.equals("") || password.replaceAll("\\*", "").equals("")) {
-                            Cookie[] cookies = ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
+                            Cookie[] cookies = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest()
+                                    .getCookies();
                             for (int i = 0; i < cookies.length; i++) {
                                 if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())) {
                                     String passphrase = cookies[i].getValue();
                                     String strings[] = passphrase.split("\\$");
-                                    if(strings.length == 3) {
+                                    if (strings.length == 3) {
                                         username = Base64.decode(strings[1]);
                                         password = strings[0] + "$" + strings[2];
                                     }
@@ -162,17 +167,21 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                             MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
                             digest.update(username.getBytes());
                             digest.update(password.getBytes());
-                            String passphrase = digest.getAlgorithm() + "$" + Base64.encode(username) + "$" + Base64.encode(new String(digest.digest()));
-                            ((WebResponse)RequestCycle.get().getResponse()).addCookie(new Cookie(RememberMeLoginPlugin.class.getName(), passphrase));
-                            Node userinfo = result.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
+                            String passphrase = digest.getAlgorithm() + "$" + Base64.encode(username) + "$"
+                                    + Base64.encode(new String(digest.digest()));
+                            ((WebResponse) RequestCycle.get().getResponse()).addCookie(new Cookie(
+                                    RememberMeLoginPlugin.class.getName(), passphrase));
+                            Node userinfo = result.getRootNode().getNode(
+                                    HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
                             String[] strings = passphrase.split("\\$");
                             userinfo.setProperty(HippoNodeType.HIPPO_PASSKEY, strings[0] + "$" + strings[2]);
                             userinfo.save();
                         }
                         if (result.getRootNode().hasNode("hippo:log")) {
-                            Workflow workflow = ((HippoWorkspace)result.getWorkspace()).getWorkflowManager().getWorkflow("internal", result.getRootNode().getNode("hippo:log"));
+                            Workflow workflow = ((HippoWorkspace) result.getWorkspace()).getWorkflowManager()
+                                    .getWorkflow("internal", result.getRootNode().getNode("hippo:log"));
                             if (workflow instanceof EventLoggerWorkflow) {
-                                ((EventLoggerWorkflow)workflow).logEvent(result.getUserID(), "Repository", "login");
+                                ((EventLoggerWorkflow) workflow).logEvent(result.getUserID(), "Repository", "login");
                             }
                         }
                     } catch (NoSuchAlgorithmException ex) {
@@ -183,12 +192,10 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage());
                     } catch (RemoteException ex) {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                    } catch (IOException ex) {
-                        log.error(ex.getClass().getName() + ": " + ex.getMessage());
                     }
                     if (result == null) {
                         credentials = Main.DEFAULT_CREDENTIALS;
-                        Main main = (Main)Application.get();
+                        Main main = (Main) Application.get();
                         main.resetConnection();
                         throw new RestartResponseException(InvalidLoginPage.class);
                     }
@@ -196,7 +203,8 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 }
             };
             userSession.setJcrSessionModel(sessionModel);
-            ConcurrentLoginFilter.validateSession(((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true), usernameTextField.getModelObjectAsString(), false);
+            ConcurrentLoginFilter.validateSession(((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest()
+                    .getSession(true), usernameTextField.getDefaultModelObjectAsString(), false);
             userSession.setLocale(new Locale(selectedLocale));
             redirect();
         }
@@ -216,8 +224,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 encoded.append(base64code.charAt((j >> 6) & 0x3f));
                 encoded.append(base64code.charAt(j & 0x3f));
             }
-            return encoded.substring(0, encoded.length() -
-                    paddingCount) + "==".substring(0, paddingCount);
+            return encoded.substring(0, encoded.length() - paddingCount) + "==".substring(0, paddingCount);
         }
 
         public static String decode(String string) {
@@ -226,7 +233,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 int value = 0;
                 int count = 3;
                 for (int j = 0; j < 4; j++) {
-                    int ch = (i+j < string.length() ? string.charAt(i + j) : '=');
+                    int ch = (i + j < string.length() ? string.charAt(i + j) : '=');
                     if (ch >= 'A' && ch <= 'Z') {
                         ch = ch - 'A';
                     } else if (ch >= 'a' && ch <= 'z') {
@@ -243,12 +250,12 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     }
                     value = (value << 6) | ch;
                 }
-                decoded.append((char)((value >> 16) & 0xff));
-                if(count > 1) {
-                    decoded.append((char)((value >> 8) & 0xff));
+                decoded.append((char) ((value >> 16) & 0xff));
+                if (count > 1) {
+                    decoded.append((char) ((value >> 8) & 0xff));
                 }
-                if(count > 2) {
-                    decoded.append((char)(value & 0xff));
+                if (count > 2) {
+                    decoded.append((char) (value & 0xff));
                 }
             }
             return new String(decoded);

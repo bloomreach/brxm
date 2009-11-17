@@ -77,7 +77,7 @@ public class PermissionsDialog extends AbstractDialog {
     static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
     public PermissionsDialog(MenuPlugin plugin) {
-        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         setModel(nodeModel);
 
         final Label usernameLabel = new Label("username", "Unknown");
@@ -104,15 +104,15 @@ public class PermissionsDialog extends AbstractDialog {
             String[] actions = getAllowedActions(subject, JCR_ACTIONS);
             String[] roles = getAllowedActions(subject, JCR_PRIVILEGES);
 
-            usernameLabel.setModel(new Model(userID));
-            membershipsLabel.setModel(new Model(StringUtils.join(memberships, ", ")));
-            allActionsLabel.setModel(new Model(StringUtils.join(JCR_ACTIONS, ", ")));
-            allPrivilegesLabel.setModel(new Model(StringUtils.join(JCR_PRIVILEGES, ", ")));
-            actionsLabel.setModel(new Model(StringUtils.join(actions, ", ")));
-            privilegesLabel.setModel(new Model(StringUtils.join(roles, ", ")));
+            usernameLabel.setDefaultModel(new Model(userID));
+            membershipsLabel.setDefaultModel(new Model(StringUtils.join(memberships, ", ")));
+            allActionsLabel.setDefaultModel(new Model(StringUtils.join(JCR_ACTIONS, ", ")));
+            allPrivilegesLabel.setDefaultModel(new Model(StringUtils.join(JCR_PRIVILEGES, ", ")));
+            actionsLabel.setDefaultModel(new Model(StringUtils.join(actions, ", ")));
+            privilegesLabel.setDefaultModel(new Model(StringUtils.join(roles, ", ")));
 
         } catch (RepositoryException ex) {
-            actionsLabel.setModel(new Model(ex.getClass().getName() + ": " + ex.getMessage()));
+            actionsLabel.setDefaultModel(new Model(ex.getClass().getName() + ": " + ex.getMessage()));
         }
         setCancelVisible(false);
         setFocusOnOk();

@@ -78,7 +78,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
             try {
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
-                        .getModel();
+                        .getDefaultModel();
                 GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this
                         .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
                 if (workflow == null) {
@@ -136,7 +136,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                     WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                     try {
                         WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
-                                .getModel();
+                                .getDefaultModel();
                         GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this
                                 .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
                         Document document = workflow.createGalleryItem(NodeNameCodec.encode(filename, true), type);

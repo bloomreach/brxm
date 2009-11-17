@@ -32,16 +32,16 @@ import org.hippoecm.frontend.validation.IValidationResult;
  * plugins that are unaware of the container model, but only operate on a field
  * value.
  */
-public class FilteredValidationModel extends Model implements IObservable {
+public class FilteredValidationModel extends Model<IValidationResult> implements IObservable {
     private static final long serialVersionUID = 1L;
 
     private IObservationContext obContext;
     private IObserver observer;
 
-    private IModel upstreamModel;
+    private IModel<IValidationResult> upstreamModel;
 
-    public FilteredValidationModel(IModel upstreamModel, IFieldDescriptor field) {
-        super(new FilteredValidationResult((IValidationResult) upstreamModel.getObject(), field));
+    public FilteredValidationModel(IModel<IValidationResult> upstreamModel, IFieldDescriptor field) {
+        super(new FilteredValidationResult(upstreamModel.getObject(), field));
         this.upstreamModel = upstreamModel;
     }
 
@@ -52,14 +52,14 @@ public class FilteredValidationModel extends Model implements IObservable {
     public void startObservation() {
         if (upstreamModel instanceof IObservable) {
             final IObservable upstream = (IObservable) upstreamModel;
-            obContext.registerObserver(observer = new IObserver() {
+            obContext.registerObserver(observer = new IObserver<IObservable>() {
                 private static final long serialVersionUID = 1L;
 
                 public IObservable getObservable() {
                     return upstream;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> events) {
+                public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
                     obContext.notifyObservers(new EventCollection(events));
                 }
 

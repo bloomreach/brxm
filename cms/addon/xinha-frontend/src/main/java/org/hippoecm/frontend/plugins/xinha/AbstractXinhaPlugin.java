@@ -182,7 +182,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
                 @Override
                 protected void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
-                    String text = (String) getModelObject();
+                    String text = (String) getDefaultModelObject();
                     if (text != null) {
                         JcrPropertyValueModel propertyValueModel = getValueModel();
                         String prefix = XinhaUtil.encode(BINARIES_PREFIX

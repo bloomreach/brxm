@@ -45,7 +45,7 @@ public interface ILayoutDescriptor extends IClusterable {
      * The localized name of the layout.
      * @return
      */
-    IModel/*<String>*/ getName();
+    IModel<String> getName();
     
     Resource getIcon();
 

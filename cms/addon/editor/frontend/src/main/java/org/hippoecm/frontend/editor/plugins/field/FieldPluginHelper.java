@@ -92,16 +92,16 @@ public abstract class FieldPluginHelper implements IClusterable {
         if (config.containsKey("validator.model")) {
             IModelReference modelRef = context.getService(config.getString("validator.model"), IModelReference.class);
             if (modelRef != null) {
-                final IModel model = modelRef.getModel();
+                final IModel<IValidationResult> model = modelRef.getModel();
                 if (model instanceof IObservable) {
-                    context.registerService(new IObserver() {
+                    context.registerService(new IObserver<IObservable>() {
                         private static final long serialVersionUID = 1L;
 
                         public IObservable getObservable() {
                             return (IObservable) model;
                         }
 
-                        public void onEvent(Iterator<? extends IEvent> events) {
+                        public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
                             onValidation((IValidationResult) model.getObject());
                         }
 

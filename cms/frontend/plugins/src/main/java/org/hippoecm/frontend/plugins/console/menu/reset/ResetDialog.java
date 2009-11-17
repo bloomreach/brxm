@@ -42,7 +42,7 @@ public class ResetDialog extends AbstractDialog {
         this.plugin = plugin;
 
         Component message;
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         try {
             HippoNode rootNode = (HippoNode) nodeModel.getNode().getSession().getRootNode();
             if (rootNode.getSession().hasPendingChanges()) {
@@ -72,7 +72,7 @@ public class ResetDialog extends AbstractDialog {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
             Node rootNode = nodeModel.getNode().getSession().getRootNode();
             // always refresh regardless of the local changes, so external changes
             // can also be exposed.

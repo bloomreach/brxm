@@ -105,14 +105,14 @@ public class ValidationEngine implements IValidateService {
         final IModelReference wicketModelRef = context.getService(config.getString("wicket.model"),
                 IModelReference.class);
         if (wicketModelRef != null) {
-            context.registerService(modelObserver = new IObserver() {
+            context.registerService(modelObserver = new IObserver<IObservable>() {
                 private static final long serialVersionUID = 1L;
 
                 public IObservable getObservable() {
                     return wicketModelRef;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> events) {
+                public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
                     resultModel.setObject(new ValidationResult());
                 }
 

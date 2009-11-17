@@ -28,12 +28,10 @@ import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ClearableDialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -41,13 +39,13 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinkPickerPlugin extends RenderPlugin {
+public class LinkPickerPlugin extends RenderPlugin<String> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private JcrPropertyValueModel valueModel;
+    private IModel<String> valueModel;
 
     private List<String> nodetypes = new ArrayList<String>();
 
@@ -58,15 +56,14 @@ public class LinkPickerPlugin extends RenderPlugin {
     public LinkPickerPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        IDialogService dialogService = getDialogService();
-        valueModel = (JcrPropertyValueModel) getModel();
+        valueModel = getModel();
 
-        final IModel displayModel = new Model() {
+        final IModel<String> displayModel = new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Object getObject() {
-                String docbaseUUID = (String) valueModel.getObject();
+            protected String load() {
+                String docbaseUUID = valueModel.getObject();
                 if (docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.startsWith("cafebabe-")) {
                     return EMPTY_LINK_TEXT;
                 }
@@ -100,24 +97,24 @@ public class LinkPickerPlugin extends RenderPlugin {
             IDialogFactory dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
 
-                public AbstractDialog createDialog() {
-                    return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel() {
+                public AbstractDialog<String> createDialog() {
+                    return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel<String>() {
                         private static final long serialVersionUID = 1L;
 
-                        public Object getObject() {
+                        public String getObject() {
                             return valueModel.getObject();
                         }
 
-                        public void setObject(Object object) {
+                        public void setObject(String object) {
                             valueModel.setObject(object);
                             redraw();
                         }
 
-                        public IModel getChainedModel() {
+                        public IModel<String> getChainedModel() {
                             return valueModel;
                         }
 
-                        public void setChainedModel(IModel model) {
+                        public void setChainedModel(IModel<?> model) {
                             throw new UnsupportedOperationException("Value model cannot be changed");
                         }
 

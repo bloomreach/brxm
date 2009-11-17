@@ -265,11 +265,6 @@
         </dependency>
         <dependency>
             <groupId>org.hippoecm</groupId>
-            <artifactId>hippo-ecm-addon-cms-management</artifactId>
-            <version>2.10.00-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hippoecm</groupId>
             <artifactId>hippo-ecm-addon-cms-admin</artifactId>
             <version>2.10.00-SNAPSHOT</version>
         </dependency>

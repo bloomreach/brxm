@@ -44,7 +44,7 @@ public abstract class XinhaDialogBehavior extends AbstractDefaultAjaxBehavior {
     protected Map<String, String> getParameters() {
         Request request = RequestCycle.get().getRequest();
         HashMap<String, String> p = new HashMap<String, String>();
-        Map<String, String> requestParams = request.getRequestParameters().getParameters();
+        Map<String, ?> requestParams = request.getRequestParameters().getParameters();
         for (String key : requestParams.keySet()) {
             if (key.startsWith(AbstractXinhaPlugin.XINHA_PARAM_PREFIX)) {
                 p.put(key.substring(AbstractXinhaPlugin.XINHA_PARAM_PREFIX.length()), request.getParameter(key));

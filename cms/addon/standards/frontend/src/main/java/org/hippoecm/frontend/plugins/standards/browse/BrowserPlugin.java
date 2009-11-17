@@ -21,7 +21,6 @@ import java.util.Iterator;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -42,7 +41,7 @@ public class BrowserPlugin extends RenderPlugin {
     public BrowserPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        browseView = new BrowseView(context, config, (JcrNodeModel) getModel()) {
+        browseView = new BrowseView(context, config, (JcrNodeModel) getDefaultModel()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -60,30 +59,30 @@ public class BrowserPlugin extends RenderPlugin {
 
             final IModelReference documentReference = context.getService(config.getString("model.document"),
                     IModelReference.class);
-            context.registerService(new IObserver() {
+            context.registerService(new IObserver<IModelReference>() {
                 private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
+                public IModelReference getObservable() {
                     return documentReference;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> event) {
-                    BrowserPlugin.this.setModel(documentReference.getModel());
+                public void onEvent(Iterator<? extends IEvent<IModelReference>> event) {
+                    BrowserPlugin.this.setDefaultModel(documentReference.getModel());
                 }
 
             }, IObserver.class.getName());
 
             final IModelReference folderReference = context.getService(config.getString("model.folder"),
                     IModelReference.class);
-            context.registerService(new IObserver() {
+            context.registerService(new IObserver<IModelReference>() {
                 private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
+                public IModelReference getObservable() {
                     return folderReference;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> event) {
-                    BrowserPlugin.this.setModel(folderReference.getModel());
+                public void onEvent(Iterator<? extends IEvent<IModelReference>> event) {
+                    BrowserPlugin.this.setDefaultModel(folderReference.getModel());
                 }
 
             }, IObserver.class.getName());

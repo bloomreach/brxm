@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class StringMapSetting extends Setting<Map<String, String>> {
+public class StringMapSetting extends Setting<Map<String, Object>> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -34,35 +34,38 @@ public class StringMapSetting extends Setting<Map<String, String>> {
         this(javascriptKey, null);
     }
 
-    public StringMapSetting(String javascriptKey, Map<String, String> defaultValue) {
+    public StringMapSetting(String javascriptKey, Map<String, Object> defaultValue) {
         super(javascriptKey, defaultValue);
     }
 
-    public Map<String, String> newValue() {
+    @Override
+    public Map<String, Object> newValue() {
         if (defaultValue != null) {
-            return new HashMap<String, String>(defaultValue);
+            return new HashMap<String, Object>(defaultValue);
         } else {
-            return new HashMap<String, String>();
+            return new HashMap<String, Object>();
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Map<String, String> getValueFromConfig(IPluginConfig config, YuiObject settings) {
+    protected Map<String, Object> getValueFromConfig(IPluginConfig config, YuiObject settings) {
         return config.getPluginConfig(configKey);
     }
 
+    @Override
     public void setFromString(String value, YuiObject settings) {
         set(new ValueMap(value), settings);
     }
 
-    public String getScriptValue(Map<String, String> value) {
+    @Override
+    public String getScriptValue(Map<String, Object> value) {
         if(value == null)  {
             return null;
         }
         StringBuilder buf = new StringBuilder();
         boolean first = true;
-        for (Entry<String, String> e : value.entrySet()) {
+        for (Entry<String, Object> e : value.entrySet()) {
             //TODO: A IPluginConfig map can be passed into this method, which will results in a jcr:primaryType key-value entry, which breaks
             //the js-object and shouldn't be present. We could just try and ignore it by wrapping the js-object key's with quotes as well.
             if (e.getKey().startsWith("jcr:"))
@@ -74,7 +77,7 @@ public class StringMapSetting extends Setting<Map<String, String>> {
             }
             buf.append(e.getKey()).append(':');
             if (escaped) {
-                buf.append(StringSetting.escapeString(e.getValue()));
+                buf.append(StringSetting.escapeString(e.getValue().toString()));
             } else {
                 buf.append(e.getValue());
             }

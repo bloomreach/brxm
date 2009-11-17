@@ -34,6 +34,6 @@ public class XinhaPlugin extends AbstractXinhaPlugin {
     }
 
     protected JcrPropertyValueModel getValueModel() {
-        return (JcrPropertyValueModel) getModel();
+        return (JcrPropertyValueModel) getDefaultModel();
     }
 }

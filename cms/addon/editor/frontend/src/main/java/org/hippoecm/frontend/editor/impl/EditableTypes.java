@@ -117,8 +117,8 @@ class EditableTypes extends AbstractList implements Serializable, IObservable {
                 new String[] { HippoNodeType.NT_NAMESPACE }) {
             @Override
             public void onEvent(EventIterator events) {
-                EventCollection<IEvent> collection = new EventCollection<IEvent>();
-                collection.add(new IEvent() {
+                EventCollection<IEvent<IObservable>> collection = new EventCollection<IEvent<IObservable>>();
+                collection.add(new IEvent<IObservable>() {
 
                     public IObservable getSource() {
                         return EditableTypes.this;

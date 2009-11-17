@@ -33,6 +33,7 @@ import org.apache.wicket.Resource;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.WebResource;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.resource.IPropertiesFactory;
 import org.apache.wicket.resource.Properties;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -124,7 +125,7 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
 
     }
 
-    private IModel clModel;
+    private IModel<ClassLoader> clModel;
     private String location;
     private String variant;
     private Map<String, ILayoutPad> pads;
@@ -136,11 +137,11 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
      * @param classLoaderModel read-only IModel that returns a ClassLoader
      * @param plugin
      */
-    public XmlLayoutDescriptor(IModel/*<ClassLoader>*/classLoaderModel, String plugin) {
+    public XmlLayoutDescriptor(IModel<ClassLoader> classLoaderModel, String plugin) {
         this(classLoaderModel, plugin, null);
     }
 
-    public XmlLayoutDescriptor(IModel/*<ClassLoader>*/classLoaderModel, String plugin, String variant) {
+    public XmlLayoutDescriptor(IModel<ClassLoader> classLoaderModel, String plugin, String variant) {
         this.clModel = classLoaderModel;
         this.location = plugin.replace('.', '/');
         this.variant = variant;
@@ -150,7 +151,7 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
 
         // Get layout description.  Use the variant description if it is available.
         // Otherwise, fall back to the default. 
-        ClassLoader cl = (ClassLoader) clModel.getObject();
+        ClassLoader cl = clModel.getObject();
         InputStream stream = null;
         if (variant != null) {
             stream = cl.getResourceAsStream(location + "_" + variant + ".layout.xml");
@@ -221,7 +222,7 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
 
             @Override
             public IResourceStream getResourceStream() {
-                ClassLoader cl = (ClassLoader) clModel.getObject();
+                ClassLoader cl = clModel.getObject();
                 URL url = null;
                 if (variant != null) {
                     url = cl.getResource(location + "_" + variant + ".png");
@@ -256,19 +257,20 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
      * the variant appended and falling back to the using the name itself as key if
      * this fails.  Finally, if no properties files are found, the name is returned.
      */
-    public IModel getName() {
-        return new IModel() {
+    public IModel<String> getName() {
+        return new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
-            public Object getObject() {
+            @Override
+            protected String load() {
                 // Load the properties associated with the path
                 IPropertiesFactory propertiesFactory = Application.get().getResourceSettings().getPropertiesFactory();
 
                 Locale locale = Session.get().getLocale();
                 String name = location.substring(location.lastIndexOf('/') + 1);
-                ResourceNameIterator iterator = new ResourceNameIterator(location, variant, locale, "properties");
+                ResourceNameIterator iterator = new ResourceNameIterator(location, variant, locale, null);
                 while (iterator.hasNext()) {
-                    String path = (String) iterator.next();
+                    String path = iterator.next();
                     final Properties props = propertiesFactory.load(null, path);
                     if (props != null) {
                         if (variant != null) {
@@ -285,12 +287,6 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
                     }
                 }
                 return name;
-            }
-
-            public void setObject(Object object) {
-            }
-
-            public void detach() {
             }
 
         };

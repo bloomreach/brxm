@@ -50,13 +50,13 @@ class StdWorkflowPlugin extends Panel {
                         @Override
                         protected void invoke() {
                             try {
-                                WorkflowDescriptor descriptor = (WorkflowDescriptor) StdWorkflowPlugin.this.getModelObject();
+                                WorkflowDescriptor descriptor = (WorkflowDescriptor) StdWorkflowPlugin.this.getDefaultModelObject();
                                 Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
                                 WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
                                 session.save();
                                 session.refresh(true);
                                 Workflow workflow = manager.getWorkflow(descriptor);
-                                ((Method)getModelObject()).invoke(workflow, new Object[0]);
+                                ((Method)getDefaultModelObject()).invoke(workflow, new Object[0]);
                                 session.refresh(false);
                             } catch(RepositoryException ex) {
                                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
@@ -70,7 +70,7 @@ class StdWorkflowPlugin extends Panel {
                             }
                         }
                     };
-                    wf.setModel(new WorkflowMethodDescriptorModel((WorkflowDescriptorModel)StdWorkflowPlugin.this.getModel(), method));
+                    wf.setDefaultModel(new WorkflowMethodDescriptorModel((WorkflowDescriptorModel)StdWorkflowPlugin.this.getDefaultModel(), method));
                     list.add(wf);
                 }
             }

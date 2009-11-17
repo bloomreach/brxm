@@ -35,6 +35,7 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ClearableDialogLink;
@@ -49,7 +50,7 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FacetSelectTemplatePlugin extends RenderPlugin {
+public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -64,8 +65,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
     public FacetSelectTemplatePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrNodeModel jcrNodeModel = (JcrNodeModel) getModel();
-        Node node = jcrNodeModel.getNode();
+        Node node = getModelObject();
         try {
             if (!node.hasProperty("hippo:docbase")) {
                 node.setProperty("hippo:docbase", node.getSession().getRootNode().getUUID());
@@ -86,20 +86,20 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-        
-        final IModel displayModel = new Model() {
+
+        final IModel<String> displayModel = new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Object getObject() {
-                Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getModel()).getNode();
+            protected String load() {
+                Node node = FacetSelectTemplatePlugin.this.getModelObject();
                 try {
                     if (node != null && node.hasProperty("hippo:docbase")) {
                         String docbaseUUID = node.getProperty("hippo:docbase").getString();
                         if (docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.startsWith("cafebabe-")) {
                             return EMPTY_LINK_TEXT;
                         }
-                    return node.getSession().getNodeByUUID(docbaseUUID).getPath();
+                        return node.getSession().getNodeByUUID(docbaseUUID).getPath();
                     }
                 } catch (ValueFormatException e) {
                     log.warn("Invalid value format for docbase " + e.getMessage());
@@ -116,45 +116,53 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
 
         mode = config.getString("mode", "view");
         try {
-            IDataProvider provider = new IDataProvider() {
-                public Iterator iterator(int first, int count) {
-                    return new Iterator() {
+            IDataProvider<Integer> provider = new IDataProvider<Integer>() {
+                private static final long serialVersionUID = 1L;
+
+                public Iterator<Integer> iterator(int first, int count) {
+                    return new Iterator<Integer>() {
                         int current = 0;
+
                         public boolean hasNext() {
                             try {
-                                Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getModel()).getNode();
+                                Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getDefaultModel()).getNode();
                                 return current < node.getProperty("hippo:facets").getValues().length;
-                            } catch(RepositoryException ex) {
+                            } catch (RepositoryException ex) {
                                 return false;
                             }
                         }
-                        public Object next() {
-                            if(hasNext()) {
+
+                        public Integer next() {
+                            if (hasNext()) {
                                 return new Integer(current++);
                             } else {
                                 throw new NoSuchElementException();
                             }
                         }
+
                         public void remove() {
                             throw new UnsupportedOperationException();
                         }
                     };
                 }
+
                 public int size() {
                     try {
-                        Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getModel()).getNode();
+                        Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getDefaultModel()).getNode();
                         return node.getProperty("hippo:facets").getValues().length;
-                    } catch(RepositoryException ex) {
+                    } catch (RepositoryException ex) {
                         return 0;
                     }
                 }
-                public IModel model(Object object) {
-                    return new Model(((Integer)object).intValue());
+
+                public IModel<Integer> model(Integer object) {
+                    return new Model<Integer>(object);
                 }
+
                 public void detach() {
                 }
             };
-            if("edit".equals(mode)) {
+            if ("edit".equals(mode)) {
                 final List<String> nodetypes = new ArrayList<String>();
                 if (config.getStringArray("nodetypes") != null) {
                     String[] nodeTypes = config.getStringArray("nodetypes");
@@ -163,29 +171,30 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
                 if (nodetypes.size() == 0) {
                     log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
                 }
-                final JcrPropertyValueModel docbaseModel = new JcrPropertyValueModel(new JcrPropertyModel(node.getProperty("hippo:docbase")));
+                final IModel<String> docbaseModel = new JcrPropertyValueModel<String>(new JcrPropertyModel<String>(node
+                        .getProperty("hippo:docbase")));
                 //add(new TextFieldWidget("docbase", docbaseModel));
                 IDialogFactory dialogFactory = new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
 
-                    public AbstractDialog createDialog() {
-                        return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel() {
+                    public AbstractDialog<String> createDialog() {
+                        return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel<String>() {
                             private static final long serialVersionUID = 1L;
 
-                            public Object getObject() {
+                            public String getObject() {
                                 return docbaseModel.getObject();
                             }
 
-                            public void setObject(Object object) {
+                            public void setObject(String object) {
                                 docbaseModel.setObject(object);
                                 redraw();
                             }
 
-                            public IModel getChainedModel() {
+                            public IModel<String> getChainedModel() {
                                 return docbaseModel;
                             }
 
-                            public void setChainedModel(IModel model) {
+                            public void setChainedModel(IModel<?> model) {
                                 throw new UnsupportedOperationException("Value model cannot be changed");
                             }
 
@@ -195,13 +204,13 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
                         }, nodetypes);
                     }
                 };
-                
+
                 add(new ClearableDialogLink("docbase", displayModel, dialogFactory, getDialogService()) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onClear() {
-                        Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getModel()).getNode();
+                        Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getDefaultModel()).getNode();
                         try {
                             node.setProperty("hippo:docbase", node.getSession().getRootNode().getUUID());
                         } catch (RepositoryException e) {
@@ -217,50 +226,64 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
                     }
                 });
 
-                add(new DataView("arguments", provider) {
-                    public void populateItem(final Item item) {
-                            Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getModel()).getNode();
-                            final int index = ((Integer) item.getModelObject()).intValue();
-                            try {
-                                item.add(new TextFieldWidget("facet", new JcrPropertyValueModel(index, new JcrPropertyModel(node.getProperty("hippo:facets")))));
-                                item.add(new TextFieldWidget("mode", new JcrPropertyValueModel(index, new JcrPropertyModel(node.getProperty("hippo:modes")))));
-                                item.add(new TextFieldWidget("value", new JcrPropertyValueModel(index, new JcrPropertyModel(node.getProperty("hippo:values")))));
-                                AjaxLink removeButton;
-                                item.add(removeButton = new AjaxLink("remove") {
-                                    public void onClick(AjaxRequestTarget target) {
-                                        Node node = ((JcrNodeModel)FacetSelectTemplatePlugin.this.getModel()).getNode();
-                                        for (String property : new String[] {"hippo:facets", "hippo:modes", "hippo:values"}) {
-                                            try {
-                                                Value[] oldValues = node.getProperty(property).getValues();
-                                                Value[] newValues = new Value[oldValues.length - 1];
-                                                System.arraycopy(oldValues, 0, newValues, 0, index);
-                                                System.arraycopy(oldValues, index+1, newValues, 0, oldValues.length-index-1);
-                                                node.setProperty(property, newValues);
-                                            } catch (RepositoryException ex) {
-                                                log.error("cannot add new facet select line", ex);
-                                            }
+                add(new DataView<Integer>("arguments", provider) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void populateItem(final Item<Integer> item) {
+                        Node node = FacetSelectTemplatePlugin.this.getModelObject();
+                        final int index = item.getModelObject().intValue();
+                        try {
+                            item.add(new TextFieldWidget("facet", new JcrPropertyValueModel<String>(index,
+                                    new JcrPropertyModel<String>(node.getProperty("hippo:facets")))));
+                            item.add(new TextFieldWidget("mode", new JcrPropertyValueModel<String>(index,
+                                    new JcrPropertyModel<String>(node.getProperty("hippo:modes")))));
+                            item.add(new TextFieldWidget("value", new JcrPropertyValueModel<String>(index,
+                                    new JcrPropertyModel<String>(node.getProperty("hippo:values")))));
+                            AjaxLink<Void> removeButton;
+                            item.add(removeButton = new AjaxLink<Void>("remove") {
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                public void onClick(AjaxRequestTarget target) {
+                                    Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getDefaultModel())
+                                            .getNode();
+                                    for (String property : new String[] { "hippo:facets", "hippo:modes", "hippo:values" }) {
+                                        try {
+                                            Value[] oldValues = node.getProperty(property).getValues();
+                                            Value[] newValues = new Value[oldValues.length - 1];
+                                            System.arraycopy(oldValues, 0, newValues, 0, index);
+                                            System.arraycopy(oldValues, index + 1, newValues, 0, oldValues.length
+                                                    - index - 1);
+                                            node.setProperty(property, newValues);
+                                        } catch (RepositoryException ex) {
+                                            log.error("cannot add new facet select line", ex);
                                         }
-                                        FacetSelectTemplatePlugin.this.redraw();
                                     }
-                                });
-                                removeButton.setOutputMarkupId(true);
-                            } catch(RepositoryException ex) {
-                                log.error("cannot read facet select line", ex);
-                            }
+                                    FacetSelectTemplatePlugin.this.redraw();
+                                }
+                            });
+                            removeButton.setOutputMarkupId(true);
+                        } catch (RepositoryException ex) {
+                            log.error("cannot read facet select line", ex);
                         }
-                    });
-                AjaxLink addButton;
-                add(addButton = new AjaxLink("add") {
+                    }
+                });
+                AjaxLink<Void> addButton;
+                add(addButton = new AjaxLink<Void>("add") {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
                     public void onClick(AjaxRequestTarget target) {
-                        Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getModel()).getNode();
-                        for(String property : new String[] { "hippo:facets", "hippo:modes", "hippo:values"}) {
+                        Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getDefaultModel()).getNode();
+                        for (String property : new String[] { "hippo:facets", "hippo:modes", "hippo:values" }) {
                             try {
                                 Value[] oldValues = node.getProperty(property).getValues();
                                 Value[] newValues = new Value[oldValues.length + 1];
                                 System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
                                 newValues[newValues.length - 1] = node.getSession().getValueFactory().createValue("");
                                 node.setProperty(property, newValues);
-                            } catch(RepositoryException ex) {
+                            } catch (RepositoryException ex) {
                                 log.error("cannot add new facet select line", ex);
                             }
                         }
@@ -270,31 +293,38 @@ public class FacetSelectTemplatePlugin extends RenderPlugin {
                 addButton.setOutputMarkupId(true);
             } else {
                 add(new Label("docbase", displayModel));
-                add(new DataView("arguments", provider) {
-                    public void populateItem(final Item item) {
-                            try {
-                                Node node = ((JcrNodeModel)FacetSelectTemplatePlugin.this.getModel()).getNode();
-                                int index = ((Integer)item.getModelObject()).intValue();
-                                item.add(new Label("facet", node.getProperty("hippo:facets").getValues()[index].getString()));
-                                item.add(new Label("mode", node.getProperty("hippo:modes").getValues()[index].getString()));
-                                item.add(new Label("value", node.getProperty("hippo:values").getValues()[index].getString()));
-                                Label removeButton;
-                                item.add(removeButton = new Label("remove"));
-                                removeButton.setVisible(false);
-                            } catch(RepositoryException ex) {
-                                log.error("cannot read facet select line", ex);
-                            }
+                add(new DataView<Integer>("arguments", provider) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void populateItem(final Item<Integer> item) {
+                        try {
+                            Node node = FacetSelectTemplatePlugin.this.getModelObject();
+                            int index = item.getModelObject().intValue();
+                            item
+                                    .add(new Label("facet", node.getProperty("hippo:facets").getValues()[index]
+                                            .getString()));
+                            item.add(new Label("mode", node.getProperty("hippo:modes").getValues()[index].getString()));
+                            item
+                                    .add(new Label("value", node.getProperty("hippo:values").getValues()[index]
+                                            .getString()));
+                            Label removeButton;
+                            item.add(removeButton = new Label("remove"));
+                            removeButton.setVisible(false);
+                        } catch (RepositoryException ex) {
+                            log.error("cannot read facet select line", ex);
                         }
-                    });
+                    }
+                });
                 Label addButton;
                 add(addButton = new Label("add"));
                 addButton.setVisible(false);
             }
-        } catch(PathNotFoundException ex) {
+        } catch (PathNotFoundException ex) {
             log.error("failed to read existing facet select", ex);
-        } catch(ValueFormatException ex) {
+        } catch (ValueFormatException ex) {
             log.error("failed to read existing facet select", ex);
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             log.error("failed to read existing facet select", ex);
         }
 

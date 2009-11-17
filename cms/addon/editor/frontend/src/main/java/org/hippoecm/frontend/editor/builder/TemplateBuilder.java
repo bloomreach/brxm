@@ -181,14 +181,14 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
 
         public void startObservation() {
-            obContext.registerObserver(observer = new IObserver() {
+            obContext.registerObserver(observer = new IObserver<IFieldDescriptor>() {
                 private static final long serialVersionUID = -510095692858775942L;
 
-                public IObservable getObservable() {
+                public IFieldDescriptor getObservable() {
                     return delegate;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> events) {
+                public void onEvent(Iterator<? extends IEvent<IFieldDescriptor>> events) {
                     obContext.notifyObservers(new EventCollection(events));
                 }
 
@@ -343,14 +343,14 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
 
         public void startObservation() {
-            obContext.registerObserver(observer = new IObserver() {
+            obContext.registerObserver(observer = new IObserver<ITypeDescriptor>() {
                 private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
+                public ITypeDescriptor getObservable() {
                     return typeDescriptor;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> events) {
+                public void onEvent(Iterator<? extends IEvent<ITypeDescriptor>> events) {
                     obContext.notifyObservers(new EventCollection(events));
                 }
 
@@ -740,13 +740,14 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private void registerObservers() {
         if (clusterConfig != null) {
-            context.registerService(clusterObserver = new IObserver() {
+            context.registerService(clusterObserver = new IObserver<IClusterConfig>() {
+                private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
+                public IClusterConfig getObservable() {
                     return clusterConfig;
                 }
 
-                public void onEvent(Iterator<? extends IEvent> events) {
+                public void onEvent(Iterator<? extends IEvent<IClusterConfig>> events) {
                     while (events.hasNext()) {
                         IEvent event = events.next();
                         if (event instanceof ClusterConfigEvent) {
@@ -838,7 +839,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private void notifyObservers() {
         if (obContext != null) {
-            EventCollection<IEvent> collection = new EventCollection<IEvent>();
+            EventCollection<IEvent<IObservable>> collection = new EventCollection<IEvent<IObservable>>();
             collection.add(new IEvent() {
 
                 public IObservable getSource() {

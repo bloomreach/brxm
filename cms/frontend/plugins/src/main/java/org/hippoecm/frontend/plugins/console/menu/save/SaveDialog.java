@@ -48,7 +48,7 @@ public class SaveDialog extends AbstractDialog {
     public SaveDialog(MenuPlugin plugin) {
         this.plugin = plugin;
         Component message;
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         try {
             HippoNode rootNode = (HippoNode) nodeModel.getNode().getSession().getRootNode();
             if (rootNode.getSession().hasPendingChanges()) {

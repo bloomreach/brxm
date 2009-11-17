@@ -102,10 +102,10 @@ public class LoginPlugin extends RenderPlugin {
                 Manifest manifest = new Manifest(istream);
                 Attributes atts = manifest.getMainAttributes();
                 if (atts.getValue("Implementation-Version") != null) {
-                    versionLabel.setModel(new Model(atts.getValue("Implementation-Version")));
+                    versionLabel.setDefaultModel(new Model(atts.getValue("Implementation-Version")));
                 }
                 if (atts.getValue("Implementation-Build") != null) {
-                    buildLabel.setModel(new Model(atts.getValue("Implementation-Build")));
+                    buildLabel.setDefaultModel(new Model(atts.getValue("Implementation-Build")));
                 }
             }
         } catch(IOException ex) {
@@ -118,7 +118,7 @@ public class LoginPlugin extends RenderPlugin {
                 sb.append(repository.getDescriptor(Repository.REP_NAME_DESC));
                 sb.append(" ");
                 sb.append(repository.getDescriptor(Repository.REP_VERSION_DESC));
-                repositoryLabel.setModel(new Model(new String(sb)));
+                repositoryLabel.setDefaultModel(new Model(new String(sb)));
             }
         }
     }
@@ -190,12 +190,12 @@ public class LoginPlugin extends RenderPlugin {
             usernameTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
                 protected void onUpdate(AjaxRequestTarget target) {
-                    String username = this.getComponent().getModelObjectAsString();
+                    String username = this.getComponent().getDefaultModelObjectAsString();
                     HttpSession session = ((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
                     if(ConcurrentLoginFilter.isConcurrentSession(session, username)) {
-                        userLabel.setModel(new StringResourceModel("alreadylogin", LoginPlugin.this, null, new Object[] {username}));
+                        userLabel.setDefaultModel(new StringResourceModel("alreadylogin", LoginPlugin.this, null, new Object[] {username}));
                     } else {
-                        userLabel.setModel(new Model(""));
+                        userLabel.setDefaultModel(new Model(""));
                     }
                     target.addComponent(userLabel);
                     credentials.put("username", username);
@@ -205,7 +205,7 @@ public class LoginPlugin extends RenderPlugin {
             passwordTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
                 protected void onUpdate(AjaxRequestTarget target) {
-                    credentials.put("password", this.getComponent().getModelObjectAsString());
+                    credentials.put("password", this.getComponent().getDefaultModelObjectAsString());
                 }
             });
 
@@ -228,7 +228,7 @@ public class LoginPlugin extends RenderPlugin {
         @Override
         public void onSubmit() {
             UserSession userSession = (UserSession) getSession();
-            String username = usernameTextField.getModelObjectAsString();
+            String username = usernameTextField.getDefaultModelObjectAsString();
             HttpSession session = ((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
             ConcurrentLoginFilter.validateSession(session, username, false);
             userSession.setJcrSessionModel(new JcrSessionModel(credentials));
@@ -246,7 +246,7 @@ public class LoginPlugin extends RenderPlugin {
         }
     }
 
-    protected static class StringPropertyModel extends PropertyModel {
+    protected static class StringPropertyModel extends PropertyModel<String> {
         private static final long serialVersionUID = 1L;
 
         public StringPropertyModel(Object modelObject, String expression) {

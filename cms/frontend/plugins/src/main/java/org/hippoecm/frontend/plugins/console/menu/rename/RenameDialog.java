@@ -44,7 +44,7 @@ public class RenameDialog extends AbstractDialog {
     public RenameDialog(MenuPlugin plugin) {
         this.plugin = plugin;
 
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         try {
             // get name of current node
             name = nodeModel.getNode().getName();
@@ -61,7 +61,7 @@ public class RenameDialog extends AbstractDialog {
     @Override
     protected void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
 
             if (nodeModel.getParentModel() != null) {
                 JcrNodeModel parentModel = nodeModel.getParentModel();
@@ -77,7 +77,7 @@ public class RenameDialog extends AbstractDialog {
                 jcrSession.move(oldPath, newPath);
 
                 JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
-                plugin.setModel(newNodeModel);
+                plugin.setDefaultModel(newNodeModel);
             }
         } catch (RepositoryException ex) {
             error(ex.getMessage());

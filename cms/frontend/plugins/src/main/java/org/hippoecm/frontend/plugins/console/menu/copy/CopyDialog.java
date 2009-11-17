@@ -52,7 +52,7 @@ public class CopyDialog extends LookupDialog {
         super(new JcrTreeNode(new JcrNodeModel("/"), null));
 
         this.plugin = plugin;
-        JcrNodeModel model = (JcrNodeModel) plugin.getModel();
+        JcrNodeModel model = (JcrNodeModel) plugin.getDefaultModel();
         setSelectedNode(model);
         try {
             if (model.getParentModel() != null) {
@@ -112,7 +112,7 @@ public class CopyDialog extends LookupDialog {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
 
             JcrNodeModel selectedNode = getSelectedNode().getNodeModel();
             if (selectedNode != null && name != null && !"".equals(name)) {
@@ -130,7 +130,7 @@ public class CopyDialog extends LookupDialog {
 
                 Node rootNode = nodeModel.getNode().getSession().getRootNode();
                 Node targetNode = rootNode.getNode(targetPath.substring(1));
-                plugin.setModel(new JcrNodeModel(targetNode));
+                plugin.setDefaultModel(new JcrNodeModel(targetNode));
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());

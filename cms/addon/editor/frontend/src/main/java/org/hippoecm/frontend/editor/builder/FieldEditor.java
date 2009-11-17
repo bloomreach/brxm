@@ -126,7 +126,7 @@ public class FieldEditor extends Panel {
     }
 
     IFieldDescriptor getDescriptor() {
-        return (IFieldDescriptor) getModelObject();
+        return (IFieldDescriptor) getDefaultModelObject();
     }
 
     void setType(ITypeDescriptor type) {
@@ -135,7 +135,7 @@ public class FieldEditor extends Panel {
 
     @Override
     public boolean isVisible() {
-        return getModelObject() != null;
+        return getDefaultModelObject() != null;
     }
 
     /**

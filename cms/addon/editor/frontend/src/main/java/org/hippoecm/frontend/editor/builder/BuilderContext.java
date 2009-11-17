@@ -26,7 +26,6 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.builder.EditorContext.Mode;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -62,15 +61,15 @@ public class BuilderContext implements IClusterable {
         this.listeners = new LinkedList<IBuilderListener>();
 
         final String pluginId = config.getString(PLUGIN_ID);
-        final IModelReference helperModelRef = context.getService(config.getString(SELECTED_PLUGIN),
+        final IModelReference<String> helperModelRef = context.getService(config.getString(SELECTED_PLUGIN),
                 IModelReference.class);
         if (helperModelRef != null) {
-            context.registerService(new IObserver() {
+            context.registerService(new IObserver<IModelReference<String>>() {
                 private static final long serialVersionUID = 1L;
 
                 private boolean focussed = isFocussed();
 
-                public IObservable getObservable() {
+                public IModelReference<String> getObservable() {
                     return helperModelRef;
                 }
 
@@ -78,7 +77,7 @@ public class BuilderContext implements IClusterable {
                     return helperModelRef.getModel() != null && pluginId.equals(helperModelRef.getModel().getObject());
                 }
 
-                public void onEvent(Iterator<? extends IEvent> event) {
+                public void onEvent(Iterator<? extends IEvent<IModelReference<String>>> event) {
                     if (isFocussed() && !focussed) {
                         focussed = true;
                         for (IBuilderListener listener : new ArrayList<IBuilderListener>(BuilderContext.this.listeners)) {

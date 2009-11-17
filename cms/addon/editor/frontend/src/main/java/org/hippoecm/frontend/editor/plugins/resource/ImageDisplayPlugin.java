@@ -46,10 +46,10 @@ public class ImageDisplayPlugin extends RenderPlugin {
     public ImageDisplayPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        resource = new JcrResourceStream(((JcrNodeModel) getModel()).getNode());
+        resource = new JcrResourceStream(((JcrNodeModel) getDefaultModel()).getNode());
         Fragment fragment = new Fragment("fragment", "unknown", this);
         try {
-            Node node = ((JcrNodeModel) getModel()).getNode();
+            Node node = ((JcrNodeModel) getDefaultModel()).getNode();
             String mimeType = node.getProperty("jcr:mimeType").getString();
             if (mimeType.indexOf('/') > 0) {
                 String category = mimeType.substring(0, mimeType.indexOf('/'));

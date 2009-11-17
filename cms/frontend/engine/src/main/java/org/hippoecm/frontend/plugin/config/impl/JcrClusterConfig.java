@@ -31,20 +31,19 @@ import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
-import org.apache.wicket.Session;
 import org.hippoecm.frontend.FrontendNodeType;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.JcrEventListener;
-import org.hippoecm.frontend.model.map.HippoMap;
 import org.hippoecm.frontend.model.map.JcrMap;
 import org.hippoecm.frontend.model.map.JcrValueList;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +144,6 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
             return plugins.size();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public void add(int index, IPluginConfig element) {
             if (index <= size()) {
@@ -157,9 +155,9 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                     }
                     Node child = node.addNode(name, FrontendNodeType.NT_PLUGIN);
                     JcrMap map = new JcrMap(new JcrNodeModel(child));
-                    for (Map.Entry entry : (Set<Map.Entry>) element.entrySet()) {
+                    for (Map.Entry<String, Object> entry : element.entrySet()) {
                         Object value = unwrap(entry.getValue());
-                        map.put((String) entry.getKey(), value);
+                        map.put(entry.getKey(), value);
                     }
 
                     if (node.getPrimaryNodeType().hasOrderableChildNodes() && (index < (size() - 1))) {
@@ -191,7 +189,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
             return result;
         }
 
-        void processChanges(EventCollection<ClusterConfigEvent> collection) {
+        void processChanges(EventCollection<IEvent<IClusterConfig>> collection) {
             List<String> newPlugins = loadPlugins();
             Iterator<String> iter = plugins.iterator();
             while (iter.hasNext()) {
@@ -212,35 +210,39 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
             }
         }
 
+        @SuppressWarnings("unchecked")
         void notifyObservers() {
-            EventCollection<ClusterConfigEvent> coll = new EventCollection<ClusterConfigEvent>();
+            EventCollection<IEvent<IClusterConfig>> coll = new EventCollection<IEvent<IClusterConfig>>();
             processChanges(coll);
             if (coll.size() > 0) {
-                IObservationContext obContext = getObservationContext();
+                IObservationContext<IClusterConfig> obContext = (IObservationContext<IClusterConfig>) getObservationContext();
                 if (obContext != null) {
                     obContext.notifyObservers(coll);
                 }
             }
         }
 
-        void process(Event event, EventCollection<ClusterConfigEvent> collection) {
+        void process(Event event, EventCollection<IEvent<IClusterConfig>> collection) {
             processChanges(collection);
 
             if (event.getType() != 0) {
                 try {
                     String path = event.getPath();
                     path = path.substring(0, path.lastIndexOf('/'));
-                    Node node = (Node) ((UserSession) Session.get()).getJcrSession().getItem(path);
 
+                    JcrItemModel model = new JcrItemModel(path);
                     Node root = getNode();
-                    while (!node.isSame(root)) {
-                        if (node.isNodeType(FrontendNodeType.NT_PLUGIN)) {
-                            IPluginConfig config = wrapConfig(node);
-                            collection.add(new ClusterConfigEvent(JcrClusterConfig.this, config,
-                                    ClusterConfigEvent.EventType.PLUGIN_CHANGED));
-                            break;
+                    while (model != null && !root.isSame((Node) model.getObject())) {
+                        if (model.exists()) {
+                            Node node = (Node) model.getObject();
+                            if (node.isNodeType(FrontendNodeType.NT_PLUGIN)) {
+                                IPluginConfig config = wrapConfig(node);
+                                collection.add(new ClusterConfigEvent(JcrClusterConfig.this, config,
+                                        ClusterConfigEvent.EventType.PLUGIN_CHANGED));
+                                break;
+                            }
                         }
-                        node = node.getParent();
+                        model = model.getParentModel();
                     }
                 } catch (RepositoryException ex) {
                     log.error("unable to find plugin configuration for event", ex);
@@ -324,7 +326,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     }
 
     private List<String> getList(String key) {
-        return new JcrValueList<String>(new JcrPropertyModel(getNodeModel().getItemModel().getPath() + "/" + key),
+        return new JcrValueList<String>(new JcrPropertyModel<String>(getNodeModel().getItemModel().getPath() + "/" + key),
                 PropertyType.STRING);
     }
 
@@ -340,6 +342,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void startObservation() {
         IObservationContext obContext = getObservationContext();
@@ -351,8 +354,8 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
 
             @Override
             public void onEvent(EventIterator events) {
-                IObservationContext obContext = getObservationContext();
-                EventCollection<ClusterConfigEvent> coll = new EventCollection<ClusterConfigEvent>();
+                IObservationContext<IClusterConfig> obContext = (IObservationContext<IClusterConfig>) getObservationContext();
+                EventCollection<IEvent<IClusterConfig>> coll = new EventCollection<IEvent<IClusterConfig>>();
                 while (events.hasNext()) {
                     configs.process(events.nextEvent(), coll);
                 }

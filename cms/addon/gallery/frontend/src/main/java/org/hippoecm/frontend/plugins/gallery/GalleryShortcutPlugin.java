@@ -41,14 +41,14 @@ public class GalleryShortcutPlugin extends RenderPlugin {
                 IDialogService dialogService = getDialogService();
                 UploadDialog dialog = new UploadDialog(GalleryShortcutPlugin.this.getPluginContext(),
                                                        GalleryShortcutPlugin.this.getPluginConfig(),
-                                                       GalleryShortcutPlugin.this.getModel());
+                                                       GalleryShortcutPlugin.this.getDefaultModel());
                 dialogService.show(dialog);
             }
         };
         add(link);
 
         Label label = new Label("label");
-        label.setModel(new StringResourceModel(config.getString("option.text"), this, null));
+        label.setDefaultModel(new StringResourceModel(config.getString("option.text"), this, null));
         link.add(label);
     }
 }

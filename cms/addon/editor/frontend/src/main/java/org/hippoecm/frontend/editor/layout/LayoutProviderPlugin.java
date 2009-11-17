@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.editor.layout;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -34,18 +34,12 @@ public class LayoutProviderPlugin implements IPlugin {
     
     public LayoutProviderPlugin(IPluginContext context, IPluginConfig config) {
 
-        ILayoutProvider layoutProvider = new LayoutProvider(new IModel() {
+        ILayoutProvider layoutProvider = new LayoutProvider(new LoadableDetachableModel<ClassLoader>() {
             private static final long serialVersionUID = 1L;
 
-            public Object getObject() {
+            @Override
+            protected ClassLoader load() {
                 return ((UserSession) Session.get()).getClassLoader();
-            }
-
-            public void setObject(Object object) {
-                throw new UnsupportedOperationException("class loader model is readonly");
-            }
-
-            public void detach() {
             }
             
         });

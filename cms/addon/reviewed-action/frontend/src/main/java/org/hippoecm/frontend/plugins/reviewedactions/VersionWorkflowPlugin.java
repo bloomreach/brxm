@@ -70,7 +70,7 @@ public class VersionWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
                     public Object getObject() {
                         try {
-                            Node frozenNode = ((WorkflowDescriptorModel) VersionWorkflowPlugin.this.getModel())
+                            Node frozenNode = ((WorkflowDescriptorModel) VersionWorkflowPlugin.this.getDefaultModel())
                                     .getNode();
                             Node versionNode = frozenNode.getParent();
                             Calendar calendar = versionNode.getProperty("jcr:created").getDate();
@@ -114,7 +114,7 @@ public class VersionWorkflowPlugin extends CompatibilityWorkflowPlugin {
             public boolean isEnabled() {
                 Node frozenNode;
                 try {
-                    frozenNode = ((WorkflowDescriptorModel) getModel()).getNode();
+                    frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                     String primaryType = frozenNode.getProperty("jcr:frozenPrimaryType").getString();
                     String prefix = primaryType.substring(0, primaryType.indexOf(':'));
                     if (prefix.contains("_")) {
@@ -128,7 +128,7 @@ public class VersionWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                Node frozenNode = ((WorkflowDescriptorModel) getModel()).getNode();
+                Node frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                 Session session = frozenNode.getSession();
                 Version versionNode = (Version) frozenNode.getParent();
                 Version handleVersion = JcrHelper.getVersionParent(versionNode);
@@ -197,7 +197,7 @@ public class VersionWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getModel();
+                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 return new HistoryDialog(wdm, getEditorManager());
             }
 

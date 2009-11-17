@@ -25,7 +25,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 
-public class RowSelector<T extends IModel> implements IListCellRenderer<T> {
+public class RowSelector<T> implements IListCellRenderer<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -37,30 +37,29 @@ public class RowSelector<T extends IModel> implements IListCellRenderer<T> {
         this.selectedDocuments = selectedDocuments;
     }
 
-    public Component getRenderer(String id, T model) {
+    public Component getRenderer(String id, IModel<T> model) {
         return new CheckBoxWrapper(id, model);
     }
 
     private class CheckBoxWrapper extends Panel {
         private static final long serialVersionUID = 1L;
 
-        public CheckBoxWrapper(String id, T model) {
+        public CheckBoxWrapper(String id, IModel<T> model) {
             super(id, model);
             CheckBox check;
-            add(check = new CheckBox("check", new IModel() {
+            add(check = new CheckBox("check", new IModel<Boolean>() {
                 private static final long serialVersionUID = 1L;
 
-                public Object getObject() {
-                    return selectedDocuments.contains(CheckBoxWrapper.this.getModel());
+                public Boolean getObject() {
+                    return selectedDocuments.contains(CheckBoxWrapper.this.getDefaultModel());
                 }
 
                 @SuppressWarnings("unchecked")
-                public void setObject(Object object) {
-                    Boolean value = (Boolean) object;
+                public void setObject(Boolean value) {
                     if (value.booleanValue()) {
-                        selectedDocuments.add((T) CheckBoxWrapper.this.getModel());
+                        selectedDocuments.add((T) CheckBoxWrapper.this.getDefaultModel());
                     } else {
-                        selectedDocuments.remove(CheckBoxWrapper.this.getModel());
+                        selectedDocuments.remove(CheckBoxWrapper.this.getDefaultModel());
                     }
                 }
 

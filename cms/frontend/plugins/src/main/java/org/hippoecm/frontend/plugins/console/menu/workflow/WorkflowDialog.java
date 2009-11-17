@@ -44,7 +44,7 @@ public class WorkflowDialog extends AbstractDialog {
     public WorkflowDialog(MenuPlugin plugin) {
         this.plugin = plugin;
 
-        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
 
         final MultiLineLabel dump = new MultiLineLabel("dump", "");
         dump.setOutputMarkupId(true);
@@ -65,9 +65,9 @@ public class WorkflowDialog extends AbstractDialog {
                         + (descriptor != null ? descriptor.getDisplayName() : "none"));
             }
             out.flush();
-            dump.setModel(new Model(new String(ostream.toByteArray())));
-        } catch (RepositoryException ex) {
-            dump.setModel(new Model(ex.getClass().getName() + ": " + ex.getMessage()));
+            dump.setDefaultModel(new Model(new String(ostream.toByteArray())));
+        } catch(RepositoryException ex) {
+            dump.setDefaultModel(new Model(ex.getClass().getName()+": "+ex.getMessage()));
         }
 
         setCancelVisible(false);
@@ -83,7 +83,7 @@ public class WorkflowDialog extends AbstractDialog {
     }
 
     public IModel getTitle() {
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         String path;
         try {
             path = nodeModel.getNode().getPath();

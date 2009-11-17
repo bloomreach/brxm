@@ -26,6 +26,7 @@ import javax.jcr.observation.ObservationManager;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.JcrObservationManager;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,14 +38,14 @@ public class JcrEventListener implements EventListener, IClusterable {
 
     static final Logger log = LoggerFactory.getLogger(JcrEventListener.class);
 
-    private IObservationContext context;
+    private IObservationContext<JcrNodeModel> context;
     private int eventTypes;
     private String absPath;
     private boolean isDeep;
     private String[] uuid;
     private String[] nodeTypeName;
 
-    public JcrEventListener(IObservationContext context, int eventTypes, String absPath, boolean isDeep, String[] uuid,
+    public JcrEventListener(IObservationContext<JcrNodeModel> context, int eventTypes, String absPath, boolean isDeep, String[] uuid,
             String[] nodeTypeName) {
         this.context = context;
         this.eventTypes = eventTypes;
@@ -56,7 +57,7 @@ public class JcrEventListener implements EventListener, IClusterable {
 
     public void onEvent(EventIterator events) {
         if (context != null) {
-            EventCollection<JcrEvent> list = new EventCollection<JcrEvent>();
+            EventCollection<IEvent<JcrNodeModel>> list = new EventCollection<IEvent<JcrNodeModel>>();
             while (events.hasNext()) {
                 list.add(new JcrEvent(events.nextEvent()));
             }
