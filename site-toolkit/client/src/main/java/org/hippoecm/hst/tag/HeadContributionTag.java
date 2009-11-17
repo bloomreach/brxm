@@ -20,17 +20,16 @@ import java.io.StringReader;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.dom.DOMDocumentFactory;
-import org.dom4j.io.SAXReader;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 public class HeadContributionTag extends BodyTagSupport {
 
@@ -75,21 +74,13 @@ public class HeadContributionTag extends BodyTagSupport {
                         return SKIP_BODY;
                     }
                 }
-    
-                DOMDocumentFactory factory = new DOMDocumentFactory();
-                SAXReader saxReader = new SAXReader(factory);
-                reader = new StringReader(xmlText);
-                Document doc = saxReader.read(reader);
-                Element elem = doc.getRootElement();
                 
-                element = (org.w3c.dom.Element) elem;
-            } catch (DocumentException ex) {
-                if(logger.isDebugEnabled()) {
-                    logger.warn("Skip invalid head contribution for '"+keyHint+"'. ",  ex);
-                } else {
-                    logger.warn("Skip invalid head contribution for '{}'. ",  keyHint);
+                if (!"".equals(xmlText)) {
+                    DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+                    Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
+                    element = doc.getDocumentElement();
                 }
-                return EVAL_PAGE;
             } catch (Exception ex) {
                 throw new JspException(ex);
             } finally {

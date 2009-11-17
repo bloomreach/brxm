@@ -50,17 +50,7 @@ public class HstPortletResponseState extends AbstractHstResponseState {
     }
     
     public Element createElement(String tagName) {
-        Element element = null;
-        ClassLoader paCL = Thread.currentThread().getContextClassLoader();
-        
-        try {
-            Thread.currentThread().setContextClassLoader(this.response.getClass().getClassLoader());
-            element = this.response.createElement(tagName);
-        } finally {
-            Thread.currentThread().setContextClassLoader(paCL);
-        }
-        
-        return element;
+        return this.response.createElement(tagName);
     }
 
     protected void setResponseLocale(Locale locale) {

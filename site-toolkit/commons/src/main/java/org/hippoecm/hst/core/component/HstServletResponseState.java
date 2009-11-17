@@ -23,9 +23,14 @@ import java.util.Locale;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -50,7 +55,19 @@ public class HstServletResponseState extends AbstractHstResponseState
     }
 
     public Element createElement(String tagName) {
-        return null;
+        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder;
+        
+        try
+        {
+            docBuilder = dbfac.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            return doc.createElement(tagName);
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new DOMException((short) 0, "Initialization failure");
+        }
     }    
 
     protected void setResponseLocale(Locale locale) {

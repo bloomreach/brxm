@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.util.DOMUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -306,10 +305,6 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
             element = this.topParentHstResponse.createElement(tagName); 
         } else {
             element = this.responseState.createElement(tagName);
-        }
-        
-        if (element == null) {
-            element = DOMUtils.createSerializableElement(tagName);
         }
         
         return element;

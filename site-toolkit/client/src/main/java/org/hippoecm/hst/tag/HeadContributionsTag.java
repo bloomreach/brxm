@@ -16,37 +16,36 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.dom4j.io.HTMLWriter;
-import org.dom4j.io.OutputFormat;
+import org.hippoecm.hst.core.component.HeadElementImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.util.DOMElementWriter;
+import org.hippoecm.hst.util.HeadElementUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
 public class HeadContributionsTag extends TagSupport {
     
     static Logger logger = LoggerFactory.getLogger(HeadContributionsTag.class);
 
     private static final long serialVersionUID = 1L;
-    private OutputFormat outputFormat = OutputFormat.createPrettyPrint();
+    
+    private boolean xhtml;
     
     public HeadContributionsTag() {
-        this.outputFormat.setExpandEmptyElements(true);
     }
     
     public void setXhtml(boolean xhtml) {
-        this.outputFormat.setXHTML(xhtml);
+        this.xhtml = xhtml;
     }
     
     public boolean getXhtml() {
-        return this.outputFormat.isXHTML();
+        return xhtml;
     }
     
     public int doEndTag() throws JspException {
@@ -61,31 +60,10 @@ public class HeadContributionsTag extends TagSupport {
             List<org.w3c.dom.Element> headElements = hstResponse.getHeadElements();
             
             if (headElements != null && !headElements.isEmpty()) {
-                HTMLWriter htmlWriter = null;
-                
                 try {
-                    org.dom4j.Element dom4jHeadElement = null;
-                    
-                    for (org.w3c.dom.Element headElement : headElements) {
-                        if (headElement instanceof org.dom4j.Element) {
-                            if (htmlWriter == null) {
-                                htmlWriter = new HTMLWriter(pageContext.getOut(), this.outputFormat);
-                            }
-                            
-                            dom4jHeadElement = (org.dom4j.Element) headElement;
-                            htmlWriter.write(dom4jHeadElement);
-                        } else {
-                            if (htmlWriter != null) {
-                                htmlWriter.flush();
-                            }
-                            
-                            pageContext.getOut().println(stringifyElement(headElement, 80, 0, "  "));
-                            pageContext.getOut().flush();
-                        }
-                    }
-                    
-                    if (htmlWriter != null) {
-                        htmlWriter.flush();
+                    for (Element headElement : headElements) {
+                        pageContext.getOut().println(HeadElementUtils.toHtmlString(new HeadElementImpl(headElement)));
+                        pageContext.getOut().flush();
                     }
                 } catch (IOException ioe) {
                     throw new JspException("HeadContributionsTag Exception: cannot write to the output writer.");
@@ -94,23 +72,6 @@ public class HeadContributionsTag extends TagSupport {
         }
         
         return SKIP_BODY;
-    }
-
-    private String stringifyElement(org.w3c.dom.Element element, int initialBufferSize, int indent, String indentWith) {
-        String stringified = null;
-        StringWriter writer = new StringWriter(initialBufferSize);
-        
-        try {
-            DOMElementWriter domWriter = new DOMElementWriter();
-            domWriter.write(element, writer, indent, indentWith);
-        } catch (Exception e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to write element", e);
-            }
-        }
-
-        stringified = writer.toString();
-        return stringified;
     }
     
 }

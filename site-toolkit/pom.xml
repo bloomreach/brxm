@@ -64,8 +64,6 @@
     <junit.version>4.5</junit.version>
     <easymock.version>2.4</easymock.version>
 
-    <dom4j.version>1.6.1</dom4j.version>
-
     <xml-apis.version>2.0.2</xml-apis.version>
     <xerces.version>2.4.0</xerces.version>
     <xercesImpl.version>2.9.1</xercesImpl.version>
@@ -338,20 +336,6 @@
         <groupId>taglibs</groupId>
         <artifactId>standard</artifactId>
         <version>${taglibs.version}</version>
-      </dependency>
-      
-      <!-- DOM4J Library -->
-      
-      <dependency>
-        <groupId>dom4j</groupId>
-        <artifactId>dom4j</artifactId>
-        <version>${dom4j.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       
       <!-- XML Parser and XSLT Processor. JSTL XML Tag requires all the followings. -->
