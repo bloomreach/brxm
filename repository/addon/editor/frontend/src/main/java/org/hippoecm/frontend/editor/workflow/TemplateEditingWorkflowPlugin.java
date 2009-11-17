@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
-import java.util.HashSet;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -40,25 +38,20 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
-import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.frontend.validation.IValidateService;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin implements IValidateService {
+public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     static protected Logger log = LoggerFactory.getLogger(TemplateEditingWorkflowPlugin.class);
-
-    // FIXME: should this be non-transient?
-    private transient boolean validated = false;
-    private transient boolean isvalid = true;
 
     public TemplateEditingWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -136,60 +129,6 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin i
         } catch (EditorException e) {
             log.error("Could not close editor", e);
         }
-    }
-
-    public boolean hasError() {
-        if (!validated) {
-            validate();
-        }
-        return !isvalid;
-    }
-
-    public void validate() {
-        validated = true;
-        isvalid = true;
-        try {
-            Node node = ((WorkflowDescriptorModel) getModel()).getNode();
-            if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                NodeIterator ntNodes = node.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)
-                        .getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-                Node ntNode = null;
-                while (ntNodes.hasNext()) {
-                    Node child = ntNodes.nextNode();
-                    if (!child.isNodeType(HippoNodeType.NT_REMODEL)) {
-                        ntNode = child;
-                        break;
-                    }
-                }
-                if (ntNode != null) {
-                    HashSet<String> paths = new HashSet<String>();
-                    NodeIterator fieldIter = ntNode.getNodes(HippoNodeType.HIPPO_FIELD);
-                    while (fieldIter.hasNext()) {
-                        Node field = fieldIter.nextNode();
-                        String path = field.getProperty(HippoNodeType.HIPPO_PATH).getString();
-                        if (paths.contains(path)) {
-                            error("Path " + path + " is used in multiple fields");
-                            isvalid = false;
-                        }
-                        if (!path.equals("*")) {
-                            paths.add(path);
-                        }
-                    }
-                } else {
-                    log.error("Draft nodetype not found");
-                }
-            } else {
-                log.warn("Unknown node type {}", node.getPrimaryNodeType().getName());
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-    }
-
-    @Override
-    protected void onModelChanged() {
-        validated = false;
-        super.onModelChanged();
     }
 
     private class OnCloseDialog extends AbstractDialog {

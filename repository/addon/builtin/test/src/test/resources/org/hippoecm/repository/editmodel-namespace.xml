@@ -16,7 +16,7 @@
 -->
 <sv:node xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
          xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-         xmlns:hipposysedit="http://www.onehippo.org/jcr/hipposysedit/nt/1.0"
+         xmlns:hipposysedit="http://www.onehippo.org/jcr/hipposysedit/nt/1.1"
          xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="editmodel">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">

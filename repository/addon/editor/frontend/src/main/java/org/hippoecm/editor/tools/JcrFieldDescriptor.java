@@ -15,10 +15,14 @@
  */
 package org.hippoecm.editor.tools;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
@@ -47,7 +51,15 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     public JcrFieldDescriptor(JcrNodeModel model, JcrTypeDescriptor type) {
         super(model);
         this.type = type;
-        this.name = getString(HippoNodeType.HIPPO_NAME);
+        try {
+            this.name = model.getNode().getName();
+            if (name.startsWith("hipposysedit:")) {
+                log.debug("Property " + HippoNodeType.HIPPO_NAME + " is deprecated, use the node name instead");
+                name = getString(HippoNodeType.HIPPO_NAME);
+            }
+        } catch (RepositoryException e) {
+            log.error("Error determining field name", e);
+        }
     }
 
     public String getName() {
@@ -106,14 +118,32 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         excluded = set;
     }
 
-    public boolean isBinary() {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean isAutoCreated() {
+        return getBoolean(HippoNodeType.HIPPO_AUTOCREATED);
+    }
+
+    public void setAutoCreated(boolean autocreated) {
+        setBoolean(HippoNodeType.HIPPO_AUTOCREATED, autocreated);
     }
 
     public boolean isProtected() {
-        // TODO Auto-generated method stub
-        return false;
+        return getBoolean(HippoNodeType.HIPPO_PROTECTED);
+    }
+
+    public Set<String> getValidators() {
+        return Collections.unmodifiableSet(getStringSet(HippoNodeType.HIPPO_VALIDATORS));
+    }
+
+    public void addValidator(String validator) {
+        Set<String> validators = getStringSet(HippoNodeType.HIPPO_VALIDATORS);
+        validators.add(validator);
+        setStringSet(HippoNodeType.HIPPO_VALIDATORS, validators);
+    }
+
+    public void removeValidator(String validator) {
+        Set<String> validators = getStringSet(HippoNodeType.HIPPO_VALIDATORS);
+        validators.remove(validator);
+        setStringSet(HippoNodeType.HIPPO_VALIDATORS, validators);
     }
 
     @Override
@@ -159,6 +189,39 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     private void setString(String path, String value) {
         try {
             getNode().setProperty(path, value);
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
+    private Set<String> getStringSet(String path) {
+        Set<String> result = new TreeSet<String>();
+        try {
+            if (getNode().hasProperty(path)) {
+                Value[] values = getNode().getProperty(path).getValues();
+                for (int i = 0; i < values.length; i++) {
+                    result.add(values[i].getString());
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return result;
+    }
+
+    private void setStringSet(String path, Set<String> strings) {
+        try {
+            if (strings != null && strings.size() > 0) {
+                ValueFactory vf = getNode().getSession().getValueFactory();
+                Value[] values = new Value[strings.size()];
+                int i = 0;
+                for (Iterator<String> iter = strings.iterator(); iter.hasNext();) {
+                    values[i++] = vf.createValue(iter.next());
+                }
+                getNode().setProperty(path, values);
+            } else {
+                getNode().setProperty(path, (Value) null);
+            }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }

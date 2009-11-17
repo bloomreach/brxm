@@ -45,8 +45,9 @@ import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
-import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.validation.IValidateService;
+import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Workflow;
@@ -163,8 +164,8 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                                     IValidateService.class);
                             if (validators != null) {
                                 for (IValidateService validator : validators) {
-                                    validator.validate();
-                                    if (validator.hasError()) {
+                                    IValidationResult result = validator.validate();
+                                    if (!result.isValid()) {
                                         return null;
                                     }
                                 }

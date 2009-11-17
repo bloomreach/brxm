@@ -27,10 +27,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
-import org.hippoecm.frontend.editor.model.AbstractProvider;
-import org.hippoecm.frontend.editor.model.ValueTemplateProvider;
+import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -124,7 +124,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<JcrNodeModel, JcrPr
     protected AbstractProvider<JcrPropertyValueModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             JcrNodeModel nodeModel) {
         if (!descriptor.getPath().equals("*")) {
-            ValueTemplateProvider provider = new ValueTemplateProvider(descriptor, type, propertyModel.getItemModel());
+            PropertyValueProvider provider = new PropertyValueProvider(descriptor, type, propertyModel.getItemModel());
             if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
                 provider.addNew();
             }

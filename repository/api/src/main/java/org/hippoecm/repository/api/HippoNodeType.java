@@ -338,6 +338,10 @@ public interface HippoNodeType {
     /**
      * 
      */
+    final public static String HIPPO_AUTOCREATED = "hipposysedit:autocreated";
+    /**
+     * 
+     */
     final public static String HIPPO_CLASS = "hippo:class";
     /**
      * 
@@ -534,6 +538,10 @@ public interface HippoNodeType {
     /**
      * 
      */
+    final public static String HIPPO_PROTECTED = "hipposysedit:protected";
+    /**
+     * 
+     */
     final public static String HIPPO_PROTOTYPE = "hipposysedit:prototype";
     /**
      * 
@@ -623,6 +631,10 @@ public interface HippoNodeType {
      * 
      */
     final public static String HIPPO_VERSION = "hippo:version";
+    /**
+     * 
+     */
+    final public static String HIPPO_VALIDATORS = "hipposysedit:validators";
     /**
      * 
      */

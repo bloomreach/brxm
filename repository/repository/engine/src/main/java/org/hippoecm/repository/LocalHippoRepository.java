@@ -340,7 +340,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 log.info("Initializing hipposys namespace");
                 initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), "hipposys", "http://www.onehippo.org/jcr/hipposys/nt/1.0");
                 log.info("Initializing hipposysedit namespace");
-                initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), "hipposysedit", "http://www.onehippo.org/jcr/hipposysedit/nt/1.0");
+                initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), "hipposysedit", "http://www.onehippo.org/jcr/hipposysedit/nt/1.1");
             } catch (UnsupportedRepositoryOperationException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
             } catch (AccessDeniedException ex) {

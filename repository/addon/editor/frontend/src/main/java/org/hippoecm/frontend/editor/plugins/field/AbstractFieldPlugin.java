@@ -17,19 +17,22 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
-import org.hippoecm.frontend.editor.model.AbstractProvider;
+import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.IValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +48,7 @@ public abstract class AbstractFieldPlugin<P extends IModel, C extends IModel> ex
     public static final String FIELD = "field";
     public static final String TYPE = "type";
 
+    protected boolean valid = true;
     protected String mode;
     protected AbstractProvider<C> provider;
 
@@ -55,12 +59,34 @@ public abstract class AbstractFieldPlugin<P extends IModel, C extends IModel> ex
         super(context, config);
 
         controller = new TemplateController<C>(context, config, this);
-        helper = new FieldPluginHelper(context, config);
+        helper = new FieldPluginHelper(context, config) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            void onValidation(IValidationResult result) {
+                AbstractFieldPlugin.this.onValidation(result);
+            }
+
+        };
 
         mode = config.getString(ITemplateEngine.MODE);
         if (mode == null) {
             log.error("No edit mode specified");
         }
+
+        add(new CssClassAppender(new LoadableDetachableModel() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Object load() {
+                if (isValid()) {
+                    return "";
+                } else {
+                    return "invalid";
+                }
+            }
+
+        }));
     }
 
     @Override
@@ -75,6 +101,18 @@ public abstract class AbstractFieldPlugin<P extends IModel, C extends IModel> ex
             provider.detach();
         }
         super.onDetach();
+    }
+
+    protected boolean isValid() {
+        return valid;
+    }
+
+    protected void onValidation(IValidationResult result) {
+        if (result.isValid() != valid) {
+            // FIXME: see if field is in one of the violations; only invalid if that is the case
+            valid = result.isValid();
+            redraw();
+        }
     }
 
     protected void updateProvider() {

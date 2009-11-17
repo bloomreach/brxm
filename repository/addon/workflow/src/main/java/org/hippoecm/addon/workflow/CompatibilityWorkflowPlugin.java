@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.observation.EventIterator;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -30,7 +29,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction.DestinationDialog;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
@@ -52,9 +50,11 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.yui.datetime.AjaxDateTimeField;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITranslateService;
-import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.validation.IValidateService;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -131,9 +131,14 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                     List<IValidateService> validators = getPluginContext().getServices(
                             config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
                     for (IValidateService validator : validators) {
-                        validator.validate();
-                        if (validator.hasError()) {
-                            submit = false;
+                        try {
+                            IValidationResult result = validator.validate();
+                            if (!result.isValid()) {
+                                submit = false;
+                            }
+                        } catch (ValidationException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
                         }
                     }
                 }

@@ -46,8 +46,17 @@
 
 [test:validator]
 - test:optional (string)
-- test:mandatory (string) mandatory
-- test:autocreated (string) = 'auto' mandatory autocreated 
-- test:protected (string) mandatory protected
+- test:nonempty (string)
+- test:mandatory (string)
+- test:multiple (string) multiple
+- test:autocreated (string) = 'auto' autocreated 
+- test:protected (string) protected
+
+[test:container]
++ test:base (test:validator)
++ test:single (test:validator) mandatory
++ test:multiple (test:validator) mandatory multiple
++ * (test:validator) mandatory
+
 
 

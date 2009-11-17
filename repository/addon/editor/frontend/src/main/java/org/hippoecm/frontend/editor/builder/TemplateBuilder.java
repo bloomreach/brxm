@@ -107,8 +107,12 @@ public class TemplateBuilder implements IDetachable, IObservable {
             return delegate.getType();
         }
 
-        public boolean isBinary() {
-            return delegate.isBinary();
+        public boolean isAutoCreated() {
+            return delegate.isAutoCreated();
+        }
+
+        public void setAutoCreated(boolean autocreated) {
+            delegate.setAutoCreated(autocreated);
         }
 
         public boolean isMandatory() {
@@ -155,6 +159,18 @@ public class TemplateBuilder implements IDetachable, IObservable {
         public void setType(String type) {
             delegate.setType(type);
             updatePrototype();
+        }
+
+        public void addValidator(String validator) {
+            delegate.addValidator(validator);
+        }
+
+        public Set<String> getValidators() {
+            return delegate.getValidators();
+        }
+
+        public void removeValidator(String validator) {
+            delegate.removeValidator(validator);
         }
 
         private IObservationContext obContext;

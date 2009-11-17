@@ -13,16 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.model;
+package org.hippoecm.frontend.model;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.ItemModelWrapper;
-import org.hippoecm.frontend.model.JcrItemModel;
 
+/**
+ * Provider that can turn a {@link JcrItemModel} into a {@link IDataProvider}.
+ */
 public abstract class AbstractProvider<M extends IModel> extends ItemModelWrapper implements IDataProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -66,6 +67,7 @@ public abstract class AbstractProvider<M extends IModel> extends ItemModelWrappe
         return elements.subList(first, first + count).iterator();
     }
 
+    @SuppressWarnings("unchecked")
     public IModel model(Object object) {
         M model = (M) object;
         return model;

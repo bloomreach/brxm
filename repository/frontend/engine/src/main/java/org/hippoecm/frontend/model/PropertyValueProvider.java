@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.model;
+package org.hippoecm.frontend.model;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -24,7 +24,6 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -32,18 +31,22 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueModel> {
+/**
+ * Provider of {@link JcrPropertyValueModel}s, based on a {@link JcrItemModel} for a
+ * {@link Property}.
+ */
+public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(ValueTemplateProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(PropertyValueProvider.class);
 
     private IFieldDescriptor descriptor;
     private ITypeDescriptor type;
 
-    public ValueTemplateProvider(IFieldDescriptor descriptor, ITypeDescriptor type, JcrItemModel itemModel) {
+    public PropertyValueProvider(IFieldDescriptor descriptor, ITypeDescriptor type, JcrItemModel itemModel) {
         super(itemModel);
         this.descriptor = descriptor;
         this.type = type;

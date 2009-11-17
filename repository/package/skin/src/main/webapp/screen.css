@@ -795,7 +795,9 @@ font-weight: bold;
 .hippo-editor-template-editor{padding-top: 4px; background: white url("images/hippo-shade.png"); padding-left: 4px;}
 
 .hippo-editor-template-editor .even .hippo-editor-field{background: #f0f6ff}
+.hippo-editor-template-editor .even .invalid .hippo-editor-field{background: #f00000}
 .hippo-editor-template-editor .odd .hippo-editor-field{background: #cee3f9}
+.hippo-editor-template-editor .odd .invalid .hippo-editor-field{background: #f00000}
 .hippo-editor {background: transparent url("images/hippo-shade.png")}
 
 /* feedback styling */
