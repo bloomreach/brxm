@@ -62,7 +62,11 @@ public class HeadContributionsTag extends TagSupport {
             if (headElements != null && !headElements.isEmpty()) {
                 try {
                     for (Element headElement : headElements) {
-                        pageContext.getOut().println(HeadElementUtils.toHtmlString(new HeadElementImpl(headElement)));
+                        if (xhtml) {
+                            pageContext.getOut().println(HeadElementUtils.toXhtmlString(new HeadElementImpl(headElement)));
+                        } else {
+                            pageContext.getOut().println(HeadElementUtils.toHtmlString(new HeadElementImpl(headElement)));
+                        }
                         pageContext.getOut().flush();
                     }
                 } catch (IOException ioe) {
