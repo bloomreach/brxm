@@ -26,8 +26,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.console.menu.check.CheckInOutDialog;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog;
-import org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog;
-
 import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
@@ -40,7 +38,6 @@ import org.hippoecm.frontend.plugins.console.menu.property.PropertyDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
-import org.hippoecm.frontend.plugins.console.menu.sorter.Sorter;
 import org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowDialog;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.tools.projectexport.ExportDialog;
@@ -49,8 +46,6 @@ public class MenuPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-
-    private Sorter sorter;
 
     public MenuPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -183,9 +178,6 @@ public class MenuPlugin extends RenderPlugin {
         };
         add(new DialogLink("check-inout-dialog", new Model("Check In/Out"), dialogFactory, dialogService));
 
-//        sorter = new Sorter("sorter-panel");
-//        add(sorter);
-
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
@@ -214,16 +206,6 @@ public class MenuPlugin extends RenderPlugin {
         add(new DialogLink("project-export-dialog", new Model("Project Export"), dialogFactory, dialogService));
 
     }
-
-//    @Override
-//    public void onModelChanged() {
-//        sorter.setModel(getModel());
-//    }
-//
-//    @Override
-//    public void redraw() {
-//        super.redraw();
-//    }
 
     @Deprecated
     public void flushNodeModel(JcrNodeModel nodeModel) {
