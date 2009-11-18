@@ -15,25 +15,26 @@
  */
 package org.hippoecm.frontend.validation;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 
 /**
- * Path element in a {@link FieldPath}.
+ * Path element in a {@link ModelPath}.
  */
-public final class FieldElement implements IClusterable {
+public final class ModelPathElement implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private IFieldDescriptor field;
     private String name;
     private int index;
 
-    public FieldElement(IFieldDescriptor field, String name, int index) {
+    public ModelPathElement(IFieldDescriptor field, String name, int index) {
         this.field = field;
         this.name = name;
         this.index = index;
     }
-    
+
     public IFieldDescriptor getField() {
         return field;
     }
@@ -47,8 +48,22 @@ public final class FieldElement implements IClusterable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ModelPathElement) {
+            ModelPathElement that = (ModelPathElement) obj;
+            return that.field.equals(field) && that.name.equals(name) && that.index == index;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(31, 251).append(field).append(name).append(index).toHashCode();
+    }
+
+    @Override
     public String toString() {
-        return name + "[" + (index + 1) + "]";
+        return name + "[" + index + "]";
     }
 
 }

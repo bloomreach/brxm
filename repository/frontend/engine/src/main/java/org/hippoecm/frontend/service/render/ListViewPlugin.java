@@ -19,7 +19,7 @@ import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class ListViewPlugin extends ListViewService implements IPlugin {
+public class ListViewPlugin<T> extends ListViewService<T> implements IPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

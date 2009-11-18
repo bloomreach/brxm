@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * first referenceable ancestor plus a relative path as the identification/retrieval method.
  * When the Item (or one of its ancestors) is moved, this is transparent.
  */
-public class JcrItemModel extends LoadableDetachableModel<Item> {
+public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -58,7 +58,7 @@ public class JcrItemModel extends LoadableDetachableModel<Item> {
 
     // constructors
 
-    public JcrItemModel(Item item) {
+    public JcrItemModel(T item) {
         super(item);
         relPath = null;
         uuid = null;
@@ -81,7 +81,7 @@ public class JcrItemModel extends LoadableDetachableModel<Item> {
     }
 
     public String getPath() {
-        Item item = (Item) getObject();
+        Item item = getObject();
         if (item != null) {
             try {
                 absPath = item.getPath();
@@ -100,18 +100,18 @@ public class JcrItemModel extends LoadableDetachableModel<Item> {
         return getObject() != null;
     }
 
-    public JcrItemModel getParentModel() {
+    public JcrItemModel<Node> getParentModel() {
         String path = getPath();
         if (path != null) {
             int idx = path.lastIndexOf('/');
             if (idx > 0) {
                 String parent = path.substring(0, path.lastIndexOf('/'));
-                return new JcrItemModel(parent);
+                return new JcrItemModel<Node>(parent);
             } else if (idx == 0) {
                 if (path.equals("/")) {
                     return null;
                 }
-                return new JcrItemModel("/");
+                return new JcrItemModel<Node>("/");
             } else {
                 log.error("Unrecognised path " + path);
             }
@@ -119,7 +119,7 @@ public class JcrItemModel extends LoadableDetachableModel<Item> {
         return null;
     }
 
-    public boolean hasAncestor(JcrItemModel model) {
+    public boolean hasAncestor(JcrItemModel<Node> model) {
         if (getPath() != null) {
             if (model.getPath() != null) {
                 return getPath().startsWith(model.getPath());
@@ -130,8 +130,9 @@ public class JcrItemModel extends LoadableDetachableModel<Item> {
 
     // LoadableDetachableModel
 
+    @SuppressWarnings("unchecked")
     @Override
-    protected Item load() {
+    protected T load() {
         try {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             if (uuid != null) {
@@ -140,19 +141,19 @@ public class JcrItemModel extends LoadableDetachableModel<Item> {
                     node = session.getNodeByUUID(uuid);
                     if (relPath == null) {
                         absPath = node.getPath();
-                        return node;
+                        return (T) node;
                     }
                     if (node.isSame(session.getRootNode())) {
                         absPath = "/" + relPath;
                     } else {
                         absPath = node.getPath() + "/" + relPath;
                     }
-                    return session.getItem(absPath);
+                    return (T) session.getItem(absPath);
                 } catch (InvalidItemStateException ex) {
                    if (absPath != null) {
                         uuid = null;
                         relPath = null;
-                        return session.getItem(absPath);
+                        return (T) session.getItem(absPath);
                     } else {
                         throw ex;
                     }
@@ -160,13 +161,13 @@ public class JcrItemModel extends LoadableDetachableModel<Item> {
                     if (absPath != null) {
                         uuid = null;
                         relPath = null;
-                        return session.getItem(absPath);
+                        return (T) session.getItem(absPath);
                     } else {
                         throw ex;
                     }
                 }
             } else if (absPath != null) {
-                return session.getItem(absPath);
+                return (T) session.getItem(absPath);
             } else {
                 log.debug("Neither path nor uuid present for item model, returning null");
             }
@@ -194,7 +195,7 @@ public class JcrItemModel extends LoadableDetachableModel<Item> {
                 PrependingStringBuffer spb = new PrependingStringBuffer();
 
                 // if we have an item, use it to update the path
-                Item item = (Item) getObject();
+                Item item = getObject();
                 if (item != null) {
                     try {
                         absPath = item.getPath();
@@ -275,6 +276,7 @@ public class JcrItemModel extends LoadableDetachableModel<Item> {
         return string;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object object) {
         if (object instanceof JcrItemModel == false) {

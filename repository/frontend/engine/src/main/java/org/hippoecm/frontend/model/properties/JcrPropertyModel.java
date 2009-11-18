@@ -46,7 +46,7 @@ import org.hippoecm.frontend.model.event.JcrEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrPropertyModel<T> extends ItemModelWrapper implements IDataProvider<T>, IObservable {
+public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements IDataProvider<T>, IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -69,7 +69,7 @@ public class JcrPropertyModel<T> extends ItemModelWrapper implements IDataProvid
     private JcrNodeModel parentModel;
 
     //  Constructor
-    public JcrPropertyModel(JcrItemModel model) {
+    public JcrPropertyModel(JcrItemModel<Property> model) {
         super(model);
     }
 

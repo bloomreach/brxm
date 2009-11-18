@@ -21,16 +21,16 @@ import org.apache.wicket.util.string.Strings;
 /**
  * Path to a value that maintains references to {@link IFieldDescriptor}s.
  */
-public final class FieldPath implements IClusterable {
+public final class ModelPath implements IClusterable {
     private static final long serialVersionUID = 1L;
 
-    private FieldElement[] elements;
+    private ModelPathElement[] elements;
 
-    public FieldPath(FieldElement[] elements) {
+    public ModelPath(ModelPathElement[] elements) {
         this.elements = elements;
     }
     
-    public FieldElement[] getElements() {
+    public ModelPathElement[] getElements() {
         return elements;
     }
 

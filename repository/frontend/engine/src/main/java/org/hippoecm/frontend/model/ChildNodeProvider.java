@@ -28,6 +28,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ public class ChildNodeProvider extends AbstractProvider<JcrNodeModel> {
     private IFieldDescriptor descriptor;
     private JcrNodeModel prototype;
 
-    public ChildNodeProvider(IFieldDescriptor descriptor, JcrNodeModel prototype, JcrItemModel itemModel) {
+    public ChildNodeProvider(IFieldDescriptor descriptor, JcrNodeModel prototype, JcrItemModel<Node> itemModel) {
         super(itemModel);
         this.descriptor = descriptor;
         this.prototype = prototype;
@@ -128,8 +129,11 @@ public class ChildNodeProvider extends AbstractProvider<JcrNodeModel> {
                 if (predecessor != null) {
                     try {
                         Node parent = (Node) getItemModel().getObject();
-                        String srcPath = model.getNode().getName() + (model.getNode().getIndex() > 1 ? "[" + model.getNode().getIndex() + "]" : "");
-                        String destPath = predecessor.getNode().getName() + (predecessor.getNode().getIndex() > 1 ? "[" + predecessor.getNode().getIndex() + "]" : "");
+                        String srcPath = model.getNode().getName()
+                                + (model.getNode().getIndex() > 1 ? "[" + model.getNode().getIndex() + "]" : "");
+                        String destPath = predecessor.getNode().getName()
+                                + (predecessor.getNode().getIndex() > 1 ? "[" + predecessor.getNode().getIndex() + "]"
+                                        : "");
                         parent.orderBefore(srcPath, destPath);
                     } catch (RepositoryException ex) {
                         ex.printStackTrace();
@@ -150,6 +154,21 @@ public class ChildNodeProvider extends AbstractProvider<JcrNodeModel> {
             predecessor.detach();
         }
         log.warn("could not find " + model);
+    }
+
+    @Override
+    public ModelPathElement getFieldElement(JcrNodeModel model) {
+        try {
+            Node node = model.getNode();
+            if (node != null) {
+                return new ModelPathElement(descriptor, node.getName(), node.getIndex() - 1);
+            } else {
+                log.warn("Null node in provided model");
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to build field element", e);
+        }
+        return null;
     }
 
     @Override

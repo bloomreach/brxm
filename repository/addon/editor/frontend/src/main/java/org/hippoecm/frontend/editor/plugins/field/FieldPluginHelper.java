@@ -89,36 +89,45 @@ public abstract class FieldPluginHelper implements IClusterable {
         }
 
         // FIXME: don't validate in "view" mode?
-        if (config.containsKey("validator.model")) {
-            IModelReference modelRef = context.getService(config.getString("validator.model"), IModelReference.class);
-            if (modelRef != null) {
-                final IModel<IValidationResult> model = modelRef.getModel();
-                if (model instanceof IObservable) {
-                    context.registerService(new IObserver<IObservable>() {
-                        private static final long serialVersionUID = 1L;
+        final IModel<IValidationResult> model = getValidationResultModel();
+        if (model instanceof IObservable) {
+            context.registerService(new IObserver<IObservable>() {
+                private static final long serialVersionUID = 1L;
 
-                        public IObservable getObservable() {
-                            return (IObservable) model;
-                        }
-
-                        public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
-                            onValidation((IValidationResult) model.getObject());
-                        }
-
-                    }, IObserver.class.getName());
-                } else {
-                    log.info("Validator model is not observable, status will not be updated for " + fieldName);
+                public IObservable getObservable() {
+                    return (IObservable) model;
                 }
-            } else {
-                log.info("No validator model found, will not be able to indicate status of " + fieldName);
-            }
+
+                public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
+                    onValidation((IValidationResult) model.getObject());
+                }
+
+            }, IObserver.class.getName());
         } else {
-            log.debug("No validator model configured for " + fieldName);
+            log.info("Validator model is not observable, status will not be updated for " + fieldName);
         }
     }
 
     public IFieldDescriptor getField() {
         return field;
+    }
+
+    public IModel<IValidationResult> getValidationResultModel() {
+        if (config.containsKey("validator.model")) {
+            IModelReference modelRef = context.getService(config.getString("validator.model"), IModelReference.class);
+            if (modelRef != null) {
+                return modelRef.getModel();
+            } else {
+                log.info("No validator model found, will not be able to indicate status of " + getFieldName());
+            }
+        } else {
+            log.debug("No validator model configured for " + getFieldName());
+        }
+        return null;
+    }
+
+    protected String getFieldName() {
+        return field != null ? field.getName() : "<unknown>";
     }
 
     abstract void onValidation(IValidationResult result);

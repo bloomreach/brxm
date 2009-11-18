@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.Iterator;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
@@ -26,11 +27,13 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -41,7 +44,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeFieldPlugin extends AbstractFieldPlugin<JcrNodeModel, JcrNodeModel> {
+public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -70,10 +73,11 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<JcrNodeModel, JcrNodeMo
 
     @Override
     protected AbstractProvider<JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
-            JcrNodeModel nodeModel) {
+            IModel<Node> nodeModel) {
         try {
             JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
-            ChildNodeProvider provider = new ChildNodeProvider(descriptor, prototype, nodeModel.getItemModel());
+            ChildNodeProvider provider = new ChildNodeProvider(descriptor, prototype, new JcrItemModel<Node>(nodeModel
+                    .getObject()));
             if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
                 provider.addNew();
             }
@@ -132,7 +136,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<JcrNodeModel, JcrNodeMo
 
     @Override
     protected void onAddRenderService(Item item, IRenderService renderer) {
-        final JcrNodeModel model = findModel(renderer);
+        final JcrNodeModel model = getController().findItemRenderer(renderer).getModel();
         final int index = item.getIndex();
 
         MarkupContainer remove = new AjaxLink("remove") {

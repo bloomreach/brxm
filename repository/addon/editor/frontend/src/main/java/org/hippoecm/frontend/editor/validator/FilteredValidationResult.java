@@ -18,9 +18,8 @@ package org.hippoecm.frontend.editor.validator;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.hippoecm.frontend.types.IFieldDescriptor;
-import org.hippoecm.frontend.validation.FieldElement;
-import org.hippoecm.frontend.validation.FieldPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.Violation;
 
@@ -31,21 +30,25 @@ import org.hippoecm.frontend.validation.Violation;
 public class FilteredValidationResult implements IValidationResult {
     private static final long serialVersionUID = 1L;
 
-    private final IValidationResult upstream;
-    private final IFieldDescriptor field;
+    private IValidationResult upstream;
+    private ModelPathElement element;
 
-    public FilteredValidationResult(IValidationResult result, IFieldDescriptor field) {
+    public FilteredValidationResult(IValidationResult result, ModelPathElement element) {
         this.upstream = result;
-        this.field = field;
+        this.element = element;
     }
 
     public Set<Violation> getViolations() {
         Set<Violation> orig = upstream.getViolations();
         Set<Violation> result = new HashSet<Violation>();
         for (Violation violation : orig) {
-            Set<FieldPath> paths = violation.getDependentPaths();
-            for (FieldPath path : paths) {
-                if (path.getElements()[0].getField().equals(field)) {
+            Set<ModelPath> paths = violation.getDependentPaths();
+            for (ModelPath path : paths) {
+                if (path.getElements().length > 0) {
+                    ModelPathElement first = path.getElements()[0];
+                    if (!element.equals(first)) {
+                        continue;
+                    }
                     result.add(filterViolation(violation));
                     break;
                 }
@@ -59,13 +62,17 @@ public class FilteredValidationResult implements IValidationResult {
     }
 
     private Violation filterViolation(Violation violation) {
-        Set<FieldPath> origPaths = violation.getDependentPaths();
-        Set<FieldPath> newPaths = new HashSet<FieldPath>();
-        for (FieldPath path : origPaths) {
-            if (path.getElements()[0].getField().equals(field)) {
-                FieldElement[] elements = new FieldElement[path.getElements().length - 1];
+        Set<ModelPath> origPaths = violation.getDependentPaths();
+        Set<ModelPath> newPaths = new HashSet<ModelPath>();
+        for (ModelPath path : origPaths) {
+            if (path.getElements().length > 0) {
+                ModelPathElement first = path.getElements()[0];
+                if (!element.equals(first)) {
+                    continue;
+                }
+                ModelPathElement[] elements = new ModelPathElement[path.getElements().length - 1];
                 System.arraycopy(path.getElements(), 1, elements, 0, elements.length);
-                newPaths.add(new FieldPath(elements));
+                newPaths.add(new ModelPath(elements));
             }
         }
         return new Violation(newPaths, violation.getMessage());

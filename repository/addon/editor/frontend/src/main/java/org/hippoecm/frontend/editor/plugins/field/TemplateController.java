@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.TemplateEngineException;
+import org.hippoecm.frontend.editor.validator.FilteredValidationModel;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -29,6 +30,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.IValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,66 +39,53 @@ public class TemplateController<C extends IModel> implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TemplateController.class);
-    
-    private static class Renderer<C extends IModel> implements IClusterable {
-        private static final long serialVersionUID = 1L;
-
-        IClusterControl clusterControl;
-        ModelReference<C> modelRef;
-
-        Renderer(ModelReference<C> model, IClusterControl control) {
-            this.clusterControl = control;
-            this.modelRef = model;
-        }
-    }
 
     private IPluginContext context;
     @SuppressWarnings("unused")
     private IPluginConfig config;
     private ITemplateFactory<C> factory;
-    private Map<C, TemplateController.Renderer<C>> childTemplates;
+    private IModel<IValidationResult> validationModel;
+    private Map<C, FieldItemRenderer<C>> childTemplates;
 
-    public TemplateController(IPluginContext context, IPluginConfig config, ITemplateFactory<C> factory) {
+    public TemplateController(IPluginContext context, IPluginConfig config, IModel<IValidationResult> validationModel,
+            ITemplateFactory<C> factory) {
         this.context = context;
         this.config = config;
+        this.validationModel = validationModel;
         this.factory = factory;
-        childTemplates = new HashMap<C, TemplateController.Renderer<C>>();
+        childTemplates = new HashMap<C, FieldItemRenderer<C>>();
     }
 
     public void start(AbstractProvider<C> provider) {
         Iterator<C> iter = provider.iterator(0, provider.size());
         while (iter.hasNext()) {
-            addModel(iter.next());
+            C model = iter.next();
+            addModel(model, provider.getFieldElement(model));
         }
     }
 
     public void stop() {
-        for (Map.Entry<C, TemplateController.Renderer<C>> entry : childTemplates.entrySet()) {
-            entry.getValue().modelRef.destroy();
-            entry.getValue().clusterControl.stop();
+        for (Map.Entry<C, FieldItemRenderer<C>> entry : childTemplates.entrySet()) {
+            FieldItemRenderer<C> renderer = entry.getValue();
+            renderer.destroy();
         }
         childTemplates.clear();
     }
 
-    public C findModel(IRenderService renderer) {
-        for (Map.Entry<C, TemplateController.Renderer<C>> entry : childTemplates.entrySet()) {
-            String renderId = entry.getValue().clusterControl.getClusterConfig().getString("wicket.id");
+    public FieldItemRenderer<C> findItemRenderer(IRenderService renderer) {
+        for (Map.Entry<C, FieldItemRenderer<C>> entry : childTemplates.entrySet()) {
+            String renderId = entry.getValue().getRendererId();
             if (renderer == context.getService(renderId, IRenderService.class)) {
-                return entry.getKey();
+                return entry.getValue();
             }
         }
         return null;
     }
 
-    private void addModel(final C model) {
+    private void addModel(final C model, ModelPathElement element) {
         try {
             IClusterControl control = factory.getTemplate(model);
-            String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
-            ModelReference<C> modelService = new ModelReference<C>(modelId, model);
-
-            modelService.init(context);
-            control.start();
-            childTemplates.put(model, new Renderer<C>(modelService, control));
+            childTemplates.put(model, new FieldItemRenderer<C>(context, model, validationModel, control, element));
         } catch (TemplateEngineException ex) {
             log.error("Failed to open editor for new model", ex);
         }

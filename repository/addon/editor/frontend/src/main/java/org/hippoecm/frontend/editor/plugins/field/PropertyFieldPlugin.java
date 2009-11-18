@@ -17,6 +17,8 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.Iterator;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -32,7 +34,6 @@ import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -44,7 +45,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PropertyFieldPlugin extends AbstractFieldPlugin<JcrNodeModel, JcrPropertyValueModel> {
+public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyValueModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -122,7 +123,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<JcrNodeModel, JcrPr
 
     @Override
     protected AbstractProvider<JcrPropertyValueModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
-            JcrNodeModel nodeModel) {
+            IModel nodeModel) {
         if (!descriptor.getPath().equals("*")) {
             PropertyValueProvider provider = new PropertyValueProvider(descriptor, type, propertyModel.getItemModel());
             if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
@@ -158,7 +159,9 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<JcrNodeModel, JcrPr
 
     @Override
     protected void onAddRenderService(Item item, IRenderService renderer) {
-        final JcrPropertyValueModel model = findModel(renderer);
+        super.onAddRenderService(item, renderer);
+
+        final JcrPropertyValueModel model = getController().findItemRenderer(renderer).getModel();
 
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
