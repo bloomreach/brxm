@@ -140,7 +140,7 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
       
        Node siteMapNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
        this.siteMapService = new HstSiteMapService(this, siteMapNode);   
-       this.locationMapTree = new LocationMapTreeImpl(canonicalcontentPath, this.getSiteMap().getSiteMapItems());
+       this.locationMapTree = new LocationMapTreeImpl(this.getSiteMap().getSiteMapItems());
        
        if(configurationNode.hasNode(HstNodeTypes.NODENAME_HST_SITEMENUS)) {
            Node siteMenusNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMENUS);
@@ -164,6 +164,10 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
 
     public String getContentPath() {
         return contentPath;
+    }
+    
+    public String getCanonicalContentPath() {
+        return canonicalcontentPath;
     }
     
     public String getConfigurationPath() {

@@ -38,19 +38,13 @@ public class LocationMapTreeImpl implements LocationMapTree{
     private final static Logger log = LoggerFactory.getLogger(LocationMapTreeImpl.class);
     
     private Map<String, LocationMapTreeItem> children = new HashMap<String, LocationMapTreeItem>();
-    private String canonicalSiteContentPath;
    
-    public LocationMapTreeImpl(String canonicalcontentPath, List<HstSiteMapItem> siteMapItems) {
-        this.canonicalSiteContentPath = canonicalcontentPath;
+    public LocationMapTreeImpl(List<HstSiteMapItem> siteMapItems) {
         for(HstSiteMapItem siteMapItem : siteMapItems ){
             add2LocationMap(siteMapItem);
         }
     }
 
-    public String getCanonicalSiteContentPath() {
-        return this.canonicalSiteContentPath;
-    }
-      
     private void add2LocationMap(HstSiteMapItem siteMapItem) {
         String normPath = PathUtils.normalizePath(siteMapItem.getRelativeContentPath());
         if( !(normPath == null || "".equals(normPath))) {

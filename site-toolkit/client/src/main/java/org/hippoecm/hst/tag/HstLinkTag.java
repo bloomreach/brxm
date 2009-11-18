@@ -31,6 +31,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -62,12 +63,24 @@ public class HstLinkTag extends TagSupport {
     protected String var;
     
     protected String scope;
-    
+
     protected boolean external;
+    
+    protected boolean canonical;
     
     protected boolean skipTag; 
 
     protected Boolean escapeXml = true;
+    
+    /**
+     * if defined, first a link for this preferSiteMapItem is tried to be created. 
+     */
+    protected HstSiteMapItem preferSiteMapItem;
+    
+    /**
+     * whether to fallback to normal linkrewriting when the preferSiteMapItem was not able to linkrewrite the item. Default true
+     */
+    protected boolean fallback = true;
         
     protected Map<String, List<String>> parametersMap = new HashMap<String, List<String>>();
     
@@ -118,8 +131,11 @@ public class HstLinkTag extends TagSupport {
                 log.warn("Cannot only get links for HstRequest");
                 return EVAL_PAGE;
             }
-            
-            this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext.getResolvedSiteMapItem());
+            if(canonical) {
+                this.link = reqContext.getHstLinkCreator().createCanonical(hippoBean.getNode(), reqContext.getResolvedSiteMapItem(), preferSiteMapItem);
+            } else {
+                this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), reqContext.getResolvedSiteMapItem(), preferSiteMapItem, fallback);
+            }
         }
         
         if(this.link == null && this.path != null) {
@@ -170,6 +186,9 @@ public class HstLinkTag extends TagSupport {
         link = null;
         external = false;
         skipTag = false;
+        preferSiteMapItem = null;
+        fallback = true;
+        canonical = false;
         
         return EVAL_PAGE;
     }
@@ -226,6 +245,9 @@ public class HstLinkTag extends TagSupport {
     public void setPath(String path) {
         this.path = path;
     }
+    public void setCanonical(boolean canonical) {
+        this.canonical = canonical;
+    }
     
     public void setHippobean(HippoBean hippoBean) {
         this.hippoBean = hippoBean;
@@ -272,5 +294,15 @@ public class HstLinkTag extends TagSupport {
             return vi;
         }
 
+    }
+
+
+    public void setPreferredSiteMapItem(HstSiteMapItem preferSiteMapItem) {
+        this.preferSiteMapItem = preferSiteMapItem;
+    }
+
+
+    public void setFallback(boolean fallback) {
+       this.fallback = fallback;
     }
 }

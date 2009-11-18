@@ -46,6 +46,7 @@ public class LocationMapResolver {
     private LocationMapTree locationMapTree; 
     private boolean representsDocument;
     private boolean canonical;
+    private boolean isSubResolver;
     
     // the resolved sitemap item of the current request
     private ResolvedSiteMapItem resolvedSiteMapItem;
@@ -68,7 +69,10 @@ public class LocationMapResolver {
     public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
         this.resolvedSiteMapItem = resolvedSiteMapItem;
     }
-    
+
+    public void setSubResolver(boolean isSubResolver) {
+        this.isSubResolver = isSubResolver;
+    }
     
     public ResolvedLocationMapTreeItem resolve(String path) {
         long start = System.nanoTime();
@@ -144,7 +148,9 @@ public class LocationMapResolver {
         
         String resolvedPath = (String)pp.resolveProperty("parameterizedPath", ((HstSiteMapItemService)matchingSiteMapItem).getParameterizedPath());
         if(resolvedPath == null) {
-            log.warn("Unable to resolve '{}'. Return null", ((HstSiteMapItemService)matchingSiteMapItem).getParameterizedPath());
+            if(!isSubResolver) {
+                log.warn("Unable to resolve '{}'. Return null", ((HstSiteMapItemService)matchingSiteMapItem).getParameterizedPath());
+            }
             return null;
         }
         
@@ -176,21 +182,21 @@ public class LocationMapResolver {
         
         HstSiteMapItem hstSiteMapItem = null;
 
-        List<HstSiteMapItem> preferredSiteMapItems = new ArrayList<HstSiteMapItem>();
+        List<HstSiteMapItem> typeMatchedSiteMapItems = new ArrayList<HstSiteMapItem>();
         List<HstSiteMapItem> fallbackSiteMapItems = new ArrayList<HstSiteMapItem>();
         for(HstSiteMapItem item : matchedLocationMapTreeItem.getHstSiteMapItems()) {
             HstSiteMapItemService serv = (HstSiteMapItemService)item;
             if(representsDocument) {
                 if(serv.getExtension() != null) {
                     //  found a sitemap item with an extension! Add this one
-                    preferredSiteMapItems.add(serv);
+                    typeMatchedSiteMapItems.add(serv);
                 } else {
                     fallbackSiteMapItems.add(serv);
                 }
             } else {
                 if(serv.getExtension() == null) {
                     //  found a sitemap item without an extension! Add this one
-                    preferredSiteMapItems.add(serv);
+                    typeMatchedSiteMapItems.add(serv);
                 } else {
                     fallbackSiteMapItems.add(serv);
                 }
@@ -198,10 +204,14 @@ public class LocationMapResolver {
         }
         
         if(this.canonical || resolvedSiteMapItem == null) {
-            // TODO
+            // let's return the canonical location. 
+            hstSiteMapItem = getCanonicalItem(typeMatchedSiteMapItems);
+            if(hstSiteMapItem == null) {
+                hstSiteMapItem = getCanonicalItem(fallbackSiteMapItems);
+            }
         } else {
             // fetch the best matching sitemap item: 
-            List<HstSiteMapItem> contextOrderedMatches = orderToBestInContext(preferredSiteMapItems);
+            List<HstSiteMapItem> contextOrderedMatches = orderToBestInContext(typeMatchedSiteMapItems);
             for(HstSiteMapItem item : contextOrderedMatches) {
                 hstSiteMapItem = contextualize((HstSiteMapItemService)item);  
                 if(hstSiteMapItem != null) {
@@ -224,6 +234,40 @@ public class LocationMapResolver {
           
         return hstSiteMapItem;
         
+    }
+
+    /*
+     * The algorithm to find the canonical item is currently as follows:
+     * 
+     * 1) A sitemap item that returns true for isUseableInRightContextOnly() is not useable and ignored
+     * 2) The sitemap item that has the lowest depth (getDepth()) is used as canonical.
+     * 3) When multiple sitemap items have equal depth, the first is returned 
+     * 
+     * @param preferredSiteMapItems
+     * @return the canonical <code>HstSiteMapItem</code> or <code>null</code> if not succeeded.
+     */
+    private HstSiteMapItem getCanonicalItem(List<HstSiteMapItem> matchedHstSiteMapItema) {
+        List<HstSiteMapItem> canonicals = new ArrayList<HstSiteMapItem>();
+        int lowestDepth = Integer.MAX_VALUE;
+        for(HstSiteMapItem item : matchedHstSiteMapItema) {
+            HstSiteMapItemService serviceItem = (HstSiteMapItemService)item;
+            if(serviceItem.isUseableInRightContextOnly()) {
+                // unuseable for canonical
+                continue;
+            }
+            if(serviceItem.getDepth() < lowestDepth) {
+                lowestDepth = serviceItem.getDepth();
+                canonicals.clear();
+                canonicals.add(serviceItem);
+            } else if (serviceItem.getDepth() == lowestDepth) {
+                canonicals.add(serviceItem);
+            }
+        }
+        if(!canonicals.isEmpty()) {
+            // even if multiple canonicals are equally suited, we cannot do better then pick the first
+            return canonicals.get(0);
+        }
+        return null;
     }
 
     /*
@@ -505,5 +549,4 @@ public class LocationMapResolver {
         return contextOrderedMatches;
     }
 
-    
 }

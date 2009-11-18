@@ -54,16 +54,60 @@ public interface HstLinkCreator {
      * Rewrite a jcr Node to a HstLink wrt its current ResolvedSiteMapItem
      * @param node
      * @param resolvedSiteMapItem
-     * @return HstLink 
+     * @return the HstLink for this jcr Node or <code>null</code>
      */
     HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem);
     
-
+    /**
+     * Rewrite a jcr Node to a HstLink wrt its current ResolvedSiteMapItem and preferredItem. The link is tried to be rewritten to 
+     * one of the descendant HstSiteMapItem's or self of the preferredItem. When there cannot be created an HstLink to a descendant HstSiteMapItem 
+     * or self, then:
+     * 
+     * <ol>
+     *  <li>when <code>fallback = true</code>, a fallback to {@link #create(Node, ResolvedSiteMapItem)} is done</li>
+     *  <li>when <code>fallback = false</code>, dependent on the implementation some error HstLink or <code>null</code> can be returned</li>
+     * </ol>
+     *  
+     * @param node
+     * @param resolvedSiteMapItem
+     * @param preferredItem
+     * @param fallback 
+      * @return the HstLink for this jcr Node or <code>null</code>
+     */
+    HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem, boolean fallback);
+    
+    /**
+     * This creates a canonical HstLink: regardless the context, one and the same jcr Node is garantueed to return the same HstLink. This is
+     * useful when showing one and the same content via multiple urls, for example in faceted navigation. Search engines can better index your
+     * website when defining a canonical location for duplicate contents: See 
+     * <a href="http://googlewebmastercentral.blogspot.com/2009/02/specify-your-canonical.html">specify-your-canonical</a> for more info on this subject.
+     * 
+     * @param node
+     * @param resolvedSiteMapItem
+     * @return the HstLink for this jcr Node or <code>null</code>
+     */
+    HstLink createCanonical(Node node, ResolvedSiteMapItem resolvedSiteMapItem);
+    
+    /**
+     * @see {@link #createCanonical(Node, ResolvedSiteMapItem)}.
+     * When specifying a preferredItem, we try to create a canonical link wrt this preferredItem. If the link cannot be created for this preferredItem,
+     * a fallback to {@link #createCanonical(Node, ResolvedSiteMapItem)} without preferredItem is done.
+     * 
+     * @param node
+     * @param resolvedSiteMapItem
+     * @param preferredItem if <code>null</code>, a fallback to {@link #createCanonical(Node, ResolvedSiteMapItem)} is done
+     * @return the HstLink for this jcr Node or <code>null</code>
+     */
+    HstLink createCanonical(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem);
+    
+    
+    
     /**
      * 
      * @param node
      * @param hstRequestContext
      * @return
+     * @deprecated  Use {@link  #create(Node, ResolvedSiteMapItem)} 
      */
     HstLink create(Node node, HstRequestContext hstRequestContext);
     
@@ -77,7 +121,7 @@ public interface HstLinkCreator {
     
     
     /**
-     * For creating a link from a HstSiteMapItem to a HstSiteMapItem with toSiteMapItemId within the same Site
+     * For creating a link from a HstSiteMapItem to a HstSiteMapItem with toSiteMapItemId
      * @param toSiteMapItemId
      * @param resolvedSiteMapItem
      * @return an <code>HstLink</code> instance or <code>null<code> 
