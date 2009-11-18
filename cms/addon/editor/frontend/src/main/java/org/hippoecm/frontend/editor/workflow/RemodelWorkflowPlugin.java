@@ -53,7 +53,7 @@ import org.hippoecm.repository.standardworkflow.ChangeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin<NamespaceWorkflow> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -77,8 +77,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
+            protected String execute(NamespaceWorkflow workflow) throws Exception {
                 try {
                     JcrSessionModel sessionModel = ((UserSession) Session.get()).getJcrSessionModel();
                     Map<String, Serializable> hints = workflow.hints();
@@ -88,20 +87,13 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     sessionModel.getSession().save();
                     sessionModel.getSession().refresh(false);
 
-                    WorkflowDescriptor descriptor = (WorkflowDescriptor) RemodelWorkflowPlugin.this.getModelObject();
-                    WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
-                    workflow = (NamespaceWorkflow) manager.getWorkflow(descriptor);
-                    if (workflow != null) {
-                        log.info("remodelling namespace " + prefix);
-                        try {
-                            workflow.updateModel(cnd, cargo);
-                        } finally {
-                            // log out; the session model will log in again.
-                            // Sessions cache path resolver information, which is incorrect after remapping the prefix.
-                            sessionModel.flush();
-                        }
-                    } else {
-                        log.warn("no remodeling workflow available on selected node");
+                    log.info("remodelling namespace " + prefix);
+                    try {
+                        workflow.updateModel(cnd, cargo);
+                    } finally {
+                        // log out; the session model will log in again.
+                        // Sessions cache path resolver information, which is incorrect after remapping the prefix.
+                        sessionModel.flush();
                     }
                     return null;
                 } catch (Exception ex) {
