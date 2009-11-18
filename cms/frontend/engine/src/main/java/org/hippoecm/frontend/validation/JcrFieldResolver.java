@@ -19,10 +19,10 @@ import java.util.Iterator;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Creates a model from a container model, using a {@link FieldPath}.
+ * Creates a model from a container model, using a {@link ModelPath}.
  */
 public class JcrFieldResolver implements IFieldResolver {
     private static final long serialVersionUID = 1L;
@@ -46,27 +46,28 @@ public class JcrFieldResolver implements IFieldResolver {
         this.typeStore = typeStore;
     }
 
-    public IModel resolve(IModel model, FieldPath path) throws EditorException {
+    public IModel resolve(IModel model, ModelPath path) throws EditorException {
         if (model instanceof JcrNodeModel) {
             JcrNodeModel nodeModel = (JcrNodeModel) model;
             Node node = nodeModel.getNode();
             try {
-                for (FieldElement element : path.getElements()) {
+                for (ModelPathElement element : path.getElements()) {
                     IFieldDescriptor field = element.getField();
                     ITypeDescriptor fieldType = typeStore.load(field.getType());
-                    IDataProvider provider;
+                    Iterator<? extends IModel> iter;
                     if (fieldType.isNode()) {
-                        provider = new ChildNodeProvider(field, null, nodeModel.getItemModel());
+                        ChildNodeProvider provider = new ChildNodeProvider(field, null, nodeModel.getItemModel());
+                        iter = provider.iterator(element.getIndex(), 1);
                     } else {
-                        provider = new PropertyValueProvider(field, null, nodeModel.getItemModel());
+                        PropertyValueProvider provider = new PropertyValueProvider(field, null, nodeModel.getItemModel());
+                        iter = provider.iterator(element.getIndex(), 1);
                     }
-                    Iterator iter = provider.iterator(element.getIndex(), 1);
                     if (iter.hasNext()) {
                         if (fieldType.isNode()) {
-                            JcrNodeModel childModel = (JcrNodeModel) provider.model(iter.next());
+                            JcrNodeModel childModel = (JcrNodeModel) iter.next();
                             node = childModel.getNode();
                         } else {
-                            return provider.model(iter.next());
+                            return iter.next();
                         }
                     } else {
                         throw new EditorException("Field is not available in model");

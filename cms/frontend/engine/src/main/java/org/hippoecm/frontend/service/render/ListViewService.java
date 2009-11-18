@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The service redraws completely when a child service (dis)appears.
  */
-public class ListViewService extends RenderService<Void> {
+public class ListViewService<T> extends RenderService<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

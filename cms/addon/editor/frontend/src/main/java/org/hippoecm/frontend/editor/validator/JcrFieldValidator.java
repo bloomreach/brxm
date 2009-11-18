@@ -21,20 +21,20 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.AbstractProvider;
+import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeLocator;
-import org.hippoecm.frontend.validation.FieldElement;
-import org.hippoecm.frontend.validation.FieldPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
@@ -71,19 +71,19 @@ public class JcrFieldValidator implements ITypeValidator {
                 return violations;
             }
             JcrNodeModel nodeModel = (JcrNodeModel) model;
-            IDataProvider provider;
+            AbstractProvider<? extends IModel> provider;
             if (fieldType.isNode()) {
                 provider = new ChildNodeProvider(field, null, nodeModel.getItemModel());
             } else {
                 JcrItemModel itemModel = new JcrItemModel(nodeModel.getItemModel().getPath() + "/" + field.getPath());
                 provider = new PropertyValueProvider(field, null, itemModel);
             }
-            Iterator<?> iter = provider.iterator(0, provider.size());
+            Iterator<? extends IModel> iter = provider.iterator(0, provider.size());
             if (required && !iter.hasNext()) {
                 violations.add(newViolation(field.getPath(), 0, "Required field is not present"));
             }
             while (iter.hasNext()) {
-                IModel childModel = provider.model(iter.next());
+                IModel childModel = iter.next();
                 if (fieldType.isNode()) {
                     Set<Violation> typeViolations = typeValidator.validate(childModel);
                     if (typeViolations.size() > 0) {
@@ -102,14 +102,14 @@ public class JcrFieldValidator implements ITypeValidator {
                             name = name.substring(name.indexOf('['));
                         }
                         for (Violation violation : typeViolations) {
-                            Set<FieldPath> childPaths = violation.getDependentPaths();
-                            Set<FieldPath> paths = new HashSet<FieldPath>();
-                            for (FieldPath childPath : childPaths) {
-                                FieldElement[] elements = new FieldElement[childPath.getElements().length + 1];
+                            Set<ModelPath> childPaths = violation.getDependentPaths();
+                            Set<ModelPath> paths = new HashSet<ModelPath>();
+                            for (ModelPath childPath : childPaths) {
+                                ModelPathElement[] elements = new ModelPathElement[childPath.getElements().length + 1];
                                 System.arraycopy(childPath.getElements(), 0, elements, 1,
                                         childPath.getElements().length);
-                                elements[0] = new FieldElement(field, name, index);
-                                paths.add(new FieldPath(elements));
+                                elements[0] = new ModelPathElement(field, name, index);
+                                paths.add(new ModelPath(elements));
                             }
                             violations.add(new Violation(paths, violation.getMessage()));
                         }
@@ -119,18 +119,17 @@ public class JcrFieldValidator implements ITypeValidator {
                         String value = (String) childModel.getObject();
                         if ("".equals(value)) {
                             String name = field.getPath();
+                            JcrPropertyValueModel valueModel = (JcrPropertyValueModel) childModel;
                             if ("*".equals(name)) {
-                                JcrPropertyValueModel valueModel = (JcrPropertyValueModel) childModel;
                                 try {
                                     name = valueModel.getJcrPropertymodel().getProperty().getName();
                                 } catch (RepositoryException e) {
                                     throw new ValidationException("Could not resolve path for invalid value", e);
                                 }
                             }
-                            int index = 0;
-                            if (name.indexOf('[') >= 0) {
-                                index = Integer.valueOf(name.substring(name.indexOf('[') + 1, name.lastIndexOf(']'))) - 1;
-                                name = name.substring(name.indexOf('['));
+                            int index = valueModel.getIndex();
+                            if (index == -1) {
+                                index = 0;
                             }
                             // TODO: add i18n.
                             violations.add(newViolation(name, index, "String value is empty"));
@@ -143,10 +142,10 @@ public class JcrFieldValidator implements ITypeValidator {
     }
 
     private Violation newViolation(String name, int index, String message) {
-        FieldElement[] elements = new FieldElement[1];
-        elements[0] = new FieldElement(field, name, index);
-        Set<FieldPath> paths = new HashSet<FieldPath>();
-        paths.add(new FieldPath(elements));
+        ModelPathElement[] elements = new ModelPathElement[1];
+        elements[0] = new ModelPathElement(field, name, index);
+        Set<ModelPath> paths = new HashSet<ModelPath>();
+        paths.add(new ModelPath(elements));
         return new Violation(paths, new Model(message));
     }
 

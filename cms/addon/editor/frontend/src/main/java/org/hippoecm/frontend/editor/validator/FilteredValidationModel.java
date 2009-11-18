@@ -24,7 +24,7 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.IValidationResult;
 
 /**
@@ -40,8 +40,8 @@ public class FilteredValidationModel extends Model<IValidationResult> implements
 
     private IModel<IValidationResult> upstreamModel;
 
-    public FilteredValidationModel(IModel<IValidationResult> upstreamModel, IFieldDescriptor field) {
-        super(new FilteredValidationResult(upstreamModel.getObject(), field));
+    public FilteredValidationModel(IModel<IValidationResult> upstreamModel, ModelPathElement element) {
+        super(new FilteredValidationResult(upstreamModel.getObject(), element));
         this.upstreamModel = upstreamModel;
     }
 

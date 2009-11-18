@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
  * of the property.  I.e. JCR type string maps to {@link String}, date maps to {@link Data}.
  * <p>
  * One can also set and retrieve the underlying {@link Value}.
- * 
- * @author Frank van Lankvelt
  */
 public class JcrPropertyValueModel<T extends Serializable> implements IModel<T> {
     @SuppressWarnings("unused")

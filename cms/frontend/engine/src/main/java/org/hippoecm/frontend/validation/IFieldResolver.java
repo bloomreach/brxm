@@ -21,6 +21,6 @@ import org.hippoecm.frontend.service.EditorException;
 
 public interface IFieldResolver extends IClusterable {
 
-    IModel resolve(IModel model, FieldPath path) throws EditorException;
+    IModel resolve(IModel model, ModelPath path) throws EditorException;
 
 }

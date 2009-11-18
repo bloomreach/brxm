@@ -28,6 +28,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.ModelPathElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
     private IFieldDescriptor descriptor;
     private ITypeDescriptor type;
 
-    public PropertyValueProvider(IFieldDescriptor descriptor, ITypeDescriptor type, JcrItemModel itemModel) {
+    public PropertyValueProvider(IFieldDescriptor descriptor, ITypeDescriptor type, JcrItemModel<Property> itemModel) {
         super(itemModel);
         this.descriptor = descriptor;
         this.type = type;
@@ -174,6 +175,15 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
     }
 
     @Override
+    public ModelPathElement getFieldElement(JcrPropertyValueModel model) {
+        int index = model.getIndex();
+        if (index == -1) {
+            index = 0;
+        }
+        return new ModelPathElement(descriptor, descriptor.getPath(), index);
+    }
+    
+    @Override
     protected void load() {
         if (elements != null) {
             return;
@@ -189,12 +199,12 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
                     Value[] values = property.getValues();
                     for (int index = 0; index < values.length; index++) {
                         if (descriptor.isMultiple()) {
-                            addTemplate(property, values[index], index);
+                            addValue(property, values[index], index);
                         } else {
                             Value value = property.getValues()[0];
                             property.remove();
                             property = node.setProperty(path, value);
-                            addTemplate(property, value, JcrPropertyValueModel.NO_INDEX);
+                            addValue(property, value, JcrPropertyValueModel.NO_INDEX);
                             break;
                         }
                     }
@@ -203,9 +213,9 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
                         Value value = property.getValue();
                         property.remove();
                         property = node.setProperty(path, new Value[] { value });
-                        addTemplate(property, value, 0);
+                        addValue(property, value, 0);
                     } else {
-                        addTemplate(property, property.getValue(), JcrPropertyValueModel.NO_INDEX);
+                        addValue(property, property.getValue(), JcrPropertyValueModel.NO_INDEX);
                     }
                 }
             }
@@ -214,11 +224,12 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
         }
     }
 
-    private void addTemplate(Property property, Value value, int index) throws RepositoryException {
+    private void addValue(Property property, Value value, int index) throws RepositoryException {
         String name = property.getName();
         Set<String> excluded = descriptor.getExcluded();
         if (excluded == null || !excluded.contains(name)) {
             elements.addLast(new JcrPropertyValueModel(index, value, new JcrPropertyModel(property)));
         }
     }
+
 }

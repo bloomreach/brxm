@@ -21,16 +21,16 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
 /**
- * Validation constraint violation.  Provides the list of {@link FieldPath}s that
+ * Validation constraint violation.  Provides the list of {@link ModelPath}s that
  * led up to the violation, plus a message that describes the problem. 
  */
 public final class Violation implements IClusterable {
     private static final long serialVersionUID = 1L;
 
-    private Set<FieldPath> fieldPaths;
+    private Set<ModelPath> fieldPaths;
     private IModel/*<String>*/message;
 
-    public Violation(Set<FieldPath> fieldPaths, IModel/*<String>*/message) {
+    public Violation(Set<ModelPath> fieldPaths, IModel/*<String>*/message) {
         this.fieldPaths = fieldPaths;
         this.message = message;
     }
@@ -39,7 +39,7 @@ public final class Violation implements IClusterable {
         return message;
     }
 
-    public Set<FieldPath> getDependentPaths() {
+    public Set<ModelPath> getDependentPaths() {
         return fieldPaths;
     }
 

@@ -15,9 +15,16 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import javax.jcr.Item;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.AbstractProvider;
@@ -33,60 +40,119 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ModelPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractFieldPlugin<P extends IModel, C extends IModel> extends ListViewPlugin implements
+public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<P> implements
         ITemplateFactory<C> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
+    static abstract class ValidationFilter extends Model<String> {
+        private static final long serialVersionUID = 1L;
+
+        private boolean valid = true;
+
+        public boolean isValid() {
+            return valid;
+        }
+
+        public void setValid(boolean valid) {
+            this.valid = valid;
+        }
+
+        public abstract void onValidation(IValidationResult result);
+
+        @Override
+        public String getObject() {
+            if (valid) {
+                return "";
+            } else {
+                return "invalid";
+            }
+        }
+    }
+
     static final Logger log = LoggerFactory.getLogger(AbstractFieldPlugin.class);
 
     public static final String FIELD = "field";
     public static final String TYPE = "type";
 
-    protected boolean valid = true;
     protected String mode;
     protected AbstractProvider<C> provider;
 
     private FieldPluginHelper helper;
     private TemplateController<C> controller;
 
+    private boolean managedValidation = false;
+    private Map<Object, ValidationFilter> listeners = new HashMap<Object, ValidationFilter>();
+
     protected AbstractFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        controller = new TemplateController<C>(context, config, this);
         helper = new FieldPluginHelper(context, config) {
             private static final long serialVersionUID = 1L;
 
             @Override
             void onValidation(IValidationResult result) {
-                AbstractFieldPlugin.this.onValidation(result);
+                for (ValidationFilter listener : new ArrayList<ValidationFilter>(listeners.values())) {
+                    listener.onValidation(result);
+                }
             }
 
         };
+        controller = new TemplateController<C>(context, config, helper.getValidationResultModel(), this);
 
         mode = config.getString(ITemplateEngine.MODE);
         if (mode == null) {
             log.error("No edit mode specified");
         }
 
-        add(new CssClassAppender(new LoadableDetachableModel() {
-            private static final long serialVersionUID = 1L;
+        IFieldDescriptor field = helper.getField();
+        if (field != null && (!field.isMultiple() || !doesTemplateSupportValidation())) {
+            final ValidationFilter holder = new ValidationFilter() {
+                private static final long serialVersionUID = 1L;
 
-            @Override
-            protected Object load() {
-                if (isValid()) {
-                    return "";
-                } else {
-                    return "invalid";
+                @Override
+                public void onValidation(IValidationResult validation) {
+                    boolean valid = true;
+                    if (!validation.isValid()) {
+                        IFieldDescriptor field = getFieldHelper().getField();
+                        for (Violation violation : validation.getViolations()) {
+                            Set<ModelPath> paths = violation.getDependentPaths();
+                            for (ModelPath path : paths) {
+                                if (path.getElements().length > 0) {
+                                    ModelPathElement first = path.getElements()[0];
+                                    if (first.getField().equals(field)) {
+                                        valid = false;
+                                    }
+                                    break;
+                                }
+                            }
+                            if (!valid) {
+                                break;
+                            }
+                        }
+                    }
+                    if (valid != isValid()) {
+                        setValid(valid);
+                        redraw();
+                    }
                 }
-            }
 
-        }));
+            };
+            addValidationFilter(this, holder);
+
+            managedValidation = true;
+            if (!field.isMultiple()) {
+                add(new CssClassAppender(holder));
+            }
+        }
     }
 
     @Override
@@ -103,24 +169,12 @@ public abstract class AbstractFieldPlugin<P extends IModel, C extends IModel> ex
         super.onDetach();
     }
 
-    protected boolean isValid() {
-        return valid;
-    }
-
-    protected void onValidation(IValidationResult result) {
-        if (result.isValid() != valid) {
-            // FIXME: see if field is in one of the violations; only invalid if that is the case
-            valid = result.isValid();
-            redraw();
-        }
-    }
-
     protected void updateProvider() {
         IFieldDescriptor field = helper.getField();
         if (field != null) {
             ITemplateEngine engine = getTemplateEngine();
             if (engine != null) {
-                P model = (P) getDefaultModel();
+                IModel<P> model = getModel();
                 try {
                     ITypeDescriptor subType = engine.getType(field.getType());
                     provider = newProvider(field, subType, model);
@@ -139,7 +193,8 @@ public abstract class AbstractFieldPlugin<P extends IModel, C extends IModel> ex
         }
     }
 
-    protected abstract AbstractProvider<C> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type, P parentModel);
+    protected abstract AbstractProvider<C> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
+            IModel<P> parentModel);
 
     protected boolean canRemoveItem() {
         IFieldDescriptor field = helper.getField();
@@ -172,6 +227,49 @@ public abstract class AbstractFieldPlugin<P extends IModel, C extends IModel> ex
         redraw();
     }
 
+    private void addValidationFilter(Object key, ValidationFilter listener) {
+        listeners.put(key, listener);
+    }
+
+    private void removeValidationFilter(Object key) {
+        listeners.remove(key);
+    }
+
+    @Override
+    protected void onAddRenderService(final org.apache.wicket.markup.repeater.Item<IRenderService> item,
+            IRenderService renderer) {
+        super.onAddRenderService(item, renderer);
+
+        final FieldItemRenderer<C> itemRenderer = getController().findItemRenderer(renderer);
+        if (managedValidation && getFieldHelper().getField().isMultiple()) {
+            item.setOutputMarkupId(true);
+            ValidationFilter listener = new ValidationFilter() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onValidation(IValidationResult result) {
+                    boolean valid = itemRenderer.isValid();
+                    if (valid != this.isValid()) {
+                        AjaxRequestTarget target = AjaxRequestTarget.get();
+                        if (target != null) {
+                            target.addComponent(item);
+                        }
+                        setValid(valid);
+                    }
+                }
+            };
+            addValidationFilter(item, listener);
+            item.add(new CssClassAppender(listener));
+        }
+    }
+
+    @Override
+    protected void onRemoveRenderService(org.apache.wicket.markup.repeater.Item<IRenderService> item,
+            IRenderService renderer) {
+        removeValidationFilter(item);
+        super.onRemoveRenderService(item, renderer);
+    }
+    
     protected FieldPluginHelper getFieldHelper() {
         return helper;
     }
@@ -185,8 +283,15 @@ public abstract class AbstractFieldPlugin<P extends IModel, C extends IModel> ex
                 .getService(getPluginConfig().getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
     }
 
-    protected C findModel(IRenderService renderer) {
-        return controller.findModel(renderer);
+    protected boolean doesTemplateSupportValidation() {
+        ITemplateEngine engine = getTemplateEngine();
+        IFieldDescriptor field = helper.getField();
+        try {
+            IClusterConfig template = engine.getTemplate(engine.getType(field.getType()), mode);
+            return (template.getReferences().contains("validator.model"));
+        } catch (TemplateEngineException e) {
+            return false;
+        }
     }
 
     public IClusterControl getTemplate(C model) throws TemplateEngineException {
