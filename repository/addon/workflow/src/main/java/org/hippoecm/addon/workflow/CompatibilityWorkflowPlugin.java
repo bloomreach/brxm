@@ -64,7 +64,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Deprecated
-public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin<T> implements IActivator {
+public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin<WorkflowDescriptor> implements IActivator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: AbstractWorkflowPlugin.java 16815 2009-03-11 16:09:10Z fvlankvelt $";
 
@@ -84,13 +84,13 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
     }
 
     @SuppressWarnings("unchecked")
-    public IModel<T> getModel() {
-        return (IModel<T>) getDefaultModel();
+    public IModel<WorkflowDescriptor> getModel() {
+        return (IModel<WorkflowDescriptor>) getDefaultModel();
     }
 
     @SuppressWarnings("unchecked")
-    public T getModelObject() {
-        return (T) getDefaultModelObject();
+    public WorkflowDescriptor getModelObject() {
+        return (WorkflowDescriptor) getDefaultModelObject();
     }
     
     @Deprecated
