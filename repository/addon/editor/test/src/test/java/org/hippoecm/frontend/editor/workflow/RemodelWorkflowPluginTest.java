@@ -97,7 +97,7 @@ public class RemodelWorkflowPluginTest extends PluginTest {
         Node nsNode = session.getRootNode().getNode("hippo:namespaces");
         TemplateEditorWorkflow nsWfl = (TemplateEditorWorkflow) wflMgr.getWorkflow("test", nsNode);
         nsWfl.createNamespace("testns", "http://example.org/test/0.0");
-        
+
         Node documentNode = session.getRootNode().getNode("hippo:namespaces/testns");
         String category = "test";
         WorkflowDescriptor descriptor = wflMgr.getWorkflowDescriptor(category, documentNode);
