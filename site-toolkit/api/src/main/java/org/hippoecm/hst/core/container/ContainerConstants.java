@@ -85,4 +85,14 @@ public interface ContainerConstants {
      */
     String CMS_LOCATION = "cms.location";
     
+    /**
+     * The head element attribute name prefix used as a hint for container to aggregate.
+     */
+    String HEAD_ELEMENT_CONTRIBUTION_HINT_ATTRIBUTE_PREFIX = "org.hippoecm.hst.container.head.element.contribution.hint.";
+    
+    /**
+     * The category key hint for head elements. This category can be used to filter head elements during writing head elements.
+     */
+    String HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE = HEAD_ELEMENT_CONTRIBUTION_HINT_ATTRIBUTE_PREFIX + "category";
+    
 }

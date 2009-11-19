@@ -410,6 +410,17 @@
                     JSP developers could ignore this attribute and use 'element' attribute instead directly with object property value.
             </description>
         </attribute>
+        <attribute>
+            <name>category</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> Comma separated category list string.
+              A head element can be contributed by one or more categories, and
+              the page template that finally writes the head elements into a page
+              can do filtering based on category includes or excludes.
+              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+        </attribute>
     </tag>
     
     <tag>
@@ -455,6 +466,17 @@
                     JSP developers could ignore this attribute and use 'element' attribute instead directly with object property value.
             </description>
         </attribute>
+        <attribute>
+            <name>category</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> Comma separated category list string.
+              A head element can be contributed by one or more categories, and
+              the page template that finally writes the head elements into a page
+              can do filtering based on category includes or excludes.
+              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+        </attribute>
     </tag>
 
     <tag>
@@ -473,8 +495,30 @@
             <description> If this attribute is true, then the output will be generated as XHTML
                 format. By default, this value is false. </description>
         </attribute>
+        <attribute>
+            <name>categoryIncludes</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> Comma separated category list string for category includes.
+              Contributed head elements can be filtered in by this attribute.
+              If a contributed head element has a category and this attribute contains
+              the category, then the head element would be written into the page.
+              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+        </attribute>
+        <attribute>
+            <name>categoryExcludes</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> Comma separated category list string for category excludes.
+              Contributed head elements can be filtered out by this attribute.
+              If a contributed head element has a category and this attribute does not contain
+              the category, then the head element would be written into the page.
+              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+        </attribute>
     </tag>
-
+    
     <tag>
         <name>headContributions</name>
         <tag-class>org.hippoecm.hst.tag.HeadContributionsTag</tag-class>
@@ -491,8 +535,110 @@
             <description> If this attribute is true, then the output will be generated as XHTML
                 format. By default, this value is false. </description>
         </attribute>
+        <attribute>
+            <name>categoryIncludes</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> Comma separated category list string for category includes.
+              Contributed head elements can be filtered in by this attribute.
+              If a contributed head element has a category and this attribute contains
+              the category, then the head element would be written into the page.
+              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+        </attribute>
+        <attribute>
+            <name>categoryExcludes</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> Comma separated category list string for category excludes.
+              Contributed head elements can be filtered out by this attribute.
+              If a contributed head element has a category and this attribute does not contain
+              the category, then the head element would be written into the page.
+               By the way, this attribute does not affect anything in portal/portlet environment. </description>
+        </attribute>
     </tag>
 
+    <tag>
+        <name>write-head-contributions</name>
+        <tag-class>org.hippoecm.hst.tag.HeadContributionsTag</tag-class>
+        <body-content>empty</body-content>
+        <description> All the HEAD elements contributed by each HstComponent can be accessed only by
+            the root HstComponent. The root HstComponent will be responsible for rendering all the
+            contributed HEAD elements. By inserting this tag, the root HstComponent can render all
+            the contributed HEAD elements. </description>
+        <attribute>
+            <name>xhtml</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>boolean</type>
+            <description> If this attribute is true, then the output will be generated as XHTML
+                format. By default, this value is false. </description>
+        </attribute>
+        <attribute>
+            <name>categoryIncludes</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> Comma separated category list string for category includes.
+              Contributed head elements can be filtered in by this attribute.
+              If a contributed head element has a category and this attribute contains
+              the category, then the head element would be written into the page.
+              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+        </attribute>
+        <attribute>
+            <name>categoryExcludes</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> Comma separated category list string for category excludes.
+              Contributed head elements can be filtered out by this attribute.
+              If a contributed head element has a category and this attribute does not contain
+              the category, then the head element would be written into the page.
+              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+        </attribute>
+    </tag>
+    
+    <tag>
+        <name>writeHeadContributions</name>
+        <tag-class>org.hippoecm.hst.tag.HeadContributionsTag</tag-class>
+        <body-content>empty</body-content>
+        <description> All the HEAD elements contributed by each HstComponent can be accessed only by
+            the root HstComponent. The root HstComponent will be responsible for rendering all the
+            contributed HEAD elements. By inserting this tag, the root HstComponent can render all
+            the contributed HEAD elements. </description>
+        <attribute>
+            <name>xhtml</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>boolean</type>
+            <description> If this attribute is true, then the output will be generated as XHTML
+                format. By default, this value is false. </description>
+        </attribute>
+        <attribute>
+            <name>categoryIncludes</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> Comma separated category list string for category includes.
+              Contributed head elements can be filtered in by this attribute.
+              If a contributed head element has a category and this attribute contains
+              the category, then the head element would be written into the page.
+              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+        </attribute>
+        <attribute>
+            <name>categoryExcludes</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description> Comma separated category list string for category excludes.
+              Contributed head elements can be filtered out by this attribute.
+              If a contributed head element has a category and this attribute does not contain
+              the category, then the head element would be written into the page.
+              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+        </attribute>
+    </tag>
+    
     <tag>
         <name>namespace</name>
         <tag-class>org.hippoecm.hst.tag.NamespaceTag</tag-class>

@@ -29,6 +29,7 @@ import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 public class HeadContributionTag extends BodyTagSupport {
@@ -39,7 +40,12 @@ public class HeadContributionTag extends BodyTagSupport {
     
     protected String keyHint;
     
-    protected org.w3c.dom.Element element;
+    protected Element element;
+    
+    /**
+     * Comma separated category list where this head element should be in.
+     */
+    protected String category;
     
     public int doEndTag() throws JspException {
         // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
@@ -75,12 +81,10 @@ public class HeadContributionTag extends BodyTagSupport {
                     }
                 }
                 
-                if (!"".equals(xmlText)) {
-                    DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-                    Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
-                    element = doc.getDocumentElement();
-                }
+                DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+                Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
+                element = doc.getDocumentElement();
             } catch (Exception ex) {
                 throw new JspException(ex);
             } finally {
@@ -91,6 +95,14 @@ public class HeadContributionTag extends BodyTagSupport {
         if (element != null) {
             if (this.keyHint == null) {
                 this.keyHint = new StringBuilder().append(element.getTextContent()).toString();
+            }
+            
+            if (category != null) {
+                String existingCategoryHint = element.getAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE);
+                // if there already exists category hint in the element itself, ignore category property.
+                if (existingCategoryHint == null || "".equals(existingCategoryHint)) {
+                    element.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, category);
+                }
             }
             
             hstResponse.addHeadElement(element, this.keyHint);
@@ -110,16 +122,24 @@ public class HeadContributionTag extends BodyTagSupport {
         return this.keyHint;
     }
     
-    public void setElement(org.w3c.dom.Element element) {
+    public void setElement(Element element) {
         this.element = element;
     }
     
     public void setElementByBeanPath(String beanPath) {
-        this.element = (org.w3c.dom.Element) PageContextPropertyUtils.getProperty(pageContext, beanPath);
+        this.element = (Element) PageContextPropertyUtils.getProperty(pageContext, beanPath);
     }
     
-    public org.w3c.dom.Element getElement() {
+    public Element getElement() {
         return this.element;
     }
-
+    
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    
+    public String getCategory() {
+        return category;
+    }
+    
 }

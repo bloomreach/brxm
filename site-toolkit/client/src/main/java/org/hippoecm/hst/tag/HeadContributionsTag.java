@@ -16,11 +16,15 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HeadElementImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -37,6 +41,16 @@ public class HeadContributionsTag extends TagSupport {
     
     private boolean xhtml;
     
+    /**
+     * Comma separated category includes list
+     */
+    private Set<String> categoryIncludes;
+    
+    /**
+     * Comma separated category excludes list
+     */
+    private Set<String> categoryExcludes;
+    
     public HeadContributionsTag() {
     }
     
@@ -48,6 +62,30 @@ public class HeadContributionsTag extends TagSupport {
         return xhtml;
     }
     
+    public void setCategoryIncludes(String categoryIncludes) {
+        this.categoryIncludes = new HashSet<String>(Arrays.asList(StringUtils.split(categoryIncludes, ", ")));
+    }
+    
+    public String getCategoryIncludes() {
+        if (categoryIncludes != null) {
+            StringUtils.join(categoryIncludes, ", ");
+        }
+        
+        return null;
+    }
+    
+    public void setCategoryExcludes(String categoryExcludes) {
+        this.categoryExcludes = new HashSet<String>(Arrays.asList(StringUtils.split(categoryExcludes, ", ")));
+    }
+    
+    public String getCategoryExcludes() {
+        if (categoryExcludes != null) {
+            StringUtils.join(categoryExcludes, ", ");
+        }
+        
+        return null;
+    }
+    
     public int doEndTag() throws JspException {
         // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
         HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
@@ -57,17 +95,57 @@ public class HeadContributionsTag extends TagSupport {
         }
         
         if (hstResponse != null) {
-            List<org.w3c.dom.Element> headElements = hstResponse.getHeadElements();
+            List<Element> headElements = hstResponse.getHeadElements();
             
             if (headElements != null && !headElements.isEmpty()) {
                 try {
-                    for (Element headElement : headElements) {
-                        if (xhtml) {
-                            pageContext.getOut().println(HeadElementUtils.toXhtmlString(new HeadElementImpl(headElement)));
-                        } else {
-                            pageContext.getOut().println(HeadElementUtils.toHtmlString(new HeadElementImpl(headElement)));
+                    boolean categoryIncludesEmpty = (categoryIncludes == null || categoryIncludes.isEmpty());
+                    boolean categoryExcludesEmpty = (categoryExcludes == null || categoryExcludes.isEmpty());
+                    
+                    if (!categoryIncludesEmpty || !categoryExcludesEmpty) {
+                        for (Element headElement : headElements) {
+                            boolean skip = true;
+                            
+                            String [] categories = StringUtils.split(headElement.getAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE), ", ");
+                            int categoriesLength = (categories == null ? 0 : categories.length);
+                            
+                            if (!categoryIncludesEmpty) {
+                                if (categoriesLength != 0 && containsAnyCategory(categoryIncludes, categories)) {
+                                    skip = false;
+                                    if (!categoryExcludesEmpty) {
+                                        skip = containsAnyCategory(categoryExcludes, categories);
+                                    }
+                                }
+                            } else if (!categoryExcludesEmpty) {
+                                if (categoriesLength == 0) {
+                                    skip = false;
+                                } else {
+                                    skip = containsAnyCategory(categoryExcludes, categories);
+                                }
+                            }
+                            
+                            if (skip) {
+                                continue;
+                            }
+                            
+                            if (xhtml) {
+                                pageContext.getOut().println(HeadElementUtils.toXhtmlString(new HeadElementImpl(headElement)));
+                            } else {
+                                pageContext.getOut().println(HeadElementUtils.toHtmlString(new HeadElementImpl(headElement)));
+                            }
+                            
+                            pageContext.getOut().flush();
                         }
-                        pageContext.getOut().flush();
+                    } else {
+                        for (Element headElement : headElements) {
+                            if (xhtml) {
+                                pageContext.getOut().println(HeadElementUtils.toXhtmlString(new HeadElementImpl(headElement)));
+                            } else {
+                                pageContext.getOut().println(HeadElementUtils.toHtmlString(new HeadElementImpl(headElement)));
+                            }
+                            
+                            pageContext.getOut().flush();
+                        }
                     }
                 } catch (IOException ioe) {
                     throw new JspException("HeadContributionsTag Exception: cannot write to the output writer.");
@@ -76,6 +154,16 @@ public class HeadContributionsTag extends TagSupport {
         }
         
         return SKIP_BODY;
+    }
+    
+    private boolean containsAnyCategory(final Set<String> categorySet, final String [] categories) {
+        for (String category : categories) {
+            if (categorySet.contains(category)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
 }

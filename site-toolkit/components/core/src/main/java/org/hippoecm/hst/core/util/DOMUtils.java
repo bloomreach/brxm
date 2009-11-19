@@ -30,11 +30,11 @@ public class DOMUtils {
     private DOMUtils() {
     }
 
-    public static String stringifyElement(org.w3c.dom.Element element) {
+    public static String stringifyElement(Element element) {
         return stringifyElement(element, DEFAULT_ELEMENT_STRINGIFYING_BUFFER_SIZE, DEFAULT_INDENT, DEFAULT_INDENT_WITH);
     }
 
-    public static String stringifyElement(org.w3c.dom.Element element, int initialBufferSize, int indent, String indentWith) {
+    public static String stringifyElement(Element element, int initialBufferSize, int indent, String indentWith) {
         String stringified = null;
         StringWriter writer = new StringWriter(initialBufferSize);
 
