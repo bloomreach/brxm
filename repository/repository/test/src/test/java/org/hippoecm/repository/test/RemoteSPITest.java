@@ -38,7 +38,7 @@ import org.junit.runners.Suite;
     org.hippoecm.repository.DescriptorsTest.class,
     org.hippoecm.repository.PendingChangesTest.class,
     org.hippoecm.repository.RepositoryMapTest.class,
-//    org.hippoecm.repository.FacetedAuthorizationTest.class,
+    org.hippoecm.repository.FacetedAuthorizationTest.class,
     org.hippoecm.repository.FacetedNavigationChildNameTest.class,
     org.hippoecm.repository.FacetedNavigationHippoCountTest.class,
     org.hippoecm.repository.FacetedNavigationNamespaceTest.class,
