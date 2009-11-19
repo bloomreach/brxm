@@ -408,8 +408,9 @@ public interface HippoNodeType {
      */
     final public static String HIPPO_FACETNODENAMES = "hippo:facetnodenames";
     /**
-     * 
+     * Deprecated name for field descriptor nodes.  Use field name as node name instead.
      */
+    @Deprecated
     final public static String HIPPO_FIELD = "hipposysedit:field";
     /**
      * 
@@ -472,8 +473,9 @@ public interface HippoNodeType {
      */
     final public static String HIPPO_MULTIPLE = "hipposysedit:multiple";
     /**
-     * 
+     * Deprecated property for field name.  Use node name instead.
      */
+    @Deprecated
     final public static String HIPPO_NAME = "hipposysedit:name";
     /**
      * 

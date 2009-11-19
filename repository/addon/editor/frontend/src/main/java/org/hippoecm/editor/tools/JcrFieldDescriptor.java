@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
@@ -168,7 +169,27 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     }
 
     void setName(String name) {
-        setString(HippoNodeType.HIPPO_NAME, name);
+        if (name == null || "".equals(name)) {
+            throw new IllegalArgumentException("Null or empty field name is not allowed");
+        }
+        try {
+            Node node = getNode();
+            if (node.getName().equals(name)) {
+                log.debug("Field already has correct name");
+                return;
+            }
+            if (node.getParent().hasNode(name)) {
+                node.setProperty(HippoNodeType.HIPPO_NAME, name);
+                log.warn("A node with name " + name + " already exists, falling back to name property");
+            } else {
+                node.getSession().move(node.getPath(), node.getParent().getPath() + name);
+                if (node.hasProperty(HippoNodeType.HIPPO_NAME)) {
+                    node.getProperty(HippoNodeType.HIPPO_NAME).remove();
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     void setPrimary(boolean isprimary) {

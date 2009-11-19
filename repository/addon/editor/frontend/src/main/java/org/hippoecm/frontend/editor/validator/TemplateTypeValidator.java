@@ -57,9 +57,12 @@ public class TemplateTypeValidator implements ITypeValidator {
                 }
                 if (ntNode != null) {
                     HashSet<String> paths = new HashSet<String>();
-                    NodeIterator fieldIter = ntNode.getNodes(HippoNodeType.HIPPO_FIELD);
+                    NodeIterator fieldIter = ntNode.getNodes();
                     while (fieldIter.hasNext()) {
                         Node field = fieldIter.nextNode();
+                        if (!field.isNodeType(HippoNodeType.NT_FIELD)) {
+                            continue;
+                        }
                         String path = field.getProperty(HippoNodeType.HIPPO_PATH).getString();
                         if (paths.contains(path)) {
                             // TODO: add actual paths

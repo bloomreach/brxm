@@ -45,9 +45,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowDescriptor;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.Change;
 import org.hippoecm.repository.standardworkflow.ChangeType;
 import org.slf4j.Logger;
@@ -151,16 +148,34 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin<Namespace
             }
             Map<String, Node> draftDefinition = new TreeMap<String, Node>();
             if (draftNodeType != null) {
-                for (NodeIterator iter = draftNodeType.getNodes(HippoNodeType.HIPPO_FIELD); iter.hasNext();) {
+                for (NodeIterator iter = draftNodeType.getNodes(); iter.hasNext();) {
                     Node field = iter.nextNode();
-                    draftDefinition.put(field.getProperty(HippoNodeType.HIPPO_NAME).getString(), field);
+                    if (!field.isNodeType(HippoNodeType.NT_FIELD)) {
+                        continue;
+                    }
+                    String name;
+                    if (field.hasProperty(HippoNodeType.HIPPO_NAME)) {
+                        name = field.getProperty(HippoNodeType.HIPPO_NAME).getString();
+                    } else {
+                        name = field.getName();
+                    }
+                    draftDefinition.put(name, field);
                 }
             }
             Map<String, Node> currentDefinition = new TreeMap<String, Node>();
             if (currentNodeType != null) {
-                for (NodeIterator iter = currentNodeType.getNodes(HippoNodeType.HIPPO_FIELD); iter.hasNext();) {
+                for (NodeIterator iter = currentNodeType.getNodes(); iter.hasNext();) {
                     Node field = iter.nextNode();
-                    currentDefinition.put(field.getProperty(HippoNodeType.HIPPO_NAME).getString(), field);
+                    if (!field.isNodeType(HippoNodeType.NT_FIELD)) {
+                        continue;
+                    }
+                    String name;
+                    if (field.hasProperty(HippoNodeType.HIPPO_NAME)) {
+                        name = field.getProperty(HippoNodeType.HIPPO_NAME).getString();
+                    } else {
+                        name = field.getName();
+                    }
+                    currentDefinition.put(name, field);
                 }
             }
             if (draftNodeType != null) {

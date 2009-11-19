@@ -212,7 +212,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     public void addField(IFieldDescriptor descriptor) {
         try {
             Node typeNode = getNode();
-            Node field = typeNode.addNode(HippoNodeType.HIPPO_FIELD, HippoNodeType.NT_FIELD);
+            Node field = typeNode.addNode(descriptor.getName(), HippoNodeType.NT_FIELD);
             JcrFieldDescriptor desc = new JcrFieldDescriptor(new JcrNodeModel(field), this);
             desc.copy(descriptor);
 
@@ -224,6 +224,8 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     public void removeField(String field) {
         try {
+            detach();
+
             Node fieldNode = getFieldNode(field);
             if (fieldNode != null) {
                 IFieldDescriptor descriptor = new JcrFieldDescriptor(new JcrNodeModel(fieldNode), this);
@@ -235,8 +237,6 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             } else {
                 log.warn("field " + field + " was not found in type " + getType());
             }
-
-            detach();
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -373,14 +373,20 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     private Node getFieldNode(String field) throws RepositoryException {
         Node typeNode = getNode();
-        NodeIterator fieldIter = typeNode.getNodes(HippoNodeType.HIPPO_FIELD);
+        NodeIterator fieldIter = typeNode.getNodes();
         while (fieldIter.hasNext()) {
             Node fieldNode = fieldIter.nextNode();
+            if (!fieldNode.isNodeType(HippoNodeType.NT_FIELD)) {
+                continue;
+            }
+            String name;
             if (fieldNode.hasProperty(HippoNodeType.HIPPO_NAME)) {
-                String name = fieldNode.getProperty(HippoNodeType.HIPPO_NAME).getString();
-                if (name.equals(field)) {
-                    return fieldNode;
-                }
+                name = fieldNode.getProperty(HippoNodeType.HIPPO_NAME).getString();
+            } else {
+                name = fieldNode.getName();
+            }
+            if (name.equals(field)) {
+                return fieldNode;
             }
         }
         return null;
