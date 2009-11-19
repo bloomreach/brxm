@@ -524,4 +524,15 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         return false;
     }
 
+    @Override
+    public void save() {
+        attach();
+        // remove ordered attribute if present on a non-multiple field
+        for (IFieldDescriptor field : declaredFields.values()) {
+            if (!field.isMultiple() && field.isOrdered()) {
+                field.setOrdered(false);
+            }
+        }
+        super.save();
+    }
 }

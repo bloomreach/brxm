@@ -23,7 +23,9 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 
@@ -60,7 +62,7 @@ public class FieldEditor extends Panel {
             private static final long serialVersionUID = 1L;
 
             public Boolean getObject() {
-                return getDescriptor() == null ? null : new Boolean(getDescriptor().isMandatory());
+                return getDescriptor().getValidators().contains("required");
             }
 
             public void setObject(Boolean object) {
@@ -95,14 +97,20 @@ public class FieldEditor extends Panel {
             public void detach() {
             }
         }));
-        add(new Label("ordered-label", new ResourceModel("ordered")) {
+        Label orderedLabel = new Label("ordered-label", new ResourceModel("ordered"));
+        orderedLabel.add(new CssClassAppender(new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public boolean isEnabled() {
-                return super.isEnabled() && getDescriptor().isMultiple();
+            public String load() {
+                if(getDescriptor().isMultiple()) {
+                    return "";
+                } else {
+                    return "disabled";
+                }
             }
-        });
+        }));
+        add(orderedLabel);
         CheckBox ordered = new CheckBox("ordered", new IModel<Boolean>() {
             private static final long serialVersionUID = 1L;
 

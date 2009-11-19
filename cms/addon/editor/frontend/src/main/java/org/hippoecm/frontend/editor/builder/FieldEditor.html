@@ -25,25 +25,30 @@
       <table>
         <tr>
           <td>
-            <label for="mandatory"><wicket:message key="mandatory" /></label>
+            <input type="checkbox" wicket:id="mandatory"/>
           </td>
           <td>
-            <input type="checkbox" wicket:id="mandatory"/>
+            <label for="mandatory"><wicket:message key="mandatory" /></label>
           </td>
         </tr>
         <tr>
           <td>
-            <label for="multiple"><wicket:message key="multiple"/></label>
+            <input type="checkbox" wicket:id="multiple"/>
           </td>
           <td>
-            <input type="checkbox" wicket:id="multiple"/>
-            <table>
+            <label for="multiple"><wicket:message key="multiple"/></label>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="ordered">
               <tr>
                 <td>
-                  <label for="ordered" wicket:id="ordered-label">ordered</label>
+                  <input type="checkbox" wicket:id="ordered"/>
                 </td>
                 <td>
-                  <input type="checkbox" wicket:id="ordered"/>
+                  <label for="ordered" wicket:id="ordered-label">ordered</label>
                 </td>
               </tr>
             </table>
@@ -51,10 +56,10 @@
         </tr>
         <tr>
           <td>
-            <label for="primary"><wicket:message key="primary"/></label>
+            <input type="checkbox" wicket:id="primary"/>
           </td>
           <td>
-            <input type="checkbox" wicket:id="primary"/>
+            <label for="primary"><wicket:message key="primary"/></label>
           </td>
         </tr>
       </table>
