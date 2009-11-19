@@ -32,8 +32,8 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
-import org.hippoecm.frontend.validation.FieldElement;
-import org.hippoecm.frontend.validation.FieldPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.IValidateService;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -108,10 +108,10 @@ public class ValidationPluginTest extends PluginTest {
         Iterator<Violation> iter = violations.iterator();
         while (iter.hasNext()) {
             Violation violation = iter.next();
-            Set<FieldPath> paths = violation.getDependentPaths();
+            Set<ModelPath> paths = violation.getDependentPaths();
             assertEquals(1, paths.size());
 
-            FieldElement[] elements = paths.iterator().next().getElements();
+            ModelPathElement[] elements = paths.iterator().next().getElements();
             assertEquals(1, elements.length);
             jcrPaths.add(elements[0].getField().getPath());
         }
@@ -134,10 +134,10 @@ public class ValidationPluginTest extends PluginTest {
         Iterator<Violation> iter = violations.iterator();
         while (iter.hasNext()) {
             Violation violation = iter.next();
-            Set<FieldPath> paths = violation.getDependentPaths();
+            Set<ModelPath> paths = violation.getDependentPaths();
             assertEquals(1, paths.size());
 
-            FieldElement[] elements = paths.iterator().next().getElements();
+            ModelPathElement[] elements = paths.iterator().next().getElements();
             assertEquals(2, elements.length);
             jcrPaths.add(elements[0].getName() + '[' + (elements[0].getIndex() + 1) + ']' + '/' + elements[1].getName()
                     + '[' + (elements[1].getIndex() + 1) + ']');
