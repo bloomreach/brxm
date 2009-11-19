@@ -477,10 +477,8 @@
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>java.lang.String</type>
-            <description> Comma separated category list string.
-              A head element can be contributed by one or more categories, and
-              the page template that finally writes the head elements into a page
-              can do filtering based on category includes or excludes.
+            <description> Category name of the contributed head element.
+              The head elements can be filtered in or filtered out by this attribute.
               By the way, this attribute does not affect anything in portal/portlet environment. </description>
         </attribute>
     </tag>
@@ -533,10 +531,8 @@
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>java.lang.String</type>
-            <description> Comma separated category list string.
-              A head element can be contributed by one or more categories, and
-              the page template that finally writes the head elements into a page
-              can do filtering based on category includes or excludes.
+            <description> Category name of the contributed head element.
+              The head elements can be filtered in or filtered out by this attribute.
               By the way, this attribute does not affect anything in portal/portlet environment. </description>
         </attribute>
     </tag>

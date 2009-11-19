@@ -106,21 +106,23 @@ public class HeadContributionsTag extends TagSupport {
                         for (Element headElement : headElements) {
                             boolean skip = true;
                             
-                            String [] categories = StringUtils.split(headElement.getAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE), ", ");
-                            int categoriesLength = (categories == null ? 0 : categories.length);
+                            String category = headElement.getAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE);
+                            if (category != null && "".equals(category)) {
+                                category = null;
+                            }
                             
                             if (!categoryIncludesEmpty) {
-                                if (categoriesLength != 0 && containsAnyCategory(categoryIncludes, categories)) {
+                                if (category != null && categoryIncludes.contains(category)) {
                                     skip = false;
                                     if (!categoryExcludesEmpty) {
-                                        skip = containsAnyCategory(categoryExcludes, categories);
+                                        skip = categoryExcludes.contains(category);
                                     }
                                 }
                             } else if (!categoryExcludesEmpty) {
-                                if (categoriesLength == 0) {
+                                if (category == null) {
                                     skip = false;
                                 } else {
-                                    skip = containsAnyCategory(categoryExcludes, categories);
+                                    skip = categoryExcludes.contains(category);
                                 }
                             }
                             
@@ -154,16 +156,6 @@ public class HeadContributionsTag extends TagSupport {
         }
         
         return SKIP_BODY;
-    }
-    
-    private boolean containsAnyCategory(final Set<String> categorySet, final String [] categories) {
-        for (String category : categories) {
-            if (categorySet.contains(category)) {
-                return true;
-            }
-        }
-        
-        return false;
     }
     
 }

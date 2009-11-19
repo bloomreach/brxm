@@ -188,7 +188,69 @@
             <description>If value is 'true' the created link will be external, thus containing
                 'http://' or 'https://' etc</description>
         </attribute>
+        <attribute>
+            <name>canonical</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.boolean</type>
+            <description>If the link that is created should be the canonical link, use this attr with value true</description>
+        </attribute>
     </tag>
+
+    <tag>
+        <name>sitemapitem</name>
+        <tag-class>org.hippoecm.hst.tag.SiteMapItemTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>This sitemapitem tag can nested into a hst link tag to provide a preferred sitemap item to create the link for. You can define the 
+        preferred sitemap item by choosing one (no more) of these attributes: preferItem, preferItemId, preferItemPath or preferItemByPath. Optionally 
+        add a fallback attr which is a boolean true or false</description>
+        <attribute>
+            <name>preferItem</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.hippoecm.hst.configuration.sitemap.HstSiteMapItem</type>
+            <description>A HstSiteMapItem object. The preferred sitemap item to use for linkrewriting</description>
+        </attribute>
+        <attribute>
+            <name>preferItemId</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              The id of the preferred sitemap item to use for linkrewriting
+            </description>
+        </attribute>
+        <attribute>
+            <name>preferPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              The path of the preferred sitemap item to use for linkrewriting
+            </description>
+        </attribute>
+        <attribute>
+            <name>preferItemByPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              A bean path of HstSiteMapItem object which can be retrieved via pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean path.
+                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
+            </description>
+        </attribute>
+        <attribute>
+            <name>fallback</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>boolean</type>
+            <description>
+              whether to fallback to normal linkrewriting when this preferred sitemap item is not suited to be used for the link
+            </description>
+        </attribute>
+    </tag>
+
 
     <tag>
         <name>facetnavigationlink</name>
@@ -415,10 +477,8 @@
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>java.lang.String</type>
-            <description> Comma separated category list string.
-              A head element can be contributed by one or more categories, and
-              the page template that finally writes the head elements into a page
-              can do filtering based on category includes or excludes.
+            <description> Category name of the contributed head element.
+              The head elements can be filtered in or filtered out by this attribute.
               By the way, this attribute does not affect anything in portal/portlet environment. </description>
         </attribute>
     </tag>
@@ -471,10 +531,8 @@
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>java.lang.String</type>
-            <description> Comma separated category list string.
-              A head element can be contributed by one or more categories, and
-              the page template that finally writes the head elements into a page
-              can do filtering based on category includes or excludes.
+            <description> Category name of the contributed head element.
+              The head elements can be filtered in or filtered out by this attribute.
               By the way, this attribute does not affect anything in portal/portlet environment. </description>
         </attribute>
     </tag>
