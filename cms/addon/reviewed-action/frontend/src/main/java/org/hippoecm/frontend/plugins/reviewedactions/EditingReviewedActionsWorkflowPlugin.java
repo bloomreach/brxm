@@ -159,20 +159,19 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                                 dirty = true;
                             }
                         }
-                        if (dirty) {
-                            List<IValidateService> validators = context.getServices(config.getString(IValidateService.VALIDATE_ID),
-                                    IValidateService.class);
-                            if (validators != null) {
-                                for (IValidateService validator : validators) {
-                                    IValidationResult result = validator.validate();
-                                    if (!result.isValid()) {
-                                        return null;
-                                    }
-                                }
+                        List<IValidateService> validators = context.getServices(config.getString(IValidateService.VALIDATE_ID),
+                                IValidateService.class);
+                        boolean valid = true;
+                        if (validators != null) {
+                            for (IValidateService validator : validators) {
+                                IValidationResult result = validator.validate();
+                                valid = result.isValid();
                             }
+                        }
+                        if (dirty || !valid) {
                             IDialogService dialogService = context.getService(IDialogService.class.getName(),
                                     IDialogService.class);
-                            dialogService.show(new OnCloseDialog(actions, new JcrNodeModel(node), editor));
+                            dialogService.show(new OnCloseDialog(actions, new JcrNodeModel(node), editor, valid));
                         } else {
                             actions.revert();
                             return new Object();

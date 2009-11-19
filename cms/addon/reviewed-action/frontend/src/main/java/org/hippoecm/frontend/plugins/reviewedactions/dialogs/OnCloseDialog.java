@@ -50,7 +50,7 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
         void close();
     }
 
-    public OnCloseDialog(final Actions actions, JcrNodeModel model, final IEditor editor) {
+    public OnCloseDialog(final Actions actions, JcrNodeModel model, final IEditor editor, final boolean isValid) {
         super(model);
 
         setOkVisible(false);
@@ -80,6 +80,11 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
         button = new AjaxButton(getButtonId()) {
             private static final long serialVersionUID = 1L;
 
+            @Override
+            public boolean isEnabled() {
+                return isValid;
+            }
+            
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 try {
