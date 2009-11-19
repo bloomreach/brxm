@@ -89,26 +89,22 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
 
         Map<String, IFieldDescriptor> fields = type.getFields();
         for (Map.Entry<String, IFieldDescriptor> entry : fields.entrySet()) {
-            try {
-                IFieldDescriptor field = entry.getValue();
-                ITypeDescriptor type = typeStore.load(field.getType());
+            IFieldDescriptor field = entry.getValue();
+            ITypeDescriptor type = field.getTypeDescriptor();
 
-                config = new JavaPluginConfig(entry.getKey());
-                if (type.isNode()) {
-                    config.put("plugin.class", NodeFieldPlugin.class.getName());
-                } else {
-                    config.put("plugin.class", PropertyFieldPlugin.class.getName());
-                }
-                config.put("wicket.id", "${cluster.id}.field");
-                config.put("wicket.model", "${wicket.model}");
-                config.put("engine", "${engine}");
-                config.put("mode", "${mode}");
-                config.put("caption", entry.getKey());
-                config.put("field", entry.getKey());
-                list.add(config);
-            } catch (StoreException ex) {
-                log.error("Invalid type description", ex);
+            config = new JavaPluginConfig(entry.getKey());
+            if (type.isNode()) {
+                config.put("plugin.class", NodeFieldPlugin.class.getName());
+            } else {
+                config.put("plugin.class", PropertyFieldPlugin.class.getName());
             }
+            config.put("wicket.id", "${cluster.id}.field");
+            config.put("wicket.model", "${wicket.model}");
+            config.put("engine", "${engine}");
+            config.put("mode", "${mode}");
+            config.put("caption", entry.getKey());
+            config.put("field", entry.getKey());
+            list.add(config);
         }
         return list;
     }

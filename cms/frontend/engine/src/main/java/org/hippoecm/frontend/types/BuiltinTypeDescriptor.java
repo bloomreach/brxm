@@ -31,6 +31,7 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetachable {
     private transient Map<String, IFieldDescriptor> declaredFields;
     private transient NodeType nt = null;
 
-    BuiltinTypeDescriptor(String type, TypeLocator locator) {
+    BuiltinTypeDescriptor(String type, ITypeLocator locator) {
         super(type, type, locator);
 
         this.type = type;
@@ -109,13 +110,15 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetachable {
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
+            } catch (StoreException e) {
+                log.error("Failed to load type descriptor", e);
             }
             loaded = true;
         }
     }
     
-    protected void addDefinition(String prefix, ItemDefinition definition) {
-        BuiltinFieldDescriptor field = new BuiltinFieldDescriptor(prefix, definition);
+    protected void addDefinition(String prefix, ItemDefinition definition) throws StoreException {
+        BuiltinFieldDescriptor field = new BuiltinFieldDescriptor(prefix, definition, locator);
         if (definition.getDeclaringNodeType().equals(nt)) {
             declaredFields.put(definition.getName(), field);
         }

@@ -15,21 +15,11 @@
  */
 package org.hippoecm.editor.tools;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jcr.NamespaceRegistry;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ocm.StoreException;
-import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 
 /**
  * A namespace that unites multiple JCR namespaces by a "versioning" URI scheme.
@@ -60,39 +50,6 @@ public class JcrNamespace {
 
     private Session getJcrSession() {
         return session;
-    }
-
-    public Map<String, TypeUpdate> getUpdate(TypeLocator locator) throws RepositoryException, StoreException {
-        HippoSession session = (HippoSession) getJcrSession();
-        Map<String, TypeUpdate> result = new HashMap<String, TypeUpdate>();
-
-        String uri = getCurrentUri();
-        NodeIterator iter = ((Node) session.getItem(getPath())).getNodes();
-        while (iter.hasNext()) {
-            Node typeNode = iter.nextNode();
-
-            Node draft = null, current = null;
-            NodeIterator versions = typeNode.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-            while (versions.hasNext()) {
-                Node node = versions.nextNode();
-                if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    draft = node;
-                } else {
-                    if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                        current = node;
-                    }
-                }
-            }
-
-            if (current != null) {
-                ITypeDescriptor currentType = new JcrTypeDescriptor(new JcrNodeModel(current), locator);
-                ITypeDescriptor draftType = draft == null ? null : new JcrTypeDescriptor(new JcrNodeModel(draft),
-                        locator);
-                result.put(typeNode.getName(), new TypeConversion(locator, currentType, draftType)
-                        .getTypeUpdate());
-            }
-        }
-        return result;
     }
 
     public String getPath() {

@@ -28,8 +28,10 @@ import javax.jcr.ValueFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.ocm.JcrObject;
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
@@ -46,17 +48,19 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     private static final Logger log = LoggerFactory.getLogger(JcrFieldDescriptor.class);
 
     private Set<String> excluded;
-    private ITypeDescriptor type;
+    private JcrTypeDescriptor type;
     private String name;
 
     public JcrFieldDescriptor(JcrNodeModel model, JcrTypeDescriptor type) {
         super(model);
         this.type = type;
         try {
-            this.name = model.getNode().getName();
-            if (name.startsWith("hipposysedit:")) {
+            Node node = getNode();
+            if (node.hasProperty(HippoNodeType.HIPPO_NAME)) {
+                this.name = node.getProperty(HippoNodeType.HIPPO_NAME).getString();
                 log.debug("Property " + HippoNodeType.HIPPO_NAME + " is deprecated, use the node name instead");
-                name = getString(HippoNodeType.HIPPO_NAME);
+            } else {
+                this.name = node.getName();
             }
         } catch (RepositoryException e) {
             log.error("Error determining field name", e);
@@ -75,12 +79,20 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         setString(HippoNodeType.HIPPO_PATH, path);
     }
 
-    public String getType() {
+    String getType() {
         return getString(HippoNodeType.HIPPOSYSEDIT_TYPE);
     }
 
-    public void setType(String type) {
+    void setType(String type) {
         setString(HippoNodeType.HIPPOSYSEDIT_TYPE, type);
+    }
+
+    public ITypeDescriptor getTypeDescriptor() {
+        try {
+            return type.locator.locate(getType());
+        } catch (StoreException e) {
+            throw new RuntimeException("Field type cannot be resolved", e);
+        }
     }
 
     public boolean isMandatory() {
@@ -156,7 +168,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
 
     void copy(IFieldDescriptor source) {
         setName(source.getName());
-        setType(source.getType());
+        setType(source.getTypeDescriptor().getName());
         setPath(source.getPath());
         setExcluded(source.getExcluded());
 

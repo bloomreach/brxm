@@ -152,7 +152,7 @@ public class ValidationEngine implements IValidateService {
                 validator = new TemplateTypeValidator();
             } else {
                 ITypeDescriptor descriptor = locator.locate(nodeType);
-                validator = new JcrTypeValidator(descriptor, locator);
+                validator = new JcrTypeValidator(descriptor);
             }
             ((ValidationResult) resultModel.getObject()).setViolations(validator.validate(model));
             resultModel.notifyObservers(new EventCollection());

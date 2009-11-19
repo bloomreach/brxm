@@ -28,9 +28,28 @@ public class BuiltinTypeStore implements ITypeStore {
 
     private static final long serialVersionUID = 1L;
 
+    private ITypeLocator locator;
+
     @SuppressWarnings("unchecked")
+    public BuiltinTypeStore() {
+        locator = new TypeLocator(new IStore[] { this });
+    }
+
+    public ITypeLocator getTypeLocator() {
+        return this.locator;
+    }
+
+    /**
+     * Set the type locator that will be used by type descriptors to resolve super
+     * types.
+     * @param locator
+     */
+    public void setTypeLocator(ITypeLocator locator) {
+        this.locator = locator;
+    }
+
     public ITypeDescriptor getTypeDescriptor(String type) {
-        BuiltinTypeDescriptor result = new BuiltinTypeDescriptor(type, new TypeLocator(new IStore[] { this }));
+        BuiltinTypeDescriptor result = new BuiltinTypeDescriptor(type, locator);
         if (result.isValid()) {
             return result;
         }

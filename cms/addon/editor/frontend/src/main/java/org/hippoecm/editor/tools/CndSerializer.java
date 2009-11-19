@@ -38,6 +38,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
@@ -87,23 +88,14 @@ public class CndSerializer implements IClusterable {
                 IFieldDescriptor origField = entry.getValue();
                 FieldIdentifier oldId = new FieldIdentifier();
                 oldId.path = origField.getPath();
-                oldId.type = locator.locate(origField.getType()).getType();
+                oldId.type = origField.getTypeDescriptor().getType();
 
                 if (newType != null) {
                     IFieldDescriptor newField = newType.getField(entry.getKey());
                     if (newField != null) {
                         FieldIdentifier newId = new FieldIdentifier();
                         newId.path = newField.getPath();
-
-                        // deal with pseudo-types; find the jcr name
-                        String fieldTypeName = newField.getType();
-                        ITypeDescriptor fieldType;
-                        if (types.containsKey(fieldTypeName)) {
-                            fieldType = types.get(fieldTypeName).getNewType();
-                        } else {
-                            fieldType = locator.locate(fieldTypeName);
-                        }
-                        newId.type = fieldType.getType();
+                        newId.type = newField.getTypeDescriptor().getType();
 
                         update.renames.put(oldId, newId);
                     }
@@ -135,7 +127,7 @@ public class CndSerializer implements IClusterable {
                 visit(superType);
             }
             for (IFieldDescriptor field : descriptor.getFields().values()) {
-                visit(field.getType());
+                visit(field.getTypeDescriptor().getName());
             }
             result.add(types.get(typeName).getNewType());
         }
@@ -152,15 +144,32 @@ public class CndSerializer implements IClusterable {
     private JcrSessionModel jcrSession;
     private Map<String, String> namespaces;
     private LinkedHashMap<String, TypeEntry> types;
-    private TypeLocator locator;
+    private ITypeLocator oldTypeLocator;
+    private ITypeLocator newTypeLocator;
 
-    public CndSerializer(JcrSessionModel sessionModel, String namespace) throws RepositoryException, StoreException {
+    public CndSerializer(JcrSessionModel sessionModel, final String namespace) throws RepositoryException,
+            StoreException {
         this.jcrSession = sessionModel;
 
         JcrTypeStore jcrTypeStore = new JcrTypeStore();
         IStore<ITypeDescriptor> builtinTypeStore = new BuiltinTypeStore();
-        locator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore });
-        jcrTypeStore.setTypeLocator(locator);
+        oldTypeLocator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore });
+        jcrTypeStore.setTypeLocator(oldTypeLocator);
+
+        newTypeLocator = new ITypeLocator() {
+
+            public ITypeDescriptor locate(String type) throws StoreException {
+                if (type.indexOf(':') > 0 && namespace.equals(type.substring(0, type.indexOf(':')))) {
+                    if (types.containsKey(type)) {
+                        return types.get(type).newType;
+                    } else {
+                        throw new StoreException("Type " + type + " no longer exists");
+                    }
+                }
+                return oldTypeLocator.locate(type);
+            }
+
+        };
 
         this.namespaces = new HashMap<String, String>();
         addNamespace(namespace);
@@ -216,20 +225,22 @@ public class CndSerializer implements IClusterable {
 
             Node ntNode = templateTypeNode.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
             NodeIterator versions = ntNode.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+            Node oldTypeNode = null;
             while (versions.hasNext()) {
                 Node version = versions.nextNode();
                 if (version.isNodeType(HippoNodeType.NT_REMODEL)) {
                     if (version.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                        oldType = new JcrTypeDescriptor(new JcrNodeModel(version), locator);
+                        oldTypeNode = version;
+                        oldType = new JcrTypeDescriptor(new JcrNodeModel(version), oldTypeLocator);
                     }
                 } else {
-                    newType = new JcrTypeDescriptor(new JcrNodeModel(version), locator);
+                    newType = new JcrTypeDescriptor(new JcrNodeModel(version), newTypeLocator);
                 }
             }
 
             // FIXME: it should be possible to delete types.
             if (newType == null) {
-                newType = oldType;
+                newType = new JcrTypeDescriptor(new JcrNodeModel(oldTypeNode), newTypeLocator);
             }
             types.put(pseudoName, new TypeEntry(oldType, newType));
         }
@@ -246,9 +257,9 @@ public class CndSerializer implements IClusterable {
                 }
 
                 for (IFieldDescriptor field : descriptor.getFields().values()) {
-                    String subType = field.getType();
-                    ITypeDescriptor sub = getTypeDescriptor(subType);
+                    ITypeDescriptor sub = field.getTypeDescriptor();
                     if (sub.isNode()) {
+                        String subType = sub.getType();
                         addNamespace(subType.substring(0, subType.indexOf(':')));
 
                         List<String> superTypes = sub.getSuperTypes();
@@ -339,8 +350,7 @@ public class CndSerializer implements IClusterable {
     }
 
     private void renderField(StringBuffer output, IFieldDescriptor field) throws StoreException {
-        String subType = field.getType();
-        ITypeDescriptor sub = getTypeDescriptor(subType);
+        ITypeDescriptor sub = field.getTypeDescriptor();
         if (sub.isNode()) {
             output.append("+");
         } else {
@@ -403,14 +413,6 @@ public class CndSerializer implements IClusterable {
             renderField(output, field);
         }
         output.append("\n");
-    }
-
-    private ITypeDescriptor getTypeDescriptor(String subType) throws StoreException {
-        if (types.containsKey(subType)) {
-            return types.get(subType).getNewType();
-        } else {
-            return locator.locate(subType);
-        }
     }
 
     private Set<ITypeDescriptor> sortTypes() {

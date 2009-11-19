@@ -43,7 +43,7 @@ public class JcrTypeDescriptorTest extends PluginTest {
 
         IFieldDescriptor field = descriptor.getDeclaredFields().values().iterator().next();
         assertEquals("extra", field.getName());
-        assertEquals("String", field.getType());
+        assertEquals("String", field.getTypeDescriptor().getType());
 
         Map<String, IFieldDescriptor> fields = descriptor.getFields();
         assertEquals(3, fields.size());

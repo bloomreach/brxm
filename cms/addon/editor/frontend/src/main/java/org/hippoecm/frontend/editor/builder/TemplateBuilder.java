@@ -60,7 +60,6 @@ import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
-import org.hippoecm.frontend.types.TypeLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,8 +102,8 @@ public class TemplateBuilder implements IDetachable, IObservable {
             return delegate.getPath();
         }
 
-        public String getType() {
-            return delegate.getType();
+        public ITypeDescriptor getTypeDescriptor() {
+            return delegate.getTypeDescriptor();
         }
 
         public boolean isAutoCreated() {
@@ -153,11 +152,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         public void setPath(String path) {
             delegate.setPath(path);
-            updatePrototype();
-        }
-
-        public void setType(String type) {
-            delegate.setType(type);
             updatePrototype();
         }
 
@@ -463,7 +457,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private JcrTypeStore jcrTypeStore;
     private IStore<ITypeDescriptor> builtinTypeStore;
-    private TypeLocator locator;
 
     private JcrPrototypeStore prototypeStore;
 
@@ -487,8 +480,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         this.jcrTypeStore = new JcrTypeStore();
         this.builtinTypeStore = new BuiltinTypeStore();
-        locator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore });
-        jcrTypeStore.setTypeLocator(locator);
         IStore<ITypeDescriptor> fieldTypeStore = new IStore<ITypeDescriptor>() {
             private static final long serialVersionUID = 1L;
 
@@ -652,7 +643,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     String oldPath = entry.getValue();
                     IFieldDescriptor newField = typeDescriptor.getField(entry.getKey());
                     if (newField != null) {
-                        ITypeDescriptor fieldType = locator.locate(newField.getType());
+                        ITypeDescriptor fieldType = newField.getTypeDescriptor();
                         if (!newField.getPath().equals(oldPath) && !newField.getPath().equals("*")
                                 && !oldPath.equals("*")) {
                             if (fieldType.isNode()) {
@@ -705,20 +696,12 @@ public class TemplateBuilder implements IDetachable, IObservable {
             log.error("Failed to update prototype", ex.getMessage());
         } catch (BuilderException ex) {
             log.error("Incomplete model", ex);
-        } catch (StoreException ex) {
-            log.error("Invalid field type", ex);
         }
     }
 
     protected void processFieldAdded(IFieldDescriptor fieldDescriptor) {
         if (clusterConfig != null) {
-            ITypeDescriptor fieldType;
-            try {
-                fieldType = locator.locate(fieldDescriptor.getType());
-            } catch (StoreException ex) {
-                log.error("Unknown type " + fieldDescriptor.getType(), ex);
-                return;
-            }
+            ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
 
             String pluginName = UUID.randomUUID().toString();
             JavaPluginConfig pluginConfig = new JavaPluginConfig(pluginName);

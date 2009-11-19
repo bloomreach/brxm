@@ -34,6 +34,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -53,7 +54,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(JcrTypeStore.class);
 
-    private TypeLocator locator;
+    private ITypeLocator locator;
     private Map<String, JcrTypeDescriptor> types = new HashMap<String, JcrTypeDescriptor>();
 
     @SuppressWarnings("unchecked")
@@ -62,7 +63,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         locator = new TypeLocator(new IStore[] { this, builtinTypeStore });
     }
 
-    public TypeLocator getTypeLocator() {
+    public ITypeLocator getTypeLocator() {
         return this.locator;
     }
 
@@ -71,7 +72,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
      * types.
      * @param locator
      */
-    public void setTypeLocator(TypeLocator locator) {
+    public void setTypeLocator(ITypeLocator locator) {
         this.locator = locator;
     }
 
@@ -95,10 +96,6 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
             }
         }
         return result;
-    }
-
-    public Map<String, TypeUpdate> getUpdate(String prefix) throws RepositoryException, StoreException {
-        return new JcrNamespace(getJcrSession(), prefix).getUpdate(locator);
     }
 
     public void delete(ITypeDescriptor object) {

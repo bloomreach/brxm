@@ -31,9 +31,7 @@ import org.hippoecm.frontend.editor.builder.EditorContext;
 import org.hippoecm.frontend.editor.builder.FieldEditor;
 import org.hippoecm.frontend.editor.builder.IBuilderListener;
 import org.hippoecm.frontend.editor.builder.RenderPluginEditorPlugin;
-import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -132,14 +130,13 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
         @Override
         protected void onBeforeRender() {
-            IFieldDescriptor descriptor = (IFieldDescriptor) fieldModel.getObject();
+            IFieldDescriptor descriptor = fieldModel.getObject();
             // Field editor
             Panel panel = new EmptyPanel(TEMPLATE_PARAMETER_EDITOR);
             if (descriptor != null) {
-                String subType = descriptor.getType();
                 ITemplateEngine engine = getTemplateEngine();
                 try {
-                    IClusterConfig target = engine.getTemplate(engine.getType(subType), "edit");
+                    IClusterConfig target = engine.getTemplate(descriptor.getTypeDescriptor(), "edit");
                     panel = new TemplateParameterEditor(TEMPLATE_PARAMETER_EDITOR, getClusterParameters(edit), target,
                             edit);
                 } catch (TemplateEngineException e) {

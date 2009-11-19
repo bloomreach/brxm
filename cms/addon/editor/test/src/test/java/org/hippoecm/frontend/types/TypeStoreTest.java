@@ -45,7 +45,7 @@ public class TypeStoreTest extends PluginTest {
         assertTrue(fields.keySet().contains("child"));
 
         IFieldDescriptor title = fields.get("title");
-        assertEquals("String", title.getType());
+        assertEquals("String", title.getTypeDescriptor().getName());
         assertEquals("test:title", title.getPath());
         assertEquals("title", title.getName());
     }
@@ -62,7 +62,7 @@ public class TypeStoreTest extends PluginTest {
         assertTrue(fields.keySet().contains("test:child"));
 
         IFieldDescriptor title = fields.get("test:title");
-        assertEquals("String", title.getType());
+        assertEquals("String", title.getTypeDescriptor().getName());
         assertEquals("test:title", title.getPath());
     }
 
@@ -100,7 +100,7 @@ public class TypeStoreTest extends PluginTest {
         assertEquals(0, expected.size());
         assertTrue(title != null);
 
-        assertEquals("String", title.getType());
+        assertEquals("String", title.getTypeDescriptor().getName());
         assertEquals("test:title", title.getPath());
         assertEquals(titleName, title.getName());
     }

@@ -17,11 +17,13 @@ package org.hippoecm.frontend.editor.builder;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 
@@ -34,81 +36,104 @@ public class FieldEditor extends Panel {
     private ITypeDescriptor type;
     private boolean edit;
 
-    public FieldEditor(String id, ITypeDescriptor type, IModel model, boolean edit) {
+    public FieldEditor(String id, ITypeDescriptor type, IModel<IFieldDescriptor> model, boolean edit) {
         super(id, model);
 
         this.type = type;
         this.edit = edit;
 
-        addFormField(new TextField("path", new IModel() {
+        addFormField(new TextField<String>("path", new IModel<String>() {
             private static final long serialVersionUID = 1L;
 
-            public Object getObject() {
+            public String getObject() {
                 return getDescriptor().getPath();
             }
 
-            public void setObject(Object object) {
-                getDescriptor().setPath((String) object);
+            public void setObject(String object) {
+                getDescriptor().setPath(object);
             }
 
             public void detach() {
             }
         }));
-        addFormField(new CheckBox("mandatory", new IModel() {
+        addFormField(new CheckBox("mandatory", new IModel<Boolean>() {
             private static final long serialVersionUID = 1L;
 
-            public Object getObject() {
+            public Boolean getObject() {
                 return getDescriptor() == null ? null : new Boolean(getDescriptor().isMandatory());
             }
 
-            public void setObject(Object object) {
-                Boolean bool = (Boolean) object;
-                getDescriptor().setMandatory(bool);
+            public void setObject(Boolean object) {
+                IFieldDescriptor field = getDescriptor();
+                if (object) {
+                    field.addValidator("required");
+                    if (field.getTypeDescriptor().isType("String")) {
+                        field.addValidator("non-empty");
+                    }
+                } else {
+                    if (field.getTypeDescriptor().isType("String")) {
+                        field.removeValidator("non-empty");
+                    }
+                    field.removeValidator("required");
+                }
             }
 
             public void detach() {
             }
         }));
-        addFormField(new CheckBox("multiple", new IModel() {
+        addFormField(new CheckBox("multiple", new IModel<Boolean>() {
             private static final long serialVersionUID = 1L;
 
-            public Object getObject() {
+            public Boolean getObject() {
                 return getDescriptor() == null ? null : new Boolean(getDescriptor().isMultiple());
             }
 
-            public void setObject(Object object) {
-                Boolean bool = (Boolean) object;
-                getDescriptor().setMultiple(bool);
+            public void setObject(Boolean object) {
+                getDescriptor().setMultiple(object);
             }
 
             public void detach() {
             }
         }));
-        addFormField(new CheckBox("ordered", new IModel() {
+        add(new Label("ordered-label", new ResourceModel("ordered")) {
             private static final long serialVersionUID = 1L;
 
-            public Object getObject() {
+            @Override
+            public boolean isEnabled() {
+                return super.isEnabled() && getDescriptor().isMultiple();
+            }
+        });
+        CheckBox ordered = new CheckBox("ordered", new IModel<Boolean>() {
+            private static final long serialVersionUID = 1L;
+
+            public Boolean getObject() {
                 return getDescriptor() == null ? null : new Boolean(getDescriptor().isOrdered());
             }
 
-            public void setObject(Object object) {
-                Boolean bool = (Boolean) object;
-                getDescriptor().setOrdered(bool);
+            public void setObject(Boolean object) {
+                getDescriptor().setOrdered(object);
             }
 
             public void detach() {
             }
-        }));
-        addFormField(new CheckBox("primary", new IModel() {
+        }) {
             private static final long serialVersionUID = 1L;
 
-            public Object getObject() {
+            @Override
+            public boolean isEnabled() {
+                return super.isEnabled() && getDescriptor().isMultiple();
+            }
+        };
+        addFormField(ordered);
+        addFormField(new CheckBox("primary", new IModel<Boolean>() {
+            private static final long serialVersionUID = 1L;
+
+            public Boolean getObject() {
                 return getDescriptor() == null ? null : new Boolean(getDescriptor().isPrimary());
             }
 
-            public void setObject(Object object) {
-                Boolean bool = (Boolean) object;
-                if (bool) {
+            public void setObject(Boolean object) {
+                if (object) {
                     FieldEditor.this.type.setPrimary(getDescriptor().getName());
                 }
             }
@@ -129,10 +154,6 @@ public class FieldEditor extends Panel {
         return (IFieldDescriptor) getDefaultModelObject();
     }
 
-    void setType(ITypeDescriptor type) {
-        this.type = type;
-    }
-
     @Override
     public boolean isVisible() {
         return getDefaultModelObject() != null;
@@ -141,7 +162,7 @@ public class FieldEditor extends Panel {
     /**
      * Adds an ajax updating form component
      */
-    protected void addFormField(FormComponent component) {
+    protected void addFormField(FormComponent<?> component) {
         add(component);
         if (edit) {
             component.setOutputMarkupId(true);

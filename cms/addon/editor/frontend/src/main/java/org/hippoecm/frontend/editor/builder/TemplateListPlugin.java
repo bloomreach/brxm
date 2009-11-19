@@ -158,7 +158,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     String prefix = containingType.getName();
                     if (prefix.indexOf(':') > 0) {
                         prefix = prefix.substring(0, prefix.indexOf(':'));
-                        containingType.addField(new JavaFieldDescriptor(prefix, type.getName()));
+                        containingType.addField(new JavaFieldDescriptor(prefix, type));
                     } else {
                         log.warn("adding a field to a primitive type is not supported");
                     }
