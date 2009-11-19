@@ -76,7 +76,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
         IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
             subscribe();
-            if (!field.isMandatory()) {
+            if (!field.getValidators().contains("required")) {
                 required.setVisible(false);
             }
         }

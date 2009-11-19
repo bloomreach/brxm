@@ -82,7 +82,17 @@ public class FieldEditor extends Panel {
 
             public void detach() {
             }
-        }));
+        }) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isEnabled() {
+                if (getDescriptor().isMandatory()) {
+                    return false;
+                }
+                return super.isEnabled();
+            }
+        });
         addFormField(new CheckBox("multiple", new IModel<Boolean>() {
             private static final long serialVersionUID = 1L;
 

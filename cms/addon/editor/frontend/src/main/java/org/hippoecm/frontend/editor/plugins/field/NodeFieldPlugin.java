@@ -61,7 +61,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         add(new Label("name", new StringResourceModel(captionKey, this, null, config.getString("caption"))));
 
         Label required = new Label("required", "*");
-        if (field != null && !field.isMandatory()) {
+        if (field != null && !field.getValidators().contains("required")) {
             required.setVisible(false);
         }
         add(required);
