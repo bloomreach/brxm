@@ -175,15 +175,11 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             ITemplateEngine engine = getTemplateEngine();
             if (engine != null) {
                 IModel<P> model = getModel();
-                try {
-                    ITypeDescriptor subType = engine.getType(field.getType());
-                    provider = newProvider(field, subType, model);
-                    if (provider != null) {
-                        controller.stop();
-                        controller.start(provider);
-                    }
-                } catch (TemplateEngineException ex) {
-                    log.warn("Unable to obtain type descriptor for " + model, ex);
+                ITypeDescriptor subType = field.getTypeDescriptor();
+                provider = newProvider(field, subType, model);
+                if (provider != null) {
+                    controller.stop();
+                    controller.start(provider);
                 }
             } else {
                 log.warn("No engine found to display new model");
@@ -287,7 +283,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         ITemplateEngine engine = getTemplateEngine();
         IFieldDescriptor field = helper.getField();
         try {
-            IClusterConfig template = engine.getTemplate(engine.getType(field.getType()), mode);
+            IClusterConfig template = engine.getTemplate(field.getTypeDescriptor(), mode);
             return (template.getReferences().contains("validator.model"));
         } catch (TemplateEngineException e) {
             return false;
@@ -297,7 +293,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     public IClusterControl getTemplate(C model) throws TemplateEngineException {
         ITemplateEngine engine = getTemplateEngine();
         IFieldDescriptor field = helper.getField();
-        IClusterConfig template = engine.getTemplate(engine.getType(field.getType()), mode);
+        IClusterConfig template = engine.getTemplate(field.getTypeDescriptor(), mode);
 
         IPluginConfig parameters = new JavaPluginConfig(getPluginConfig().getPluginConfig("cluster.options"));
         parameters.put(ITemplateEngine.ENGINE, getPluginConfig().getString(ITemplateEngine.ENGINE));

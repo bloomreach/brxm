@@ -21,6 +21,7 @@ import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +33,8 @@ class BuiltinFieldDescriptor extends JavaFieldDescriptor {
 
     private static final Logger log = LoggerFactory.getLogger(BuiltinFieldDescriptor.class);
 
-    BuiltinFieldDescriptor(String prefix, ItemDefinition definition) {
-        super(prefix, getType(definition));
+    BuiltinFieldDescriptor(String prefix, ItemDefinition definition, ITypeLocator locator) throws StoreException {
+        super(prefix, locator.locate(getType(definition)));
 
         setPath(definition.getName());
         if (definition instanceof NodeDefinition) {

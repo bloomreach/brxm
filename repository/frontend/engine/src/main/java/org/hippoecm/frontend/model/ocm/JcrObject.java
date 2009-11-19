@@ -85,8 +85,9 @@ abstract public class JcrObject implements IDetachable, IObservable {
         }
     }
 
-    public void setObservationContext(IObservationContext context) {
-        this.obContext = context;
+    @SuppressWarnings("unchecked")
+    public void setObservationContext(IObservationContext<? extends IObservable> context) {
+        this.obContext = (IObservationContext<JcrObject>) context;
     }
 
     protected IObservationContext getObservationContext() {

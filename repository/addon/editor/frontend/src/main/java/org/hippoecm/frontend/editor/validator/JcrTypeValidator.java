@@ -22,7 +22,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
 
@@ -34,9 +33,9 @@ public class JcrTypeValidator implements ITypeValidator {
 
     private Set<JcrFieldValidator> fieldValidators = new HashSet<JcrFieldValidator>();
 
-    public JcrTypeValidator(ITypeDescriptor type, TypeLocator typeLocator) throws StoreException {
+    public JcrTypeValidator(ITypeDescriptor type) throws StoreException {
         for (IFieldDescriptor field : type.getFields().values()) {
-            fieldValidators.add(new JcrFieldValidator(field, typeLocator));
+            fieldValidators.add(new JcrFieldValidator(field));
         }
     }
 

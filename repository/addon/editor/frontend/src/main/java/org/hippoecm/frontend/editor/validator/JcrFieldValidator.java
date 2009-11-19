@@ -32,9 +32,8 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.TypeLocator;
-import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ModelPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
@@ -49,11 +48,11 @@ public class JcrFieldValidator implements ITypeValidator {
     private ITypeDescriptor fieldType;
     private ITypeValidator typeValidator;
 
-    public JcrFieldValidator(IFieldDescriptor field, TypeLocator locator) throws StoreException {
+    public JcrFieldValidator(IFieldDescriptor field) throws StoreException {
         this.field = field;
-        this.fieldType = locator.locate(field.getType());
+        this.fieldType = field.getTypeDescriptor();
         if (fieldType.isNode()) {
-            typeValidator = new JcrTypeValidator(fieldType, locator);
+            typeValidator = new JcrTypeValidator(fieldType);
         }
     }
 

@@ -43,7 +43,6 @@ import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.ocm.JcrObject;
@@ -51,8 +50,8 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
-import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,15 +64,16 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     private static final Logger log = LoggerFactory.getLogger(JcrTypeDescriptor.class);
 
+    ITypeLocator locator;
+
     private String name;
-    private TypeLocator locator;
     private Map<String, IFieldDescriptor> declaredFields;
     private Map<String, IFieldDescriptor> fields;
     private Map<String, IObserver> observers = new TreeMap<String, IObserver>();
     private IFieldDescriptor primary;
     private transient boolean attached = false;
 
-    public JcrTypeDescriptor(JcrNodeModel nodeModel, TypeLocator locator) throws RepositoryException {
+    public JcrTypeDescriptor(JcrNodeModel nodeModel, ITypeLocator locator) throws RepositoryException {
         super(nodeModel);
 
         this.locator = locator;

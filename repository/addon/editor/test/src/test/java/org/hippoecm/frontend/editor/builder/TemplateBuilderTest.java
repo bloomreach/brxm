@@ -43,6 +43,7 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutPlugin;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
+import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
@@ -121,8 +122,9 @@ public class TemplateBuilderTest extends PluginTest {
 
         }, IObserver.class.getName());
 
+        BuiltinTypeStore builtinTypes = new BuiltinTypeStore();
         ITypeDescriptor type = builder.getTypeDescriptor();
-        type.addField(new JavaFieldDescriptor("test", "nt:unstructured"));
+        type.addField(new JavaFieldDescriptor("test", builtinTypes.load("nt:unstructured")));
 
         home.processEvents();
 
@@ -190,9 +192,10 @@ public class TemplateBuilderTest extends PluginTest {
         IClusterConfig config = builder.getTemplate();
         Node node = builder.getPrototype().getNode();
 
+        BuiltinTypeStore typeStore = new BuiltinTypeStore();
         // add a field to the type: a plugin should be added
         List<IPluginConfig> plugins = config.getPlugins();
-        type.addField(new JavaFieldDescriptor("test", "nt:unstructured"));
+        type.addField(new JavaFieldDescriptor("test", typeStore.load("nt:unstructured")));
         home.processEvents();
         assertEquals(4, plugins.size());
 

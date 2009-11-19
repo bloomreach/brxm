@@ -42,6 +42,8 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
 
     private static final Logger log = LoggerFactory.getLogger(JavaTypeDescriptor.class);
 
+    ITypeLocator locator;
+
     private String name;
     private String type;
     private List<String> superTypes;
@@ -50,11 +52,10 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     private JavaFieldDescriptor primary;
     private boolean node;
     private boolean mixin;
-    private TypeLocator locator;
     private IObservationContext obContext;
     private boolean mutable = true;
 
-    public JavaTypeDescriptor(String name, String type, TypeLocator locator) {
+    public JavaTypeDescriptor(String name, String type, ITypeLocator locator) {
         this.name = name;
         this.type = type;
         this.superTypes = new LinkedList<String>();

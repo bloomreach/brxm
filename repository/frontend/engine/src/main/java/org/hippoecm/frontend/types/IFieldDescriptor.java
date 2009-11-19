@@ -25,10 +25,8 @@ public interface IFieldDescriptor extends IClusterable, IObservable {
 
     String getName();
 
-    String getType();
-
-    void setType(String type);
-
+    ITypeDescriptor getTypeDescriptor();
+    
     String getPath();
 
     void setPath(String path);

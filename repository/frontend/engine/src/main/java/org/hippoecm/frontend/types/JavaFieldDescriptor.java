@@ -30,8 +30,8 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
     private static final long serialVersionUID = 1L;
 
     private String name;
-    private String type;
     private String path;
+    private ITypeDescriptor type;
 
     private Set<String> excluded;
     private Set<String> validators = new TreeSet<String>();
@@ -45,9 +45,9 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
 
     private IObservationContext obContext;
     
-    public JavaFieldDescriptor(String prefix, String type) {
+    public JavaFieldDescriptor(String prefix, ITypeDescriptor type) {
         this.type = type;
-        this.path = prefix + ":" + type.toLowerCase().replace(':', '_');
+        this.path = prefix + ":" + type.getName().toLowerCase().replace(':', '_');
         this.excluded = null;
         this.name = UUID.randomUUID().toString();
 
@@ -55,7 +55,7 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
     }
 
     public JavaFieldDescriptor(IFieldDescriptor source) {
-        this.type = source.getType();
+        this.type = source.getTypeDescriptor();
         this.path = source.getPath();
         this.excluded = source.getExcluded();
 
@@ -72,11 +72,11 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
     }
 
     public String getType() {
-        return type;
+        return type.getName();
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public ITypeDescriptor getTypeDescriptor() {
+        return type;
     }
 
     public String getPath() {
