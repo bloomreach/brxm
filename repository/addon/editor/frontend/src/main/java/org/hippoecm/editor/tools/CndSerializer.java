@@ -29,12 +29,16 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
+import org.hippoecm.frontend.types.BuiltinTypeDescriptor;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -54,20 +58,32 @@ public class CndSerializer implements IClusterable {
     private static Logger log = LoggerFactory.getLogger(CndSerializer.class);
 
     class TypeEntry {
-        ITypeDescriptor oldType;
-        ITypeDescriptor newType;
+        Node oldType;
+        Node newType;
 
-        TypeEntry(ITypeDescriptor oldType, ITypeDescriptor newType) {
+        TypeEntry(Node oldType, Node newType) {
             this.oldType = oldType;
             this.newType = newType;
         }
 
-        ITypeDescriptor getOldType() {
-            return oldType;
+        ITypeDescriptor getOldType() throws StoreException {
+            try {
+                return new JcrTypeDescriptor(new JcrNodeModel(oldType), oldTypeLocator);
+            } catch (RepositoryException e) {
+                throw new StoreException(e);
+            }
         }
 
-        ITypeDescriptor getNewType() {
-            return newType;
+        ITypeDescriptor getNewType() throws StoreException {
+            try {
+                // FIXME: it should be possible to delete types.
+                if (newType == null) {
+                    return new JcrTypeDescriptor(new JcrNodeModel(oldType), newTypeLocator);
+                }
+                return new JcrTypeDescriptor(new JcrNodeModel(newType), newTypeLocator);
+            } catch (RepositoryException e) {
+                throw new StoreException(e);
+            }
         }
 
         TypeUpdate getUpdate() throws StoreException {
@@ -77,21 +93,24 @@ public class CndSerializer implements IClusterable {
 
             TypeUpdate update = new TypeUpdate();
 
+            ITypeDescriptor oldTypeDescriptor = getOldType();
+            ITypeDescriptor newTypeDescriptor = getNewType();
+
             if (newType != null) {
-                update.newName = newType.getName();
+                update.newName = newTypeDescriptor.getName();
             } else {
-                update.newName = oldType.getName();
+                update.newName = oldTypeDescriptor.getName();
             }
 
             update.renames = new HashMap<FieldIdentifier, FieldIdentifier>();
-            for (Map.Entry<String, IFieldDescriptor> entry : oldType.getFields().entrySet()) {
+            for (Map.Entry<String, IFieldDescriptor> entry : oldTypeDescriptor.getFields().entrySet()) {
                 IFieldDescriptor origField = entry.getValue();
                 FieldIdentifier oldId = new FieldIdentifier();
                 oldId.path = origField.getPath();
                 oldId.type = origField.getTypeDescriptor().getType();
 
                 if (newType != null) {
-                    IFieldDescriptor newField = newType.getField(entry.getKey());
+                    IFieldDescriptor newField = newTypeDescriptor.getField(entry.getKey());
                     if (newField != null) {
                         FieldIdentifier newId = new FieldIdentifier();
                         newId.path = newField.getPath();
@@ -115,7 +134,7 @@ public class CndSerializer implements IClusterable {
             visited = new HashSet<String>();
         }
 
-        void visit(String typeName) {
+        void visit(String typeName) throws StoreException {
             if (visited.contains(typeName) || !types.containsKey(typeName)) {
                 return;
             }
@@ -132,7 +151,7 @@ public class CndSerializer implements IClusterable {
             result.add(types.get(typeName).getNewType());
         }
 
-        LinkedHashSet<ITypeDescriptor> sort() {
+        LinkedHashSet<ITypeDescriptor> sort() throws StoreException {
             result = new LinkedHashSet<ITypeDescriptor>();
             for (String type : types.keySet()) {
                 visit(type);
@@ -151,25 +170,30 @@ public class CndSerializer implements IClusterable {
             StoreException {
         this.jcrSession = sessionModel;
 
-        JcrTypeStore jcrTypeStore = new JcrTypeStore();
-        IStore<ITypeDescriptor> builtinTypeStore = new BuiltinTypeStore();
-        oldTypeLocator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore });
+        final JcrTypeStore jcrTypeStore = new JcrTypeStore();
+        IStore<ITypeDescriptor> oldBuiltinTypeStore = new BuiltinTypeStore();
+        oldTypeLocator = new TypeLocator(new IStore[] { jcrTypeStore, oldBuiltinTypeStore });
         jcrTypeStore.setTypeLocator(oldTypeLocator);
 
+        JcrTypeStore newJcrTypeStore = new JcrTypeStore();
+        final BuiltinTypeStore newBuiltinTypeStore = new BuiltinTypeStore();
+        final ITypeLocator newLocator = new TypeLocator(new IStore[] { newJcrTypeStore, newBuiltinTypeStore });
         newTypeLocator = new ITypeLocator() {
 
             public ITypeDescriptor locate(String type) throws StoreException {
                 if (type.indexOf(':') > 0 && namespace.equals(type.substring(0, type.indexOf(':')))) {
                     if (types.containsKey(type)) {
-                        return types.get(type).newType;
+                        return types.get(type).getNewType();
                     } else {
-                        throw new StoreException("Type " + type + " no longer exists");
+                        return newBuiltinTypeStore.load(type);
                     }
                 }
-                return oldTypeLocator.locate(type);
+                return newLocator.locate(type);
             }
 
         };
+        newBuiltinTypeStore.setTypeLocator(newTypeLocator);
+        newJcrTypeStore.setTypeLocator(newTypeLocator);
 
         this.namespaces = new HashMap<String, String>();
         addNamespace(namespace);
@@ -187,8 +211,8 @@ public class CndSerializer implements IClusterable {
         }
         output.append("\n");
 
-        Set<ITypeDescriptor> sorted = sortTypes();
         try {
+            Set<ITypeDescriptor> sorted = sortTypes();
             for (ITypeDescriptor type : sorted) {
                 renderType(output, type);
             }
@@ -216,31 +240,25 @@ public class CndSerializer implements IClusterable {
         JcrNamespace jcrNamespace = new JcrNamespace(session, namespace);
         String uri = jcrNamespace.getCurrentUri();
         Node nsNode = session.getRootNode().getNode(jcrNamespace.getPath().substring(1));
+
         NodeIterator typeIter = nsNode.getNodes();
         while (typeIter.hasNext()) {
             Node templateTypeNode = typeIter.nextNode();
             String pseudoName = namespace + ":" + templateTypeNode.getName();
 
-            ITypeDescriptor oldType = null, newType = null;
+            Node oldType = null, newType = null;
 
             Node ntNode = templateTypeNode.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
             NodeIterator versions = ntNode.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-            Node oldTypeNode = null;
             while (versions.hasNext()) {
                 Node version = versions.nextNode();
                 if (version.isNodeType(HippoNodeType.NT_REMODEL)) {
                     if (version.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                        oldTypeNode = version;
-                        oldType = new JcrTypeDescriptor(new JcrNodeModel(version), oldTypeLocator);
+                        oldType = version;
                     }
                 } else {
-                    newType = new JcrTypeDescriptor(new JcrNodeModel(version), newTypeLocator);
+                    newType = version;
                 }
-            }
-
-            // FIXME: it should be possible to delete types.
-            if (newType == null) {
-                newType = new JcrTypeDescriptor(new JcrNodeModel(oldTypeNode), newTypeLocator);
             }
             types.put(pseudoName, new TypeEntry(oldType, newType));
         }
@@ -415,7 +433,7 @@ public class CndSerializer implements IClusterable {
         output.append("\n");
     }
 
-    private Set<ITypeDescriptor> sortTypes() {
+    private Set<ITypeDescriptor> sortTypes() throws StoreException {
         return new SortContext().sort();
     }
 
