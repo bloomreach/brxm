@@ -492,6 +492,16 @@ public class BaseHstComponent extends GenericHstComponent {
         jcrPrimaryNodeTypeClassPairs.put(jcrPrimaryNodeType,clazz);
     }
 
+    /**
+     * when you want to inject specific component only custom annotated classes override this method
+     * 
+     * This method is only called during the init() phase of a component     
+	 * @return List of annotated classes, and if there are none, return an empty list
+     */
+    protected List<Class<? extends HippoBean>> getLocalAnnotatedClasses() {
+        return new ArrayList<Class<? extends HippoBean>>();
+    }
+    
     private List<Class<? extends HippoBean>> getAnnotatedClassNames() {
         List<String> classNames = new ArrayList<String>();
         List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
@@ -526,7 +536,7 @@ public class BaseHstComponent extends GenericHstComponent {
                 } catch (Exception ce) {
                 }
         }
-
+        
         for (String className : classNames) {
             Class clazz = null;
             try {
@@ -535,6 +545,18 @@ public class BaseHstComponent extends GenericHstComponent {
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     log.warn("Skipped class registration into the mapper. Cannot load class: " + className);
+                }
+            }
+        }
+        
+        List<Class<? extends HippoBean>> localAnnotatedClasses = getLocalAnnotatedClasses();
+        if(localAnnotatedClasses != null) {
+            for(Class<? extends HippoBean> localClass : localAnnotatedClasses) {
+                if(classNames.contains(localClass.getName())) {
+                    log.warn("local added class '{}' already present. Skipping", localClass.getName());
+                } 
+                else {
+                    annotatedClasses.add(localClass); 
                 }
             }
         }
