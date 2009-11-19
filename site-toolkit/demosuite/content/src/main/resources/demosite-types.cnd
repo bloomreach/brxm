@@ -22,7 +22,6 @@
  
  [demosite:product] > demosite:basedocument
   - demosite:color (string)
-  - demosite:type (string)
   - demosite:product (string)
   - demosite:brand (string)
   + demosite:body (hippostd:html)

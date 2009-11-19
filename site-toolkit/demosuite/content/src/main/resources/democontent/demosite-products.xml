@@ -64,9 +64,6 @@
             <sv:property sv:name="demosite:product" sv:type="String">
                 <sv:value>car</sv:value>
             </sv:property>
-            <sv:property sv:name="demosite:type" sv:type="String">
-                <sv:value>156 2.0 TwinSpark</sv:value>
-            </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String">
                 <sv:value>08a4a5a2-a3b9-4066-9670-833e75cbb22d</sv:value>
                 <sv:value>db72e3c9-3bab-40df-9d28-e466974af710</sv:value>
@@ -118,9 +115,6 @@
             </sv:property>
             <sv:property sv:name="demosite:product" sv:type="String">
                 <sv:value>car</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:type" sv:type="String">
-                <sv:value>156 2.0 TwinSpark</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String">
                 <sv:value>617103ed-0c47-43b7-a629-eb14926920d5</sv:value>
@@ -184,9 +178,6 @@
             <sv:property sv:name="demosite:product" sv:type="String">
                 <sv:value>car</sv:value>
             </sv:property>
-            <sv:property sv:name="demosite:type" sv:type="String">
-                <sv:value>Alfa-147 1.6</sv:value>
-            </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String">
                 <sv:value>7be0001e-b3dd-437e-92c4-bee0cdee7fba</sv:value>
                 <sv:value>c8f1e54f-b2ed-480b-8bbb-87b148ed3585</sv:value>
@@ -249,9 +240,6 @@
             <sv:property sv:name="demosite:product" sv:type="String">
                 <sv:value>car</sv:value>
             </sv:property>
-            <sv:property sv:name="demosite:type" sv:type="String">
-                <sv:value>Vanette 2.3 DSL E</sv:value>
-            </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String">
                 <sv:value>3af6858a-9f16-4da9-ae8b-f4dab7c38c6b</sv:value>
                 <sv:value>7ab888be-308b-4075-b256-c68e117480bc</sv:value>
@@ -313,9 +301,6 @@
             </sv:property>
             <sv:property sv:name="demosite:product" sv:type="String">
                 <sv:value>car</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:type" sv:type="String">
-                <sv:value>2.5CDTI Tecshift 145PK L2H1</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String">
                 <sv:value>36219765-12fb-40e8-af20-469fc6701e89</sv:value>
