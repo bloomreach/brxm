@@ -77,8 +77,8 @@ public abstract class FieldPluginHelper implements IClusterable {
                     if (field == null) {
                         log.error("Could not resolve field for name " + fieldName);
                     } else if ("*".equals(field.getPath())) {
-                        throw new UnsupportedOperationException("Field path * is not supported, field name is "
-                                + fieldName);
+                        log.error("Field path * is not supported, field name is " + fieldName);
+                        field = null;
                     }
                 } catch (TemplateEngineException tee) {
                     log.error("Could not resolve field for name " + fieldName, tee);

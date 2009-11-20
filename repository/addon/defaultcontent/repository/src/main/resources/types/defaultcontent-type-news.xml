@@ -141,7 +141,7 @@
           <sv:value>defaultcontent:internallink</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:type" sv:type="String">
-          <sv:value>hippo:facetselect</sv:value>
+          <sv:value>hippo:mirror</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -412,16 +412,10 @@
       </sv:node>
       <sv:node sv:name="defaultcontent:internallink">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:facetselect</sv:value>
+          <sv:value>hippo:mirror</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:docbase" sv:type="String">
           <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:facets" sv:type="String">
-        </sv:property>
-        <sv:property sv:name="hippo:modes" sv:type="String">
-        </sv:property>
-        <sv:property sv:name="hippo:values" sv:type="String">
         </sv:property>
       </sv:node>
     </sv:node>
