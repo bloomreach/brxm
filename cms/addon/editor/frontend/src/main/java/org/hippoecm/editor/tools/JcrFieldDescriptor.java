@@ -279,4 +279,43 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        ITypeDescriptor type = getTypeDescriptor();
+        if (type.isNode()) {
+            builder.append("+ ");
+        } else {
+            builder.append("- ");
+        }
+        builder.append(getPath());
+        builder.append(" (");
+        builder.append(type.getName());
+        builder.append(") ");
+        if (isMultiple()) {
+            builder.append("multiple ");
+        }
+        if (isMandatory()) {
+            builder.append("mandatory ");
+        }
+        if (isAutoCreated()) {
+            builder.append("autocreated ");
+        }
+        if (isProtected()) {
+            builder.append("protected ");
+        }
+        if (isPrimary()) {
+            builder.append("primary ");
+        }
+        builder.append("[ ");
+        if (isOrdered()) {
+            builder.append("ordered ");
+        }
+        for (String validator : getValidators()) {
+            builder.append(validator);
+            builder.append(' ');
+        }
+        builder.append(']');
+        return builder.toString();
+    }
 }
