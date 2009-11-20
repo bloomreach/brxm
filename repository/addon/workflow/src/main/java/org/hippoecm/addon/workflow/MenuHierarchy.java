@@ -140,7 +140,10 @@ class MenuHierarchy {
         if (context instanceof MenuBar) {
             for (ActionDescription item : items) {
                 if (!(item.getId().startsWith("info") || item.getId().equals("spacer"))) {
-                    list.add(new MenuAction("item", item));
+                    MenuAction menuAction = new MenuAction("item", item);
+                    if (menuAction.isVisible()) {
+                        list.add(menuAction);
+                    }
                 }
             }
             for (Map.Entry<String, MenuHierarchy> submenu : submenus.entrySet()) {

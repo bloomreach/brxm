@@ -29,10 +29,11 @@ class MenuAction extends Panel implements IContextMenu {
 
     private static final long serialVersionUID = 1L;
 
+    private MenuLink link;
+    
     public MenuAction(String id, final ActionDescription wf) {
         super(id);
 
-        MenuLink link;
         add(link = new MenuLink("link") {
             private static final long serialVersionUID = 1L;
 
@@ -46,6 +47,11 @@ class MenuAction extends Panel implements IContextMenu {
             @Override
             public boolean isEnabled() {
                 return wf.isEnabled();
+            }
+
+            @Override
+            public boolean isVisible() {
+                return wf.isVisible();
             }
         });
 
@@ -89,4 +95,18 @@ class MenuAction extends Panel implements IContextMenu {
     public void collapse(AjaxRequestTarget target) {
     }
 
+    /**
+     * {@inheritDoc}
+     * This visibility of this menu action is determined by checking the
+     * {@code link} visibility status witch in turn determines the visibility
+     * by checking the visibility of the {@link StdWorkflow} e.g. the workflow (action)
+     * itself.
+     */
+    @Override
+    public boolean isVisible() {
+        if (link == null) {
+            return true;
+        }
+        return link.isVisible();
+    }
 }
