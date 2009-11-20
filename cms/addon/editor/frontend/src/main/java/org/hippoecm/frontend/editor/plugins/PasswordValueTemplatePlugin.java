@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -34,8 +33,7 @@ public class PasswordValueTemplatePlugin extends RenderPlugin {
     public PasswordValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getDefaultModel();
-        add(new PasswordTextFieldWidget("value", valueModel));
+        add(new PasswordTextFieldWidget("value", getModel()));
 
         setOutputMarkupId(true);
     }

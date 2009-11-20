@@ -26,7 +26,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StringConverter implements IModel {
+public class StringConverter implements IModel<String> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -51,7 +51,7 @@ public class StringConverter implements IModel {
         return null;
     }
 
-    public void setObject(Object object) {
+    public void setObject(String object) {
         try {
             ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
             String string = object == null ? "" : object.toString();

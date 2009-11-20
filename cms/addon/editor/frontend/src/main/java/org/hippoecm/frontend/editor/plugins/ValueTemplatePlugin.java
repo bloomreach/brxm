@@ -26,7 +26,7 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ValueTemplatePlugin extends RenderPlugin {
+public class ValueTemplatePlugin extends RenderPlugin<String> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -37,9 +37,8 @@ public class ValueTemplatePlugin extends RenderPlugin {
     public ValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getDefaultModel();
         String mode = config.getString("mode", "view");
-        StringConverter stringModel = new StringConverter(valueModel);
+        StringConverter stringModel = new StringConverter((JcrPropertyValueModel) getModel());
         if (ITemplateEngine.EDIT_MODE.equals(mode)) {
             TextFieldWidget widget = new TextFieldWidget("value", stringModel);
             if (config.getString("size") != null) {
