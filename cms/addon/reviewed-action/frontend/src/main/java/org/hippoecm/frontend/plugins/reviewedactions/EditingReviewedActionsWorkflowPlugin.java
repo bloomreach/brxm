@@ -83,6 +83,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
     private Fragment feedbackContainer;
     private transient boolean closing = false;
+    private boolean isValid = true;
 
     public EditingReviewedActionsWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -160,19 +161,11 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                                 dirty = true;
                             }
                         }
-                        List<IValidateService> validators = context.getServices(config
-                                .getString(IValidateService.VALIDATE_ID), IValidateService.class);
-                        boolean valid = true;
-                        if (validators != null) {
-                            for (IValidateService validator : validators) {
-                                IValidationResult result = validator.validate();
-                                valid = result.isValid();
-                            }
-                        }
-                        if (dirty || !valid) {
+                        validate();
+                        if (dirty || !isValid()) {
                             IDialogService dialogService = context.getService(IDialogService.class.getName(),
                                     IDialogService.class);
-                            dialogService.show(new OnCloseDialog(actions, new JcrNodeModel(node), editor, valid));
+                            dialogService.show(new OnCloseDialog(actions, new JcrNodeModel(node), editor, isValid()));
                         } else {
                             actions.revert();
                             return new Object();
@@ -193,21 +186,9 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-save-16.png")) {
             @Override
             protected String execute(Workflow wf) throws Exception {
-                boolean valid = true;
-
-                IPluginConfig config = getPluginConfig();
-                if (config.getString(IValidateService.VALIDATE_ID) != null) {
-                    List<IValidateService> validators = getPluginContext().getServices(
-                            config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
-                    for (IValidateService validator : validators) {
-                        IValidationResult result = validator.validate();
-                        if (!result.isValid()) {
-                            valid = false;
-                        }
-                    }
-                }
-                if (!valid) {
-                    return "Invalid document";
+                validate();
+                if (!isValid()) {
+                    return null;
                 }
 
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
@@ -238,6 +219,11 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-done-16.png")) {
             @Override
             public String execute(Workflow wf) throws Exception {
+                validate();
+                if (!isValid()) {
+                    return null;
+                }
+
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
                 ((UserSession) Session.get()).getJcrSession().refresh(true);
@@ -253,6 +239,21 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
     protected void showFeedback() {
         YuiFeedbackPanel yfp = (YuiFeedbackPanel) feedbackContainer.get("feedback");
         yfp.render(AjaxRequestTarget.get());
+    }
+
+    void validate() throws ValidationException {
+        List<IValidateService> validators = getPluginContext().getServices(
+                getPluginConfig().getString(IValidateService.VALIDATE_ID), IValidateService.class);
+        if (validators != null) {
+            for (IValidateService validator : validators) {
+                IValidationResult result = validator.validate();
+                isValid = result.isValid();
+            }
+        }
+    }
+
+    boolean isValid() {
+        return isValid;
     }
 
     class Feedback extends ActionDescription {

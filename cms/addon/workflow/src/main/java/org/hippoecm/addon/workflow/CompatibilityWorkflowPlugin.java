@@ -134,8 +134,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 } catch (Exception ex) {
                     getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(
                             createResponseDialog(ex.getClass().getName() + ": " + ex.getMessage()));
-                    ex.printStackTrace();
-                    throw new RuntimeException("workflow exception", ex);
                 }
             }
         }
