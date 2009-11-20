@@ -1,0 +1,22 @@
+<projectDescription>
+  <name>hst-persistency</name>
+  <comment>Hippo Site Toolkit Persistency Support</comment>
+  <projects>
+    <project>hst-api</project>
+    <project>hst-client</project>
+    <project>hst-content-beans</project>
+    <project>hst-ocm</project>
+    <project>hst-test</project>
+    <project>hst-addon-cnd_7_2</project>
+    <project>hst-addon-repository</project>
+    <project>hst-addon-testcontents</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
