@@ -117,8 +117,8 @@
     </dependency>
     
     <dependency>
-      <groupId>org.onehippo.ecm.hst.testsuite.sandbox</groupId>
-      <artifactId>hst-sandbox-persistency</artifactId>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>hst-persistency</artifactId>
       <version>${pom.version}</version>
     </dependency>
   

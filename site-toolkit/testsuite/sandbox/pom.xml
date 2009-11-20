@@ -30,7 +30,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>persistency</module>
     <module>jaxrs</module>
   </modules>
 
