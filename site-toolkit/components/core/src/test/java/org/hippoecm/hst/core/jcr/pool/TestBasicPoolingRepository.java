@@ -167,6 +167,10 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
         int jobCount = 100;
         int workerCount = 20;
         
+        // temporary fix for concurrent first login when repository is just started
+        Session session = this.poolingRepository.login();
+        session.logout();
+        
         LinkedList<Runnable> jobQueue = new LinkedList<Runnable>();
         
         for (int i = 0; i < jobCount; i++) {
@@ -177,6 +181,7 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
 
         Thread [] workers = new Thread[workerCount];
 
+        
         for (int i = 0; i < workerCount; i++) {
             workers[i] = new Worker(jobQueue);
         }
@@ -245,7 +250,7 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
             try {
                 Session session = this.repository.login();
                 // forgot to invoke logout() to return the session to the pool by invoking the following:
-                //session.logout();
+                // session.logout();
             } catch (Exception e) {
                 long end = System.currentTimeMillis();
                 assertTrue("No waiting occurred.", (end - start) >= this.maxWait);
