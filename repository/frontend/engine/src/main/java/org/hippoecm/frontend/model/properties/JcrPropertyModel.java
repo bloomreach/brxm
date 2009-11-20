@@ -172,19 +172,21 @@ public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements I
     }
 
     public int size() {
-        int result = 1;
         try {
             Property prop = getProperty();
             if (prop == null) {
                 return 0;
             }
             if (prop.getDefinition().isMultiple()) {
-                result = prop.getValues().length;
+                return prop.getValues().length;
+            } else {
+                return 1;
             }
         } catch (RepositoryException e) {
-            log.error(e.getMessage());
+            log.info("Failed to determine number of values", e);
+            detach();
         }
-        return result;
+        return 0;
     }
 
     public void setObservationContext(IObservationContext context) {
