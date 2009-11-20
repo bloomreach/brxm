@@ -18,8 +18,8 @@ package org.hippoecm.frontend.editor.plugins;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -27,7 +27,7 @@ import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BooleanValueTemplatePlugin extends RenderPlugin {
+public class BooleanValueTemplatePlugin extends RenderPlugin<Boolean> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -38,7 +38,7 @@ public class BooleanValueTemplatePlugin extends RenderPlugin {
     public BooleanValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getDefaultModel();
+        IModel<Boolean> valueModel = getModel();
         if ("edit".equals(config.getString("mode", "view"))) {
             add(new BooleanFieldWidget("value", valueModel));
         } else {
@@ -46,7 +46,7 @@ public class BooleanValueTemplatePlugin extends RenderPlugin {
             add(fragment);
 
             CheckBox checkbox = new CheckBox("checkbox", valueModel);
-            checkbox.add(new AttributeModifier("disabled", true, new Model(Boolean.TRUE)));
+            checkbox.add(new AttributeModifier("disabled", true, new Model<Boolean>(true)));
             fragment.add(checkbox);
         }
         setOutputMarkupId(true);

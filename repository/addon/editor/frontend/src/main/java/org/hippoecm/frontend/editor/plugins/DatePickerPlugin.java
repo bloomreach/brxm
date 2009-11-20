@@ -15,9 +15,11 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
+import java.util.Date;
+
 import org.apache.wicket.datetime.StyleDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
@@ -25,7 +27,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatePickerPlugin extends RenderPlugin {
+public class DatePickerPlugin extends RenderPlugin<Date> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -36,7 +38,7 @@ public class DatePickerPlugin extends RenderPlugin {
     public DatePickerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getDefaultModel();
+        IModel<Date> valueModel = getModel();
         if ("edit".equals(config.getString("mode", "view"))) {
             add(new DateFieldWidget("value", valueModel, context, config));
         } else {
