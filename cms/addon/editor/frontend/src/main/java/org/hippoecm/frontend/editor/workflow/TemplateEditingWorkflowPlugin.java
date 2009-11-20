@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -40,6 +42,8 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.validation.IValidateService;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
@@ -81,7 +85,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                             dirty = true;
                         }
                     }
-                    if (dirty) {
+                    if (dirty || !isValid()) {
                         IDialogService dialogService = context.getService(IDialogService.class.getName(),
                                 IDialogService.class);
                         dialogService.show(new OnCloseDialog());
@@ -100,17 +104,38 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
         add(new WorkflowAction("save", new StringResourceModel("save", this, null)) {
             @Override
             protected String execute(Workflow workflow) throws Exception {
-                doSave();
+                if (!isValid()) {
+                    return "Invalid template";
+                }
                 return null;
-            }});
+            }
+        });
         add(new WorkflowAction("done", new StringResourceModel("done", this, null)) {
             @Override
             protected String execute(Workflow workflow) throws Exception {
-                doSave();
                 IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
                 editor.setMode(IEditor.Mode.VIEW);
                 return null;
-            }});
+            }
+        });
+    }
+
+    boolean isValid() {
+        try {
+            IPluginConfig config = getPluginConfig();
+            if (config.getString(IValidateService.VALIDATE_ID) != null) {
+                List<IValidateService> validators = getPluginContext().getServices(
+                        config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
+                for (IValidateService validator : validators) {
+                    IValidationResult result;
+                    result = validator.validate();
+                    return result.isValid();
+                }
+            }
+        } catch (ValidationException e) {
+            log.error("error validating template", e);
+        }
+        return true;
     }
 
     void doSave() throws Exception {
@@ -162,6 +187,11 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             button = new AjaxButton(getButtonId()) {
                 private static final long serialVersionUID = 1L;
+
+                @Override
+                public boolean isEnabled() {
+                    return super.isValid() && TemplateEditingWorkflowPlugin.this.isValid();
+                }
 
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {

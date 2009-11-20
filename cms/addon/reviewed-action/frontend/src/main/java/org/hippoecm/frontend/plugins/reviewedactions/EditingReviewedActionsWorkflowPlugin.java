@@ -48,6 +48,7 @@ import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.validation.IValidateService;
 import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Workflow;
@@ -77,9 +78,9 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
         @Override
         protected void onRender(MarkupStream markupStream) {
         }
-        
+
     }
-    
+
     private Fragment feedbackContainer;
     private transient boolean closing = false;
 
@@ -159,8 +160,8 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                                 dirty = true;
                             }
                         }
-                        List<IValidateService> validators = context.getServices(config.getString(IValidateService.VALIDATE_ID),
-                                IValidateService.class);
+                        List<IValidateService> validators = context.getServices(config
+                                .getString(IValidateService.VALIDATE_ID), IValidateService.class);
                         boolean valid = true;
                         if (validators != null) {
                             for (IValidateService validator : validators) {
@@ -192,13 +193,29 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-save-16.png")) {
             @Override
             protected String execute(Workflow wf) throws Exception {
+                boolean valid = true;
+
+                IPluginConfig config = getPluginConfig();
+                if (config.getString(IValidateService.VALIDATE_ID) != null) {
+                    List<IValidateService> validators = getPluginContext().getServices(
+                            config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
+                    for (IValidateService validator : validators) {
+                        IValidationResult result = validator.validate();
+                        if (!result.isValid()) {
+                            valid = false;
+                        }
+                    }
+                }
+                if (!valid) {
+                    return "Invalid document";
+                }
+
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
 
                 DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-                new FeedbackLogger().info(new StringResourceModel("saved",
-                        EditingReviewedActionsWorkflowPlugin.this, null, new Object[] { df.format(new Date()) })
-                        .getString());
+                new FeedbackLogger().info(new StringResourceModel("saved", EditingReviewedActionsWorkflowPlugin.this,
+                        null, new Object[] { df.format(new Date()) }).getString());
                 showFeedback();
 
                 UserSession session = (UserSession) Session.get();

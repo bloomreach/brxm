@@ -16,7 +16,6 @@
 package org.hippoecm.addon.workflow;
 
 import java.util.Iterator;
-import java.util.List;
 
 import javax.jcr.RepositoryException;
 
@@ -39,7 +38,6 @@ import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -52,9 +50,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.validation.IValidateService;
-import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -134,34 +129,13 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             if (dialog != null) {
                 getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
             } else {
-                boolean submit = true;
-
-                IPluginConfig config = getPluginConfig();
-                if (config.getString(IValidateService.VALIDATE_ID) != null) {
-                    List<IValidateService> validators = getPluginContext().getServices(
-                            config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
-                    for (IValidateService validator : validators) {
-                        try {
-                            IValidationResult result = validator.validate();
-                            if (!result.isValid()) {
-                                submit = false;
-                            }
-                        } catch (ValidationException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                if (submit) {
-                    try {
-                        execute();
-                    } catch (Exception ex) {
-                        getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(
-                                createResponseDialog(ex.getClass().getName() + ": " + ex.getMessage()));
-                        ex.printStackTrace();
-                        throw new RuntimeException("workflow exception", ex);
-                    }
+                try {
+                    execute();
+                } catch (Exception ex) {
+                    getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(
+                            createResponseDialog(ex.getClass().getName() + ": " + ex.getMessage()));
+                    ex.printStackTrace();
+                    throw new RuntimeException("workflow exception", ex);
                 }
             }
         }
