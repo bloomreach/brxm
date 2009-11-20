@@ -26,9 +26,6 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -61,19 +58,14 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
     public PropertyFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
+        IFieldDescriptor field = getFieldHelper().getField();
+
         nodeModel = (JcrNodeModel) getDefaultModel();
 
         // use caption for backwards compatibility; i18n should use field name
-        IModel nameModel;
-        if (config.getString("caption") != null) {
-            nameModel = new Model(config.getString("caption"));
-        } else {
-            nameModel = new StringResourceModel(getFieldHelper().getField().getName(), this, null);
-        }
-        add(new Label("name", nameModel));
+        add(new Label("name", getCaptionModel()));
 
         Label required = new Label("required", "*");
-        IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
             subscribe();
             if (!field.getValidators().contains("required")) {
@@ -83,16 +75,19 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
         add(required);
 
         add(createAddLink());
+    }
 
-        updateProvider();
+    private JcrPropertyModel newPropertyModel() {
+        final IFieldDescriptor field = getFieldHelper().getField();
+        JcrItemModel itemModel = new JcrItemModel(((JcrNodeModel) getDefaultModel()).getItemModel().getPath() + "/"
+                + field.getPath());
+        return new JcrPropertyModel(itemModel);
     }
 
     protected void subscribe() {
         final IFieldDescriptor field = getFieldHelper().getField();
         if (!field.getPath().equals("*")) {
-            JcrItemModel itemModel = new JcrItemModel(((JcrNodeModel) getDefaultModel()).getItemModel().getPath() + "/"
-                    + field.getPath());
-            propertyModel = new JcrPropertyModel(itemModel);
+            propertyModel = newPropertyModel();
             nrValues = propertyModel.size();
             getPluginContext().registerService(propertyObserver = new IObserver<JcrPropertyModel>() {
                 private static final long serialVersionUID = 1L;
@@ -104,7 +99,6 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
                 public void onEvent(Iterator<? extends IEvent<JcrPropertyModel>> events) {
                     if (propertyModel.size() != nrValues || field.isOrdered()) { //Only redraw if number of properties has changed.
                         nrValues = propertyModel.size();
-                        updateProvider();
                         redraw();
                     }
                 }
@@ -125,11 +119,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
     protected AbstractProvider<JcrPropertyValueModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             IModel nodeModel) {
         if (!descriptor.getPath().equals("*")) {
-            PropertyValueProvider provider = new PropertyValueProvider(descriptor, type, propertyModel.getItemModel());
-            if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
-                provider.addNew();
-            }
-            return provider;
+            return new PropertyValueProvider(descriptor, type, newPropertyModel().getItemModel());
         }
         return null;
     }
@@ -138,7 +128,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
     public void onModelChanged() {
         // filter out changes in the node model itself.
         // The property model observation takes care of that.
-        if (!nodeModel.equals(getDefaultModel())) {
+        if (!nodeModel.equals(getDefaultModel()) || (propertyModel != null && propertyModel.size() != nrValues)) {
             IFieldDescriptor field = getFieldHelper().getField();
             if (field != null) {
                 unsubscribe();
@@ -212,8 +202,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
     // privates
 
     protected Component createAddLink() {
-        IFieldDescriptor field = getFieldHelper().getField();
-        if (ITemplateEngine.EDIT_MODE.equals(mode) && (field != null) && field.isMultiple()) {
+        if (canAddItem()) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
 

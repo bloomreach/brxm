@@ -22,16 +22,13 @@ import java.util.Map;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.TemplateEngineException;
-import org.hippoecm.frontend.editor.validator.FilteredValidationModel;
 import org.hippoecm.frontend.model.AbstractProvider;
-import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ModelPathElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -25,6 +25,7 @@ import javax.jcr.Item;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.AbstractProvider;
@@ -92,6 +93,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private boolean managedValidation = false;
     private Map<Object, ValidationFilter> listeners = new HashMap<Object, ValidationFilter>();
 
+    private boolean restartTemplates = true;
+
     protected AbstractFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
@@ -112,6 +115,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         if (mode == null) {
             log.error("No edit mode specified");
         }
+
+        provider = getProvider();
 
         IFieldDescriptor field = helper.getField();
         if (field != null && (!field.isMultiple() || !doesTemplateSupportValidation())) {
@@ -146,6 +151,10 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 }
 
             };
+            IModel<IValidationResult> validationModel = helper.getValidationResultModel();
+            if (validationModel != null) {
+                holder.setValid(validationModel.getObject().isValid());
+            }
             addValidationFilter(this, holder);
 
             managedValidation = true;
@@ -169,32 +178,72 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         super.onDetach();
     }
 
-    protected void updateProvider() {
+    @Override
+    protected void redraw() {
+        super.redraw();
+        if (!restartTemplates) {
+            restartTemplates = true;
+            controller.stop();
+        }
+    }
+
+    @Override
+    public void onBeforeRender() {
+        if (restartTemplates) {
+            provider = getProvider();
+            if (provider != null) {
+                setVisible(true);
+                controller.start(provider);
+            } else {
+                setVisible(false);
+            }
+            restartTemplates = false;
+        }
+        super.onBeforeRender();
+    }
+
+    private AbstractProvider<C> getProvider() {
         IFieldDescriptor field = helper.getField();
         if (field != null) {
             ITemplateEngine engine = getTemplateEngine();
             if (engine != null) {
                 IModel<P> model = getModel();
                 ITypeDescriptor subType = field.getTypeDescriptor();
-                provider = newProvider(field, subType, model);
-                if (provider != null) {
-                    controller.stop();
-                    controller.start(provider);
+                AbstractProvider<C> provider = newProvider(field, subType, model);
+                if (ITemplateEngine.EDIT_MODE.equals(mode) && provider.size() == 0
+                        && field.getValidators().contains("required")) {
+                    provider.addNew();
                 }
+                return provider;
             } else {
                 log.warn("No engine found to display new model");
             }
-        } else {
-            setVisible(false);
         }
+        return null;
     }
 
+    /**
+     * Factory method for provider of models that will be used to instantiate templates.
+     * This method may be called from the base class constructor.
+     * 
+     * @param descriptor
+     * @param type
+     * @param parentModel
+     * @return
+     */
     protected abstract AbstractProvider<C> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             IModel<P> parentModel);
 
+    protected boolean canAddItem() {
+        IFieldDescriptor field = getFieldHelper().getField();
+        return ITemplateEngine.EDIT_MODE.equals(mode) && (field != null)
+                && (field.isMultiple() || provider.size() == 0);
+    }
+
     protected boolean canRemoveItem() {
         IFieldDescriptor field = helper.getField();
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isMultiple()) {
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null)
+                || (field.getValidators().contains("required") && provider.size() == 1)) {
             return false;
         }
         return true;
@@ -218,8 +267,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     public void onMoveItemUp(C model, AjaxRequestTarget target) {
         provider.moveUp(model);
-        // reorderings are not detected by the observation manager, so do a hard refresh
-        updateProvider();
         redraw();
     }
 
@@ -254,6 +301,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                     }
                 }
             };
+            listener.setValid(itemRenderer.isValid());
             addValidationFilter(item, listener);
             item.add(new CssClassAppender(listener));
         }
@@ -265,9 +313,16 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         removeValidationFilter(item);
         super.onRemoveRenderService(item, renderer);
     }
-    
+
     protected FieldPluginHelper getFieldHelper() {
         return helper;
+    }
+
+    protected IModel<String> getCaptionModel() {
+        IFieldDescriptor field = getFieldHelper().getField();
+        String caption = getPluginConfig().getString("caption", "unknown");
+        String captionKey = field != null ? field.getName() : caption;
+        return new StringResourceModel(captionKey, this, null, caption);
     }
 
     protected TemplateController<C> getController() {

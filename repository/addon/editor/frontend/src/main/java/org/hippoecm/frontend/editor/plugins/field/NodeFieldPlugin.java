@@ -29,7 +29,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
@@ -57,8 +56,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
         IFieldDescriptor field = getFieldHelper().getField();
         // use caption for backwards compatibility; i18n should use field name
-        String captionKey = field != null ? field.getName() : config.getString("caption");
-        add(new Label("name", new StringResourceModel(captionKey, this, null, config.getString("caption"))));
+        add(new Label("name", getCaptionModel()));
 
         Label required = new Label("required", "*");
         if (field != null && !field.getValidators().contains("required")) {
@@ -67,8 +65,6 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         add(required);
 
         add(createAddLink());
-
-        updateProvider();
     }
 
     @Override
@@ -76,12 +72,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
             IModel<Node> nodeModel) {
         try {
             JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
-            ChildNodeProvider provider = new ChildNodeProvider(descriptor, prototype, new JcrItemModel<Node>(nodeModel
-                    .getObject()));
-            if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
-                provider.addNew();
-            }
-            return provider;
+            return new ChildNodeProvider(descriptor, prototype, new JcrItemModel<Node>(nodeModel.getObject()));
         } catch (TemplateEngineException ex) {
             log.warn("Could not find prototype", ex);
             return null;
@@ -90,7 +81,6 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     @Override
     public void onModelChanged() {
-        updateProvider();
         replace(createAddLink());
         redraw();
     }
@@ -192,8 +182,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     }
 
     protected Component createAddLink() {
-        IFieldDescriptor field = getFieldHelper().getField();
-        if (ITemplateEngine.EDIT_MODE.equals(mode) && (field != null) && field.isMultiple()) {
+        if (canAddItem()) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
 
