@@ -36,7 +36,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetachable {
+public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 
@@ -50,7 +50,7 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetachable {
     private transient Map<String, IFieldDescriptor> declaredFields;
     private transient NodeType nt = null;
 
-    BuiltinTypeDescriptor(String type, ITypeLocator locator) {
+    public BuiltinTypeDescriptor(String type, ITypeLocator locator) {
         super(type, type, locator);
 
         this.type = type;
@@ -62,12 +62,15 @@ class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetachable {
 
         load();
         if (nt != null) {
-            NodeType[] supers = nt.getSupertypes();
+            NodeType[] supers = nt.getDeclaredSupertypes();
             List<String> superTypes = new LinkedList<String>();
             for (NodeType superType : supers) {
-                superTypes.add(superType.getName());
+                if (!"nt:base".equals(superType.getName())) {
+                    superTypes.add(superType.getName());
+                }
             }
             setSuperTypes(superTypes);
+            setIsMixin(nt.isMixin());
         }
         setMutable(false);
     }

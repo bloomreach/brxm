@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.IStore;
@@ -87,6 +88,11 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
                 Node typeNode = lookupConfigNode(name);
                 if (typeNode != null) {
                     result = createTypeDescriptor(typeNode, name);
+                    // do validation on type
+                    if (WebApplication.get() != null
+                            && "development".equals(WebApplication.get().getConfigurationType())) {
+                        result.validate();
+                    }
                     types.put(name, result);
                 } else {
                     log.debug("No nodetype description found for " + name);

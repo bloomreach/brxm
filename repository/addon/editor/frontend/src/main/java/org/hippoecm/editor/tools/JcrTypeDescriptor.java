@@ -35,6 +35,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -48,6 +50,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.ocm.JcrObject;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.types.BuiltinTypeDescriptor;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
@@ -534,5 +537,108 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             }
         }
         super.save();
+    }
+
+    void validate() {
+        ITypeDescriptor builtin = new BuiltinTypeDescriptor(getType(), locator);
+
+        List<String> superTypes = getSuperTypes();
+        List<String> builtinSuperTypes = builtin.getSuperTypes();
+        for (String type : builtinSuperTypes) {
+            if (!superTypes.contains(type)) {
+                log.warn("Super type " + type + " is defined as super type in CND, but not available in descriptor");
+            }
+        }
+        for (String type : superTypes) {
+            if (!builtinSuperTypes.contains(type)) {
+                log.warn("Super type " + type + " is declared in descriptor, but is not defined as super type in CND");
+            }
+        }
+
+        if (isMixin() != builtin.isMixin()) {
+            log.warn("Node type definition and description disagree on mixin status");
+        }
+
+        if (isNode() != builtin.isNode()) {
+            log.warn("Node type definition and description disagree on compound/primitive classification");
+        }
+
+        if (isNode()) {
+            Map<String, IFieldDescriptor> anyPaths = new HashMap<String, IFieldDescriptor>();
+            Map<String, IFieldDescriptor> pathToField = new HashMap<String, IFieldDescriptor>();
+            Map<String, IFieldDescriptor> nameToField = getDeclaredFields();
+            for (Map.Entry<String, IFieldDescriptor> entry : nameToField.entrySet()) {
+                if ("*".equals(entry.getValue().getPath())) {
+                    anyPaths.put(entry.getValue().getTypeDescriptor().getType(), entry.getValue());
+                } else {
+                    pathToField.put(entry.getValue().getPath(), entry.getValue());
+                }
+            }
+
+            Map<String, IFieldDescriptor> builtinAnyPaths = new HashMap<String, IFieldDescriptor>();
+            Map<String, IFieldDescriptor> builtinPathToField = new HashMap<String, IFieldDescriptor>();
+            Map<String, IFieldDescriptor> builtinNameToField = builtin.getDeclaredFields();
+            for (Map.Entry<String, IFieldDescriptor> entry : builtinNameToField.entrySet()) {
+                if ("*".equals(entry.getValue().getPath())) {
+                    builtinAnyPaths.put(entry.getValue().getTypeDescriptor().getType(), entry.getValue());
+                } else {
+                    builtinPathToField.put(entry.getValue().getPath(), entry.getValue());
+                }
+            }
+
+            for (Map.Entry<String, IFieldDescriptor> entry : pathToField.entrySet()) {
+                if (builtinPathToField.containsKey(entry.getKey())) {
+                    validateField(entry.getValue(), builtinPathToField.get(entry.getKey()));
+                } else {
+                    log.warn("Path " + entry.getKey() + " is present in description, but not in CND definition");
+                }
+            }
+            for (Map.Entry<String, IFieldDescriptor> entry : builtinPathToField.entrySet()) {
+                if (!pathToField.containsKey(entry.getKey())) {
+                    log.warn("Path " + entry.getKey() + " is present in CND definition, but not in description");
+                }
+            }
+
+            for (Map.Entry<String, IFieldDescriptor> entry : anyPaths.entrySet()) {
+                if (builtinAnyPaths.containsKey(entry.getKey())) {
+                    validateField(entry.getValue(), builtinAnyPaths.get(entry.getKey()));
+                } else {
+                    log.warn("Field with path *, type " + entry.getKey()
+                            + " is present in description, but not in CND definition");
+                }
+            }
+            for (Map.Entry<String, IFieldDescriptor> entry : builtinAnyPaths.entrySet()) {
+                if (!anyPaths.containsKey(entry.getKey())) {
+                    log.warn("Field with path *, type " + entry.getKey()
+                            + " is present in CND definition, but not in description");
+                }
+            }
+        }
+    }
+
+    void validateField(IFieldDescriptor myField, IFieldDescriptor builtinField) {
+        if (!myField.getTypeDescriptor().getType().equals(builtinField.getTypeDescriptor().getType())) {
+            log.warn("Node type definition and description disagree on type for field: " + myField.toString());
+        }
+
+        if (myField.isMandatory() != builtinField.isMandatory()) {
+            log.warn("Node type definition and description disagree on mandatory keyword for " + myField.toString());
+        }
+
+        if (myField.isMultiple() != builtinField.isMultiple()) {
+            log.warn("Node type definition and description disagree on multiple keyword for " + myField.toString());
+        }
+
+        if (myField.isProtected() != builtinField.isProtected()) {
+            log.warn("Node type definition and description disagree on protected keyword for " + myField.toString());
+        }
+
+        if (myField.isAutoCreated() != builtinField.isAutoCreated()) {
+            log.warn("Node type definition and description disagree on protected keyword for " + myField.toString());
+        }
+
+        if (myField.isPrimary() != builtinField.isPrimary()) {
+            log.warn("Node type definition and description disagree on primary keyword for " + myField.toString());
+        }
     }
 }
