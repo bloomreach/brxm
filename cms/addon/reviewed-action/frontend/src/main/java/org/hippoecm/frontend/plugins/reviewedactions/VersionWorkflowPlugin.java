@@ -111,7 +111,7 @@ public class VersionWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
 
             @Override
-            public boolean isEnabled() {
+            public boolean isVisible() {
                 Node frozenNode;
                 try {
                     frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
