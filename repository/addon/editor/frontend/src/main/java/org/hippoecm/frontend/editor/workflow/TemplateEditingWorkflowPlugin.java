@@ -57,6 +57,8 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     static protected Logger log = LoggerFactory.getLogger(TemplateEditingWorkflowPlugin.class);
 
+    boolean isValid = true;
+
     public TemplateEditingWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -85,6 +87,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                             dirty = true;
                         }
                     }
+                    validate();
                     if (dirty || !isValid()) {
                         IDialogService dialogService = context.getService(IDialogService.class.getName(),
                                 IDialogService.class);
@@ -104,38 +107,41 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
         add(new WorkflowAction("save", new StringResourceModel("save", this, null)) {
             @Override
             protected String execute(Workflow workflow) throws Exception {
-                if (!isValid()) {
-                    return "Invalid template";
-                }
+                validate();
                 return null;
             }
         });
         add(new WorkflowAction("done", new StringResourceModel("done", this, null)) {
             @Override
             protected String execute(Workflow workflow) throws Exception {
-                IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
-                editor.setMode(IEditor.Mode.VIEW);
+                validate();
+                if (isValid()) {
+                    IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
+                    editor.setMode(IEditor.Mode.VIEW);
+                }
                 return null;
             }
         });
     }
 
     boolean isValid() {
+        return isValid();
+    }
+    
+    void validate() {
+        isValid = true;
         try {
             IPluginConfig config = getPluginConfig();
             if (config.getString(IValidateService.VALIDATE_ID) != null) {
                 List<IValidateService> validators = getPluginContext().getServices(
                         config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
                 for (IValidateService validator : validators) {
-                    IValidationResult result;
-                    result = validator.validate();
-                    return result.isValid();
+                    isValid = validator.validate().isValid();
                 }
             }
         } catch (ValidationException e) {
             log.error("error validating template", e);
         }
-        return true;
     }
 
     void doSave() throws Exception {
