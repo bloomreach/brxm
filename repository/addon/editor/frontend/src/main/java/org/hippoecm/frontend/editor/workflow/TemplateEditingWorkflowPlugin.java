@@ -125,9 +125,9 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
     }
 
     boolean isValid() {
-        return isValid();
+        return isValid;
     }
-    
+
     void validate() {
         isValid = true;
         try {
