@@ -38,7 +38,7 @@
 - defaultcontent:introduction (string)
 + defaultcontent:date (hippostd:date)
 + defaultcontent:body (hippostd:html)
-+ defaultcontent:internallink (hippo:facetselect)
++ defaultcontent:internallink (hippo:mirror)
 
 [defaultcontent:event] > defaultcontent:basedocument
 - defaultcontent:title (string)
