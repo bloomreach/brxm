@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * Provider of JcrNodeModels for nodes in a facet(sub)search resultset.
  * Multiple variants of the same document are collapsed to a single entry.  
  */
-public class FacetSearchProvider extends SortableDataProvider implements IObservable {
+public class FacetSearchProvider extends SortableDataProvider<Node> implements IObservable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -53,12 +53,12 @@ public class FacetSearchProvider extends SortableDataProvider implements IObserv
     static final Logger log = LoggerFactory.getLogger(FacetSearchProvider.class);
 
     private JcrNodeModel model;
-    private transient List<JcrNodeModel> entries = null;
-    private Map<String, Comparator<IModel>> comparators;
+    private transient List<Node> entries = null;
+    private Map<String, Comparator<Node>> comparators;
     private IObservationContext obContext;
     private JcrNodeModel resultSetModel;
 
-    public FacetSearchProvider(JcrNodeModel model, Map<String, Comparator<IModel>> comparators) {
+    public FacetSearchProvider(JcrNodeModel model, Map<String, Comparator<Node>> comparators) {
         this.model = model;
         this.comparators = comparators;
     }
@@ -110,23 +110,23 @@ public class FacetSearchProvider extends SortableDataProvider implements IObserv
                     log.error(ex.getMessage());
                 }
             }
-            entries = new LinkedList<JcrNodeModel>();
+            entries = new LinkedList<Node>();
             for (Node subNode : primaryNodes.values()) {
-                entries.add(new JcrNodeModel(subNode));
+                entries.add(subNode);
             }
         }
     }
 
     // impl IDataProvider
 
-    public Iterator<IModel> iterator(int first, int count) {
+    public Iterator<Node> iterator(int first, int count) {
         load();
-        List<IModel> displayedList = new ArrayList<IModel>(entries);
+        List<Node> displayedList = new ArrayList<Node>(entries);
         SortState sortState = getSortState();
         if (sortState != null && sortState.isSorted()) {
             String sortProperty = sortState.getProperty();
             if (sortProperty != null) {
-                Comparator<IModel> comparator = comparators.get(sortProperty);
+                Comparator<Node> comparator = comparators.get(sortProperty);
                 if (comparator != null) {
                     Collections.sort(displayedList, comparator);
                     if (sortState.isDescending()) {
@@ -138,8 +138,8 @@ public class FacetSearchProvider extends SortableDataProvider implements IObserv
         return displayedList.subList(first, first + count).iterator();
     }
 
-    public IModel model(Object object) {
-        return (IModel) object;
+    public IModel<Node> model(Node object) {
+        return new JcrNodeModel(object);
     }
 
     public int size() {

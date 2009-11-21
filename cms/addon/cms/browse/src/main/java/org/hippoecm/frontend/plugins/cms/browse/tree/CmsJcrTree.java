@@ -27,6 +27,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
+import org.hippoecm.frontend.model.tree.LabelTreeNode;
 import org.hippoecm.frontend.widgets.JcrTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,11 +56,16 @@ public abstract class CmsJcrTree extends JcrTree {
         }
 
         public String getTitleName(TreeNode treeNode) {
-            return (String) newTranslator(treeNode).getNodeName().getObject();
+            if (treeNode instanceof IJcrTreeNode) {
+                return newTranslator(treeNode).getNodeName().getObject();
+            } else if (treeNode instanceof LabelTreeNode) {
+                return ((LabelTreeNode) treeNode).getLabel();
+            }
+            return null;
         }
 
         public boolean hasTitle(TreeNode treeNode, int level) {
-            return true;
+            return (treeNode instanceof IJcrTreeNode || treeNode instanceof LabelTreeNode);
         }
     }
 

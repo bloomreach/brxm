@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -31,7 +33,7 @@ public class FacetSearchListingPlugin extends DocumentListingPlugin {
     }
 
     @Override
-    protected ISortableDataProvider newDataProvider() {
+    protected ISortableDataProvider<Node> newDataProvider() {
         return new FacetSearchProvider((JcrNodeModel) getDefaultModel(), getTableDefinition().getComparators());
     }
 

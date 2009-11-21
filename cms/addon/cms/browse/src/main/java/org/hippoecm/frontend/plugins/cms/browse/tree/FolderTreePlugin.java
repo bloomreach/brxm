@@ -83,7 +83,7 @@ public class FolderTreePlugin extends RenderPlugin {
             @Override
             protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {
                 IPluginConfig workflowConfig = config.getPluginConfig("module.workflow");
-                if (workflowConfig != null) {
+                if (workflowConfig != null && (node instanceof IJcrTreeNode)) {
                     ContextWorkflowPlugin content = new ContextWorkflowPlugin(context, workflowConfig);
                     content.bind(FolderTreePlugin.this, id);
                     JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
