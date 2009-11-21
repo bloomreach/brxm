@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -52,42 +54,42 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     }
 
     @Override
-    protected TableDefinition getTableDefinition() {
-        List<ListColumn> columns = new ArrayList<ListColumn>();
+    protected TableDefinition<Node> getTableDefinition() {
+        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
 
-        ListColumn column = new ListColumn(new Model(""), "icon");
+        ListColumn<Node> column = new ListColumn<Node>(new Model(""), "icon");
         column.setComparator(new TypeComparator());
         column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new IconAttributeModifier());
         columns.add(column);
 
-        column = new ListColumn(new StringResourceModel("doclisting-name", this, null), "name");
+        column = new ListColumn<Node>(new StringResourceModel("doclisting-name", this, null), "name");
         column.setComparator(new NameComparator());
         column.setAttributeModifier(new DocumentAttributeModifier());
         columns.add(column);
 
-        column = new ListColumn(new StringResourceModel("doclisting-state", this, null), "state");
+        column = new ListColumn<Node>(new StringResourceModel("doclisting-state", this, null), "state");
         column.setComparator(new StateComparator());
         column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new StateIconAttributeModifier());
         columns.add(column);
 
-        return new TableDefinition(columns);
+        return new TableDefinition<Node>(columns);
     }
 
     @Override
-    protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
-            ISortableDataProvider dataProvider, TableSelectionListener selectionListener, boolean triState,
+    protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
+            ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState,
             ListPagingDefinition pagingDefinition) {
         return new DraggebleListDataTable(id, tableDefinition, dataProvider, selectionListener, triState,
                 pagingDefinition);
     }
 
-    class DraggebleListDataTable extends ListDataTable {
+    class DraggebleListDataTable extends ListDataTable<Node> {
         private static final long serialVersionUID = 1L;
 
-        public DraggebleListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
-                TableSelectionListener selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
+        public DraggebleListDataTable(String id, TableDefinition<Node> tableDefinition, ISortableDataProvider<Node> dataProvider,
+                TableSelectionListener<Node> selectionListener, boolean triState, ListPagingDefinition pagingDefinition) {
             super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
 
             //Don't use drag&drop on documents because 300+ documents in a folder on IE* is slow

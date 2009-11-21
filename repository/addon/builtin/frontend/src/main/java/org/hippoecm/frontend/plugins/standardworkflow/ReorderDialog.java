@@ -214,12 +214,12 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
                 private static final long serialVersionUID = 1L;
 
                 public AttributeModifier[] getCellAttributeModifiers(IModel<ListItem> model) {
-                    ListItem item = (ListItem) model.getObject();
+                    ListItem item = model.getObject();
                     return new AttributeModifier[] { item.getCellModifier() };
                 }
 
                 public AttributeModifier[] getColumnAttributeModifiers(IModel<ListItem> model) {
-                    ListItem item = (ListItem) model.getObject();
+                    ListItem item = model.getObject();
                     return new AttributeModifier[] { item.getColumnModifier() };
                 }
             });
@@ -230,7 +230,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
                 private static final long serialVersionUID = 1L;
 
                 public Component getRenderer(String id, IModel<ListItem> model) {
-                    ListItem item = (ListItem) model;
+                    ListItem item = model.getObject();
                     return new Label(id, item.getDisplayName());
                 }
             });

@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -40,24 +42,24 @@ public class NamespaceListingPlugin extends AbstractListingPlugin {
     }
 
     @Override
-    protected TableDefinition getTableDefinition() {
-        List<ListColumn> columns = new ArrayList<ListColumn>();
+    protected TableDefinition<Node> getTableDefinition() {
+        List<ListColumn<Node>> columns = new ArrayList<ListColumn<Node>>();
 
-        ListColumn column = new ListColumn(new StringResourceModel("nslisting-name", this, null), "name");
+        ListColumn<Node> column = new ListColumn<Node>(new StringResourceModel("nslisting-name", this, null), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
 
-        column = new ListColumn(new StringResourceModel("nslisting-type", this, null), null);
-        column.setRenderer(new IListCellRenderer() {
+        column = new ListColumn<Node>(new StringResourceModel("nslisting-type", this, null), null);
+        column.setRenderer(new IListCellRenderer<Node>() {
             private static final long serialVersionUID = 1L;
 
-            public Component getRenderer(String id, IModel model) {
+            public Component getRenderer(String id, IModel<Node> model) {
                 return new Label(id, new StringResourceModel("nslisting-ns", NamespaceListingPlugin.this, null));
             }
         });
         columns.add(column);
 
-        return new TableDefinition(columns);
+        return new TableDefinition<Node>(columns);
     }
 
 }
