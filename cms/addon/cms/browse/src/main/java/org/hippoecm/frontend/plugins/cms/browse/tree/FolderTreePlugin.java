@@ -150,16 +150,18 @@ public class FolderTreePlugin extends RenderPlugin {
 
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
-                IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
-                FolderTreePlugin.this.setDefaultModel(treeNodeModel.getNodeModel());
-                ITreeState state = getTreeState();
-                if (state.isNodeExpanded(clickedNode)) {
-                    // super has already switched selection.
-                    if (!state.isNodeSelected(clickedNode)) {
-                        state.collapseNode(clickedNode);
+                if (clickedNode instanceof IJcrTreeNode) {
+                    IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
+                    FolderTreePlugin.this.setDefaultModel(treeNodeModel.getNodeModel());
+                    ITreeState state = getTreeState();
+                    if (state.isNodeExpanded(clickedNode)) {
+                        // super has already switched selection.
+                        if (!state.isNodeSelected(clickedNode)) {
+                            state.collapseNode(clickedNode);
+                        }
+                    } else {
+                        state.expandNode(clickedNode);
                     }
-                } else {
-                    state.expandNode(clickedNode);
                 }
                 updateTree(target);
             }
