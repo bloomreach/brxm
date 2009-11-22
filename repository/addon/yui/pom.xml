@@ -109,6 +109,7 @@
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.html</include>
+          <include>**/*.properties</include>
           <include>**/*.css</include>
           <include>**/*.js</include>
           <include>**/*.gif</include>
