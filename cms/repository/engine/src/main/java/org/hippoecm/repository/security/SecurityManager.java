@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -38,7 +40,6 @@ import javax.jcr.query.QueryResult;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.domain.Domain;
 import org.hippoecm.repository.security.group.GroupManager;
-import org.hippoecm.repository.security.role.Role;
 import org.hippoecm.repository.security.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,11 @@ public class SecurityManager {
     private static final SecurityManager instance = new SecurityManager();
 
     /**
+     * Lock for sync the init method
+     */
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
+    /**
      * Logger
      */
     private final Logger log = LoggerFactory.getLogger(SecurityManager.class);
@@ -86,29 +92,42 @@ public class SecurityManager {
      * @throws RepositoryException
      */
     public void init(Session session) throws RepositoryException {
-        if (this.session != null && this.session.isLive()) {
-            return;
-        }
-        this.session = session;
-
-        // initial create
-        createSecurityProviders();
-
-        // start a listener to check if provider are added or removed
-        ObservationManager obMgr = session.getWorkspace().getObservationManager();
-        listener = new EventListener() {
-            public void onEvent(EventIterator events) {
-                try {
-                    clearProviders();
-                    createSecurityProviders();
-                } catch (RepositoryException e) {
-                    log.info("Failed to reload config for provider: {}", e.getMessage());
-                }
+        lock.readLock().lock();
+        try {
+            if (this.session != null && this.session.isLive()) {
+                return;
             }
-        };
-        obMgr.addEventListener(listener, Event.NODE_ADDED | Event.NODE_REMOVED, "/" + SECURITY_CONFIG_PATH, true, null,
-                new String[] { HippoNodeType.NT_SECURITYPROVIDER }, true);
+        } finally {
+            lock.readLock().unlock();
+        }
+        
+        lock.writeLock().lock();
+        try {
+            if (this.session != null && this.session.isLive()) {
+                return;
+            }
+            this.session = session;
 
+            // initial create
+            createSecurityProviders();
+
+            // start a listener to check if provider are added or removed
+            ObservationManager obMgr = session.getWorkspace().getObservationManager();
+            listener = new EventListener() {
+                public void onEvent(EventIterator events) {
+                    try {
+                        clearProviders();
+                        createSecurityProviders();
+                    } catch (RepositoryException e) {
+                        log.info("Failed to reload config for provider: {}", e.getMessage());
+                    }
+                }
+            };
+            obMgr.addEventListener(listener, Event.NODE_ADDED | Event.NODE_REMOVED, "/" + SECURITY_CONFIG_PATH, true, null,
+                    new String[] { HippoNodeType.NT_SECURITYPROVIDER }, true);
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     /**
