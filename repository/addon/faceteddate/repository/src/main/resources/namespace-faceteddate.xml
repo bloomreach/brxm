@@ -306,7 +306,8 @@
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-        <sv:value>nt:unstructured</sv:value>
+        <sv:value>hippostd:datefields</sv:value>
+        <sv:value>hippo:derived</sv:value>
       </sv:property>
       <sv:node sv:name="hipposysedit:field">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -323,6 +324,12 @@
         </sv:property>
         <sv:property sv:name="hipposysedit:type" sv:type="String">
           <sv:value>Date</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+          <sv:value>true</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
+          <sv:value>true</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
