@@ -15,18 +15,33 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
+
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.MarkupStream;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ValidationPlugin implements IPlugin, IFeedbackMessageFilter {
+public class ValidationPlugin extends Plugin implements IFeedbackMessageFilter {
+
+    private final class FeedbackLogger extends Component implements IFeedbackLogger {
+        private static final long serialVersionUID = 1L;
+
+        private FeedbackLogger(String id) {
+            super(id);
+        }
+
+        @Override
+        protected void onRender(MarkupStream markupStream) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -34,21 +49,16 @@ public class ValidationPlugin implements IPlugin, IFeedbackMessageFilter {
 
     private static Logger log = LoggerFactory.getLogger(ValidationPlugin.class);
 
-    private Component component;
+    private FeedbackLogger component;
     private ValidationEngine validation;
 
     public ValidationPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
+        this.component = new FeedbackLogger("component");
+
         validation = new ValidationEngine(context, config);
-        validation.start();
-
-        this.component = new Component("component") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onRender(MarkupStream markupStream) {
-                throw new UnsupportedOperationException();
-            }
-        };
+        validation.start(component);
 
         if (config.getString(RenderService.FEEDBACK) != null) {
             context.registerService(this, config.getString(RenderService.FEEDBACK));
