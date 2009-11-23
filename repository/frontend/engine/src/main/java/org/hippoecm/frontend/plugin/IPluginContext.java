@@ -48,6 +48,9 @@ public interface IPluginContext extends IClusterable {
      * provided, what services are used and what additional properties can be set
      * for the cluster.  The parameters specify the values that are required to
      * create a cluster from the template.
+     * <p>
+     * Note that clusters that are started during the construction phase will not
+     * be able to reference services that have been created in the same phase.
      * 
      * @param template A cluster template, i.e. a configuration hierarchy whose
      *                 variables have not yet been expanded.  The template contains

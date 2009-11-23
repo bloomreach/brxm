@@ -42,20 +42,17 @@ public class HippoTester extends WicketTester {
         }, null);
     }
 
-    public Home startPluginPage() {
-        Home home;
-        // create a request cycle, but don't use it.
-        // this is a workaround for mockwebapplication's retaining of these cycles. 
-        RequestCycle rc = createRequestCycle();
-        if (appFactory != null) {
-            home = (Home) super.startPage(new Home(appFactory));
-        } else {
-            home = (Home) super.startPage(Home.class);
-        }
-        rc.detach();
-        return home;
+    public HippoTester(IApplicationFactory factory) {
+        this(new JcrSessionModel(null) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Object load() {
+                return null;
+            }
+        }, factory);
     }
-    
+
     public HippoTester(final JcrSessionModel sessionModel, IApplicationFactory jcrAppFactory) {
         super(new NonPageCachingDummyWebApplication() {
 
@@ -73,4 +70,18 @@ public class HippoTester extends WicketTester {
         this.appFactory = jcrAppFactory;
     }
 
+    public Home startPluginPage() {
+        Home home;
+        // create a request cycle, but don't use it.
+        // this is a workaround for mockwebapplication's retaining of these cycles. 
+        RequestCycle rc = createRequestCycle();
+        if (appFactory != null) {
+            home = (Home) super.startPage(new Home(appFactory));
+        } else {
+            home = (Home) super.startPage(Home.class);
+        }
+        rc.detach();
+        return home;
+    }
+    
 }

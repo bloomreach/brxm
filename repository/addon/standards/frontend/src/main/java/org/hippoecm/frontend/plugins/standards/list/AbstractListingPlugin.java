@@ -27,7 +27,6 @@ import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
@@ -38,7 +37,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractListingPlugin extends RenderPlugin<Node> implements TableSelectionListener<Node>, IActivator {
+public abstract class AbstractListingPlugin extends RenderPlugin<Node> implements TableSelectionListener<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -86,11 +85,10 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
         }
     }
 
-    public void start() {
+    @Override
+    protected void onStart() {
+        super.onStart();
         modelChanged();
-    }
-
-    public void stop() {
     }
 
     protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,

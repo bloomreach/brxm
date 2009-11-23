@@ -18,14 +18,14 @@ package org.hippoecm.frontend.plugins.xinha.htmlcleaner;
 import nl.hippo.htmlcleaner.HtmlCleaner;
 import nl.hippo.htmlcleaner.HtmlCleanerTemplate;
 
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.IHtmlCleanerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HtmlCleanerPlugin implements IPlugin, IHtmlCleanerService {
+public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -37,6 +37,8 @@ public class HtmlCleanerPlugin implements IPlugin, IHtmlCleanerService {
     private transient HtmlCleanerTemplate htmlCleanerTemplate;
 
     public HtmlCleanerPlugin(IPluginContext context, final IPluginConfig config) {
+        super(context, config);
+
         htmlCleanerConfig = config.getPluginConfig("cleaner.config");
         if (htmlCleanerConfig != null) {
             try {

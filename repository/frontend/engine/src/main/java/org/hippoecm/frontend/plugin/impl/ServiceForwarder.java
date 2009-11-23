@@ -91,19 +91,24 @@ public final class ServiceForwarder extends ServiceTracker<IClusterable> {
         if (stack == null) {
             threadLocal.set(stack = new HashSet<StackEntry>());
         }
-        // detect recursion; forwarded services may be forwarded yet again,
-        // but shouldn't be registered twice under the same name
-        StackEntry targetEntry = new StackEntry(target, service);
-        if (!stack.contains(targetEntry)) {
-            StackEntry sourceEntry = new StackEntry(name, service);
-            stack.add(sourceEntry);
-            log.debug("Forwarding " + service + " from " + source + " to " + target);
-            pluginMgr.registerService(service, target);
-            forwarded.add(service);
-            stack.remove(sourceEntry);
-        }
-        if (stack.size() == 0) {
-            threadLocal.remove();
+        try {
+            // detect recursion; forwarded services may be forwarded yet again,
+            // but shouldn't be registered twice under the same name
+            StackEntry targetEntry = new StackEntry(target, service);
+            if (!stack.contains(targetEntry)) {
+                StackEntry sourceEntry = new StackEntry(name, service);
+                stack.add(sourceEntry);
+                if (log.isDebugEnabled()) {
+                    log.debug("Forwarding " + service + " from " + source + " to " + target);
+                }
+                pluginMgr.registerService(service, target);
+                forwarded.add(service);
+                stack.remove(sourceEntry);
+            }
+        } finally {
+            if (stack.size() == 0) {
+                threadLocal.remove();
+            }
         }
     }
 
@@ -120,7 +125,9 @@ public final class ServiceForwarder extends ServiceTracker<IClusterable> {
                 if (!stack.contains(targetEntry)) {
                     StackEntry sourceEntry = new StackEntry(name, service);
                     stack.add(sourceEntry);
-                    log.debug("Removing " + service + " from " + target + " (source: " + source + ")");
+                    if (log.isDebugEnabled()) {
+                        log.debug("Removing " + service + " from " + target + " (source: " + source + ")");
+                    }
                     pluginMgr.unregisterService(service, target);
                     stack.remove(sourceEntry);
                 }

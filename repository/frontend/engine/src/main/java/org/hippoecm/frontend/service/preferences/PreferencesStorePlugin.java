@@ -16,11 +16,11 @@
 
 package org.hippoecm.frontend.service.preferences;
 
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class PreferencesStorePlugin implements IPlugin, IPreferencesStore {
+public class PreferencesStorePlugin extends Plugin implements IPreferencesStore {
     private static final long serialVersionUID = 1L;
     
     @SuppressWarnings("unused")
@@ -29,6 +29,8 @@ public class PreferencesStorePlugin implements IPlugin, IPreferencesStore {
     private PreferencesStore store;
     
     public PreferencesStorePlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         store = new PreferencesStore();
         
         context.registerService(this, IPreferencesStore.SERVICE_ID);

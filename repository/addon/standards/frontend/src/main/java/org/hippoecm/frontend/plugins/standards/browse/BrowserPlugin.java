@@ -51,6 +51,12 @@ public class BrowserPlugin extends RenderPlugin {
         };
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        browseView.start();
+    }
+
     abstract public class BrowseView extends AbstractBrowseView {
         private static final long serialVersionUID = 1L;
 

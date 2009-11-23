@@ -19,8 +19,8 @@ import java.util.Map;
 
 import org.apache.wicket.protocol.http.WicketURLDecoder;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IBrowseService;
@@ -31,17 +31,14 @@ import org.hippoecm.frontend.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ControllerPlugin implements IPlugin, IController {
+public class ControllerPlugin extends Plugin implements IController {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ControllerPlugin.class);
 
-    private IPluginContext context;
-    private IPluginConfig config;
-
     public ControllerPlugin(IPluginContext context, IPluginConfig config) {
-        this.context = context;
-        this.config = config;
+        super(context, config);
+
         context.registerService(this, IController.class.getName());
     }
 
@@ -51,6 +48,8 @@ public class ControllerPlugin implements IPlugin, IController {
             String jcrPath = WicketURLDecoder.PATH_INSTANCE.decode(urlPaths[0]);
             JcrNodeModel nodeModel = new JcrNodeModel(jcrPath);
 
+            IPluginContext context = getPluginContext();
+            IPluginConfig config = getPluginConfig();
             IBrowseService browseService = context.getService(config.getString("browser.id", "service.browse"),
                     IBrowseService.class);
             if (browseService != null) {

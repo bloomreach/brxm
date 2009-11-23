@@ -23,8 +23,8 @@ import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -35,7 +35,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AutoEditPlugin implements IPlugin {
+public class AutoEditPlugin extends Plugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -44,7 +44,14 @@ public class AutoEditPlugin implements IPlugin {
     public static final Logger log = LoggerFactory.getLogger(AutoEditPlugin.class);
 
     public AutoEditPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+    }
+    
+    @Override
+    public void start() {
+        IPluginConfig config = getPluginConfig();
         if (config.getString("editor.id") != null) {
+            IPluginContext context = getPluginContext();
             final IEditorManager editService = context.getService(config.getString("editor.id"), IEditorManager.class);
             if (editService != null) {
                 try {

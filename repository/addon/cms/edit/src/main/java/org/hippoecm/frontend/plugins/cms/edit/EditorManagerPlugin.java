@@ -26,8 +26,8 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IRefreshable;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -36,7 +36,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditorManagerPlugin implements IPlugin, IEditorManager, IRefreshable, IDetachable {
+public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefreshable, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -51,6 +51,8 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IRefreshabl
     transient boolean active = false;
 
     public EditorManagerPlugin(final IPluginContext context, final IPluginConfig config) {
+        super(context, config);
+
         editorFactory = new EditorFactory(this, context, config);
         browser = new BrowserObserver(this, context, config);
 
@@ -117,14 +119,15 @@ public class EditorManagerPlugin implements IPlugin, IEditorManager, IRefreshabl
         }
     }
 
-    protected AbstractCmsEditor<JcrNodeModel> createEditor(JcrNodeModel model, IEditor.Mode mode) throws ServiceException {
+    protected AbstractCmsEditor<JcrNodeModel> createEditor(JcrNodeModel model, IEditor.Mode mode)
+            throws ServiceException {
         try {
             AbstractCmsEditor<JcrNodeModel> editor = editorFactory.newEditor(model, mode);
             editor.start();
-    
+
             editors.add(editor);
             editor.focus();
-    
+
             onFocus(editor);
             return editor;
         } catch (CmsEditorException ex) {

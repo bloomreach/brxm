@@ -44,7 +44,17 @@ public class ShortcutsPlugin implements IPlugin {
     private static final String PLUGINSQUERY = "shortcuts.query";
     public static final String SHORTCUTS_ID = "shortcuts.id";
 
+    private final IPluginContext context;
+
+    private final IPluginConfig config;
+
     public ShortcutsPlugin(IPluginContext context, IPluginConfig config) {
+        this.context = context;
+        this.config = config;
+
+    }
+
+    public void start() {
         // FIXME: throw exception when no query is defined?
         if (config.get(PLUGINSQUERY) != null) {
             JcrQueryModel query = new JcrQueryModel(config.getString(PLUGINSQUERY), Query.XPATH);
@@ -62,6 +72,9 @@ public class ShortcutsPlugin implements IPlugin {
         } else {
             log.warn("No query defined for {}", context.getReference(this).getServiceId());
         }
+    }
+
+    public void stop() {
     }
 
 }

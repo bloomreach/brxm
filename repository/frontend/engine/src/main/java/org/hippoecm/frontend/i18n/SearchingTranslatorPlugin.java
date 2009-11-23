@@ -70,4 +70,10 @@ public class SearchingTranslatorPlugin extends AbstractTranslateService implemen
         return null;
     }
 
+    public void start() {
+    }
+
+    public void stop() {
+    }
+
 }

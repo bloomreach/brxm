@@ -112,6 +112,10 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
         }
 
         context.registerControl(this);
+
+        if (log.isDebugEnabled()) {
+            log.debug("cluster " + clusterId + " has started");
+        }
     }
 
     public void stop() {
@@ -119,6 +123,11 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
             log.debug("cluster has already been stopped");
             return;
         }
+
+        if (log.isDebugEnabled()) {
+            log.debug("stopping cluster " + clusterId);
+        }
+
         running = false;
 
         context.unregisterControl(this);

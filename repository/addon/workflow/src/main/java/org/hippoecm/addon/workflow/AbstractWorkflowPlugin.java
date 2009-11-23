@@ -74,17 +74,11 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin {
         // It should not occur, but the lifecycle model currently can return null here.  To avoid NPEs we
         // will disable the normal operability of the plugin at this time.
         IServiceReference serviceReference = context.getReference(this);
-        if(serviceReference != null) {
-            plugins = new PluginController(context, config, serviceReference.getServiceId());
-        } else {
-            plugins = null;
-        }
+        plugins = new PluginController(context, config, serviceReference.getServiceId());
     }
 
     MenuHierarchy buildMenu(Set<Node> nodeSet) {
         final MenuHierarchy menu = new MenuHierarchy();
-        if (plugins == null)
-            return menu;
         plugins.stopRenderers();
         List<Panel> list = new LinkedList<Panel>();
         for(Node documentNode : nodeSet) {

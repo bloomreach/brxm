@@ -26,9 +26,10 @@ import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.plugin.IPlugin;
+import org.hippoecm.frontend.plugin.DummyPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.repository.TestCase;
 import org.junit.After;
@@ -40,16 +41,6 @@ public abstract class PluginTest extends TestCase {
     private static final String SVN_ID = "$Id$";
 
     protected static ValueMap CREDENTIALS = new ValueMap("username=" + SYSTEMUSER_ID + ",password=" + SYSTEMUSER_PASSWORD.toString());
-    
-    protected static IPluginContext context;
-
-    public static class DummyPlugin implements IPlugin {
-        private static final long serialVersionUID = 1L;
-
-        public DummyPlugin(IPluginContext context, IPluginConfig config) {
-            PluginTest.context = context;
-        }
-    }
 
     String[] config = new String[] {
             "/config", "nt:unstructured",
@@ -62,6 +53,7 @@ public abstract class PluginTest extends TestCase {
     protected Node root;
     protected HippoTester tester;
     protected Home home;
+    protected IPluginContext context;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -98,6 +90,9 @@ public abstract class PluginTest extends TestCase {
         }, jcrAppFactory);
 
         home = tester.startPluginPage();
+        JavaPluginConfig config = new JavaPluginConfig("dummy");
+        config.put("plugin.class", DummyPlugin.class.getName());
+        context = home.getPluginManager().start(config);
     }
 
     @After

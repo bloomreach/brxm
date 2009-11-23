@@ -50,4 +50,10 @@ public class AjaxIndicatorPlugin extends AjaxIndicatorBehavior implements IPlugi
         return config.getString(IBehaviorService.PATH);
     }
 
+    public void start() {
+    }
+
+    public void stop() {
+    }
+
 }

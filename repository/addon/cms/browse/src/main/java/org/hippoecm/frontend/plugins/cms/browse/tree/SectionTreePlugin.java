@@ -299,4 +299,10 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         return dirty;
     }
 
+    public void start() {
+    }
+
+    public void stop() {
+    }
+
 }

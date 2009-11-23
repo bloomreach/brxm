@@ -38,9 +38,7 @@ public class EditorPlugin extends RenderPlugin {
 
     public EditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-
-        add(form = newForm());
-
+        
         feedback = new YuiFeedbackPanel("feedback", new IFeedbackMessageFilter() {
             private static final long serialVersionUID = 1L;
 
@@ -58,6 +56,12 @@ public class EditorPlugin extends RenderPlugin {
             }
         }, context);
         add(feedback);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        add(form = newForm());
     }
 
     @Override

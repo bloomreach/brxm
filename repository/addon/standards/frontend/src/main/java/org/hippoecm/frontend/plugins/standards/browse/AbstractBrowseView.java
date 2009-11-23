@@ -80,7 +80,13 @@ public abstract class AbstractBrowseView implements IBrowseService<JcrNodeModel>
                 }
 
             }, IObserver.class.getName());
-
+        }
+    }
+    
+    public void start() {
+        final IModelReference<Node> folderReference = context.getService(config.getString("model.folder"),
+                IModelReference.class);
+        if (folderReference != null) {
             IModel<Node> model = folderReference.getModel();
             if (model != null) {
                 onFolderChanged(model);

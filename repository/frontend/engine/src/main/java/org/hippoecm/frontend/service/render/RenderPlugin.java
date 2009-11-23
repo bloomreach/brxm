@@ -44,6 +44,8 @@ public class RenderPlugin<T> extends RenderService<T> implements IPlugin {
 
     private static final long serialVersionUID = 1L;
 
+    private static final int FLAG_STARTING_STOPPING = FLAG_RESERVED5;
+
     class PluginEntry implements Serializable {
         private static final long serialVersionUID = 1L;
 
@@ -72,6 +74,49 @@ public class RenderPlugin<T> extends RenderService<T> implements IPlugin {
 
     public RenderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+    }
+
+    public final void start() {
+        setFlag(FLAG_STARTING_STOPPING, true);
+        onStart();
+        if (getFlag(FLAG_STARTING_STOPPING)) {
+            throw new IllegalStateException(RenderPlugin.class.getName() +
+                    " has not been properly started. Something in the hierarchy of " +
+                    getClass().getName() +
+                    " has not called super.onStart() in the override of onStart() method");
+        }
+    }
+
+    public final void stop() {
+        setFlag(FLAG_STARTING_STOPPING, true);
+        onStop();
+        if (getFlag(FLAG_STARTING_STOPPING)) {
+            throw new IllegalStateException(RenderPlugin.class.getName() +
+                    " has not been properly stopped. Something in the hierarchy of " +
+                    getClass().getName() +
+                    " has not called super.onStop() in the override of onStop() method");
+        }
+    }
+
+    /**
+     * Called during the start phase of the plugin.  Services and trackers that were registered
+     * during construction have been made available to other plugins.
+     * <p>
+     * NOTE* If you override this, you *must* call super.onStop() within your
+     * implementation.
+     */
+    protected void onStart() {
+        setFlag(FLAG_STARTING_STOPPING, false);
+    }
+
+    /**
+     * Called during the stop phase of the plugin.
+     * <p>
+     * NOTE* If you override this, you *must* call super.onStop() within your
+     * implementation.
+     */
+    protected void onStop() {
+        setFlag(FLAG_STARTING_STOPPING, false);
     }
 
     @Override
@@ -142,4 +187,5 @@ public class RenderPlugin<T> extends RenderService<T> implements IPlugin {
         }
         return newPlugin(id, pluginConfig);
     }
+
 }

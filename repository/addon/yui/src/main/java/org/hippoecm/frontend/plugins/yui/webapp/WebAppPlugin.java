@@ -49,4 +49,10 @@ public class WebAppPlugin extends WebAppBehavior implements IPlugin, IBehaviorSe
         return config.getString(IBehaviorService.PATH);
     }
 
+    public void start() {
+    }
+
+    public void stop() {
+    }
+
 }

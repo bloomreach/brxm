@@ -15,7 +15,8 @@
  */
 package org.hippoecm.frontend.plugin;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.HippoTester;
@@ -23,7 +24,6 @@ import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +39,9 @@ public class ServiceFactoryTest {
     public void setUp() {
         tester = new HippoTester();
         home = (Home) tester.startPage(Home.class);
-        context = new PluginContext(home.getPluginManager(), new JavaPluginConfig("test"));
+        JavaPluginConfig config = new JavaPluginConfig("dummy");
+        config.put("plugin.class", DummyPlugin.class.getName());
+        context = home.getPluginManager().start(config);
     }
 
     static class TestService implements IClusterable {
@@ -59,7 +61,7 @@ public class ServiceFactoryTest {
     static class TestFactory implements IServiceFactory<TestService> {
 
         int count = 0;
-        
+
         public TestService getService(IPluginContext context) {
             count++;
             return new TestService(context);
@@ -83,9 +85,11 @@ public class ServiceFactoryTest {
         assertNotNull(testService);
     }
 
-    public static class TestPlugin implements IPlugin {
+    public static class TestPlugin extends Plugin {
 
         public TestPlugin(IPluginContext context, IPluginConfig config) {
+            super(context, config);
+
             TestService testService = context.getService("service.test", TestService.class);
             assertNotNull(testService);
         }
