@@ -209,9 +209,24 @@ if (!YAHOO.hippo.EditorManager) {
                 
                 //concat default properties with configured properties
                 xinha.config = this._appendProperties(xinha.config, editor.config.properties);
-                
+
                 //configure toolbar
-                xinha.config.toolbar = [ editor.config.toolbars ];
+                if(editor.config.toolbars.length == 0) {
+                    //Load toolbar with all Xinha default buttons
+                    //remove button popupeditor
+                    outerLoop:
+                    for(var i=0; i<xinha.config.toolbar.length; i++) {
+                        for(var j=0; j<xinha.config.toolbar[i].length; j++) {
+                            if(xinha.config.toolbar[i][j] == 'popupeditor') {
+                                xinha.config.toolbar[i].splice(j, 1);//remove element from array
+                                break outerLoop;      
+                            }
+                        }
+                    }
+                } else {
+                    //load custom toolbar
+                    xinha.config.toolbar = [ editor.config.toolbars ];
+                }
                 
                 //concat default plugin properties with configured properties
                 for ( var i = 0; i < editor.config.pluginProperties.length; i++) {
