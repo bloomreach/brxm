@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -35,7 +34,6 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -98,10 +96,8 @@ public class HstSurfAndEditTag extends TagSupport {
         }
         
         HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
-        HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
-        HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
-        HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
-
+         HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
+       
         if(hstRequest == null) {
             log.warn("Cannot create a surf & edit link outside the hst request processing for '{}'", this.hippoBean.getPath());
             return EVAL_PAGE;

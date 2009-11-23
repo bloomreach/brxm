@@ -176,11 +176,11 @@ public class SimpleHmlStringParser {
             log.warn("Cannot rewrite absolute path '{}'. Expected a relative path. Return '{}'", path, path);
             return null;
         } else {
-            // relative node, most likely a facetselect node:
+            // relative node, most likely a mirror node:
             try {
                 if (node.hasNode(path)) {
-                    Node facetSelectNode = node.getNode(path);
-                    return reqContext.getHstLinkCreator().create(facetSelectNode, reqContext.getResolvedSiteMapItem());
+                    Node mirrorNode = node.getNode(path);
+                    return reqContext.getHstLinkCreator().create(mirrorNode, reqContext.getResolvedSiteMapItem());
                 } else {
                     log.warn("Missing facetselect node '{}' for internal link for document '{}'. Cannot create link", path, node.getPath());
                 }

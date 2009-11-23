@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.tag;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
@@ -33,8 +32,6 @@ public class HstActionURLTag extends BaseHstURLTag {
     @Override
     protected HstURL getUrl() {
         if (this.url == null) {
-            HttpServletResponse servletResponse = (HttpServletResponse) this.pageContext.getResponse();
-
             // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
             HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
 
