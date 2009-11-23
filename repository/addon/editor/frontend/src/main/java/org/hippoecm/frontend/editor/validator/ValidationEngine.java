@@ -40,6 +40,7 @@ import org.hippoecm.frontend.validation.IValidateService;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidationResult;
+import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +79,7 @@ public class ValidationEngine implements IValidateService {
     private ModelReference resultModelReference;
     private IObserver modelObserver;
     private TypeLocator locator;
+    private IFeedbackLogger logger;
 
     public ValidationEngine(IPluginContext context, IPluginConfig config) {
         this.context = context;
@@ -96,12 +98,13 @@ public class ValidationEngine implements IValidateService {
         locator = new TypeLocator(stores);
     }
 
-    public void start() {
+    public void start(IFeedbackLogger logger) {
         if (!config.containsKey("wicket.model") || !config.containsKey("validator.model")
                 || !config.containsKey(IValidateService.VALIDATE_ID)) {
             return;
         }
 
+        this.logger = logger;
         final IModelReference wicketModelRef = context.getService(config.getString("wicket.model"),
                 IModelReference.class);
         if (wicketModelRef != null) {
@@ -154,8 +157,12 @@ public class ValidationEngine implements IValidateService {
                 ITypeDescriptor descriptor = locator.locate(nodeType);
                 validator = new JcrTypeValidator(descriptor);
             }
-            ((ValidationResult) resultModel.getObject()).setViolations(validator.validate(model));
+            ValidationResult result = (ValidationResult) resultModel.getObject();
+            result.setViolations(validator.validate(model));
             resultModel.notifyObservers(new EventCollection());
+            for (Violation violation : result.getViolations()) {
+                logger.error(violation.getMessage().getObject());
+            }
             return (IValidationResult) resultModel.getObject();
         } catch (RepositoryException e) {
             throw new ValidationException("Repository error", e);
