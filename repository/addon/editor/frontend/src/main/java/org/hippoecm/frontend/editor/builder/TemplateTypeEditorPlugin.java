@@ -124,7 +124,11 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             log.error(e.getMessage());
             throw new RuntimeException("Failed to initialize", e);
         }
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         onModelChanged();
     }
 
