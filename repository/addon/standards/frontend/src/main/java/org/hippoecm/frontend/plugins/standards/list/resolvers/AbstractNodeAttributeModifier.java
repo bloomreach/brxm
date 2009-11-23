@@ -24,7 +24,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractNodeAttributeModifier implements IListAttributeModifier {
+public abstract class AbstractNodeAttributeModifier implements IListAttributeModifier<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -32,10 +32,10 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
 
     private static final Logger log = LoggerFactory.getLogger(AbstractNodeAttributeModifier.class);
 
-    public AttributeModifier[] getCellAttributeModifiers(IModel model) {
+    public AttributeModifier[] getCellAttributeModifiers(IModel<Node> model) {
         if (model instanceof JcrNodeModel) {
             try {
-                Node node = (Node) model.getObject();
+                Node node = model.getObject();
                 if (node != null) {
                     return getCellAttributeModifiers(node);
                 } else {
@@ -61,18 +61,16 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
         }
     }
 
-    public AttributeModifier[] getColumnAttributeModifiers(IModel model) {
-        if (model instanceof JcrNodeModel) {
-            try {
-                Node node = (Node) model.getObject();
-                if (node != null) {
-                    return getColumnAttributeModifiers(node);
-                } else {
-                    log.warn("Cannot render a null node");
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
+    public AttributeModifier[] getColumnAttributeModifiers(IModel<Node> model) {
+        try {
+            Node node = model.getObject();
+            if (node != null) {
+                return getColumnAttributeModifiers(node);
+            } else {
+                log.warn("Cannot render a null node");
             }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
         return null;
     }

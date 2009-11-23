@@ -24,11 +24,10 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GalleryFolderAttributeModifier extends AbstractNodeAttributeModifier implements IListAttributeModifier {
+public class GalleryFolderAttributeModifier extends AbstractNodeAttributeModifier  {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     
