@@ -38,7 +38,7 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
     
     @Override
     public AttributeModifier getCellAttributeModifier(Node node) {
-        IModel documentType = null;
+        IModel<String> documentType = null;
         try {
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 //isFolder = false;
