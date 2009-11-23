@@ -756,7 +756,7 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>2.7</version>
         <configuration>
-          <downloadSources>true</downloadSources>
+          <downloadSources>false</downloadSources>
           <downloadJavadocs>true</downloadJavadocs>
         </configuration>
       </plugin>
