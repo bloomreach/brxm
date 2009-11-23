@@ -34,11 +34,10 @@ import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
-import org.hippoecm.frontend.plugins.cms.edit.EditorManagerPlugin;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -50,7 +49,6 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.reviewedactions.PublishableDocument;
-import org.hippoecm.repository.standardworkflow.DefaultWorkflowImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,12 +92,14 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         }
     }
 
-    public static class CloseFilter implements IEditorFilter, IPlugin {
+    public static class CloseFilter extends Plugin implements IEditorFilter {
         private static final long serialVersionUID = 1L;
 
         boolean closed = false;
 
         public CloseFilter(IPluginContext context, IPluginConfig config) {
+            super(context, config);
+
             IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
             context.registerService(this, context.getReference(editor).getServiceId());
 
@@ -115,19 +115,19 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         }
     }
 
-    protected static List<IRenderService> getPreviews() {
+    protected List<IRenderService> getPreviews() {
         return context.getServices(PREVIEWS, IRenderService.class);
     }
 
-    protected static List<IRenderService> getEditors() {
+    protected List<IRenderService> getEditors() {
         return context.getServices(EDITORS, IRenderService.class);
     }
 
-    protected static List<CloseFilter> getCloseFilters() {
+    protected List<CloseFilter> getCloseFilters() {
         return context.getServices(FILTERS, CloseFilter.class);
     }
 
-    protected static List<IRenderService> getRenderers() {
+    protected List<IRenderService> getRenderers() {
         return context.getServices(RENDERERS, IRenderService.class);
     }
 

@@ -53,7 +53,11 @@ public class ViewerPlugin extends RenderPlugin {
         engineId = context.getReference(factory).getServiceId();
 
         addExtensionPoint("template");
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         modelChanged();
     }
 

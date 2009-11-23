@@ -17,22 +17,23 @@ package org.hippoecm.frontend.editor.layout;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LayoutProviderPlugin implements IPlugin {
+public class LayoutProviderPlugin extends Plugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(LayoutProviderPlugin.class);
-    
+
     public LayoutProviderPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
 
         ILayoutProvider layoutProvider = new LayoutProvider(new LoadableDetachableModel<ClassLoader>() {
             private static final long serialVersionUID = 1L;
@@ -41,7 +42,7 @@ public class LayoutProviderPlugin implements IPlugin {
             protected ClassLoader load() {
                 return ((UserSession) Session.get()).getClassLoader();
             }
-            
+
         });
         context.registerService(layoutProvider, ILayoutProvider.class.getName());
     }

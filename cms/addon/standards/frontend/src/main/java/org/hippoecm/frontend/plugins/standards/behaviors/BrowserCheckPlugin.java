@@ -278,4 +278,10 @@ public class BrowserCheckPlugin extends AbstractBehavior implements IPlugin, IBe
         return config.getString(IBehaviorService.PATH);
     }
 
+    public void start() {
+    }
+
+    public void stop() {
+    }
+
 }

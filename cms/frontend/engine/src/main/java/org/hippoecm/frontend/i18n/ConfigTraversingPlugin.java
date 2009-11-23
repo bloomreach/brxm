@@ -67,4 +67,10 @@ public class ConfigTraversingPlugin extends AbstractTranslateService implements 
         }
     }
 
+    public void start() {
+    }
+
+    public void stop() {
+    }
+
 }

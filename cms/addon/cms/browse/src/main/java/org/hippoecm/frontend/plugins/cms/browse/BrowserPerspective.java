@@ -57,6 +57,12 @@ public class BrowserPerspective extends Perspective {
     }
     
     @Override
+    protected void onStart() {
+        super.onStart();
+        browserView.start();
+    }
+    
+    @Override
     protected void onDetach() {
         browserView.detach();
         super.onDetach();

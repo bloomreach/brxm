@@ -169,4 +169,10 @@ public class ObservableRegistry implements IPlugin {
         }
     }
 
+    public void start() {
+    }
+
+    public void stop() {
+    }
+
 }

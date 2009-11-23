@@ -42,7 +42,6 @@ import org.hippoecm.frontend.editor.layout.LayoutHelper;
 import org.hippoecm.frontend.editor.layout.RenderContext;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -55,7 +54,7 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator, ILayoutAware {
+public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAware {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -192,11 +191,14 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
         }
 
         registerExtensionPointSelector();
-
-        updatePreview();
     }
 
-    public void start() {
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        updatePreview();
+
         final IPluginConfig editedConfig = builderContext.getEditablePluginConfig();
         getPluginContext().registerService(configObserver = new IObserver<IPluginConfig>() {
             private static final long serialVersionUID = 1L;
@@ -212,8 +214,10 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements IActivator
         }, IObserver.class.getName());
     }
 
-    public void stop() {
+    @Override
+    protected void onStop() {
         getPluginContext().unregisterService(configObserver, IObserver.class.getName());
+        super.onStop();
     }
 
     @Override

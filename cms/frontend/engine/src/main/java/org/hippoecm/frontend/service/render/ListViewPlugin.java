@@ -29,4 +29,17 @@ public class ListViewPlugin<T> extends ListViewService<T> implements IPlugin {
         super(context, config);
     }
 
+    public final void start() {
+        onStart();
+    }
+
+    public final void stop() {
+        onStop();
+    }
+
+    protected void onStart() {
+    }
+
+    protected void onStop() {
+    }
 }

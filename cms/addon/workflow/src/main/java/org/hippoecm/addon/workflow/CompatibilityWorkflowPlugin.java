@@ -39,7 +39,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -59,7 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Deprecated
-public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin<WorkflowDescriptor> implements IActivator {
+public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin<WorkflowDescriptor> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: AbstractWorkflowPlugin.java 16815 2009-03-11 16:09:10Z fvlankvelt $";
 
@@ -71,11 +70,10 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         super(context, config);
     }
 
-    public void start() {
+    @Override
+    protected void onStart() {
+        super.onStart();
         modelChanged();
-    }
-
-    public void stop() {
     }
 
     @SuppressWarnings("unchecked")

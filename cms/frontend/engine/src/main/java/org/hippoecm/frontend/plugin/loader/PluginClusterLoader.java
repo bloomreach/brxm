@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.plugin.loader;
 
 import org.hippoecm.frontend.plugin.IClusterControl;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * Plugin loads all the plugins from a specified cluster
  *
  */
-public class PluginClusterLoader implements IPlugin {
+public class PluginClusterLoader extends Plugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -40,6 +40,13 @@ public class PluginClusterLoader implements IPlugin {
     public static final String CLUSTER_PARAMETERS = "cluster.config";
 
     public PluginClusterLoader(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+    }
+    
+    @Override
+    public void start() {
+        IPluginContext context = getPluginContext();
+        IPluginConfig config = getPluginConfig();
         IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
 
@@ -56,6 +63,7 @@ public class PluginClusterLoader implements IPlugin {
                 control.start();
             }
         }
+        super.start();
     }
 
 }

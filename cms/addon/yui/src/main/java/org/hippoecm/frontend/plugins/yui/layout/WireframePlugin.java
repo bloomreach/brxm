@@ -55,4 +55,10 @@ public class WireframePlugin extends WireframeBehavior implements IPlugin, IBeha
         return config.getString(IBehaviorService.PATH);
     }
 
+    public void start() {
+    }
+
+    public void stop() {
+    }
+
 }

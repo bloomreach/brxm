@@ -19,14 +19,15 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
-import org.hippoecm.frontend.plugin.IActivator;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -51,6 +52,7 @@ public class PluginContext implements IPluginContext, IDetachable {
     private IPluginConfig config;
     private IPlugin plugin;
     private Map<String, List<IClusterable>> services;
+    private Map<IClusterable, ServiceRegistration> registrations;
     private Map<IServiceFactory<IClusterable>, IClusterable> instances;
     private Map<String, List<IServiceTracker<? extends IClusterable>>> listeners;
     private Map<String, ClusterControl> children;
@@ -66,8 +68,9 @@ public class PluginContext implements IPluginContext, IDetachable {
         }
 
         this.services = new HashMap<String, List<IClusterable>>();
+        this.registrations = new IdentityHashMap<IClusterable, ServiceRegistration>();
         this.instances = new IdentityHashMap<IServiceFactory<IClusterable>, IClusterable>();
-        this.listeners = new HashMap<String, List<IServiceTracker<? extends IClusterable>>>();
+        this.listeners = new LinkedHashMap<String, List<IServiceTracker<? extends IClusterable>>>();
         this.children = new TreeMap<String, ClusterControl>();
     }
 
@@ -117,23 +120,37 @@ public class PluginContext implements IPluginContext, IDetachable {
     @SuppressWarnings("unchecked")
     public <T extends IClusterable> T getService(String name, Class<T> clazz) {
         T service = manager.getService(name, clazz);
-        if (service == null) {
-            List<IServiceFactory> list = manager.getServices(name, IServiceFactory.class);
-            if (list != null && list.size() > 0) {
-                for (IServiceFactory factory : list) {
-                    if (clazz.isAssignableFrom(factory.getServiceClass())) {
-                        if (instances.containsKey(factory)) {
-                            service = (T) instances.get(factory);
-                        } else {
-                            service = (T) factory.getService(this);
-                            instances.put(factory, service);
-                        }
-                        break;
+        if (service != null) {
+            return service;
+        }
+
+        List<IServiceFactory> list = manager.getServices(name, IServiceFactory.class);
+        if (list != null && list.size() > 0) {
+            for (IServiceFactory factory : list) {
+                if (clazz.isAssignableFrom(factory.getServiceClass())) {
+                    if (instances.containsKey(factory)) {
+                        return (T) instances.get(factory);
+                    } else {
+                        service = (T) factory.getService(this);
+                        instances.put(factory, service);
+                        return service;
                     }
                 }
             }
         }
-        return service;
+
+        if (initializing && service == null) {
+            for (Map.Entry<IClusterable, ServiceRegistration> entry : registrations.entrySet()) {
+                ServiceRegistration registration = entry.getValue();
+                if (registration.names.contains(name)) {
+                    if (clazz.isInstance(entry.getKey())) {
+                        return (T) entry.getKey();
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -154,6 +171,16 @@ public class PluginContext implements IPluginContext, IDetachable {
                 }
             }
         }
+        if (initializing) {
+            for (Map.Entry<IClusterable, ServiceRegistration> entry : registrations.entrySet()) {
+                ServiceRegistration registration = entry.getValue();
+                if (registration.names.contains(name)) {
+                    if (clazz.isInstance(entry.getKey())) {
+                        result.add((T) entry.getKey());
+                    }
+                }
+            }
+        }
         return result;
     }
 
@@ -169,7 +196,21 @@ public class PluginContext implements IPluginContext, IDetachable {
                 services.put(name, list);
             }
             list.add(service);
-            manager.registerService(service, name);
+            if (initializing) {
+                ServiceRegistration registration;
+                if (registrations.containsKey(service)) {
+                    registration = registrations.get(service);
+                    registration.addName(name);
+                } else {
+                    registration = manager.registerService(service, name);
+                    registrations.put(service, registration);
+                }
+            } else {
+                ServiceRegistration registration = manager.registerService(service, name);
+                if (registration != null) {
+                    registration.notifyTrackers();
+                }
+            }
         } else {
             log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
                     + " is registering a service when stopping; ignoring");
@@ -181,7 +222,21 @@ public class PluginContext implements IPluginContext, IDetachable {
             List<IClusterable> list = services.get(name);
             if (list != null) {
                 list.remove(service);
-                manager.unregisterService(service, name);
+                if (initializing) {
+                    if (registrations.containsKey(service)) {
+                        ServiceRegistration registration = registrations.get(service);
+                        registration.removeName(name);
+                        if (registration.names.size() == 0) {
+                            registration.cleanup();
+                            registrations.remove(service);
+                        }
+                    } else {
+                        log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
+                                + " is unregistering service at " + name + " that wasn't registered.");
+                    }
+                } else {
+                    manager.unregisterService(service, name);
+                }
             } else {
                 log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
                         + " is unregistering service at " + name + " that wasn't registered.");
@@ -222,15 +277,20 @@ public class PluginContext implements IPluginContext, IDetachable {
     public void connect(IPlugin plugin) {
         if (initializing) {
             this.plugin = plugin;
-            for (Map.Entry<String, List<IServiceTracker<? extends IClusterable>>> entry : listeners.entrySet()) {
+            Map<String, List> listeners = new LinkedHashMap(this.listeners);
+            initializing = false;
+            for (Map.Entry<String, List> entry : (Set<Map.Entry<String, List>>) listeners.entrySet()) {
                 List<IServiceTracker<? extends IClusterable>> list = entry.getValue();
                 for (IServiceTracker<? extends IClusterable> listener : list) {
                     manager.registerTracker(listener, entry.getKey());
                 }
             }
-            initializing = false;
-            if (plugin instanceof IActivator) {
-                ((IActivator) plugin).start();
+            for (ServiceRegistration registration : registrations.values()) {
+                registration.notifyTrackers();
+            }
+            registrations.clear();
+            if (plugin != null) {
+                plugin.start();
             }
         } else {
             log.warn("context was already initialized");
@@ -253,8 +313,8 @@ public class PluginContext implements IPluginContext, IDetachable {
         if (!stopping) {
             stopping = true;
 
-            if (plugin instanceof IActivator) {
-                ((IActivator) plugin).stop();
+            if (plugin != null) {
+                plugin.stop();
             }
 
             ClusterControl[] controls = children.values().toArray(new ClusterControl[children.size()]);
@@ -276,10 +336,17 @@ public class PluginContext implements IPluginContext, IDetachable {
             }
             instances.clear();
 
-            for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
-                for (IClusterable service : entry.getValue()) {
-                    manager.unregisterService(service, entry.getKey());
+            if (!initializing) {
+                for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
+                    for (IClusterable service : entry.getValue()) {
+                        manager.unregisterService(service, entry.getKey());
+                    }
                 }
+            } else {
+                for (ServiceRegistration registration : registrations.values()) {
+                    registration.cleanup();
+                }
+                registrations.clear();
             }
             services.clear();
         }

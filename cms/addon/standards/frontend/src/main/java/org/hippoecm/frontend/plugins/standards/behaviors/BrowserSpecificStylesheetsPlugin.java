@@ -17,15 +17,15 @@
 package org.hippoecm.frontend.plugins.standards.behaviors;
 
 import org.apache.wicket.behavior.IBehavior;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.behaviors.BrowserSpecificStylesheetsBehavior.Browser;
 import org.hippoecm.frontend.plugins.standards.behaviors.BrowserSpecificStylesheetsBehavior.StylesheetConfiguration;
 import org.hippoecm.frontend.plugins.standards.behaviors.BrowserSpecificStylesheetsBehavior.UserAgent;
 import org.hippoecm.frontend.service.IBehaviorService;
 
-public class BrowserSpecificStylesheetsPlugin implements IPlugin, IBehaviorService {
+public class BrowserSpecificStylesheetsPlugin extends Plugin implements IBehaviorService {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -35,6 +35,8 @@ public class BrowserSpecificStylesheetsPlugin implements IPlugin, IBehaviorServi
     private BrowserSpecificStylesheetsBehavior behavior;
 
     public BrowserSpecificStylesheetsPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         componentPath = config.getString(IBehaviorService.PATH);
 
         String[] browsers = config.getStringArray("browsers");
