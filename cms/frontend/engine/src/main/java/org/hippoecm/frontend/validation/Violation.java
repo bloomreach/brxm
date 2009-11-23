@@ -28,14 +28,14 @@ public final class Violation implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private Set<ModelPath> fieldPaths;
-    private IModel/*<String>*/message;
+    private IModel<String> message;
 
-    public Violation(Set<ModelPath> fieldPaths, IModel/*<String>*/message) {
+    public Violation(Set<ModelPath> fieldPaths, IModel<String> message) {
         this.fieldPaths = fieldPaths;
         this.message = message;
     }
 
-    public IModel/*<String>*/getMessage() {
+    public IModel<String> getMessage() {
         return message;
     }
 
