@@ -125,6 +125,10 @@ public class TestMultipleRepository extends AbstractSpringTestCase {
         int jobCount = 100;
         int workerCount = 20;
         
+        // temporary fix for concurrent first login when repository is just started
+        Session session = this.multipleRepository.login();
+        session.logout();
+        
         LinkedList<Runnable> jobQueue = new LinkedList<Runnable>();
         
         for (int i = 0; i < jobCount; i++) {
