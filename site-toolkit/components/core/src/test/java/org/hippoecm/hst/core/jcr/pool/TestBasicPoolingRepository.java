@@ -167,7 +167,7 @@ public class TestBasicPoolingRepository extends AbstractSpringTestCase {
         int jobCount = 100;
         int workerCount = 20;
         
-        // temporary fix for concurrent first login when repository is just started
+        // temporary fix for concurrent first login when repository is just started: From ECM 2.10.00 and higher this is fixed
         Session session = this.poolingRepository.login();
         session.logout();
         
