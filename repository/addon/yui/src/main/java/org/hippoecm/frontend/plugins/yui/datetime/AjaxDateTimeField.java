@@ -21,11 +21,9 @@ import java.util.TimeZone;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.datetime.DateTimeField;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
@@ -36,7 +34,7 @@ public class AjaxDateTimeField extends DateTimeField {
 
     private static final long serialVersionUID = 1L;
 
-    public AjaxDateTimeField(String id, IModel model, boolean todayLinkVisible, IPluginContext context, IPluginConfig config) {
+    public AjaxDateTimeField(String id, IModel<Date> model, boolean todayLinkVisible, IPluginContext context, IPluginConfig config) {
         super(id, model, context, config);
 
         get("date").add(new ChangeBehaviour());
@@ -46,7 +44,7 @@ public class AjaxDateTimeField extends DateTimeField {
 
         setOutputMarkupId(true);
 
-        add(new AjaxLink("today") {
+        add(new AjaxLink<Date>("today") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -58,9 +56,9 @@ public class AjaxDateTimeField extends DateTimeField {
 
     // callback that the ChangeBehaviour calls when one of the composing fields updates
     public void onUpdate(AjaxRequestTarget target) {
-        Object dateFieldInput = getField("date").getModelObject();
-        Integer hours = (Integer) getField("hours").getModelObject();
-        Integer minutes = (Integer) getField("minutes").getModelObject();
+        Object dateFieldInput = get("date").getDefaultModelObject();
+        Integer hours = (Integer) get("hours").getDefaultModelObject();
+        Integer minutes = (Integer) get("minutes").getDefaultModelObject();
 
         updateDateTime(dateFieldInput, hours, minutes, target);
     }
@@ -88,10 +86,6 @@ public class AjaxDateTimeField extends DateTimeField {
             error(e.getMessage());
             invalid();
         }
-    }
-
-    private FormComponent getField(String id) {
-        return (FormComponent) get(id);
     }
 
     @Override

@@ -15,11 +15,10 @@
  */
 package org.hippoecm.faceteddate.editor;
 
+import java.util.Date;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.datetime.StyleDateConverter;
@@ -27,7 +26,6 @@ import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
@@ -37,8 +35,10 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class DatePickerPlugin extends RenderPlugin {
+public class DatePickerPlugin extends RenderPlugin<Date> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -50,7 +50,7 @@ public class DatePickerPlugin extends RenderPlugin {
         super(context, config);
 
         Node dateNode = ((JcrNodeModel) getDefaultModel()).getNode();
-        JcrPropertyValueModel valueModel = new JcrPropertyValueModel(new JcrPropertyModel(dateNode
+        JcrPropertyValueModel<Date> valueModel = new JcrPropertyValueModel<Date>(new JcrPropertyModel(dateNode
                 .getProperty("hippostd:date")));
         MarkupContainer panel;
         add(panel = new WebMarkupContainer("info"));
@@ -59,7 +59,7 @@ public class DatePickerPlugin extends RenderPlugin {
                 "hippostd:weekofyear").getString() : "-"));
         if (dateNode.hasProperty("hippostd:dayofweek")) {
             panel.add(new Label("dayofweek", new TypeTranslator(new JcrNodeTypeModel("hippostd:date")).getValueName(
-                    "hippostd:dayofweek", new Model(dateNode.getProperty("hippostd:dayofweek").getString()))));
+                    "hippostd:dayofweek", new Model<String>(dateNode.getProperty("hippostd:dayofweek").getString()))));
         } else {
             panel.add(new Label("dayofweek", "-"));
         }

@@ -29,7 +29,7 @@ public class DateFieldWidget extends Panel {
     private static final long serialVersionUID = 1L;
 
     public DateFieldWidget(String id, IModel<Date> model, IPluginContext context, IPluginConfig config) {
-        this(id, model, false, context, config);
+        this(id, model, config.getBoolean("show.today.button"), context, config);
     }
     
     public DateFieldWidget(String id, IModel<Date> model, boolean todayLinkVisible, IPluginContext context, IPluginConfig config) {
