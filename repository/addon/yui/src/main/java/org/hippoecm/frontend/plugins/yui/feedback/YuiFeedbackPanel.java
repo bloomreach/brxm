@@ -59,6 +59,10 @@ public class YuiFeedbackPanel extends Panel {
         }
     }
 
+    public boolean hasMessages() {
+        return feedback.anyMessage();
+    }
+    
     class NotifyUserBehavior extends AbstractYuiBehavior {
         private static final long serialVersionUID = 1L;
 
