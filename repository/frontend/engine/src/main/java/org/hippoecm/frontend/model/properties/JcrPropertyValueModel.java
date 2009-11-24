@@ -28,6 +28,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.PropertyDefinition;
+import javax.xml.crypto.Data;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -35,6 +36,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.IObjectClassAwareModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * One can also set and retrieve the underlying {@link Value}.
  */
-public class JcrPropertyValueModel<T extends Serializable> implements IModel<T> {
+public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>, IObjectClassAwareModel<T> {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -300,7 +302,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T> 
         int type = getType();
         return factory.createValue("", (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
     }
-    
+
     private void load() {
         if (!loaded) {
             if (propertyModel.getItemModel().exists()) {
@@ -349,6 +351,23 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T> 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(33, 113).append(propertyModel).append(index).toHashCode();
+    }
+
+    public Class getObjectClass() {
+        int type = getType();
+        switch (type) {
+        case PropertyType.BOOLEAN:
+            return Boolean.class;
+        case PropertyType.DATE:
+            return Date.class;
+        case PropertyType.DOUBLE:
+            return Double.class;
+        case PropertyType.LONG:
+            return Long.class;
+        case PropertyType.UNDEFINED:
+            return null;
+        }
+        return String.class;
     }
 
 }
