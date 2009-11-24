@@ -37,7 +37,6 @@ import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.state.ChangeLog;
-import org.apache.jackrabbit.core.state.ForkedItemStateManager;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.ForkedXAItemStateManager;
 import org.apache.jackrabbit.core.state.ItemState;
