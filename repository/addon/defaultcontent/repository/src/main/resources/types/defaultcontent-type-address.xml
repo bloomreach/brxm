@@ -48,12 +48,9 @@
       <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
-      <sv:node sv:name="hipposysedit:field">
+      <sv:node sv:name="street">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:name" sv:type="String">
-          <sv:value>street</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
           <sv:value>defaultcontent:street</sv:value>
@@ -61,19 +58,22 @@
         <sv:property sv:name="hipposysedit:type" sv:type="String">
           <sv:value>String</sv:value>
         </sv:property>
+        <sv:property sv:name="hipposysedit:validators" sv:type="String">
+          <sv:value>required</sv:value>
+        </sv:property>
       </sv:node>
-      <sv:node sv:name="hipposysedit:field">
+      <sv:node sv:name="number">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:name" sv:type="String">
-          <sv:value>number</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
           <sv:value>defaultcontent:number</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:type" sv:type="String">
           <sv:value>Long</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:validators" sv:type="String">
+          <sv:value>required</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -92,9 +92,11 @@
       <sv:property sv:name="frontend:references" sv:type="String">
         <sv:value>engine</sv:value>
         <sv:value>wicket.model</sv:value>
+        <sv:value>validator.id</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:services" sv:type="String">
         <sv:value>wicket.id</sv:value>
+        <sv:value>validator.id</sv:value>
       </sv:property>
       <sv:node sv:name="root">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -141,6 +143,9 @@
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
         </sv:property>
+        <sv:property sv:name="validator.id" sv:type="String">
+          <sv:value>${validator.id}</sv:value>
+        </sv:property>
       </sv:node>
       <sv:node sv:name="number">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -166,6 +171,9 @@
         </sv:property>
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
+        </sv:property>
+        <sv:property sv:name="validator.id" sv:type="String">
+          <sv:value>${validator.id}</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
