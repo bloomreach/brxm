@@ -55,6 +55,12 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
 
         setOkVisible(false);
 
+        if (isValid) {
+            add(new Label("label", new ResourceModel("message")));
+        } else {
+            add(new Label("label", new ResourceModel("invalid")));
+        }
+
         final Label exceptionLabel = new Label("exception", "");
         exceptionLabel.setOutputMarkupId(true);
         add(exceptionLabel);
@@ -74,17 +80,21 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
                 }
             }
         };
-        button.setModel(new ResourceModel("discard", "Discard"));
+        if (isValid) {
+            button.setModel(new ResourceModel("discard", "Discard"));
+        } else {
+            button.setModel(new ResourceModel("discard-invalid"));
+        }
         addButton(button);
 
         button = new AjaxButton(getButtonId()) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public boolean isEnabled() {
+            public boolean isVisible() {
                 return isValid;
             }
-            
+
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 try {
