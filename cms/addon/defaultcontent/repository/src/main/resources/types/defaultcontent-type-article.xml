@@ -100,6 +100,10 @@
         <sv:property sv:name="hipposysedit:type" sv:type="String">
           <sv:value>Text</sv:value>
         </sv:property>
+        <sv:property sv:name="hipposysedit:validators" sv:type="String">
+          <sv:value>required</sv:value>
+          <sv:value>non-empty</sv:value>
+        </sv:property>
       </sv:node>
       <sv:node sv:name="body">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -128,10 +132,11 @@
       <sv:property sv:name="frontend:references" sv:type="String">
         <sv:value>engine</sv:value>
         <sv:value>wicket.model</sv:value>
-        <sv:value>validator.model</sv:value>
+        <sv:value>validator.id</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:services" sv:type="String">
         <sv:value>wicket.id</sv:value>
+        <sv:value>validator.id</sv:value>
       </sv:property>
       <sv:node sv:name="root">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -200,8 +205,8 @@
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
         </sv:property>
-        <sv:property sv:name="validator.model" sv:type="String">
-          <sv:value>${validator.model}</sv:value>
+        <sv:property sv:name="validator.id" sv:type="String">
+          <sv:value>${validator.id}</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="introduction">
@@ -229,8 +234,8 @@
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
         </sv:property>
-        <sv:property sv:name="validator.model" sv:type="String">
-          <sv:value>${validator.model}</sv:value>
+        <sv:property sv:name="validator.id" sv:type="String">
+          <sv:value>${validator.id}</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.css" sv:type="String">
           <sv:value>default-textarea</sv:value>
@@ -261,8 +266,8 @@
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
         </sv:property>
-        <sv:property sv:name="validator.model" sv:type="String">
-          <sv:value>${validator.model}</sv:value>
+        <sv:property sv:name="validator.id" sv:type="String">
+          <sv:value>${validator.id}</sv:value>
         </sv:property>
         <sv:node sv:name="cluster.options">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
