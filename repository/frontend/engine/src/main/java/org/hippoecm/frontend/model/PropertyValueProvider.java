@@ -66,6 +66,8 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
             Value value = type.createValue();
             Node node = (Node) getItemModel().getParentModel().getObject();
             String relPath = getItemModel().getPath().substring(node.getPath().length() + 1);
+            getItemModel().detach();
+
             if (descriptor.isMultiple()) {
                 Value[] oldValues;
                 if (node.hasProperty(relPath)) {
@@ -75,7 +77,6 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
                     } else {
                         oldValues = new Value[1];
                         oldValues[0] = property.getValue();
-                        getItemModel().detach();
                     }
                 } else {
                     oldValues = new Value[0];
