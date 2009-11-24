@@ -94,7 +94,10 @@
             <sv:value>true</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippogallery:image</sv:value>
+            <sv:value>hippo:resource</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:autocreated" sv:type="Boolean">
+            <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hipposysedit:field">
@@ -108,7 +111,7 @@
             <sv:value>hippogallery:picture</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippogallery:image</sv:value>
+            <sv:value>hippo:resource</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -322,7 +325,10 @@
             <sv:value>true</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippogallery:asset</sv:value>
+            <sv:value>hippo:resource</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:autocreated" sv:type="Boolean">
+            <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
