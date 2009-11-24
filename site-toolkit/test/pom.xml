@@ -55,6 +55,12 @@
     <!-- repository builtin like hippostd & frontend -->
     <dependency>
       <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-package-auth</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
       <version>${hippoecm.version}</version>
     </dependency>
@@ -96,7 +102,31 @@
       <artifactId>hippo-ecm-addon-gallery-repository</artifactId>
       <version>${hippoecm.version}</version>
     </dependency>
-
+  
+    <!-- repository workflow -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+    
+    <!-- TODO this dependency should not be needed. When fixed in ecm, remove it here -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-xinha-frontend</artifactId>
+      <version>${hippoecm.version}</version>
+    </dependency>
+    
     <!-- end repository builtin like hippostd & frontend -->
 
     <!-- hst dependencies & initial structure -->

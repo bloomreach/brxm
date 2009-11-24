@@ -65,8 +65,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
     }
     
  
-    //@Test
-    // TODO FIX THIS TEST SEE HSTTWO-854
+    @Test
     public void testDocumentManipulation() throws Exception {
         Session session = null;
         
@@ -104,9 +103,6 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
                 // then the POJO object in the first parameter will be used as a binder. 
                 cpm.update(newPage);
                 
-                // TODO cpm.save() is not needed here. should we keep it?
-                //cpm.save();
-                
                 // retrieves the document created just before
                 newPage = (PersistableTextPage) cpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
                 assertEquals("Collaboration Portal Title", newPage.getTitle());
@@ -130,7 +126,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
         
     }
     
-    @Test
+    //@Test
     public void testFolderCreateRemove() throws Exception {
         Session session = null;
         
@@ -164,7 +160,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
         
     }
     
-    @Test
+    //@Test
     public void testFolderAutoCreateRemove() throws Exception {
         Session session = null;
         

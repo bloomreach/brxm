@@ -85,22 +85,22 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
     /**
      * The workflow category name to get a folder workflow.
      */
-    protected String folderNodeWorkflowCategory = "internal"; // found in Niels's example
+    protected String folderNodeWorkflowCategory = "internal"; 
     
     /**
      * The workflow category name to get a document workflow. 
      */
-    protected String documentNodeWorkflowCategory = "default"; // found in Niels's example
+    protected String documentNodeWorkflowCategory = "default"; 
     
     /**
      * The workflow category name to add a new document.
      */
-    protected String documentAdditionWorkflowCategory = "new-document"; // found in Niels's example
+    protected String documentAdditionWorkflowCategory = "new-document"; 
     
     /**
      * The workflow category name to add a new folder.
      */
-    protected String folderAdditionWorkflowCategory = "new-folder"; // found in a test case for FolderWorkflow
+    protected String folderAdditionWorkflowCategory = "new-folder"; 
 
     /**
      * Workflow callback handler
@@ -378,13 +378,13 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                 WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 Workflow wf = wfm.getWorkflow(documentNodeWorkflowCategory, contentNode);
                 
-                String handleUuid = contentNode.getParent().getUUID();
+                //String handleUuid = contentNode.getParent().getUUID();
                 
-                boolean nodeReplaced = false;
+                Document document = null;
                 if(customContentNodeBinder != null) {
                     if (wf instanceof EditableWorkflow) {
                         EditableWorkflow ewf = (EditableWorkflow) wf;
-                        Document document = ewf.obtainEditableInstance();
+                        document = ewf.obtainEditableInstance();
                         String uuid = document.getIdentity();
                         
                         if (uuid != null && !"".equals(uuid)) {
@@ -396,10 +396,9 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                             contentNode.save();
                             // we need to recreate the EditableWorkflow because the node has changed
                             ewf = (EditableWorkflow)wfm.getWorkflow(documentNodeWorkflowCategory, contentNode);
-                            ewf.commitEditableInstance();
-                            nodeReplaced = true;
+                            document = ewf.commitEditableInstance();
                         } else {
-                            ewf.disposeEditableInstance();
+                            document = ewf.disposeEditableInstance();
                         }
                     } else {
                         throw new ContentPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
@@ -407,18 +406,8 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                 }
                 
                 if (workflowCallbackHandler != null) {
-                    if(nodeReplaced) {
-                        // we first need to recreate the wf as the original node is replaced by commitEditableInstance
-                        // TODO : can this be done more easily instead of fetching any document below the handle again?
-                        // if we do not do this now, we get an item does not exist anymore exception
-                        Node handle = session.getNodeByUUID(handleUuid);
-                        if(handle.hasNode(handle.getName()))  {
-                            contentNode = handle.getNode(handle.getName());
-                            wf = wfm.getWorkflow(documentNodeWorkflowCategory, contentNode);
-                        } else {
-                            throw new ContentPersistenceException("The handle does not contain documents. Cannot call workflowCallbackHandler");
-                        }
-                    }
+                    // recreate the wf 
+                    wf = wfm.getWorkflow(documentNodeWorkflowCategory, document);
                     if (wf != null) {
                         workflowCallbackHandler.processWorkflow(wf);
                     } else {
@@ -451,6 +440,7 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                 if(canonical == null) {
                     throw new ContentPersistenceException("Cannot remove HippoBean because there is no canonical node for '"+contentBean.getPath()+"'");
                 }
+             
                 Node handleNode = canonical.getParent();
                 String nodeName = handleNode.getName();
                 HippoBean folderBean = contentBean.getParentBean();
