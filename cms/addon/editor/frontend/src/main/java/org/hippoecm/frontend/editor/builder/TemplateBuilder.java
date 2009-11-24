@@ -712,6 +712,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
             pluginConfig.put("wicket.id", getSelectedExtensionPoint());
             pluginConfig.put("wicket.model", "${wicket.model}");
+            pluginConfig.put("validator.id", "${validator.id}");
             pluginConfig.put("mode", "${mode}");
             pluginConfig.put("engine", "${engine}");
             pluginConfig.put("field", fieldDescriptor.getName());

@@ -23,11 +23,13 @@ import org.apache.wicket.IClusterable;
  * this model, informing the user when the field is involved in a constraint
  * violation.
  */
-public interface IValidateService extends IClusterable {
+public interface IValidationService extends IClusterable {
     final static String SVN_ID = "$Id$";
 
     String VALIDATE_ID = "validator.id";
 
-    IValidationResult validate() throws ValidationException;
+    void validate() throws ValidationException;
+
+    IValidationResult getValidationResult();
 
 }

@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
-
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
@@ -50,14 +49,14 @@ public class ValidationPlugin extends Plugin implements IFeedbackMessageFilter {
     private static Logger log = LoggerFactory.getLogger(ValidationPlugin.class);
 
     private FeedbackLogger component;
-    private ValidationEngine validation;
+    private JcrValidationService validation;
 
     public ValidationPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         this.component = new FeedbackLogger("component");
 
-        validation = new ValidationEngine(context, config);
+        validation = new JcrValidationService(context, config);
         validation.start(component);
 
         if (config.getString(RenderService.FEEDBACK) != null) {

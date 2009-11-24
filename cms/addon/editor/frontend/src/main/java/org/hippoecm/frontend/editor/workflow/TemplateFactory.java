@@ -41,8 +41,10 @@ public class TemplateFactory implements IClusterable {
         JavaClusterConfig clusterConfig = new JavaClusterConfig();
         clusterConfig.addProperty("mode");
         clusterConfig.addService("wicket.id");
+        clusterConfig.addService("validator.id");
         clusterConfig.addReference("wicket.model");
         clusterConfig.addReference("engine");
+        clusterConfig.addReference("validator.id");
 
         JavaPluginConfig root = new JavaPluginConfig("root");
         root.put("plugin.class", layout.getPluginClass());

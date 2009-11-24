@@ -23,7 +23,9 @@ import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,24 +34,39 @@ public class FieldItemRenderer<C extends IModel> implements IClusterable {
 
     static final Logger log = LoggerFactory.getLogger(FieldItemRenderer.class);
 
+    private IPluginContext context;
     private IClusterControl clusterControl;
     private ModelReference<?> modelRef;
     private IModel<IValidationResult> filteredValidationModel;
-    private ModelReference<IValidationResult> validationModelRef;
+    private IValidationService validationService;
 
     public FieldItemRenderer(IPluginContext context, final C model, IModel<IValidationResult> validationModel,
             IClusterControl control, ModelPathElement element) {
+        this.context = context;
+
         String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
         modelRef = new ModelReference(modelId, model);
         modelRef.init(context);
 
-        validationModelRef = null;
+        validationService = null;
         if (validationModel != null) {
             filteredValidationModel = new FilteredValidationModel(validationModel, element);
-            String validationModelId = control.getClusterConfig().getString("validator.model");
-            if (validationModelId != null) {
-                validationModelRef = new ModelReference<IValidationResult>(validationModelId, filteredValidationModel);
-                validationModelRef.init(context);
+            String validationServiceId = control.getClusterConfig().getString(IValidationService.VALIDATE_ID);
+            if (validationServiceId != null) {
+                validationService = new IValidationService() {
+                    private static final long serialVersionUID = 1L;
+
+                    public IValidationResult getValidationResult() {
+                        return filteredValidationModel.getObject();
+                    }
+
+                    public void validate() throws ValidationException {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                };
+                context.registerService(validationService, validationServiceId);
             }
         } else {
             if (control.getClusterConfig().containsKey("validator.model")) {
@@ -63,8 +80,10 @@ public class FieldItemRenderer<C extends IModel> implements IClusterable {
     }
 
     public void destroy() {
-        if (validationModelRef != null) {
-            validationModelRef.destroy();
+        String validationServiceId = clusterControl.getClusterConfig().getString(IValidationService.VALIDATE_ID);
+        if (validationServiceId != null) {
+            context.unregisterService(validationService, validationServiceId);
+            validationService = null;
         }
         modelRef.destroy();
         clusterControl.stop();
@@ -79,7 +98,7 @@ public class FieldItemRenderer<C extends IModel> implements IClusterable {
     }
 
     boolean hasValidation() {
-        return validationModelRef != null;
+        return validationService != null;
     }
 
     boolean isValid() {
@@ -88,5 +107,5 @@ public class FieldItemRenderer<C extends IModel> implements IClusterable {
         }
         return true;
     }
-    
+
 }
