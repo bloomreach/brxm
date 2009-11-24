@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
-public interface HippoMirrorBean {
+public interface HippoMirrorBean extends HippoBean{
 
     HippoBean getReferencedBean();
     

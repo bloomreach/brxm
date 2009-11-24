@@ -99,21 +99,35 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * @param beanMappingClass
      * @return returns the <code>HippoBean</code> of (sub)type beanMappingClass with relative path <code>relPath</code> to this bean, or <code>null</code> when it does not exist, is not of (sub)type beanMappingClass, or when the relPath is not a valid relative path
      */
-    <T> T getBean(String relPath, Class<T> beanMappingClass);
+    <T extends HippoBean> T getBean(String relPath, Class<T> beanMappingClass);
     
     /**
-     * This method returns the <code>HippoBean</code> linked by <code>relPath</code>, or <code>null</code> if no bean found or not of (sub)type beanMappingClass.
+     * This method returns the <code>HippoBean</code> linked by <code>relPath</code> of type beanMappingClass, or <code>null</code> if no bean found or not of (sub)type beanMappingClass.
      * 
      * Only a bean can be returned if, and only if, the bean at <code>relPath</code> is a bean of type {@link HippoMirrorBean} (thus either a hippo:mirror or
      * hippo:facetselect). If a mirror bean is found, and the mirror points to a bean of (sub)type <code>beanMappingClass</code>, then, this bean is returned. In all other cases,
      * <code>null</code> is returned
      * 
      * @param <T>
-     * @param relPath
+     * @param relPath (path not starting with a "/")
      * @param beanMappingClass
      * @return The linked <code>HippoBean</code> of (sub)type beanMappingClass where the link has relative path <code>relPath</code> to this bean, or <code>null</code> when it does not exist, is not of (sub)type beanMappingClass, or when the relPath is not a valid relative path
      */
-    <T> T getLinkedBean(String relPath, Class<T> beanMappingClass);
+    <T extends HippoBean> T getLinkedBean(String relPath, Class<T> beanMappingClass);
+    
+    /**
+     * This method returns all the <code>HippoBean</code>'s linked by <code>relPath</code> of type beanMappingClass as a List, or an <code>Empty</code> list if no bean found or not of (sub)type beanMappingClass.
+     * 
+     * if the relPath is something like: foo/bar/my:links, then, all first the node foo/bar is fetched, and then all beans are returned that have
+     * name 'my:links'
+     * 
+     * @see {@link #getBean(String, Class)}
+     * @param <T>
+     * @param relPath (path not starting with a "/")
+     * @param beanMappingClass
+     * @return
+     */
+    <T extends HippoBean> List<T> getLinkedBeans(String relPath, Class<T> beanMappingClass);
     
     /**
      * Returns the parent bean wrt this bean. Note that this does not automatically imply

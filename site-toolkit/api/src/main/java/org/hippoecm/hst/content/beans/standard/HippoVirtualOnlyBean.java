@@ -20,6 +20,6 @@ package org.hippoecm.hst.content.beans.standard;
  * no physical equivalence: in other words, the canonical node is null
  * 
  */
-public interface HippoVirtualOnlyBean {
+public interface HippoVirtualOnlyBean extends HippoBean{
 
 }
