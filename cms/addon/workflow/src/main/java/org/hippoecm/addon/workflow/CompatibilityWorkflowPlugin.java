@@ -228,6 +228,46 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         }
 
         @Deprecated
+        public class ConfirmDialog extends WorkflowDialog {
+            private static final long serialVersionUID = 1L;
+            private IModel title;
+
+            public ConfirmDialog(IModel title, IModel question) {
+                this(title, null, null, question);
+            }
+
+            public ConfirmDialog(IModel title, IModel intro, IModel text, IModel question) {
+                super();
+                this.title = title;
+                if(intro == null) {
+                    Label component;
+                    add(component = new Label("intro"));
+                    component.setVisible(false);
+                } else {
+                    add(new Label("intro", intro));
+                }
+                if(text == null) {
+                    Label component;
+                    add(component = new Label("text"));
+                    component.setVisible(false);
+                } else {
+                    add(new Label("text", text));
+                }
+                add(new Label("question", question));
+            }
+
+            @Override
+            public IModel getTitle() {
+                return title;
+            }
+
+            @Override
+            public IValueMap getProperties() {
+                return SMALL;
+            }
+        }
+
+        @Deprecated
         public class NameDialog extends WorkflowDialog {
             private static final long serialVersionUID = 1L;
             private IModel title;

@@ -23,6 +23,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.Model;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.repository.api.Workflow;
@@ -78,6 +81,35 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     return new StringResourceModel("drop-request", BasicRequestWorkflowPlugin.this, null);
                 } else {
                     return new StringResourceModel("cancel-request", BasicRequestWorkflowPlugin.this, null);
+                }
+            }
+            @Override
+            protected Dialog createRequestDialog() {
+                if (state.equals("rejected")) {
+                    IModel reason = null;
+                    try {
+                        if (getModel() instanceof WorkflowDescriptorModel) {
+                            WorkflowDescriptorModel model = (WorkflowDescriptorModel)getModel();
+                            Node node = (model != null ? model.getNode() : null);
+                            if (node != null && node.hasProperty("reason")) {
+                                reason = new Model(node.getProperty("reason").getString());
+                            }
+                        }
+                    } catch(RepositoryException ex) {
+                        log.warn(ex.getMessage(), ex);
+                    }
+                    if (reason == null) {
+                        reason = new StringResourceModel("rejected-request-unavailable", BasicRequestWorkflowPlugin.this, null);
+                    }
+                    return new WorkflowAction.ConfirmDialog(new StringResourceModel("rejected-request-title",
+                                                                                    BasicRequestWorkflowPlugin.this, null),
+                                                            new StringResourceModel("rejected-request-text",
+                                                                                    BasicRequestWorkflowPlugin.this, null),
+                                                            reason,
+                                                            new StringResourceModel("rejected-request-question",
+                                                                                    BasicRequestWorkflowPlugin.this, null));
+                } else {
+                    return super.createRequestDialog();
                 }
             }
             @Override
