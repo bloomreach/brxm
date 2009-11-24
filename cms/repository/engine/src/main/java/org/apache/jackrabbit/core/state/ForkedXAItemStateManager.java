@@ -22,6 +22,7 @@ import org.apache.jackrabbit.core.TransactionContext;
 import org.apache.jackrabbit.core.InternalXAResource;
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
+import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.core.virtual.VirtualItemStateProvider;
 import org.apache.jackrabbit.uuid.UUID;
@@ -64,7 +65,8 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
      * manager is in one of the {@link #prepare}, {@link #commit}, {@link
      * #rollback} methods.
      */
-    private final Map commitLogs = Collections.synchronizedMap(new IdentityHashMap());
+    //private final Map commitLogs = Collections.synchronizedMap(new IdentityHashMap());
+    ThreadLocal commitLog = new ThreadLocal();
 
     /**
      * Current instance-local change log.
@@ -150,7 +152,7 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
     public void beforeOperation(TransactionContext tx) {
         ChangeLog txLog = (ChangeLog) tx.getAttribute(attributeName);
         if (txLog != null) {
-            commitLogs.put(Thread.currentThread(), txLog);
+            commitLog.set(txLog);
         }
     }
 
@@ -208,7 +210,7 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
      * {@inheritDoc}
      */
     public void afterOperation(TransactionContext tx) {
-        commitLogs.remove(Thread.currentThread());
+        commitLog.remove();
     }
 
     /**
@@ -217,7 +219,7 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
      * change log was found.
      */
     public ChangeLog getChangeLog() {
-        ChangeLog changeLog = (ChangeLog) commitLogs.get(Thread.currentThread());
+        ChangeLog changeLog = (ChangeLog) commitLog.get();
         if (changeLog == null) {
             changeLog = txLog;
         }
@@ -588,7 +590,7 @@ public class ForkedXAItemStateManager extends LocalItemStateManager implements I
      * in a subsequent transaction (see JCR-1554).
      */
     public void stateModified(ItemState modified) {
-        ChangeLog changeLog = (ChangeLog) commitLogs.get(Thread.currentThread());
+        ChangeLog changeLog = (ChangeLog) commitLog.get();
         if (changeLog != null) {
             ItemState local;
             if (modified.getContainer() != this) {
