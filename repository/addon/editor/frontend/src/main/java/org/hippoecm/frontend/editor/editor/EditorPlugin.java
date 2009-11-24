@@ -15,17 +15,11 @@
  */
 package org.hippoecm.frontend.editor.editor;
 
-import java.util.List;
-
-import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.service.render.RenderService;
 
 public class EditorPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -34,29 +28,10 @@ public class EditorPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     private EditorForm form;
-    private YuiFeedbackPanel feedback;
 
     public EditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        
-        feedback = new YuiFeedbackPanel("feedback", new IFeedbackMessageFilter() {
-            private static final long serialVersionUID = 1L;
-
-            public boolean accept(FeedbackMessage message) {
-                if (config.getString(RenderService.FEEDBACK) != null) {
-                    List<IFeedbackMessageFilter> filters = context.getServices(
-                            config.getString(RenderService.FEEDBACK), IFeedbackMessageFilter.class);
-                    for (IFeedbackMessageFilter filter : filters) {
-                        if (filter.accept(message)) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
             }
-        }, context);
-        add(feedback);
-    }
 
     @Override
     protected void onStart() {
@@ -75,7 +50,6 @@ public class EditorPlugin extends RenderPlugin {
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        feedback.render(target);
         if (form != null) {
             form.render(target);
         }

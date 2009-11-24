@@ -112,7 +112,7 @@ public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetach
                     }
                 }
             } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
+                log.error(ex.getMessage(), ex);
             } catch (StoreException e) {
                 log.error("Failed to load type descriptor", e);
             }

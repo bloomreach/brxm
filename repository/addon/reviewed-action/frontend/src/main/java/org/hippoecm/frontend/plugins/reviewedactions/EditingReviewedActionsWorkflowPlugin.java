@@ -46,7 +46,7 @@ import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.validation.IValidateService;
+import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -242,12 +242,14 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
     }
 
     void validate() throws ValidationException {
-        List<IValidateService> validators = getPluginContext().getServices(
-                getPluginConfig().getString(IValidateService.VALIDATE_ID), IValidateService.class);
+        isValid = true;
+        List<IValidationService> validators = getPluginContext().getServices(
+                getPluginConfig().getString(IValidationService.VALIDATE_ID), IValidationService.class);
         if (validators != null) {
-            for (IValidateService validator : validators) {
-                IValidationResult result = validator.validate();
-                isValid = result.isValid();
+            for (IValidationService validator : validators) {
+                validator.validate();
+                IValidationResult result = validator.getValidationResult();
+                isValid = isValid && result.isValid();
             }
         }
     }

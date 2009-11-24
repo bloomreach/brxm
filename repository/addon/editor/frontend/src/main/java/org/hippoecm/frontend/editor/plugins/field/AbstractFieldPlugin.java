@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,9 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.AbstractProvider;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -98,18 +102,20 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     protected AbstractFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        helper = new FieldPluginHelper(context, config) {
-            private static final long serialVersionUID = 1L;
+        helper = new FieldPluginHelper(context, config);
+        if (helper.getValidationModel() != null && helper.getValidationModel() instanceof IObservable) {
+            context.registerService(new Observer((IObservable) helper.getValidationModel()) {
 
-            @Override
-            void onValidation(IValidationResult result) {
-                for (ValidationFilter listener : new ArrayList<ValidationFilter>(listeners.values())) {
-                    listener.onValidation(result);
+                public void onEvent(Iterator events) {
+                    for (ValidationFilter listener : new ArrayList<ValidationFilter>(listeners.values())) {
+                        listener.onValidation(helper.getValidationModel().getObject());
+                    }
                 }
-            }
 
-        };
-        controller = new TemplateController<C>(context, config, helper.getValidationResultModel(), this);
+            }, IObserver.class.getName());
+
+        }
+        controller = new TemplateController<C>(context, config, helper.getValidationModel(), this);
 
         mode = config.getString(ITemplateEngine.MODE);
         if (mode == null) {
@@ -151,8 +157,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 }
 
             };
-            IModel<IValidationResult> validationModel = helper.getValidationResultModel();
-            if (validationModel != null) {
+            IModel<IValidationResult> validationModel = helper.getValidationModel();
+            if (validationModel != null && validationModel.getObject() != null) {
                 holder.setValid(validationModel.getObject().isValid());
             }
             addValidationFilter(this, holder);

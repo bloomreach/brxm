@@ -37,7 +37,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.validation.IValidateService;
+import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.slf4j.Logger;
@@ -115,11 +115,12 @@ public class EditorForm extends Form<Node> {
         super.onSubmit();
 
         // do the validation
-        IValidateService validator = context.getService(config.getString(IValidateService.VALIDATE_ID),
-                IValidateService.class);
+        IValidationService validator = context.getService(config.getString(IValidationService.VALIDATE_ID),
+                IValidationService.class);
         if (validator != null) {
             try {
-                IValidationResult result = validator.validate();
+                validator.validate();
+                IValidationResult result = validator.getValidationResult();
                 if (!result.isValid()) {
                     log.debug("Invalid model {}", getModel());
                 }

@@ -41,7 +41,7 @@ import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.validation.IValidateService;
+import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.api.HippoSession;
@@ -62,10 +62,10 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
     public TemplateEditingWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        if (config.getString(IValidateService.VALIDATE_ID) != null) {
-            context.registerService(this, config.getString(IValidateService.VALIDATE_ID));
+        if (config.getString(IValidationService.VALIDATE_ID) != null) {
+            context.registerService(this, config.getString(IValidationService.VALIDATE_ID));
         } else {
-            log.warn("No validator id {} defined", IValidateService.VALIDATE_ID);
+            log.warn("No validator id {} defined", IValidationService.VALIDATE_ID);
         }
 
         IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
@@ -132,11 +132,12 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
         isValid = true;
         try {
             IPluginConfig config = getPluginConfig();
-            if (config.getString(IValidateService.VALIDATE_ID) != null) {
-                List<IValidateService> validators = getPluginContext().getServices(
-                        config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
-                for (IValidateService validator : validators) {
-                    isValid = validator.validate().isValid();
+            if (config.getString(IValidationService.VALIDATE_ID) != null) {
+                List<IValidationService> validators = getPluginContext().getServices(
+                        config.getString(IValidationService.VALIDATE_ID), IValidationService.class);
+                for (IValidationService validator : validators) {
+                    validator.validate();
+                    isValid = validator.getValidationResult().isValid();
                 }
             }
         } catch (ValidationException e) {

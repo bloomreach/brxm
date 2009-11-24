@@ -15,20 +15,15 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.frontend.model.IModelReference;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelReference;
-import org.hippoecm.frontend.model.ObservableModel;
-import org.hippoecm.frontend.model.event.EventCollection;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
-import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -36,7 +31,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeLocator;
-import org.hippoecm.frontend.validation.IValidateService;
+import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.validation.IValidationListener;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidationResult;
@@ -46,12 +42,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A validation engine that registers itself as an {@link IValidateService}.  All supported
+ * A validation engine that registers itself as an {@link IValidationService}.  All supported
  * validation rules are hardcoded.  Generic node types will be validated according to the
  * "required" and "non-empty" rules that apply to fields (see {@link JcrFieldValidator}).
  * The template type node type is validated by the {@link TemplateTypeValidator}.
  * <p>
- * Validation can be triggered by invoking the {@link IValidateService#validate()} method.
+ * Validation can be triggered by invoking the {@link IValidationService#validate()} method.
  * Results of the validation are returned and made available on the validator.model model
  * service.
  * <p>
@@ -67,89 +63,57 @@ import org.slf4j.LoggerFactory;
  * model that is registered here.
  * </ul>
  */
-public class ValidationEngine implements IValidateService {
+public class JcrValidationService implements IValidationService {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ValidationEngine.class);
+    static final Logger log = LoggerFactory.getLogger(JcrValidationService.class);
 
     private IPluginContext context;
     private IPluginConfig config;
-    private ObservableModel resultModel;
 
-    private ModelReference resultModelReference;
-    private IObserver modelObserver;
     private TypeLocator locator;
     private IFeedbackLogger logger;
+    private ValidationResult result;
 
-    public ValidationEngine(IPluginContext context, IPluginConfig config) {
+    @SuppressWarnings("unchecked")
+    public JcrValidationService(IPluginContext context, IPluginConfig config) {
         this.context = context;
         this.config = config;
 
-        if (!config.containsKey("wicket.model") || !config.containsKey("validator.model")) {
-            log.warn("No wicket.model or validator.model configured for validation engine");
+        if (!config.containsKey("wicket.model") || !config.containsKey(IValidationService.VALIDATE_ID)) {
+            log.warn("No wicket.model or validator.id configured for validation engine");
             return;
         }
-
-        resultModel = new ObservableModel/*<IValidationResult>*/(new ValidationResult());
 
         IStore<ITypeDescriptor>[] stores = new IStore[2];
         stores[0] = new JcrTypeStore();
         stores[1] = new BuiltinTypeStore();
         locator = new TypeLocator(stores);
-    }
 
+        result = new ValidationResult();
+    }
+    
     public void start(IFeedbackLogger logger) {
-        if (!config.containsKey("wicket.model") || !config.containsKey("validator.model")
-                || !config.containsKey(IValidateService.VALIDATE_ID)) {
+        if (!config.containsKey("wicket.model") || !config.containsKey(IValidationService.VALIDATE_ID)) {
             return;
         }
 
         this.logger = logger;
-        final IModelReference wicketModelRef = context.getService(config.getString("wicket.model"),
-                IModelReference.class);
-        if (wicketModelRef != null) {
-            context.registerService(modelObserver = new IObserver<IObservable>() {
-                private static final long serialVersionUID = 1L;
 
-                public IObservable getObservable() {
-                    return wicketModelRef;
-                }
-
-                public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
-                    resultModel.setObject(new ValidationResult());
-                }
-
-            }, IObserver.class.getName());
-
-            resultModelReference = new ModelReference(config.getString("validator.model"), resultModel);
-            resultModelReference.init(context);
-
-            context.registerService(this, config.getString(IValidateService.VALIDATE_ID));
-        } else {
-            log.warn("No model service found");
-        }
+        context.registerService(this, config.getString(IValidationService.VALIDATE_ID));
     }
 
     public void stop() {
-        if (modelObserver != null) {
-            context.unregisterService(this, config.getString("validator.service"));
-
-            resultModelReference.destroy();
-            resultModelReference = null;
-
-            context.unregisterService(modelObserver, IObserver.class.getName());
-            modelObserver = null;
-        }
+        context.unregisterService(this, config.getString(IValidationService.VALIDATE_ID));
     }
 
-    public IValidationResult validate() throws ValidationException {
-        IModel model = getModel();
-        if (model == null) {
+    public void validate() throws ValidationException {
+        IModel<Node> model = getModel();
+        if (model == null || model.getObject() == null) {
             throw new ValidationException("No model found, skipping validation");
         }
         try {
-            String nodeType = ((JcrNodeModel) model).getNode().getPrimaryNodeType()
-            .getName();
+            String nodeType = model.getObject().getPrimaryNodeType().getName();
             ITypeValidator validator;
             if (HippoNodeType.NT_TEMPLATETYPE.equals(nodeType)) {
                 validator = new TemplateTypeValidator();
@@ -157,13 +121,15 @@ public class ValidationEngine implements IValidateService {
                 ITypeDescriptor descriptor = locator.locate(nodeType);
                 validator = new JcrTypeValidator(descriptor);
             }
-            ValidationResult result = (ValidationResult) resultModel.getObject();
             result.setViolations(validator.validate(model));
-            resultModel.notifyObservers(new EventCollection());
+            List<IValidationListener> listeners = context.getServices(config.getString(IValidationService.VALIDATE_ID),
+                    IValidationListener.class);
+            for (IValidationListener listener : new ArrayList<IValidationListener>(listeners)) {
+                listener.onValidation(result);
+            }
             for (Violation violation : result.getViolations()) {
                 logger.error(violation.getMessage().getObject());
             }
-            return (IValidationResult) resultModel.getObject();
         } catch (RepositoryException e) {
             throw new ValidationException("Repository error", e);
         } catch (StoreException e) {
@@ -171,12 +137,17 @@ public class ValidationEngine implements IValidateService {
         }
     }
 
-    private IModelReference getModelReference() {
+    public IValidationResult getValidationResult() {
+        return result;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private IModelReference<Node> getModelReference() {
         return context.getService(config.getString("wicket.model"), IModelReference.class);
     }
 
-    private IModel getModel() {
-        IModelReference modelRef = getModelReference();
+    private IModel<Node> getModel() {
+        IModelReference<Node> modelRef = getModelReference();
         if (modelRef != null) {
             return modelRef.getModel();
         }
