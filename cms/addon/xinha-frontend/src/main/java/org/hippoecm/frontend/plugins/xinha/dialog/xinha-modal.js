@@ -71,26 +71,12 @@ ModalDialog.prototype = {
         this.editor.deactivateEditor();
         this.editor.suspendUpdateToolbar = true;
         this.editor.currentModal = this;
-
-        // unfortunately we have to hide the editor (iframe/caret bug)
-        if (Xinha.is_ff2)
-        {
-          this._restoreTo = [this.editor._textArea.style.display, this.editor._iframe.style.visibility, this.editor.hidePanels()];
-          this.editor._textArea.style.display = 'none';
-          this.editor._iframe.style.visibility   = 'hidden';
-        }
     },
     
     restoreState: function() {
         if(this.editor.editorIsActivated() && Xinha._currentlyActiveEditor) {
             return;
         }
-        if (Xinha.is_ff2) {
-          this.editor._textArea.style.display = this._restoreTo[0];
-          this.editor._iframe.style.visibility   = this._restoreTo[1];
-          this.editor.showPanels(this._restoreTo[2]);
-        }
-
         this.editor.suspendUpdateToolbar = false;
         this.editor.currentModal = null;
         this.editor.activateEditor();
