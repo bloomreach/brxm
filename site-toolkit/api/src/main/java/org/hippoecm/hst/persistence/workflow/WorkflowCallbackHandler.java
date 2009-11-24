@@ -17,6 +17,7 @@ package org.hippoecm.hst.persistence.workflow;
 
 import org.hippoecm.repository.api.Workflow;
 
+
 public interface WorkflowCallbackHandler<T extends Workflow> {
     
     void processWorkflow(T workflow) throws Exception;

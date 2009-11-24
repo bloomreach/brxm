@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.persistence;
 
-import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 
 /**
  * <CODE>ContentPersistenceManager</CODE> is the primary interface for HST-2-Persistence-aware application components.
