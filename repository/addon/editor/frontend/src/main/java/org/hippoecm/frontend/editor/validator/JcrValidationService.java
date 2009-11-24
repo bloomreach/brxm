@@ -92,7 +92,7 @@ public class JcrValidationService implements IValidationService {
 
         result = new ValidationResult();
     }
-    
+
     public void start(IFeedbackLogger logger) {
         if (!config.containsKey("wicket.model") || !config.containsKey(IValidationService.VALIDATE_ID)) {
             return;
@@ -128,7 +128,7 @@ public class JcrValidationService implements IValidationService {
                 listener.onValidation(result);
             }
             for (Violation violation : result.getViolations()) {
-                logger.error(violation.getMessage().getObject());
+                logger.error(violation.getMessageKey(), violation.getParameters());
             }
         } catch (RepositoryException e) {
             throw new ValidationException("Repository error", e);
@@ -140,13 +140,13 @@ public class JcrValidationService implements IValidationService {
     public IValidationResult getValidationResult() {
         return result;
     }
-    
+
     @SuppressWarnings("unchecked")
     private IModelReference<Node> getModelReference() {
         return context.getService(config.getString("wicket.model"), IModelReference.class);
     }
 
-    private IModel<Node> getModel() {
+    public IModel<Node> getModel() {
         IModelReference<Node> modelRef = getModelReference();
         if (modelRef != null) {
             return modelRef.getModel();

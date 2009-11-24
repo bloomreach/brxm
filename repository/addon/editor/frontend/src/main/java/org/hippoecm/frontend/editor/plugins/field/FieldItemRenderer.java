@@ -102,7 +102,7 @@ public class FieldItemRenderer<C extends IModel> implements IClusterable {
     }
 
     boolean isValid() {
-        if (filteredValidationModel != null) {
+        if (filteredValidationModel != null && filteredValidationModel.getObject() != null) {
             return filteredValidationModel.getObject().isValid();
         }
         return true;

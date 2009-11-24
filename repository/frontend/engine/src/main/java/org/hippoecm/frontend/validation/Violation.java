@@ -18,7 +18,6 @@ package org.hippoecm.frontend.validation;
 import java.util.Set;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IModel;
 
 /**
  * Validation constraint violation.  Provides the list of {@link ModelPath}s that
@@ -28,17 +27,23 @@ public final class Violation implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private Set<ModelPath> fieldPaths;
-    private IModel<String> message;
+    private String messageKey;
+    private Object[] parameters;
 
-    public Violation(Set<ModelPath> fieldPaths, IModel<String> message) {
+    public Violation(Set<ModelPath> fieldPaths, String message, Object[] parameters) {
         this.fieldPaths = fieldPaths;
-        this.message = message;
+        this.messageKey = message;
+        this.parameters = parameters;
     }
 
-    public IModel<String> getMessage() {
-        return message;
+    public String getMessageKey() {
+        return messageKey;
     }
 
+    public Object[] getParameters() {
+        return parameters;
+    }
+    
     public Set<ModelPath> getDependentPaths() {
         return fieldPaths;
     }

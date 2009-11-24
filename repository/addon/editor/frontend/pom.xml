@@ -39,6 +39,11 @@
       <artifactId>jcr</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>net.sourceforge.nekohtml</groupId> 
+      <artifactId>nekohtml</artifactId> 
+      <version>${nekohtml.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.hippoecm</groupId>
