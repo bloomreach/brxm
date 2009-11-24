@@ -54,9 +54,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
 
         types = new ValueMap(config.getString("types"));
 
-        // Add upload form with ajax progress bar
-        form = new FileUploadForm("form");
-        add(form);
+        add(form = new FileUploadForm("form"));
 
         add(new EventStoppingBehavior("onclick"));
 

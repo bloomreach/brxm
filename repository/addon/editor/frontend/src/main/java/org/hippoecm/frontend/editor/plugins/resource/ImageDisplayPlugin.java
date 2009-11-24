@@ -46,6 +46,10 @@ public class ImageDisplayPlugin extends RenderPlugin {
     public ImageDisplayPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
+        addResourceFragment();
+    }
+    
+    private void addResourceFragment() {
         resource = new JcrResourceStream(((JcrNodeModel) getDefaultModel()).getNode());
         Fragment fragment = new Fragment("fragment", "unknown", this);
         try {
@@ -58,16 +62,22 @@ public class ImageDisplayPlugin extends RenderPlugin {
                     fragment.add(new NonCachingImage("image", new JcrResource(resource)));
                 } else {
                     fragment = new Fragment("fragment", "embed", this);
-                    fragment.add(new Label("filename", new Model(resource.getNode().getParent().getName())));
-                    fragment.add(new Label("filesize", new Model(new ByteSizeFormatter().format(resource.length()))));
-                    fragment.add(new Label("mimetype", new Model(resource.getContentType())));
+                    fragment.add(new Label("filename", new Model<String>(resource.getNode().getParent().getName())));
+                    fragment.add(new Label("filesize", new Model<String>(new ByteSizeFormatter().format(resource.length()))));
+                    fragment.add(new Label("mimetype", new Model<String>(resource.getContentType())));
                     fragment.add(new ResourceLink("link", new JcrResource(resource)));
                 }
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
-        add(fragment);
+        addOrReplace(fragment);
+    }
+
+    @Override
+    protected void onModelChanged() {
+        addResourceFragment();
+        super.onModelChanged();
     }
 
     @Override

@@ -40,18 +40,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LinkPickerPlugin extends RenderPlugin<String> {
+    private static final long serialVersionUID = 1L;
+    
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    private static final long serialVersionUID = 1L;
-
-    private IModel<String> valueModel;
-
-    private List<String> nodetypes = new ArrayList<String>();
 
     static final Logger log = LoggerFactory.getLogger(LinkPickerPlugin.class);
 
     private static final String EMPTY_LINK_TEXT = "[...]";
+
+    private IModel<String> valueModel;
+    private List<String> nodetypes = new ArrayList<String>();
 
     public LinkPickerPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
