@@ -67,7 +67,7 @@
         <sv:value>a87d38af-21b1-4245-ac9c-e47afda6f294</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
-        <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.5</sv:value>
+        <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.6</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
         <sv:value>true</sv:value>
