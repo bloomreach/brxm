@@ -63,15 +63,12 @@
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
         <sv:value>http://www.onehippo.org/jcr/hippostd/nt/2.0</sv:value>
       </sv:property>
-      <sv:node sv:name="hipposysedit:field">
+      <sv:node sv:name="content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
           <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:name" sv:type="String">
-          <sv:value>content</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
           <sv:value>hippostd:content</sv:value>
@@ -82,13 +79,13 @@
         <sv:property sv:name="hipposysedit:type" sv:type="String">
           <sv:value>String</sv:value>
         </sv:property>
+        <sv:property sv:name="hipposysedit:validators" sv:type="String">
+          <sv:value>html</sv:value>
+        </sv:property>
       </sv:node>
-      <sv:node sv:name="hipposysedit:field">
+      <sv:node sv:name="links">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:name" sv:type="String">
-          <sv:value>links</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
           <sv:value>*</sv:value>

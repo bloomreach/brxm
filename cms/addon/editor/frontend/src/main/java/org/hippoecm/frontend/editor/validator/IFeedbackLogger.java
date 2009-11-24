@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
-import java.io.Serializable;
-
 public interface IFeedbackLogger {
-    
-    void warn(String message);
 
-    void error(Serializable message);
+    void warn(String messageKey, Object[] parameters);
+
+    void error(String messageKey, Object[] parameters);
 }

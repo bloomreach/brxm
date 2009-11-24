@@ -75,6 +75,6 @@ public class FilteredValidationResult implements IValidationResult {
                 newPaths.add(new ModelPath(elements));
             }
         }
-        return new Violation(newPaths, violation.getMessage());
+        return new Violation(newPaths, violation.getMessageKey(), violation.getParameters());
     }
 }
