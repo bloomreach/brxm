@@ -26,6 +26,7 @@ import org.hippoecm.repository.standardworkflow.ChangeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 import static org.junit.Assert.assertTrue;
 
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -62,7 +63,7 @@ public class UpdateAllContentTest extends TestCase {
     String cnd1 = "<nt='http://www.jcp.org/jcr/nt/1.0'>"
         + "<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>"
         + "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"
-        + "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.6'>"
+        + "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.7'>"
         + ""
         + "[defaultcontent:basedocument] > hippo:document, hippostd:publishable, hippostd:publishableSummary"
         + ""
@@ -97,7 +98,7 @@ public class UpdateAllContentTest extends TestCase {
     String cnd2 = "<nt='http://www.jcp.org/jcr/nt/1.0'>"
         + "<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>"
         + "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"
-        + "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.7'>"
+        + "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.8'>"
         + ""
         + "[defaultcontent:basedocument] > hippo:document, hippostd:publishable, hippostd:publishableSummary"
         + ""
@@ -132,7 +133,7 @@ public class UpdateAllContentTest extends TestCase {
     String cnd3 = "<nt='http://www.jcp.org/jcr/nt/1.0'>"
         + "<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>"
         + "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"
-        + "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.8'>"
+        + "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.9'>"
         + ""
         + "[defaultcontent:basedocument] > hippo:document, hippostd:publishable, hippostd:publishableSummary"
         + ""
@@ -166,43 +167,6 @@ public class UpdateAllContentTest extends TestCase {
         + "- defaultcontent:introduction (string)"
         + "";
     String cnd4 = "<nt='http://www.jcp.org/jcr/nt/1.0'>"
-        + "<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>"
-        + "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"
-        + "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.9'>"
-        + ""
-        + "[defaultcontent:basedocument] > hippo:document, hippostd:publishable, hippostd:publishableSummary"
-        + ""
-        + "[defaultcontent:address]"
-        + "- defaultcontent:street (string)"
-        + "- defaultcontent:number (long)"
-        + ""
-        + "[defaultcontent:article] > defaultcontent:basedocument"
-        + "+ defaultcontent:body (hippostd:html)"
-        + "+ defaultcontent:ydob (hippostd:html) mandatory"
-        + "- defaultcontent:title (string)"
-        + "- defaultcontent:a (string) mandatory"
-        + "- defaultcontent:introduction (string)"
-        + ""
-        + "[defaultcontent:event] > defaultcontent:basedocument"
-        + "+ defaultcontent:body (hippostd:html)"
-        + "- defaultcontent:title (string)"
-        + "+ defaultcontent:address (defaultcontent:address)"
-        + "+ defaultcontent:date (hippostd:date)"
-        + "- defaultcontent:introduction (string)"
-        + ""
-        + "[defaultcontent:news] > defaultcontent:basedocument"
-        + "+ defaultcontent:body (hippostd:html)"
-        + "- defaultcontent:title (string)"
-        + "+ defaultcontent:internallink (hippo:facetselect)"
-        + "+ defaultcontent:date (hippostd:date)"
-        + "- defaultcontent:introduction (string)"
-        + ""
-        + "[defaultcontent:overview] > defaultcontent:basedocument"
-        + "- defaultcontent:title (string)"
-        + "+ defaultcontent:query (hippo:query)"
-        + "- defaultcontent:introduction (string)"
-        + "";
-    String cnd5 = "<nt='http://www.jcp.org/jcr/nt/1.0'>"
         + "<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>"
         + "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"
         + "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.10'>"
@@ -239,7 +203,44 @@ public class UpdateAllContentTest extends TestCase {
         + "+ defaultcontent:query (hippo:query)"
         + "- defaultcontent:introduction (string)"
         + "";
-    
+    String cnd5 = "<nt='http://www.jcp.org/jcr/nt/1.0'>"
+        + "<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>"
+        + "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>"
+        + "<defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.11'>"
+        + ""
+        + "[defaultcontent:basedocument] > hippo:document, hippostd:publishable, hippostd:publishableSummary"
+        + ""
+        + "[defaultcontent:address]"
+        + "- defaultcontent:street (string)"
+        + "- defaultcontent:number (long)"
+        + ""
+        + "[defaultcontent:article] > defaultcontent:basedocument"
+        + "+ defaultcontent:body (hippostd:html)"
+        + "+ defaultcontent:ydob (hippostd:html) mandatory"
+        + "- defaultcontent:title (string)"
+        + "- defaultcontent:a (string) mandatory"
+        + "- defaultcontent:introduction (string)"
+        + ""
+        + "[defaultcontent:event] > defaultcontent:basedocument"
+        + "+ defaultcontent:body (hippostd:html)"
+        + "- defaultcontent:title (string)"
+        + "+ defaultcontent:address (defaultcontent:address)"
+        + "+ defaultcontent:date (hippostd:date)"
+        + "- defaultcontent:introduction (string)"
+        + ""
+        + "[defaultcontent:news] > defaultcontent:basedocument"
+        + "+ defaultcontent:body (hippostd:html)"
+        + "- defaultcontent:title (string)"
+        + "+ defaultcontent:internallink (hippo:facetselect)"
+        + "+ defaultcontent:date (hippostd:date)"
+        + "- defaultcontent:introduction (string)"
+        + ""
+        + "[defaultcontent:overview] > defaultcontent:basedocument"
+        + "- defaultcontent:title (string)"
+        + "+ defaultcontent:query (hippo:query)"
+        + "- defaultcontent:introduction (string)"
+        + "";
+
     Map<String, List<Change>> cargo1 = new HashMap<String, List<Change>>();
     cargo1.put("defaultcontent:address", new LinkedList<Change>());
     cargo1.put("defaultcontent:article", new LinkedList<Change>());
@@ -271,66 +272,13 @@ public class UpdateAllContentTest extends TestCase {
     WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
     Workflow wf = workflowManager.getWorkflow("editor", editorNamespaceFolder);
     assertTrue(wf instanceof NamespaceWorkflow);
+    System.err.println("START");
+    long t1 = System.currentTimeMillis();
     ((NamespaceWorkflow) wf).updateModel(cnd1, cargo1);
+    long t2 = System.currentTimeMillis();
 
     session.logout();
     session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-    editorNamespaceFolder = session.getRootNode().getNode("hippo:namespaces/defaultcontent");
-    workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-    wf = workflowManager.getWorkflow("editor", editorNamespaceFolder);
-    ((NamespaceWorkflow) wf).updateModel(cnd2, cargo1);
-
-    session.logout();
-    session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-    editorNamespaceFolder = session.getRootNode().getNode("hippo:namespaces/defaultcontent");
-    workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-    Node newPrototype = editorNamespaceFolder.getNode("article").getNode("hipposysedit:prototypes");
-    newPrototype = newPrototype.addNode("hipposysedit:prototype","nt:unstructured");
-    newPrototype.addMixin("hippostd:publishableSummary");
-    newPrototype.addMixin("hippo:harddocument");
-    newPrototype.addMixin("hippostd:publishable");
-    newPrototype.setProperty("defaultcontent:a","Test");
-    newPrototype.setProperty("defaultcontent:introduction","introduction");
-    newPrototype.setProperty("defaultcontent:title","title");
-    newPrototype.setProperty("hippostd:state","unpublished");
-    newPrototype.setProperty("hippostd:stateSummary","new");
-    Node newPrototypeChild = newPrototype.addNode("defaultcontent:body","hippostd:html");
-    newPrototypeChild.setProperty("hippostd:content","&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;");
-    session.save();
-    wf = workflowManager.getWorkflow("editor", editorNamespaceFolder);
-    ((NamespaceWorkflow) wf).updateModel(cnd3, cargo3);
-
-    session.logout();
-    session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-    editorNamespaceFolder = session.getRootNode().getNode("hippo:namespaces/defaultcontent");
-    workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-    newPrototype = editorNamespaceFolder.getNode("article").getNode("hipposysedit:prototypes");
-    newPrototype = newPrototype.addNode("hipposysedit:prototype","nt:unstructured");
-    newPrototype.addMixin("hippostd:publishableSummary");
-    newPrototype.addMixin("hippo:harddocument");
-    newPrototype.addMixin("hippostd:publishable");
-    newPrototype.setProperty("defaultcontent:a","Test");
-    newPrototype.setProperty("defaultcontent:introduction","introduction");
-    newPrototype.setProperty("defaultcontent:title","title");
-    newPrototype.setProperty("hippostd:state","unpublished");
-    newPrototype.setProperty("hippostd:stateSummary","new");
-    newPrototypeChild = newPrototype.addNode("defaultcontent:body","hippostd:html");
-    newPrototypeChild.setProperty("hippostd:content","&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;");
-    newPrototypeChild = newPrototype.addNode("defaultcontent:ydob","hippostd:html");
-    newPrototypeChild.setProperty("hippostd:content","&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;");
-    session.save();
-    wf = workflowManager.getWorkflow("editor", editorNamespaceFolder);
-    ((NamespaceWorkflow) wf).updateModel(cnd4, cargo4);
-
-    session.logout();
-    session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-    editorNamespaceFolder = session.getRootNode().getNode("hippo:namespaces/defaultcontent");
-    workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-    wf = workflowManager.getWorkflow("editor", editorNamespaceFolder);
-    ((NamespaceWorkflow) wf).updateModel(cnd5, cargo1);
+    System.err.println("\n\n\n\n\n\n\n"+(t2-t1)+"\n\n\n\n\n\n\n\n");
   }
 }
