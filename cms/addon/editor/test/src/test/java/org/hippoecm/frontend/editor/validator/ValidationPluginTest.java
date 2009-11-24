@@ -34,7 +34,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ModelPath;
-import org.hippoecm.frontend.validation.IValidateService;
+import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
@@ -45,14 +45,8 @@ public class ValidationPluginTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    final static String[] content = {
-        "/test", "nt:unstructured",
-            "/test/plugin", "frontend:plugin",
-                "plugin.class", ValidationPlugin.class.getName(),
-                "wicket.model", "service.model",
-                "validator.id", "service.validator",
-                "validator.model", "model.validator",
-    };
+    final static String[] content = { "/test", "nt:unstructured", "/test/plugin", "frontend:plugin", "plugin.class",
+            ValidationPlugin.class.getName(), "wicket.model", "service.model", "validator.id", "service.validator", };
     IPluginConfig config;
 
     @Override
@@ -69,12 +63,11 @@ public class ValidationPluginTest extends PluginTest {
     }
 
     protected Set<Violation> getViolations() {
-        IModelReference validationRef = context.getService("model.validator", IModelReference.class);
-        return ((IValidationResult) validationRef.getModel().getObject()).getViolations();
+        return context.getService("service.validator", IValidationService.class).getValidationResult().getViolations();
     }
 
     protected void validate(final Node node) throws ValidationException {
-        context.getService("service.validator", IValidateService.class).validate();
+        context.getService("service.validator", IValidationService.class).validate();
     }
 
     @Test
@@ -102,7 +95,7 @@ public class ValidationPluginTest extends PluginTest {
         assertTrue(jcrPaths.contains("test:single"));
         assertTrue(jcrPaths.contains("test:multiple"));
     }
-    
+
     private Set<String> getJcrPaths(Set<Violation> violations) {
         Set<String> jcrPaths = new TreeSet<String>();
         Iterator<Violation> iter = violations.iterator();
