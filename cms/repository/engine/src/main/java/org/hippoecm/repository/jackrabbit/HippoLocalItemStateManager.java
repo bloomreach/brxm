@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -35,6 +37,8 @@ import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.state.ChangeLog;
+import org.apache.jackrabbit.core.state.ForkedItemStateManager;
+import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.ForkedXAItemStateManager;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
@@ -415,16 +419,23 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         }
 
         void invalidate() {
-            for(Iterator iter = upstream.deletedStates(); iter.hasNext(); ) {
-                ItemState state = (ItemState) iter.next();
+            List<ItemState> deletedStates = new LinkedList<ItemState>();
+            for(Iterator iter = upstream.deletedStates(); iter.hasNext(); )
+                deletedStates.add((ItemState)iter.next());
+            List<ItemState> addedStates = new LinkedList<ItemState>();
+            for(Iterator iter = upstream.addedStates(); iter.hasNext(); )
+                addedStates.add((ItemState)iter.next());
+            List<ItemState> modifiedStates = new LinkedList<ItemState>();
+            for(Iterator iter = upstream.modifiedStates(); iter.hasNext(); )
+                modifiedStates.add((ItemState)iter.next());
+            for(ItemState state : deletedStates) {
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     deletedExternals.put(state.getId(), null);
                     ((NodeState)state).removeAllChildNodeEntries();
                     stateDestroyed(state);
                 }
             }
-            for(Iterator iter = upstream.addedStates(); iter.hasNext(); ) {
-                ItemState state = (ItemState) iter.next();
+            for(ItemState state : addedStates) {
                 if((isVirtual(state) & ITEM_TYPE_VIRTUAL) != 0) {
                     if(state.isNode()) {
                         NodeState nodeState = (NodeState) state;
@@ -447,8 +458,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     }
                 }
             }
-            for(Iterator iter = upstream.modifiedStates(); iter.hasNext(); ) {
-                ItemState state = (ItemState) iter.next();
+            for(ItemState state : modifiedStates) {
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     stateDestroyed((NodeState)state);
                     ((NodeState)state).removeAllChildNodeEntries();
