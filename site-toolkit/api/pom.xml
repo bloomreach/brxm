@@ -47,6 +47,12 @@
       <artifactId>jcr</artifactId>
       <scope>provided</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- To exclude slf4j depedency explicitly. 
          hst-commons must not have this dependency because it is deployed to shared lib directory. -->
