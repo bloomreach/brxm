@@ -50,7 +50,7 @@ public class PluginManager implements IClusterable {
 
         RefCount(IClusterable service) {
             this.service = service;
-            count = 1;
+            count = 0;
         }
 
         void addRef() {
