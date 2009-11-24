@@ -801,8 +801,8 @@ font-weight: bold;
 .hippo-editor {background: transparent url("images/hippo-shade.png")}
 
 /* feedback styling */
-.hippo-editor-feedback {width: 70%; margin: 0px 10px; padding: 0px 20px;}
-.hippo-editor-feedback ul {margin-top: 5px; margin-bottom: 5px; padding-top: 5px; padding-bottom: 5px;}
+.hippo-editor-feedback {width: 70%; margin: 0px 10px 0px 0px; padding: 0px 10px; height: 43px; overflow: hidden;}
+.hippo-editor-feedback ul {margin-bottom: 5px; -bottom: 5px; background-color: #ffdfdf; border: 2px solid #ff5050;}
 .hippo-editor-feedback li {height: 20px; padding: 5px 40px;}
 .hippo-editor-feedback .feedbackPanelERROR {display: list-item; background-color: #c00;}
 
@@ -909,6 +909,7 @@ background-image:url("images/icons/workflow-16.png"); background-repeat: no-repe
 .hippo-editor .hippo-editor-field-subfield-controls{}
 .hippo-editor .hippo-editor-field-subfield-controls .delete-16{padding: 0px; width: 16px; height: 16px; display: block; float: right; margin-top: 4px; margin-right: 4px;}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield {background: white; border: 1px solid #B2B2B2; margin-bottom: 4px;}
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield.invalid {border-color: #f00000;}
 
 
 /* sub sub fields */

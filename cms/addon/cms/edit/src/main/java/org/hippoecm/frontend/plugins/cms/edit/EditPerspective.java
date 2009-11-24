@@ -17,19 +17,29 @@ package org.hippoecm.frontend.plugins.cms.edit;
 
 import java.text.MessageFormat;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
+import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +48,59 @@ public class EditPerspective extends Perspective {
     private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
-    
+
     private static final long serialVersionUID = 1L;
 
-    public EditPerspective(IPluginContext context, IPluginConfig config) {
+    private String topHeight;
+    private UnitSettings topSettings;
+    private YuiFeedbackPanel feedback;
+    private boolean feedbackShown;
+
+    public EditPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
+        feedback = new YuiFeedbackPanel("feedback", new IFeedbackMessageFilter() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean accept(FeedbackMessage message) {
+                if (config.getString(RenderService.FEEDBACK) != null) {
+                    List<IFeedbackMessageFilter> filters = context.getServices(
+                            config.getString(RenderService.FEEDBACK), IFeedbackMessageFilter.class);
+                    for (IFeedbackMessageFilter filter : filters) {
+                        if (filter.accept(message)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }, context);
+        add(feedback);
+        feedbackShown = false;
+
+        WireframeSettings wfSettings = new WireframeSettings(YuiPluginHelper
+                .getConfig(config));
+        topSettings = wfSettings.getUnitSettingsByPosition("top");
+        topHeight = topSettings.getHeight();
+        add(new WireframeBehavior(YuiPluginHelper.getManager(context), wfSettings));
+    }
+
+    @Override
+    public void render(PluginRequestTarget target) {
+        super.render(target);
+        if (feedback.hasMessages()) {
+            target.addComponent(this);
+            if (!feedbackShown) {
+                topSettings.setHeight(Integer.valueOf(getPluginConfig().getAsInteger("feedback.height", 50) + Integer.parseInt(topHeight)).toString());
+                feedbackShown = true;
+            }
+        } else {
+            if (feedbackShown) {
+                target.addComponent(this);
+                topSettings.setHeight(topHeight);
+                feedbackShown = false;
+            }
+        }
     }
 
     @Override

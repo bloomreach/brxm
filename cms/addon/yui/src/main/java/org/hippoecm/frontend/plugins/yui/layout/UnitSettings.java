@@ -86,29 +86,45 @@ public class UnitSettings extends YuiObject {
         return POSITION.get(this);
     }
 
+    public String getWidth() {
+        return WIDTH.get(this);
+    }
+    
     public void setWidth(String width) {
         WIDTH.set(width, this);
+    }
+
+    public String getHeight() {
+        return HEIGHT.get(this);
     }
 
     public void setHeight(String height) {
         HEIGHT.set(height, this);
     }
 
+    public String getMinWidth() {
+        return MIN_WIDTH.get(this);
+    }
+
     public void setMinWidth(String minWidth) {
         MIN_WIDTH.set(minWidth, this);
+    }
+
+    public String getMinHeight() {
+        return MIN_HEIGHT.get(this);
     }
 
     public void setMinHeight(String minHeight) {
         MIN_HEIGHT.set(minHeight, this);
     }
+
+    public String getWrapperId() {
+        return wrapperId;
+    }
     
     public void setWrapperId(String id) {
         wrapperId = id;
         notifyListeners();
-    }
-
-    public String getWrapperId() {
-        return wrapperId;
     }
 
     public String getMarkupId() {

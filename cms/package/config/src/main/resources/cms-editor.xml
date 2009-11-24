@@ -49,7 +49,6 @@
     </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>${wicket.behavior}</sv:value>
-      <sv:value>${cluster.id}.behavior.perspective</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.editor</sv:value>
@@ -61,16 +60,8 @@
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>${wicket.model}</sv:value>
     </sv:property>
-  </sv:node>
-  <sv:node sv:name="editLayout">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.id" sv:type="String">
-      <sv:value>${cluster.id}.behavior.perspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
+    <sv:property sv:name="wicket.feedback" sv:type="String">
+      <sv:value>${cluster.id}.feedback</sv:value>
     </sv:property>
     <sv:node sv:name="yui.config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -110,9 +101,6 @@
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>${wicket.model}</sv:value>
     </sv:property>
-    <sv:property sv:name="validator.model" sv:type="String">
-      <sv:value>${cluster.id}.validator</sv:value>
-    </sv:property>
   </sv:node>
   <sv:node sv:name="editorPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -120,9 +108,6 @@
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.editor.editor.EditorPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.feedback" sv:type="String">
-      <sv:value>${cluster.id}.feedback</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>${cluster.id}.editor</sv:value>
@@ -134,7 +119,7 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
-    <sv:property sv:name="validator.model" sv:type="String">
+    <sv:property sv:name="validator.id" sv:type="String">
       <sv:value>${cluster.id}.validator</sv:value>
     </sv:property>
     </sv:node>
