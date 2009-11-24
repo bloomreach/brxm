@@ -24,11 +24,13 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
@@ -76,14 +78,24 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
         });
 
         add(rejectAction = new WorkflowAction("reject", new StringResourceModel("reject-request", this, null).getString(), null) {
+            public String reason;
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "workflow-requestunpublish-16.png");
             }
             @Override
+            protected Dialog createRequestDialog() {
+                return new WorkflowAction.NameDialog(new StringResourceModel("reject-request-title",
+                                                                             FullRequestWorkflowPlugin.this, null),
+                                                     new StringResourceModel("reject-request-text",
+                                                                             FullRequestWorkflowPlugin.this, null),
+                                                     new PropertyModel(this, "reason"));
+            }
+            @Override
             protected String execute(Workflow wf) throws Exception {
                 FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
-                workflow.rejectRequest(""); // FIXME
+                workflow.rejectRequest(reason);
                 return null;
             }
         });

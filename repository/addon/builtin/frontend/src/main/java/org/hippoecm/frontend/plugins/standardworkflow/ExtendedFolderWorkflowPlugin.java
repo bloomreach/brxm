@@ -111,7 +111,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 } catch (RepositoryException ex) {
                     log.error("Error preparing to publish all documents: {}", ex);
                 }
-                return new ConfirmDialog(this,
+                return new ExtendedFolderWorkflowPlugin.ConfirmDialog(this,
                         new StringResourceModel("publish-all-title", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("publish-all-text", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("publish-all-subtext", ExtendedFolderWorkflowPlugin.this, null),
@@ -180,7 +180,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 } catch (RepositoryException ex) {
                     log.error("Error preparing to publish all documents: {}", ex);
                 }
-                return new ConfirmDialog(this,
+                return new ExtendedFolderWorkflowPlugin.ConfirmDialog(this,
                         new StringResourceModel("depublish-all-title", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("depublish-all-text", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("depublish-all-subtext", ExtendedFolderWorkflowPlugin.this, null),
