@@ -21,6 +21,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -113,4 +114,19 @@ public abstract class AbstractXinhaDialog extends AbstractDialog<AbstractPersist
         IPersistedMap link = (IPersistedMap) getModelObject();
         link.delete();
     }
+    
+    protected static class StringPropertyModel extends PropertyModel<String> {
+        private static final long serialVersionUID = 1L;
+
+        public StringPropertyModel(Object modelObject, String expression) {
+            super(modelObject, expression);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Class getObjectClass() {
+            return String.class;
+        }
+    }
+
 }
