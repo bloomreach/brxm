@@ -82,6 +82,7 @@ public class Detail extends BaseHstComponent {
             response.setStatus(HstResponse.SC_NOT_FOUND);
             try {
                 response.forward("/error");
+                return;
             } catch (IOException e) {
                 throw new HstComponentException("Could not forward the request to the error page.", e);
             }
