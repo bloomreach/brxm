@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -252,7 +253,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                     add(component = new Label("text"));
                     component.setVisible(false);
                 } else {
-                    add(new Label("text", text));
+                    add(new MultiLineLabel("text", text));
                 }
                 add(new Label("question", question));
             }
@@ -306,6 +307,8 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
                 TextAreaWidget textfield;
                 add(textfield = new TextAreaWidget("value", textModel));
+                textfield.setCols("25");
+                textfield.setRows("4");
                 setFocus(textfield.getFocusComponent());
             }
 

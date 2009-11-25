@@ -20,11 +20,14 @@
         <td>
           <span wicket:id="intro"/>
         </td>
-      </tr><tr>
+      </tr>
+      <wicket:enclosure child="text"><tr>
         <td>
-          <blockquote><span wicket:id="text"/></blockquote>
+          <span wicket:id="text" class="notification"/>
         </td>
-      </tr><tr>
+      </tr>
+      </wicket:enclosure>
+      <tr>
         <td>
           <span wicket:id="question">Do you wish to continue?</span>
         </td>
