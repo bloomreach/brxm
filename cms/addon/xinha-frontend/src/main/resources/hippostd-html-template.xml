@@ -196,6 +196,7 @@
             <sv:value>hippostd:folder</sv:value>
             <sv:value>hippogallery:stdImageGallery</sv:value>
             <sv:value>hippogallery:stdAssetGallery</sv:value>
+            <sv:value>hippo:facetsearch</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="yui.config">
