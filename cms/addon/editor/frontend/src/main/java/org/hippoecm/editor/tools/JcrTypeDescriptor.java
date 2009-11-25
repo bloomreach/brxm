@@ -540,7 +540,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     }
 
     void validate() {
-        ITypeDescriptor builtin = new BuiltinTypeDescriptor(getType(), locator);
+        ITypeDescriptor builtin;
+        try {
+            builtin = new BuiltinTypeDescriptor(getType(), locator);
+        } catch (StoreException e) {
+            return;
+        }
 
         List<String> superTypes = getSuperTypes();
         List<String> builtinSuperTypes = builtin.getSuperTypes();
