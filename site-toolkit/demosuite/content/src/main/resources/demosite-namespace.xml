@@ -1350,9 +1350,6 @@
                 <sv:property sv:name="demosite:product" sv:type="String">
                     <sv:value/>
                 </sv:property>
-                <sv:property sv:name="demosite:type" sv:type="String">
-                    <sv:value/>
-                </sv:property>
                 <sv:property sv:name="hippo:paths" sv:type="String">
                     <sv:value>ec31847e-d1b9-479e-acc2-589a31307c8c</sv:value>
                     <sv:value>2fd1a96f-cb8f-4d60-9405-8ba56791b9d8</sv:value>
