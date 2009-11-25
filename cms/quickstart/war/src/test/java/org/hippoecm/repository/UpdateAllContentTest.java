@@ -272,13 +272,11 @@ public class UpdateAllContentTest extends TestCase {
     WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
     Workflow wf = workflowManager.getWorkflow("editor", editorNamespaceFolder);
     assertTrue(wf instanceof NamespaceWorkflow);
-    System.err.println("START");
     long t1 = System.currentTimeMillis();
     ((NamespaceWorkflow) wf).updateModel(cnd1, cargo1);
     long t2 = System.currentTimeMillis();
 
     session.logout();
     session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-    System.err.println("\n\n\n\n\n\n\n"+(t2-t1)+"\n\n\n\n\n\n\n\n");
   }
 }
