@@ -188,6 +188,9 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     @Override
     protected void redraw() {
         super.redraw();
+        for (ValidationFilter listener : listeners.values()) {
+            listener.setValid(true);
+        }
         if (!restartTemplates) {
             restartTemplates = true;
             controller.stop();
