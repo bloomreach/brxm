@@ -332,6 +332,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             this.throttler = new Wicket.Throttler(true);
             
             this.name = id.indexOf(':') > -1 ? id.substr(id.indexOf(':') + 1) : id;
+            
+            this.DIM_COOKIE = 'hippocms7-layout-sizes';
         };
         
         YAHOO.hippo.BaseWireframe.prototype = {
@@ -357,7 +359,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             initLayout : function() {
                 var me = this;
                 this.layout.on('beforeResize', function() {
-                    me.updateDimensions();
+                    me.loadDimensions();
                     Dom.setStyle(me.id, 'height', me.config.height + 'px');
                     Dom.setStyle(me.id, 'width',  me.config.width + 'px');
                 });
@@ -366,7 +368,10 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             onLayoutResize: function() {
-                this.storeDimensions();
+                try {
+                    this.storeDimensions();
+                } catch(e) {
+                }
                 
                 var values = this.children.valueSet();
                 for(var i=0; i<values.length; i++) {
@@ -377,7 +382,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             resize : function() {
                 if(this.layout != null) {
                     this.layout.resize();
-                    this.storeDimensions();
                 }
             },
 
@@ -392,69 +396,32 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             prepareConfig : function() {
             },
             
-            updateDimensions : function() {
-            },
-            
-            hasPosition : function(pos) {
-                if (pos == 'doc') {
-                    return true;
-                }
-                for(var i=0; i<this.config.units.length; i++) {
-                    if(this.config.units[i].position == pos) {
-                        return true;
-                    }
-                }
-                return false;
-            },
-            
-            loadStoredDimensions : function() {
-                var docDim = this.readDimension('doc');
-                if(docDim == null || docDim.w == null || docDim.h == null) {
-                    YAHOO.log('No stored dimensions found for: ' + this.name, 'info', 'Wireframe');
-                    return false;
-                }
-                
-                YAHOO.log('Stored dimensions found for: ' + this.name, 'info', 'Wireframe');
-                this.config.width = docDim.w;
-                this.config.height = docDim.h;
-                var IEIE = 'doc[w=' + docDim.w + ',h=' + docDim.h + '], ';
-                
-                for(var i=0; i<this.config.units.length; i++) {
-                    var unit = this.config.units[i];
-                    var dim = this.readDimension(unit.position);
-                    if(dim) {
-                        this.config.units[i].width = dim.w;
-                        this.config.units[i].height = dim.h;
-                        IEIE += unit.position + '[w=' + dim.w + ',h=' + dim.h + '], ';
-                    }
-                }
-                //alert(IEIE);
-                return true;
+            loadDimensions : function() {
             },
             
             storeDimensions : function() {
-                YAHOO.log('Store sizes for: ' + this.name, 'info', 'Wireframe');
-                var sizes = this.layout.getSizes();
-                this.storeDimension(sizes, 'doc');
-                this.storeDimension(sizes, 'top');
-                this.storeDimension(sizes, 'right');
-                this.storeDimension(sizes, 'bottom');
-                this.storeDimension(sizes, 'left');
-                this.storeDimension(sizes, 'center');
+                YAHOO.log('Store dimensions for: ' + this.name, 'info', 'Wireframe');
+
+                this.storeDimension('top');
+                this.storeDimension('right');
+                this.storeDimension('bottom');
+                this.storeDimension('left');
             },
             
-            storeDimension : function(sizes, pos) {
-                if(this.hasPosition(pos)) {
-                    YAHOO.log('Sizes changed for ' + this.name, 'info', 'Wireframe');
+            storeDimension : function(pos) {
+                var unit = this.layout.getUnitByPosition(pos);
+                if(unit && unit.get('resize')) {
                     var date = new Date();
                     date.setDate(date.getDate() + 31);
                     var opts = { expires: date };
-                    YAHOO.util.Cookie.setSub('hippocms-layout-sizes', this.name + ':' + pos, sizes[pos].w + ',' + sizes[pos].h, opts);
+                    var sizes = this.layout.getSizes();
+                    YAHOO.util.Cookie.setSub(this.DIM_COOKIE, this.name + ':' + pos, sizes[pos].w + ',' + sizes[pos].h, opts);
+                    YAHOO.log('Stored dimension for ' + this.name + ':' + pos, 'info', 'Wireframe');
                 }
             },
             
             readDimension : function(pos) {
-                var val = YAHOO.util.Cookie.getSub('hippocms-layout-sizes', this.name + ':' + pos);
+                var val = YAHOO.util.Cookie.getSub(this.DIM_COOKIE, this.name + ':' + pos);
                 if(val == null) {
                     return false;
                 }
@@ -613,7 +580,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 this.config.height = Dom.getClientHeight() - this.margins.h;
             },
 
-            updateDimensions : function() {
+            loadDimensions : function() {
                 this.config.height = Dom.getClientHeight()-this.margins.h;
                 this.config.width = Dom.getClientWidth()-this.margins.w; //this works better than offsetWidth
             }
@@ -645,15 +612,24 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             initDimensions : function() {
-                if(!this.loadStoredDimensions()) {
-                    this.updateDimensions();
+                for(var i=0; i<this.config.units.length; i++) {
+                    var unit = this.config.units[i];
+                    if(unit.resize) {
+                        var dim = this.readDimension(unit.position);
+                        if(dim) {
+                            this.config.units[i].width = dim.w;
+                            this.config.units[i].height = dim.h;
+                        }
+                    }
                 }
             },
             
-            updateDimensions : function() {
+            loadDimensions : function() {
                 var dim = this.getDimensions();
                 this.config.height = dim.h;
                 this.config.width = dim.w;
+                
+                YAHOO.log('Load dimensions for: ' + this.name, 'info', 'Wireframe');
             },
             
             getDimensions : function() {
@@ -721,25 +697,23 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         YAHOO.extend(YAHOO.hippo.RelativeWireframe, YAHOO.hippo.Wireframe, {
             
             initDimensions : function() {
-                if (!this.loadStoredDimensions()) {
-                    var dim = this.getDimensions();
-                    this.config.height = dim.h;
-                    this.config.width = dim.w;
-                    
-                    for(var i=0; i<this.config.units.length; i++) {
-                        var pos = this.config.units[i].position;
-                        if(pos != 'center' && pos != 'top' && pos != 'bottom') {
-                            var w = this.relativeUnits[pos].w;
-                            this.config.units[i].width = parseInt(dim.w*w);
+                var dim = this.getDimensions();
+                this.config.height = dim.h;
+                this.config.width = dim.w;
+                
+                for(var i=0; i<this.config.units.length; i++) {
+                    var pos = this.config.units[i].position;
+                    if(pos != 'center' && pos != 'top' && pos != 'bottom') {
+                        var w = this.relativeUnits[pos].w;
+                        this.config.units[i].width = parseInt(dim.w*w);
 
-                            //var h = this.relativeUnits[pos].h;
-                            //this.config.units[i].height = parseInt(dim.h*h);
-                        }
+                        //var h = this.relativeUnits[pos].h;
+                        //this.config.units[i].height = parseInt(dim.h*h);
                     }
                 }
             },
             
-            updateDimensions : function() {
+            loadDimensions : function() {
                 this.initDimensions();
 
                 for(var i=0; i<this.config.units.length; i++) {
@@ -747,24 +721,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     if(pos != 'center' && pos != 'top' && pos != 'bottom') {
                         var x = this.layout.getUnitByPosition(pos);
                         x._configs.width.value = this.config.units[i].width;
-                        //x._configs.height.value = this.config.units[i].height;
                     }
                 }
-            },
-            
-            loadStoredDimensions : function() {
-                return false;
-            }
-        });
-        
-        //remove
-        YAHOO.hippo.TabsWireframe = function(id, config) {
-            YAHOO.hippo.TabsWireframe.superclass.constructor.apply(this, arguments);
-        };
-
-        YAHOO.extend(YAHOO.hippo.TabsWireframe, YAHOO.hippo.Wireframe, {
-            afterRender : function() {
-                YAHOO.hippo.TabsWireframe.superclass.prepareConfig.call(this);
             }
         });
         
