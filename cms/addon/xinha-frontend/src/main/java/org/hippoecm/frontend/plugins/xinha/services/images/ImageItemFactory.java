@@ -165,7 +165,7 @@ public class ImageItemFactory implements IClusterable {
         public String getUrl() {
             String url = "binaries" + parentPath + "/" + facetName;
             if (selectedResourceDefinition != null) {
-                return XinhaUtil.encode(url + "/" + nodeName + "/" + selectedResourceDefinition);
+                return XinhaUtil.encode(url + "/{_document}/" + selectedResourceDefinition);
             }
             return XinhaUtil.encode(url);
         }

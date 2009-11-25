@@ -62,6 +62,18 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                 relPath = ancestor.getName() + relPath.substring("{.}".length());
             } else if(relPath.startsWith("{_name}")) {
                 relPath = ancestor.getName() + relPath.substring("{_name}".length());
+            } else if(relPath.startsWith("{_document}")) {
+                if(node != null) {
+                    for (NodeIterator iter=node.getNodes(); iter.hasNext(); ) {
+                        Node child = iter.nextNode();
+                        if(child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                            relPath = child.getName();
+                            if(child.getIndex() > 1) {
+                                relPath = relPath += "[" + Integer.toString(child.getIndex()) + "]";
+                            }
+                        }
+                    }
+                }
             } else if(relPath.startsWith("{..}")) {
                 relPath = ancestor.getParent().getName() + relPath.substring("{..}".length());
             } else if(relPath.startsWith("{_parent}")) {
@@ -73,9 +85,17 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                 continue;
             }
             Map<String,String> conditions = null;
+            String relIndex = null;
             if(relPath.contains("[") && relPath.endsWith("]")) {
-                conditions = new TreeMap<String,String>();
-                String[] conditionElts = relPath.substring(relPath.indexOf("[")+1,relPath.lastIndexOf("]")).split(",");
+                relIndex = relPath.substring(relPath.indexOf("[")+1,relPath.lastIndexOf("]"));
+                try {
+                    Integer.decode(relIndex);
+                } catch(NumberFormatException ex) {
+                    conditions = new TreeMap<String,String>();
+                }
+            }
+            if (conditions != null) {
+                String[] conditionElts = relIndex.split(",");
                 for(int conditionIdx=0; conditionIdx<conditionElts.length; conditionIdx++) {
                     int pos = conditionElts[conditionIdx].indexOf("=");
                     if(pos >= 0) {
@@ -109,6 +129,7 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                     }
                 }
                 relPath = relPath.substring(0,relPath.indexOf("["));
+                }
             }
             if(last != null) {
                 last.node = node;
