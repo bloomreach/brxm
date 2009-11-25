@@ -253,7 +253,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
                 }
                 getNode().setProperty(path, values);
             } else {
-                getNode().setProperty(path, (Value) null);
+                getNode().setProperty(path, (Value[]) null);
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
