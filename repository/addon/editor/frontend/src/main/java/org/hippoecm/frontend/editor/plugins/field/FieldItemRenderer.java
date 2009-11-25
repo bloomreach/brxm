@@ -15,13 +15,20 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.validator.FilteredValidationModel;
 import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.validation.IValidationListener;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPathElement;
@@ -37,11 +44,12 @@ public class FieldItemRenderer<C extends IModel> implements IClusterable {
     private IPluginContext context;
     private IClusterControl clusterControl;
     private ModelReference<?> modelRef;
-    private IModel<IValidationResult> filteredValidationModel;
+    private FilteredValidationModel filteredValidationModel;
+    private IObserver validationObserver;
     private IValidationService validationService;
 
-    public FieldItemRenderer(IPluginContext context, final C model, IModel<IValidationResult> validationModel,
-            IClusterControl control, ModelPathElement element) {
+    public FieldItemRenderer(final IPluginContext context, final C model,
+            final IModel<IValidationResult> validationModel, IClusterControl control, final ModelPathElement element) {
         this.context = context;
 
         String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
@@ -49,9 +57,9 @@ public class FieldItemRenderer<C extends IModel> implements IClusterable {
         modelRef.init(context);
 
         validationService = null;
-        if (validationModel != null) {
+        if (validationModel != null && validationModel.getObject() != null) {
             filteredValidationModel = new FilteredValidationModel(validationModel, element);
-            String validationServiceId = control.getClusterConfig().getString(IValidationService.VALIDATE_ID);
+            final String validationServiceId = control.getClusterConfig().getString(IValidationService.VALIDATE_ID);
             if (validationServiceId != null) {
                 validationService = new IValidationService() {
                     private static final long serialVersionUID = 1L;
@@ -61,15 +69,27 @@ public class FieldItemRenderer<C extends IModel> implements IClusterable {
                     }
 
                     public void validate() throws ValidationException {
-                        // TODO Auto-generated method stub
-
+                        throw new ValidationException("Initiating validation from template is unsupported");
                     }
 
                 };
                 context.registerService(validationService, validationServiceId);
+                if (validationModel instanceof IObservable) {
+                    context.registerService(validationObserver = new Observer((IObservable) validationModel) {
+
+                        public void onEvent(Iterator events) {
+                            List<IValidationListener> listeners = context.getServices(validationServiceId,
+                                    IValidationListener.class);
+                            for (IValidationListener listener : listeners) {
+                                listener.onValidation(filteredValidationModel.getObject());
+                            }
+                        }
+
+                    }, IObserver.class.getName());
+                }
             }
         } else {
-            if (control.getClusterConfig().containsKey("validator.model")) {
+            if (control.getClusterConfig().containsKey(IValidationService.VALIDATE_ID)) {
                 log.warn("Template supports validation, but container does not provide validator model");
             }
         }
@@ -82,6 +102,7 @@ public class FieldItemRenderer<C extends IModel> implements IClusterable {
     public void destroy() {
         String validationServiceId = clusterControl.getClusterConfig().getString(IValidationService.VALIDATE_ID);
         if (validationServiceId != null) {
+            context.unregisterService(validationObserver, IObserver.class.getName());
             context.unregisterService(validationService, validationServiceId);
             validationService = null;
         }

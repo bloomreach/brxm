@@ -45,6 +45,7 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.Violation;
@@ -125,7 +126,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         provider = getProvider();
 
         IFieldDescriptor field = helper.getField();
-        if (field != null && (!field.isMultiple() || !doesTemplateSupportValidation())) {
+        if (field != null && !doesTemplateSupportValidation()) {
             final ValidationFilter holder = new ValidationFilter() {
                 private static final long serialVersionUID = 1L;
 
@@ -345,7 +346,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         IFieldDescriptor field = helper.getField();
         try {
             IClusterConfig template = engine.getTemplate(field.getTypeDescriptor(), mode);
-            return (template.getReferences().contains("validator.model"));
+            return (template.getReferences().contains(IValidationService.VALIDATE_ID));
         } catch (TemplateEngineException e) {
             return false;
         }
