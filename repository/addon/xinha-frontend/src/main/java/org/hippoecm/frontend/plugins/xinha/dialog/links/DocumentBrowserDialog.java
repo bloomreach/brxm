@@ -18,9 +18,11 @@ package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
+import org.hippoecm.frontend.plugins.xinha.dialog.AbstractPersistedMap;
 import org.hippoecm.frontend.plugins.xinha.services.links.InternalXinhaLink;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
@@ -36,10 +38,10 @@ public class DocumentBrowserDialog extends AbstractBrowserDialog {
 
     static final Logger log = LoggerFactory.getLogger(DocumentBrowserDialog.class);
 
-    public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, IModel model) {
+    public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, IModel<AbstractPersistedMap> model) {
         super(context, config, model);
 
-        add(new TextFieldWidget("title", getPropertyModel(InternalXinhaLink.class, XinhaLink.TITLE)) {
+        add(new TextFieldWidget("title", new PropertyModel<String>(model, XinhaLink.TITLE)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -48,7 +50,7 @@ public class DocumentBrowserDialog extends AbstractBrowserDialog {
             }
         });
 
-        add(new BooleanFieldWidget("popup", getPropertyModel(InternalXinhaLink.class, "target")) {
+        add(new BooleanFieldWidget("popup", new PropertyModel<Boolean>(model, "target")) {
             private static final long serialVersionUID = 1L;
 
             @Override

@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.xinha.XinhaPlugin;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.preferences.IPreferencesStore;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,7 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
     private static final String LAST_VISITED = "last.visited";
     private static final String LAST_VISITED_NODETYPES_ALLOWED = "last.visited.nodetypes.allowed";
+    private static final String[] DEFAULT_LAST_VISITED_NODETYPES_ALLOWED = new String[] { HippoStdNodeType.NT_FOLDER };
 
     protected final IPluginContext context;
     protected final IPluginConfig config;
@@ -56,7 +58,7 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
     private IModel<Node> lastModelVisited;
 
-    public AbstractBrowserDialog(IPluginContext context, IPluginConfig config, IModel<Node> model) {
+    public AbstractBrowserDialog(IPluginContext context, IPluginConfig config, IModel<AbstractPersistedMap> model) {
         super(model);
 
         this.context = context;
@@ -77,32 +79,32 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
         //save modelServiceId and dialogServiceId in cluster config
         String modelServiceId = decorated.getString("wicket.model");
-        IModel model = ((DocumentLink) getModelObject()).getNodeModel();
-        
-        if(model == null) {
+        IModel<Node> model = ((DocumentLink) getModelObject()).getNodeModel();
+
+        if (model == null) {
             IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
             String lastVisited = store.getString(config.getName(), LAST_VISITED);
-            if(lastVisited != null) {
+            if (lastVisited != null) {
                 model = new JcrNodeModel(lastVisited);
             }
         }
         lastModelVisited = model;
-        
+
         modelService = new ModelReference<Node>(modelServiceId, model) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void setModel(IModel model) {
-                if (model != null) {
+            public void setModel(IModel<Node> newModel) {
+                if (newModel != null) {
                     DocumentLink link = (DocumentLink) getModelObject();
                     JcrNodeModel currentModel = link.getNodeModel();
-                    if (!model.equals(currentModel)) {
-                        link.setNodeModel((JcrNodeModel) model);
+                    if (!newModel.equals(currentModel)) {
+                        link.setNodeModel((JcrNodeModel) newModel);
                         checkState();
                     }
-                } 
-                lastModelVisited = model;
-                super.setModel(model);
+                }
+                lastModelVisited = newModel;
+                super.setModel(newModel);
             }
         };
         modelService.init(context);
@@ -141,14 +143,16 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
             JcrNodeModel nodeModel = (JcrNodeModel) lastModelVisited;
             Node node = nodeModel.getNode();
             if (node != null) {
-                String[] allowedTypes = config.containsKey(LAST_VISITED_NODETYPES_ALLOWED) ? config.getStringArray(LAST_VISITED_NODETYPES_ALLOWED) : new String[] {"hippostd:folder"};
+                String[] allowedTypes = config.containsKey(LAST_VISITED_NODETYPES_ALLOWED) ? config
+                        .getStringArray(LAST_VISITED_NODETYPES_ALLOWED) : DEFAULT_LAST_VISITED_NODETYPES_ALLOWED;
                 if (allowedTypes != null) {
                     for (String nodeType : allowedTypes) {
                         try {
                             Node testNode = node;
-                            while(!testNode.getPath().equals("/")) { //TODO: Can do nicer
-                                if(testNode.isNodeType(nodeType)) {
-                                    IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
+                            while (!testNode.getPath().equals("/")) { //TODO: Can do nicer
+                                if (testNode.isNodeType(nodeType)) {
+                                    IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID,
+                                            IPreferencesStore.class);
                                     store.set(config.getName(), LAST_VISITED, testNode.getPath());
                                     break;
                                 }
