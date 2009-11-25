@@ -20,6 +20,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.xinha.dialog.AbstractPersistedMap;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
 import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 
@@ -39,7 +40,8 @@ public class ExternalLinkBehavior extends XinhaDialogBehavior {
     @Override
     protected void respond(AjaxRequestTarget target) {
         getDialogService().show(
-                new ExternalLinkDialog(context, config, new Model(new ExternalXinhaLink(getParameters()))));
+                new ExternalLinkDialog(context, config, new Model<AbstractPersistedMap>(new ExternalXinhaLink(
+                        getParameters()))));
     }
 
 }

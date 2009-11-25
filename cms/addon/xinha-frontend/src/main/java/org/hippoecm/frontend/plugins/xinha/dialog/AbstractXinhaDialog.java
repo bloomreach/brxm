@@ -21,19 +21,22 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 
-public abstract class AbstractXinhaDialog extends AbstractDialog {
+public abstract class AbstractXinhaDialog extends AbstractDialog<AbstractPersistedMap> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public AbstractXinhaDialog(IModel model) {
+    private boolean hasExistingLink;
+
+    public AbstractXinhaDialog(IModel<AbstractPersistedMap> model) {
         super(model);
+
+        hasExistingLink = model.getObject().isExisting();
 
         final Button remove = new AjaxButton("button") {
             private static final long serialVersionUID = 1L;
@@ -56,7 +59,7 @@ public abstract class AbstractXinhaDialog extends AbstractDialog {
 
     }
 
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         return new StringResourceModel("dialog-title", this, null);
     }
 
@@ -66,7 +69,7 @@ public abstract class AbstractXinhaDialog extends AbstractDialog {
     }
 
     protected boolean hasRemoveButton() {
-        return ((IPersistedMap) getModelObject()).isExisting();
+        return hasExistingLink;
     }
 
     //FIXME: remove and use set*Enabled
@@ -110,26 +113,4 @@ public abstract class AbstractXinhaDialog extends AbstractDialog {
         IPersistedMap link = (IPersistedMap) getModelObject();
         link.delete();
     }
-    
-    /**
-     * Helper method for new PropertyModel on nested PersistedMap. Method getObjectClass is overridden
-     * to help Wicket decide what type the nested model is.
-     * 
-     * @param _class  The type of the model's nested object
-     * @param exp  Property expression  
-     * 
-     * @return A PropertyModel that wraps the Dialog's model.
-     */
-    protected IModel getPropertyModel(final Class<? extends AbstractPersistedMap> _class, String exp) {
-        return new PropertyModel(getModel(), exp) {
-            private static final long serialVersionUID = 1L;
-            
-            @Override
-            public Class<? extends AbstractPersistedMap> getObjectClass() {
-                return _class;
-            }
-        };
-    }
-
-
 }

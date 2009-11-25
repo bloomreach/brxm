@@ -23,8 +23,8 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.xinha.dialog.AbstractPersistedMap;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractXinhaDialog;
-import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
@@ -35,11 +35,19 @@ public class ExternalLinkDialog extends AbstractXinhaDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public ExternalLinkDialog(IPluginContext context, IPluginConfig config, IModel model) {
+    public ExternalLinkDialog(IPluginContext context, IPluginConfig config, IModel<AbstractPersistedMap> model) {
         super(model);
 
-        ExternalXinhaLink link = (ExternalXinhaLink) getModelObject();
-        add(new TextFieldWidget("href", new PropertyModel(link, XinhaLink.HREF)) {
+        add(setFocus(new TextFieldWidget("href", new PropertyModel<String>(model.getObject(), XinhaLink.HREF)) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                update(target);
+            }
+        }));
+
+        add(new TextFieldWidget("title", new PropertyModel<String>(model, XinhaLink.TITLE)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -48,16 +56,7 @@ public class ExternalLinkDialog extends AbstractXinhaDialog {
             }
         });
 
-        add(new TextFieldWidget("title", new PropertyModel(link, XinhaLink.TITLE)) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                update(target);
-            }
-        });
-
-        add(new BooleanFieldWidget("popup", new PropertyModel(link, "target")) {
+        add(new BooleanFieldWidget("popup", new PropertyModel<Boolean>(model, "target")) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -69,15 +68,9 @@ public class ExternalLinkDialog extends AbstractXinhaDialog {
 
     @Override
     public IValueMap getProperties() {
-        return new ValueMap("width=400,height=200");
+        return new ValueMap("width=400,height=190");
     }
 
     private void update(AjaxRequestTarget target) {
-        //For now this doesn't work
-        //        IPersistedMap link = (IPersistedMap) getModelObject();
-        //        ok.setEnabled(link.isValid() && link.hasChanged());
-        //        if (target != null) {
-        //            target.addComponent(ok);
-        //        }
     }
 }

@@ -29,6 +29,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
+import org.hippoecm.frontend.plugins.xinha.dialog.AbstractPersistedMap;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
@@ -41,13 +42,14 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
     private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
-    
-    public final static List<String> ALIGN_OPTIONS = Arrays.asList(new String[] { "top", "middle", "bottom", "left", "right" });
 
-    public ImageBrowserDialog(IPluginContext context, IPluginConfig config, final IModel model) {
+    public final static List<String> ALIGN_OPTIONS = Arrays.asList(new String[] { "top", "middle", "bottom", "left",
+            "right" });
+
+    public ImageBrowserDialog(IPluginContext context, IPluginConfig config, final IModel<AbstractPersistedMap> model) {
         super(context, config, model);
 
-        add(new TextFieldWidget("alt", getPropertyModel(XinhaImage.class, XinhaImage.ALT)) {
+        add(new TextFieldWidget("alt", new PropertyModel<String>(model, XinhaImage.ALT)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -61,7 +63,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
                     private static final long serialVersionUID = 1L;
 
                     public Object getDisplayValue(Object object) {
-                        return new StringResourceModel((String) object, ImageBrowserDialog.this, null).getString();                        
+                        return new StringResourceModel((String) object, ImageBrowserDialog.this, null).getString();
                     }
 
                     public String getIdValue(Object object, int index) {
