@@ -728,12 +728,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     
                     for(var i=0; i<this.config.units.length; i++) {
                         var pos = this.config.units[i].position;
-                        if(pos != 'center') {
+                        if(pos != 'center' && pos != 'top' && pos != 'bottom') {
                             var w = this.relativeUnits[pos].w;
-                            var h = this.relativeUnits[pos].h;
-
                             this.config.units[i].width = parseInt(dim.w*w);
-                            this.config.units[i].height = parseInt(dim.h*h);
+
+                            //var h = this.relativeUnits[pos].h;
+                            //this.config.units[i].height = parseInt(dim.h*h);
                         }
                     }
                 }
@@ -744,10 +744,10 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
                 for(var i=0; i<this.config.units.length; i++) {
                     var pos = this.config.units[i].position;
-                    if(pos != 'center') {
+                    if(pos != 'center' && pos != 'top' && pos != 'bottom') {
                         var x = this.layout.getUnitByPosition(pos);
                         x._configs.width.value = this.config.units[i].width;
-                        x._configs.height.value = this.config.units[i].height;
+                        //x._configs.height.value = this.config.units[i].height;
                     }
                 }
             },

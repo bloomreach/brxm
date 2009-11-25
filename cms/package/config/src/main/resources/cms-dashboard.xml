@@ -65,6 +65,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
+      <sv:property sv:name="top" sv:type="String">
+        <sv:value>id=top,height=23px</sv:value>
+      </sv:property>
       <sv:property sv:name="center" sv:type="String">
         <sv:value>id=center,scroll=true,width=33%,body=center-body,gutter=1px 1px 1px 0px</sv:value>
       </sv:property>
@@ -84,6 +87,7 @@
         <sv:value>dashboard-perspective-wrapper</sv:value>
       </sv:property>
       <sv:property sv:name="units" sv:type="String">
+        <sv:value>top</sv:value>
         <sv:value>left</sv:value>
         <sv:value>center</sv:value>
         <sv:value>right</sv:value>
