@@ -15,11 +15,14 @@
  */
 package org.hippoecm.frontend.editor.workflow.dialog;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.extensions.wizard.IWizardModel;
+import org.apache.wicket.markup.html.link.Link;
 
-public final class FinishLink extends AjaxFallbackLink {
+/**
+ * This MUST be a non-ajax link.  Because there is a session reset, no events are
+ * processed during "finish".  So do a full page refresh.
+ */
+public final class FinishLink extends Link {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -42,7 +45,7 @@ public final class FinishLink extends AjaxFallbackLink {
     }
 
     @Override
-    public void onClick(AjaxRequestTarget target) {
+    public void onClick() {
         getWizardModel().finish();
     }
 
