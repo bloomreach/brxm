@@ -41,7 +41,7 @@ public class DocumentBrowserDialog extends AbstractBrowserDialog {
     public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, IModel<AbstractPersistedMap> model) {
         super(context, config, model);
 
-        add(new TextFieldWidget("title", new PropertyModel<String>(model, XinhaLink.TITLE)) {
+        add(new TextFieldWidget("title", new StringPropertyModel(model, XinhaLink.TITLE)) {
             private static final long serialVersionUID = 1L;
 
             @Override

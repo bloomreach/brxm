@@ -49,7 +49,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
     public ImageBrowserDialog(IPluginContext context, IPluginConfig config, final IModel<AbstractPersistedMap> model) {
         super(context, config, model);
 
-        add(new TextFieldWidget("alt", new PropertyModel<String>(model, XinhaImage.ALT)) {
+        add(new TextFieldWidget("alt", new StringPropertyModel(model, XinhaImage.ALT)) {
             private static final long serialVersionUID = 1L;
 
             @Override

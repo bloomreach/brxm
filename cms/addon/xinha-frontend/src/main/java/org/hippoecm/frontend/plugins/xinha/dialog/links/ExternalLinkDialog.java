@@ -38,7 +38,7 @@ public class ExternalLinkDialog extends AbstractXinhaDialog {
     public ExternalLinkDialog(IPluginContext context, IPluginConfig config, IModel<AbstractPersistedMap> model) {
         super(model);
 
-        add(setFocus(new TextFieldWidget("href", new PropertyModel<String>(model.getObject(), XinhaLink.HREF)) {
+        add(setFocus(new TextFieldWidget("href", new StringPropertyModel(model, XinhaLink.HREF)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -47,7 +47,7 @@ public class ExternalLinkDialog extends AbstractXinhaDialog {
             }
         }));
 
-        add(new TextFieldWidget("title", new PropertyModel<String>(model, XinhaLink.TITLE)) {
+        add(new TextFieldWidget("title", new StringPropertyModel(model, XinhaLink.TITLE)) {
             private static final long serialVersionUID = 1L;
 
             @Override
