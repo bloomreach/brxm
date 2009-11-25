@@ -9,6 +9,4 @@ div.template-type-center-body, div.editor-perspective-center-body {
 }
 /* End Hide from IE-Mac */
 
-.simple-values input[type="file"] { width: 300px; border: 1px solid #666; float:left;}
-.simple-values input[type="submit"] { float:left; clear:left; }
-.resource-upload { height: 60px;}
+.resource-upload input[type="file"] { border: 1px solid #666; width: 300px;}

@@ -1269,10 +1269,24 @@ body.hippo-root div.yui-log-container {
   right: 5px;
 }
 
-.simple-values { padding: 10px; font-size: 12px; }
-.hippo-preview-document .simple-values { padding-left: 0px; }
-.simple-values label { width: 110px; display: block; float: left; }
-.simple-values .simple-editor-value { float: left; color: #666; }
-.simple-values a { text-decoration: underline; }
-.simple-values input[type="submit"] {  padding-left: 0px; padding-top: 0px;}
+/* Resource upload/properties */
+.resource-values { font-size: 12px; padding: 10px; padding-top: 5px; }
+.resource-values label { display: block; float: left; margin-right: 10px;}
+.resource-values .simple-editor-value { float: left; color: #666; }
+.resource-values a { text-decoration: underline; }
+
+.resource-values ul { display: inline; }
+.resource-values ul li { list-style: none; display: inline; }
+.resource-values ul li > span { padding-right: 50px; }
+
+.hippo-preview-document .resource-values { padding-left: 0px; }
+
+.resource-upload { margin-top: 10px; height: 75px; }
+.resource-upload input {clear: left; float: left;}
+.resource-upload input[type="submit"] {  padding:0; margin:0;}
+
+
+
+
+
 

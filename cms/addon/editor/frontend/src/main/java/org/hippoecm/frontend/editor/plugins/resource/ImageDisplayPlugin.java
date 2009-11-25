@@ -62,7 +62,6 @@ public class ImageDisplayPlugin extends RenderPlugin {
                     fragment.add(new NonCachingImage("image", new JcrResource(resource)));
                 } else {
                     fragment = new Fragment("fragment", "embed", this);
-                    fragment.add(new Label("filename", new Model<String>(resource.getNode().getParent().getName())));
                     fragment.add(new Label("filesize", new Model<String>(new ByteSizeFormatter().format(resource.length()))));
                     fragment.add(new Label("mimetype", new Model<String>(resource.getContentType())));
                     fragment.add(new ResourceLink("link", new JcrResource(resource)));
