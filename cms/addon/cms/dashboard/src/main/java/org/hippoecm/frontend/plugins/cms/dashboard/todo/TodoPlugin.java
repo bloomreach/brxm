@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
@@ -29,6 +30,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
@@ -73,21 +75,40 @@ public class TodoPlugin extends RenderPlugin {
         @Override
         protected Iterator getItemModels() {
             final IDataProvider dataProvider = (IDataProvider) getDefaultModel();
-            final Iterator iter = dataProvider.iterator(0, 0);
+            final Iterator<Node> iter = dataProvider.iterator(0, 0);
             return new Iterator() {
-
+                private Node next;
                 public boolean hasNext() {
-                    return iter.hasNext();
+                    while (next == null && iter.hasNext()) {
+                        next = iter.next();
+                        try {
+                            if (!next.hasProperty("type")) {
+                                next = null;
+                            }
+                        } catch (RepositoryException ex) {
+                            next = null;
+                        }
+                    }
+                    return next != null;
                 }
-
                 public Object next() {
-                    return dataProvider.model(iter.next());
+                    while (next == null && iter.hasNext()) {
+                        next = iter.next();
+                        try {
+                            if (!next.hasProperty("type")) {
+                                next = null;
+                            }
+                        } catch (RepositoryException ex) {
+                            next = null;
+                        }
+                    }
+                    Node rtValue = next;
+                    next = null;
+                    return dataProvider.model(rtValue);
                 }
-
                 public void remove() {
-                    iter.remove();
+                    throw new UnsupportedOperationException("Unsupported operation");
                 }
-
             };
         }
 
@@ -113,8 +134,8 @@ public class TodoPlugin extends RenderPlugin {
             item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", new Model(target),
                     new PropertyModel(target, "name")));
 
-            Request request = new Request((JcrNodeModel) item.getModel());
-            item.add(new Label("request-description", new PropertyModel(request, "type")));
+            Request request = new Request((JcrNodeModel) item.getModel(), TodoPlugin.this);
+            item.add(new Label("request-description", new PropertyModel(request, "localType")));
             item.add(new Label("request-owner", new PropertyModel(request, "username")));
         }
     }
@@ -122,15 +143,25 @@ public class TodoPlugin extends RenderPlugin {
     static class Request extends JcrObject {
         private static final long serialVersionUID = 1L;
 
-        Request(JcrNodeModel model) {
+        private Component container;
+
+        Request(JcrNodeModel model, Component container) {
             super(model);
+            this.container = container;
         }
 
         public String getType() {
             try {
                 return getNode().getProperty("type").getString();
             } catch (RepositoryException e) {
-                log.warn(e.getMessage());
+            }
+            return null;
+        }
+
+        public String getLocalType() {
+            try {
+                return new StringResourceModel(getNode().getProperty("type").getString(), container, null).getString();
+            } catch (RepositoryException e) {
             }
             return null;
         }
@@ -139,7 +170,6 @@ public class TodoPlugin extends RenderPlugin {
             try {
                 return getNode().getProperty("username").getString();
             } catch (RepositoryException e) {
-                log.warn(e.getMessage());
             }
             return null;
         }
@@ -148,5 +178,4 @@ public class TodoPlugin extends RenderPlugin {
         protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
         }
     }
-
 }
