@@ -139,11 +139,11 @@ public class Detail extends BaseHstComponent {
                         }
                     });
 
-                    // it is not important where we store comments. WE just use some time path below our project content
-                    String siteContentBasePath = getSiteContentBasePath(request);
+                    // it is not important where we store comments. WE just use some (canonical) time path below our project content
+                    String siteCanonicalBasePath = this.getHstSite(request).getCanonicalContentPath();
                     Calendar currentDate = Calendar.getInstance();
                     
-                    String commentsFolderPath = "/"+siteContentBasePath + "/comment/" + currentDate.get(Calendar.YEAR) + "/"
+                    String commentsFolderPath = siteCanonicalBasePath + "/comment/" + currentDate.get(Calendar.YEAR) + "/"
                             + currentDate.get(Calendar.MONTH) + "/" + currentDate.get(Calendar.DAY_OF_MONTH);
                     // comment node name is simply a concatenation of 'comment-' and current time millis. 
                     String commentNodeName = "comment-for-"+commentTo.getName()+"-" + System.currentTimeMillis();

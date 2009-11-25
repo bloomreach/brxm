@@ -41,7 +41,15 @@ public interface HstSite {
      * @return The absolute content path for this <code>HstSite</code>
      */
     String getContentPath();
-
+    
+    /**
+     * Returns the absolute canonical content path for this <code>HstSite</code>
+     * 
+     * This path differs from {@link #getContentPath()} when the {@link #getContentPath()} points to a mirror node.
+     * @return @return The absolute absolute content path for this <code>HstSite</code>
+     */
+    String getCanonicalContentPath();
+    
     /**
      * @return the componentsConfiguration for this <code>HstSite</code>
      */
