@@ -49,6 +49,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -290,6 +291,32 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             @Override
             public IValueMap getProperties() {
                 return SMALL;
+            }
+        }
+
+        @Deprecated
+        public class TextDialog extends WorkflowDialog {
+            private static final long serialVersionUID = 1L;
+            private IModel title;
+
+            public TextDialog(IModel title, IModel question, PropertyModel textModel) {
+                super();
+                this.title = title;
+                add(new Label("question", question));
+
+                TextAreaWidget textfield;
+                add(textfield = new TextAreaWidget("value", textModel));
+                setFocus(textfield.getFocusComponent());
+            }
+
+            @Override
+            public IModel getTitle() {
+                return title;
+            }
+
+            @Override
+            public IValueMap getProperties() {
+                return MEDIUM;
             }
         }
 
