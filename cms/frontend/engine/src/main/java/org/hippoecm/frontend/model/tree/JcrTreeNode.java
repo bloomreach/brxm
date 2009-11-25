@@ -132,6 +132,7 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
     @Override
     public void detach() {
         reloadChildren = true;
+        reloadChildCount = true;
         if (children != null) {
             for (TreeNode child : children) {
                 if (child instanceof IDetachable) {
