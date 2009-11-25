@@ -55,13 +55,11 @@ public class ResourceUploadPlugin extends RenderPlugin {
         types = new ValueMap(config.getString("types"));
 
         add(form = new FileUploadForm("form"));
+        String mode = config.getString("mode", "edit");
+        form.setVisible("edit".equals(mode));
 
         add(new EventStoppingBehavior("onclick"));
 
-        String mode = config.getString("mode", "edit");
-        if (!"edit".equals(mode)) {
-            form.setVisible(false);
-        }
     }
 
     private class FileUploadForm extends Form {
