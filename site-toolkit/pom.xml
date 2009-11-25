@@ -85,7 +85,7 @@
 
     <jackrabbit.version>1.5.0</jackrabbit.version>
 
-    <hippoecm.version>2.09.02</hippoecm.version>
+    <hippoecm.version>2.09.04</hippoecm.version>
     <hst-configuration-editor.version>1.02.02</hst-configuration-editor.version>
     
     <jdo.version>2.0</jdo.version>
@@ -757,7 +757,7 @@
         <version>2.7</version>
         <configuration>
           <downloadSources>false</downloadSources>
-          <downloadJavadocs>true</downloadJavadocs>
+          <downloadJavadocs>false</downloadJavadocs>
         </configuration>
       </plugin>
       <plugin>
@@ -807,7 +807,6 @@
         <module>commons</module>
         <module>test</module>
         <module>content-beans</module>
-        <module>persistency</module>
         <module>ocm</module>
         <module>toolkit-resources</module>
         <module>components</module>
