@@ -86,7 +86,7 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.NameDialog(new StringResourceModel("reject-request-title",
+                return new WorkflowAction.TextDialog(new StringResourceModel("reject-request-title",
                                                                              FullRequestWorkflowPlugin.this, null),
                                                      new StringResourceModel("reject-request-text",
                                                                              FullRequestWorkflowPlugin.this, null),
