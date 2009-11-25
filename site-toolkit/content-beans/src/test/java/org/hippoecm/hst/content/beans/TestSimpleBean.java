@@ -79,10 +79,10 @@ public class TestSimpleBean extends AbstractBeanTestCase {
      
         Object o = obm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull("The object is not retrieved from the path.", o);
-        assertTrue(" Object should be an instance of SimpleTextPage and not SimpleTextPageCopy, because SimpleTextPage is added first", o instanceof SimpleTextPage);
+        assertTrue(" Object should be an instance of PersistableTextPage and not PersistableTextPageCopy, because PersistableTextPage is added first", o instanceof PersistableTextPage);
         
-        SimpleTextPage productsPage =  (SimpleTextPage)obm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
-        SimpleTextPage productsPage2 = (SimpleTextPage) obm.getObject("/testcontent/documents/testproject/Products/SomeProduct/SomeProduct");
+        PersistableTextPage productsPage =  (PersistableTextPage)obm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
+        PersistableTextPage productsPage2 = (PersistableTextPage) obm.getObject("/testcontent/documents/testproject/Products/SomeProduct/SomeProduct");
 
         assertTrue("Handle and Document should return true for equalCompare ", productsPage.equalCompare(productsPage2));
         assertFalse("Folder and Document should return false for equalCompare ",folder.equalCompare(productsPage2));

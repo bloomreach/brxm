@@ -19,12 +19,12 @@ import java.util.Calendar;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.content.beans.ContentNodeBinder;
+import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoImage;
-import org.hippoecm.hst.persistence.ContentNodeBinder;
-import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +61,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
         return getHippoHtml(HTML_NODEPATH);    
     }
     
-    public void setHtml(String html) throws ContentPersistenceBindingException{
+    public void setHtml(String html) throws ContentNodeBindingException{
         this.html = html;
     }
     
@@ -88,7 +88,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
         return null;
     }
     
-    public boolean bind(Object content, javax.jcr.Node node) throws ContentPersistenceBindingException {
+    public boolean bind(Object content, javax.jcr.Node node) throws ContentNodeBindingException {
         try {
             BaseBean bean =  (BaseBean) content;
             node.setProperty("demosite:title", bean.getTitle());
@@ -98,7 +98,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
                 if(node.hasNode(HTML_NODEPATH)) {
                     javax.jcr.Node htmlNode = node.getNode(HTML_NODEPATH);
                     if(!htmlNode.isNodeType("hippostd:html")) {
-                        throw new ContentPersistenceBindingException("Expected html node of type 'hippostd:html' but was '"+htmlNode.getPrimaryNodeType().getName()+"'");
+                        throw new ContentNodeBindingException("Expected html node of type 'hippostd:html' but was '"+htmlNode.getPrimaryNodeType().getName()+"'");
                     }
                     htmlNode.setProperty("hippostd:content", html);
                 } else {
@@ -107,7 +107,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
                 }
             }
         } catch (Exception e) {
-            throw new ContentPersistenceBindingException(e);
+            throw new ContentNodeBindingException(e);
         }
         
         return true;

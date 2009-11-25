@@ -13,13 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.persistence.workflow;
+package org.hippoecm.hst.content.beans.manager.workflow;
 
-import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.hippoecm.repository.api.Workflow;
 
-public interface WorkflowPersistenceManager extends ContentPersistenceManager {
+
+public interface WorkflowCallbackHandler<T extends Workflow> {
     
-    void setWorkflowCallbackHandler(WorkflowCallbackHandler<? extends Workflow> workflowCallbackHandler);
+    void processWorkflow(T workflow) throws Exception;
     
 }

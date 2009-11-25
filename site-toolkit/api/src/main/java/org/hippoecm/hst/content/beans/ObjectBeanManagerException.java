@@ -17,25 +17,24 @@ package org.hippoecm.hst.content.beans;
 
 
 /**
- * The <CODE>ObjectContentManagerException</CODE> class defines a general exception
+ * The <CODE>ObjectBeanManagerException</CODE> class defines a general exception
  * that an object content manager can throw when it is unable to perform its operation
  * successfully.
  * 
- * @version $Id$
  */
 public class ObjectBeanManagerException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * Constructs a new ObjectContentManagerException exception.
+     * Constructs a new ObjectBeanManagerException exception.
      */
     public ObjectBeanManagerException() {
         super();
     }
 
     /**
-     * Constructs a new ObjectContentManagerException exception with the given message.
+     * Constructs a new ObjectBeanManagerException exception with the given message.
      *
      * @param   message
      *          the exception message
@@ -45,7 +44,7 @@ public class ObjectBeanManagerException extends Exception {
     }
 
     /**
-     * Constructs a new ObjectContentManagerException exception with the nested exception.
+     * Constructs a new ObjectBeanManagerException exception with the nested exception.
      *
      * @param   nested
      *          the nested exception
@@ -55,7 +54,7 @@ public class ObjectBeanManagerException extends Exception {
     }
 
     /**
-     * Constructs a new ObjectContentManagerException exception when the container needs to do
+     * Constructs a new ObjectBeanManagerException exception when the container needs to do
      * the following:
      * <ul>
      * <li>throw an exception 

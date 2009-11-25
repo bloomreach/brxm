@@ -13,12 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.persistence;
+package org.hippoecm.hst.content.beans;
 
 import javax.jcr.Node;
 
+
 /**
- * <CODE>ContentPersistenceBinder</CODE> is the interface for custom mapping content POJO object to JCR node.
+ * <CODE>ContentNodeBinder</CODE> is the interface for custom mapping content POJO object to JCR node.
  * <P>
  * An implementation of this interface should be able to set property values of the content node or its child nodes.
  * </P>
@@ -32,8 +33,8 @@ public interface ContentNodeBinder {
      * @param content content POJO object, which can be retrieved by an OCM solution 
      * @param node a main target JCR node which can have some properties or child nodes.
      * @return returns true if the binding makes changes
-     * @throws ContentPersistenceBindingException
+     * @throws ContentNodeBindingException
      */
-    boolean bind(Object content, Node node) throws ContentPersistenceBindingException;
+    boolean bind(Object content, Node node) throws ContentNodeBindingException;
     
 }

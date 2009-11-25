@@ -13,22 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.beans;
+package org.hippoecm.hst.content.beans.manager.workflow;
 
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
-import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
+import org.hippoecm.repository.api.Workflow;
 
-@Node(jcrType="testproject:textpage")
-public class SimpleTextPageCopy extends HippoDocument {
+public interface WorkflowPersistenceManager extends ObjectBeanPersistenceManager {
     
-    protected String title;
-
-    public String getTitle() {
-        return getProperty("testproject:title");
-    }
-    
-    public HippoHtml getBody(){
-        return getHippoHtml("testproject:body");
-    }
+    void setWorkflowCallbackHandler(WorkflowCallbackHandler<? extends Workflow> workflowCallbackHandler);
     
 }

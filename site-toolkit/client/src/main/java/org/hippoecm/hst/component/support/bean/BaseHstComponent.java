@@ -23,7 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletConfig;
 
@@ -31,12 +34,15 @@ import org.apache.commons.digester.Digester;
 import org.hippoecm.hst.configuration.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.container.HstContainerServlet;
+import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoAsset;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -62,6 +68,7 @@ import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -85,6 +92,13 @@ import org.xml.sax.SAXException;
  * a JCR session from {@link HstRequestContext#getSession()} internally.
  * </P>
  * 
+ * <P>
+ * When you need to persist beans through ecm workflow, you can use {@link #getWorkflowPersistenceManager(Session)}. Make
+ * sure that the jcr session you use as parameter is obtained through {@link #getPersistableSession(HstRequest)} or 
+ * {@link #getPersistableSession(HstRequest, Credentials)}.
+ * </P>
+ * 
+ * 
  * @version $Id$
  */
 public class BaseHstComponent extends GenericHstComponent {
@@ -95,6 +109,10 @@ public class BaseHstComponent extends GenericHstComponent {
 
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "beans-annotated-classes";
     public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
+
+    public static final String DEFAULT_WRITABLE_USERNAME_PROPERTY = "writable.repository.user.name";
+    public static final String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";
+    
 
     protected boolean beansInitialized;
     protected ObjectConverter objectConverter;
@@ -561,5 +579,60 @@ public class BaseHstComponent extends GenericHstComponent {
             }
         }
         return annotatedClasses;
+    }
+    
+    /**
+     * Creates a persistable JCR session with the default credentials
+     * <P>
+     * <EM>Note: The client should invoke <CODE>logout()</CODE> method on the session after use.</EM>
+     * </P>
+     * <P>
+     * Internally, {@link javax.jcr.Session#impersonate(Credentials)} method will be used to create a
+     * persistable JCR session. The method is invoked on the session from the session pooling repository.
+     * </P>
+     * @param request
+     * @return
+     */
+    protected Session getPersistableSession(HstRequest request) throws RepositoryException {
+        ContainerConfiguration config = request.getRequestContext().getContainerConfiguration();
+        String username = config.getString(DEFAULT_WRITABLE_USERNAME_PROPERTY);
+        String password = config.getString(DEFAULT_WRITABLE_PASSWORD_PROPERTY);
+        return getPersistableSession(request, new SimpleCredentials(username, password.toCharArray()));
+    }
+    
+    /**
+     * Creates a persistable JCR session with provided credentials.
+     * <P>
+     * <EM>Note: The client should invoke <CODE>logout()</CODE> method on the session after use.</EM>
+     * </P>
+     * <P>
+     * Internally, {@link javax.jcr.Session#impersonate(Credentials)} method will be used to create a
+     * persistable JCR session. The method is invoked on the session from the session pooling repository.
+     * </P>
+     * @param request
+     * @return
+     */
+    protected Session getPersistableSession(HstRequest request, Credentials credentials) throws RepositoryException {
+        return request.getRequestContext().getSession().impersonate(credentials);
+    }
+    
+    /**
+     * Returns a <CODE>WorkflowPersistenceManager</CODE> instance.
+     * @param session make sure this is a persistable session, obtained through {@link #getPersistableSession(HstRequest) or {@link #getPersistableSession(HstRequest, Credentials)}}
+     * @return
+     */
+    protected WorkflowPersistenceManager getWorkflowPersistenceManager(Session session) {
+        return getWorkflowPersistenceManager(session, null);
+    }
+    
+    /**
+     * Returns a <CODE>WorkflowPersistenceManager</CODE> instance with custom binders map.
+     * @param session make sure this is a persistable session, obtained through {@link #getPersistableSession(HstRequest) or {@link #getPersistableSession(HstRequest, Credentials)}}
+     * @param contentNodeBinders
+     * @return
+     */
+    protected WorkflowPersistenceManager getWorkflowPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders) {
+        WorkflowPersistenceManagerImpl wpm = new WorkflowPersistenceManagerImpl(session, this.objectConverter, contentNodeBinders);
+        return wpm;
     }
 }

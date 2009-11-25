@@ -129,12 +129,6 @@
       <groupId>org.onehippo.yui</groupId>
       <artifactId>yui-2.xx-sources</artifactId>
     </dependency>
-    <!-- temporarily added as long as in sandbox -->
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-persistency</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <!-- Freemarker -->
     <dependency>
       <groupId>org.freemarker</groupId>

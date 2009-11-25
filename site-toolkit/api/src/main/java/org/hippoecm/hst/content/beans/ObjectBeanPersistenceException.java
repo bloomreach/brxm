@@ -13,48 +13,48 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.persistence;
+package org.hippoecm.hst.content.beans;
+
 
 /**
- * The <CODE>ContentPersistenceException</CODE> class defines a general exception
- * that a <CODE>ContentPersistenceManager</CODE> can throw when it is unable to perform its operation
+ * The <CODE>ObjectBeanPersistenceException</CODE> class defines a general exception
+ * that a <CODE>ObjectBeanPersistenceManager</CODE> can throw when it is unable to perform its operation
  * successfully.
  * 
- * @version $Id$
  */
-public class ContentPersistenceException extends Exception {
+public class ObjectBeanPersistenceException extends ObjectBeanManagerException {
     
     private static final long serialVersionUID = 1L;
 
     /**
-     * Constructs a new ContainerException exception.
+     * Constructs a new ObjectBeanPersistenceException exception.
      */
-    public ContentPersistenceException() {
+    public ObjectBeanPersistenceException() {
         super();
     }
 
     /**
-     * Constructs a new ContainerException exception with the given message.
+     * Constructs a new ObjectBeanPersistenceException exception with the given message.
      *
      * @param   message
      *          the exception message
      */
-    public ContentPersistenceException(String message) {
+    public ObjectBeanPersistenceException(String message) {
         super(message);
     }
 
     /**
-     * Constructs a new ContainerException exception with the nested exception.
+     * Constructs a new ObjectBeanPersistenceException exception with the nested exception.
      *
      * @param   nested
      *          the nested exception
      */
-    public ContentPersistenceException(Throwable nested) {
+    public ObjectBeanPersistenceException(Throwable nested) {
         super(nested);
     }
 
     /**
-     * Constructs a new ContainerException exception when the container needs to do
+     * Constructs a new ObjectBeanPersistenceException exception when the container needs to do
      * the following:
      * <ul>
      * <li>throw an exception 
@@ -67,7 +67,7 @@ public class ContentPersistenceException extends Exception {
      * @param   nested
      *          the nested exception
      */
-    public ContentPersistenceException(String msg, Throwable nested) {
+    public ObjectBeanPersistenceException(String msg, Throwable nested) {
         super(msg, nested);
     }
     

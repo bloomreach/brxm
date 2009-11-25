@@ -13,11 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.persistence;
+package org.hippoecm.hst.content.beans.manager;
+
+import org.hippoecm.hst.content.beans.ContentNodeBinder;
+import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 
 
 /**
- * <CODE>ContentPersistenceManager</CODE> is the primary interface for HST-2-Persistence-aware application components.
+ * <CODE>ObjectBeanPersistenceManager</CODE> is the primary interface for HST-2-Persistence-aware application components.
  * <P>
  * An implementation of this interface should be able to convert content nodes to objects, and vice versa.
  * Also it should have knowledges on how to create, update or remove a content node with node type and absolute path.
@@ -38,25 +41,8 @@ package org.hippoecm.hst.persistence;
  * In these cases, they can provide an implementation for this interface.
  * </P>
  * 
- * @version $Id$
  */
-public interface ContentPersistenceManager {
-    
-    /**
-     * Returns the content object at the specified absolute path.
-     * @param absPath
-     * @return an object mapped to the specified absolute path and its primary node type.
-     * @throws ContentPersistenceException
-     */
-    Object getObject(String absPath) throws ContentPersistenceException;
-    
-    /**
-     * Returns the content object by the specified uuid.
-     * @param uuid
-     * @return an object having the specified uuid
-     * @throws ContentPersistenceException
-     */
-    Object getObjectByUuid(String uuid) throws ContentPersistenceException;
+public interface ObjectBeanPersistenceManager extends ObjectBeanManager {
     
     /**
      * Creates content node(s) with the specified node type at the specified absolute path.
@@ -70,9 +56,9 @@ public interface ContentPersistenceManager {
      * @param absPath the absolute node path
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    void create(String absPath, String nodeTypeName, String name) throws ContentPersistenceException;
+    void create(String absPath, String nodeTypeName, String name) throws ObjectBeanPersistenceException;
     
     /**
      * Creates content node(s) with the specified node type at the specified absolute path.
@@ -90,9 +76,9 @@ public interface ContentPersistenceManager {
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
      * @param autoCreateFolders the flag to create folders
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ContentPersistenceException;
+    void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ObjectBeanPersistenceException;
     
     /**
      * Updates the content node which is mapped to the object.
@@ -103,9 +89,9 @@ public interface ContentPersistenceManager {
      * of underlying repository.
      * </P>
      * @param content
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    void update(Object content) throws ContentPersistenceException;
+    void update(Object content) throws ObjectBeanPersistenceException;
     
     /**
      * Updates the content node which is mapped to the object by the <CODE>customContentNodeBinder</CODE>
@@ -119,35 +105,35 @@ public interface ContentPersistenceManager {
      * </P>
      * @param content
      * @param customContentNodeBinder
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    void update(Object content, ContentNodeBinder customContentNodeBinder) throws ContentPersistenceException;
+    void update(Object content, ContentNodeBinder customContentNodeBinder) throws ObjectBeanPersistenceException;
     
     /**
      * Removes the content node which is mapped to the object.
      * @param content
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    void remove(Object content) throws ContentPersistenceException;
+    void remove(Object content) throws ObjectBeanPersistenceException;
     
     /**
      * Saves all pending changes. 
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    void save() throws ContentPersistenceException;
+    void save() throws ObjectBeanPersistenceException;
     
     /**
      * Invokes {@link javax.jcr.Session#refresh(boolean)} with <CODE>false</CODE> parameter.  
      * @param keepChanges
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    void refresh() throws ContentPersistenceException;
+    void refresh() throws ObjectBeanPersistenceException;
     
     /**
      * Invokes {@link javax.jcr.Session#refresh(boolean)}.  
      * @param keepChanges
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    void refresh(boolean keepChanges) throws ContentPersistenceException;
+    void refresh(boolean keepChanges) throws ObjectBeanPersistenceException;
     
 }

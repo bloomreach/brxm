@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.SimpleTextPage;
-import org.hippoecm.hst.content.beans.SimpleTextPageCopy;
+import org.hippoecm.hst.content.beans.PersistableTextPage;
+import org.hippoecm.hst.content.beans.PersistableTextPageCopy;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -48,6 +48,7 @@ public abstract class AbstractBeanTestCase extends AbstractHstTestCase{
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
         Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class<? extends HippoBean>>();
 
+
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoDocument.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFolder.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoFacetSearch.class, true);
@@ -57,8 +58,8 @@ public abstract class AbstractBeanTestCase extends AbstractHstTestCase{
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoHtml.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoResource.class, true);
         addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, HippoRequest.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPage.class, true);
-        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, SimpleTextPageCopy.class, true);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, PersistableTextPage.class, false);
+        addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, PersistableTextPageCopy.class, true);
         
         // builds a fallback jcrPrimaryNodeType array.
         String [] fallBackJcrPrimaryNodeTypes = new String[] { "hippo:facetselect","hippostd:directory","hippostd:folder" , "hippo:resource", "hippo:request", "hippostd:html", "hippo:document" };

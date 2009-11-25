@@ -38,8 +38,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +71,7 @@ public class ContentService extends BaseHstContentService {
         HippoBeanContent beanContent = new HippoBeanContent();
         
         try {
-            ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
+            ObjectBeanPersistenceManager cpm = getContentPersistenceManager(servletRequest);
             HippoBean bean = (HippoBean) cpm.getObjectByUuid(uuid);
             
             if (bean != null) {
@@ -104,7 +104,7 @@ public class ContentService extends BaseHstContentService {
             Item item = getHstRequestContext(servletRequest).getSession().getItem(itemPath);
             
             if (item.isNode()) {
-                ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
+                ObjectBeanPersistenceManager cpm = getContentPersistenceManager(servletRequest);
                 HippoBean bean = (HippoBean) cpm.getObject(itemPath);
                 
                 if (bean != null) {
@@ -141,7 +141,7 @@ public class ContentService extends BaseHstContentService {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
-            ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
+            ObjectBeanPersistenceManager cpm = getContentPersistenceManager(servletRequest);
             HippoBean bean = (HippoBean) cpm.getObject(itemPath);
             
             if (bean == null) {
@@ -173,7 +173,7 @@ public class ContentService extends BaseHstContentService {
         String itemPath = parentPath + "/" + documentBeanContent.getName();
         
         try {
-            ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
+            ObjectBeanPersistenceManager cpm = getContentPersistenceManager(servletRequest);
             PropertyContent primaryTypePropertyContent = documentBeanContent.getPropertyContent("jcr:primaryType");
             
             if (primaryTypePropertyContent == null) {
@@ -210,7 +210,7 @@ public class ContentService extends BaseHstContentService {
         String parentPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
-            ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
+            ObjectBeanPersistenceManager cpm = getContentPersistenceManager(servletRequest);
             HippoBean bean = (HippoBean) cpm.getObject(parentPath);
             
             if (bean == null) {
@@ -268,7 +268,7 @@ public class ContentService extends BaseHstContentService {
         String itemPath = getContentItemPath(servletRequest, pathSegments);
         
         try {
-            ContentPersistenceManager cpm = getContentPersistenceManager(servletRequest);
+            ObjectBeanPersistenceManager cpm = getContentPersistenceManager(servletRequest);
             
             HippoBean bean = (HippoBean) cpm.getObject(itemPath);
             

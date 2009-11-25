@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.beans.manager;
+package org.hippoecm.hst.content.beans.manager.workflow;
 
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -24,13 +24,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.uuid.UUID;
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.ContentNodeBinder;
+import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.persistence.ContentNodeBinder;
-import org.hippoecm.hst.persistence.ContentPersistenceException;
-import org.hippoecm.hst.persistence.ContentPersistenceManager;
-import org.hippoecm.hst.persistence.workflow.WorkflowCallbackHandler;
-import org.hippoecm.hst.persistence.workflow.WorkflowPersistenceManager;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -42,7 +40,7 @@ import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 /**
- * An implementation for {@link ContentPersistenceManager} interface with Hippo Repository Workflow API.
+ * An implementation for {@link WorkflowPersistenceManager} interface with Hippo Repository Workflow API.
  * <P>
  * This implementation does not provide automatic bindings from content object to JCR node(s).
  * So, client codes should provide custom binders for their own node types. These custom binders map can be
@@ -60,18 +58,8 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
  * </P>
  * 
  */
-public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersistenceManager {
+public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implements WorkflowPersistenceManager {
 
-    /**
-     * {@link ObjectBeanManager} instance provided by HST content-beans to provide {@link #getObject(String)} facility. 
-     */
-    protected ObjectBeanManager obm;
-    
-    /**
-     * JCR session in this manager object context.
-     */
-    protected Session session;
-    
     /**
      * Custom content node binders map, which is used to look up a custom binder for a node type.
      */
@@ -112,7 +100,7 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
      * @param session the session for this manager context
      * @param objectConverter the object converter to do mapping from JCR nodes to content POJO objects
      */
-    public PersistableObjectBeanManagerWorkflowImpl(Session session, ObjectConverter objectConverter) {
+    public WorkflowPersistenceManagerImpl(Session session, ObjectConverter objectConverter) {
         this(session, objectConverter, null);
     }
      
@@ -122,39 +110,11 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
      * @param objectConverter the object converter to do mapping from JCR nodes to content POJO objects
      * @param contentNodeBinders the predefined content node binders map which item is node type name key and custom binder object value.
      */
-    public PersistableObjectBeanManagerWorkflowImpl(Session session, ObjectConverter objectConverter, Map<String, ContentNodeBinder> contentNodeBinders) {
-        obm = new ObjectBeanManagerImpl(session, objectConverter);
-        this.session = session;
+    public WorkflowPersistenceManagerImpl(Session session, ObjectConverter objectConverter, Map<String, ContentNodeBinder> contentNodeBinders) {
+        super(session, objectConverter);
         this.contentNodeBinders = contentNodeBinders;
     }
    
-
-    /**
-     * Get an object from the JCR repository
-     * 
-     * @see {@link ObjectBeanManager#getObject(String)}
-     */
-    public Object getObject(String absPath) throws ContentPersistenceException {
-        try {
-            return obm.getObject(absPath);
-        } catch (ObjectBeanManagerException e) {
-            throw new ContentPersistenceException(e);
-        }
-    }
-
-    /**
-     * Get an object from the JCR repository
-     *
-     * @see {@link ObjectBeanManager#getObjectByUuid(String)}
-     */
-    public Object getObjectByUuid(String uuid) throws ContentPersistenceException {
-        try {
-            return obm.getObjectByUuid(uuid);
-        } catch (ObjectBeanManagerException e) {
-            throw new ContentPersistenceException(e);
-        }
-    }
-    
     /**
      * Creates content node(s) with the specified node type at the specified absolute path.
      * <P>
@@ -167,9 +127,9 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
      * @param absPath the absolute node path
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    public void create(String absPath, String nodeTypeName, String name) throws ContentPersistenceException {
+    public void create(String absPath, String nodeTypeName, String name) throws ObjectBeanPersistenceException {
         create(absPath, nodeTypeName, name, false);
     }
     
@@ -189,27 +149,27 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
      * @param nodeTypeName the node type name of the content object
      * @param name the content node name
      * @param autoCreateFolders the flag to create folders
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    public void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ContentPersistenceException {
+    public void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ObjectBeanPersistenceException {
         try {
             if (!session.itemExists(absPath)) {
                 if (!autoCreateFolders) {
-                    throw new ContentPersistenceException("The folder node not found on the path: " + absPath);
+                    throw new ObjectBeanPersistenceException("The folder node not found on the path: " + absPath);
                 } else {
                     createMissingFolders(absPath);
                 }
             }
             
             createNodeByWorkflow((Node) session.getItem(absPath), nodeTypeName, name);
-        } catch (ContentPersistenceException e) {
+        } catch (ObjectBeanPersistenceException e) {
             throw e;
         } catch (Exception e) {
-            throw new ContentPersistenceException(e);
+            throw new ObjectBeanPersistenceException(e);
         }
     }
     
-    protected void createMissingFolders(String absPath) throws ContentPersistenceException {
+    protected void createMissingFolders(String absPath) throws ObjectBeanPersistenceException {
         try {
             String [] folderNames = absPath.split("/");
             
@@ -237,33 +197,33 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                         try {
                             UUID.fromString(docbaseUuid);
                         } catch (IllegalArgumentException e){
-                            throw new ContentPersistenceException("hippo:docbase in mirror does not contain a valid uuid", e);
+                            throw new ObjectBeanPersistenceException("hippo:docbase in mirror does not contain a valid uuid", e);
                         }
                         // this is always the canonical
                         curNode = session.getNodeByUUID(docbaseUuid);
                     } else if (curNode instanceof HippoNode) {
                         Node canonical = ((HippoNode) curNode).getCanonicalNode();
                         if(canonical == null) {
-                            throw new ContentPersistenceException("Cannot create folders because there is no canonical node for '"+curNode.getPath()+"'");
+                            throw new ObjectBeanPersistenceException("Cannot create folders because there is no canonical node for '"+curNode.getPath()+"'");
                         }
                         curNode =  canonical;
                     }
                 }
             }
-        } catch (ContentPersistenceException e) {
+        } catch (ObjectBeanPersistenceException e) {
             throw e;
         } catch (Exception e) {
-            throw new ContentPersistenceException(e);
+            throw new ObjectBeanPersistenceException(e);
         }
     }
     
     protected void createNodeByWorkflow(Node folderNode, String nodeTypeName, String name)
-            throws ContentPersistenceException {
+            throws ObjectBeanPersistenceException {
         try {
             if (folderNode instanceof HippoNode) {
                 Node canonical = ((HippoNode) folderNode).getCanonicalNode();
                 if(canonical == null) {
-                    throw new ContentPersistenceException("Cannot createNodeByWorkflow because there is no canonical node for '"+folderNode.getPath()+"'");
+                    throw new ObjectBeanPersistenceException("Cannot createNodeByWorkflow because there is no canonical node for '"+folderNode.getPath()+"'");
                 }
                 folderNode = canonical;
             }
@@ -282,19 +242,19 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
 
                 String added = fwf.add(category, nodeTypeName, name);
                 if (added == null) {
-                    throw new ContentPersistenceException("Failed to add document/folder for type '" + nodeTypeName
+                    throw new ObjectBeanPersistenceException("Failed to add document/folder for type '" + nodeTypeName
                             + "'. Make sure there is a prototype.");
                 }
             } else {
-                throw new ContentPersistenceException("The workflow is not a FolderWorkflow for "
+                throw new ObjectBeanPersistenceException("The workflow is not a FolderWorkflow for "
                         + folderNode.getPath() + ": " + wf);
             }
         } catch (RepositoryException e) {
-            throw new ContentPersistenceException(e);
+            throw new ObjectBeanPersistenceException(e);
         } catch (RemoteException e) {
-            throw new ContentPersistenceException(e);
+            throw new ObjectBeanPersistenceException(e);
         } catch (WorkflowException e) {
-            throw new ContentPersistenceException(e);
+            throw new ObjectBeanPersistenceException(e);
         }
 
     }
@@ -311,9 +271,9 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
      * only without any bindings.
      * </P>
      * @param content
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    public void update(Object content) throws ContentPersistenceException {
+    public void update(Object content) throws ObjectBeanPersistenceException {
         if (content instanceof HippoBean) {
             ContentNodeBinder binder = null;
 
@@ -325,14 +285,14 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                     if (contentNode instanceof HippoNode) {
                         Node canonical = ((HippoNode) contentNode).getCanonicalNode();
                         if(canonical == null) {
-                            throw new ContentPersistenceException("Cannot update HippoBean because there is no canonical node for '"+contentNode.getPath()+"'");
+                            throw new ObjectBeanPersistenceException("Cannot update HippoBean because there is no canonical node for '"+contentNode.getPath()+"'");
                         }
                         contentNode = canonical;
                     }
                     
                     binder = contentNodeBinders.get(contentNode.getPrimaryNodeType().getName());
                 } catch (Exception e) {
-                    throw new ContentPersistenceException(e);
+                    throw new ObjectBeanPersistenceException(e);
                 }
             }
             
@@ -342,7 +302,7 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
             
             update(content, binder);
         } else {
-            throw new ContentPersistenceException("The content object parameter should be an instance of HippoBean.");
+            throw new ObjectBeanPersistenceException("The content object parameter should be an instance of HippoBean.");
         }
     }
     
@@ -358,9 +318,9 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
      * </P>
      * @param content
      * @param customContentNodeBinder
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    public void update(Object content, ContentNodeBinder customContentNodeBinder) throws ContentPersistenceException {
+    public void update(Object content, ContentNodeBinder customContentNodeBinder) throws ObjectBeanPersistenceException {
         String path = null; 
         if (content instanceof HippoBean) {
             try {
@@ -370,7 +330,7 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                 if (contentNode instanceof HippoNode) {
                     Node canonical = ((HippoNode) contentNode).getCanonicalNode();
                     if(canonical == null) {
-                        throw new ContentPersistenceException("Cannot update HippoBean because there is no canonical node for '"+contentNode.getPath()+"'");
+                        throw new ObjectBeanPersistenceException("Cannot update HippoBean because there is no canonical node for '"+contentNode.getPath()+"'");
                     }
                     contentNode = canonical;
                 }
@@ -401,7 +361,7 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                             document = ewf.disposeEditableInstance();
                         }
                     } else {
-                        throw new ContentPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
+                        throw new ObjectBeanPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
                     }
                 }
                 
@@ -411,34 +371,34 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                     if (wf != null) {
                         workflowCallbackHandler.processWorkflow(wf);
                     } else {
-                        throw new ContentPersistenceException("Callback cannot be called because the workflow is not applicable: " + wf);
+                        throw new ObjectBeanPersistenceException("Callback cannot be called because the workflow is not applicable: " + wf);
                     }
                 }
             } catch (Exception e) {
                 if(path != null) {
-                    throw new ContentPersistenceException("Exception while trying to update '"+path+"'" ,e);
+                    throw new ObjectBeanPersistenceException("Exception while trying to update '"+path+"'" ,e);
                 } else {
-                    throw new ContentPersistenceException(e);
+                    throw new ObjectBeanPersistenceException(e);
                 }
             }
         } else {
-            throw new ContentPersistenceException("The content object parameter should be an instance of HippoBean.");
+            throw new ObjectBeanPersistenceException("The content object parameter should be an instance of HippoBean.");
         }
     }
     
     /**
      * Removes the content node which is mapped to the object.
      * @param content
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    public void remove(Object content) throws ContentPersistenceException {
+    public void remove(Object content) throws ObjectBeanPersistenceException {
         if (content instanceof HippoBean) {
             try {
                 HippoBean contentBean = (HippoBean) content;
                 
                 Node canonical = ((HippoNode)contentBean.getNode()).getCanonicalNode();
                 if(canonical == null) {
-                    throw new ContentPersistenceException("Cannot remove HippoBean because there is no canonical node for '"+contentBean.getPath()+"'");
+                    throw new ObjectBeanPersistenceException("Cannot remove HippoBean because there is no canonical node for '"+contentBean.getPath()+"'");
                 }
              
                 Node handleNode = canonical.getParent();
@@ -447,7 +407,7 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                 Node folderNode = folderBean.getNode();
                 canonical = ((HippoNode)folderNode).getCanonicalNode();
                 if(canonical == null) {
-                    throw new ContentPersistenceException("Cannot remove HippoBean because there is no canonical node for '"+folderNode.getPath()+"'");
+                    throw new ObjectBeanPersistenceException("Cannot remove HippoBean because there is no canonical node for '"+folderNode.getPath()+"'");
                 }
                 folderNode = canonical;
                 
@@ -476,47 +436,47 @@ public class PersistableObjectBeanManagerWorkflowImpl implements WorkflowPersist
                     FolderWorkflow fwf = (FolderWorkflow) wf;
                     fwf.delete(nodeName);
                 } else {
-                    throw new ContentPersistenceException("The workflow is not a FolderWorkflow for " + folderBean.getPath() + ": " + wf);
+                    throw new ObjectBeanPersistenceException("The workflow is not a FolderWorkflow for " + folderBean.getPath() + ": " + wf);
                 }
             } catch (Exception e) {
-                throw new ContentPersistenceException(e);
+                throw new ObjectBeanPersistenceException(e);
             }
         } else {
-            throw new ContentPersistenceException("The content object parameter should be an instance of HippoBean.");
+            throw new ObjectBeanPersistenceException("The content object parameter should be an instance of HippoBean.");
         }
     }
 
     /**
      * Saves all pending changes. 
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    public void save() throws ContentPersistenceException {
+    public void save() throws ObjectBeanPersistenceException {
         try {
             session.save();
         } catch (Exception e) {
-            throw new ContentPersistenceException(e);
+            throw new ObjectBeanPersistenceException(e);
         }
     }
 
     /**
      * Invokes {@link javax.jcr.Session#refresh(boolean)} with <CODE>false</CODE> parameter.  
      * @param keepChanges
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    public void refresh() throws ContentPersistenceException {
+    public void refresh() throws ObjectBeanPersistenceException {
         refresh(false);
     }
     
     /**
      * Invokes {@link javax.jcr.Session#refresh(boolean)}.  
      * @param keepChanges
-     * @throws ContentPersistenceException
+     * @throws ObjectBeanPersistenceException
      */
-    public void refresh(boolean keepChanges) throws ContentPersistenceException {
+    public void refresh(boolean keepChanges) throws ObjectBeanPersistenceException {
         try {
             session.refresh(keepChanges);
         } catch (Exception e) {
-            throw new ContentPersistenceException(e);
+            throw new ObjectBeanPersistenceException(e);
         }
     }
     

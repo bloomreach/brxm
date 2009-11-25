@@ -21,24 +21,24 @@ import java.util.List;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.beans.TextPage;
-import org.hippoecm.hst.component.support.bean.persistency.BasePersistenceHstComponent;
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.persistence.ContentPersistenceException;
-import org.hippoecm.hst.persistence.ContentPersistenceManager;
-import org.hippoecm.hst.persistence.workflow.WorkflowCallbackHandler;
-import org.hippoecm.hst.persistence.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Detail extends BasePersistenceHstComponent {
+public class Detail extends BaseHstComponent {
     
     private static Logger log = LoggerFactory.getLogger(Detail.class);
     
@@ -86,14 +86,14 @@ public class Detail extends BasePersistenceHstComponent {
             
             if (title != null && !"".equals(title.trim()) && comment != null) {
                 Session persistableSession = null;
-                WorkflowPersistenceManager cpm = null;
+                WorkflowPersistenceManager wpm = null;
                 
                 try {
                     // retrieves writable session. NOTE: this session should be logged out manually!
                     persistableSession = getPersistableSession(request);
                     
-                    cpm = getWorkflowPersistenceManager(persistableSession);
-                    cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    wpm = getWorkflowPersistenceManager(persistableSession);
+                    wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
                         public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
                             FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
                             fraw.requestPublication();
@@ -106,26 +106,26 @@ public class Detail extends BasePersistenceHstComponent {
                     String commentNodeName = "comment-" + System.currentTimeMillis();
                     
                     // create comment node now
-                    cpm.create(commentsFolderPath, "testproject:textpage", commentNodeName, true);
+                    wpm.create(commentsFolderPath, "testproject:textpage", commentNodeName, true);
     
                     // retrieve the comment content to manipulate
-                    TextPage commentPage = (TextPage) cpm.getObject(commentsFolderPath + "/" + commentNodeName);
+                    TextPage commentPage = (TextPage) wpm.getObject(commentsFolderPath + "/" + commentNodeName);
                     // update content properties
                     commentPage.setTitle(title);
                     commentPage.setBodyContent(comment);
                     
                     // update now
-                    cpm.update(commentPage);
+                    wpm.update(commentPage);
                     
                     // save the pending changes
-                    cpm.save();
+                    wpm.save();
                 } catch (Exception e) {
                     log.warn("Failed to create a comment.", e);
                     
-                    if (cpm != null) {
+                    if (wpm != null) {
                         try {
-                            cpm.refresh();
-                        } catch (ContentPersistenceException e1) {
+                            wpm.refresh();
+                        } catch (ObjectBeanPersistenceException e1) {
                             log.warn("Failed to reset. {}", e);
                         }
                     }
@@ -140,7 +140,7 @@ public class Detail extends BasePersistenceHstComponent {
             
             if (commentPath != null) {
                 Session persistableSession = null;
-                ContentPersistenceManager cpm = null;
+                ObjectBeanPersistenceManager cpm = null;
                 
                 try {
                     // Retrieve writable session. NOTE: this session should be logged out manually!
@@ -157,7 +157,7 @@ public class Detail extends BasePersistenceHstComponent {
                     if (cpm != null) {
                         try {
                             cpm.refresh();
-                        } catch (ContentPersistenceException e1) {
+                        } catch (ObjectBeanPersistenceException e1) {
                             log.warn("Failed to reset. {}", e);
                         }
                     }

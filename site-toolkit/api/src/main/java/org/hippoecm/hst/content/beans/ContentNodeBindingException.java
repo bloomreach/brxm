@@ -13,48 +13,47 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.persistence;
+package org.hippoecm.hst.content.beans;
 
 /**
- * The <CODE>ContentPersistenceBindingException</CODE> class defines a binding exception
- * that a <CODE>ContentPersistenceBinder</CODE> can throw when it is unable to perform its operation
+ * The <CODE>ContentNodeBindingException</CODE> class defines a binding exception
+ * that a <CODE>ContentNodeBinder</CODE> can throw when it is unable to perform its operation
  * successfully.
  * 
- * @version $Id$
  */
-public class ContentPersistenceBindingException extends ContentPersistenceException {
+public class ContentNodeBindingException extends ObjectBeanPersistenceException {
     
     private static final long serialVersionUID = 1L;
 
     /**
-     * Constructs a new ContainerException exception.
+     * Constructs a new ContentNodeBindingException exception.
      */
-    public ContentPersistenceBindingException() {
+    public ContentNodeBindingException() {
         super();
     }
 
     /**
-     * Constructs a new ContainerException exception with the given message.
+     * Constructs a new ContentNodeBindingException exception with the given message.
      *
      * @param   message
      *          the exception message
      */
-    public ContentPersistenceBindingException(String message) {
+    public ContentNodeBindingException(String message) {
         super(message);
     }
 
     /**
-     * Constructs a new ContainerException exception with the nested exception.
+     * Constructs a new ContentNodeBindingException exception with the nested exception.
      *
      * @param   nested
      *          the nested exception
      */
-    public ContentPersistenceBindingException(Throwable nested) {
+    public ContentNodeBindingException(Throwable nested) {
         super(nested);
     }
 
     /**
-     * Constructs a new ContainerException exception when the container needs to do
+     * Constructs a new ContentNodeBindingException exception when the container needs to do
      * the following:
      * <ul>
      * <li>throw an exception 
@@ -67,7 +66,7 @@ public class ContentPersistenceBindingException extends ContentPersistenceExcept
      * @param   nested
      *          the nested exception
      */
-    public ContentPersistenceBindingException(String msg, Throwable nested) {
+    public ContentNodeBindingException(String msg, Throwable nested) {
         super(msg, nested);
     }
     

@@ -24,18 +24,19 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.AbstractPersistencySpringTestCase;
+import org.hippoecm.hst.AbstractBeanTestCase;
+import org.hippoecm.hst.content.beans.ContentNodeBinder;
+import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.PersistableTextPage;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
-import org.hippoecm.hst.persistence.ContentNodeBinder;
-import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
-import org.hippoecm.hst.persistence.workflow.WorkflowCallbackHandler;
-import org.hippoecm.hst.persistence.workflow.WorkflowPersistenceManager;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestPersistableObjectBeanManager extends AbstractPersistencySpringTestCase {
+public class TestPersistableObjectBeanManager extends AbstractBeanTestCase {
     
     private static final String HIPPOSTD_FOLDER_NODE_TYPE = "hippostd:folder";
     private static final String TEST_DOCUMENT_NODE_TYPE = "testproject:textpage";
@@ -74,7 +75,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             
             session = this.getSession();
             
-            cpm = new PersistableObjectBeanManagerWorkflowImpl(session, objectConverter, persistBinders);
+            cpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
             cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
                 public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
                     FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
@@ -135,7 +136,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             
             session = this.getSession();
             
-            cpm = new PersistableObjectBeanManagerWorkflowImpl(session, objectConverter, persistBinders);
+            cpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
             
             HippoFolderBean newFolder = null;
             
@@ -169,7 +170,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
             
             session = this.getSession();
             
-            cpm = new PersistableObjectBeanManagerWorkflowImpl(session, objectConverter, persistBinders);
+            cpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
             
             HippoFolderBean newFolder = null;
             
@@ -196,7 +197,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
     
     private class PersistableTextPageBinder implements ContentNodeBinder {
         
-        public boolean bind(Object content, Node node) throws ContentPersistenceBindingException {
+        public boolean bind(Object content, Node node) throws ContentNodeBindingException {
             PersistableTextPage page = (PersistableTextPage) content;
             
             try {
@@ -204,7 +205,7 @@ public class TestPersistableObjectBeanManager extends AbstractPersistencySpringT
                 Node htmlNode = node.getNode("testproject:body");
                 htmlNode.setProperty("hippostd:content", page.getBodyContent());
             } catch (Exception e) {
-                throw new ContentPersistenceBindingException(e);
+                throw new ContentNodeBindingException(e);
             }
             
             // FIXME: return true only if actual changes happen.

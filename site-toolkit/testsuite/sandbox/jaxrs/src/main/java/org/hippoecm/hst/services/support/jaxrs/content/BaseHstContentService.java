@@ -29,9 +29,10 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
-import org.hippoecm.hst.content.beans.manager.PersistableObjectBeanManagerWorkflowImpl;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.content.beans.standard.HippoAsset;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDirectory;
@@ -53,7 +54,6 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.MatchedMapping;
-import org.hippoecm.hst.persistence.ContentPersistenceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,8 +78,8 @@ public class BaseHstContentService {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
     
-    protected ContentPersistenceManager getContentPersistenceManager(HttpServletRequest servletRequest) throws LoginException, RepositoryException {
-        return new PersistableObjectBeanManagerWorkflowImpl(getHstRequestContext(servletRequest).getSession(), getObjectConverter());
+    protected ObjectBeanPersistenceManager getContentPersistenceManager(HttpServletRequest servletRequest) throws LoginException, RepositoryException {
+        return new WorkflowPersistenceManagerImpl(getHstRequestContext(servletRequest).getSession(), getObjectConverter());
     }
     
     protected ObjectConverter getObjectConverter() {

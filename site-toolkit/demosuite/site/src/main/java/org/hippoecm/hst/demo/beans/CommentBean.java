@@ -17,9 +17,9 @@ package org.hippoecm.hst.demo.beans;
 
 import java.util.Calendar;
 
+import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
 
 @Node(jcrType="demosite:comment")
 public class CommentBean extends TextBean {
@@ -56,7 +56,7 @@ public class CommentBean extends TextBean {
         return (BaseBean)b;
     }
     
-    public boolean bind(Object content, javax.jcr.Node node) throws ContentPersistenceBindingException {
+    public boolean bind(Object content, javax.jcr.Node node) throws ContentNodeBindingException {
         super.bind(content, node);
         try {
             BaseBean bean =  (BaseBean) content;
@@ -74,7 +74,7 @@ public class CommentBean extends TextBean {
             
             
         } catch (Exception e) {
-            throw new ContentPersistenceBindingException(e);
+            throw new ContentNodeBindingException(e);
         }
         return true;
     }

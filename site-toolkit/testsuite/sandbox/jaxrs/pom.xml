@@ -115,12 +115,6 @@
       <artifactId>hst-content-beans</artifactId>
       <version>${pom.version}</version>
     </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.ecm.hst</groupId>
-      <artifactId>hst-persistency</artifactId>
-      <version>${pom.version}</version>
-    </dependency>
   
     <!-- Test dependencies -->
     

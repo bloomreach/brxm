@@ -19,16 +19,39 @@ import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
 @Node(jcrType="testproject:textpage")
-public class SimpleTextPage extends HippoDocument {
+public class PersistableTextPageCopy extends HippoDocument {
     
     protected String title;
+    protected String bodyContent;
 
     public String getTitle() {
-        return getProperty("testproject:title");
+        return (title != null ? title : (String) getProperty("testproject:title"));
+    }
+    
+    public void setTitle(String title) {
+        this.title = title;
     }
     
     public HippoHtml getBody(){
         return getHippoHtml("testproject:body");
+    }
+    
+    public String getBodyContent() {
+        if (bodyContent != null) {
+            return bodyContent;
+        } else {
+            HippoHtml html = getBody();
+            
+            if (html != null) {
+                return html.getContent();
+            } else {
+                return null;
+            }
+        }
+    }
+    
+    public void setBodyContent(String bodyContent) {
+        this.bodyContent = bodyContent;
     }
     
 }

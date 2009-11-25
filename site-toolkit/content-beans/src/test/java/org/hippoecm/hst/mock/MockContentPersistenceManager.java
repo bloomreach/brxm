@@ -24,9 +24,11 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hippoecm.hst.persistence.ContentNodeBinder;
-import org.hippoecm.hst.persistence.ContentPersistenceException;
-import org.hippoecm.hst.persistence.ContentPersistenceManager;
+import javax.jcr.Session;
+
+import org.hippoecm.hst.content.beans.ContentNodeBinder;
+import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 
 /**
  * Simple in-memory implementation for <CODE>ContentPersistenceManager</CODE> interface.
@@ -51,12 +53,12 @@ import org.hippoecm.hst.persistence.ContentPersistenceManager;
  * 
  * @version $Id$
  */
-public class MockContentPersistenceManager implements ContentPersistenceManager {
+public class MockContentPersistenceManager implements ObjectBeanPersistenceManager {
     
     protected Map<String, Object> pathToObjectMap = new HashMap<String, Object>();
     protected Map<Object, String> objectToPathMap = new HashMap<Object, String>();
     
-    public Object getObject(String absPath) throws ContentPersistenceException {
+    public Object getObject(String absPath) throws ObjectBeanPersistenceException {
         Object object = pathToObjectMap.get(absPath);
         
         if (object != null) {
@@ -66,7 +68,7 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         return null;
     }
     
-    public Object getObjectByUuid(String uuid) throws ContentPersistenceException {
+    public Object getObjectByUuid(String uuid) throws ObjectBeanPersistenceException {
         for (Object object : objectToPathMap.keySet()) {
             if (uuid.equals(getUuidProperty(object))) {
                 return object;
@@ -75,9 +77,9 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         return null;
     }
 
-    public synchronized void setObject(String absPath, Object object) throws ContentPersistenceException {
+    public synchronized void setObject(String absPath, Object object) throws ObjectBeanPersistenceException {
         if (absPath == null) {
-            throw new ContentPersistenceException("The absolute path is null.");
+            throw new ObjectBeanPersistenceException("The absolute path is null.");
         }
 
         if (object != null) {
@@ -91,22 +93,22 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         }
     }
     
-    public void create(String absPath, String nodeTypeName, String name) throws ContentPersistenceException {
+    public void create(String absPath, String nodeTypeName, String name) throws ObjectBeanPersistenceException {
         create(absPath, nodeTypeName, name, false);
     }
 
-    public void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ContentPersistenceException {
+    public void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ObjectBeanPersistenceException {
         // do nothing... use setObject for mocking.
     }
     
-    public synchronized void update(Object content) throws ContentPersistenceException {
+    public synchronized void update(Object content) throws ObjectBeanPersistenceException {
         String path = getPathProperty(content);
         if (path != null) {
             setObject(path, content);
         }
     }
 
-    public void update(Object content, ContentNodeBinder customBinder) throws ContentPersistenceException {
+    public void update(Object content, ContentNodeBinder customBinder) throws ObjectBeanPersistenceException {
         String path = getPathProperty(content);
         if (path != null) {
             if (customBinder != null) {
@@ -116,21 +118,21 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         }
     }
     
-    public void remove(Object content) throws ContentPersistenceException {
+    public void remove(Object content) throws ObjectBeanPersistenceException {
         String path = getPathProperty(content);
         if (path != null) {
             setObject(path, null);
         }
     }
 
-    public void save() throws ContentPersistenceException {
+    public void save() throws ObjectBeanPersistenceException {
     }
 
-    public void refresh() throws ContentPersistenceException {
+    public void refresh() throws ObjectBeanPersistenceException {
         refresh(false);
     }
     
-    public void refresh(boolean keepChanges) throws ContentPersistenceException {
+    public void refresh(boolean keepChanges) throws ObjectBeanPersistenceException {
     }
     
     protected String getPathProperty(Object object) {
@@ -163,13 +165,13 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         return uuid;
     }
     
-    protected Object getSerializedCopy(Object object) throws ContentPersistenceException {
+    protected Object getSerializedCopy(Object object) throws ObjectBeanPersistenceException {
         return bytesToObject(objectToBytes(object));
     }
     
-    protected byte [] objectToBytes(Object object) throws ContentPersistenceException {
+    protected byte [] objectToBytes(Object object) throws ObjectBeanPersistenceException {
         if (!(object instanceof Serializable)) {
-            throw new ContentPersistenceException("Object is not serializable.");            
+            throw new ObjectBeanPersistenceException("Object is not serializable.");            
         }
         
         byte [] bytes = null;
@@ -184,7 +186,7 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
             oos.flush();
             bytes = baos.toByteArray();
         } catch (Exception e) {
-            throw new ContentPersistenceException(e);
+            throw new ObjectBeanPersistenceException(e);
         } finally {
             if (oos != null) try { oos.close(); } catch (Exception ce) { }
             if (baos != null) try { baos.close(); } catch (Exception ce) { }
@@ -193,7 +195,7 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
         return bytes;
     }
     
-    protected Object bytesToObject(byte [] bytes) throws ContentPersistenceException {
+    protected Object bytesToObject(byte [] bytes) throws ObjectBeanPersistenceException {
         Object object = null;
         
         ByteArrayInputStream bais = null;
@@ -204,13 +206,17 @@ public class MockContentPersistenceManager implements ContentPersistenceManager 
             ois = new ObjectInputStream(bais);
             object = ois.readObject();
         } catch (Exception e) {
-            throw new ContentPersistenceException(e);
+            throw new ObjectBeanPersistenceException(e);
         } finally {
             if (ois != null) try { ois.close(); } catch (Exception ce) { }
             if (bais != null) try { bais.close(); } catch (Exception ce) { }
         }
         
         return object;
+    }
+
+    public Session getSession() {
+        return null;
     }
 
 }

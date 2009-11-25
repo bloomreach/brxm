@@ -22,7 +22,10 @@ import java.util.List;
 import javax.jcr.Session;
 import javax.servlet.ServletConfig;
 
-import org.hippoecm.hst.component.support.bean.persistency.BasePersistenceHstComponent;
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
@@ -35,15 +38,12 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.demo.beans.BaseBean;
 import org.hippoecm.hst.demo.beans.CommentBean;
-import org.hippoecm.hst.persistence.ContentPersistenceException;
-import org.hippoecm.hst.persistence.workflow.WorkflowCallbackHandler;
-import org.hippoecm.hst.persistence.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.utils.BeanUtils;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Detail extends BasePersistenceHstComponent {
+public class Detail extends BaseHstComponent {
 
     public static final Logger log = LoggerFactory.getLogger(Detail.class);
     
@@ -61,6 +61,7 @@ public class Detail extends BasePersistenceHstComponent {
             cmsApplicationUrl = param;
         }
     }
+
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
@@ -108,7 +109,7 @@ public class Detail extends BasePersistenceHstComponent {
         }
         
     }
-
+    
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         String type = request.getParameter("type");
@@ -124,13 +125,13 @@ public class Detail extends BasePersistenceHstComponent {
             String commentToUuidOfHandle = ((HippoDocumentBean)commentTo).getCanonicalHandleUUID();
             if (title != null && !"".equals(title.trim()) && comment != null) {
                 Session persistableSession = null;
-                WorkflowPersistenceManager cpm = null;
+                WorkflowPersistenceManager wpm = null;
 
                 try {
                     // retrieves writable session. NOTE: this session should be logged out manually!
                     persistableSession = getPersistableSession(request);
-                    cpm = getWorkflowPersistenceManager(persistableSession);
-                    cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    wpm = getWorkflowPersistenceManager(persistableSession);
+                    wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
                         public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
                             FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
                             fraw.requestPublication();
@@ -147,10 +148,10 @@ public class Detail extends BasePersistenceHstComponent {
                     String commentNodeName = "comment-for-"+commentTo.getName()+"-" + System.currentTimeMillis();
 
                     // create comment node now
-                    cpm.create(commentsFolderPath, "demosite:comment", commentNodeName, true);
+                    wpm.create(commentsFolderPath, "demosite:comment", commentNodeName, true);
 
                     // retrieve the comment content to manipulate
-                    CommentBean commentBean = (CommentBean) cpm.getObject(commentsFolderPath + "/" + commentNodeName);
+                    CommentBean commentBean = (CommentBean) wpm.getObject(commentsFolderPath + "/" + commentNodeName);
                     // update content properties
                     if(commentBean == null) {
                         throw new HstComponentException("Failed to add Comment");
@@ -164,16 +165,16 @@ public class Detail extends BasePersistenceHstComponent {
                     commentBean.setCommentTo(commentToUuidOfHandle);
                     
                     // update now
-                    cpm.update(commentBean);
+                    wpm.update(commentBean);
 
                     
                 } catch (Exception e) {
                     log.warn("Failed to create a comment: ", e);
 
-                    if (cpm != null) {
+                    if (wpm != null) {
                         try {
-                            cpm.refresh();
-                        } catch (ContentPersistenceException e1) {
+                            wpm.refresh();
+                        } catch (ObjectBeanPersistenceException e1) {
                             log.warn("Failed to refresh: ", e);
                         }
                     }
@@ -240,7 +241,7 @@ public class Detail extends BasePersistenceHstComponent {
                 if (cpm != null) {
                     try {
                         cpm.refresh();
-                    } catch (ContentPersistenceException e1) {
+                    } catch (ObjectBeanPersistenceException e1) {
                         log.warn("Failed to refresh: ", e);
                     }
                 }

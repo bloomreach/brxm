@@ -21,13 +21,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 
+import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.mock.MockContentPersistenceManager;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestContentPersistenceManager {
     
-    private ContentPersistenceManager cpm;
+    private ObjectBeanPersistenceManager cpm;
     private Comment comment1;
     private Comment comment2;
     

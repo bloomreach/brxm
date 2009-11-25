@@ -24,22 +24,22 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
-import org.hippoecm.hst.component.support.bean.persistency.BasePersistenceHstComponent;
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoRequest;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.persistence.ContentPersistenceException;
-import org.hippoecm.hst.persistence.workflow.WorkflowCallbackHandler;
-import org.hippoecm.hst.persistence.workflow.WorkflowPersistenceManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TodoList extends BasePersistenceHstComponent {
+public class TodoList extends BaseHstComponent {
     
     private static final Logger log = LoggerFactory.getLogger(Home.class);
     
@@ -51,7 +51,7 @@ public class TodoList extends BasePersistenceHstComponent {
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         
         Session persistableSession = null;
-        WorkflowPersistenceManager cpm = null;
+        WorkflowPersistenceManager wpm = null;
 
         try {
             final String requestPath = request.getParameter("requestPath");
@@ -69,8 +69,8 @@ public class TodoList extends BasePersistenceHstComponent {
             // retrieves writable session. NOTE: this session should be logged out manually!
             persistableSession = getPersistableSession(request);
 
-            cpm = getWorkflowPersistenceManager(persistableSession);
-            cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullRequestWorkflow>() {
+            wpm = getWorkflowPersistenceManager(persistableSession);
+            wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullRequestWorkflow>() {
                 public void processWorkflow(FullRequestWorkflow wf) throws Exception {
                     FullRequestWorkflow fraw = (FullRequestWorkflow) wf;
                     
@@ -82,8 +82,8 @@ public class TodoList extends BasePersistenceHstComponent {
                 }
             });
             
-            HippoRequest requestBean = (HippoRequest) cpm.getObject(requestPath);
-            cpm.update(requestBean);
+            HippoRequest requestBean = (HippoRequest) wpm.getObject(requestPath);
+            wpm.update(requestBean);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to process action.", e);
@@ -91,10 +91,10 @@ public class TodoList extends BasePersistenceHstComponent {
                 log.warn("Failed to process action. {}", e.toString());
             }
             
-            if (cpm != null) {
+            if (wpm != null) {
                 try {
-                    cpm.refresh();
-                } catch (ContentPersistenceException e1) {
+                    wpm.refresh();
+                } catch (ObjectBeanPersistenceException e1) {
                     log.warn("Failed to refresh: ", e);
                 }
             }

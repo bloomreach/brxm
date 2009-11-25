@@ -15,9 +15,9 @@
  */
 package org.hippoecm.hst.beans;
 
+import org.hippoecm.hst.content.beans.ContentNodeBinder;
+import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.persistence.ContentNodeBinder;
-import org.hippoecm.hst.persistence.ContentPersistenceBindingException;
 
 @Node(jcrType="testproject:textpage")
 public class TextPage extends GeneralPage implements ContentNodeBinder {
@@ -62,7 +62,7 @@ public class TextPage extends GeneralPage implements ContentNodeBinder {
         this.bodyContent = bodyContent;
     }
     
-    public boolean bind(Object content, javax.jcr.Node node) throws ContentPersistenceBindingException {
+    public boolean bind(Object content, javax.jcr.Node node) throws ContentNodeBindingException {
         try {
             TextPage commentPage = (TextPage) content;
             node.setProperty("testproject:title", commentPage.getTitle());
@@ -70,7 +70,7 @@ public class TextPage extends GeneralPage implements ContentNodeBinder {
             javax.jcr.Node body = node.getNode("testproject:body");
             body.setProperty("hippostd:content", commentPage.getBodyContent());
         } catch (Exception e) {
-            throw new ContentPersistenceBindingException(e);
+            throw new ContentNodeBindingException(e);
         }
         
         // FIXME: return true only if actual changes happen.
