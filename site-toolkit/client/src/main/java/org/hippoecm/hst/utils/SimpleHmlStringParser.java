@@ -18,9 +18,8 @@ package org.hippoecm.hst.utils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import javax.jcr.ItemNotFoundException;
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +28,8 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,15 +179,22 @@ public class SimpleHmlStringParser {
         } else {
             // relative node, most likely a mirror node:
             try {
-                if (node.hasNode(path)) {
-                    Node mirrorNode = node.getNode(path);
+                /*
+                 * Important: use here the HippoWorkspace hierarchy resolver and not a direct getNode(path) because the hierarchy resolver
+                 * contains logic about how to fetch relative paths for for example a picked image in an RTE field. 
+                 * 
+                 * For example, the relative path of a picked image in RTE field is something like: facetNode/[some-encoding-wildcard]/thumbnail
+                 * 
+                 * The hierarchy resolver knows how to solve: [some-encoding-wildcard]
+                 * 
+                 */
+                Node mirrorNode = ((HippoWorkspace)((HippoSession)node.getSession()).getWorkspace()).getHierarchyResolver().getNode(node, path);    
+                if (mirrorNode != null) {
                     return reqContext.getHstLinkCreator().create(mirrorNode, reqContext.getResolvedSiteMapItem());
                 } else {
-                    log.warn("Missing facetselect node '{}' for internal link for document '{}'. Cannot create link", path, node.getPath());
+                    log.warn("Cannot find node '{}' for internal link for document '{}'. Cannot create link", path, node.getPath());
                 }
-            } catch (ItemNotFoundException e) {
-                log.warn("Unable to rewrite '{}' to proper url : '{}'. Return null", path, e.getMessage());
-            } catch (PathNotFoundException e) {
+            } catch (InvalidItemStateException e) {
                 log.warn("Unable to rewrite '{}' to proper url : '{}'. Return null", path, e.getMessage());
             } catch (RepositoryException e) {
                 log.warn("Unable to rewrite '{}' to proper url : '{}'. Return null", path, e.getMessage());
