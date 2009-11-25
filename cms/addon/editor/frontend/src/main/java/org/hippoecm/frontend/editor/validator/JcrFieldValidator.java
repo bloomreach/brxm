@@ -81,7 +81,7 @@ public class JcrFieldValidator implements ITypeValidator {
         Set<String> validators = field.getValidators();
         boolean required = validators.contains("required");
         boolean nonEmpty = validators.contains("non-empty");
-        if ((required || nonEmpty || htmlValidator != null) && !field.isProtected()) {
+        if ((required || fieldType.isNode() || nonEmpty || htmlValidator != null) && !field.isProtected()) {
             if ("*".equals(field.getPath())) {
                 log.warn("Wildcard properties are not validated");
                 return violations;
