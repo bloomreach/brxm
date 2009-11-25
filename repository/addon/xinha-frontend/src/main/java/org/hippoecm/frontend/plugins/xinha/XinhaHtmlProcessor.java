@@ -26,11 +26,14 @@ public class XinhaHtmlProcessor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static Pattern LINK_PATTERN = Pattern.compile("<(a|img)(\\s+)(.*?)(src|href)=\"(.*?)\"(.*?)>",
+    private static Pattern LINK_AND_IMAGES_PATTERN = Pattern.compile("<(a|img)(\\s+)(.*?)(src|href)=\"(.*?)\"(.*?)>",
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
     private static Pattern IMG_PATTERN = Pattern.compile("<img[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern SRC_PATTERN = Pattern.compile("src=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
 
+    private static Pattern LINK_PATTERN = Pattern.compile("<a[^>]+>", Pattern.CASE_INSENSITIVE);
+    private static Pattern HREF_PATTERN = Pattern.compile("href=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
+    
     /**
      * Prefix the targets of relative image links in a text.  Text and prefix may
      * neither be null.
@@ -73,7 +76,7 @@ public class XinhaHtmlProcessor {
      */
     public static Set<String> getInternalLinks(String text) {
         Set<String> links = new TreeSet<String>();
-        Matcher m = LINK_PATTERN.matcher(text);
+        Matcher m = LINK_AND_IMAGES_PATTERN.matcher(text);
         while (m.find()) {
             String link = m.group(5);
             if (link.startsWith("http:") || link.startsWith("https:")) {
@@ -89,6 +92,44 @@ public class XinhaHtmlProcessor {
             links.add(linkName);
         }
         return links;
+    }
+
+    public static String decorateInternalLinks(String text, ILinkDecorator decorator) {
+        
+        StringBuffer processed = new StringBuffer();
+        Matcher m = LINK_PATTERN.matcher(text);
+        while (m.find()) {
+            String anchor = m.group();
+            StringBuffer newAnchor = new StringBuffer();
+            Matcher s = HREF_PATTERN.matcher(anchor);
+            if (s.find()) {
+                String href = s.group();
+                // skip href=
+                String link = href.substring(5);
+
+                if (link.charAt(0) == '"') {
+                    link = link.substring(1);
+                }
+                if (link.charAt(link.length() - 1) == '"') {
+                    link = link.substring(0, link.length() - 1);
+                }
+                if (!link.startsWith("http:") && !link.startsWith("https:")) {
+                    s.appendReplacement(newAnchor, ("href=\"" + decorator.decorate(link) + "\"").replace("\\", "\\\\").replace("$",
+                            "\\$"));
+                } else {
+                    s.appendReplacement(newAnchor, href.replace("\\", "\\\\").replace("$", "\\$"));
+                }
+            }
+            s.appendTail(newAnchor);
+            m.appendReplacement(processed, newAnchor.toString().replace("\\", "\\\\").replace("$", "\\$"));
+        }
+        m.appendTail(processed);
+
+        return processed.toString();
+    }
+    
+    public static interface ILinkDecorator {
+        String decorate(String input);
     }
 
 }
