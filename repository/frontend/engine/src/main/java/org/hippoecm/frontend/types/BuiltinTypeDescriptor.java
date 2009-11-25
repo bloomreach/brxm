@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.ItemDefinition;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
@@ -50,7 +51,7 @@ public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetach
     private transient Map<String, IFieldDescriptor> declaredFields;
     private transient NodeType nt = null;
 
-    public BuiltinTypeDescriptor(String type, ITypeLocator locator) {
+    public BuiltinTypeDescriptor(String type, ITypeLocator locator) throws StoreException {
         super(type, type, locator);
 
         this.type = type;
@@ -58,6 +59,16 @@ public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetach
         // set properties of super class
         if (type.indexOf(':') < 0) {
             setIsNode(false);
+        } else {
+            try {
+                Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
+                ntMgr.getNodeType(type);
+            } catch (NoSuchNodeTypeException ex) {
+                throw new StoreException("Type does not exist");
+            } catch (RepositoryException ex) {
+                // ignore; will be triggered by load
+            }
         }
 
         load();

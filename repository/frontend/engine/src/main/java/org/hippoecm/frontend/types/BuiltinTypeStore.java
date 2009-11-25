@@ -49,7 +49,12 @@ public class BuiltinTypeStore implements ITypeStore {
     }
 
     public ITypeDescriptor getTypeDescriptor(String type) {
-        BuiltinTypeDescriptor result = new BuiltinTypeDescriptor(type, locator);
+        BuiltinTypeDescriptor result;
+        try {
+            result = new BuiltinTypeDescriptor(type, locator);
+        } catch (StoreException e) {
+            return null;
+        }
         if (result.isValid()) {
             return result;
         }
