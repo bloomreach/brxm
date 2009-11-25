@@ -196,6 +196,9 @@
         <sv:property sv:name="width" sv:type="String">
           <sv:value>${width}</sv:value>
         </sv:property>
+        <sv:property sv:name="browser.id" sv:type="String">
+          <sv:value>service.browse</sv:value>
+        </sv:property>
         <sv:node sv:name="Xinha.plugins.InsertImage">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
