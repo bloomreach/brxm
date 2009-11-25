@@ -210,6 +210,9 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             protected void onOk() {
                 try {
                     execute();
+                } catch (WorkflowException ex) {
+                    log.info("Error during workflow execution", ex);
+                    error(ex);
                 } catch (Exception ex) {
                     log.error("Error during workflow execution", ex);
                     error(ex);

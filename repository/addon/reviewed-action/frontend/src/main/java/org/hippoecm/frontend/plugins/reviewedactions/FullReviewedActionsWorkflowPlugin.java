@@ -279,6 +279,10 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 if (name == null || name.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
+                if (name.equals(getInputNodeName())) {
+                    // shortcut, the node was not actually renamed
+                    return null;
+                }
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 String nodeName = NodeNameCodec.encode(name, true);
                 workflow.rename(nodeName);

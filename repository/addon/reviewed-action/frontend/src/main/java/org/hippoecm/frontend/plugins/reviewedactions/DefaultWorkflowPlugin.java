@@ -155,6 +155,13 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
+                if (name == null || name.trim().equals("")) {
+                    throw new WorkflowException("No name for destination given");
+                }
+                if (name.equals(getInputNodeName())) {
+                    // shortcut, the node was not actually renamed
+                    return null;
+                }
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
                 workflow.rename(NodeNameCodec.encode(name, true));
                 return null;
