@@ -26,6 +26,7 @@ import javax.jcr.ValueFormatException;
 
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -35,7 +36,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
-import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
 import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
@@ -53,13 +53,13 @@ public class EditPerspective extends Perspective {
 
     private String topHeight;
     private UnitSettings topSettings;
-    private YuiFeedbackPanel feedback;
+    private FeedbackPanel feedback;
     private boolean feedbackShown;
 
     public EditPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        feedback = new YuiFeedbackPanel("feedback", new IFeedbackMessageFilter() {
+        feedback = new FeedbackPanel("feedback", new IFeedbackMessageFilter() {
             private static final long serialVersionUID = 1L;
 
             public boolean accept(FeedbackMessage message) {
@@ -74,7 +74,7 @@ public class EditPerspective extends Perspective {
                 }
                 return false;
             }
-        }, context);
+        });
         add(feedback);
         feedbackShown = false;
 
@@ -88,7 +88,7 @@ public class EditPerspective extends Perspective {
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        if (feedback.hasMessages()) {
+        if (feedback.anyMessage()) {
             target.addComponent(this);
             if (!feedbackShown) {
                 topSettings.setHeight(Integer.valueOf(getPluginConfig().getAsInteger("feedback.height", 50) + Integer.parseInt(topHeight)).toString());

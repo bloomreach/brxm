@@ -800,10 +800,10 @@ font-weight: bold;
 .hippo-editor {background: transparent url("images/hippo-shade.png")}
 
 /* feedback styling */
-.hippo-editor-feedback {width: 70%; margin: 0px 10px 0px 0px; padding: 0px 10px; height: 43px; overflow: hidden;}
+.hippo-editor-feedback {width: 70%; margin: 0px 10px 0px 0px; padding: 0px 5px; float:left; clear:left;}
 .hippo-editor-feedback ul {margin-bottom: 5px; -bottom: 5px; background-color: #ffdfdf; border: 2px solid #ff5050;}
 .hippo-editor-feedback li {height: 20px; padding: 5px 40px;}
-.hippo-editor-feedback .feedbackPanelERROR {display: list-item; background-color: #c00;}
+.hippo-editor-feedback .feedbackPanelERROR {display: list-item; background-color: #c00; color: #e3e3e3;}
 
 /* field styling */
 .hippo-editor-field{padding: 8px; margin-bottom: 0px; }
@@ -896,8 +896,7 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor .hippo-editor-template-field-new {height: 200px; overflow: auto;}
 .hippo-editor .hippo-editor-template-field-new li{list-style-type: none; margin-bottom: 5px;padding-top: 4px; padding-bottom: 2px;}
 .hippo-editor .hippo-editor-template-field-new li span em,
-.hippo-editor .hippo-editor-template-field-new li a{
-background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat;padding-left: 20px; display: inline;}
+.hippo-editor .hippo-editor-template-field-new li a{background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat;padding-left: 20px; display: inline;}
 .hippo-editor .hippo-editor-template-field-new li a:hover{text-decoration: underline}
 /* .hippo-editor .hippo-editor-template-field-new li span em{display: none;} */
 .hippo-editor-template-field-edit{padding-left: 15px; padding-right: 15px; padding-top: 10px; padding-bottom: 5px;}
@@ -909,10 +908,9 @@ background-image:url("images/icons/workflow-16.png"); background-repeat: no-repe
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls .delete-16{margin-left: 15px; width: 18px; height: 16px; padding: 10px;}
 .hippo-editor .hippo-editor-field .add-16{display: block; padding: 10px; background-color: white; border: 1px solid white; background-position: right center; margin-top: 8px;}
 .hippo-editor .hippo-editor-field .add-16:hover{border: 1px solid #EDF5FF; background-color: white}
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield {margin-bottom: 4px;}
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield {background: white; border: 1px solid #B2B2B2; margin-bottom: 4px;}
 .hippo-editor .hippo-editor-field-subfield.invalid .hippo-editor-field-subfield-item {border-color: #f00000;}
 .hippo-editor .hippo-editor-field-subfield-item{margin-right: 85px; background: white; border: 1px solid #B2B2B2; }
-
 
 /* sub sub fields */
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield{background-color: white; border: none; width: auto; margin-bottom: 4px; position: static;}
@@ -1288,9 +1286,6 @@ body.hippo-root div.yui-log-container {
 .resource-upload { margin-top: 10px; height: 75px; }
 .resource-upload input {clear: left; float: left;}
 .resource-upload input[type="submit"] {  padding:0; margin:0;}
-
-
-
 
 
 
