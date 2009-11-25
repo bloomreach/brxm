@@ -321,7 +321,6 @@ padding-right: 9px;
 
 /* Dashboard */
 /* ================================================ */
-.hippo-perspective-dashboard{padding-top: 23px;}
 .hippo-perspective-dashboard .hippo-perspective-dashboard-panel{background: #ffffff; border: 1px solid #afafaf; border-right: 0px;}
 .hippo-perspective-dashboard .hippo-perspective-dashboard-panel h2{color: #666666; padding: 8px; padding-left: 4px; padding-right: 4px; font-weight: bold; border-bottom: 1px dotted #afafaf; background: url("images/hippo-panels-headerback.png") repeat-x}
 .hippo-perspective-dashboard .hippo-list-details {width: 100%;}
@@ -1234,6 +1233,8 @@ table.hippo-list-details > tbody {
 
 table.hippo-currentactivity > tbody, table.hippo-todo > tbody {
   display: table-row-group;
+  overflow-y: hidden;
+  height: 100%;
 }
 
 .hippo-accordion-unit-center {
