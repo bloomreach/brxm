@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 
+import javax.servlet.http.HttpServletResponse;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -69,7 +71,17 @@ public class JcrResourceRequestTarget implements IRequestTarget {
     public void respond(RequestCycle requestCycle) {
         InputStream stream = null;
         try {
-            Node node = nodeModel.getNode();
+            Node node = (nodeModel != null ? nodeModel.getNode(): null);
+
+            if (node == null) {
+                HttpServletResponse response = ((WebResponse) requestCycle.getResponse()).getHttpServletResponse();
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                // Make sure it is not cached by a client
+                response.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
+                response.setHeader("Cache-Control", "no-cache, must-revalidate");
+                response.setHeader("Pragma", "no-cache");
+                return;
+            }
 
             // if node is facetselect, check the referenced node
             // TODO now by default return primary item. If facetselect has filter, there might be no

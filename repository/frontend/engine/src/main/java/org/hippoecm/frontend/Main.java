@@ -67,6 +67,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -246,7 +247,7 @@ public class Main extends WebApplication {
                     subSession = session.getJcrSession().impersonate(
                             new javax.jcr.SimpleCredentials(credentials.getString("username"), credentials.getString(
                                     "password").toCharArray()));
-                    Node node = subSession.getRootNode().getNode(path);
+                    Node node = ((HippoWorkspace)subSession.getWorkspace()).getHierarchyResolver().getNode(subSession.getRootNode(), path);
                     return new JcrResourceRequestTarget(new JcrNodeModel(node));
                 } catch (PathNotFoundException e) {
                     log.info("binary not found " + e.getMessage());
