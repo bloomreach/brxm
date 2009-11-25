@@ -129,7 +129,6 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                     }
                 }
                 relPath = relPath.substring(0,relPath.indexOf("["));
-                }
             }
             if(last != null) {
                 last.node = node;
