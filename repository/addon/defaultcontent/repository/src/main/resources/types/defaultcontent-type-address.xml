@@ -60,6 +60,7 @@
         </sv:property>
         <sv:property sv:name="hipposysedit:validators" sv:type="String">
           <sv:value>required</sv:value>
+          <sv:value>non-empty</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="number">

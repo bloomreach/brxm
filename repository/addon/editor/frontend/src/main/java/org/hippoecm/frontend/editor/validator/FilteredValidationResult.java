@@ -39,8 +39,11 @@ public class FilteredValidationResult implements IValidationResult {
     }
 
     public Set<Violation> getViolations() {
-        Set<Violation> orig = upstream.getViolations();
         Set<Violation> result = new HashSet<Violation>();
+        if (upstream == null) {
+            return result;
+        }
+        Set<Violation> orig = upstream.getViolations();
         for (Violation violation : orig) {
             Set<ModelPath> paths = violation.getDependentPaths();
             for (ModelPath path : paths) {
@@ -58,7 +61,7 @@ public class FilteredValidationResult implements IValidationResult {
     }
 
     public boolean isValid() {
-        return upstream.isValid() || getViolations().size() == 0;
+        return upstream == null || upstream.isValid() || getViolations().size() == 0;
     }
 
     private Violation filterViolation(Violation violation) {
