@@ -18,12 +18,12 @@
 <taglib xmlns="http://java.sun.com/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
-    
+
     <tlib-version>1.0</tlib-version>
     <jsp-version>1.2</jsp-version>
     <short-name>hst-core-tags</short-name>
     <uri>http://www.hippoecm.org/jsp/hst/core</uri>
-    <description>HST Corre Tag Library</description>
+    <description>HST Core Tag Library</description>
 
     <tag>
         <name>include</name>
@@ -38,6 +38,22 @@
             <type>java.lang.String</type>
             <description>The name of the child HstComponent to be included.</description>
         </attribute>
+        <example><![CDATA[
+          <!-- Threecolumnlayout -->
+          <table class="main">
+            <tr>
+              <td class="leftmenu">
+                <hst:include ref="leftmenu"/>
+              </td>
+              <td class="content">
+                <hst:include ref="content"/>
+              </td>
+              <td class="rightmenu">
+                <hst:include ref="right"/>
+              </td>
+            </tr>
+           </table>
+         ]]></example>
     </tag>
 
     <tag>
@@ -60,6 +76,21 @@
             <type>java.lang.String</type>
             <description>The value of the parameter</description>
         </attribute>
+        <example><![CDATA[
+          <ul id="paging-nav">
+            <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}" varStatus="status">
+              <c:set var="active" value="" />
+              <c:if test="${searchResults.currentPage == pageNr}">
+                <c:set var="active" value=" class=\"active\"" />
+              </c:if>
+              <hst:renderURL var="pagelink">
+                <hst:param name="page" value="${pageNr}" />
+                <hst:param name="query" value="${query}" />
+              </hst:renderURL>
+              <li${active}><a href="${pagelink}" title="${pageNr}">${pageNr}</a></li>
+            </c:forEach>
+          </ul>
+          ]]></example>
     </tag>
 
     <tag>
@@ -77,6 +108,21 @@
             <type>java.lang.String</type>
             <description>The variable name of the renderURL</description>
         </attribute>
+        <example><![CDATA[
+          <ul id="paging-nav">
+            <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}" varStatus="status">
+              <c:set var="active" value="" />
+              <c:if test="${searchResults.currentPage == pageNr}">
+                <c:set var="active" value=" class=\"active\"" />
+              </c:if>
+              <hst:renderURL var="pagelink">
+                <hst:param name="page" value="${pageNr}" />
+                <hst:param name="query" value="${query}" />
+              </hst:renderURL>
+              <li${active}><a href="${pagelink}" title="${pageNr}">${pageNr}</a></li>
+            </c:forEach>
+          </ul>
+          ]]></example>
     </tag>
 
     <tag>
@@ -196,6 +242,52 @@
             <type>java.lang.boolean</type>
             <description>If the link that is created should be the canonical link, use this attr with value true</description>
         </attribute>
+        <example><![CDATA[
+        <!-- In a body component: A list of document names with summaries and links to those documents: -->
+
+         <c:forEach var="child_document" items="${document_list}">
+           <tr>
+             <hst:link var="link" hippobean="${child_document}"/>
+             <td class="title">
+               <a href="${link}">${child_document.name}</a>
+             </td>
+             <td>${child_document.summary}</td>
+           </tr>
+         </c:forEach>
+
+        <!-- In a <head>: -->
+
+        <hst:link var='screencss' path='/css/community/screen.css'></hst:link>
+        <link media='screen' href='${screencss}' type='text/css' rel='stylesheet'></link>
+
+        <!-- In a menu: -->
+
+         <ul id="nav-main">
+           <c:forEach var="item" items="${menu.menuItems}">
+             <c:choose >
+               <c:when test="${! empty item.externalLink}">
+                 <li>
+                  <a href="${item.externalLink}"><b>${item.name}</b></a>
+                 </li>
+               </c:when>
+               <c:when test="${item.expanded}">
+                 <li class="active">
+                   ${item.name}
+                 </li>
+               </c:when>
+               <c:otherwise>
+                 <li>
+                   <hst:link var="link" link="${item.hstLink}" />
+                   <a href="${link}">
+                       ${item.name}
+                   </a>
+                </li>
+               </c:otherwise>
+             </c:choose>
+           </c:forEach>
+         </ul>
+         ]]></example>
+
     </tag>
 
     <tag>
@@ -374,6 +466,11 @@
                     JSP developers could ignore this attribute and use 'hippohtml' attribute instead directly with object property value.
             </description>
         </attribute>
+        <example><![CDATA[
+          <div>
+             <hst:html hippohtml="${document.intro}"/>
+          </div>
+          ]]></example>
     </tag>
 
     <tag>
@@ -434,32 +531,22 @@
         <name>head-contribution</name>
         <tag-class>org.hippoecm.hst.tag.HeadContributionTag</tag-class>
         <body-content>JSP</body-content>
-        <description> A HstComponent can contribute HTML HEAD elements to the page aggregation.
-            Because the output of a HstComponent is usually put in the middle of BODY area, it is
-            not recommended to include some javascripts or style definitions in its view page. If
-            the view page uses this head-contribution tag including some head element, then the
-            container will include the head element at the final page aggregation phase. </description>
+        <description>Deprecated: use headContribution instead.
+        </description>
         <attribute>
             <name>keyHint</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>java.lang.String</type>
-            <description> To avoid multiple inclusion of the same HEAD element like javascript
-                library, this keyHint attribute can be provided to set the key for the HEAD element.
-                If two HstComponents contribute HEAD elements with same keyHint attribute, the
-                container will include the HEAD element only once. If the component does not provide
-                keyHint attribute, the container will make a keyHint automatically by stringifying
-                the included HEAD element by this tag. </description>
+            <description>Tag is Deprecated: use headContribution instead.
+            </description>
         </attribute>
         <attribute>
             <name>element</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>org.w3c.dom.Element</type>
-            <description> For more optimized way to create and use DOM element, this tag supports
-                setting a DOM element by element attribute. If this attribute is set, then the
-                head-contribution tag will not try to parse the body content to create a DOM
-                element. Instead, it will use the passed DOM element by this attribute.
+            <description>Tag is Deprecated: use headContribution instead.
             </description>
         </attribute>
         <attribute>
@@ -467,10 +554,7 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>
-            <description>
-              A bean name of Element object which can be retrieved from pageContext.
-              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
-                    JSP developers could ignore this attribute and use 'element' attribute instead directly with object property value.
+            <description>Tag is Deprecated: use headContribution instead.
             </description>
         </attribute>
         <attribute>
@@ -478,12 +562,11 @@
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>java.lang.String</type>
-            <description> Category name of the contributed head element.
-              The head elements can be filtered in or filtered out by this attribute.
-              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+            <description>Tag is Deprecated: use headContribution instead.
+            </description>
         </attribute>
     </tag>
-    
+
     <tag>
         <name>headContribution</name>
         <tag-class>org.hippoecm.hst.tag.HeadContributionTag</tag-class>
@@ -536,48 +619,44 @@
               The head elements can be filtered in or filtered out by this attribute.
               By the way, this attribute does not affect anything in portal/portlet environment. </description>
         </attribute>
+        <example><![CDATA[
+          <hst:headContribution keyHint="generator">
+            <meta name="generator" content="Hippo Site Toolkit 2"/>
+          </hst:headContribution>
+          ]]></example>
     </tag>
 
     <tag>
         <name>head-contributions</name>
         <tag-class>org.hippoecm.hst.tag.HeadContributionsTag</tag-class>
         <body-content>empty</body-content>
-        <description> All the HEAD elements contributed by each HstComponent can be accessed only by
-            the root HstComponent. The root HstComponent will be responsible for rendering all the
-            contributed HEAD elements. By inserting this tag, the root HstComponent can render all
-            the contributed HEAD elements. </description>
+        <description>Deprecated: use headContributions instead.</description>
         <attribute>
             <name>xhtml</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>boolean</type>
-            <description> If this attribute is true, then the output will be generated as XHTML
-                format. By default, this value is false. </description>
+            <description>Tag is Deprecated: use headContributions instead.
+            </description>
         </attribute>
         <attribute>
             <name>categoryIncludes</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>java.lang.String</type>
-            <description> Comma separated category list string for category includes.
-              Contributed head elements can be filtered in by this attribute.
-              If a contributed head element has a category and this attribute contains
-              the category, then the head element would be written into the page.
-              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+            <description>Tag is Deprecated: use headContributions instead.
+            </description>
         </attribute>
         <attribute>
             <name>categoryExcludes</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>java.lang.String</type>
-            <description> Comma separated category list string for category excludes.
-              Contributed head elements can be filtered out by this attribute.
-              If a contributed head element has a category and this attribute does not contain
-              the category, then the head element would be written into the page.
-              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+            <description>Tag is Deprecated: use headContributions instead.
+            </description>
         </attribute>
     </tag>
-    
+
     <tag>
         <name>headContributions</name>
         <tag-class>org.hippoecm.hst.tag.HeadContributionsTag</tag-class>
@@ -622,42 +701,31 @@
         <name>write-head-contributions</name>
         <tag-class>org.hippoecm.hst.tag.HeadContributionsTag</tag-class>
         <body-content>empty</body-content>
-        <description> All the HEAD elements contributed by each HstComponent can be accessed only by
-            the root HstComponent. The root HstComponent will be responsible for rendering all the
-            contributed HEAD elements. By inserting this tag, the root HstComponent can render all
-            the contributed HEAD elements. </description>
+        <description>Deprecated: use writeHeadContributions instead.
+        </description>
         <attribute>
             <name>xhtml</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>boolean</type>
-            <description> If this attribute is true, then the output will be generated as XHTML
-                format. By default, this value is false. </description>
+            <description>Tag is deprecated: use writeHeadContributions instead.</description>
         </attribute>
         <attribute>
             <name>categoryIncludes</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>java.lang.String</type>
-            <description> Comma separated category list string for category includes.
-              Contributed head elements can be filtered in by this attribute.
-              If a contributed head element has a category and this attribute contains
-              the category, then the head element would be written into the page.
-              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+            <description>Tag is deprecated: use writeHeadContributions instead.</description>
         </attribute>
         <attribute>
             <name>categoryExcludes</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <type>java.lang.String</type>
-            <description> Comma separated category list string for category excludes.
-              Contributed head elements can be filtered out by this attribute.
-              If a contributed head element has a category and this attribute does not contain
-              the category, then the head element would be written into the page.
-              By the way, this attribute does not affect anything in portal/portlet environment. </description>
+            <description>Tag is deprecated: use writeHeadContributions instead.</description>
         </attribute>
     </tag>
-    
+
     <tag>
         <name>writeHeadContributions</name>
         <tag-class>org.hippoecm.hst.tag.HeadContributionsTag</tag-class>
@@ -697,7 +765,7 @@
               By the way, this attribute does not affect anything in portal/portlet environment. </description>
         </attribute>
     </tag>
-    
+
     <tag>
         <name>namespace</name>
         <tag-class>org.hippoecm.hst.tag.NamespaceTag</tag-class>
@@ -707,12 +775,12 @@
             elements. Using this tag, each HstComponent can write unique name for its elements.
         </description>
     </tag>
-    
+
     <tag>
         <name>defineObjects</name>
         <tag-class>org.hippoecm.hst.tag.DefineObjectsTag</tag-class>
         <tei-class>org.hippoecm.hst.tag.DefineObjectsTag$TEI</tei-class>
         <body-content>empty</body-content>
     </tag>
-    
+
 </taglib>
