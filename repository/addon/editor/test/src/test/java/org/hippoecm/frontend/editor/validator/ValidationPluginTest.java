@@ -45,8 +45,13 @@ public class ValidationPluginTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    final static String[] content = { "/test", "nt:unstructured", "/test/plugin", "frontend:plugin", "plugin.class",
-            ValidationPlugin.class.getName(), "wicket.model", "service.model", "validator.id", "service.validator", };
+    final static String[] content = {
+        "/test", "nt:unstructured",
+            "/test/plugin", "frontend:plugin",
+                "plugin.class", ValidationPlugin.class.getName(),
+                "wicket.model", "service.model",
+                "validator.id", "service.validator",
+    };
     IPluginConfig config;
 
     @Override
@@ -140,6 +145,19 @@ public class ValidationPluginTest extends PluginTest {
         assertTrue(jcrPaths.contains("test:single[1]/test:multiple[1]"));
         assertTrue(jcrPaths.contains("test:multiple[1]/test:mandatory[1]"));
         assertTrue(jcrPaths.contains("test:multiple[1]/test:multiple[1]"));
+    }
+
+    @Test
+    public void testCascading() throws Exception {
+        start(config);
+
+        Node content = root.getNode("test").addNode("content", "test:container");
+        Node uncascaded = content.addNode("test:uncascaded", "test:uncascaded");
+        uncascaded.setProperty("test:property", "");
+        validate(content);
+
+        Set<Violation> violations = getViolations();
+        assertEquals(2, violations.size());
     }
 
 }

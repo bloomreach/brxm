@@ -101,33 +101,10 @@ public class JcrFieldValidator implements ITypeValidator {
             while (iter.hasNext()) {
                 IModel childModel = iter.next();
                 if (fieldType.isNode()) {
-                    Set<Violation> typeViolations = typeValidator.validate(childModel);
-                    if (typeViolations.size() > 0) {
-                        String name = field.getPath();
-                        if ("*".equals(name)) {
-                            JcrNodeModel childNodeModel = (JcrNodeModel) childModel;
-                            try {
-                                name = childNodeModel.getNode().getName();
-                            } catch (RepositoryException e) {
-                                throw new ValidationException("Could not resolve path for invalid value", e);
-                            }
-                        }
-                        int index = 0;
-                        if (name.indexOf('[') >= 0) {
-                            index = Integer.valueOf(name.substring(name.indexOf('[') + 1, name.lastIndexOf(']'))) - 1;
-                            name = name.substring(name.indexOf('['));
-                        }
-                        for (Violation violation : typeViolations) {
-                            Set<ModelPath> childPaths = violation.getDependentPaths();
-                            Set<ModelPath> paths = new HashSet<ModelPath>();
-                            for (ModelPath childPath : childPaths) {
-                                ModelPathElement[] elements = new ModelPathElement[childPath.getElements().length + 1];
-                                System.arraycopy(childPath.getElements(), 0, elements, 1,
-                                        childPath.getElements().length);
-                                elements[0] = new ModelPathElement(field, name, index);
-                                paths.add(new ModelPath(elements));
-                            }
-                            violations.add(new Violation(paths, violation.getMessageKey(), violation.getParameters()));
+                    if (required || field.getTypeDescriptor().isValidationCascaded()) {
+                        Set<Violation> typeViolations = typeValidator.validate(childModel);
+                        if (typeViolations.size() > 0) {
+                            addTypeViolations(violations, childModel, typeViolations);
                         }
                     }
                 } else if (htmlValidator != null || nonEmpty) {
@@ -145,6 +122,36 @@ public class JcrFieldValidator implements ITypeValidator {
             }
         }
         return violations;
+    }
+
+    private void addTypeViolations(Set<Violation> violations, IModel childModel, Set<Violation> typeViolations)
+            throws ValidationException {
+        String name = field.getPath();
+        if ("*".equals(name)) {
+            JcrNodeModel childNodeModel = (JcrNodeModel) childModel;
+            try {
+                name = childNodeModel.getNode().getName();
+            } catch (RepositoryException e) {
+                throw new ValidationException("Could not resolve path for invalid value", e);
+            }
+        }
+        int index = 0;
+        if (name.indexOf('[') >= 0) {
+            index = Integer.valueOf(name.substring(name.indexOf('[') + 1, name.lastIndexOf(']'))) - 1;
+            name = name.substring(name.indexOf('['));
+        }
+        for (Violation violation : typeViolations) {
+            Set<ModelPath> childPaths = violation.getDependentPaths();
+            Set<ModelPath> paths = new HashSet<ModelPath>();
+            for (ModelPath childPath : childPaths) {
+                ModelPathElement[] elements = new ModelPathElement[childPath.getElements().length + 1];
+                System.arraycopy(childPath.getElements(), 0, elements, 1,
+                        childPath.getElements().length);
+                elements[0] = new ModelPathElement(field, name, index);
+                paths.add(new ModelPath(elements));
+            }
+            violations.add(new Violation(paths, violation.getMessageKey(), violation.getParameters()));
+        }
     }
 
     private Violation newValueViolation(IModel childModel, String key) throws ValidationException {

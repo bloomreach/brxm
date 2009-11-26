@@ -150,6 +150,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
                 type.setSuperTypes(object.getSuperTypes());
                 type.setIsNode(object.isNode());
                 type.setIsMixin(object.isMixin());
+                type.setIsValidationCascaded(object.isValidationCascaded());
                 for (Map.Entry<String, IFieldDescriptor> entry : object.getFields().entrySet()) {
                     type.addField(entry.getValue());
                 }

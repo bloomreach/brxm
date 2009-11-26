@@ -159,11 +159,11 @@ public class CndSerializer implements IClusterable {
     private JcrSessionModel jcrSession;
     private Map<String, String> namespaces;
     private LinkedHashMap<String, TypeEntry> types;
+    private HashMap<String, String> pseudoTypes;
     private ITypeLocator oldTypeLocator;
     private ITypeLocator newTypeLocator;
 
-    public CndSerializer(JcrSessionModel sessionModel, final String namespace) throws RepositoryException,
-            StoreException {
+    public CndSerializer(JcrSessionModel sessionModel, final String namespace) throws StoreException {
         this.jcrSession = sessionModel;
 
         final JcrTypeStore jcrTypeStore = new JcrTypeStore();
@@ -180,6 +180,8 @@ public class CndSerializer implements IClusterable {
                 if (type.indexOf(':') > 0 && namespace.equals(type.substring(0, type.indexOf(':')))) {
                     if (types.containsKey(type)) {
                         return types.get(type).getNewType();
+                    } else if (pseudoTypes.containsKey(type)) {
+                        return locate(pseudoTypes.get(type));
                     } else {
                         return newBuiltinTypeStore.load(type);
                     }
@@ -229,34 +231,54 @@ public class CndSerializer implements IClusterable {
         return result;
     }
 
-    private void initTypes(String namespace) throws RepositoryException {
+    private void initTypes(String namespace) throws StoreException {
         types = new LinkedHashMap<String, TypeEntry>();
-        Session session = jcrSession.getSession();
+        pseudoTypes = new HashMap<String, String>();
 
-        JcrNamespace jcrNamespace = new JcrNamespace(session, namespace);
-        String uri = jcrNamespace.getCurrentUri();
-        Node nsNode = session.getRootNode().getNode(jcrNamespace.getPath().substring(1));
+        try {
+            Session session = jcrSession.getSession();
+            JcrNamespace jcrNamespace = new JcrNamespace(session, namespace);
+            String uri = jcrNamespace.getCurrentUri();
+            Node nsNode = session.getRootNode().getNode(jcrNamespace.getPath().substring(1));
 
-        NodeIterator typeIter = nsNode.getNodes();
-        while (typeIter.hasNext()) {
-            Node templateTypeNode = typeIter.nextNode();
-            String pseudoName = namespace + ":" + templateTypeNode.getName();
+            NodeIterator typeIter = nsNode.getNodes();
+            while (typeIter.hasNext()) {
+                Node templateTypeNode = typeIter.nextNode();
+                String pseudoName = namespace + ":" + templateTypeNode.getName();
 
-            Node oldType = null, newType = null;
+                Node oldType = null, newType = null;
 
-            Node ntNode = templateTypeNode.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-            NodeIterator versions = ntNode.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-            while (versions.hasNext()) {
-                Node version = versions.nextNode();
-                if (version.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    if (version.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                        oldType = version;
+                boolean isPseudoType = false;
+                Node ntNode = templateTypeNode.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+                NodeIterator versions = ntNode.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+                while (versions.hasNext()) {
+                    Node version = versions.nextNode();
+                    if (version.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
+                        if (!pseudoName.equals(version.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString())) {
+                            isPseudoType = true;
+                            oldType = version;
+                            break;
+                        }
                     }
+                    if (version.isNodeType(HippoNodeType.NT_REMODEL)) {
+                        if (version.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
+                            oldType = version;
+                        }
+                    } else {
+                        newType = version;
+                    }
+                }
+                if (oldType == null && newType == null) {
+                    throw new StoreException("No description found for either old or new version of type " + pseudoName);
+                }
+                if (!isPseudoType) {
+                    types.put(pseudoName, new TypeEntry(oldType, newType));
                 } else {
-                    newType = version;
+                    pseudoTypes.put(pseudoName, oldType.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString());
                 }
             }
-            types.put(pseudoName, new TypeEntry(oldType, newType));
+        } catch (RepositoryException ex) {
+            throw new StoreException("Error retrieving namespace description from repository");
         }
     }
 

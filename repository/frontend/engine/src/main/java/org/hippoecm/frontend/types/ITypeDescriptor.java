@@ -18,8 +18,6 @@ package org.hippoecm.frontend.types;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.Value;
-
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.event.IObservable;
 
@@ -59,6 +57,7 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
      * Set the super types of the type.  If the type is a mixin type, then all of the
      * super types must be mixin types too.  This should not include nt:base for node
      * types.
+     * 
      * @param superTypes the list of super types
      */
     void setSuperTypes(List<String> superTypes);
@@ -66,6 +65,7 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
     /**
      * The map of fields that are declared in this type of any of its super types.
      * If the type is primitive, null will be returned.
+     * 
      * @return an immutable list of fields in the type
      */
     Map<String, IFieldDescriptor> getFields();
@@ -74,12 +74,14 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
      * The map of fields that are declared in this type.  This does not include the
      * fields that are declared in any of the super types.
      * If the type is primitive, null will be returned.
+     * 
      * @return the list of fields declared in the type
      */
     Map<String, IFieldDescriptor> getDeclaredFields();
 
     /**
      * Retrieve the field associated with a key.
+     * 
      * @param key
      * @return the field descriptor
      */
@@ -87,12 +89,14 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
 
     /**
      * Add a field to the type.
+     * 
      * @param descriptor the field that is added to the type
      */
     void addField(IFieldDescriptor descriptor);
 
     /**
      * Remove a field from the type.
+     * 
      * @param name the name of the field that is removed
      */
     void removeField(String name);
@@ -101,6 +105,7 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
      * Declare one of the fields to be the primary item.  This is only valid when
      * the field has been declared in the type, not in any of its super types.
      * Additionally, none of the super types may have defined a primary item.
+     * 
      * @param name
      */
     void setPrimary(String name);
@@ -108,6 +113,7 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
     /**
      * Is the type a compound or mixin type, corresponding to a node type.  False
      * for the primitive types or any of their pseudo variants. 
+     * 
      * @return whether the type corresponds to a node type
      */
     boolean isNode();
@@ -122,11 +128,23 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
      * Returns true if this type is <code>typeName</code>
      * or a subtype of <code>typeName</code>, otherwise returns
      * <code>false</code>.
+     * 
      * @param typeName the name of a node type.
      * @return a boolean
      */
     boolean isType(String typeName);
 
-    Value createValue();
-    
+    /**
+     * Returns true if validation is cascaded, i.e. whether fields with this type
+     * are automatically validated.  When false, the field needs the "required"
+     * validator to get the field value validated.
+     * 
+     * @return whether fields of the type are automatically validated
+     */
+    boolean isValidationCascaded();
+
+    /**
+     * @param isCascaded are fields of this type always validated
+     */
+    void setIsValidationCascaded(boolean isCascaded);
 }

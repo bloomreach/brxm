@@ -210,6 +210,32 @@
     </sv:node>
   </sv:node>
   <!-- end "test:test"-->
+  <!-- "test:pseudo"-->
+  <sv:node sv:name="pseudo">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposysedit:templatetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposysedit:nodetype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:hardhandle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hipposysedit:nodetype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposysedit:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:type" sv:type="String">
+          <sv:value>test:test</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <!-- "test:pseudo"-->
   <!-- "test:inheriting"-->
   <sv:node sv:name="inheriting">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -399,6 +425,20 @@
             <sv:value>String</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="nonempty">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>test:nonempty</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:validators" sv:type="String">
+            <sv:value>nonempty</sv:value>
+          </sv:property>
+        </sv:node>
         <sv:node sv:name="mandatory">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
@@ -439,6 +479,9 @@
           </sv:property>
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>String</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:autocreated" sv:type="Boolean">
+            <sv:value>true</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:validators" sv:type="String">
             <sv:value>required</sv:value>
@@ -551,6 +594,17 @@
             <sv:value>required</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="uncascaded">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>test:uncascaded</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>test:uncascaded</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hipposysedit:prototypes">
@@ -560,5 +614,52 @@
     </sv:node>
   </sv:node>
   <!-- end "test:container"-->
+  <!-- "test:uncascaded"-->
+  <sv:node sv:name="uncascaded">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposysedit:templatetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposysedit:nodetype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:hardhandle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hipposysedit:nodetype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposysedit:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hipposysedit:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:cascadevalidation" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+        <sv:node sv:name="property">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>test:property</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:validators" sv:type="String">
+            <sv:value>required</sv:value>
+            <sv:value>non-empty</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <!-- "test:uncascaded"-->
 </sv:node>
 
