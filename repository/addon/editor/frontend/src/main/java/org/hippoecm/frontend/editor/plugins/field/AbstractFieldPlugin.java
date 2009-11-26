@@ -152,8 +152,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                         }
                     }
                     if (valid != isValid()) {
-                        setValid(valid);
                         redraw();
+                        setValid(valid);
                     }
                 }
 
@@ -185,12 +185,15 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         super.onDetach();
     }
 
-    @Override
-    protected void redraw() {
-        super.redraw();
+    protected void resetValidation() {
         for (ValidationFilter listener : listeners.values()) {
             listener.setValid(true);
         }
+    }
+    
+    @Override
+    protected void redraw() {
+        super.redraw();
         if (!restartTemplates) {
             restartTemplates = true;
             controller.stop();
