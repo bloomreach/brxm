@@ -74,7 +74,7 @@ public class HippoItem implements HippoBean {
     }
 
     public String getPath() {
-        if (this.path == null) {
+        if (this.path == null && valueProvider != null) {
             this.path = valueProvider.getPath();
         }
         return this.path;
@@ -509,11 +509,16 @@ public class HippoItem implements HippoBean {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof HippoBean) {
-            return ((HippoBean) obj).getPath().equals(this.getPath());
-        } else {
+        if (this == obj) {
+             return true;
+        }
+        if (this.getPath() == null) {
             return false;
         }
+        if(obj instanceof HippoBean) {
+            return this.getPath().equals(((HippoBean)obj).getPath());
+        }
+        return false;
     }
 
     /**
@@ -521,7 +526,7 @@ public class HippoItem implements HippoBean {
      */
     @Override
     public int hashCode() {
-        return this.getPath().hashCode();
+        return this.getPath() == null ? super.hashCode() : this.getPath().hashCode();
     }
 
 }

@@ -47,7 +47,7 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * 
      * When the jcr node is virtual, it returns the virtual path.
      * 
-     * @return the absolute jcr path of the backing jcr node. This method never returns <code>null</code>
+     * @return the absolute jcr path of the backing jcr node. 
      */
     String getPath();
     
