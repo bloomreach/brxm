@@ -15,17 +15,24 @@
  */
 package org.hippoecm.frontend.model;
 
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.ModelPathElement;
@@ -63,7 +70,7 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
 
         try {
             int index;
-            Value value = type.createValue();
+            Value value = createValue();
             Node node = (Node) getItemModel().getParentModel().getObject();
             String relPath = getItemModel().getPath().substring(node.getPath().length() + 1);
             getItemModel().detach();
@@ -183,7 +190,7 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
         }
         return new ModelPathElement(descriptor, descriptor.getPath(), index);
     }
-    
+
     @Override
     protected void load() {
         if (elements != null) {
@@ -222,6 +229,32 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
+        }
+    }
+
+    private Value createValue() throws UnsupportedRepositoryOperationException, RepositoryException {
+        ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
+        int propertyType = PropertyType.valueFromName(type.getType());
+        switch (propertyType) {
+        case PropertyType.BOOLEAN:
+            return factory.createValue(false);
+        case PropertyType.DATE:
+            return factory.createValue(Calendar.getInstance());
+        case PropertyType.DOUBLE:
+            return factory.createValue(0.0);
+        case PropertyType.LONG:
+            return factory.createValue(0L);
+        case PropertyType.NAME:
+            return factory.createValue("", PropertyType.NAME);
+        case PropertyType.PATH:
+            return factory.createValue("/", PropertyType.PATH);
+        case PropertyType.REFERENCE:
+            return factory.createValue(UUID.randomUUID().toString(), PropertyType.REFERENCE);
+        case PropertyType.STRING:
+        case PropertyType.UNDEFINED:
+            return factory.createValue("", PropertyType.STRING);
+        default:
+            return null;
         }
     }
 

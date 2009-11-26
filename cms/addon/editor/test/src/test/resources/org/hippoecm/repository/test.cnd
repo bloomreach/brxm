@@ -44,6 +44,9 @@
 
 [test:superMixinTest] > test:mixinTest, test:mixin
 
+[test:uncascaded]
+- test:property (string)
+
 [test:validator]
 - test:optional (string)
 - test:nonempty (string)
@@ -54,9 +57,10 @@
 
 [test:container]
 + test:base (test:validator)
-+ test:single (test:validator) mandatory
-+ test:multiple (test:validator) mandatory multiple
-+ * (test:validator) mandatory
++ test:single (test:validator) 
++ test:multiple (test:validator) multiple
++ test:uncascaded (test:uncascaded)
++ * (test:validator)
 
 
 

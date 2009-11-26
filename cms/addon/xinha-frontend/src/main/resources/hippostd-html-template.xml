@@ -63,6 +63,9 @@
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
         <sv:value>http://www.onehippo.org/jcr/hippostd/nt/2.0</sv:value>
       </sv:property>
+      <sv:property sv:name="hipposysedit:cascadevalidation" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
       <sv:node sv:name="content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>

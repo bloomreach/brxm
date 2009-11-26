@@ -15,22 +15,14 @@
  */
 package org.hippoecm.frontend.types;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-
-import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +44,8 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     private JavaFieldDescriptor primary;
     private boolean node;
     private boolean mixin;
+    private boolean cascadeValidation;
+
     private IObservationContext obContext;
     private boolean mutable = true;
 
@@ -63,6 +57,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
         this.primary = null;
         this.node = true;
         this.mixin = false;
+        this.cascadeValidation = true;
         this.locator = locator;
     }
 
@@ -158,41 +153,14 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
         this.mixin = isMixin;
     }
 
-    public Value createValue() {
-        try {
-            int propertyType = PropertyType.valueFromName(type);
-            switch (propertyType) {
-            case PropertyType.BOOLEAN:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(false);
-            case PropertyType.DATE:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(
-                        Calendar.getInstance());
-            case PropertyType.DOUBLE:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(0.0);
-            case PropertyType.LONG:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(0L);
-            case PropertyType.NAME:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("",
-                        PropertyType.NAME);
-            case PropertyType.PATH:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("/",
-                        PropertyType.PATH);
-            case PropertyType.REFERENCE:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(
-                        UUID.randomUUID().toString(), PropertyType.REFERENCE);
-            case PropertyType.STRING:
-            case PropertyType.UNDEFINED:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("",
-                        PropertyType.STRING);
-            default:
-                return null;
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-            return null;
-        }
+    public boolean isValidationCascaded() {
+        return cascadeValidation;
     }
 
+    public void setIsValidationCascaded(boolean isCascaded) {
+        cascadeValidation = isCascaded;
+    }
+    
     public void setObservationContext(IObservationContext context) {
         this.obContext = context;
     }

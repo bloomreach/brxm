@@ -48,4 +48,14 @@ public final class Violation implements IClusterable {
         return fieldPaths;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("paths: ");
+        sb.append(fieldPaths.toString());
+        sb.append(", message: ");
+        sb.append(messageKey);
+        return sb.toString();
+    }
+
 }

@@ -156,6 +156,7 @@
 - hipposysedit:supertype (string) multiple
 - hipposysedit:node (boolean)
 - hipposysedit:mixin (boolean)
+- hipposysedit:cascadevalidation (boolean)
 + * (hipposysedit:field) multiple // multiple is required to support deprecated hipposysedit:field name
 
 [hipposysedit:prototypeset]

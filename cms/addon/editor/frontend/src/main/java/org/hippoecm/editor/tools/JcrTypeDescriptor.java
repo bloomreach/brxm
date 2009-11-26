@@ -16,7 +16,6 @@
 package org.hippoecm.editor.tools;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,20 +26,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.UUID;
 import java.util.Map.Entry;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
@@ -49,7 +43,6 @@ import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.ocm.JcrObject;
 import org.hippoecm.frontend.model.ocm.StoreException;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.BuiltinTypeDescriptor;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -177,39 +170,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         setBoolean(HippoNodeType.HIPPO_MIXIN, isMixin);
     }
 
-    public Value createValue() {
-        try {
-            int propertyType = PropertyType.valueFromName(getType());
-            switch (propertyType) {
-            case PropertyType.BOOLEAN:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(false);
-            case PropertyType.DATE:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(
-                        Calendar.getInstance());
-            case PropertyType.DOUBLE:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(0.0);
-            case PropertyType.LONG:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(0L);
-            case PropertyType.NAME:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("",
-                        PropertyType.NAME);
-            case PropertyType.PATH:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("/",
-                        PropertyType.PATH);
-            case PropertyType.REFERENCE:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(
-                        UUID.randomUUID().toString(), PropertyType.REFERENCE);
-            case PropertyType.STRING:
-            case PropertyType.UNDEFINED:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("",
-                        PropertyType.STRING);
-            default:
-                return null;
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-            return null;
-        }
+    public boolean isValidationCascaded() {
+        return getBoolean(HippoNodeType.HIPPO_CASCADEVALIDATION, true);
+    }
+
+    public void setIsValidationCascaded(boolean isCascaded) {
+        setBoolean(HippoNodeType.HIPPO_CASCADEVALIDATION, isCascaded);
     }
 
     public void addField(IFieldDescriptor descriptor) {
@@ -356,6 +322,10 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     }
 
     private boolean getBoolean(String path) {
+        return getBoolean(path, false);
+    }
+
+    private boolean getBoolean(String path, boolean defaultValue) {
         try {
             if (getNode().hasProperty(path)) {
                 return getNode().getProperty(path).getBoolean();
@@ -363,7 +333,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
-        return false;
+        return defaultValue;
     }
 
     private void setBoolean(String path, boolean value) {
@@ -639,11 +609,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         }
 
         if (myField.isAutoCreated() != builtinField.isAutoCreated()) {
-            log.warn("Node type definition and description disagree on protected keyword for " + myField.toString());
+            log.warn("Node type definition and description disagree on autocreated keyword for " + myField.toString());
         }
 
         if (myField.isPrimary() != builtinField.isPrimary()) {
             log.warn("Node type definition and description disagree on primary keyword for " + myField.toString());
         }
     }
+
 }

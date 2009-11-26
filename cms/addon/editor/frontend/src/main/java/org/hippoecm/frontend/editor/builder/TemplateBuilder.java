@@ -271,10 +271,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
             updatePrototype();
         }
 
-        public Value createValue() {
-            return typeDescriptor.createValue();
-        }
-
         public Map<String, IFieldDescriptor> getDeclaredFields() {
             return new FieldMap(typeDescriptor.getDeclaredFields());
         }
@@ -334,6 +330,14 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         public void setSuperTypes(List<String> superTypes) {
             typeDescriptor.setSuperTypes(superTypes);
+        }
+
+        public boolean isValidationCascaded() {
+            return typeDescriptor.isValidationCascaded();
+        }
+
+        public void setIsValidationCascaded(boolean isCascaded) {
+            typeDescriptor.setIsValidationCascaded(isCascaded);
         }
 
         public void startObservation() {
