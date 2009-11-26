@@ -44,6 +44,10 @@
 
 [test:superMixinTest] > test:mixinTest, test:mixin
 
+[test:legacy]
+- test:a (string)
+- test:b (string)
+
 [test:uncascaded]
 - test:property (string)
 

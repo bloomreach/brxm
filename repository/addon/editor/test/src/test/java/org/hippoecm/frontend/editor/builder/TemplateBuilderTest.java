@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.builder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
@@ -27,6 +28,7 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
@@ -243,6 +245,39 @@ public class TemplateBuilderTest extends PluginTest {
         home.processEvents();
 
         assertFalse(prototype.getNode().hasProperty("test:titel_new"));
+    }
+
+    @Test
+    public void testSetPathOnNewTemplateChangesFieldName() throws Exception {
+        TemplateBuilder builder = new TemplateBuilder("test:new", false, context, new ExtPtModel());
+
+        // initialize type descriptor and template
+        ITypeDescriptor type = builder.getTypeDescriptor();
+        session.save();
+        home.processEvents();
+
+        IFieldDescriptor newField = new JavaFieldDescriptor("test", new JcrTypeStore().load("String"));
+        assertFalse("title".equals(newField.getName()));
+
+        type.addField(newField);
+        newField = type.getField(newField.getName());
+
+        newField.setPath("test:title");
+        assertEquals("title", newField.getName());
+
+        IPluginConfig fieldPlugin = null;
+        IClusterConfig cluster = builder.getTemplate();
+        List<IPluginConfig> plugins = cluster.getPlugins();
+        for (IPluginConfig plugin : plugins) {
+            if (plugin.containsKey("field")) {
+                if ("title".equals(plugin.getString("field"))) {
+                    fieldPlugin = plugin;
+                    break;
+                }
+            }
+        }
+        assertNotNull(fieldPlugin);
+        assertEquals("title", fieldPlugin.getName());
     }
 
     @Test

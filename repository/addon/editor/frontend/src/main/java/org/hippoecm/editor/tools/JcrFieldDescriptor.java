@@ -180,7 +180,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         //        setProtected(source.isProtected());
     }
 
-    void setName(String name) {
+    public void setName(String name) {
         if (name == null || "".equals(name)) {
             throw new IllegalArgumentException("Null or empty field name is not allowed");
         }

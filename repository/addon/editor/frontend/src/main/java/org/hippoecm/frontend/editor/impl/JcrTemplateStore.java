@@ -156,8 +156,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig>, IDetachable {
                 }
 
                 for (IPluginConfig plugin : cluster.getPlugins()) {
-                    String name = UUID.randomUUID().toString();
-                    Node child = node.addNode(name, FrontendNodeType.NT_PLUGIN);
+                    Node child = node.addNode(plugin.getName(), FrontendNodeType.NT_PLUGIN);
                     JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child));
                     for (Map.Entry<String, Object> entry : plugin.entrySet()) {
                         pluginConfig.put(entry.getKey(), entry.getValue());

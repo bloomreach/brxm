@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -71,10 +70,18 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateBuilder.class);
 
+    public static String getFieldName(String path, String type) {
+        if (!"*".equals(path)) {
+            return path.substring(path.indexOf(':') + 1);
+        } else {
+            return "_any_" + type.replace(':', '-');
+        }
+    }
+    
     class BuilderFieldDescriptor implements IFieldDescriptor, IDetachable {
         private static final long serialVersionUID = 6935814333088957137L;
 
-        private final IFieldDescriptor delegate;
+        private IFieldDescriptor delegate;
 
         BuilderFieldDescriptor(IFieldDescriptor descriptor) {
             delegate = descriptor;
@@ -152,6 +159,35 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         public void setPath(String path) {
             delegate.setPath(path);
+            String name = delegate.getName();
+            String newName = getFieldName(path, getTypeDescriptor().getName());
+            if (!typeDescriptor.getFields().containsKey(newName)
+                    && (currentTypeDescriptor == null || (!currentTypeDescriptor.getFields().containsKey(name) && !currentTypeDescriptor
+                            .getFields().containsKey(newName)))) {
+                JavaFieldDescriptor javaFieldDescriptor = new JavaFieldDescriptor(delegate);
+                typeDescriptor.removeField(name);
+                javaFieldDescriptor.setName(newName);
+                typeDescriptor.addField(javaFieldDescriptor);
+                delegate = typeDescriptor.getField(newName);
+            }
+            boolean containsNewName = false;
+            int position = -1;
+            List<IPluginConfig> plugins = clusterConfig.getPlugins();
+            for (int i = 0; i < plugins.size(); i++) {
+                IPluginConfig plugin = plugins.get(i);
+                if (plugin.containsKey("field") && name.equals(plugin.getString("field"))) {
+                    plugin.put("field", newName);
+                    position = i;
+                }
+                if (newName.equals(plugin.getName())) {
+                    containsNewName = true;
+                }
+            }
+            if (!containsNewName) {
+                JavaPluginConfig newPlugin = new JavaPluginConfig(newName);
+                newPlugin.putAll(plugins.get(position));
+                plugins.set(position, newPlugin);
+            }
             updatePrototype();
         }
 
@@ -464,6 +500,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private JcrPrototypeStore prototypeStore;
 
+    private ITypeDescriptor currentTypeDescriptor;
     private ITypeDescriptor typeDescriptor;
     private IClusterConfig clusterConfig;
     private JcrNodeModel prototype;
@@ -516,6 +553,12 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         try {
             typeDescriptor = jcrTypeStore.load(type);
+
+            try {
+                currentTypeDescriptor = jcrTypeStore.getCurrentType(type);
+            } catch (StoreException ex) {
+                // ignore
+            }
 
             // load template
             @SuppressWarnings("unchecked")
@@ -707,7 +750,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
         if (clusterConfig != null) {
             ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
 
-            String pluginName = UUID.randomUUID().toString();
+            String pluginName = getFieldName(fieldDescriptor.getPath(), fieldDescriptor.getTypeDescriptor().getName());
             JavaPluginConfig pluginConfig = new JavaPluginConfig(pluginName);
             if (fieldType.isNode()) {
                 pluginConfig.put("plugin.class", NodeFieldPlugin.class.getName());
