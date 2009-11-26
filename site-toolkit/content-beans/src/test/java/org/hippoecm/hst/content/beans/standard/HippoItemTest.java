@@ -23,7 +23,6 @@ import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 /**
  * Tests {@link org.hippoecm.hst.content.beans.standard.HippoItem HippoItem}.
  *
- * @author Tom van Zummeren
  */
 public class HippoItemTest {
 
@@ -111,12 +110,12 @@ public class HippoItemTest {
         HippoItem item2 = new HippoItem();
         item2.valueProvider = mockValueProvider;
 
-        //expect(mockValueProvider.getPath()).andReturn("/content/documents");
-
-        //replay(mockValueProvider);
+        replay(mockValueProvider);
 
         assertFalse(item1.equals(item2));
 
-        //verify(mockValueProvider);
+        verify(mockValueProvider);
     }
+
+    
 }
