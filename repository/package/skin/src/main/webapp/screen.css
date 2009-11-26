@@ -886,7 +886,8 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor-template-field-controls .left {background-image:url("images/icons/arrow-sort-left-16.png")} 
 .hippo-editor-template-field-controls .right {background-image:url("images/icons/arrow-sort-right-16.png")} 
 
-.hippo-editor .hippo-editor-template-field-edit input{width: 180px;}
+.hippo-editor .hippo-editor-template-field-edit input{width: 165px;}
+.hippo-editor .hippo-editor-template-field-edit input[type=checkbox]{width: 20px;}
 .hippo-editor .hippo-editor-template-field-edit .hippo-editor-field-title{display: block}
 .hippo-editor .hippo-editor-template-field-edit table{margin-top: 5px;}
 .hippo-editor .hippo-editor-template-field-edit table tr td{color: #666666; padding: 2px; }
@@ -900,6 +901,9 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor .hippo-editor-template-field-new li a:hover{text-decoration: underline}
 /* .hippo-editor .hippo-editor-template-field-new li span em{display: none;} */
 .hippo-editor-template-field-edit{padding-left: 15px; padding-right: 15px; padding-top: 10px; padding-bottom: 5px;}
+.hippo-editor-template-field-edit .hippo-editor-template-css{}
+.hippo-editor-template-field-edit .hippo-editor-template-css li div{width: 80%; float: left; overflow: hidden;}
+.hippo-editor-template-field-edit .hippo-editor-template-css li a{width: 15%; float: right;}
 
 /* subfields */
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls{background-color: #def; height: 0px; overflow-y: shown; float: right; width: 75px; display:block;}
