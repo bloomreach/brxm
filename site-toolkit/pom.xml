@@ -757,7 +757,7 @@
         <version>2.7</version>
         <configuration>
           <downloadSources>false</downloadSources>
-          <downloadJavadocs>false</downloadJavadocs>
+          <downloadJavadocs>true</downloadJavadocs>
         </configuration>
       </plugin>
       <plugin>
