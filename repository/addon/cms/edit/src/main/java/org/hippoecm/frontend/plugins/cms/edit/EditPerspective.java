@@ -18,12 +18,14 @@ package org.hippoecm.frontend.plugins.cms.edit;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -40,6 +42,10 @@ import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.validation.IValidationListener;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +58,7 @@ public class EditPerspective extends Perspective {
     private static final long serialVersionUID = 1L;
 
     private String topHeight;
-    private UnitSettings topSettings;
+    private WireframeSettings wfSettings;
     private FeedbackPanel feedback;
     private boolean feedbackShown;
 
@@ -75,12 +81,29 @@ public class EditPerspective extends Perspective {
                 return false;
             }
         });
+        feedback.setOutputMarkupId(true);
         add(feedback);
         feedbackShown = false;
 
-        WireframeSettings wfSettings = new WireframeSettings(YuiPluginHelper
-                .getConfig(config));
-        topSettings = wfSettings.getUnitSettingsByPosition("top");
+        if (config.containsKey(IValidationService.VALIDATE_ID)) {
+            context.registerService(new IValidationListener() {
+                private static final long serialVersionUID = 1L;
+
+                public void onResolve(Set<Violation> violations) {
+                }
+
+                public void onValidation(IValidationResult result) {
+                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    if (target != null) {
+                        target.addComponent(feedback);
+                    }
+                }
+
+            }, config.getString(IValidationService.VALIDATE_ID));
+        }
+
+        wfSettings = new WireframeSettings(YuiPluginHelper.getConfig(config));
+        UnitSettings topSettings = wfSettings.getUnitSettingsByPosition("top");
         topHeight = topSettings.getHeight();
         add(new WireframeBehavior(YuiPluginHelper.getManager(context), wfSettings));
     }
@@ -88,18 +111,24 @@ public class EditPerspective extends Perspective {
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        if (feedback.anyMessage()) {
-            target.addComponent(this);
-            if (!feedbackShown) {
-                topSettings.setHeight(Integer.valueOf(getPluginConfig().getAsInteger("feedback.height", 50) + Integer.parseInt(topHeight)).toString());
-                feedbackShown = true;
-            }
-        } else {
-            if (feedbackShown) {
-                target.addComponent(this);
-                topSettings.setHeight(topHeight);
-                feedbackShown = false;
-            }
+        boolean hasMessage = feedback.anyMessage();
+        UnitSettings topSettings = wfSettings.getUnitSettingsByPosition("top");
+        boolean updateTop = false;
+        if (hasMessage && !feedbackShown) {
+            topSettings.setHeight(Integer.valueOf(
+                    getPluginConfig().getAsInteger("feedback.height", 50) + Integer.parseInt(topHeight)).toString());
+            feedbackShown = true;
+            updateTop = true;
+        } else if (!hasMessage && feedbackShown) {
+            topSettings.setHeight(topHeight);
+            feedbackShown = false;
+            updateTop = true;
+        }
+        if (updateTop && isVisibleInHierarchy()) {
+            String topId = topSettings.getElementId();
+            target.appendJavascript("YAHOO.hippo.LayoutManager.findLayoutUnit(YAHOO.util.Dom.get('" + topId
+                    + "')).set('height', " + topSettings.getHeight() + ");");
+            target.addComponent(feedback);
         }
     }
 

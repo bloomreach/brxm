@@ -52,7 +52,8 @@ public class UnitSettings extends YuiObject {
 
     private static final IntSetting Z_INDEX = new IntSetting("zindex");
 
-    protected final static YuiType TYPE = new YuiType(POSITION, ID, BODY, WIDTH, HEIGHT, MIN_WIDTH, MIN_HEIGHT, GUTTER, SCROLL, RESIZE, Z_INDEX, USE_SHIM);
+    protected final static YuiType TYPE = new YuiType(POSITION, ID, BODY, WIDTH, HEIGHT, MIN_WIDTH, MIN_HEIGHT, GUTTER,
+            SCROLL, RESIZE, Z_INDEX, USE_SHIM);
 
     public static final String TOP = "top";
     public static final String RIGHT = "right";
@@ -89,7 +90,7 @@ public class UnitSettings extends YuiObject {
     public String getWidth() {
         return WIDTH.get(this);
     }
-    
+
     public void setWidth(String width) {
         WIDTH.set(width, this);
     }
@@ -118,10 +119,14 @@ public class UnitSettings extends YuiObject {
         MIN_HEIGHT.set(minHeight, this);
     }
 
+    public String getElementId() {
+        return ID.get(this).getElementId();
+    }
+
     public String getWrapperId() {
         return wrapperId;
     }
-    
+
     public void setWrapperId(String id) {
         wrapperId = id;
         notifyListeners();
