@@ -115,6 +115,16 @@ public class YuiObject implements IClusterable {
         return sb.toString();
     }
 
+    @Override
+    /**
+     * {@inheritDoc}
+     * 
+     * This method is not part of the YuiObject API.  Use #toScript instead.
+     */
+    public String toString() {
+        return toScript();
+    }
+    
     public boolean isValid() {
         return true;
     }
