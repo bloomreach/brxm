@@ -99,6 +99,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
                 public void onEvent(Iterator<? extends IEvent<JcrPropertyModel>> events) {
                     if (propertyModel.size() != nrValues || field.isOrdered()) { //Only redraw if number of properties has changed.
                         nrValues = propertyModel.size();
+                        resetValidation();
                         redraw();
                     }
                 }
