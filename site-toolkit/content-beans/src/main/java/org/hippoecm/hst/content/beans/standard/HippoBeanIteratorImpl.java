@@ -21,8 +21,8 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.core.search.HstContextualizeException;
-import org.hippoecm.hst.core.search.HstVirtualizer;
+import org.hippoecm.hst.content.beans.query.HstContextualizeException;
+import org.hippoecm.hst.content.beans.query.HstVirtualizer;
 import org.slf4j.LoggerFactory;
 
 public class HippoBeanIteratorImpl implements HippoBeanIterator{

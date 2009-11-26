@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.search;
+package org.hippoecm.hst.content.beans.query;
 
 import java.util.Set;
 
@@ -26,7 +26,7 @@ import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.LoggerFactory;
 
-public class HstVirtualizerImpl implements HstVirtualizer {
+public class HstVirtualizerImpl implements org.hippoecm.hst.content.beans.query.HstVirtualizer {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstVirtualizerImpl.class);
     
@@ -36,7 +36,7 @@ public class HstVirtualizerImpl implements HstVirtualizer {
        this.pathMappers  = pathMappers;
     }
 
-    public Node virtualize(Node canonical)  throws HstContextualizeException{
+    public Node virtualize(Node canonical)  throws org.hippoecm.hst.content.beans.query.HstContextualizeException{
         
         String path = null;
         try {
@@ -59,14 +59,14 @@ public class HstVirtualizerImpl implements HstVirtualizer {
              }
              
              // can never happen in principal
-             throw new HstContextualizeException("Unable to virtualize node '"+path+"' ");
+             throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Unable to virtualize node '"+path+"' ");
            
         } catch(PathNotFoundException e) {
             log.warn("The node '{}' cannot be virtualized. Return null", path);
             return null;
         }
         catch (RepositoryException e) {
-            throw new HstContextualizeException("Unable to virtualize node '"+path+"' " , e);
+            throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Unable to virtualize node '"+path+"' " , e);
         }
     }
 

@@ -28,7 +28,6 @@ import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
-import org.hippoecm.hst.content.beans.query.exceptions.ScopeException;
 import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
@@ -36,8 +35,6 @@ import org.hippoecm.hst.content.beans.query.filter.HstCtxWhereFilter;
 import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.search.HstContextualizeException;
-import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +52,7 @@ public class HstQueryImpl implements HstQuery {
     private int offset = -1;
     private BaseFilter filter;
     private List<Node> scopes = new ArrayList<Node>();
+    private List<Node> excludeScopes = new ArrayList<Node>();
     private boolean skipInvalidScopes = false;
     private List<String> orderByList = new ArrayList<String>();
     private NodeTypeFilter nodeTypeFilter;
@@ -225,7 +223,9 @@ public class HstQueryImpl implements HstQuery {
     public void addScopes(List<HippoBean> scopes) {
         for(HippoBean scope : scopes) {
             if(scope != null) {
-                this.scopes.add(scope.getNode());
+                Node newScope = scope.getNode();
+                removeNodeFromList(newScope, this.excludeScopes);
+                this.scopes.add(newScope);
             } else {
                 this.scopes.add(null);
             }
@@ -235,6 +235,7 @@ public class HstQueryImpl implements HstQuery {
     public void addScopes(Node[] scopes) {
        for(Node scope : scopes) {
            if(scope != null) {
+               removeNodeFromList(scope, this.excludeScopes);
                this.scopes.add(scope);
            } else {
                this.scopes.add(null);
@@ -245,5 +246,37 @@ public class HstQueryImpl implements HstQuery {
     public void setSkipInvalidScopes(boolean skipInvalidScopes) {
         this.skipInvalidScopes = skipInvalidScopes;
     }
+    
+    public void excludeScopes(List<HippoBean> scopes) {
+        for(HippoBean scope : scopes) {
+            if(scope != null) {
+                Node scopeNode = scope.getNode();
+                removeNodeFromList(scopeNode, this.scopes);
+                this.excludeScopes.add(scopeNode);
+            }
+        }
+    }
 
+    public void excludeScopes(Node[] scopes) {
+        for(Node scope : scopes) {
+            if(scope != null) {
+                removeNodeFromList(scope, this.scopes);
+                this.excludeScopes.add(scope);
+            } 
+        }
+    }
+    
+    private void removeNodeFromList(Node remove, List<Node> fromList) {
+        List<Node> removeItems = new ArrayList<Node>();
+        for(Node node : fromList) {
+            try {
+                if(node.isSame(remove)) {
+                    removeItems.add(node);
+                }
+            } catch (RepositoryException e) {
+               log.error("Ignore remove from list. Repository exception: ", e.getMessage());
+            }
+        }
+        fromList.removeAll(removeItems);
+    }
 }

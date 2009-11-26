@@ -39,7 +39,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
@@ -160,11 +159,6 @@ public class HstRequestContextImpl implements HstRequestContext {
         this.hstQueryManagerFactory = hstQueryManagerFactory;
     }
    
-    
-    public HstCtxWhereClauseComputer getHstCtxWhereClauseComputer(){
-        return this.getHstQueryManagerFactory().getHstCtxWhereClauseComputer();
-    }
-
     public Object getAttribute(String name) {
         if (name == null) {
             throw new IllegalArgumentException("attribute name cannot be null.");

@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.core.search;
 
+/**
+ * @deprecated interface moved: use {@link org.hippoecm.hst.content.beans.query.HstContextualizeException} instead
+ */
+@Deprecated
 public class HstContextualizeException extends Exception{
 
     private static final long serialVersionUID = 1L;

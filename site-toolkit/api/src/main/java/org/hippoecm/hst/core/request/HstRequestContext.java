@@ -21,13 +21,13 @@ import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
@@ -110,17 +110,7 @@ public interface HstRequestContext {
      * @return the HstSiteMenus
      */
     HstSiteMenus getHstSiteMenus();
-    
-    /**
-     * Returns a {@link HstCtxWhereClauseComputer} instance that can compute a filter (context where clause) for searching 
-     * in virtual structures.
-     * 
-     * @return HstCtxWhereClauseComputer
-     * @deprecated Use {@link HstQueryManagerFactory#getHstCtxWhereClauseComputer()} instead
-     */
-    @Deprecated
-    HstCtxWhereClauseComputer getHstCtxWhereClauseComputer();
-    
+        
     /**
      * Returns a {@link HstQueryManagerFactory} instance responsible for creating a query manager
      * @return HstQueryManagerFactory

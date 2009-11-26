@@ -19,9 +19,9 @@ import java.util.List;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.content.beans.query.HstContextualizeException;
+import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
-import org.hippoecm.hst.core.search.HstContextualizeException;
-import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

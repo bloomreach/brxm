@@ -27,7 +27,6 @@ import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.PrimaryNodeTypeFilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.slf4j.LoggerFactory;
 
 

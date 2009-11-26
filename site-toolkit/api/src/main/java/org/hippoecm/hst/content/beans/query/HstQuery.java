@@ -63,15 +63,31 @@ public interface HstQuery {
 
     /**
      * add scopes to search in. 
+     * If the exact scope is already added to exclude from the search, it is removed from the excluded list.
      * @param scopes
      */
     void addScopes(List<HippoBean> scopes);
     
     /**
      * add scopes to search in. 
+     * If the exact scope is already added to exclude from the search, it is removed from the excluded list.
      * @param scopes
      */
     void addScopes(Node[] scopes);
+    
+    /**
+     * add scopes to exclude from search. 
+     * If the exact scope is already added as a scope to search in, it is removed from there
+     * @param scopes
+     */
+    void excludeScopes(List<HippoBean> scopes);
+    
+    /**
+     * add scopes to exclude from search. 
+     * If the exact scope is already added as a scope to search in, it is removed from there
+     * @param scopes
+     */
+    void excludeScopes(Node[] scopes);
     
     /**
      * Whether invalid scopes should be skipped, or if an invalid scope is found (jcr node is null, HippoBean is empty, etc), throw 

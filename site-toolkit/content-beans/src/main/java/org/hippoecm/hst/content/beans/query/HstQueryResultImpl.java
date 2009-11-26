@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIteratorImpl;
-import org.hippoecm.hst.core.search.HstVirtualizer;
 import org.slf4j.LoggerFactory;
 
 public class HstQueryResultImpl implements HstQueryResult {

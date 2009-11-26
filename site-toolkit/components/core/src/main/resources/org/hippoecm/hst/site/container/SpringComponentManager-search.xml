@@ -25,13 +25,13 @@
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
     
     
-    <bean id="org.hippoecm.hst.core.search.HstCtxWhereClauseComputer" 
-          class="org.hippoecm.hst.core.search.HstCtxWhereClauseComputerImpl">
+      <bean id="org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer" 
+            class="org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputerImpl">
     </bean>
     
     <bean id="org.hippoecm.hst.core.search.HstQueryManagerFactory" 
           class="org.hippoecm.hst.core.search.HstQueryManagerFactoryImpl">
-          <property name="hstCtxWhereClauseComputer" ref="org.hippoecm.hst.core.search.HstCtxWhereClauseComputer" />
+          <property name="hstCtxWhereClauseComputer" ref="org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer" />
     </bean>
     
 </beans>

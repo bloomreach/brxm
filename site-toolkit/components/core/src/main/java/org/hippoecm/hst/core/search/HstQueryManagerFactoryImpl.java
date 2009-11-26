@@ -16,14 +16,15 @@
 package org.hippoecm.hst.core.search;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputerImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
 
 public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory{
 
-    private HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
+    private org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
     
-    public HstCtxWhereClauseComputer getHstCtxWhereClauseComputer() {
+    public org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer getHstCtxWhereClauseComputer() {
         if(this.hstCtxWhereClauseComputer == null) {
             // if hstCtxWhereClauseComputer not set through dependency injection, we use the default impl
             synchronized(this){
@@ -35,7 +36,7 @@ public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory{
         return this.hstCtxWhereClauseComputer;
     }
 
-    public void setHstCtxWhereClauseComputer(HstCtxWhereClauseComputer hstCtxWhereClauseComputer) {
+    public void setHstCtxWhereClauseComputer(org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer hstCtxWhereClauseComputer) {
         this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
     }
 

@@ -13,14 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.search;
+package org.hippoecm.hst.content.beans.query;
 
 import javax.jcr.Node;
 
 /**
- * @deprecated interface moved: use {@link org.hippoecm.hst.content.beans.query.HstVirtualizer} instead
+ * A virtualizer implementation converts a physical node to its virtual context aware node, or
+ * if the context wasn't virtual, it just returns the physical node
+ *
  */
-@Deprecated
 public interface HstVirtualizer {
 
     /**

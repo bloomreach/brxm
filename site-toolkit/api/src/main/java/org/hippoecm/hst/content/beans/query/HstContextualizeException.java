@@ -13,20 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.search;
+package org.hippoecm.hst.content.beans.query;
 
-import javax.jcr.Node;
+public class HstContextualizeException extends Exception{
 
-/**
- * @deprecated interface moved: use {@link org.hippoecm.hst.content.beans.query.HstVirtualizer} instead
- */
-@Deprecated
-public interface HstVirtualizer {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * @param canonical
-     * @return the canonical node as a virtual node in the right context
-     * @throws HstContextualizeException
-     */
-    Node virtualize(Node canonical) throws HstContextualizeException;
+    public HstContextualizeException(String message) {
+        super(message);
+    }
+    
+    public HstContextualizeException(String message, Throwable th) {
+        super(message, th);
+    }
 }

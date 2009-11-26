@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.search;
+package org.hippoecm.hst.content.beans.query;
 
 import java.util.List;
 
@@ -21,11 +21,12 @@ import javax.jcr.Node;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-
 /**
- * @deprecated interface moved: use {@link org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer} instead
+ * Implementations should return an xpath filter (where clause) that accounts for searching in virtual subtrees. It is AND-ed with 
+ * the where clause from a normal xpath search.  
+ * This is only needed for sites/application rendering and searching virtual structures. The actual implementation of
+ * a <code>HstCtxWhereClauseComputer</code> is accessible through <code>{@ling org.hippoecm.hst.core.request.HstRequestContext#getHstCtxWhereClauseComputer()}</code>
  */
-@Deprecated
 public interface HstCtxWhereClauseComputer {
 
     /**

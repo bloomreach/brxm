@@ -22,5 +22,5 @@ public interface HstQueryManagerFactory {
 
     HstQueryManager createQueryManager(ObjectConverter objectConverter);
     
-    HstCtxWhereClauseComputer getHstCtxWhereClauseComputer();
+    org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer getHstCtxWhereClauseComputer();
 }

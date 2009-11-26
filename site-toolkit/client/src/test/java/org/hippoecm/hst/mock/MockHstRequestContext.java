@@ -34,7 +34,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.search.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
@@ -95,10 +94,6 @@ public class MockHstRequestContext implements HstRequestContext {
 
     public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory) {
         this.hstQueryManagerFactory = hstQueryManagerFactory;
-    }
-    
-    public HstCtxWhereClauseComputer getHstCtxWhereClauseComputer(){
-        return this.getHstQueryManagerFactory().getHstCtxWhereClauseComputer();
     }
     
     public void setHstSiteMenus(HstSiteMenus siteMenus) {

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.search;
+package org.hippoecm.hst.content.beans.query;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,7 +34,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
+public class HstCtxWhereClauseComputerImpl implements org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer{
 
     public final static Logger log = LoggerFactory.getLogger(HstCtxWhereClauseComputerImpl.class.getName()); 
     
@@ -43,13 +43,13 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
      * 
      * As we have multiple scope, we try every scope, with the deepest scopes first. Therefor, a sorted treeSet is used
      */
-    public HstVirtualizer getVirtualizer(List<Node> scopes, boolean skipInvalidScopes) throws HstContextualizeException{
+    public org.hippoecm.hst.content.beans.query.HstVirtualizer getVirtualizer(List<Node> scopes, boolean skipInvalidScopes) throws org.hippoecm.hst.content.beans.query.HstContextualizeException{
         // sortable set as first the deepest paths, which are the most precise, most be tried as virtualizer.
         Set<KeyValue<String, String>> pathMappers = new TreeSet<KeyValue<String, String>>();
         for(Node scope : scopes ) {
             try {
                 pathMappers.add(getPathMapper(scope));
-            } catch (HstContextualizeException e){
+            } catch (org.hippoecm.hst.content.beans.query.HstContextualizeException e){
                 if(skipInvalidScopes) {
                     log.info("Skipping invalid scope: {}", e.getMessage());
                 } else {
@@ -61,15 +61,15 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
         return new HstVirtualizerImpl(pathMappers);
     }
     
-    public HstVirtualizer getVirtualizer(Node scope) throws HstContextualizeException{
+    public org.hippoecm.hst.content.beans.query.HstVirtualizer getVirtualizer(Node scope) throws org.hippoecm.hst.content.beans.query.HstContextualizeException{
         Set<KeyValue<String, String>> pathMappers = new HashSet<KeyValue<String, String>>();
         pathMappers.add(getPathMapper(scope));
         return new HstVirtualizerImpl(pathMappers);
     }
     
-    protected Mapper getPathMapper(Node scope) throws HstContextualizeException{
+    protected Mapper getPathMapper(Node scope) throws org.hippoecm.hst.content.beans.query.HstContextualizeException{
         if(scope == null) {
-            throw new HstContextualizeException("Cannot create a Virtualizer for a scope that is null" );
+            throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Cannot create a Virtualizer for a scope that is null" );
         }
         try {
             Session session = scope.getSession();
@@ -84,7 +84,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                        contentFacetSelectNode = start.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
                        break;
                    } else {
-                       throw new HstContextualizeException("Cannot create a Virtualizer for : " + scope.getPath());
+                       throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Cannot create a Virtualizer for : " + scope.getPath());
                    }
                 }
             }
@@ -92,14 +92,14 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 return new Mapper("/", "/");
             }
             if(contentFacetSelectNode == null || !contentFacetSelectNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                throw new HstContextualizeException("Cannot create a Virtualizer for : " + scope.getPath());
+                throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Cannot create a Virtualizer for : " + scope.getPath());
             }
            
             String docbase = contentFacetSelectNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
             try {
                 UUID.fromString(docbase);
             } catch (IllegalArgumentException e){
-                throw new HstContextualizeException("Unable to create a Virtualizer: '{}'", e);
+                throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Unable to create a Virtualizer: '{}'", e);
             }
             
             Node canonicalContentNode = session.getNodeByUUID(docbase);
@@ -108,7 +108,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             String contentFacetSelectNodePath = contentFacetSelectNode.getPath();
             return new Mapper(canonicalContentNodePath,contentFacetSelectNodePath);
         } catch (RepositoryException e) {
-           throw new HstContextualizeException("Unable to create a Virtualizer: '{}'", e);
+           throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Unable to create a Virtualizer: '{}'", e);
         }
     }
     
@@ -117,9 +117,9 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
         String toPath;
         int length;
 
-        Mapper(String fromPath, String toPath) throws HstContextualizeException {
+        Mapper(String fromPath, String toPath) throws org.hippoecm.hst.content.beans.query.HstContextualizeException {
             if (fromPath == null || toPath == null) {
-                throw new HstContextualizeException("Unable to create a Virtualizer for null path");
+                throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Unable to create a Virtualizer for null path");
             }
             this.fromPath = fromPath;
             this.toPath = toPath;
@@ -178,27 +178,27 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
         }
     }
     
-    public String getCtxWhereClause(Node node) throws HstContextualizeException{
+    public String getCtxWhereClause(Node node) throws org.hippoecm.hst.content.beans.query.HstContextualizeException{
         StringBuilder facetSelectClauses = new StringBuilder();
         String path = null;
         if(node == null) {
-            throw new HstContextualizeException("Unable to create context where clause for a node (scope) that is null.");
+            throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Unable to create context where clause for a node (scope) that is null.");
         }
         try {
             path = node.getPath();
             if(!(node instanceof HippoNode)) {
-                throw new HstContextualizeException("Cannot compute a context where clause for a non HippoNode : " + node.getPath());
+                throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Cannot compute a context where clause for a non HippoNode : " + node.getPath());
             }
             
             HippoNode hnode = (HippoNode)node;
             HippoNode canonical = (HippoNode)hnode.getCanonicalNode();
             
             if(canonical == null) {
-                throw new HstContextualizeException("Cannot compute a context where clause for a node that does not have a physical equivalence : " + node.getPath());
+                throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Cannot compute a context where clause for a node that does not have a physical equivalence : " + node.getPath());
             }
             
             if(!canonical.isNodeType("mix:referenceable") && !canonical.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                throw new  HstContextualizeException("Cannot create a context where clause for node '"+canonical.getPath()+"'");
+                throw new  org.hippoecm.hst.content.beans.query.HstContextualizeException("Cannot create a context where clause for node '"+canonical.getPath()+"'");
             }
             if (canonical.isSame(node)){
                 // either the site content root node (hst:content) or just a physical node.
@@ -223,11 +223,11 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             }
         } catch (RepositoryException e) {
            log.warn("Unable to get Context where clause: '{}'", e);
-           throw new HstContextualizeException("Unable to get Context where clause", e);
+           throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Unable to get Context where clause", e);
         }
         
         if(facetSelectClauses.length() == 0) {
-            throw new HstContextualizeException("Exception during creating ContextWhereClause. Cannot create a proper search.");
+            throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Exception during creating ContextWhereClause. Cannot create a proper search.");
         }
         facetSelectClauses.append(" and not(@jcr:primaryType='nt:frozenNode')");
         log.debug("For node '{}' the ctxWhereClause is '{}'", path , facetSelectClauses.toString());
@@ -235,7 +235,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
     }
     
     // TODO HSTTWO-849 : improve the combined context computed by not repeating specific parts of all the scopes that do not add new criteria to the search
-    public String getCtxWhereClause(List<Node> scopes, boolean skipInvalidScopes) throws HstContextualizeException {
+    public String getCtxWhereClause(List<Node> scopes, boolean skipInvalidScopes) throws org.hippoecm.hst.content.beans.query.HstContextualizeException {
         StringBuilder combinedCtxClauses = new StringBuilder();
         List<String> ctxes = new ArrayList<String>();
         for(Node scope : scopes) {
@@ -244,7 +244,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 if(ctxForScope != null && !"".equals(ctxForScope)) {
                     ctxes.add(ctxForScope);
                 }
-            } catch (HstContextualizeException e) {
+            } catch (org.hippoecm.hst.content.beans.query.HstContextualizeException e) {
                 if(skipInvalidScopes) {
                     log.info("Skipping invalid scope: {}", e.getMessage());
                 } else {
@@ -253,7 +253,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             }
         }
         if(ctxes.size() == 0) {
-            throw new HstContextualizeException("At least one valid scope to search in must be present. No valid scopes found. ");
+            throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("At least one valid scope to search in must be present. No valid scopes found. ");
         }
         
         if(ctxes.size() == 1) {
@@ -272,7 +272,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
         
     }
     
-    private void getFacetSelectClauses(Session jcrSession, HippoNode node, StringBuilder facetSelectClauses, boolean traversUp) throws HstContextualizeException{
+    private void getFacetSelectClauses(Session jcrSession, HippoNode node, StringBuilder facetSelectClauses, boolean traversUp) throws org.hippoecm.hst.content.beans.query.HstContextualizeException{
         try {
             if(node == null || node.isSame(jcrSession.getRootNode())) {
                 return;
@@ -304,7 +304,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                     }
                 } else {
                     log.warn("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
-                    throw new HstContextualizeException("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
+                    throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("Skipping invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
                 }
             }
             
@@ -326,7 +326,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             }
         } catch (RepositoryException e) {
             log.warn("RepositoryException while trying to resolve facetselect clauses. Return null");
-            throw new HstContextualizeException("RepositoryException while trying to resolve facetselect clauses. Return null", e);
+            throw new org.hippoecm.hst.content.beans.query.HstContextualizeException("RepositoryException while trying to resolve facetselect clauses. Return null", e);
         }
         
     }
