@@ -342,6 +342,10 @@ public interface HippoNodeType {
     /**
      * 
      */
+    final public static String HIPPO_CASCADEVALIDATION = "hipposysedit:cascadevalidation";
+    /**
+     * 
+     */
     final public static String HIPPO_CLASS = "hippo:class";
     /**
      * 
