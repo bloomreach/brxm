@@ -226,8 +226,13 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * A convenience method capable of comparing two HippoBean instances for you for the underlying jcr node. 
      * 
      * When the nodes being compared have the same canonical node (physical equivalence) this method returns true.
+     * If there is no canonical node the virtual jcr path is used to compare the items: if these paths are the same, true is returned
+     * 
+     * <b>Note: this method compares the jcr path of the backing canonical jcr nodes. The {@link #equals(Object)} tests
+     * the jcr node path, which might be a virtual path. So this method can return true while {@link #equals(Object)} returns false</b>
+     * 
      * @param compare the object to compare to
-     * @return <code>true</code> if the object compared has the same canonical node
+     * @return <code>true</code> if the object compared has the same canonical node or the same virtual path when they don't have a canonical
      */
     
     boolean equalCompare(Object compare);
@@ -240,7 +245,11 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * 
      * <code>${mydocument.equalComparator[otherdocument]}</code>
      * 
-     * this only returns true when mydocument and otherdocument have the same canonical node
+     * returns true when mydocument and otherdocument have the same canonical node
+     * If there is no canonical node the virtual jcr path is used to compare the items: if these paths are the same, true is returned
+     * 
+     * <b>Note: this method compares the jcr path of the backing canonical jcr nodes. The {@link #equals(Object)} tests
+     * the jcr node path, which might be a virtual path. So this method can return true while {@link #equals(Object)} returns false</b>
      * 
      * @return a ComparatorMap in which you can compare HippoBean's via the get(Object o)
      */

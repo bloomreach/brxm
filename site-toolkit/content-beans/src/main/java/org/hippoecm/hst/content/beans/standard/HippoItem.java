@@ -48,6 +48,7 @@ public class HippoItem implements HippoBean {
     protected String canonicalId;
     protected transient Node node;
     protected String path;
+    protected String comparePath;
     protected JCRValueProvider valueProvider;
     protected transient ObjectConverter objectConverter;
     protected boolean detached = false;
@@ -473,28 +474,48 @@ public class HippoItem implements HippoBean {
             }
 
             HippoItem compareItem = (HippoItem) compare;
-            if (compareItem.canonicalId == null) {
+            
+            if (compareItem.comparePath == null) {
                 HippoNode node = (HippoNode) compareItem.getNode();
                 if (node == null) {
                     return false;
                 }
-                compareItem.canonicalId = compareItem.getCanonicalUUID();
-                if (compareItem.canonicalId == null) {
+                Node canonical = null;
+                try {
+                    canonical = node.getCanonicalNode();
+                    if (canonical == null) {
+                        // virtual only
+                        compareItem.comparePath = node.getPath();
+                    } else {
+                        compareItem.comparePath = canonical.getPath();
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Repository exception during compare", e);
                     return false;
                 }
+               
             }
-            if (HippoItem.this.canonicalId == null) {
+            if (HippoItem.this.comparePath == null) {
                 HippoNode node = (HippoNode) HippoItem.this.getNode();
                 if (node == null) {
                     return false;
                 }
-                HippoItem.this.canonicalId = HippoItem.this.getCanonicalUUID();
-                if (HippoItem.this.canonicalId == null) {
+                Node canonical = null;
+                try {
+                    canonical = node.getCanonicalNode();
+                    if (canonical == null) {
+                        // virtual only
+                        HippoItem.this.comparePath = node.getPath();
+                    } else {
+                        HippoItem.this.comparePath = canonical.getPath();
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Repository exception during compare", e);
                     return false;
                 }
             }
-            if (compareItem.canonicalId != null && HippoItem.this.canonicalId != null) {
-                return compareItem.canonicalId.equals(HippoItem.this.canonicalId);
+            if (compareItem.comparePath != null && HippoItem.this.comparePath != null) {
+                return compareItem.comparePath.equals(HippoItem.this.comparePath);
             }
             return false;
         }
