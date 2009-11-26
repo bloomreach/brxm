@@ -133,9 +133,32 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * Returns the parent bean wrt this bean. Note that this does not automatically imply
      * a bean with the parent jcr node of this bean. When the parent node is of type "hippo:handle",
      * the parent of the handle must be taken
-     * @return the parent bean wrt this bean, or if the object converter cannot create a bean for the parent, return <code>null</code>
+     * @return the parent bean wrt this bean, or if this bean backing jcr node is null or object converter cannot create a bean for the parent, return <code>null</code>
      */
     HippoBean getParentBean();
+    
+    
+    /**
+     * Returns the 'real' contextual (preview / live context) bean version of this bean. Most of the time, this is just the current bean. However, 
+     * when the current bean is below some parent bean because it was mirrored by this parent, then, this method returns
+     * the 'real' contextual version, where the {@link #getParentBean()} also returns the contextualized version of the physical parent
+     * 
+     * <b>note: this is quite an expensive check </b>
+     * @return the contextual bean for this bean, or <code>null</code> if it fails to contextualize this bean 
+     */
+    HippoBean getContextualBean();
+    
+    /**
+     * @see {@link #getParentBean()}, only this method returns the 'real' contextual parent bean. Suppose I have some HippoBean (= myBean), that 
+     * I got through a mirror, in other, words, the HippoBean is below the document (=docA) that had the mirror (link). {@link #getParentBean()} will
+     * return a bean for <code>docA</code>, but this is not the 'real' contextual parent bean of <code>myBean</code>. The 'real' contextual parent can be 
+     * fetched through this method. Note, that when <code>myBean</code> was not the result of a mirror, that {@link #getParentBean()} will then return the 
+     * same bean
+     * 
+     * <b>note: this is quite an expensive check </b>
+     * @return the 'unmirrored' parent bean in wrt this bean, but still in context, or if this bean backing jcr node is null or if the object converter cannot create a bean for the parent, return <code>null</code>
+     */
+    HippoBean getContextualParentBean();
     
     /**
      * @param <T>

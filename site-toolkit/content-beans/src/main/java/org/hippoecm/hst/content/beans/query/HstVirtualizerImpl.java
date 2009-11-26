@@ -58,7 +58,6 @@ public class HstVirtualizerImpl implements HstVirtualizer {
                  }
              }
              
-             // can never happen in principal
              throw new HstContextualizeException("Unable to virtualize node '"+path+"' ");
            
         } catch(PathNotFoundException e) {
