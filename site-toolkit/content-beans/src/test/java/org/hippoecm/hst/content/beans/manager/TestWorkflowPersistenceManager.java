@@ -36,7 +36,7 @@ import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestPersistableObjectBeanManager extends AbstractBeanTestCase {
+public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
     
     private static final String HIPPOSTD_FOLDER_NODE_TYPE = "hippostd:folder";
     private static final String TEST_DOCUMENT_NODE_TYPE = "testproject:textpage";
@@ -55,7 +55,7 @@ public class TestPersistableObjectBeanManager extends AbstractBeanTestCase {
     private static final String TEST_AUTO_NEW_FOLDER_NODE_NAME = "comments/tests";
     private static final String TEST_AUTO_NEW_FOLDER_NODE_PATH = TEST_CONTENTS_PATH + "/" + TEST_AUTO_NEW_FOLDER_NODE_NAME;
     
-    private WorkflowPersistenceManager cpm;
+    private WorkflowPersistenceManager wpm;
     private Map<String, ContentNodeBinder> persistBinders;
     
     @Before
@@ -75,8 +75,8 @@ public class TestPersistableObjectBeanManager extends AbstractBeanTestCase {
             
             session = this.getSession();
             
-            cpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
-            cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+            wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
                 public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
                     FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
                     fraw.requestPublication();
@@ -84,28 +84,28 @@ public class TestPersistableObjectBeanManager extends AbstractBeanTestCase {
             });
             
             // basic object retrieval from the content
-            PersistableTextPage page = (PersistableTextPage) cpm.getObject(TEST_EXISTING_DOCUMENT_NODE_PATH);
+            PersistableTextPage page = (PersistableTextPage) wpm.getObject(TEST_EXISTING_DOCUMENT_NODE_PATH);
             assertNotNull(page);
             
             try {
                 // create a document with type and name 
-                cpm.create(TEST_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, TEST_NEW_DOCUMENT_NODE_NAME);
+                wpm.create(TEST_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, TEST_NEW_DOCUMENT_NODE_NAME);
             
                 // retrieves the document created just before
-                PersistableTextPage newPage = (PersistableTextPage) cpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+                PersistableTextPage newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
                 assertNotNull(newPage);
                 
                 newPage.setTitle("Collaboration Portal Title");
                 newPage.setBodyContent("<h1>Welcome to the Collaboration Portal!</h1>");
 
-                // custom mapping binder is already provided during CPM instantiation.
+                // custom mapping binder is already provided during WPM instantiation.
                 // but you can also provide your custom binder as the second parameter.
                 // if any binder is not found and the first parameter (newPage) is instanceof ContentPersistenceBinder,
                 // then the POJO object in the first parameter will be used as a binder. 
-                cpm.update(newPage);
+                wpm.update(newPage);
                 
                 // retrieves the document created just before
-                newPage = (PersistableTextPage) cpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+                newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
                 assertEquals("Collaboration Portal Title", newPage.getTitle());
                 assertEquals("<h1>Welcome to the Collaboration Portal!</h1>", newPage.getBodyContent());
                 
@@ -113,12 +113,12 @@ public class TestPersistableObjectBeanManager extends AbstractBeanTestCase {
                 PersistableTextPage newPage = null;
                 
                 try {
-                    newPage = (PersistableTextPage) cpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+                    newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
                 } catch (Exception e) {
                 }
                 
                 if (newPage != null) {
-                    cpm.remove(newPage);
+                    wpm.remove(newPage);
                 }
             }
         } finally {
@@ -127,7 +127,7 @@ public class TestPersistableObjectBeanManager extends AbstractBeanTestCase {
         
     }
     
-    //@Test
+    @Test
     public void testFolderCreateRemove() throws Exception {
         Session session = null;
         
@@ -136,32 +136,32 @@ public class TestPersistableObjectBeanManager extends AbstractBeanTestCase {
             
             session = this.getSession();
             
-            cpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
             
             HippoFolderBean newFolder = null;
             
             try {
                 // create a document with type and name 
-                cpm.create(TEST_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, TEST_NEW_FOLDER_NODE_NAME);
+                wpm.create(TEST_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, TEST_NEW_FOLDER_NODE_NAME);
             
                 // retrieves the document created just before
-                newFolder = (HippoFolderBean) cpm.getObject(TEST_NEW_FOLDER_NODE_PATH);
+                newFolder = (HippoFolderBean) wpm.getObject(TEST_NEW_FOLDER_NODE_PATH);
                 assertNotNull(newFolder);
                 
             } finally {
                 if (newFolder != null) {
-                    cpm.remove(newFolder);
+                    wpm.remove(newFolder);
                 }
             }
             
-            cpm.save();
+            wpm.save();
         } finally {
             if (session != null) session.logout();
         }
         
     }
     
-    //@Test
+    @Test
     public void testFolderAutoCreateRemove() throws Exception {
         Session session = null;
         
@@ -170,25 +170,25 @@ public class TestPersistableObjectBeanManager extends AbstractBeanTestCase {
             
             session = this.getSession();
             
-            cpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
             
             HippoFolderBean newFolder = null;
             
             try {
                 // create a document with type and name 
-                cpm.create(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, "testfolder", true);
+                wpm.create(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, "testfolder", true);
             
                 // retrieves the document created just before
-                newFolder = (HippoFolderBean) cpm.getObject(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/testfolder");
+                newFolder = (HippoFolderBean) wpm.getObject(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/testfolder");
                 assertNotNull(newFolder);
                 
             } finally {
                 if (newFolder != null) {
-                    cpm.remove(newFolder);
+                    wpm.remove(newFolder);
                 }
             }
             
-            cpm.save();
+            wpm.save();
         } finally {
             if (session != null) session.logout();
         }

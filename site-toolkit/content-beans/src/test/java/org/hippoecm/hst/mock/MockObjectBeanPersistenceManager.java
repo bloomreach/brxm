@@ -31,7 +31,7 @@ import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 
 /**
- * Simple in-memory implementation for <CODE>ContentPersistenceManager</CODE> interface.
+ * Simple in-memory implementation for <CODE>MockObjectBeanPersistenceManager</CODE> interface.
  * <P>
  * This implementation assumes that a content object has 'path' bean property to indicate
  * from which absolute path the content object is originated.
@@ -53,7 +53,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
  * 
  * @version $Id$
  */
-public class MockContentPersistenceManager implements ObjectBeanPersistenceManager {
+public class MockObjectBeanPersistenceManager implements ObjectBeanPersistenceManager {
     
     protected Map<String, Object> pathToObjectMap = new HashMap<String, Object>();
     protected Map<Object, String> objectToPathMap = new HashMap<Object, String>();
