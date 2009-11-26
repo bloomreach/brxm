@@ -22,54 +22,54 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
-import org.hippoecm.hst.mock.MockContentPersistenceManager;
+import org.hippoecm.hst.mock.MockObjectBeanPersistenceManager;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestContentPersistenceManager {
+public class TestObjectBeanPersistenceManager {
     
-    private ObjectBeanPersistenceManager cpm;
+    private ObjectBeanPersistenceManager mpm;
     private Comment comment1;
     private Comment comment2;
     
     @Before
     public void setUp() throws Exception {
-        cpm = new MockContentPersistenceManager();
+        mpm = new MockObjectBeanPersistenceManager();
         
         comment1 = new Comment("/content/blog/comments/comment1", "00000000-0000-0000-0000-000000000001", "comment1 - title", "comment1 - content");
-        ((MockContentPersistenceManager) cpm).setObject(comment1.getPath(), comment1);
+        ((MockObjectBeanPersistenceManager) mpm).setObject(comment1.getPath(), comment1);
         comment2 = new Comment("/content/blog/comments/comment2", "00000000-0000-0000-0000-000000000002", "comment2 - title", "comment2 - content");
-        ((MockContentPersistenceManager) cpm).setObject(comment2.getPath(), comment2);
+        ((MockObjectBeanPersistenceManager) mpm).setObject(comment2.getPath(), comment2);
     }
 
     @Test
     public void testBasicUsage() throws Exception {
-        Comment testComment1 = (Comment) cpm.getObject("/content/blog/comments/comment1");
+        Comment testComment1 = (Comment) mpm.getObject("/content/blog/comments/comment1");
         assertEquals(comment1, testComment1);
         
-        Comment testComment2 = (Comment) cpm.getObject("/content/blog/comments/comment2");
+        Comment testComment2 = (Comment) mpm.getObject("/content/blog/comments/comment2");
         assertEquals(comment2, testComment2);
         
-        Comment testComment3 = (Comment) cpm.getObjectByUuid("00000000-0000-0000-0000-000000000001");
+        Comment testComment3 = (Comment) mpm.getObjectByUuid("00000000-0000-0000-0000-000000000001");
         assertEquals(comment1, testComment3);
         
-        Comment testComment4 = (Comment) cpm.getObjectByUuid("00000000-0000-0000-0000-000000000002");
+        Comment testComment4 = (Comment) mpm.getObjectByUuid("00000000-0000-0000-0000-000000000002");
         assertEquals(comment2, testComment4);
         
         testComment1.setTitle("testcomment1 - title");
         testComment1.setContent("testcomment1 - content");
         
-        cpm.update(testComment1);
+        mpm.update(testComment1);
         
-        Comment testComment12 = (Comment) cpm.getObject("/content/blog/comments/comment1");
+        Comment testComment12 = (Comment) mpm.getObject("/content/blog/comments/comment1");
         assertFalse(comment1.equals(testComment12));
         assertEquals(testComment1, testComment12);
         
-        cpm.remove(testComment1);
-        Comment testComment13 = (Comment) cpm.getObject("/content/blog/comments/comment1");
+        mpm.remove(testComment1);
+        Comment testComment13 = (Comment) mpm.getObject("/content/blog/comments/comment1");
         assertTrue(testComment13 == null);
         
-        cpm.save();
+        mpm.save();
     }
     
     public static class Comment implements Serializable {
