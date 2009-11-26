@@ -85,7 +85,9 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         JcrTypeDescriptor result = types.get(name);
         if (result == null) {
             try {
-                Node typeNode = lookupConfigNode(name);
+                TypeInfo info = new TypeInfo(name);
+                TypeVersion version = info.getLatest();
+                Node typeNode = version.getTypeNode(getJcrSession());
                 if (typeNode != null) {
                     result = createTypeDescriptor(typeNode, name);
                     // do validation on type
@@ -178,50 +180,20 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         }
     }
 
+    public ITypeDescriptor getCurrentType(String type) throws StoreException {
+        try {
+            TypeInfo info = new TypeInfo(type);
+            TypeVersion current = info.getCurrent();
+            return createTypeDescriptor(current.getTypeNode(getJcrSession()), type);
+        } catch (RepositoryException e) {
+            throw new StoreException("Could not find current type descriptor", e);
+        }
+    }
+
     // Privates
 
     private Session getJcrSession() {
         return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-    }
-
-    private Node lookupConfigNode(String type) throws RepositoryException {
-        HippoSession session = (HippoSession) getJcrSession();
-
-        TypeInfo info = new TypeInfo(type);
-        String path = info.getPath();
-
-        if (!session.itemExists(path) || !session.getItem(path).isNode()) {
-            return null;
-        }
-        NodeIterator iter = ((Node) session.getItem(path)).getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(
-                HippoNodeType.HIPPOSYSEDIT_NODETYPE);
-
-        boolean latest = true;
-        String uri = info.getNamespace().getCurrentUri();
-        String prefix;
-        if (type.indexOf(':') > 0) {
-            prefix = type.substring(0, type.indexOf(':'));
-            String typeUri = getJcrSession().getWorkspace().getNamespaceRegistry().getURI(prefix);
-            if (!typeUri.equals(uri)) {
-                latest = false;
-                uri = typeUri;
-            }
-        } else {
-            prefix = "system";
-        }
-
-        Node current = null;
-        while (iter.hasNext()) {
-            Node node = iter.nextNode();
-            if (latest && !node.isNodeType(HippoNodeType.NT_REMODEL)) {
-                return node;
-            } else {
-                if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                    current = node;
-                }
-            }
-        }
-        return current;
     }
 
     private JcrTypeDescriptor createTypeDescriptor(Node typeNode, String type) throws RepositoryException {
@@ -238,8 +210,10 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
     private class TypeInfo {
         JcrNamespace nsInfo;
         String subType;
+        String type;
 
         TypeInfo(String type) throws RepositoryException {
+            this.type = type;
             String prefix = "system";
             subType = type;
             if (type.indexOf(':') > 0) {
@@ -256,6 +230,70 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         String getPath() {
             return nsInfo.getPath() + "/" + subType;
         }
+
+        TypeVersion getLatest() throws RepositoryException {
+            boolean latest = true;
+            String uri = getNamespace().getCurrentUri();
+            String prefix;
+            if (type.indexOf(':') > 0) {
+                prefix = type.substring(0, type.indexOf(':'));
+                String typeUri = getJcrSession().getWorkspace().getNamespaceRegistry().getURI(prefix);
+                if (!typeUri.equals(uri)) {
+                    latest = false;
+                    uri = typeUri;
+                }
+            } else {
+                prefix = "system";
+            }
+
+            return new TypeVersion(this, latest, uri);
+        }
+
+        TypeVersion getCurrent() throws RepositoryException {
+            String prefix = "system";
+            String uri = null;
+            if (type.indexOf(':') > 0) {
+                prefix = type.substring(0, type.indexOf(':'));
+                uri = getJcrSession().getWorkspace().getNamespaceRegistry().getURI(prefix);
+            }
+            return new TypeVersion(this, false, uri);
+        }
     }
 
+    private class TypeVersion {
+
+        TypeInfo info;
+        boolean latest;
+        String uri;
+
+        public TypeVersion(TypeInfo info, boolean latest, String uri) {
+            this.info = info;
+            this.latest = latest;
+            this.uri = uri;
+        }
+
+        Node getTypeNode(Session session) throws RepositoryException {
+            String path = info.getPath();
+            if (!session.itemExists(path) || !session.getItem(path).isNode()) {
+                return null;
+            }
+
+            NodeIterator iter = ((Node) session.getItem(path)).getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(
+                    HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+
+            Node current = null;
+            while (iter.hasNext()) {
+                Node node = iter.nextNode();
+                if (latest && !node.isNodeType(HippoNodeType.NT_REMODEL)) {
+                    return node;
+                } else {
+                    if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
+                        current = node;
+                    }
+                }
+            }
+            return current;
+            
+        }
+    }
 }

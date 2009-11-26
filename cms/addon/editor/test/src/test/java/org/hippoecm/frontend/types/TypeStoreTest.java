@@ -121,4 +121,21 @@ public class TypeStoreTest extends PluginTest {
         assertEquals("test:test", superTypes.get(0));
     }
 
+    @Test
+    public void testLegacyFormat() throws Exception {
+        JcrTypeStore typeStore = new JcrTypeStore();
+        ITypeDescriptor descriptor = typeStore.load("test:legacy");
+        assertNotNull(descriptor);
+        assertEquals("test:legacy", descriptor.getType());
+
+        assertEquals(2, descriptor.getFields().size());
+        
+        IFieldDescriptor field = descriptor.getField("a");
+        assertNotNull(field);
+        assertEquals("a", field.getName());
+
+        field = descriptor.getField("b");
+        assertNotNull(field);
+        assertEquals("b", field.getName());
+    }
 }

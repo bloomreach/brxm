@@ -35,6 +35,7 @@ public class FieldEditor extends Panel {
 
     private static final long serialVersionUID = 1L;
 
+    private String prefix;
     private ITypeDescriptor type;
     private boolean edit;
 
@@ -44,15 +45,28 @@ public class FieldEditor extends Panel {
         this.type = type;
         this.edit = edit;
 
+        prefix = null;
+        String typeName = type.getType();
+        if (typeName.indexOf(':') > 0) {
+            prefix = typeName.substring(0, typeName.indexOf(':'));
+        }
         addFormField(new TextField<String>("path", new IModel<String>() {
             private static final long serialVersionUID = 1L;
 
             public String getObject() {
-                return getDescriptor().getPath();
+                String path = getDescriptor().getPath();
+                if (path.indexOf(':') > 0 && path.startsWith(prefix)) {
+                    return path.substring(prefix.length() + 1);
+                }
+                return path;
             }
 
-            public void setObject(String object) {
-                getDescriptor().setPath(object);
+            public void setObject(String path) {
+                if (path.indexOf(':') < 0) {
+                    getDescriptor().setPath(prefix + ":" + path);
+                } else {
+                    getDescriptor().setPath(path);
+                }
             }
 
             public void detach() {
@@ -113,7 +127,7 @@ public class FieldEditor extends Panel {
 
             @Override
             public String load() {
-                if(getDescriptor().isMultiple()) {
+                if (getDescriptor().isMultiple()) {
                     return "";
                 } else {
                     return "disabled";

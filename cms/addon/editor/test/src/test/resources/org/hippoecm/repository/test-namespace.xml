@@ -661,5 +661,85 @@
     </sv:node>
   </sv:node>
   <!-- "test:uncascaded"-->
+  <!-- "test:legacy"-->
+  <sv:node sv:name="legacy">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposysedit:templatetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposysedit:nodetype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:hardhandle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hipposysedit:nodetype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposysedit:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hipposysedit:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
+        </sv:property>
+        <sv:node sv:name="hipposysedit:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:name" sv:type="String">
+            <sv:value>a</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>test:a</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hipposysedit:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:name" sv:type="String">
+            <sv:value>b</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>test:b</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <!-- "test:legacy"-->
+  <!-- "test:new"-->
+  <sv:node sv:name="new">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposysedit:templatetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposysedit:nodetype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:hardhandle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hipposysedit:nodetype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposysedit:nodetype</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <!-- "test:new"-->
 </sv:node>
 

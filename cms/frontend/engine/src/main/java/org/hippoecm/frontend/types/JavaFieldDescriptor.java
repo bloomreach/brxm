@@ -44,12 +44,12 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
     private boolean primary;
 
     private IObservationContext obContext;
-    
+
     public JavaFieldDescriptor(String prefix, ITypeDescriptor type) {
         this.type = type;
         this.path = prefix + ":" + type.getName().toLowerCase().replace(':', '_');
         this.excluded = null;
-        this.name = UUID.randomUUID().toString();
+        this.name = type.getName().toLowerCase().replace(':', '_');
 
         multiple = protect = autocreated = mandatory = ordered = primary = false;
     }
@@ -69,6 +69,10 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getType() {
@@ -103,7 +107,7 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
     public void setAutoCreated(boolean autocreated) {
         this.autocreated = autocreated;
     }
-    
+
     public boolean isProtected() {
         return protect;
     }

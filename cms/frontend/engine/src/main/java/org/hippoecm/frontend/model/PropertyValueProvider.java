@@ -233,7 +233,8 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
     }
 
     private Value createValue() throws UnsupportedRepositoryOperationException, RepositoryException {
-        ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
+        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        ValueFactory factory = session.getValueFactory();
         int propertyType = PropertyType.valueFromName(type.getType());
         switch (propertyType) {
         case PropertyType.BOOLEAN:
@@ -249,7 +250,7 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
         case PropertyType.PATH:
             return factory.createValue("/", PropertyType.PATH);
         case PropertyType.REFERENCE:
-            return factory.createValue(UUID.randomUUID().toString(), PropertyType.REFERENCE);
+            return factory.createValue(session.getRootNode().getUUID(), PropertyType.REFERENCE);
         case PropertyType.STRING:
         case PropertyType.UNDEFINED:
             return factory.createValue("", PropertyType.STRING);
