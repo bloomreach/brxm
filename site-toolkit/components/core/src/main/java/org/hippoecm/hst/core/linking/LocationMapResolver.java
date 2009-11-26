@@ -17,10 +17,12 @@ package org.hippoecm.hst.core.linking;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
@@ -50,8 +52,9 @@ public class LocationMapResolver {
     
     // the resolved sitemap item of the current request
     private ResolvedSiteMapItem resolvedSiteMapItem;
-    
-    private List<LocationMapTreeItem> checkedLocationMapTreeItems = new ArrayList<LocationMapTreeItem>();
+
+    private Set<LocationMapTreeItem> checkedLocationMapTreeItems = new HashSet<LocationMapTreeItem>();
+    private Set<LocationMapTreeItem> globalCheckedLocationMapTreeItems = new HashSet<LocationMapTreeItem>();
     private Map<String,String> propertyPlaceHolderMap = new HashMap<String,String>();
     
     public LocationMapResolver(LocationMapTree locationMapTree) {
@@ -88,11 +91,18 @@ public class LocationMapResolver {
         if(locationMapTreeItem != null) {
             while(matchingSiteMapItem == null) {
                 propertyPlaceHolderMap.clear();
-                matchedLocationMapTreeItem =  resolveMatchingLocationMapTreeItem(locationMapTreeItem, 1, elements);
-                if(matchedLocationMapTreeItem == null) {
-                    // we did not find a matching sitemap item not having the first entry as a wildcard
+                checkedLocationMapTreeItems.clear();
+                checkedLocationMapTreeItems.addAll(globalCheckedLocationMapTreeItems);
+                LocationMapTreeItem newMatched = resolveMatchingLocationMapTreeItem(locationMapTreeItem, 1, elements);
+                if(newMatched == null || newMatched == matchedLocationMapTreeItem) {
+                    /*
+                     * we did not find a matching sitemap item not having the first entry as a wildcard or we found an item that
+                     * we allready tested before
+                     */ 
                     break;
                 }
+                globalCheckedLocationMapTreeItems.add(newMatched);
+                matchedLocationMapTreeItem = newMatched;
                 matchingSiteMapItem = resolveToSiteMapItem(matchedLocationMapTreeItem);
             }
         }
@@ -103,12 +113,20 @@ public class LocationMapResolver {
             if(locationMapTreeItem != null) {
                 while(matchingSiteMapItem == null) {
                     propertyPlaceHolderMap.clear();
+                    checkedLocationMapTreeItems.clear();
+                    checkedLocationMapTreeItems.addAll(globalCheckedLocationMapTreeItems);
                     propertyPlaceHolderMap.put(KEY_TO_PROPERTY_PREFIX+String.valueOf(propertyPlaceHolderMap.size()+1), elements[0]);
-                    matchedLocationMapTreeItem =  resolveMatchingLocationMapTreeItem(locationMapTreeItem, 1, elements);
-                    matchingSiteMapItem = resolveToSiteMapItem(matchedLocationMapTreeItem);
-                    if(matchedLocationMapTreeItem == null) {
+                    LocationMapTreeItem newMatched = resolveMatchingLocationMapTreeItem(locationMapTreeItem, 1, elements);
+                    /*
+                     * we did not find a matching sitemap item not having the first entry as a wildcard or we found an item that
+                     * we allready tested before
+                     */ 
+                    if(newMatched == null || newMatched == matchedLocationMapTreeItem) {
                         break;
                     }
+                    globalCheckedLocationMapTreeItems.add(newMatched);
+                    matchedLocationMapTreeItem = newMatched;
+                    matchingSiteMapItem = resolveToSiteMapItem(matchedLocationMapTreeItem);
                 }
             }
         }
@@ -358,8 +376,11 @@ public class LocationMapResolver {
                return locationMapTreeItem;
             } 
             // there was a matched locationMapTreeItem, but it did not have sitemap items attached to it. Continue searching after 
-            // a move up
-            return traverseUp(locationMapTreeItem, position, elements);
+            // a move up: if the current locationMapTreeItem is a wildcard, we need to remove the param wrt to wildcard again
+            if(((LocationMapTreeItemImpl)locationMapTreeItem).isWildCard()) {
+                propertyPlaceHolderMap.remove(KEY_TO_PROPERTY_PREFIX+(propertyPlaceHolderMap.size()));
+            }
+            return traverseUp(locationMapTreeItem.getParentItem(), position, elements);
         }
         if(locationMapTreeItem.getChild(elements[position]) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(elements[position]))) {
             return traverseInToLocationMapTreeItem(locationMapTreeItem.getChild(elements[position]), ++position, elements);
@@ -383,12 +404,13 @@ public class LocationMapResolver {
             return null;
         }
         if(((LocationMapTreeItemImpl)locationMapTreeItem).isWildCard()) {
-            // as this tree path did not result in a match, remove some params again
             if(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))){
+                // HERE
                 return traverseInToLocationMapTreeItem(locationMapTreeItem, position, elements);
             } else if(locationMapTreeItem.getChild(HstNodeTypes.ANY) != null) {
                 return traverseInToLocationMapTreeItem(locationMapTreeItem,position, elements);
             }
+            // as this tree path did not result in a match, remove some params again
             propertyPlaceHolderMap.remove(KEY_TO_PROPERTY_PREFIX+(propertyPlaceHolderMap.size()));
             return traverseUp(locationMapTreeItem.getParentItem(), --position, elements );
         } else if(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))){
