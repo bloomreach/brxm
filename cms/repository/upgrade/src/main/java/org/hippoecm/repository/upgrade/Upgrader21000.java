@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.upgrade;
 
+import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,5 +63,41 @@ public class Upgrader21000 implements UpdaterModule {
                 htmlProperty.setValue(new String(sb));
               }
         });
+        for(String path : new String[] {
+            "/hippo:configuration/hippo:queries/hippo:templates/Template Editor Namespace",
+            "/hippo:configuration/hippo:queries/hippo:templates/new-type",
+            "/hippo:configuration/hippo:initialize/templateeditor-namespace.xml",
+            "/hippo:configuration/hippo:initialize/templateeditor-type-query.xml"
+        }) {
+            context.registerVisitor(new UpdaterItemVisitor.PathVisitor(path) {
+                @Override
+                public void leaving(final Node node, int level) throws RepositoryException {
+                    node.remove();
+                }
+            });
+        }
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hipposysedit:field") {
+            @Override
+            public void leaving(final Node node, int level) throws RepositoryException {
+                if(node.hasProperty("hipposysedit:name")) {
+                    Property nameProperty = node.getProperty("hipposysedit:name");
+                    if(node.getName().equals("hipposysedit:field")) {
+                        context.setName(node, nameProperty.getString());
+                    }
+                    nameProperty.remove();
+                }
+                if(node.hasProperty("hipposysedit:mandatory")) {
+                    node.getProperty("hipposysedit:mandatory").remove();
+                }
+            }
+        });
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hipposysedit:nodetype") {
+            @Override
+            public void leaving(final Node node, int level) throws RepositoryException {
+                context.setName(node, "hipposysedit_1_1:nodetype");
+            }
+        });
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", "-",
+                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd"))));
     }
 }
