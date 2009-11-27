@@ -35,6 +35,8 @@ import org.hippoecm.hst.content.beans.query.filter.HstCtxWhereFilter;
 import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.LoggerFactory;
 
@@ -135,6 +137,46 @@ public class HstQueryImpl implements HstQuery {
         } else {
             query.append("(").append(ctxWhereFilter.getJcrExpression()).append(")");
         }
+        
+        if(this.excludeScopes != null && !this.excludeScopes.isEmpty()) {
+            String excludeExpr = "";
+            for(Node excludeScope : this.excludeScopes) {
+                String scopeUUID = null;
+                try {
+                    if(excludeScope.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                        scopeUUID = excludeScope.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                    } else {
+                        Node canonicalExcludeScope = ((HippoNode)excludeScope).getCanonicalNode();
+                        if(canonicalExcludeScope != null && canonicalExcludeScope.isNodeType("mix:referenceable")) {
+                            scopeUUID = canonicalExcludeScope.getUUID();
+                        } else {
+                            if(canonicalExcludeScope == null) {
+                               log.warn("Cannot use a virtual only node in exclude scopes. Exclude Scope '{}' is ignored",excludeScope.getPath()); 
+                            } else {
+                                log.warn("ignoring exclude scope: only facetselects or referenceable nodes can be used to exclude a scope. Exclude Scope '{}' is ignored", excludeScope.getPath());
+                            }
+                        }
+                    }
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException while excluding scope: ", e);
+                }
+                
+                if(scopeUUID != null) {
+                    if(!"".equals(excludeExpr)) {
+                        excludeExpr = excludeExpr + " and ";
+                    }
+                    // do not use a!=b but not(a=b) as this is different for multivalued properties in jcr!
+                    excludeExpr = excludeExpr + "not(@"+(HippoNodeType.HIPPO_PATHS) +"='"+scopeUUID+"')";
+                }
+            }
+            if(!"".equals(excludeExpr)) {
+                if(query.length() == 0) {
+                    query.append("(").append(excludeExpr).append(")");
+                } else {
+                    query.append(" and (").append(excludeExpr).append(")");
+                }
+            }
+        } 
         
         String jcrExpression;
         if(this.getFilter() != null && (jcrExpression = this.getFilter().getJcrExpression()) != null) {
