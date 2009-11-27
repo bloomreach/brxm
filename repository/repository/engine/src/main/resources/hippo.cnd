@@ -20,6 +20,10 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 
+[rep:jarFile] mixin
+- rep:jarExpanded (date) mandatory copy
++ rep:jarContents (nt:base) = nt:folder mandatory copy
+
 // DATA TYPES: RESOURCES AND MARKERS
 
 [hippo:resource]
