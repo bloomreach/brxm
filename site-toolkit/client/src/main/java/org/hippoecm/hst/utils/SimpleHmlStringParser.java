@@ -173,9 +173,8 @@ public class SimpleHmlStringParser {
 
         // translate the documentPath to a URL in combination with the Node and the mapping object
         if (path.startsWith("/")) {
-            // absolute location, try to translate directly
-            log.warn("Cannot rewrite absolute path '{}'. Expected a relative path. Return '{}'", path, path);
-            return null;
+            // this is an absolute path, which is not an internal content link. We just try to create a link for it directly
+            return reqContext.getHstLinkCreator().create(path, reqContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite());
         } else {
             // relative node, most likely a mirror node:
             try {
