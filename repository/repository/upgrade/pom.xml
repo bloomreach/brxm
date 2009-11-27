@@ -67,7 +67,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.upgrade.Release72UpgraderPhase1 org.hippoecm.repository.upgrade.Release72UpgraderPhase2 org.hippoecm.repository.upgrade.Release72UpgraderPhase3</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.upgrade.Upgrader21000</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>
