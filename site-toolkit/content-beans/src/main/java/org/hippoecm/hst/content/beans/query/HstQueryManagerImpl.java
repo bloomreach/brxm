@@ -66,7 +66,7 @@ public class HstQueryManagerImpl implements HstQueryManager{
         String primaryNodeTypeNameForBean = objectConverter.getPrimaryNodeTypeNameFor(filterBean);
         IsNodeTypeFilter isNodeTypeFilter = null;
         if(primaryNodeTypeNameForBean == null) {
-          throw new QueryException("Cannot find primaryNodeType for '"+filterBean.getClass().getName()+"'.");
+          throw new QueryException("Cannot find primaryNodeType for '"+filterBean.getName()+"'.");
         } else {
             isNodeTypeFilter = new IsNodeTypeFilter(primaryNodeTypeNameForBean);
         }
