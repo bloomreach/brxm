@@ -83,10 +83,6 @@ public class HstLinkImpl implements HstLink{
             return null;
         }
         
-        if(path.contains("foo")) {
-            System.out.println("!!!");
-        }
-        
         String urlString = null;
         
         if (this.containerResource) {
