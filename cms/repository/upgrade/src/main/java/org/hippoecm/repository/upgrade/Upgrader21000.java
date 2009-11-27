@@ -15,8 +15,12 @@
  */
 package org.hippoecm.repository.upgrade;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.ext.UpdaterContext;
@@ -43,6 +47,20 @@ public class Upgrader21000 implements UpdaterModule {
                     }
                 }
             }
+        });
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippostd:html") {
+            Pattern pattern = Pattern.compile("(<img[^>]*src=\")([^/]*)/([^/]*)/([^\"]*\")", Pattern.MULTILINE);
+            @Override
+            public void leaving(final Node node, int level) throws RepositoryException {
+                Property htmlProperty = node.getProperty("hippostd:content");
+                Matcher matcher = pattern.matcher(htmlProperty.getString());
+                StringBuffer sb = new StringBuffer();
+                while(matcher.find()) {
+                    matcher.appendReplacement(sb, "$1$2/{_document}/$4");
+                }
+                matcher.appendTail(sb);
+                htmlProperty.setValue(new String(sb));
+              }
         });
     }
 }
