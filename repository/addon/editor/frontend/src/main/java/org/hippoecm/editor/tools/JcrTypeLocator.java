@@ -25,13 +25,17 @@ import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.TypeLocator;
 
 public class JcrTypeLocator implements ITypeLocator {
+    private static final long serialVersionUID = 1L;
+
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     TypeLocator locator;
-    
+
     public JcrTypeLocator() {
         JcrTypeStore jcrTypeStore = new JcrTypeStore();
         BuiltinTypeStore builtinTypeStore = new BuiltinTypeStore();
-        locator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore});
+        locator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore });
         jcrTypeStore.setTypeLocator(locator);
         builtinTypeStore.setTypeLocator(locator);
     }
