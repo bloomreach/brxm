@@ -138,4 +138,17 @@ public class TypeStoreTest extends PluginTest {
         assertNotNull(field);
         assertEquals("b", field.getName());
     }
+
+    @Test
+    public void testPseudoType() throws Exception {
+        JcrTypeStore typeStore = new JcrTypeStore();
+        ITypeDescriptor descriptor = typeStore.load("test:pseudo");
+        assertNotNull(descriptor);
+        assertEquals("test:test", descriptor.getType());
+
+        Map<String, IFieldDescriptor> fields = descriptor.getFields();
+        assertEquals(2, fields.size());
+        assertTrue(fields.keySet().contains("title"));
+        assertTrue(fields.keySet().contains("child"));
+    }
 }

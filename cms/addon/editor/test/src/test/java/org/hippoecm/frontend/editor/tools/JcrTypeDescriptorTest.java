@@ -28,6 +28,7 @@ import org.hippoecm.editor.tools.JcrTypeDescriptor;
 import org.hippoecm.editor.tools.JcrTypeStore;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.junit.Test;
 
 public class JcrTypeDescriptorTest extends PluginTest {
@@ -38,7 +39,7 @@ public class JcrTypeDescriptorTest extends PluginTest {
     public void testAllFieldsReturned() throws Exception {
         JcrTypeStore typeStore = new JcrTypeStore();
 
-        JcrTypeDescriptor descriptor = typeStore.getTypeDescriptor("test:inheriting");
+        ITypeDescriptor descriptor = typeStore.getTypeDescriptor("test:inheriting");
         assertEquals(1, descriptor.getDeclaredFields().size());
 
         IFieldDescriptor field = descriptor.getDeclaredFields().values().iterator().next();
@@ -53,7 +54,7 @@ public class JcrTypeDescriptorTest extends PluginTest {
     public void testSerialization() throws Exception {
         JcrTypeStore typeStore = new JcrTypeStore();
 
-        JcrTypeDescriptor descriptor = typeStore.getTypeDescriptor("test:test");
+        ITypeDescriptor descriptor = typeStore.getTypeDescriptor("test:test");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(descriptor);

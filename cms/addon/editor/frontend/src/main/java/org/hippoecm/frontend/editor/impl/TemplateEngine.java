@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.editor.impl;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,7 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.editor.tools.JcrPrototypeStore;
-import org.hippoecm.editor.tools.JcrTypeStore;
+import org.hippoecm.editor.tools.JcrTypeLocator;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -35,9 +34,8 @@ import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.TypeLocator;
+import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
@@ -51,51 +49,14 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
 
     static Logger log = LoggerFactory.getLogger(TemplateEngine.class);
 
-    private JcrTypeStore jcrTypeStore;
-    private IStore<ITypeDescriptor> typeStore;
+    private ITypeLocator typeStore;
     private JcrTemplateStore jcrTemplateStore;
     private IStore<IClusterConfig> builtinTemplateStore;
     private JcrPrototypeStore prototypeStore;
     private EditableTypes editableTypes;
 
     public TemplateEngine(IPluginContext context) {
-        jcrTypeStore = new JcrTypeStore();
-        final BuiltinTypeStore builtinTypeStore = new BuiltinTypeStore();
-        jcrTypeStore.setTypeLocator(new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore }));
-        typeStore = new IStore<ITypeDescriptor>() {
-            private static final long serialVersionUID = 1L;
-
-            public void delete(ITypeDescriptor object) throws StoreException {
-                throw new UnsupportedOperationException("Type store is read only");
-            }
-
-            public Iterator<ITypeDescriptor> find(Map<String, Object> criteria) {
-                Map<String, ITypeDescriptor> types = new HashMap<String, ITypeDescriptor>();
-
-                for (Iterator<ITypeDescriptor> iter = builtinTypeStore.find(criteria); iter.hasNext();) {
-                    ITypeDescriptor type = iter.next();
-                    types.put(type.getName(), type);
-                }
-                for (Iterator<ITypeDescriptor> iter = jcrTypeStore.find(criteria); iter.hasNext();) {
-                    ITypeDescriptor type = iter.next();
-                    types.put(type.getName(), type);
-                }
-                return types.values().iterator();
-            }
-
-            public ITypeDescriptor load(String id) throws StoreException {
-                try {
-                    return jcrTypeStore.load(id);
-                } catch (StoreException ex) {
-                    return builtinTypeStore.load(id);
-                }
-            }
-
-            public String save(ITypeDescriptor object) throws StoreException {
-                throw new UnsupportedOperationException("Type store is read only");
-            }
-
-        };
+        typeStore = new JcrTypeLocator();
 
         this.jcrTemplateStore = new JcrTemplateStore(typeStore);
         this.builtinTemplateStore = new BuiltinTemplateStore(typeStore);
@@ -104,7 +65,7 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
 
     public ITypeDescriptor getType(String type) throws TemplateEngineException {
         try {
-            return typeStore.load(type);
+            return typeStore.locate(type);
         } catch (StoreException ex) {
             throw new TemplateEngineException("Unable to load type", ex);
         }
@@ -152,9 +113,13 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
         if (iter.hasNext()) {
             return iter.next();
         }
-        iter = builtinTemplateStore.find(criteria);
-        if (iter.hasNext()) {
-            return iter.next();
+        try {
+            iter = builtinTemplateStore.find(criteria);
+            if (iter.hasNext()) {
+                return iter.next();
+            }
+        } catch (StoreException e) {
+            throw new TemplateEngineException("Error locating template", e);
         }
         throw new TemplateEngineException("No template found");
     }
@@ -172,7 +137,6 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
 
     public void detach() {
         jcrTemplateStore.detach();
-        jcrTypeStore.detach();
         prototypeStore.detach();
         editableTypes = null;
     }

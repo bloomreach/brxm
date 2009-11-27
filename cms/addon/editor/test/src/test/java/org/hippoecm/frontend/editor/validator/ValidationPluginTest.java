@@ -19,23 +19,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.jcr.Node;
 
+import org.hippoecm.editor.tools.JcrTypeDescriptor;
+import org.hippoecm.editor.tools.JcrTypeLocator;
 import org.hippoecm.frontend.PluginTest;
-import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
-import org.hippoecm.frontend.validation.ModelPathElement;
-import org.hippoecm.frontend.validation.ModelPath;
-import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.validation.ModelPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
 import org.junit.Before;
@@ -159,5 +158,18 @@ public class ValidationPluginTest extends PluginTest {
         Set<Violation> violations = getViolations();
         assertEquals(2, violations.size());
     }
+
+    /*
+    @Test
+    public void testSetPathFailsWhenSubtypeHasSamePath() throws Exception {
+        JcrNodeModel nodeModel = new JcrNodeModel("/hippo:namespaces/test/test/hippo:nodetype/hippo:nodetype[2]");
+        JcrTypeDescriptor typeDescriptor = new JcrTypeDescriptor(nodeModel, new JcrTypeLocator());
+        typeDescriptor.getField("title").setPath("test:extra");
+
+        TemplateTypeValidator validator = new TemplateTypeValidator();
+        Set<Violation> violations = validator.validate(nodeModel);
+        assertEquals(1, violations.size());
+    }
+    */
 
 }

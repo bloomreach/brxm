@@ -189,6 +189,10 @@ public class CndSerializer implements IClusterable {
                 return newLocator.locate(type);
             }
 
+            public List<ITypeDescriptor> getSubTypes(String type) throws StoreException {
+                throw new StoreException("sub-types are not supported in cnd serializer");
+            }
+
         };
         newBuiltinTypeStore.setTypeLocator(newTypeLocator);
         newJcrTypeStore.setTypeLocator(newTypeLocator);

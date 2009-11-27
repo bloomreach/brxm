@@ -15,12 +15,22 @@
  */
 package org.hippoecm.frontend.types;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
+import org.hippoecm.frontend.session.UserSession;
 
 public class BuiltinTypeStore implements ITypeStore {
     @SuppressWarnings("unused")
@@ -69,11 +79,32 @@ public class BuiltinTypeStore implements ITypeStore {
         throw new UnsupportedOperationException();
     }
 
-    public Iterator<ITypeDescriptor> find(Map<String, Object> criteria) {
+    public Iterator<ITypeDescriptor> find(Map<String, Object> criteria) throws StoreException {
+        List<ITypeDescriptor> result = new LinkedList<ITypeDescriptor>();
         if (criteria.containsKey("namespace")) {
             return getTypes((String) criteria.get("namespace")).iterator();
         }
-        return null;
+        if (criteria.containsKey("supertype")) {
+            Set<String> types = new HashSet<String>((List<String>) criteria.get("supertype"));
+            try {
+                Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
+                NodeTypeIterator ntIter = ntMgr.getAllNodeTypes();
+                while (ntIter.hasNext()) {
+                    NodeType nt = ntIter.nextNodeType();
+                    for (NodeType superType : nt.getDeclaredSupertypes()) {
+                        String name = superType.getName();
+                        if (types.contains(name)) {
+                            result.add(locator.locate(nt.getName()));
+                            break;
+                        }
+                    }
+                }
+            } catch (RepositoryException e) {
+                throw new StoreException("Could not find supertypes", e);
+            }
+        }
+        return result.iterator();
     }
 
     public ITypeDescriptor load(String id) throws StoreException {

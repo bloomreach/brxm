@@ -30,7 +30,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.editor.NamespaceValidator;
-import org.hippoecm.editor.tools.JcrTypeStore;
+import org.hippoecm.editor.tools.JcrTypeLocator;
 import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.action.NewDocumentTypeAction;
@@ -53,10 +53,11 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
             super(new ResourceModel("type-detail-title"), new ResourceModel("type-detail-summary"));
             add(nameComponent = new TextFieldWidget("name", new PropertyModel<String>(action, "name")));
 
-            CheckGroup<String> cg = new CheckGroup<String>("checkgroup", new PropertyModel<Collection<String>>(action, "mixins"));
+            CheckGroup<String> cg = new CheckGroup<String>("checkgroup", new PropertyModel<Collection<String>>(action,
+                    "mixins"));
             add(cg);
 
-            JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeStore());
+            JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeLocator());
 
             cg.add(new DataView<String>("mixins", new ListDataProvider<String>(templateStore.getAvailableMixins())) {
                 private static final long serialVersionUID = 1L;
@@ -71,7 +72,7 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
 
             });
         }
-        
+
         @Override
         public void applyState() {
             try {

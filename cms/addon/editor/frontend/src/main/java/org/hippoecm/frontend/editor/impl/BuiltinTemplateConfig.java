@@ -21,8 +21,6 @@ import java.util.Map;
 
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
-import org.hippoecm.frontend.model.ocm.IStore;
-import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -40,15 +38,13 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
     
     static final Logger log = LoggerFactory.getLogger(BuiltinTemplateConfig.class);
 
-    private IStore<ITypeDescriptor> typeStore;
     private ITypeDescriptor type;
     private String name;
 
-    public BuiltinTemplateConfig(IStore<ITypeDescriptor> store, ITypeDescriptor type) {
+    public BuiltinTemplateConfig(ITypeDescriptor type) {
         this.type = type;
         super.put("type", type.getName());
         this.name = type.getName().replace(':', '_');
-        this.typeStore = store;
     }
 
     @Override
