@@ -56,7 +56,7 @@ public class FolderTreeNode extends JcrTreeNode {
         }
         return null;
     }
-    
+
     @Override
     protected List<TreeNode> loadChildren() throws RepositoryException {
         List<TreeNode> result = new ArrayList<TreeNode>();
@@ -81,7 +81,7 @@ public class FolderTreeNode extends JcrTreeNode {
                 HippoNode hippoNode = (HippoNode) jcrNode;
                 // do not count for virtual nodes w.r.t performance
                 if (hippoNode.getCanonicalNode() == null || !hippoNode.getCanonicalNode().isSame(hippoNode)) {
-                    return 1;
+                    return 0;
                 }
             } catch (RepositoryException e) {
                 log.warn("Unable to get child count: " + e.getMessage());
