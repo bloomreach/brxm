@@ -18,12 +18,14 @@ package org.hippoecm.frontend.types;
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.UUID;
 
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.ocm.StoreException;
 
-public class JavaFieldDescriptor implements IFieldDescriptor {
+public class JavaFieldDescriptor implements IFieldDescriptor, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -175,6 +177,12 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
 
     public void removeValidator(String validator) {
         validators.remove(validator);
+    }
+
+    public void detach() {
+        if (type instanceof IDetachable) {
+            ((IDetachable) type).detach();
+        }
     }
 
 }

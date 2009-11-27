@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
@@ -28,7 +29,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JavaTypeDescriptor implements ITypeDescriptor {
+public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -198,6 +199,14 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
 
     public void setMutable(boolean mutable) {
         this.mutable = mutable;
+    }
+
+    public void detach() {
+        for (IFieldDescriptor field : fields.values()) {
+            if (field instanceof IDetachable) {
+                ((IDetachable) field).detach();
+            }
+        }
     }
 
 }

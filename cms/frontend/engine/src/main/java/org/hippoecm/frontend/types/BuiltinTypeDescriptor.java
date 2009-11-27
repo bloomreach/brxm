@@ -169,10 +169,12 @@ public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetach
         return fields;
     }
 
+    @Override
     public void detach() {
         nt = null;
         fields = null;
         declaredFields = null;
+        super.detach();
     }
 
 }
