@@ -46,6 +46,7 @@
      <property name="contextPath" value="/site" />
      <property name="servletPath" value="/content" />
      <property name="pathInfo" value="/news/2008/08" />
+     <property name="requestURI" value="/site/content/news/2008/08" />
   </bean>
   
   <bean id="javax.servlet.http.HttpServletResponse" scope="prototype"
