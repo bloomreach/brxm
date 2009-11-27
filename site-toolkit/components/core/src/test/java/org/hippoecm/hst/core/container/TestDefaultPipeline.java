@@ -91,6 +91,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     public void testDefaultPipeline() throws ContainerException, UnsupportedEncodingException {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news");
+        ((MockHttpServletRequest)servletRequest).setRequestURI(servletRequest.getContextPath() + servletRequest.getServletPath() + servletRequest.getPathInfo());
         
         this.defaultPipeline.beforeInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
         
@@ -111,6 +112,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     public void testDefaultPipeline2() throws ContainerException, UnsupportedEncodingException {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news/2009/februari");
+        ((MockHttpServletRequest)servletRequest).setRequestURI(servletRequest.getContextPath() + servletRequest.getServletPath() + servletRequest.getPathInfo());
         
         this.defaultPipeline.beforeInvoke(this.requestContainerConfig, this.servletRequest, this.servletResponse);
         

@@ -84,6 +84,9 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         ((MockHttpServletRequest) request).setParameter("param1", "value1");
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
+        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
+        
+        
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
 
         assertNull("action window reference namespace is not null.", containerURL.getActionWindowReferenceNamespace());
@@ -96,6 +99,9 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 
+        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
+        
+        
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
         ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
 
@@ -136,6 +142,9 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 
+        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
+        
+        
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext);
         ((HstRequestContextImpl) requestContext).setBaseURL(containerURL);
 
@@ -180,6 +189,9 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 
+        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
+        
+        
         ((MockHttpServletRequest) request).setParameter("param1", "value1");
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
@@ -206,6 +218,9 @@ public class TestContainerURLProvider extends AbstractSpringTestCase {
         HttpServletRequest request = getComponent(HttpServletRequest.class.getName());
         HttpServletResponse response = getComponent(HttpServletResponse.class.getName());
 
+        ((MockHttpServletRequest)request).setRequestURI(request.getContextPath() + request.getServletPath() + request.getPathInfo());
+        
+        
         ((MockHttpServletRequest) request).setParameter("param1", "value1");
         ((MockHttpServletRequest) request).setParameter("param2", "value2");
         
