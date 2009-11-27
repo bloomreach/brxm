@@ -201,7 +201,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     }
 
     @Override
-    public void onBeforeRender() {
+    protected void onBeforeRender() {
         if (restartTemplates) {
             provider = getProvider();
             if (provider != null) {

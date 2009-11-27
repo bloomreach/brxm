@@ -19,14 +19,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 
-public class PseudoTypeDescriptor implements ITypeDescriptor {
+public class PseudoTypeDescriptor implements ITypeDescriptor, IDetachable {
 
     private static final long serialVersionUID = 1L;
 
@@ -139,7 +141,8 @@ public class PseudoTypeDescriptor implements ITypeDescriptor {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof PseudoTypeDescriptor) {
-            return ((PseudoTypeDescriptor) obj).upstream.equals(upstream);
+            PseudoTypeDescriptor that = (PseudoTypeDescriptor) obj;
+            return that.name.equals(name) && that.upstream.equals(upstream);
         }
         return false;
     }
@@ -147,6 +150,12 @@ public class PseudoTypeDescriptor implements ITypeDescriptor {
     @Override
     public int hashCode() {
         return 317 ^ upstream.hashCode();
+    }
+
+    public void detach() {
+        if (upstream instanceof IDetachable) {
+            ((IDetachable) upstream).detach();
+        }
     }
 
 }

@@ -135,9 +135,14 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
                 unsubscribe();
                 subscribe();
             }
-            replace(createAddLink());
             redraw();
         }
+    }
+
+    @Override
+    protected void onBeforeRender() {
+        replace(createAddLink());
+        super.onBeforeRender();
     }
 
     @Override

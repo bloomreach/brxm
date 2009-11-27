@@ -17,6 +17,7 @@ package org.hippoecm.editor.tools;
 
 import java.util.List;
 
+import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
@@ -24,7 +25,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.TypeLocator;
 
-public class JcrTypeLocator implements ITypeLocator {
+public class JcrTypeLocator implements ITypeLocator, IClusterable  {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")

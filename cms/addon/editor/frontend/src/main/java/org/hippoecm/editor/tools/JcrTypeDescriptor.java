@@ -530,21 +530,21 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         List<String> builtinSuperTypes = builtin.getSuperTypes();
         for (String type : builtinSuperTypes) {
             if (!superTypes.contains(type)) {
-                log.warn("Super type " + type + " is defined as super type in CND, but not available in descriptor");
+                log.warn("Super type " + type + " is defined as super type in CND, but not available in descriptor for " + name);
             }
         }
         for (String type : superTypes) {
             if (!builtinSuperTypes.contains(type)) {
-                log.warn("Super type " + type + " is declared in descriptor, but is not defined as super type in CND");
+                log.warn("Super type " + type + " is declared in descriptor, but is not defined as super type in CND for " + name);
             }
         }
 
         if (isMixin() != builtin.isMixin()) {
-            log.warn("Node type definition and description disagree on mixin status");
+            log.warn("Node type definition and description disagree on mixin status for " + name);
         }
 
         if (isNode() != builtin.isNode()) {
-            log.warn("Node type definition and description disagree on compound/primitive classification");
+            log.warn("Node type definition and description disagree on compound/primitive classification " + name);
         }
 
         if (isNode()) {
@@ -574,12 +574,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                 if (builtinPathToField.containsKey(entry.getKey())) {
                     validateField(entry.getValue(), builtinPathToField.get(entry.getKey()));
                 } else {
-                    log.warn("Path " + entry.getKey() + " is present in description, but not in CND definition");
+                    log.warn("Path " + entry.getKey() + " is present in description, but not in CND definition for " + name);
                 }
             }
             for (Map.Entry<String, IFieldDescriptor> entry : builtinPathToField.entrySet()) {
                 if (!pathToField.containsKey(entry.getKey())) {
-                    log.warn("Path " + entry.getKey() + " is present in CND definition, but not in description");
+                    log.warn("Path " + entry.getKey() + " is present in CND definition, but not in description for " + name);
                 }
             }
 
@@ -588,13 +588,13 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                     validateField(entry.getValue(), builtinAnyPaths.get(entry.getKey()));
                 } else {
                     log.warn("Field with path *, type " + entry.getKey()
-                            + " is present in description, but not in CND definition");
+                            + " is present in description, but not in CND definition for " + name);
                 }
             }
             for (Map.Entry<String, IFieldDescriptor> entry : builtinAnyPaths.entrySet()) {
                 if (!anyPaths.containsKey(entry.getKey())) {
                     log.warn("Field with path *, type " + entry.getKey()
-                            + " is present in CND definition, but not in description");
+                            + " is present in CND definition, but not in description for " + name);
                 }
             }
         }

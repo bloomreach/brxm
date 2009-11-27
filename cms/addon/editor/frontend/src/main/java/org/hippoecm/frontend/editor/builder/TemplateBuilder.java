@@ -161,7 +161,17 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
 
         public void setPath(String path) {
+            String oldPath = delegate.getPath();
             delegate.setPath(path);
+            try {
+                IModel prototypeModel = getPrototype();
+                Node prototype = (Node) prototypeModel.getObject();
+                updateItem(prototype, oldPath, delegate);
+            } catch (RepositoryException ex) {
+                log.error("Failed to update prototype", ex);
+            } catch (BuilderException ex) {
+                log.error("Failed to find prototype when updating the path", ex);
+            }
 
             Set<String> fieldNames = new HashSet<String>();
             for (ITypeDescriptor subType : typeDescriptor.getSubTypes()) {
@@ -198,7 +208,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 newPlugin.putAll(plugins.get(position));
                 plugins.set(position, newPlugin);
             }
-            updatePrototype();
         }
 
         public void addValidator(String validator) {
@@ -312,6 +321,19 @@ public class TemplateBuilder implements IDetachable, IObservable {
         private IObserver observer;
 
         public void addField(IFieldDescriptor descriptor) {
+            for (IFieldDescriptor field : getFields().values()) {
+                if (!"*".equals(field.getPath())) {
+                    if (field.getPath().equals(descriptor.getPath())) {
+                        log.warn("Path " + descriptor.getPath() + " already exists, not adding field");
+                        return;
+                    }
+                } else if ("*".equals(descriptor.getPath())) {
+                    if (field.getTypeDescriptor().getType().equals(descriptor.getTypeDescriptor().getType())) {
+                        log.warn("Path " + descriptor.getPath() + " already exists, not adding field");
+                        return;
+                    }
+                }
+            }
             typeDescriptor.addField(descriptor);
             processFieldAdded(descriptor);
             updatePrototype();
@@ -446,7 +468,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     IFieldDescriptor descriptor = removedFields.remove(field);
                     if (descriptor != null) {
                         typeDescriptor.addField(descriptor);
-                        updatePrototype();
                     }
                 }
             }
@@ -681,60 +702,64 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 for (Map.Entry<String, String> entry : oldFields.entrySet()) {
                     String oldPath = entry.getValue();
                     IFieldDescriptor newField = typeDescriptor.getField(entry.getKey());
-                    if (newField != null) {
-                        ITypeDescriptor fieldType = newField.getTypeDescriptor();
-                        if (!newField.getPath().equals(oldPath) && !newField.getPath().equals("*")
-                                && !oldPath.equals("*")) {
-                            if (fieldType.isNode()) {
-                                if (prototype.hasNode(oldPath)) {
-                                    Node child = prototype.getNode(oldPath);
-                                    child.getSession().move(child.getPath(),
-                                            prototype.getPath() + "/" + newField.getPath());
-                                }
-                            } else {
-                                if (prototype.hasProperty(oldPath)) {
-                                    Property property = prototype.getProperty(oldPath);
-                                    if (property.getDefinition().isMultiple()) {
-                                        Value[] values = property.getValues();
-                                        property.remove();
-                                        if (newField.isMultiple()) {
-                                            prototype.setProperty(newField.getPath(), values);
-                                        } else if (values.length > 0) {
-                                            prototype.setProperty(newField.getPath(), values[0]);
-                                        }
-                                    } else {
-                                        Value value = property.getValue();
-                                        property.remove();
-                                        if (newField.isMultiple()) {
-                                            prototype.setProperty(newField.getPath(), new Value[] { value });
-                                        } else {
-                                            prototype.setProperty(newField.getPath(), value);
-                                        }
-                                    }
-                                }
-                            }
-                        } else if (oldPath.equals("*") || newField.getPath().equals("*")) {
-                            log.warn("Wildcard fields are not supported");
-                        }
-                    } else {
-                        if (oldPath.equals("*")) {
-                            log
-                                    .warn("Removing wildcard fields is unsupported.  Items that fall under the definition will not be removed.");
-                        } else {
-                            if (prototype.hasNode(oldPath)) {
-                                prototype.getNode(oldPath).remove();
-                            }
-                            if (prototype.hasProperty(oldPath)) {
-                                prototype.getProperty(oldPath).remove();
-                            }
-                        }
-                    }
+                    updateItem(prototype, oldPath, newField);
                 }
             }
         } catch (RepositoryException ex) {
             log.error("Failed to update prototype", ex.getMessage());
         } catch (BuilderException ex) {
             log.error("Incomplete model", ex);
+        }
+    }
+
+    private void updateItem(Node prototype, String oldPath, IFieldDescriptor newField) throws RepositoryException {
+        if (newField != null) {
+            ITypeDescriptor fieldType = newField.getTypeDescriptor();
+            if (!newField.getPath().equals(oldPath) && !newField.getPath().equals("*")
+                    && !oldPath.equals("*")) {
+                if (fieldType.isNode()) {
+                    if (prototype.hasNode(oldPath)) {
+                        Node child = prototype.getNode(oldPath);
+                        child.getSession().move(child.getPath(),
+                                prototype.getPath() + "/" + newField.getPath());
+                    }
+                } else {
+                    if (prototype.hasProperty(oldPath)) {
+                        Property property = prototype.getProperty(oldPath);
+                        if (property.getDefinition().isMultiple()) {
+                            Value[] values = property.getValues();
+                            property.remove();
+                            if (newField.isMultiple()) {
+                                prototype.setProperty(newField.getPath(), values);
+                            } else if (values.length > 0) {
+                                prototype.setProperty(newField.getPath(), values[0]);
+                            }
+                        } else {
+                            Value value = property.getValue();
+                            property.remove();
+                            if (newField.isMultiple()) {
+                                prototype.setProperty(newField.getPath(), new Value[] { value });
+                            } else {
+                                prototype.setProperty(newField.getPath(), value);
+                            }
+                        }
+                    }
+                }
+            } else if (oldPath.equals("*") || newField.getPath().equals("*")) {
+                log.warn("Wildcard fields are not supported");
+            }
+        } else {
+            if (oldPath.equals("*")) {
+                log
+                        .warn("Removing wildcard fields is unsupported.  Items that fall under the definition will not be removed.");
+            } else {
+                if (prototype.hasNode(oldPath)) {
+                    prototype.getNode(oldPath).remove();
+                }
+                if (prototype.hasProperty(oldPath)) {
+                    prototype.getProperty(oldPath).remove();
+                }
+            }
         }
     }
 
