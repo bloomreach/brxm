@@ -14,5 +14,8 @@ padding-top: 5px;
 }
 ol, ul{list-style-position: inside}
 
+html, body { border: none; }
+
+body {padding: 4px;}
 
 
