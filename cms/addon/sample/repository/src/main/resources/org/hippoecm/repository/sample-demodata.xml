@@ -14,13 +14,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<sv:node sv:name="template-demo" xmlns:fn="http://www.w3.org/2005/xpath-functions"
-  xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-  xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
-  xmlns:hippostd="http://www.onehippo.org/jcr/hippostd/nt/2.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
-  xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-  xmlns:rep="internal" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="template-demo">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippostd:folder</sv:value>
   </sv:property>

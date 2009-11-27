@@ -14,10 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
-         xmlns:hipposysedit="http://www.onehippo.org/jcr/hipposysedit/nt/1.1"
-         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="hippo:namespaces">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hippo:namespaces">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:namespacefolder</sv:value>
   </sv:property>

@@ -14,10 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-         xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
-         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="navigation">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="navigation">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
   </sv:property>
