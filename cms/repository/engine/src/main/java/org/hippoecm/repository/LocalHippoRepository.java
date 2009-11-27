@@ -349,27 +349,28 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             Session syncSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
 
-            try {
-                String cndName = "repository.cnd";
-                log.info("Initializing nodetypes from: " + cndName);
-                initializeNodetypes(syncSession.getWorkspace(), getClass().getResourceAsStream(cndName), cndName);
-                syncSession.save();
-            } catch (ConstraintViolationException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (InvalidItemStateException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (ItemExistsException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (LockException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (NoSuchNodeTypeException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (ParseException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (VersionException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-            } catch (AccessDeniedException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            for(String cndName : new String[] { "hippo.cnd", "hipposys.cnd", "hipposysedit.cnd" }) {
+                try {
+                    log.info("Initializing nodetypes from: " + cndName);
+                    initializeNodetypes(syncSession.getWorkspace(), getClass().getClassLoader().getResourceAsStream(cndName), cndName);
+                    syncSession.save();
+                } catch (ConstraintViolationException ex) {
+                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+                } catch (InvalidItemStateException ex) {
+                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+                } catch (ItemExistsException ex) {
+                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+                } catch (LockException ex) {
+                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+                } catch (NoSuchNodeTypeException ex) {
+                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+                } catch (ParseException ex) {
+                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+                } catch (VersionException ex) {
+                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+                } catch (AccessDeniedException ex) {
+                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+                }
             }
 
             ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(true);
