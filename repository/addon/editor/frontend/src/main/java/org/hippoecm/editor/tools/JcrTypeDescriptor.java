@@ -124,6 +124,15 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         return null;
     }
 
+    public List<ITypeDescriptor> getSubTypes() {
+        try {
+            return locator.getSubTypes(getType());
+        } catch (StoreException e) {
+            log.error("error retrieving subtypes", e);
+        }
+        return Collections.emptyList();
+    }
+
     public void setSuperTypes(List<String> superTypes) {
         try {
             String[] types = superTypes.toArray(new String[superTypes.size()]);

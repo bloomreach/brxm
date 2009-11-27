@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.types;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.Map;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +73,15 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
 
     public List<String> getSuperTypes() {
         return superTypes;
+    }
+
+    public List<ITypeDescriptor> getSubTypes() {
+        try {
+            return locator.getSubTypes(type);
+        } catch (StoreException e) {
+            log.error(e.getMessage());
+        }
+        return Collections.emptyList();
     }
 
     public void setSuperTypes(List<String> superTypes) {

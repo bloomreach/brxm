@@ -18,12 +18,17 @@ package org.hippoecm.editor.tools;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -53,15 +58,18 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
 
     private static final long serialVersionUID = 1L;
 
+    static final String SUPERTYPE_QUERY = "";
+
     static final Logger log = LoggerFactory.getLogger(JcrTypeStore.class);
 
     private ITypeLocator locator;
-    private Map<String, JcrTypeDescriptor> types = new HashMap<String, JcrTypeDescriptor>();
+    private Map<String, ITypeDescriptor> types = new HashMap<String, ITypeDescriptor>();
 
     @SuppressWarnings("unchecked")
     public JcrTypeStore() {
-        IStore<ITypeDescriptor> builtinTypeStore = new BuiltinTypeStore();
+        BuiltinTypeStore builtinTypeStore = new BuiltinTypeStore();
         locator = new TypeLocator(new IStore[] { this, builtinTypeStore });
+        builtinTypeStore.setTypeLocator(locator);
     }
 
     public ITypeLocator getTypeLocator() {
@@ -77,12 +85,12 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         this.locator = locator;
     }
 
-    public JcrTypeDescriptor getTypeDescriptor(String name) {
+    public ITypeDescriptor getTypeDescriptor(String name) {
         if ("rep:root".equals(name)) {
             // ignore the root node
             return null;
         }
-        JcrTypeDescriptor result = types.get(name);
+        ITypeDescriptor result = types.get(name);
         if (result == null) {
             try {
                 TypeInfo info = new TypeInfo(name);
@@ -90,16 +98,13 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
                 Node typeNode = version.getTypeNode(getJcrSession());
                 if (typeNode != null) {
                     result = createTypeDescriptor(typeNode, name);
-                    // do validation on type
-                    if (WebApplication.get() != null
-                            && "development".equals(WebApplication.get().getConfigurationType())) {
-                        result.validate();
-                    }
                     types.put(name, result);
                 } else {
                     log.debug("No nodetype description found for " + name);
                 }
             } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            } catch (StoreException e) {
                 log.error(e.getMessage());
             }
         }
@@ -109,9 +114,87 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
     public void delete(ITypeDescriptor object) {
     }
 
-    public Iterator<ITypeDescriptor> find(Map<String, Object> criteria) {
-        // TODO Auto-generated method stub
-        return null;
+    public Iterator<ITypeDescriptor> find(Map<String, Object> criteria) throws StoreException {
+        Map<String, ITypeDescriptor> results = new TreeMap<String, ITypeDescriptor>();
+        if (criteria.containsKey("supertype")) {
+            if (!(criteria.get("supertype") instanceof List)) {
+                throw new StoreException("Invalid criteria; supertype should be of type List<String>");
+            }
+            List<String> supertype = (List<String>) criteria.get("supertype");
+            if (supertype.size() == 0) {
+                throw new StoreException("No supertypes specified");
+            }
+            Session session = getJcrSession();
+            try {
+                QueryManager qm = session.getWorkspace().getQueryManager();
+                StringBuilder sb = new StringBuilder();
+                sb.append("//element(*,");
+                sb.append(HippoNodeType.NT_NODETYPE);
+                sb.append(")[@");
+                sb.append(HippoNodeType.HIPPO_SUPERTYPE);
+                sb.append("='");
+                boolean first = true;
+                for (String type : supertype) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        sb.append("' or @");
+                        sb.append(HippoNodeType.HIPPO_SUPERTYPE);
+                        sb.append("='");
+                    }
+                    sb.append(type);
+                }
+                sb.append("']");
+                String queryStr = sb.toString();
+                log.debug("Query for supertypes: {}", queryStr);
+                Query query = qm.createQuery(queryStr, Query.XPATH);
+                QueryResult result = query.execute();
+                for (NodeIterator nodes = result.getNodes(); nodes.hasNext();) {
+                    Node node = nodes.nextNode();
+                    String realType = null;
+                    if (node.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
+                        realType = node.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
+                    }
+                    // assume /hippo:namespaces/<prefix>/<subType>/hipposysedit:nodetype/hipposysedit:nodetype
+                    if (node.getDepth() < 5) {
+                        continue;
+                    }
+                    node = node.getParent();
+                    if (!node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        continue;
+                    }
+                    node = node.getParent();
+                    if (!node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                        continue;
+                    }
+                    String subType = node.getName();
+                    node = node.getParent();
+                    if (!node.isNodeType(HippoNodeType.NT_NAMESPACE)) {
+                        continue;
+                    }
+                    String prefix = node.getName();
+                    if ("system".equals(prefix)) {
+                        continue;
+                    }
+                    String subTypeName = prefix + ":" + subType;
+                    if (realType != null && !realType.equals(subTypeName)) {
+                        continue;
+                    }
+                    if (!results.containsKey(subTypeName)) {
+                        try {
+                            ITypeDescriptor type = locator.locate(subTypeName);
+                            results.put(subTypeName, type);
+                        } catch (StoreException ex) {
+                            // not found; continue
+                            continue;
+                        }
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.error("Error searching for subtypes of " + supertype, e);
+            }
+        }
+        return results.values().iterator();
     }
 
     public ITypeDescriptor load(String id) throws StoreException {
@@ -148,7 +231,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
 
                 nsNode.refresh(false);
 
-                JcrTypeDescriptor type = getTypeDescriptor(object.getType());
+                ITypeDescriptor type = getTypeDescriptor(object.getType());
                 type.setSuperTypes(object.getSuperTypes());
                 type.setIsNode(object.isNode());
                 type.setIsMixin(object.isMixin());
@@ -175,16 +258,18 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
     }
 
     public void detach() {
-        for (JcrTypeDescriptor type : types.values()) {
-            type.detach();
+        for (ITypeDescriptor type : types.values()) {
+            if (type instanceof IDetachable) {
+                ((IDetachable) type).detach();
+            }
         }
     }
 
-    public ITypeDescriptor getCurrentType(String type) throws StoreException {
+    public ITypeDescriptor getCurrentType(String name) throws StoreException {
         try {
-            TypeInfo info = new TypeInfo(type);
+            TypeInfo info = new TypeInfo(name);
             TypeVersion current = info.getCurrent();
-            return createTypeDescriptor(current.getTypeNode(getJcrSession()), type);
+            return createTypeDescriptor(current.getTypeNode(getJcrSession()), name);
         } catch (RepositoryException e) {
             throw new StoreException("Could not find current type descriptor", e);
         }
@@ -196,13 +281,22 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
     }
 
-    private JcrTypeDescriptor createTypeDescriptor(Node typeNode, String type) throws RepositoryException {
-        try {
-            if (typeNode.isNodeType(HippoNodeType.NT_NODETYPE)) {
-                return new JcrTypeDescriptor(new JcrNodeModel(typeNode), locator);
+    private ITypeDescriptor createTypeDescriptor(Node typeNode, String type) throws RepositoryException, StoreException {
+        if (typeNode.isNodeType(HippoNodeType.NT_NODETYPE)) {
+            if (typeNode.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
+                String realType = typeNode.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
+                if (!realType.equals(type)) {
+                    return new PseudoTypeDescriptor(type, locator.locate(realType));
+                }
             }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+
+            JcrTypeDescriptor result = new JcrTypeDescriptor(new JcrNodeModel(typeNode), locator);
+            // do validation on type
+            if (WebApplication.get() != null && "development".equals(WebApplication.get().getConfigurationType())) {
+                result.validate();
+            }
+            return result;
+
         }
         return null;
     }
@@ -293,7 +387,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
                 }
             }
             return current;
-            
+
         }
     }
 }

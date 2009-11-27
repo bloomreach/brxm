@@ -22,11 +22,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.wicket.util.collections.MiniMap;
-import org.hippoecm.editor.tools.JcrTypeStore;
+import org.hippoecm.editor.tools.JcrTypeLocator;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeLocator;
 import org.junit.Test;
 
 public class JcrTemplateStoreTest extends PluginTest {
@@ -35,8 +36,8 @@ public class JcrTemplateStoreTest extends PluginTest {
 
     @Test
     public void testCurrentTypeTemplate() throws Exception {
-        IStore<ITypeDescriptor> typeStore = new JcrTypeStore();
-        ITypeDescriptor type = typeStore.load("test:test");
+        ITypeLocator typeStore = new JcrTypeLocator();
+        ITypeDescriptor type = typeStore.locate("test:test");
 
         IStore<IClusterConfig> templateStore = new JcrTemplateStore(typeStore);
         Map<String, Object> criteria = new MiniMap(1);
@@ -49,8 +50,8 @@ public class JcrTemplateStoreTest extends PluginTest {
 
     @Test
     public void testHistoricTypeTemplate() throws Exception {
-        IStore<ITypeDescriptor> typeStore = new JcrTypeStore();
-        ITypeDescriptor type = typeStore.load("test_0_0:test");
+        ITypeLocator typeStore = new JcrTypeLocator();
+        ITypeDescriptor type = typeStore.locate("test_0_0:test");
 
         IStore<IClusterConfig> templateStore = new JcrTemplateStore(typeStore);
         Map<String, Object> criteria = new MiniMap(1);

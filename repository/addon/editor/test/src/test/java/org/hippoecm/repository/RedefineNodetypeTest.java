@@ -36,6 +36,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RedefineNodetypeTest extends TestCase {
@@ -74,7 +75,8 @@ public class RedefineNodetypeTest extends TestCase {
         }
     }
 
-    @Test
+//    @Test
+    @Ignore
     public void testRedefine() throws RepositoryException {
         Node node, root = session.getRootNode().addNode("test");
         try {
@@ -136,7 +138,8 @@ public class RedefineNodetypeTest extends TestCase {
         */
     }
 
-    @Test
+//    @Test
+    @Ignore
     public void testWorkflow() throws RepositoryException, WorkflowException, RemoteException {
 
         String cnd1 =

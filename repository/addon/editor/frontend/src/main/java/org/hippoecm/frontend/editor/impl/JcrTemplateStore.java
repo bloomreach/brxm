@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -43,6 +42,7 @@ import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,10 +55,10 @@ public class JcrTemplateStore implements IStore<IClusterConfig>, IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(JcrTemplateStore.class);
 
-    private IStore<ITypeDescriptor> typeStore;
+    private ITypeLocator typeLocator;
 
-    public JcrTemplateStore(IStore<ITypeDescriptor> typeStore) {
-        this.typeStore = typeStore;
+    public JcrTemplateStore(ITypeLocator typeStore) {
+        this.typeLocator = typeStore;
     }
 
     public List<String> getAvailableMixins() {
@@ -148,7 +148,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig>, IDetachable {
                 throw new StoreException("Can only store clusters with a type");
             }
             try {
-                Node node = getTemplateNode(typeStore.load(type), true);
+                Node node = getTemplateNode(typeLocator.locate(type), true);
 
                 JcrClusterConfig jcrConfig = new JcrClusterConfig(new JcrNodeModel(node));
                 for (Map.Entry<String, Object> entry : cluster.entrySet()) {
@@ -253,8 +253,8 @@ public class JcrTemplateStore implements IStore<IClusterConfig>, IDetachable {
     }
 
     public void detach() {
-        if (typeStore instanceof IDetachable) {
-            ((IDetachable) typeStore).detach();
+        if (typeLocator instanceof IDetachable) {
+            ((IDetachable) typeLocator).detach();
         }
     }
 

@@ -15,9 +15,21 @@
  */
 package org.hippoecm.frontend.types;
 
+import java.util.List;
+
 import org.hippoecm.frontend.model.ocm.StoreException;
 
 public interface ITypeLocator {
 
     ITypeDescriptor locate(String type) throws StoreException;
+
+    /**
+     * Retrieves the list of types that descend from the specified type.
+     * 
+     * @param type
+     * @return
+     * @throws StoreException
+     */
+    List<ITypeDescriptor> getSubTypes(String type) throws StoreException;
+
 }

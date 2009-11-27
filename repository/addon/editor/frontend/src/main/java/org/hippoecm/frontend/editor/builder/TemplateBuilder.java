@@ -20,6 +20,7 @@ import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,9 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
+import org.hippoecm.frontend.types.TypeLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +80,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             return "_any_" + type.replace(':', '-');
         }
     }
-    
+
     class BuilderFieldDescriptor implements IFieldDescriptor, IDetachable {
         private static final long serialVersionUID = 6935814333088957137L;
 
@@ -159,9 +162,16 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         public void setPath(String path) {
             delegate.setPath(path);
+
+            Set<String> fieldNames = new HashSet<String>();
+            for (ITypeDescriptor subType : typeDescriptor.getSubTypes()) {
+                fieldNames.addAll(subType.getFields().keySet());
+            }
+
             String name = delegate.getName();
             String newName = getFieldName(path, getTypeDescriptor().getName());
             if (!typeDescriptor.getFields().containsKey(newName)
+                    && !fieldNames.contains(newName)
                     && (currentTypeDescriptor == null || (!currentTypeDescriptor.getFields().containsKey(name) && !currentTypeDescriptor
                             .getFields().containsKey(newName)))) {
                 JavaFieldDescriptor javaFieldDescriptor = new JavaFieldDescriptor(delegate);
@@ -325,6 +335,10 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         public List<String> getSuperTypes() {
             return typeDescriptor.getSuperTypes();
+        }
+
+        public List<ITypeDescriptor> getSubTypes() {
+            return typeDescriptor.getSubTypes();
         }
 
         public String getType() {
@@ -496,7 +510,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private IStore<IClusterConfig> builtinTemplateStore;
 
     private JcrTypeStore jcrTypeStore;
-    private IStore<ITypeDescriptor> builtinTypeStore;
+    private BuiltinTypeStore builtinTypeStore;
 
     private JcrPrototypeStore prototypeStore;
 
@@ -521,33 +535,11 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         this.jcrTypeStore = new JcrTypeStore();
         this.builtinTypeStore = new BuiltinTypeStore();
-        IStore<ITypeDescriptor> fieldTypeStore = new IStore<ITypeDescriptor>() {
-            private static final long serialVersionUID = 1L;
+        ITypeLocator fieldTypeLocator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore });
+        builtinTypeStore.setTypeLocator(fieldTypeLocator);
 
-            public void delete(ITypeDescriptor object) throws StoreException {
-                throw new UnsupportedOperationException("Read-only store does not support deleting types");
-            }
-
-            public Iterator<ITypeDescriptor> find(Map<String, Object> criteria) {
-                return jcrTypeStore.find(criteria);
-            }
-
-            public ITypeDescriptor load(String id) throws StoreException {
-                try {
-                    return jcrTypeStore.load(id);
-                } catch (StoreException ex) {
-                    return builtinTypeStore.load(id);
-                }
-            }
-
-            public String save(ITypeDescriptor object) throws StoreException {
-                throw new UnsupportedOperationException("Read-only store does not support saving types");
-            }
-
-        };
-
-        this.jcrTemplateStore = new JcrTemplateStore(fieldTypeStore);
-        this.builtinTemplateStore = new BuiltinTemplateStore(fieldTypeStore);
+        this.jcrTemplateStore = new JcrTemplateStore(fieldTypeLocator);
+        this.builtinTemplateStore = new BuiltinTemplateStore(fieldTypeLocator);
 
         this.prototypeStore = new JcrPrototypeStore();
 

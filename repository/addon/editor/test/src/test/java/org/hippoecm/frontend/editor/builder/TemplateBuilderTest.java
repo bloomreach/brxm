@@ -281,6 +281,24 @@ public class TemplateBuilderTest extends PluginTest {
     }
 
     @Test
+    public void testSetPathOnSubTypePreservesFieldName() throws Exception {
+        TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());
+
+        // initialize type descriptor and template
+        ITypeDescriptor type = builder.getTypeDescriptor();
+        session.save();
+        home.processEvents();
+
+        IFieldDescriptor newField = new JavaFieldDescriptor("test", new JcrTypeStore().load("String"));
+
+        type.addField(newField);
+        newField = type.getField(newField.getName());
+
+        newField.setPath("test:extra");
+        assertEquals("string", newField.getName());
+    }
+
+    @Test
     // regression test for HREPTWO-3155
     public void testRemoveLast() throws Exception {
         // YUCK!

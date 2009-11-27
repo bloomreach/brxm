@@ -63,6 +63,13 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
     void setSuperTypes(List<String> superTypes);
 
     /**
+     * Retrieve all types that descend from the type.
+     * 
+     * @return an immutable list of sub types.
+     */
+    List<ITypeDescriptor> getSubTypes();
+
+    /**
      * The map of fields that are declared in this type of any of its super types.
      * If the type is primitive, null will be returned.
      * 

@@ -36,10 +36,10 @@ public interface IStore<T> extends IClusterable {
      * @param criteria
      * @return iterator over objects that meet the criteria
      */
-    Iterator<T> find(Map<String, Object> criteria);
+    Iterator<T> find(Map<String, Object> criteria) throws StoreException;
 
     /**
-     * Load an object by its id
+     * Load an object by its id.  A StoreException is thrown if the object cannot be found.
      * 
      * @param id
      * @return object with the specified id

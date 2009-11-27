@@ -22,18 +22,16 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.editor.tools.JcrTypeStore;
+import org.hippoecm.editor.tools.JcrTypeLocator;
 import org.hippoecm.frontend.model.IModelReference;
-import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.TypeLocator;
-import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.validation.IValidationListener;
 import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidationResult;
 import org.hippoecm.frontend.validation.Violation;
@@ -71,7 +69,7 @@ public class JcrValidationService implements IValidationService {
     private IPluginContext context;
     private IPluginConfig config;
 
-    private TypeLocator locator;
+    private ITypeLocator locator;
     private IFeedbackLogger logger;
     private ValidationResult result;
 
@@ -85,10 +83,7 @@ public class JcrValidationService implements IValidationService {
             return;
         }
 
-        IStore<ITypeDescriptor>[] stores = new IStore[2];
-        stores[0] = new JcrTypeStore();
-        stores[1] = new BuiltinTypeStore();
-        locator = new TypeLocator(stores);
+        locator = new JcrTypeLocator();
 
         result = new ValidationResult();
     }
