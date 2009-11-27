@@ -47,7 +47,6 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
@@ -176,7 +175,7 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
             }
 
         });
-        column.setAttributeModifier(new DocumentAttributeModifier());
+        column.setAttributeModifier(new RevisionDocumentAttributeModifier());
         columns.add(column);
 
         column = new ListColumn(new StringResourceModel("history-time", this, null), null);
@@ -198,7 +197,6 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                     public void detach() {
                         model.detach();
                     }
-                    
                 };
                 return new Label(id, labelModel);
             }
