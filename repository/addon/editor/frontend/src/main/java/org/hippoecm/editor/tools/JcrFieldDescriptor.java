@@ -28,7 +28,6 @@ import javax.jcr.ValueFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.ocm.JcrObject;
 import org.hippoecm.frontend.model.ocm.StoreException;

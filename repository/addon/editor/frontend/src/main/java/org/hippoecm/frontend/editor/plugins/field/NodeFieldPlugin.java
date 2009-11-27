@@ -81,8 +81,13 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     @Override
     public void onModelChanged() {
-        replace(createAddLink());
         redraw();
+    }
+
+    @Override
+    protected void onBeforeRender() {
+        replace(createAddLink());
+        super.onBeforeRender();
     }
 
     @Override
