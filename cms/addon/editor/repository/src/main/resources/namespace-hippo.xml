@@ -70,40 +70,6 @@
         <sv:property sv:name="hipposysedit:supertype" sv:type="String">
           <sv:value>nt:query</sv:value>
         </sv:property>
-        <sv:node sv:name="hipposysedit:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:name" sv:type="String">
-            <sv:value>language</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>jcr:language</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hipposysedit:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:name" sv:type="String">
-            <sv:value>statement</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>jcr:statement</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="editor:templates">
@@ -209,9 +175,6 @@
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>http://www.onehippo.org/jcr/hippo/nt/2.0</sv:value>
         </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>nt:resource</sv:value>
-        </sv:property>
         <sv:node sv:name="hipposysedit:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
@@ -224,6 +187,12 @@
           </sv:property>
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>Binary</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
+            <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="hipposysedit:field">
@@ -239,6 +208,9 @@
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>Date</sv:value>
           </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
         </sv:node>
         <sv:node sv:name="hipposysedit:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -249,6 +221,23 @@
           </sv:property>
           <sv:property sv:name="hipposysedit:path" sv:type="String">
             <sv:value>jcr:mimeType</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hipposysedit:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:name" sv:type="String">
+            <sv:value>encoding</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>jcr:encoding</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>String</sv:value>
