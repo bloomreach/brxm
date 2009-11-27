@@ -140,9 +140,9 @@ public class UpdaterEngine {
                 }
                 visitors.add(visitor);
             } catch (RepositoryException ex) {
-                ex.printStackTrace(System.err);
+                log.error("error while registering visitor", ex);
             } catch (ParseException ex) {
-                ex.printStackTrace(System.err);
+                log.error("error while registering visitor", ex);
             }
         }
 
@@ -440,8 +440,6 @@ public class UpdaterEngine {
                         }
                     }
                 } catch(UpdaterException ex) {
-                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                    ex.printStackTrace(System.err);
                     if(exception != null) {
                         exception = ex;
                     }
@@ -610,8 +608,10 @@ public class UpdaterEngine {
                     }
                     log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
                 } catch (PathNotFoundException ex) {
+                    log.debug("could no longer convert "+path+" "+ex.getMessage(), ex);
                     // deliberate ignore
                 } catch (InvalidItemStateException ex) {
+                    log.debug("could no longer convert "+path+" "+ex.getMessage(), ex);
                     // deliberate ignore
                 }
             }
@@ -645,10 +645,10 @@ public class UpdaterEngine {
                     // deliberate ignore
                 }
             }
-            log.info("upgrade cycle iterated process intermediate commit");
+            log.info("upgrade cycle iterated process final commit");
             updaterSession.commit();
             updaterSession.flush();
-            log.info("upgrade cycle iterated process intermediate save");
+            log.info("upgrade cycle iterated process final save");
             session.save();
         }
         if (exception != null) {
@@ -726,7 +726,6 @@ public class UpdaterEngine {
                             log.info("upgrade registering new nodetype " + ntd.getName());
                             /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
                         } catch (InvalidNodeTypeDefException ex) {
-                            ex.printStackTrace(System.err);
                             // deliberate ignore
                         }
                     }
@@ -793,99 +792,6 @@ public class UpdaterEngine {
         }
     }
 
-    /*
-    public static class Converted extends UpdaterItemVisitor {
-        public Converted() {
-        }
-
-        @Override
-        public final void visit(Property property) throws RepositoryException {
-            super.visit(property);
-        }
-
-        @Override
-        public final void visit(Node node) throws RepositoryException {
-            if (((UpdaterNode)node).hollow) {
-                return;
-            }
-            super.visit(node);
-        }
-
-        protected void entering(Node node, int level)
-                throws RepositoryException {
-        }
-
-        protected void entering(Property property, int level)
-                throws RepositoryException {
-        }
-
-        protected void leaving(Node node, int level)
-                throws RepositoryException {
-        }
-
-        protected void leaving(Property property, int level)
-                throws RepositoryException {
-        }
-    }
-
-    public static class Cleaner extends Converted {
-        UpdaterContext context;
-
-        public Cleaner(UpdaterContext context) {
-            this.context = context;
-        }
-
-        void update(UpdaterSession session) throws RepositoryException {
-            session.getRootNode().accept(this);
-        }
-
-        @Override
-        public void entering(Node node, int level) throws RepositoryException {
-            NodeType[] nodeTypes = context.getNodeTypes(node);
-            for (PropertyIterator iter = node.getProperties(); iter.hasNext();) {
-                UpdaterProperty property = (UpdaterProperty)iter.nextProperty();
-                if (property.origin == null || !((Property)property.origin).getDefinition().isProtected()) {
-                    boolean isValid = false;
-                    for (int i = 0; i < nodeTypes.length; i++) {
-                        PropertyDefinition[] defs = nodeTypes[i].getPropertyDefinitions();
-                        for (int j = 0; j < defs.length; j++) {
-                            if (defs[j].getName().equals("*")) {
-                                isValid = true;
-                            } else if (defs[j].getName().equals(property.getName())) {
-                                isValid = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!isValid) {
-                        property.remove();
-                    }
-                }
-            }
-            for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-                UpdaterNode child = (UpdaterNode)iter.nextNode();
-                if (child.origin == null || !((Node)child.origin).getDefinition().isProtected()) {
-                    boolean isValid = false;
-                    for (int i = 0; i < nodeTypes.length; i++) {
-                        NodeDefinition[] defs = nodeTypes[i].getChildNodeDefinitions();
-                        for (int j = 0; j < defs.length; j++) {
-                            if (defs[j].getName().equals("*")) {
-                                isValid = true;
-                            } else if (defs[j].getName().equals(child.getName())) {
-                                isValid = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!isValid) {
-                        child.remove();
-                    }
-                }
-            }
-        }
-    }
-    */
-
     static class NamespaceVisitorImpl extends UpdaterItemVisitor {
         String namespace;
         String oldURI;
@@ -910,7 +816,7 @@ public class UpdaterEngine {
                 oldPrefix = namespace + "_" + oldURI.substring(oldURI.lastIndexOf('/') + 1).replace('.', '_');
             } catch (NamespaceException ex) {
                 // deliberate ignore
-                }
+            }
             this.cndReader = new CompactNodeTypeDefReader(definition.cndReader, cndName);
             NamespaceMapping mapping = cndReader.getNamespaceMapping();
             newURI = mapping.getURI(namespace);
