@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -51,6 +54,34 @@ public class HstRequestUtils {
         }
         
         return hstResponse;
+    }
+    
+    public static String getPathInfo(HttpServletRequest request){
+        return getPathInfo(request,null);
+    }
+    
+    public static String getPathInfo(HttpServletRequest request, String characterEncoding){
+        String encodePathInfo = request.getRequestURI();
+        encodePathInfo = encodePathInfo.substring(request.getContextPath().length());
+        encodePathInfo = encodePathInfo.substring(request.getServletPath().length());
+        
+        if (encodePathInfo == null) {
+            throw new IllegalArgumentException("Could not get pathinfo.");
+        }
+        
+        if(characterEncoding == null) {
+            characterEncoding = request.getCharacterEncoding();
+            if(characterEncoding == null) {
+                characterEncoding = "ISO-8859-1";
+            }
+        }
+        
+        try {
+            return URLDecoder.decode(encodePathInfo, characterEncoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("Could not get pathinfo. ", e);
+        }
+        
     }
     
     public static String getRequestServerName(HttpServletRequest request) {

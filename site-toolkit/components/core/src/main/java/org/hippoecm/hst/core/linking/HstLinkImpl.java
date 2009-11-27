@@ -78,12 +78,13 @@ public class HstLinkImpl implements HstLink{
         if (characterEncoding == null) {
             characterEncoding = "UTF-8";
         }
-        
-        String[] pathElements = this.getPathElements();
-        
-        if(pathElements == null) {
+        if(path == null) {
             log.warn("Unable to rewrite link. Return EVAL_PAGE");
             return null;
+        }
+        
+        if(path.contains("foo")) {
+            System.out.println("!!!");
         }
         
         String urlString = null;

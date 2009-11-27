@@ -18,6 +18,7 @@ package org.hippoecm.hst.demo.components;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 
 public class ErrorSearchComponent extends AbstractSearchComponent {
@@ -35,7 +36,7 @@ public class ErrorSearchComponent extends AbstractSearchComponent {
         if(request.getParameter("query") != null) {
             query = request.getParameter("query");
         } else {
-            String path = PathUtils.normalizePath(request.getPathInfo());
+            String path = PathUtils.normalizePath(HstRequestUtils.getPathInfo(request));
             query = path.substring(path.lastIndexOf('/') + 1);
             if (query == null || "".equals(query)) {
                 return;

@@ -30,6 +30,7 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.util.HttpUtils;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -343,16 +344,13 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
      * Splits path info to an array of namespaced path part and remainder. 
      */
     protected String [] splitPathInfo(HttpServletRequest request, String characterEncoding) {
-        String pathInfo = request.getPathInfo();
+        /*
+         * Do not use request.getPathInfo() as this path is already decoded by the 
+         * the web container making it impossible for us to distuinguish between a space and 
+         * a plus as both are represented by a '+' in the getPathInfo
+         */ 
         
-        if (pathInfo == null) {
-            return new String [] { null, null};
-        }
-        
-        try {
-            pathInfo = URLDecoder.decode(pathInfo, characterEncoding);
-        } catch (UnsupportedEncodingException ignore) {
-        }
+        String pathInfo = HstRequestUtils.getPathInfo(request, characterEncoding);
         
         if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
             return new String [] { null, pathInfo };
