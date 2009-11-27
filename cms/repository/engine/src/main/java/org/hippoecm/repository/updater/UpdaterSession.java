@@ -177,7 +177,7 @@ final public class UpdaterSession implements HippoSession {
     }
 
     void addReference(UpdaterProperty property, String uuid) throws RepositoryException {
-        if (!"cafebabe-cafe-babe-cafe-babecafebabe".equals(uuid)) {
+	if (!uuid.startsWith("cafebabe-") && !property.getName().startsWith("jcr:")) {
             if (log.isDebugEnabled()) {
                 log.debug("adding " + property.getPath() + " to docbases for " + uuid);
             }
@@ -190,7 +190,7 @@ final public class UpdaterSession implements HippoSession {
     }
     
     void removeReference(UpdaterProperty property, String uuid) throws RepositoryException {
-        if (!"cafebabe-cafe-babe-cafe-babecafebabe".equals(uuid)) {
+	if (!uuid.startsWith("cafebabe-") && !property.getName().startsWith("jcr:")) {
             if (log.isDebugEnabled()) {
                 log.debug("removing " + property.getPath() + " from docbases for " + uuid);
             }
