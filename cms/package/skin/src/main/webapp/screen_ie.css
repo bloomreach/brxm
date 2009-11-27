@@ -10,3 +10,7 @@ div.template-type-center-body, div.editor-perspective-center-body {
 /* End Hide from IE-Mac */
 
 .resource-upload input[type="file"] { border: 1px solid #666; width: 300px;}
+
+.hippo-editor-field-html .htmlarea .xinha_iframe { margin: 0; border: 0px; padding: 0px;}
+.hippo-editor-field-html .htmlarea .toolbar {padding:4px; padding-right: 0px;}
+
