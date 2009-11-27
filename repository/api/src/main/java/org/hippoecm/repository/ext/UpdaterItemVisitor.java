@@ -17,6 +17,7 @@ package org.hippoecm.repository.ext;
 
 import java.io.Reader;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 import javax.jcr.Item;
 import javax.jcr.ItemVisitor;
@@ -32,6 +33,7 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.InvalidItemStateException;
 
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoWorkspace;
 
 /**
  * 
@@ -315,7 +317,62 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         public String toString() {
             return "QueryVisitor["+statement+"]";
         }
+    }
 
+    public static class PathVisitor extends Iterated {
+        private String relPath;
+
+        public PathVisitor(String path) {
+            if(path.startsWith("/jcr:root")) {
+                path = path.substring("jcr:root".length());
+            }
+            while(path.startsWith("/"))
+                path = path.substring(1);
+            this.relPath = path;
+        }
+
+        public NodeIterator iterator(Session session) throws RepositoryException {
+            final Node node;
+            Node root = session.getRootNode();
+            if(root.hasNode(relPath)) {
+                node = root.getNode(relPath);
+            } else {
+                node = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(root, relPath);
+            }
+            return new NodeIterator() {
+                boolean done = false;
+                public Node nextNode() {
+                    if(done)
+                        throw new NoSuchElementException();
+                    done = true;
+                    return node;
+                }
+                public void skip(long skipNum) {
+                    if(skipNum > 0)
+                        done = true;
+                }
+                public long getSize() {
+                    return (node != null ? 1 : 0);
+                }
+                public long getPosition() {
+                    return (done ? 1 : 0);
+                }
+                public boolean hasNext() {
+                    return (!done && node != null);
+                }
+                public Object next() {
+                    return nextNode();
+                }
+                public void remove() {
+                    throw new UnsupportedOperationException("Unsupported operation");
+                }
+            };
+        }
+
+        @Override
+        public String toString() {
+            return "PathVisitor[/"+relPath+"]";
+        }
     }
 
     /**
