@@ -14,11 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:hippostd="http://www.onehippo.org/jcr/hippostd/nt/2.0"
-         xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
-         xmlns:hippogallery="http://www.onehippo.org/jcr/hippogallery/nt/2.0"
-         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="new-image-folder">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="new-image-folder">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippostd:templatequery</sv:value>
   </sv:property>

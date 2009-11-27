@@ -14,10 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0"
-         xmlns:hipposys="http://www.onehippo.org/jcr/hipposys/nt/1.0"
-         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="editor-templates">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="editor-templates">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:domainrule</sv:value>
   </sv:property>
