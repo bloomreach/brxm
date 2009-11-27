@@ -676,6 +676,9 @@ public class UpdaterEngine {
                 }
             };
         }
+        Map<String,List<UpdaterItemVisitor>> sortedBatch = new TreeMap<String,List<UpdaterItemVisitor>>(comparator);
+        sortedBatch.putAll(totalBatch);
+        totalBatch = sortedBatch;
         LinkedList<SortedMap<String, List<UpdaterItemVisitor>>> partitionedBatch = new LinkedList<SortedMap<String, List<UpdaterItemVisitor>>>();
         SortedMap<String, List<UpdaterItemVisitor>> currentBatch = null;
         for (Map.Entry<String, List<UpdaterItemVisitor>> entry : totalBatch.entrySet()) {
@@ -758,26 +761,21 @@ public class UpdaterEngine {
                     }
                     if (nodeIter != null) {
                         log.info("migration update traverse iterated for module " + module.name + " (" + visitor.toString() + ")");
-                        if (visitor instanceof NamespaceVisitorImpl && ((NamespaceVisitorImpl)visitor).isNotIterated()) {
-                            NamespaceVisitorImpl namespaceVisitor = (NamespaceVisitorImpl)visitor;
-                            namespaceVisitor.isCollecting = true;
-                            namespaceVisitor.isExecuting = true;
-                            updaterSession.getRootNode().accept(namespaceVisitor);
-                        } else {
                             while (nodeIter.hasNext()) {
                                 Node node = nodeIter.nextNode();
                                 String path = node.getPath();
                                 node = updaterSession.getRootNode();
                                 if (!path.equals("/")) {
-                                    node = node.getNode(path.substring(1));
-                                }
-                                try {
-                                    visitor.visit(node);
-                                } catch (InvalidItemStateException ex) {
-                                    // deliberate ignore
+                                    try {
+                                        node = node.getNode(path.substring(1));
+                                        visitor.visit(node);
+                                    } catch (PathNotFoundException ex) {
+                                        // deliberate ignore
+                                    } catch (InvalidItemStateException ex) {
+                                        // deliberate ignore
+                                    }
                                 }
                             }
-                        }
                     }
                 } catch (UpdaterException ex) {
                     if (exception != null) {
@@ -827,13 +825,8 @@ public class UpdaterEngine {
             return "NamespaceVisitor["+namespace+"]";
         }
 
-        // FIXME: this method should return false, or rather be removed
-        public boolean isNotIterated() {
-            return true;
-        }
-
         public boolean isAtomic() {
-            return !cndName.equals("-") || isNotIterated();
+            return !cndName.equals("-");
         }
 
         protected boolean isMatch(Node node) throws RepositoryException {
@@ -854,7 +847,7 @@ public class UpdaterEngine {
                     ++i;
                 }
             }
-            return true; // FIXME: should return false
+            return false;
         }
 
         public NodeIterator iterator(Session session) throws RepositoryException {
@@ -949,15 +942,10 @@ public class UpdaterEngine {
 
         @Override
         protected final void entering(Node node, int level) throws RepositoryException {
-            /*try {
-                try {
-                    node.addMixin("hipposys:unstructured");
-                } catch(NamespaceException ex) {
-                    // FIXME: should be removed
-                    node.addMixin("hipposys_1_0:unstructured");
-                }
+            try {
+                node.addMixin("hipposys:unstructured");
             } catch(RepositoryException ex) {
-            }*/
+            }
         }
 
         @Override
@@ -988,15 +976,7 @@ public class UpdaterEngine {
                 if (mixinsChanged) {
                     node.setProperty("jcr:mixinTypes", mixins);
                 }
-                /*try {
-                    try {
-                        node.removeMixin("hipposys:unstructured");
-                    } catch(NamespaceException ex) {
-                        // FIXME: should be removed
-                         node.removeMixin("hipposys_1_0:unstructured");
-                    }
-                } catch(RepositoryException ex) {
-                }*/
+                node.removeMixin("hipposys:unstructured");
             }
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
