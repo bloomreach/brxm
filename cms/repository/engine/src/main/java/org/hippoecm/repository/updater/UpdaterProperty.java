@@ -16,8 +16,13 @@
 package org.hippoecm.repository.updater;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Calendar;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -28,6 +33,7 @@ import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.OnParentVersionAction;
@@ -115,16 +121,79 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
         }
 
         String name = getName();
-        if (isMultiple()) {
-            if(UpdaterEngine.log.isDebugEnabled()) {
-                UpdaterEngine.log.debug("commit set multivalue property "+name+ " on "+getPath());
+
+        boolean isSingle = false;
+        boolean isMultiple = false;
+        Set<NodeType> nodeTypes = new HashSet<NodeType>();
+        nodeTypes.add(((Node)parent.origin).getPrimaryNodeType());
+        nodeTypes.addAll(Arrays.asList(((Node)parent.origin).getMixinNodeTypes()));
+        for (NodeType nodeType : nodeTypes) {
+            for (PropertyDefinition propDef : nodeType.getPropertyDefinitions()) {
+                if (propDef.getName().equals(name)) {
+                    if (propDef.isMultiple()) {
+                        if (values != null) {
+                            isMultiple = true;
+                            isSingle = false;
+                            break;
+                        }
+                    } else {
+                        if (value != null) {
+                            isSingle = true;
+                            isMultiple = false;
+                            break;
+                        }
+                    }
+                } else if (propDef.getName().equals("*")) {
+                    if (propDef.isMultiple()) {
+                        if (values != null) {
+                            isMultiple = true;
+                            isSingle = false;
+                        }
+                    } else {
+                        if (value != null) {
+                            isSingle = true;
+                            isMultiple = false;
+                        }
+                    }
+                }
             }
-            origin = ((Node)parent.origin).setProperty(name, values);
+        }
+        if (isSingle) {
+            if (isMultiple()) {
+                if (UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.warn("commit set singlevalue from multivalue property " + name + " on " + getPath());
+                }
+                origin = ((Node)parent.origin).setProperty(name, values);
+            } else {
+                if (UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.debug("commit set singlevalue property " + name + " on " + getPath());
+                }
+                origin = ((Node)parent.origin).setProperty(name, value);
+            }
+        } else if (isMultiple) {
+            if (isMultiple()) {
+                if (UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.debug("commit set multivalue property " + name + " on " + getPath());
+                }
+                origin = ((Node)parent.origin).setProperty(name, values);
+            } else {
+                if (UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.warn("commit set multivalue from singlevalue property " + name + " on " + getPath());
+                }
+                origin = ((Node)parent.origin).setProperty(name, values[0]);
+            }
         } else {
-            if(UpdaterEngine.log.isDebugEnabled()) {
-                UpdaterEngine.log.debug("commit set singlevalue property "+name+ " on "+getPath());
+            if (isMultiple()) {
+                if (UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.debug("commit set multivalue property " + name + " on " + getPath());
+                }
+                origin = ((Node)parent.origin).setProperty(name, values);
+            } else {
+                if (UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.debug("commit set singlevalue property " + name + " on " + getPath());
+                }
+                origin = ((Node)parent.origin).setProperty(name, value);
             }
-            origin = ((Node) parent.origin).setProperty(name, value);
         }
     }
 
