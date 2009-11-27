@@ -941,6 +941,14 @@ public class UpdaterEngine {
         }
 
         @Override
+        public void visit(Node node, int level, boolean leaving) throws RepositoryException {
+            if(leaving)
+                leaving(node, level);
+            else
+                entering(node, level);
+        }
+
+        @Override
         protected final void entering(Node node, int level) throws RepositoryException {
             try {
                 node.addMixin("hipposys:unstructured");
@@ -980,6 +988,12 @@ public class UpdaterEngine {
             }
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
+                if (child.getName().startsWith(namespace + ":")) {
+                    context.setName(child, newPrefix + ":" + child.getName().substring(child.getName().indexOf(":") + 1));
+                }
+            }
+            for (PropertyIterator iter = node.getProperties(); iter.hasNext();) {
+                Property child = iter.nextProperty();
                 if (child.getName().startsWith(namespace + ":")) {
                     context.setName(child, newPrefix + ":" + child.getName().substring(child.getName().indexOf(":") + 1));
                 }
