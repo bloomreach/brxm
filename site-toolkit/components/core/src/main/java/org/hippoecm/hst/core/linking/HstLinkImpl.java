@@ -73,8 +73,6 @@ public class HstLinkImpl implements HstLink{
     }
 
     public String toUrlForm(HstRequest request, HstResponse response, boolean external) {
-        StringBuilder url = new StringBuilder();
-        
         String characterEncoding = response.getCharacterEncoding();
         
         if (characterEncoding == null) {
@@ -88,19 +86,14 @@ public class HstLinkImpl implements HstLink{
             return null;
         }
         
-        for(String elem : pathElements) {
-            String enc = response.encodeURL(elem);
-            url.append("/").append(enc);
-        }
-        
         String urlString = null;
         
         if (this.containerResource) {
             HstURL hstUrl = response.createResourceURL(ContainerConstants.CONTAINER_REFERENCE_NAMESPACE);
-            hstUrl.setResourceID(url.toString());
+            hstUrl.setResourceID(path);
             urlString = hstUrl.toString();
         } else {
-            urlString = response.createNavigationalURL(url.toString()).toString();
+            urlString = response.createNavigationalURL(path).toString();
         }
         
         if(external) {
