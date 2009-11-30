@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.validation.ModelPathElement;
@@ -63,6 +64,9 @@ public class ChildNodeProvider extends AbstractProvider<JcrNodeModel> {
     public void detach() {
         if (prototype != null) {
             prototype.detach();
+        }
+        if (descriptor instanceof IDetachable) {
+            ((IDetachable) descriptor).detach();
         }
         super.detach();
     }

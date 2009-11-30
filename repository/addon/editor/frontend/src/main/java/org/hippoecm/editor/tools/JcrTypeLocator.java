@@ -17,7 +17,7 @@ package org.hippoecm.editor.tools;
 
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
@@ -25,16 +25,17 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.TypeLocator;
 
-public class JcrTypeLocator implements ITypeLocator, IClusterable  {
+public class JcrTypeLocator implements ITypeLocator, IDetachable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    TypeLocator locator;
+    private TypeLocator locator;
+    private JcrTypeStore jcrTypeStore;
 
     public JcrTypeLocator() {
-        JcrTypeStore jcrTypeStore = new JcrTypeStore();
+        jcrTypeStore = new JcrTypeStore();
         BuiltinTypeStore builtinTypeStore = new BuiltinTypeStore();
         locator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore });
         jcrTypeStore.setTypeLocator(locator);
@@ -47,6 +48,10 @@ public class JcrTypeLocator implements ITypeLocator, IClusterable  {
 
     public ITypeDescriptor locate(String type) throws StoreException {
         return locator.locate(type);
+    }
+
+    public void detach() {
+        jcrTypeStore.detach();
     }
 
 }

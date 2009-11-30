@@ -35,7 +35,6 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
@@ -49,7 +48,7 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
 
     static Logger log = LoggerFactory.getLogger(TemplateEngine.class);
 
-    private ITypeLocator typeStore;
+    private JcrTypeLocator typeStore;
     private JcrTemplateStore jcrTemplateStore;
     private IStore<IClusterConfig> builtinTemplateStore;
     private JcrPrototypeStore prototypeStore;
@@ -138,6 +137,7 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
     public void detach() {
         jcrTemplateStore.detach();
         prototypeStore.detach();
+        typeStore.detach();
         editableTypes = null;
     }
 

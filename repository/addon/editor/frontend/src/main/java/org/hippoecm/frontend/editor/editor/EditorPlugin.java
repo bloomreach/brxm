@@ -31,7 +31,7 @@ public class EditorPlugin extends RenderPlugin {
 
     public EditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-            }
+    }
 
     @Override
     protected void onStart() {
