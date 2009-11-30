@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import javax.jcr.NamespaceException;
@@ -29,6 +31,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
+import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
@@ -750,9 +753,9 @@ public class Release72UpgraderPhase2 implements UpdaterModule {
         }
     }
 
-    private Set<String> subTypedNamespaces(Workspace workspace) throws RepositoryException {
+    private Collection<String> subTypedNamespaces(Workspace workspace) throws RepositoryException {
         Set<String> knownNamespaces = new HashSet<String>();
-        Set<String> subtypedNamespaces = new HashSet<String>();
+        LinkedList<String> subtypedNamespaces = new LinkedList<String>();
         Set<String> skippedNamespaces = new HashSet<String>();
         knownNamespaces.add("hippo");
         skippedNamespaces.add("hipposys");
@@ -779,14 +782,24 @@ public class Release72UpgraderPhase2 implements UpdaterModule {
                     // if the namespace (x) is not known, but one of the supertypes of the type is in a
                     // known namespace (y) then add the namespace (x) to the list of known namespaces and restart.
                     if (!knownNamespaces.contains(ntNamespace)) {
-                        for (NodeType superType : nt.getSupertypes()) {
+                        Set<NodeType> dependencies = new HashSet<NodeType>();
+                        for (NodeType superType : nt.getSupertypes())
+                            dependencies.add(superType);
+                        for (NodeDefinition childDef : nt.getDeclaredChildNodeDefinitions()) {
+                            if(childDef.getDefaultPrimaryType() != null)
+                                dependencies.add(childDef.getDefaultPrimaryType());
+                            for(NodeType childNodeType : childDef.getRequiredPrimaryTypes())
+                                dependencies.add(childNodeType);
+                        }
+                        for (NodeType superType : dependencies) {
                             String superName = superType.getName();
                             if (superName.contains(":")) {
                                 String superNamespace = superName.substring(0, superName.indexOf(":"));
                                 if (knownNamespaces.contains(superNamespace)) {
                                     knownNamespaces.add(ntNamespace);
-                                    if (!skippedNamespaces.contains(ntNamespace))
-                                        subtypedNamespaces.add(ntNamespace);
+                                    if (!skippedNamespaces.contains(ntNamespace)) {
+                                        subtypedNamespaces.addFirst(ntNamespace);
+                                    }
                                     rerun = true;
                                     break;
                                 }
