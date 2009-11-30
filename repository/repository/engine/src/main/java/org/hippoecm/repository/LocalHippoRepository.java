@@ -76,6 +76,7 @@ import org.hippoecm.repository.decorating.checked.CheckedDecoratorFactory;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.impl.SessionDecorator;
+import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.updater.UpdaterEngine;
 import org.slf4j.Logger;
@@ -87,7 +88,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     private final static String SVN_ID = "$Id$";
 
     /** Hippo Namespace */
-    public final static String NAMESPACE_URI = "http://www.onehippo.org/jcr/hippo/nt/2.0";
+    public final static String NAMESPACE_URI = "http://www.onehippo.org/jcr/hippo/nt/2.0.1";
 
     /** Hippo Namespace prefix */
     public final static String NAMESPACE_PREFIX = "hippo";
@@ -752,8 +753,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                     log.error("Prefix already used for different namespace: " + prefix + ":" + uri);
                     return;
                 }
-                String newPrefix = prefix + "_" + currentURI.substring(uriPrefix.length());
-                ((NamespaceRegistryImpl)nsreg).externalRemap(prefix, newPrefix, currentURI);
+                // do not remap namespace, the upgrading infrastructure must take care of this
+                return;
             } catch (NamespaceException ex) {
                 if (!ex.getMessage().endsWith("is not a registered namespace prefix.")) {
                     log.error(ex.getMessage() +" For: " + prefix + ":" + uri);
@@ -773,7 +774,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     private void initializeNodetypes(Workspace workspace, InputStream cndStream, String cndName) throws ParseException,
             RepositoryException {
-        CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName);
+        CompactNodeTypeDefReader cndReader = new HippoCompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName, workspace.getNamespaceRegistry());
         List ntdList = cndReader.getNodeTypeDefs();
         NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
         NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
