@@ -95,9 +95,15 @@ if (!YAHOO.hippo.TableHelper) {
                 var lastRowParentTag = rows[rows.length-1].parentNode.tagName;
                 if(lastRowParentTag.toLowerCase() == 'tfoot') {
                     nonBodyHeight += 65;
+                } else {
+                    //Wicket 1.4 introduces a datatable with two tbody elements instead of thead/tfoot....
+                    var pagingRow = Dom.getElementsByClassName ( 'hippo-list-paging', 'tr', table);
+                    if(Lang.isArray(pagingRow) && pagingRow.length > 0) {
+                        nonBodyHeight += 65;
+                    }
                 }
                 var thead = rows[0].parentNode;
-                var tbody = rows[1].parentNode;
+                var tbody = rows[rows.length-1].parentNode;
 
 	        	var prevHeight = Dom.getStyle(tbody, 'height');
 	        	Dom.setStyle(tbody, 'height', 'auto');

@@ -310,11 +310,12 @@ padding-right: 9px;
 /* Wicket Table Paging */
 /* ================================================ */
 .hippo-list-paging{position: absolute; bottom: 0px; left: 0px; background: url("images/hippo-paging-back.png") repeat-x left bottom; width: 100%; color: #afafaf}
+.hippo-list-paging .paging-label {color: #666; }
 .hippo-list-details tr.hippo-list-paging td{width: 630px; text-align: right;}
 .hippo-list-details .hippo-list-paging td{padding: 4px; text-align: center; border-bottom: 0px; width: 190px;}
 
 .hippo-list-paging td div{margin-top: 10px; margin-bottom: 2px; width: 100%;}
-.hippo-list-paging td a{padding: 3px; color: #909090; border: 1px solid #afafaf}
+.hippo-list-paging td a{padding: 3px; border: 1px solid #afafaf; color: #666;}
 .hippo-list-paging td span{padding: 3px;}
 .hippo-list-paging td a:hover{background: white; color: black; border: 1px solid #666666}
 .hippo-list-paging td span em, .hippo-list-paging td a em{font-style: normal}
