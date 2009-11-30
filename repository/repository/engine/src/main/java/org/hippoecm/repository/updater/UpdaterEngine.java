@@ -17,6 +17,7 @@ package org.hippoecm.repository.updater;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -83,6 +84,7 @@ import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.impl.SessionDecorator;
+import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 
 public class UpdaterEngine {
     @SuppressWarnings("unused")
@@ -645,10 +647,10 @@ public class UpdaterEngine {
                     // deliberate ignore
                 }
             }
-            log.info("upgrade cycle iterated process final commit");
+            log.info("upgrade cycle iterated process intermediate commit");
             updaterSession.commit();
             updaterSession.flush();
-            log.info("upgrade cycle iterated process final save");
+            log.info("upgrade cycle iterated process intermediate save");
             session.save();
         }
         if (exception != null) {
@@ -815,7 +817,14 @@ public class UpdaterEngine {
             } catch (NamespaceException ex) {
                 // deliberate ignore
             }
-            this.cndReader = new CompactNodeTypeDefReader(definition.cndReader, cndName);
+            if(definition.cndReader == null) {
+                try {
+                    definition.cndReader = new StringReader(JcrCompactNodeTypeDefWriter.compactNodeTypeDef(definition.context.getWorkspace(), definition.prefix));
+                } catch(IOException ex) {
+                    log.error("cannot autogenerate cnd", ex);
+                }
+            }
+            this.cndReader = new CompactNodeTypeDefReader(definition.cndReader, cndName, nsReg);
             NamespaceMapping mapping = cndReader.getNamespaceMapping();
             newURI = mapping.getURI(namespace);
             newPrefix = namespace + "_" + newURI.substring(newURI.lastIndexOf('/') + 1).replace('.', '_');

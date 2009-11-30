@@ -741,14 +741,11 @@ public class Release72UpgraderPhase2 implements UpdaterModule {
             for(String subtypedNamespace : subTypedNamespaces(workspace)) {
                 String uri = workspace.getNamespaceRegistry().getURI(subtypedNamespace);
                 workspace.getNamespaceRegistry().registerNamespace(subtypedNamespace, VersionNumber.versionFromURI(uri).next().versionToURI(uri));
-                String cnd = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(workspace, subtypedNamespace);
-                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, subtypedNamespace, "-", new StringReader(cnd)));
+                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, subtypedNamespace, "-", null));
             }
         } catch (NamespaceException ex) {
             ex.printStackTrace(System.err);
         } catch (RepositoryException ex) {
-            ex.printStackTrace(System.err);
-        } catch (IOException ex) {
             ex.printStackTrace(System.err);
         }
     }
