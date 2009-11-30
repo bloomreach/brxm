@@ -281,7 +281,7 @@
           <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippo/nt/2.0</sv:value>
+          <sv:value>http://www.onehippo.org/jcr/hippo/nt/2.0.1</sv:value>
         </sv:property>
         <sv:node sv:name="hipposysedit:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -324,7 +324,7 @@
           <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippo/nt/2.0</sv:value>
+          <sv:value>http://www.onehippo.org/jcr/hippo/nt/2.0.1</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -440,7 +440,7 @@
           <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippo/nt/2.0</sv:value>
+          <sv:value>http://www.onehippo.org/jcr/hippo/nt/2.0.1</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:supertype" sv:type="String">
           <sv:value>hippo:document</sv:value>
@@ -540,7 +540,7 @@
           <sv:value>hipposysedit:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippo/nt/2.0</sv:value>
+          <sv:value>http://www.onehippo.org/jcr/hippo/nt/2.0.1</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:mixin" sv:type="Boolean">
           <sv:value>true</sv:value>

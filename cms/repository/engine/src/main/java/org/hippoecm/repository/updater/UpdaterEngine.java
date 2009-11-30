@@ -84,6 +84,7 @@ import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.impl.SessionDecorator;
+import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 
 public class UpdaterEngine {
@@ -824,7 +825,7 @@ public class UpdaterEngine {
                     log.error("cannot autogenerate cnd", ex);
                 }
             }
-            this.cndReader = new CompactNodeTypeDefReader(definition.cndReader, cndName, nsReg);
+            this.cndReader = new HippoCompactNodeTypeDefReader(definition.cndReader, cndName, nsReg);
             NamespaceMapping mapping = cndReader.getNamespaceMapping();
             newURI = mapping.getURI(namespace);
             newPrefix = namespace + "_" + newURI.substring(newURI.lastIndexOf('/') + 1).replace('.', '_');
