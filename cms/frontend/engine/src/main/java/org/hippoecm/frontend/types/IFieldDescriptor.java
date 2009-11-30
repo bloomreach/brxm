@@ -29,7 +29,7 @@ public interface IFieldDescriptor extends IClusterable, IObservable {
     
     String getPath();
 
-    void setPath(String path);
+    void setPath(String path) throws TypeException;
 
     void setMultiple(boolean multiple);
 

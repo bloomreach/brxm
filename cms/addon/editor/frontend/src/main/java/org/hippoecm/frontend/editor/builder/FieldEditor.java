@@ -28,6 +28,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.TypeException;
 
 public class FieldEditor extends Panel {
     @SuppressWarnings("unused")
@@ -62,10 +63,14 @@ public class FieldEditor extends Panel {
             }
 
             public void setObject(String path) {
-                if (path.indexOf(':') < 0) {
-                    getDescriptor().setPath(prefix + ":" + path);
-                } else {
-                    getDescriptor().setPath(path);
+                try {
+                    if (path.indexOf(':') < 0) {
+                        getDescriptor().setPath(prefix + ":" + path);
+                    } else {
+                        getDescriptor().setPath(path);
+                    }
+                } catch (TypeException e) {
+                    error(e.getLocalizedMessage());
                 }
             }
 

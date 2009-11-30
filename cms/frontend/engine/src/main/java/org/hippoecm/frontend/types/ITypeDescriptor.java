@@ -99,14 +99,14 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
      * 
      * @param descriptor the field that is added to the type
      */
-    void addField(IFieldDescriptor descriptor);
+    void addField(IFieldDescriptor descriptor) throws TypeException;
 
     /**
      * Remove a field from the type.
      * 
      * @param name the name of the field that is removed
      */
-    void removeField(String name);
+    void removeField(String name) throws TypeException;
 
     /**
      * Declare one of the fields to be the primary item.  This is only valid when
