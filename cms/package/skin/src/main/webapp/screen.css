@@ -786,7 +786,7 @@ font-weight: bold;
 /* Editor Plugin */
 /* ================================================ */
 /* default background when nothing is selected */
-.hippo-tabs-documents .tabbed-panel-layout-center{background: #f4f4f4 url("images/hippo-editor-default-back.png") no-repeat center center} 
+.hippo-tabs-documents .tabbed-panel-layout-center{background: #f4f4f4 no-repeat center center} 
 .hippo-editor{padding:0px; background: white; border: 1px solid #afafaf; border-top: none; border-left: none;}
 .hippo-editor-top{background: transparent url("images/editor-back.png") repeat-x}
 .hippo-editor-top .hippo-toolbar{padding-left: 4px}
@@ -904,6 +904,7 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor-template-field-edit .hippo-editor-template-css{}
 .hippo-editor-template-field-edit .hippo-editor-template-css li div{width: 80%; float: left; overflow: hidden;}
 .hippo-editor-template-field-edit .hippo-editor-template-css li a{width: 15%; float: right;}
+.hippo-editor-template-field-edit .hippo-editor-field-subfield{background: white; border: 1px solid #B2B2B2;} 
 
 /* subfields */
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls{background-color: #def; height: 0px; overflow-y: shown; float: right; width: 75px; display:block;}
