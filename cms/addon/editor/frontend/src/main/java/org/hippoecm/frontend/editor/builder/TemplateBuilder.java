@@ -61,6 +61,7 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
+import org.hippoecm.frontend.types.TypeHelper;
 import org.hippoecm.frontend.types.TypeLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,14 +73,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(TemplateBuilder.class);
-
-    public static String getFieldName(String path, String type) {
-        if (!"*".equals(path)) {
-            return path.substring(path.indexOf(':') + 1);
-        } else {
-            return "_any_" + type.replace(':', '-');
-        }
-    }
 
     class BuilderFieldDescriptor implements IFieldDescriptor, IDetachable {
         private static final long serialVersionUID = 6935814333088957137L;
@@ -179,7 +172,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
 
             String name = delegate.getName();
-            String newName = getFieldName(path, getTypeDescriptor().getName());
+            String newName = TypeHelper.getFieldName(path, getTypeDescriptor().getName());
             if (!typeDescriptor.getFields().containsKey(newName)
                     && !fieldNames.contains(newName)
                     && (currentTypeDescriptor == null || (!currentTypeDescriptor.getFields().containsKey(name) && !currentTypeDescriptor
@@ -189,6 +182,10 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 javaFieldDescriptor.setName(newName);
                 typeDescriptor.addField(javaFieldDescriptor);
                 delegate = typeDescriptor.getField(newName);
+                paths.remove(name);
+                paths.put(newName, path);
+            } else {
+                paths.put(name, path);
             }
             boolean containsNewName = false;
             int position = -1;
@@ -444,7 +441,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     }
 
-    private IFieldDescriptor wrap(final IFieldDescriptor descriptor) {
+    private IFieldDescriptor wrap(IFieldDescriptor descriptor) {
         return new BuilderFieldDescriptor(descriptor);
     }
 
@@ -715,13 +712,11 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private void updateItem(Node prototype, String oldPath, IFieldDescriptor newField) throws RepositoryException {
         if (newField != null) {
             ITypeDescriptor fieldType = newField.getTypeDescriptor();
-            if (!newField.getPath().equals(oldPath) && !newField.getPath().equals("*")
-                    && !oldPath.equals("*")) {
+            if (!newField.getPath().equals(oldPath) && !newField.getPath().equals("*") && !oldPath.equals("*")) {
                 if (fieldType.isNode()) {
                     if (prototype.hasNode(oldPath)) {
                         Node child = prototype.getNode(oldPath);
-                        child.getSession().move(child.getPath(),
-                                prototype.getPath() + "/" + newField.getPath());
+                        child.getSession().move(child.getPath(), prototype.getPath() + "/" + newField.getPath());
                     }
                 } else {
                     if (prototype.hasProperty(oldPath)) {
@@ -767,7 +762,8 @@ public class TemplateBuilder implements IDetachable, IObservable {
         if (clusterConfig != null) {
             ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
 
-            String pluginName = getFieldName(fieldDescriptor.getPath(), fieldDescriptor.getTypeDescriptor().getName());
+            String pluginName = TypeHelper.getFieldName(fieldDescriptor.getPath(), fieldDescriptor.getTypeDescriptor()
+                    .getName());
             JavaPluginConfig pluginConfig = new JavaPluginConfig(pluginName);
             if (fieldType.isNode()) {
                 pluginConfig.put("plugin.class", NodeFieldPlugin.class.getName());

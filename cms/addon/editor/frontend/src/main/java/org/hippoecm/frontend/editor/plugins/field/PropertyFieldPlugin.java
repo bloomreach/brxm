@@ -78,14 +78,14 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
     }
 
     private JcrPropertyModel newPropertyModel() {
-        final IFieldDescriptor field = getFieldHelper().getField();
+        IFieldDescriptor field = getFieldHelper().getField();
         JcrItemModel itemModel = new JcrItemModel(((JcrNodeModel) getDefaultModel()).getItemModel().getPath() + "/"
                 + field.getPath());
         return new JcrPropertyModel(itemModel);
     }
 
     protected void subscribe() {
-        final IFieldDescriptor field = getFieldHelper().getField();
+        IFieldDescriptor field = getFieldHelper().getField();
         if (!field.getPath().equals("*")) {
             propertyModel = newPropertyModel();
             nrValues = propertyModel.size();
@@ -97,6 +97,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
                 }
 
                 public void onEvent(Iterator<? extends IEvent<JcrPropertyModel>> events) {
+                    IFieldDescriptor field = getFieldHelper().getField();
                     if (propertyModel.size() != nrValues || field.isOrdered()) { //Only redraw if number of properties has changed.
                         nrValues = propertyModel.size();
                         resetValidation();

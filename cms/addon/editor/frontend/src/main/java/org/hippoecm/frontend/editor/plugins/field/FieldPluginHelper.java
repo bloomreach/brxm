@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * Helper class for field plugins. It reads the field
  * descriptor and produces a JcrItemModel.
  */
-public class FieldPluginHelper implements IClusterable {
+public class FieldPluginHelper implements IDetachable {
 
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
@@ -99,6 +99,12 @@ public class FieldPluginHelper implements IClusterable {
 
     public IModel<IValidationResult> getValidationModel() {
         return validationModel;
+    }
+
+    public void detach() {
+        if (field instanceof IDetachable) {
+            ((IDetachable) field).detach();
+        }
     }
 
     protected String getFieldName() {

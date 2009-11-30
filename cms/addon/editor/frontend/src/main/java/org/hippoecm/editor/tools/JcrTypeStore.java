@@ -64,6 +64,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
 
     private ITypeLocator locator;
     private Map<String, ITypeDescriptor> types = new HashMap<String, ITypeDescriptor>();
+    private Map<String, ITypeDescriptor> currentTypes = new HashMap<String, ITypeDescriptor>();
 
     @SuppressWarnings("unchecked")
     public JcrTypeStore() {
@@ -263,16 +264,31 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
                 ((IDetachable) type).detach();
             }
         }
+        for (ITypeDescriptor type : currentTypes.values()) {
+            if (type instanceof IDetachable) {
+                ((IDetachable) type).detach();
+            }
+        }
     }
 
     public ITypeDescriptor getCurrentType(String name) throws StoreException {
-        try {
-            TypeInfo info = new TypeInfo(name);
-            TypeVersion current = info.getCurrent();
-            return createTypeDescriptor(current.getTypeNode(getJcrSession()), name);
-        } catch (RepositoryException e) {
-            throw new StoreException("Could not find current type descriptor", e);
+        ITypeDescriptor result = currentTypes.get(name);
+        if (result == null) {
+            try {
+                TypeInfo info = new TypeInfo(name);
+                TypeVersion current = info.getCurrent();
+                Node typeNode = current.getTypeNode(getJcrSession());
+                if (typeNode != null) {
+                    result = createTypeDescriptor(typeNode, name);
+                    currentTypes.put(name, result);
+                } else {
+                    log.debug("No nodetype description found for " + name);
+                }
+            } catch (RepositoryException e) {
+                throw new StoreException("Could not find current type descriptor", e);
+            }
         }
+        return result;
     }
 
     // Privates
