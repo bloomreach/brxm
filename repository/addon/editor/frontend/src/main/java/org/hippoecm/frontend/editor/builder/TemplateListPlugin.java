@@ -51,6 +51,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
+import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -158,7 +159,11 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     String prefix = containingType.getName();
                     if (prefix.indexOf(':') > 0) {
                         prefix = prefix.substring(0, prefix.indexOf(':'));
-                        containingType.addField(new JavaFieldDescriptor(prefix, type));
+                        try {
+                            containingType.addField(new JavaFieldDescriptor(prefix, type));
+                        } catch (TypeException e) {
+                            TemplateListPlugin.this.error(e.getLocalizedMessage());
+                        }
                     } else {
                         log.warn("adding a field to a primitive type is not supported");
                     }

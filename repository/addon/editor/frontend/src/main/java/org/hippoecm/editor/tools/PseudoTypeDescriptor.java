@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -47,7 +46,7 @@ public class PseudoTypeDescriptor implements ITypeDescriptor, IDetachable {
     }
 
     public void addField(IFieldDescriptor descriptor) {
-        upstream.addField(descriptor);
+        throw new UnsupportedOperationException();
     }
 
     public Map<String, IFieldDescriptor> getDeclaredFields() {

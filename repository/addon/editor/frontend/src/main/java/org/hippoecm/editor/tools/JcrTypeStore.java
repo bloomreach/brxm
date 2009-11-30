@@ -41,6 +41,7 @@ import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
+import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -250,6 +251,9 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
                 log.error(ex.getMessage());
                 throw new StoreException(ex);
             } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+                throw new StoreException(ex);
+            } catch (TypeException ex) {
                 log.error(ex.getMessage());
                 throw new StoreException(ex);
             }

@@ -61,6 +61,7 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
+import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.frontend.types.TypeHelper;
 import org.hippoecm.frontend.types.TypeLocator;
 import org.slf4j.Logger;
@@ -153,12 +154,22 @@ public class TemplateBuilder implements IDetachable, IObservable {
             delegate.setOrdered(isOrdered);
         }
 
-        public void setPath(String path) {
+        public void setPath(String path) throws TypeException {
+            if (!"*".equals(path)) {
+                for (IFieldDescriptor sibling : typeDescriptor.getFields().values()) {
+                    if (!sibling.getName().equals(delegate.getName())) {
+                        if (sibling.getPath().equals(path)) {
+                            throw new TypeException("A field with path " + path + " already exists");
+                        }
+                    }
+                }
+            }
+
             String oldPath = delegate.getPath();
             delegate.setPath(path);
             try {
-                IModel prototypeModel = getPrototype();
-                Node prototype = (Node) prototypeModel.getObject();
+                IModel<Node> prototypeModel = getPrototype();
+                Node prototype = prototypeModel.getObject();
                 updateItem(prototype, oldPath, delegate);
             } catch (RepositoryException ex) {
                 log.error("Failed to update prototype", ex);
@@ -178,7 +189,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     && (currentTypeDescriptor == null || (!currentTypeDescriptor.getFields().containsKey(name) && !currentTypeDescriptor
                             .getFields().containsKey(newName)))) {
                 JavaFieldDescriptor javaFieldDescriptor = new JavaFieldDescriptor(delegate);
-                typeDescriptor.removeField(name);
+                    typeDescriptor.removeField(name);
                 javaFieldDescriptor.setName(newName);
                 typeDescriptor.addField(javaFieldDescriptor);
                 delegate = typeDescriptor.getField(newName);
@@ -317,17 +328,15 @@ public class TemplateBuilder implements IDetachable, IObservable {
         private IObservationContext obContext;
         private IObserver observer;
 
-        public void addField(IFieldDescriptor descriptor) {
+        public void addField(IFieldDescriptor descriptor) throws TypeException {
             for (IFieldDescriptor field : getFields().values()) {
                 if (!"*".equals(field.getPath())) {
                     if (field.getPath().equals(descriptor.getPath())) {
-                        log.warn("Path " + descriptor.getPath() + " already exists, not adding field");
-                        return;
+                        throw new TypeException("Path " + descriptor.getPath() + " already exists, not adding field");
                     }
                 } else if ("*".equals(descriptor.getPath())) {
                     if (field.getTypeDescriptor().getType().equals(descriptor.getTypeDescriptor().getType())) {
-                        log.warn("Path " + descriptor.getPath() + " already exists, not adding field");
-                        return;
+                        throw new TypeException("Path " + descriptor.getPath() + " already exists, not adding field");
                     }
                 }
             }
@@ -376,7 +385,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             return typeDescriptor.isType(typeName);
         }
 
-        public void removeField(String name) {
+        public void removeField(String name) throws TypeException {
             typeDescriptor.removeField(name);
             updatePrototype();
         }
@@ -464,7 +473,11 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 if (removedFields != null) {
                     IFieldDescriptor descriptor = removedFields.remove(field);
                     if (descriptor != null) {
-                        typeDescriptor.addField(descriptor);
+                        try {
+                            typeDescriptor.addField(descriptor);
+                        } catch (TypeException e) {
+                            log.error("Failed to add field to type", e);
+                        }
                     }
                 }
             }
@@ -479,7 +492,11 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     removedFields = new TreeMap<String, IFieldDescriptor>();
                 }
                 removedFields.put(field, new JavaFieldDescriptor(typeDescriptor.getField(field)));
-                typeDescriptor.removeField(field);
+                try {
+                    typeDescriptor.removeField(field);
+                } catch (TypeException e) {
+                    log.error("Failed to remove field from type", e);
+                }
                 updatePrototype();
             }
             return config;
