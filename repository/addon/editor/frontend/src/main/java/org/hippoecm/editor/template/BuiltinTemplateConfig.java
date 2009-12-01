@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.impl;
+package org.hippoecm.editor.template;
 
 import java.util.LinkedList;
 import java.util.List;

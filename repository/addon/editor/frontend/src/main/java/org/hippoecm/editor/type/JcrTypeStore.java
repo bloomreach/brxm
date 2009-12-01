@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.editor.tools;
+package org.hippoecm.editor.type;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -95,8 +95,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         ITypeDescriptor result = types.get(name);
         if (result == null) {
             try {
-                TypeInfo info = new TypeInfo(name);
-                TypeVersion version = info.getLatest();
+                TypeVersion version = new TypeVersion(name);
                 Node typeNode = version.getTypeNode(getJcrSession());
                 if (typeNode != null) {
                     result = createTypeDescriptor(typeNode, name);
@@ -233,7 +232,10 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
 
                 nsNode.refresh(false);
 
-                ITypeDescriptor type = getTypeDescriptor(object.getType());
+                ITypeDescriptor type = getDraftType(object.getType());
+                if (type == null) {
+                    throw new StoreException("Could not find newly created draft");
+                }
                 type.setSuperTypes(object.getSuperTypes());
                 type.setIsNode(object.isNode());
                 type.setIsMixin(object.isMixin());
@@ -275,12 +277,13 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
         }
     }
 
-    public ITypeDescriptor getCurrentType(String name) throws StoreException {
+    public ITypeDescriptor getDraftType(String name) throws StoreException {
         ITypeDescriptor result = currentTypes.get(name);
         if (result == null) {
             try {
-                TypeInfo info = new TypeInfo(name);
-                TypeVersion current = info.getCurrent();
+                TypeVersion version = new TypeVersion(name);
+                TypeInfo info = version.getTypeInfo();
+                TypeVersion current = info.getDraft();
                 Node typeNode = current.getTypeNode(getJcrSession());
                 if (typeNode != null) {
                     result = createTypeDescriptor(typeNode, name);
@@ -289,7 +292,7 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
                     log.debug("No nodetype description found for " + name);
                 }
             } catch (RepositoryException e) {
-                throw new StoreException("Could not find current type descriptor", e);
+                throw new StoreException("Could not find draft type descriptor", e);
             }
         }
         return result;
@@ -345,47 +348,38 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
             return nsInfo.getPath() + "/" + subType;
         }
 
-        TypeVersion getLatest() throws RepositoryException {
-            boolean latest = true;
-            String uri = getNamespace().getCurrentUri();
-            String prefix;
-            if (type.indexOf(':') > 0) {
-                prefix = type.substring(0, type.indexOf(':'));
-                String typeUri = getJcrSession().getWorkspace().getNamespaceRegistry().getURI(prefix);
-                if (!typeUri.equals(uri)) {
-                    latest = false;
-                    uri = typeUri;
-                }
-            } else {
-                prefix = "system";
-            }
-
-            return new TypeVersion(this, latest, uri);
-        }
-
-        TypeVersion getCurrent() throws RepositoryException {
-            String prefix = "system";
-            String uri = null;
-            if (type.indexOf(':') > 0) {
-                prefix = type.substring(0, type.indexOf(':'));
-                uri = getJcrSession().getWorkspace().getNamespaceRegistry().getURI(prefix);
-            }
-            return new TypeVersion(this, false, uri);
+        TypeVersion getDraft() throws RepositoryException {
+            return new TypeVersion(this, true, null);
         }
     }
 
     private class TypeVersion {
 
         TypeInfo info;
-        boolean latest;
+        boolean draft;
         String uri;
 
-        public TypeVersion(TypeInfo info, boolean latest, String uri) {
+        TypeVersion(String type) throws RepositoryException {
+            info = new TypeInfo(type);
+            draft = false;
+            if (type.indexOf(':') > 0) {
+                String prefix = type.substring(0, type.indexOf(':'));
+                uri = getJcrSession().getWorkspace().getNamespaceRegistry().getURI(prefix);
+            } else {
+                uri = "internal";
+            }
+        }
+
+        TypeVersion(TypeInfo info, boolean draft, String uri) {
             this.info = info;
-            this.latest = latest;
+            this.draft = draft;
             this.uri = uri;
         }
 
+        TypeInfo getTypeInfo() {
+            return info;
+        }
+        
         Node getTypeNode(Session session) throws RepositoryException {
             String path = info.getPath();
             if (!session.itemExists(path) || !session.getItem(path).isNode()) {
@@ -395,19 +389,33 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
             NodeIterator iter = ((Node) session.getItem(path)).getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(
                     HippoNodeType.HIPPOSYSEDIT_NODETYPE);
 
-            Node current = null;
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
-                if (latest && !node.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    return node;
+                if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {
+                    if (draft) {
+                        return node;
+                    } else if (node.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
+                        String realType = node.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
+                        String prefix = info.getNamespace().getPrefix();
+                        String pseudoType;
+                        if (!"system".equals(prefix)) {
+                            pseudoType = prefix + ":" + info.subType;
+                        } else {
+                            pseudoType = info.subType;
+                        }
+                        if (!realType.equals(pseudoType)) {
+                            return node;
+                        }
+                    }
                 } else {
                     if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                        current = node;
+                        return node;
                     }
                 }
             }
-            return current;
-
+            return null;
         }
+
     }
+
 }

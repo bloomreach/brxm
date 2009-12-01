@@ -13,14 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.impl;
+package org.hippoecm.editor.template;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -28,7 +28,7 @@ import org.hippoecm.frontend.types.ITypeLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BuiltinTemplateStore implements IStore<IClusterConfig> {
+public class BuiltinTemplateStore implements ITemplateStore {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -65,6 +65,10 @@ public class BuiltinTemplateStore implements IStore<IClusterConfig> {
 
     public void delete(IClusterConfig object) {
         throw new UnsupportedOperationException("Builtin template store is read only");
+    }
+
+    public List<String> getMetadataEditors() {
+        return Collections.emptyList();
     }
 
 }

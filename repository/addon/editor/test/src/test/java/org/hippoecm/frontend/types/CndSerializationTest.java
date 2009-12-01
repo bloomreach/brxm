@@ -30,7 +30,7 @@ import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 import org.apache.wicket.Session;
-import org.hippoecm.editor.tools.CndSerializer;
+import org.hippoecm.editor.cnd.CndSerializer;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.session.UserSession;

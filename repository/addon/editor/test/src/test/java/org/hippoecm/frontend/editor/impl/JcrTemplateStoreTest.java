@@ -22,7 +22,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.wicket.util.collections.MiniMap;
-import org.hippoecm.editor.tools.JcrTypeLocator;
+import org.hippoecm.editor.template.JcrTemplateStore;
+import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;

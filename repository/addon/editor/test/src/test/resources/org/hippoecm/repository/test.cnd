@@ -66,5 +66,9 @@
 + test:uncascaded (test:uncascaded)
 + * (test:validator)
 
+[test:edited]
+- test:title (string)
 
+[test:inheritingfromedited] > test:edited
+- test:extra (string)
 

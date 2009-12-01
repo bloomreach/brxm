@@ -28,7 +28,7 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.editor.tools.JcrTypeStore;
+import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
@@ -88,7 +88,7 @@ public class TemplateBuilderTest extends PluginTest {
      * verify that a plugin is added to the cluster when a field is added to the type
      */
     public void testAddField() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());
+        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel());
 
         final List<IPluginConfig> added = new LinkedList<IPluginConfig>();
         final List<IPluginConfig> removed = new LinkedList<IPluginConfig>();
@@ -138,7 +138,7 @@ public class TemplateBuilderTest extends PluginTest {
      * verify that a field is removed from the type when a plugin is removed from the cluster
      */
     public void testRemovePlugin() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());
+        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel());
 
         // initialize type descriptor and template
         final ITypeDescriptor type = builder.getTypeDescriptor();
@@ -187,7 +187,7 @@ public class TemplateBuilderTest extends PluginTest {
 
     @Test
     public void testAddRemoveCycle() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());
+        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel());
 
         // initialize type descriptor and template
         final ITypeDescriptor type = builder.getTypeDescriptor();
@@ -216,7 +216,7 @@ public class TemplateBuilderTest extends PluginTest {
 
     @Test
     public void testChangePath() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());
+        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel());
 
         // initialize type descriptor and template
         ITypeDescriptor type = builder.getTypeDescriptor();
@@ -282,7 +282,7 @@ public class TemplateBuilderTest extends PluginTest {
 
     @Test
     public void testSetPathOnSubTypePreservesFieldName() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:test", false, context, new ExtPtModel());
+        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel());
 
         // initialize type descriptor and template
         ITypeDescriptor type = builder.getTypeDescriptor();
@@ -307,17 +307,17 @@ public class TemplateBuilderTest extends PluginTest {
         context.registerService(yuiWebApp, "service.behavior.yui");
         home.add(new PageLayoutPlugin(context, new JavaPluginConfig()));
 
-        Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces/test/test");
+        Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces/test/edited");
         JcrNodeModel nodeModel = new JcrNodeModel(templateTypeNode);
         ModelReference modelRef = new ModelReference("service.model", nodeModel);
         modelRef.init(context);
 
-        TemplateEngineFactory factory = new TemplateEngineFactory();
+        TemplateEngineFactory factory = new TemplateEngineFactory(null);
         context.registerService(factory, "service.engine");
         ITemplateEngine engine = context.getService("service.engine", ITemplateEngine.class);
 
         ITypeDescriptor type = engine.getType(nodeModel);
-        IClusterConfig template = engine.getTemplate(type, "view");
+        IClusterConfig template = engine.getTemplate(type, "edit");
         JavaPluginConfig parameters = new JavaPluginConfig();
         parameters.put("wicket.id", "service.root");
         parameters.put("wicket.model", "service.model");
@@ -344,17 +344,17 @@ public class TemplateBuilderTest extends PluginTest {
         context.registerService(yuiWebApp, "service.behavior.yui");
         home.add(new PageLayoutPlugin(context, new JavaPluginConfig()));
 
-        Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces/test/test");
+        Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces/test/edited");
         JcrNodeModel nodeModel = new JcrNodeModel(templateTypeNode);
         ModelReference modelRef = new ModelReference("service.model", nodeModel);
         modelRef.init(context);
 
-        TemplateEngineFactory factory = new TemplateEngineFactory();
+        TemplateEngineFactory factory = new TemplateEngineFactory(null);
         context.registerService(factory, "service.engine");
         ITemplateEngine engine = context.getService("service.engine", ITemplateEngine.class);
 
         ITypeDescriptor type = engine.getType(nodeModel);
-        IClusterConfig template = engine.getTemplate(type, "view");
+        IClusterConfig template = engine.getTemplate(type, "edit");
         JavaPluginConfig parameters = new JavaPluginConfig();
         parameters.put("wicket.id", "service.root");
         parameters.put("wicket.model", "service.model");

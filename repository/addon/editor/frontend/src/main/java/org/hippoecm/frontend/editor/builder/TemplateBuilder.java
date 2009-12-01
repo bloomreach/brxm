@@ -36,10 +36,12 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.collections.MiniMap;
-import org.hippoecm.editor.tools.JcrPrototypeStore;
-import org.hippoecm.editor.tools.JcrTypeStore;
-import org.hippoecm.frontend.editor.impl.BuiltinTemplateStore;
-import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
+import org.hippoecm.editor.prototype.JcrPrototypeStore;
+import org.hippoecm.editor.template.BuiltinTemplateStore;
+import org.hippoecm.editor.template.JcrTemplateStore;
+import org.hippoecm.editor.type.JcrDraftStore;
+import org.hippoecm.editor.type.JcrTypeStore;
+import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -189,7 +191,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     && (currentTypeDescriptor == null || (!currentTypeDescriptor.getFields().containsKey(name) && !currentTypeDescriptor
                             .getFields().containsKey(newName)))) {
                 JavaFieldDescriptor javaFieldDescriptor = new JavaFieldDescriptor(delegate);
-                    typeDescriptor.removeField(name);
+                typeDescriptor.removeField(name);
                 javaFieldDescriptor.setName(newName);
                 typeDescriptor.addField(javaFieldDescriptor);
                 delegate = typeDescriptor.getField(newName);
@@ -545,7 +547,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private IStore<IClusterConfig> builtinTemplateStore;
 
     private JcrTypeStore jcrTypeStore;
-    private BuiltinTypeStore builtinTypeStore;
 
     private JcrPrototypeStore prototypeStore;
 
@@ -561,7 +562,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private BuilderPluginList plugins;
 
-    public TemplateBuilder(String type, boolean readonly, IPluginContext context, IModel extPtModel)
+    public TemplateBuilder(final String type, boolean readonly, IPluginContext context, IModel extPtModel)
             throws BuilderException {
         this.type = type;
         this.readonly = readonly;
@@ -569,21 +570,41 @@ public class TemplateBuilder implements IDetachable, IObservable {
         this.selectedExtPtModel = extPtModel;
 
         this.jcrTypeStore = new JcrTypeStore();
-        this.builtinTypeStore = new BuiltinTypeStore();
-        ITypeLocator fieldTypeLocator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore });
-        builtinTypeStore.setTypeLocator(fieldTypeLocator);
+        String prefix;
+        if (type.indexOf(':') > 0) {
+            prefix = type.substring(0, type.indexOf(':'));
+        } else {
+            prefix = "system";
+        }
+        IStore draftStore = new JcrDraftStore(jcrTypeStore, prefix);
+        BuiltinTypeStore builtinTypeStore = new BuiltinTypeStore();
+        ITypeLocator typeLocator = new TypeLocator(new IStore[] { draftStore, jcrTypeStore, builtinTypeStore });
+        builtinTypeStore.setTypeLocator(typeLocator);
+        jcrTypeStore.setTypeLocator(typeLocator);
 
-        this.jcrTemplateStore = new JcrTemplateStore(fieldTypeLocator);
-        this.builtinTemplateStore = new BuiltinTemplateStore(fieldTypeLocator);
+        this.jcrTemplateStore = new JcrTemplateStore(typeLocator);
+        this.builtinTemplateStore = new BuiltinTemplateStore(typeLocator);
 
         this.prototypeStore = new JcrPrototypeStore();
 
         try {
-            typeDescriptor = jcrTypeStore.load(type);
+            typeDescriptor = jcrTypeStore.getDraftType(type);
+            if (typeDescriptor == null) {
+                if (readonly) {
+                    typeDescriptor = jcrTypeStore.load(type);
+                } else {
+                    throw new BuilderException("No draft found for type " + type);
+                }
+            }
 
             try {
-                currentTypeDescriptor = jcrTypeStore.getCurrentType(type);
+                currentTypeDescriptor = jcrTypeStore.load(type);
             } catch (StoreException ex) {
+                try {
+                    currentTypeDescriptor = builtinTypeStore.load(type);
+                } catch (StoreException ex2) {
+                    // ignore
+                }
                 // ignore
             }
 

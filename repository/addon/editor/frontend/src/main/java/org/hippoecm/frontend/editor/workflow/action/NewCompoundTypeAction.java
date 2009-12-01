@@ -20,9 +20,9 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
-import org.hippoecm.editor.tools.JcrTypeLocator;
+import org.hippoecm.editor.template.JcrTemplateStore;
+import org.hippoecm.editor.type.JcrDraftLocator;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
-import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin;
 import org.hippoecm.frontend.editor.workflow.TemplateFactory;
@@ -67,7 +67,7 @@ public class NewCompoundTypeAction extends Action {
 
         // create layout
         // FIXME: should be managed by template engine
-        JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeLocator());
+        JcrTemplateStore templateStore = new JcrTemplateStore(new JcrDraftLocator(prefix));
         IClusterConfig template = new TemplateFactory().createTemplate(layoutProvider.getDescriptor(layout));
         template.put("type", prefix + ":" + name);
         templateStore.save(template);

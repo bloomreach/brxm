@@ -26,6 +26,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -75,6 +76,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
     private String typeModelId;
     private String selectedPluginId;
     private String selectedExtPtId;
+    private String engineId;
 
     public TemplateTypeEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -101,6 +103,11 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
         try {
             Node node = (Node) nodeModel.getObject();
             String typeName = node.getParent().getName() + ":" + node.getName();
+
+            engineId = context.getReference(this).getServiceId() + ".engine";
+            TemplateEngineFactory factory = new TemplateEngineFactory(node.getParent().getName());
+            context.registerService(factory, engineId);
+
             IModel selectedExtensionPointModel = new LoadableDetachableModel() {
                 private static final long serialVersionUID = 1L;
 
@@ -166,7 +173,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             // selectedExtPt ?
 
             IPluginConfig parameters = new JavaPluginConfig();
-            parameters.put(ITemplateEngine.ENGINE, config.getString("engine"));
+            parameters.put(ITemplateEngine.ENGINE, engineId);
             parameters.put(ITemplateEngine.MODE, mode);
             parameters.put(RenderService.WICKET_ID, config.getString("template"));
 

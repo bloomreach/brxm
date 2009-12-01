@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hippoecm.editor.tools.JcrTypeStore;
+import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.junit.Test;
@@ -58,10 +58,10 @@ public class TypeStoreTest extends PluginTest {
 
         Map<String, IFieldDescriptor> fields = type.getFields();
         assertEquals(2, fields.size());
-        assertTrue(fields.keySet().contains("test:title"));
-        assertTrue(fields.keySet().contains("test:child"));
+        assertTrue(fields.keySet().contains("title"));
+        assertTrue(fields.keySet().contains("child"));
 
-        IFieldDescriptor title = fields.get("test:title");
+        IFieldDescriptor title = fields.get("title");
         assertEquals("String", title.getTypeDescriptor().getName());
         assertEquals("test:title", title.getPath());
     }
@@ -82,7 +82,7 @@ public class TypeStoreTest extends PluginTest {
 
         jcrTypeStore.save(builtinType);
 
-        ITypeDescriptor type = jcrTypeStore.load("test:test2");
+        ITypeDescriptor type = jcrTypeStore.getDraftType("test:test2");
         assertEquals("test:test2", type.getName());
 
         Map<String, IFieldDescriptor> fields = type.getFields();
@@ -151,4 +151,27 @@ public class TypeStoreTest extends PluginTest {
         assertTrue(fields.keySet().contains("title"));
         assertTrue(fields.keySet().contains("child"));
     }
+
+    @Test
+    public void testFetchDraft() throws Exception {
+        JcrTypeStore typeStore = new JcrTypeStore();
+        ITypeDescriptor type = typeStore.getDraftType("test:edited");
+        assertEquals("test:edited", type.getName());
+
+        Map<String, IFieldDescriptor> fields = type.getFields();
+        assertEquals(2, fields.size());
+        assertTrue(fields.keySet().contains("title"));
+        assertTrue(fields.keySet().contains("child"));
+
+        IFieldDescriptor title = fields.get("title");
+        assertEquals("String", title.getTypeDescriptor().getName());
+        assertEquals("test:title", title.getPath());
+
+        // current type should be the builtin descriptor
+        type = typeStore.getTypeLocator().locate("test:edited");
+        fields = type.getFields();
+        assertEquals(1, fields.size());
+        assertTrue(fields.keySet().contains("title"));
+    }
+
 }

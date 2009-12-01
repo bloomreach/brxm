@@ -25,16 +25,20 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
-import org.hippoecm.editor.tools.JcrTypeLocator;
-import org.hippoecm.editor.tools.JcrTypeStore;
+import org.hippoecm.editor.template.JcrTemplateStore;
+import org.hippoecm.editor.type.JcrDraftStore;
+import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
-import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin;
 import org.hippoecm.frontend.editor.workflow.TemplateFactory;
 import org.hippoecm.frontend.editor.workflow.dialog.CreateDocumentTypeDialog;
+import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeLocator;
+import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.Workflow;
 
 public class NewDocumentTypeAction extends Action {
@@ -78,7 +82,13 @@ public class NewDocumentTypeAction extends Action {
         String prefix = (String) workflow.hints().get("prefix");
 
         JcrTypeStore typeStore = new JcrTypeStore();
-        ITypeDescriptor typeDescriptor = typeStore.getTypeDescriptor(prefix + ":" + name);
+        JcrDraftStore draftStore = new JcrDraftStore(typeStore, prefix);
+        BuiltinTypeStore builtinStore = new BuiltinTypeStore();
+        ITypeLocator typeLocator = new TypeLocator(new IStore[] {draftStore, typeStore, builtinStore});
+        typeStore.setTypeLocator(typeLocator);
+        builtinStore.setTypeLocator(typeLocator);
+
+        ITypeDescriptor typeDescriptor = typeStore.getDraftType(prefix + ":" + name);
         List<String> types = typeDescriptor.getSuperTypes();
         for (String mixin : mixins) {
             types.add(mixin);
@@ -88,7 +98,7 @@ public class NewDocumentTypeAction extends Action {
 
         // create layout
         // FIXME: should be managed by template engine
-        JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeLocator());
+        JcrTemplateStore templateStore = new JcrTemplateStore(typeLocator);
         IClusterConfig template = new TemplateFactory().createTemplate(layoutProvider.getDescriptor(layout));
         template.put("type", prefix + ":" + name);
         templateStore.save(template);

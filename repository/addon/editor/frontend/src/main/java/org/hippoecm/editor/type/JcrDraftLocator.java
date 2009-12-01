@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.editor.tools;
+package org.hippoecm.editor.type;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.TypeLocator;
 
-public class JcrTypeLocator implements ITypeLocator, IDetachable {
+public class JcrDraftLocator implements ITypeLocator, IDetachable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -34,10 +34,11 @@ public class JcrTypeLocator implements ITypeLocator, IDetachable {
     private TypeLocator locator;
     private JcrTypeStore jcrTypeStore;
 
-    public JcrTypeLocator() {
+    public JcrDraftLocator(String prefix) {
         jcrTypeStore = new JcrTypeStore();
+        JcrDraftStore draftStore = new JcrDraftStore(jcrTypeStore, prefix);
         BuiltinTypeStore builtinTypeStore = new BuiltinTypeStore();
-        locator = new TypeLocator(new IStore[] { jcrTypeStore, builtinTypeStore });
+        locator = new TypeLocator(new IStore[] { draftStore, jcrTypeStore, builtinTypeStore });
         jcrTypeStore.setTypeLocator(locator);
         builtinTypeStore.setTypeLocator(locator);
     }
