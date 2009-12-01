@@ -327,10 +327,8 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
     private class TypeInfo {
         JcrNamespace nsInfo;
         String subType;
-        String type;
 
         TypeInfo(String type) throws RepositoryException {
-            this.type = type;
             String prefix = "system";
             subType = type;
             if (type.indexOf(':') > 0) {
@@ -389,6 +387,8 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
             NodeIterator iter = ((Node) session.getItem(path)).getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(
                     HippoNodeType.HIPPOSYSEDIT_NODETYPE);
 
+            String prefix = info.getNamespace().getPrefix();
+            boolean isHippoNs = "hippo".equals(prefix) || "hipposys".equals(prefix);
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
                 if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {
@@ -396,7 +396,6 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
                         return node;
                     } else if (node.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
                         String realType = node.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
-                        String prefix = info.getNamespace().getPrefix();
                         String pseudoType;
                         if (!"system".equals(prefix)) {
                             pseudoType = prefix + ":" + info.subType;
@@ -408,7 +407,8 @@ public class JcrTypeStore implements IStore<ITypeDescriptor>, IDetachable {
                         }
                     }
                 } else {
-                    if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
+                    // ignore uris for hippo namespace
+                    if (isHippoNs || node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
                         return node;
                     }
                 }
