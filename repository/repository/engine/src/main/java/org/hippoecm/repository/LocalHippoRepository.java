@@ -87,12 +87,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    /** Hippo Namespace */
-    public final static String NAMESPACE_URI = "http://www.onehippo.org/jcr/hippo/nt/2.0.1";
-
-    /** Hippo Namespace prefix */
-    public final static String NAMESPACE_PREFIX = "hippo";
-
     /** System property for overriding the repository path */
     public final static String SYSTEM_PATH_PROPERTY = "repo.path";
 
@@ -333,19 +327,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 if (needsRestart) {
                     return;
                 }
-            }
-
-            try {
-                log.info("Initializing hippo namespace");
-                initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), NAMESPACE_PREFIX, NAMESPACE_URI);
-                log.info("Initializing hipposys namespace");
-                initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), "hipposys", "http://www.onehippo.org/jcr/hipposys/nt/1.0");
-                log.info("Initializing hipposysedit namespace");
-                initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), "hipposysedit", "http://www.onehippo.org/jcr/hipposysedit/nt/1.1");
-            } catch (UnsupportedRepositoryOperationException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
-            } catch (AccessDeniedException ex) {
-                throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
             }
 
             Session syncSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
