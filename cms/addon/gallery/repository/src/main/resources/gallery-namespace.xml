@@ -77,15 +77,12 @@
         <sv:property sv:name="hipposysedit:supertype" sv:type="String">
           <sv:value>hippo:document</sv:value>
         </sv:property>
-        <sv:node sv:name="hipposysedit:field">
+        <sv:node sv:name="thumbnail">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
             <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:name" sv:type="String">
-            <sv:value>2fff010a-6cd1-49f0-86ca-970fda17d16c</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:path" sv:type="String">
             <sv:value>hippogallery:thumbnail</sv:value>
@@ -100,12 +97,9 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="hipposysedit:field">
+        <sv:node sv:name="picture">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:name" sv:type="String">
-            <sv:value>827b5f3a-2fa2-4690-82de-5f78605c3429</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:path" sv:type="String">
             <sv:value>hippogallery:picture</sv:value>
@@ -137,7 +131,7 @@
         <sv:property sv:name="mode" sv:type="String">
           <sv:value>edit</sv:value>
         </sv:property>
-        <sv:node sv:name="6f760d4e-01dd-4c44-8116-f013786417ff">
+        <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
@@ -151,7 +145,7 @@
             <sv:value>${wicket.id}</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="c4910e8d-1051-490c-8bd2-0c9a601bffb4">
+        <sv:node sv:name="thumbnail">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
@@ -162,7 +156,7 @@
             <sv:value>${engine}</sv:value>
           </sv:property>
           <sv:property sv:name="field" sv:type="String">
-            <sv:value>2fff010a-6cd1-49f0-86ca-970fda17d16c</sv:value>
+            <sv:value>thumbnail</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -177,7 +171,7 @@
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="f42091d3-65bd-46bd-aa0e-13e1d541d947">
+        <sv:node sv:name="picture">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
@@ -188,7 +182,7 @@
             <sv:value>${engine}</sv:value>
           </sv:property>
           <sv:property sv:name="field" sv:type="String">
-            <sv:value>827b5f3a-2fa2-4690-82de-5f78605c3429</sv:value>
+            <sv:value>picture</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
@@ -308,15 +302,12 @@
         <sv:property sv:name="hipposysedit:supertype" sv:type="String">
           <sv:value>hippo:document</sv:value>
         </sv:property>
-        <sv:node sv:name="hipposysedit:field">
+        <sv:node sv:name="asset">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
             <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:name" sv:type="String">
-            <sv:value>d94cbec0-431c-45c0-b241-38582ce25ae5</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:path" sv:type="String">
             <sv:value>hippogallery:asset</sv:value>
@@ -354,7 +345,7 @@
         <sv:property sv:name="mode" sv:type="String">
           <sv:value>edit</sv:value>
         </sv:property>
-        <sv:node sv:name="1dcd56e7-a091-45b9-871a-9b205cb81313">
+        <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
@@ -368,7 +359,7 @@
             <sv:value>${wicket.id}</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="6630cfd0-c69a-4981-b2fe-a67500fd3e1d">
+        <sv:node sv:name="asset">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
@@ -379,7 +370,7 @@
             <sv:value>${engine}</sv:value>
           </sv:property>
           <sv:property sv:name="field" sv:type="String">
-            <sv:value>d94cbec0-431c-45c0-b241-38582ce25ae5</sv:value>
+            <sv:value>asset</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
