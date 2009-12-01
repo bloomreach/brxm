@@ -107,7 +107,7 @@ public class FieldPluginHelper implements IDetachable {
         }
     }
 
-    protected String getFieldName() {
+    public String getFieldName() {
         return field != null ? field.getName() : "<unknown>";
     }
 
@@ -119,17 +119,17 @@ public class FieldPluginHelper implements IDetachable {
         return context;
     }
 
-    protected ITemplateEngine getTemplateEngine() {
+    public ITemplateEngine getTemplateEngine() {
         return getPluginContext()
                 .getService(getPluginConfig().getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
     }
 
-    protected JcrNodeModel getNodeModel() {
+    public JcrNodeModel getNodeModel() {
         return (JcrNodeModel) getPluginContext().getService(getPluginConfig().getString("wicket.model"),
                 IModelReference.class).getModel();
     }
 
-    protected JcrItemModel getFieldItemModel() {
+    public JcrItemModel getFieldItemModel() {
         return new JcrItemModel(getNodeModel().getItemModel().getPath() + "/" + field.getPath());
     }
 
