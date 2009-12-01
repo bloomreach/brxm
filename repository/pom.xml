@@ -47,25 +47,6 @@
   </modules>
 
   <properties>
-    <!-- Documentation properties (variables).
-         May not contain dots as they are processed by Apache velocity.
-         Can be used in xdoc files with the extension .xml.vm
-         -->
-    <dependency_version>2.09.02</dependency_version>
-    <last_release>/tags/Tag-HREPTWO-v2_09_02</last_release>
-    <quickstart_war_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.09.02/hippo-ecm-quickstart-war-2.09.02.war</quickstart_war_url>
-    <quickstart_ear_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.09.02/hippo-ecm-quickstart-ear-2.09.02.ear</quickstart_ear_url>
-    <quickstart_zip_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.09.02/hippo-ecm-quickstart-bin-2.09.02.zip</quickstart_zip_package_url>
-    <quickstart_targz_package_url>http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.09.02/hippo-ecm-quickstart-bin-2.09.02.tar.gz</quickstart_targz_package_url>
-    <package_ear>hippo-ecm-package-ear-2.09.02.ear</package_ear>
-    <geronimo_jar_url>http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar</geronimo_jar_url>
-    <public_project_wiki>http://wiki.hippo.nl/display/CMS7/Home</public_project_wiki>
-    <project_source_url>http://svn.onehippo.org/repos/hippo/hippo-ecm</project_source_url>
-    <project_repository_url>http://repository.hippocms.org</project_repository_url>
-    <issue_tracker_homepage>http://issues.onehippo.org</issue_tracker_homepage>
-    <product_name>Hippo CMS 7</product_name>
-    <product_abr>CMS 7</product_abr>
-
     <!-- Test dependencies  -->
     <easymock.version>1.1</easymock.version>
     <selenium.version>0.9.2</selenium.version>

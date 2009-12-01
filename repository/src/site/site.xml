@@ -25,7 +25,7 @@
   <skin>
     <groupId>org.onehippo.ecm.skin</groupId>
     <artifactId>maven-skin</artifactId>
-    <version>1.01.08-SNAPSHOT</version>
+    <version>1.01.08</version>
     <!-- To change
      - Edit trunk/maven-skin/src/main/resources/css/screen.css
      - Run mvn install in trunk/maven-skin/ to get changed screen.css in $HOME/.m2/repository/org/hippoecm/hippo-ecm-maven-skin/2.02.00-SNAPSHOT/hippo-ecm-maven-skin-2.02.00-SNAPSHOT.jar 
