@@ -184,11 +184,12 @@ public abstract class UpdaterItem implements Item {
                 if (item == this) {
                     iter.remove();
                     parent.removed.add(this);
-                    return;
+                    break;
                 }
             }
-            if (parent.children.get(name).size() == 0)
+            if (parent.children.get(name).size() == 0) {
                 parent.children.remove(name);
+            }
         }
     }
 }

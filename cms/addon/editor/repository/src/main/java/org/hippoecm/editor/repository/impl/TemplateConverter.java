@@ -157,6 +157,14 @@ public class TemplateConverter implements UpdaterModule {
                                     }
                                 }
                                 String newTypeName = rename(prefix, newVersion, prefix + ":" + node.getName());
+                                for(NodeIterator childIter = draftPrototype.getNodes(); childIter.hasNext(); ) {
+                                    Node child = childIter.nextNode();
+                                    context.setName(child, rename(prefix, newVersion, child.getName()));
+                                }
+                                for(PropertyIterator childIter = draftPrototype.getProperties(); childIter.hasNext(); ) {
+                                    Property child = childIter.nextProperty();
+                                    context.setName(child, rename(prefix, newVersion, child.getName()));
+                                }
                                 context.setPrimaryNodeType(draftPrototype, newTypeName);
                                 if (draftPrototype.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                                     draftPrototype.addMixin(HippoNodeType.NT_HARDDOCUMENT);
@@ -168,7 +176,7 @@ public class TemplateConverter implements UpdaterModule {
                         }
                     }
                 }
-            }.setAtomic());
+            });
         }
     }
 }
