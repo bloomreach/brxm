@@ -24,14 +24,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.services.XinhaFacetHelper;
 import org.hippoecm.frontend.plugins.xinha.services.images.ImageItemFactory.ImageItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class XinhaImageService implements IClusterable {
+public abstract class XinhaImageService implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -88,6 +88,10 @@ public abstract class XinhaImageService implements IClusterable {
         };
     }
 
+    public void detach() {
+        nodeModel.detach();
+    }
+    
     private ImageItem createImageItem(Map<String, String> values) {
         return factory.createImageItem(values);
     }

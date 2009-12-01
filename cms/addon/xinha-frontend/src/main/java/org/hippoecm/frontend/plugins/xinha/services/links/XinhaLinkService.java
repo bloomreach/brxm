@@ -24,6 +24,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.XinhaUtil;
 import org.hippoecm.frontend.plugins.xinha.services.XinhaFacetHelper;
@@ -32,7 +33,7 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class XinhaLinkService implements IClusterable {
+public abstract class XinhaLinkService implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -80,6 +81,10 @@ public abstract class XinhaLinkService implements IClusterable {
         } catch (RepositoryException ex) {
             log.error("Error removing unused links", ex);
         }
+    }
+    
+    public void detach() {
+        nodeModel.detach();
     }
     
     private String createLink(JcrNodeModel nodeModel) {

@@ -21,6 +21,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.model.IModelReference;
@@ -61,7 +62,7 @@ import org.slf4j.LoggerFactory;
  * model that is registered here.
  * </ul>
  */
-public class JcrValidationService implements IValidationService {
+public class JcrValidationService implements IValidationService, IDetachable {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(JcrValidationService.class);
@@ -147,6 +148,11 @@ public class JcrValidationService implements IValidationService {
             return modelRef.getModel();
         }
         return null;
+    }
+
+    public void detach() {
+        locator.detach();
+        result.detach();
     }
 
 }

@@ -296,6 +296,21 @@ public class TemplateBuilderTest extends PluginTest {
 
         newField.setPath("test:extra");
         assertEquals("string", newField.getName());
+
+        // plugin should have been renamed, but it's field should still be the same
+        IPluginConfig fieldPlugin = null;
+        IClusterConfig cluster = builder.getTemplate();
+        List<IPluginConfig> plugins = cluster.getPlugins();
+        for (IPluginConfig plugin : plugins) {
+            if (plugin.containsKey("field")) {
+                if ("string".equals(plugin.getString("field"))) {
+                    fieldPlugin = plugin;
+                    break;
+                }
+            }
+        }
+        assertNotNull(fieldPlugin);
+        assertEquals("extra", fieldPlugin.getName());
     }
 
     @Test

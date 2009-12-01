@@ -23,9 +23,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.model.DetachMonitor;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The TypeLocator finds the ITypeDescriptor for a particular type,
@@ -33,19 +36,23 @@ import org.hippoecm.frontend.model.ocm.StoreException;
  * ITypeDescriptor implementations to be able to do their own lookup.
  * It should not be used by store implementations.
  */
-public class TypeLocator implements ITypeLocator, IClusterable {
+public class TypeLocator implements ITypeLocator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(TypeLocator.class);
+
     private IStore<ITypeDescriptor>[] stores;
-    
+    private DetachMonitor monitor = new DetachMonitor();
+
     public TypeLocator(IStore<ITypeDescriptor> stores[]) {
         this.stores = stores;
     }
 
     public ITypeDescriptor locate(String type) throws StoreException {
+        monitor.attach();
         for (int i = 0; i < stores.length; i++) {
             try {
                 return stores[i].load(type);
@@ -57,6 +64,7 @@ public class TypeLocator implements ITypeLocator, IClusterable {
     }
 
     public List<ITypeDescriptor> getSubTypes(String type) throws StoreException {
+        monitor.attach();
         Map<String, ITypeDescriptor> types = new LinkedHashMap<String, ITypeDescriptor>();
         List<String> newList = new LinkedList<String>();
         newList.add(type);
@@ -77,6 +85,17 @@ public class TypeLocator implements ITypeLocator, IClusterable {
             }
         } while (newList.size() > 0);
         return new LinkedList<ITypeDescriptor>(types.values());
+    }
+
+    public void detach() {
+        if (monitor.isAttached()) {
+            for (IStore store : stores) {
+                if (store instanceof IDetachable) {
+                    ((IDetachable) store).detach();
+                }
+            }
+            monitor.detach();
+        }
     }
 
 }

@@ -18,7 +18,7 @@ package org.hippoecm.frontend.editor.plugins.field;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.validator.FilteredValidationModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -36,7 +36,7 @@ import org.hippoecm.frontend.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FieldItemRenderer<C extends IModel> implements IClusterable {
+public class FieldItemRenderer<C extends IModel> implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(FieldItemRenderer.class);
@@ -127,6 +127,12 @@ public class FieldItemRenderer<C extends IModel> implements IClusterable {
             return filteredValidationModel.getObject().isValid();
         }
         return true;
+    }
+
+    public void detach() {
+        if (filteredValidationModel != null) {
+            filteredValidationModel.detach();
+        }
     }
 
 }

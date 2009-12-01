@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.wicket.Application;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.string.PrependingStringBuffer;
@@ -259,7 +260,9 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     private void writeObject(ObjectOutputStream output) throws IOException {
         if (isAttached()) {
             log.warn("Undetached JcrItemModel " + getPath());
-            detach();
+            if (Application.DEPLOYMENT.equals(Application.get().getConfigurationType())) {
+                detach();
+            }
         }
         output.defaultWriteObject();
     }

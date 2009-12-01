@@ -16,13 +16,13 @@
 package org.hippoecm.frontend.validation;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 
 /**
  * Path element in a {@link ModelPath}.
  */
-public final class ModelPathElement implements IClusterable {
+public final class ModelPathElement implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     private IFieldDescriptor field;
@@ -45,6 +45,12 @@ public final class ModelPathElement implements IClusterable {
 
     public int getIndex() {
         return index;
+    }
+
+    public void detach() {
+        if (field instanceof IDetachable) {
+            ((IDetachable) field).detach();
+        }
     }
 
     @Override

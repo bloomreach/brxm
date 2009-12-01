@@ -241,6 +241,12 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
     @Override
     protected void onDetach() {
+        if (imageService != null) {
+            imageService.detach();
+        }
+        if (linkService != null) {
+            linkService.detach();
+        }
         if (nodeModel != null) {
             nodeModel.detach();
         }

@@ -43,12 +43,15 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
 
     private final static int MAXCOUNT = 2000;
 
+    static final int DETACHING = 0x00000001;
+
     private List<TreeNode> children;
 
     private boolean reloadChildren = true;
     private boolean reloadChildCount = true;
     private int childCount = -1;
     private IJcrTreeNode parent;
+    private transient int flags = 0;
 
     public JcrTreeNode(JcrNodeModel nodeModel, IJcrTreeNode parent) {
         super(nodeModel);
@@ -131,17 +134,24 @@ public class JcrTreeNode extends NodeModelWrapper implements IJcrTreeNode {
 
     @Override
     public void detach() {
-        reloadChildren = true;
-        reloadChildCount = true;
-        if (children != null) {
-            for (TreeNode child : children) {
-                if (child instanceof IDetachable) {
-                    ((IDetachable) child).detach();
+        if ((flags & DETACHING) == 0) {
+            flags = flags | DETACHING;
+            reloadChildren = true;
+            reloadChildCount = true;
+            if (children != null) {
+                for (TreeNode child : children) {
+                    if (child instanceof IDetachable) {
+                        ((IDetachable) child).detach();
+                    }
                 }
+                children = null;
             }
-            children = null;
+            if (parent != null) {
+                parent.detach();
+            }
+            super.detach();
+            flags = flags & (0xFFFFFFFF ^ DETACHING);
         }
-        super.detach();
     }
 
     protected List<TreeNode> loadChildren() throws RepositoryException {

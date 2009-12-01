@@ -17,13 +17,13 @@ package org.hippoecm.frontend.validation;
 
 import java.util.Set;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 
 /**
  * The model that is constructed during validation.  Maintains state about
  * what fields are invalid.
  */
-public interface IValidationResult extends IClusterable {
+public interface IValidationResult extends IDetachable {
 
     Set<Violation> getViolations();
 

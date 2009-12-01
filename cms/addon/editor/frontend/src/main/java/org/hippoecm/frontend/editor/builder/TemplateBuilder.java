@@ -32,7 +32,6 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.collections.MiniMap;
@@ -41,7 +40,6 @@ import org.hippoecm.editor.template.BuiltinTemplateStore;
 import org.hippoecm.editor.template.JcrTemplateStore;
 import org.hippoecm.editor.type.JcrDraftStore;
 import org.hippoecm.editor.type.JcrTypeStore;
-import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -186,6 +184,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
             String name = delegate.getName();
             String newName = TypeHelper.getFieldName(path, getTypeDescriptor().getName());
+            boolean updateFieldName = false;
             if (!typeDescriptor.getFields().containsKey(newName)
                     && !fieldNames.contains(newName)
                     && (currentTypeDescriptor == null || (!currentTypeDescriptor.getFields().containsKey(name) && !currentTypeDescriptor
@@ -197,6 +196,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 delegate = typeDescriptor.getField(newName);
                 paths.remove(name);
                 paths.put(newName, path);
+                updateFieldName = true;
             } else {
                 paths.put(name, path);
             }
@@ -206,7 +206,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
             for (int i = 0; i < plugins.size(); i++) {
                 IPluginConfig plugin = plugins.get(i);
                 if (plugin.containsKey("field") && name.equals(plugin.getString("field"))) {
-                    plugin.put("field", newName);
+                    if (updateFieldName) {
+                        plugin.put("field", newName);
+                    }
                     position = i;
                 }
                 if (newName.equals(plugin.getName())) {
@@ -456,7 +458,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
         return new BuilderFieldDescriptor(descriptor);
     }
 
-    class BuilderPluginList extends AbstractList<IPluginConfig> implements IClusterable {
+    class BuilderPluginList extends AbstractList<IPluginConfig> implements IDetachable {
         private static final long serialVersionUID = 1L;
 
         private List<IPluginConfig> plugins;
@@ -514,6 +516,14 @@ public class TemplateBuilder implements IDetachable, IObservable {
             return plugins.size();
         }
 
+        public void detach() {
+            for (IPluginConfig config : plugins) {
+                if (config instanceof IDetachable) {
+                    ((IDetachable) config).detach();
+                }
+            }
+        }
+
     }
 
     private static class BuilderClusterDecorator extends AbstractClusterDecorator {
@@ -547,6 +557,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private IStore<IClusterConfig> builtinTemplateStore;
 
     private JcrTypeStore jcrTypeStore;
+    private ITypeLocator typeLocator;
 
     private JcrPrototypeStore prototypeStore;
 
@@ -569,7 +580,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
         this.context = context;
         this.selectedExtPtModel = extPtModel;
 
-        this.jcrTypeStore = new JcrTypeStore();
+        JcrTypeStore jcrTypeStore = new JcrTypeStore();
         String prefix;
         if (type.indexOf(':') > 0) {
             prefix = type.substring(0, type.indexOf(':'));
@@ -578,7 +589,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
         IStore draftStore = new JcrDraftStore(jcrTypeStore, prefix);
         BuiltinTypeStore builtinTypeStore = new BuiltinTypeStore();
-        ITypeLocator typeLocator = new TypeLocator(new IStore[] { draftStore, jcrTypeStore, builtinTypeStore });
+        typeLocator = new TypeLocator(new IStore[] { draftStore, jcrTypeStore, builtinTypeStore });
         builtinTypeStore.setTypeLocator(typeLocator);
         jcrTypeStore.setTypeLocator(typeLocator);
 
@@ -898,15 +909,20 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     public void detach() {
         prototypeStore.detach();
-        jcrTypeStore.detach();
-        if (prototype != null) {
-            prototype.detach();
-        }
-        if (clusterConfig != null && (clusterConfig instanceof IDetachable)) {
-            ((IDetachable) clusterConfig).detach();
-        }
+        typeLocator.detach();
+        detach(plugins);
+        detach(prototype);
+        detach(clusterConfig);
+        detach(typeDescriptor);
+        detach(currentTypeDescriptor);
     }
 
+    private void detach(Object object) {
+        if (object instanceof IDetachable) {
+            ((IDetachable) object).detach();
+        }
+    }
+    
     // IObservable
 
     public void setObservationContext(IObservationContext context) {
