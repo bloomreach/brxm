@@ -13,31 +13,43 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.editor.tools;
+package org.hippoecm.editor.cnd;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TypeUpdate implements Serializable {
+public class FieldIdentifier implements Serializable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: TypeUpdate.java 17361 2009-04-21 10:07:17Z bvanhalderen $";
+    private final static String SVN_ID = "$Id: $";
 
     private static final long serialVersionUID = 1L;
 
-    public String newName;
+    public String path;
 
-    public String prototype;
-
-    public Map<FieldIdentifier, FieldIdentifier> renames;
+    public String type;
 
     private Object writeReplace() throws ObjectStreamException {
-        Map<String, Object> obj =  new HashMap<String, Object>();
-        obj.put("newName", newName);
-        obj.put("prototype", prototype);
-        obj.put("renames", renames);
+        Map<String, String> obj =  new HashMap<String, String>();
+        obj.put("path", path);
+        obj.put("type", type);
         return obj;
     }
+    
+    @Override
+    public boolean equals(Object object) {
+        if (object != null) {
+            if (object instanceof FieldIdentifier) {
+                FieldIdentifier id = (FieldIdentifier) object;
+                return id.path.equals(path) && id.type.equals(type);
+            }
+        }
+        return false;
+    }
 
+    @Override
+    public int hashCode() {
+        return (path.hashCode() * (type != null ? type.hashCode() : 0)) % 1001;
+    }
 }

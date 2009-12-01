@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.editor.tools;
+package org.hippoecm.editor.type;
 
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.RepositoryException;
@@ -56,6 +56,10 @@ public class JcrNamespace {
         return "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix;
     }
 
+    public String getPrefix() {
+        return prefix;
+    }
+    
     public String getCurrentUri() throws RepositoryException {
         return getUri(prefix);
     }

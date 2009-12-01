@@ -24,8 +24,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 
-import org.hippoecm.editor.tools.JcrTypeDescriptor;
-import org.hippoecm.editor.tools.JcrTypeStore;
+import org.hippoecm.editor.type.JcrTypeDescriptor;
+import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;

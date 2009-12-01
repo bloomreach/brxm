@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.editor.tools;
+package org.hippoecm.editor.cnd;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +31,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.editor.type.JcrNamespace;
+import org.hippoecm.editor.type.JcrTypeDescriptor;
+import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.ocm.IStore;

@@ -40,6 +40,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,6 +100,7 @@ public class RemodelWorkflowPluginTest extends PluginTest {
         nsWfl.createNamespace("testns", "http://example.org/test/0.0");
 
         Node documentNode = session.getRootNode().getNode("hippo:namespaces/testns");
+        Utilities.dump(documentNode);
         String category = "test";
         WorkflowDescriptor descriptor = wflMgr.getWorkflowDescriptor(category, documentNode);
         WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, documentNode);

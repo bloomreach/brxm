@@ -47,7 +47,7 @@ public class ViewerPlugin extends RenderPlugin {
     public ViewerPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
 
-        TemplateEngineFactory factory = new TemplateEngineFactory();
+        TemplateEngineFactory factory = new TemplateEngineFactory(null);
         engine = factory.getService(context);
         context.registerService(factory, ITemplateEngine.class.getName());
         engineId = context.getReference(factory).getServiceId();

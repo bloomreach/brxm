@@ -19,9 +19,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.wicket.model.IDetachable;
+import org.hippoecm.editor.prototype.IPrototypeStore;
+import org.hippoecm.editor.prototype.JcrPrototypeStore;
+import org.hippoecm.editor.template.BuiltinTemplateStore;
+import org.hippoecm.editor.template.ITemplateLocator;
+import org.hippoecm.editor.template.ITemplateStore;
+import org.hippoecm.editor.template.JcrTemplateStore;
+import org.hippoecm.editor.template.TemplateLocator;
+import org.hippoecm.editor.type.JcrDraftLocator;
+import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceFactory;
+import org.hippoecm.frontend.types.ITypeLocator;
 
 public class TemplateEngineFactory implements IServiceFactory<ITemplateEngine>, IDetachable {
     @SuppressWarnings("unused")
@@ -30,10 +41,27 @@ public class TemplateEngineFactory implements IServiceFactory<ITemplateEngine>, 
     private static final long serialVersionUID = 1L;
 
     private Map<IPluginContext, TemplateEngine> engines = new HashMap<IPluginContext, TemplateEngine>();
-    
+
+    private ITypeLocator typeLocator;
+    private ITemplateLocator templateLocator;
+    private IPrototypeStore prototypeStore;
+
+    public TemplateEngineFactory(String prefix) {
+        if (prefix == null) {
+            typeLocator = new JcrTypeLocator();
+        } else {
+            typeLocator = new JcrDraftLocator(prefix);
+        }
+        ITemplateStore jcrTemplateStore = new JcrTemplateStore(typeLocator);
+        ITemplateStore builtinTemplateStore = new BuiltinTemplateStore(typeLocator);
+        templateLocator = new TemplateLocator(new IStore[] { jcrTemplateStore, builtinTemplateStore });
+
+        prototypeStore = new JcrPrototypeStore();
+    }
+
     public ITemplateEngine getService(IPluginContext context) {
         if (!engines.containsKey(context)) {
-            engines.put(context, new TemplateEngine(context));
+            engines.put(context, new TemplateEngine(typeLocator, prototypeStore, templateLocator));
         }
         return engines.get(context);
     }

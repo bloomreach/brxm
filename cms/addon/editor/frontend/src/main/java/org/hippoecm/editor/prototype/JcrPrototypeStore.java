@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.editor.tools;
+package org.hippoecm.editor.prototype;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +32,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrPrototypeStore implements IDetachable {
+public class JcrPrototypeStore implements IPrototypeStore<Node>, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: JcrPrototypeStore.java 18825 2009-07-10 15:26:30Z abogaart $";
 

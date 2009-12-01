@@ -30,8 +30,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.editor.NamespaceValidator;
-import org.hippoecm.editor.tools.JcrTypeLocator;
-import org.hippoecm.frontend.editor.impl.JcrTemplateStore;
+import org.hippoecm.editor.template.JcrTemplateStore;
+import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.action.NewDocumentTypeAction;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
@@ -59,7 +59,7 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
 
             JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeLocator());
 
-            cg.add(new DataView<String>("mixins", new ListDataProvider<String>(templateStore.getAvailableMixins())) {
+            cg.add(new DataView<String>("mixins", new ListDataProvider<String>(templateStore.getMetadataEditors())) {
                 private static final long serialVersionUID = 1L;
 
                 @Override

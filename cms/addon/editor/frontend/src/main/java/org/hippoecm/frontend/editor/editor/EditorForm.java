@@ -73,7 +73,7 @@ public class EditorForm extends Form<Node> {
 
         setMultiPart(true);
 
-        engineFactory = new TemplateEngineFactory();
+        engineFactory = new TemplateEngineFactory(null);
         engine = engineFactory.getService(context);
         context.registerService(engineFactory, ITemplateEngine.class.getName());
         engineId = context.getReference(engineFactory).getServiceId();

@@ -24,8 +24,8 @@ import java.util.TreeSet;
 
 import javax.jcr.Node;
 
-import org.hippoecm.editor.tools.JcrTypeDescriptor;
-import org.hippoecm.editor.tools.JcrTypeLocator;
+import org.hippoecm.editor.type.JcrTypeDescriptor;
+import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;

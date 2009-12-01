@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.impl;
+package org.hippoecm.editor.template;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,10 +31,9 @@ import javax.jcr.query.QueryManager;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.editor.EditorNodeType;
-import org.hippoecm.editor.tools.JcrNamespace;
+import org.hippoecm.editor.type.JcrNamespace;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -47,7 +46,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrTemplateStore implements IStore<IClusterConfig>, IDetachable {
+public class JcrTemplateStore implements ITemplateStore, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -61,7 +60,7 @@ public class JcrTemplateStore implements IStore<IClusterConfig>, IDetachable {
         this.typeLocator = typeStore;
     }
 
-    public List<String> getAvailableMixins() {
+    public List<String> getMetadataEditors() {
         List<String> mixins = new LinkedList<String>();
 
         try {

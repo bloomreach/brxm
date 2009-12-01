@@ -134,12 +134,12 @@ public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetach
     protected void addDefinition(String prefix, ItemDefinition definition) throws StoreException {
         BuiltinFieldDescriptor field = new BuiltinFieldDescriptor(prefix, definition, locator);
         if (definition.getDeclaringNodeType().equals(nt)) {
-            declaredFields.put(definition.getName(), field);
+            declaredFields.put(field.getName(), field);
         }
         if ("nt:base".equals(definition.getDeclaringNodeType().getName())) {
             return;
         }
-        fields.put(definition.getName(), field);
+        fields.put(field.getName(), field);
         String primaryItemName = definition.getDeclaringNodeType().getPrimaryItemName();
         if (primaryItemName != null && primaryItemName.equals(definition.getName())) {
             field.setPrimary(true);

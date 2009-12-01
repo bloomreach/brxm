@@ -22,7 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.editor.tools.JcrTypeLocator;
+import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
