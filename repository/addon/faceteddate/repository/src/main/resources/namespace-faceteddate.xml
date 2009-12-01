@@ -309,15 +309,12 @@
         <sv:value>hippostd:datefields</sv:value>
         <sv:value>hippo:derived</sv:value>
       </sv:property>
-      <sv:node sv:name="hipposysedit:field">
+      <sv:node sv:name="date">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
           <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:name" sv:type="String">
-          <sv:value>date</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
           <sv:value>hippostd:date</sv:value>
