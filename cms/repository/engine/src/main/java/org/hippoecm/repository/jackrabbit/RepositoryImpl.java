@@ -18,10 +18,12 @@ package org.hippoecm.repository.jackrabbit;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
+import javax.jcr.NamespaceException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.security.auth.Subject;
 
 import org.slf4j.Logger;
@@ -53,6 +55,26 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
+    }
+
+    @Override
+    protected NamespaceRegistryImpl createNamespaceRegistry(FileSystem fs) throws RepositoryException {
+        NamespaceRegistryImpl nsReg = super.createNamespaceRegistry(fs);
+        log.info("Initializing hippo namespace");
+        safeRegisterNamespace(nsReg, "hippo", "http://www.onehippo.org/jcr/hippo/nt/2.0.1");
+        log.info("Initializing hipposys namespace");
+        safeRegisterNamespace(nsReg, "hipposys", "http://www.onehippo.org/jcr/hipposys/nt/1.0");
+        log.info("Initializing hipposysedit namespace");
+        safeRegisterNamespace(nsReg, "hipposysedit", "http://www.onehippo.org/jcr/hipposysedit/nt/1.1");
+        return nsReg;
+    }
+
+    private void safeRegisterNamespace(NamespaceRegistryImpl nsreg, String prefix, String uri) throws NamespaceException, RepositoryException {
+        try {
+            nsreg.getURI(prefix);
+        } catch (NamespaceException ex) {
+            nsreg.registerNamespace(prefix, uri);
+       }
     }
 
     private FacetedNavigationEngine<FacetedNavigationEngine.Query,FacetedNavigationEngine.Context> facetedEngine;

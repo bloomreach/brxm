@@ -95,7 +95,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     @Override
     public void init(Element config, QueryHandlerContext context, NamespaceMappings nsMappings) throws Exception {
         super.init(config, context, nsMappings);
-        NamespaceResolver nsResolver = new AdditionalNamespaceResolver(getNamespaces(config));
+        NamespaceResolver nsResolver = new OverlayNamespaceResolver(context.getNamespaceRegistry(), getNamespaces(config));
         NameResolver resolver = new ParsingNameResolver(NameFactoryImpl.getInstance(), nsResolver);
         NodeList indexingConfigs = config.getChildNodes();
 
