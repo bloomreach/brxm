@@ -407,7 +407,7 @@ public class UpdaterEngine {
                         if (index != -1) {
                             modified = true;
                             iter.remove();
-                            modules.insertElementAt(module, index);
+                            modules.insertElementAt(module, index-1);
                             break;
                         }
                     }
@@ -418,6 +418,34 @@ public class UpdaterEngine {
             }
             if (!modified) {
                 break;
+            }
+        }
+
+        // Throw away all namespace upgrades for which there is both an explicit CND-resource based upgrade as an implicit
+        Set<String> explicitCNDUpgrades = new HashSet<String>();
+        for(ModuleRegistration moduleRegistration : modules) {
+            for (ItemVisitor visitor : moduleRegistration.visitors) {
+                if (visitor instanceof NamespaceVisitorImpl) {
+                    NamespaceVisitorImpl namespaceVisitor = (NamespaceVisitorImpl)visitor;
+                    if (namespaceVisitor.cndReader != null)
+                        explicitCNDUpgrades.add(namespaceVisitor.namespace);
+                }
+            }
+        }
+
+        for(ModuleRegistration moduleRegistration : modules) {
+            for (Iterator<ItemVisitor> iter = moduleRegistration.visitors.iterator(); iter.hasNext();) {
+                ItemVisitor visitor = iter.next();
+                if (visitor instanceof NamespaceVisitorImpl) {
+                    NamespaceVisitorImpl namespaceVisitor = (NamespaceVisitorImpl)visitor;
+                    if (namespaceVisitor.cndReader == null) {
+                        if (explicitCNDUpgrades.contains(namespaceVisitor.namespace)) {
+                            iter.remove();
+                        } else {
+                            namespaceVisitor.initialize(moduleRegistration.getWorkspace());
+                        }
+                    }
+                }
             }
         }
         return true;
@@ -768,17 +796,18 @@ public class UpdaterEngine {
                                 Node node = nodeIter.nextNode();
                                 String path = node.getPath();
                                 node = updaterSession.getRootNode();
-                                if (!path.equals("/")) {
-                                    try {
+                                try {
+                                    if (!path.equals("/")) {
                                         node = node.getNode(path.substring(1));
-                                        visitor.visit(node);
-                                    } catch (PathNotFoundException ex) {
-                                        // deliberate ignore
-                                    } catch (InvalidItemStateException ex) {
-                                        // deliberate ignore
                                     }
+                                    visitor.visit(node);
+                                } catch (PathNotFoundException ex) {
+                                    // deliberate ignore
+                                } catch (InvalidItemStateException ex) {
+                                    // deliberate ignore
                                 }
                             }
+                        }
                     }
                 } catch (UpdaterException ex) {
                     if (exception != null) {
@@ -818,14 +847,26 @@ public class UpdaterEngine {
             } catch (NamespaceException ex) {
                 // deliberate ignore
             }
-            if(definition.cndReader == null) {
-                try {
-                    definition.cndReader = new StringReader(JcrCompactNodeTypeDefWriter.compactNodeTypeDef(definition.context.getWorkspace(), definition.prefix));
-                } catch(IOException ex) {
-                    log.error("cannot autogenerate cnd", ex);
-                }
+           if(definition.cndReader != null) {
+               this.cndReader = new HippoCompactNodeTypeDefReader(definition.cndReader, cndName, nsReg);
+               initialize();
+           } else
+               this.cndReader = null;
+        }
+
+        void initialize(Workspace workspace) throws NamespaceException, RepositoryException {
+            try {
+                String cndString = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(workspace, namespace);
+                this.cndReader = new HippoCompactNodeTypeDefReader(new StringReader(cndString), cndName, workspace.getNamespaceRegistry());
+            } catch (ParseException ex) {
+                log.error("cannot autogenerate cnd", ex);
+            } catch (IOException ex) {
+                log.error("cannot autogenerate cnd", ex);
             }
-            this.cndReader = new HippoCompactNodeTypeDefReader(definition.cndReader, cndName, nsReg);
+            initialize();
+        }
+
+        void initialize() throws NamespaceException {
             NamespaceMapping mapping = cndReader.getNamespaceMapping();
             newURI = mapping.getURI(namespace);
             newPrefix = namespace + "_" + newURI.substring(newURI.lastIndexOf('/') + 1).replace('.', '_');
