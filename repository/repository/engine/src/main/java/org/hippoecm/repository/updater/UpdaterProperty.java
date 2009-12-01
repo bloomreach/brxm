@@ -122,8 +122,9 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
 
         String name = getName();
 
-        boolean isSingle = false;
-        boolean isMultiple = false;
+        boolean matchSingle = false;
+        boolean matchMultiple = false;
+        boolean exactMatch = false;
         Set<NodeType> nodeTypes = new HashSet<NodeType>();
         nodeTypes.add(((Node)parent.origin).getPrimaryNodeType());
         nodeTypes.addAll(Arrays.asList(((Node)parent.origin).getMixinNodeTypes()));
@@ -131,46 +132,51 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
             for (PropertyDefinition propDef : nodeType.getPropertyDefinitions()) {
                 if (propDef.getName().equals(name)) {
                     if (propDef.isMultiple()) {
+                        matchMultiple = true;
+                        matchSingle = false;
                         if (values != null) {
-                            isMultiple = true;
-                            isSingle = false;
+                            exactMatch = true;
                             break;
                         }
                     } else {
+                        matchSingle = true;
+                        matchMultiple = false;
                         if (value != null) {
-                            isSingle = true;
-                            isMultiple = false;
+                            exactMatch = true;
                             break;
                         }
                     }
                 } else if (propDef.getName().equals("*")) {
                     if (propDef.isMultiple()) {
                         if (values != null) {
-                            isMultiple = true;
-                            isSingle = false;
+                            matchMultiple = true;
+                            matchSingle = false;
                         }
                     } else {
                         if (value != null) {
-                            isSingle = true;
-                            isMultiple = false;
+                            matchSingle = true;
+                            matchMultiple = false;
                         }
                     }
                 }
             }
+            if (exactMatch) {
+                break;
+            }
         }
-        if (isSingle) {
+        if (matchSingle) {
             if (isMultiple()) {
                 if (UpdaterEngine.log.isDebugEnabled()) {
                     UpdaterEngine.log.warn("commit set singlevalue from multivalue property " + name + " on " + getPath());
                 }
-                origin = ((Node)parent.origin).setProperty(name, values);
+                origin = ((Node)parent.origin).setProperty(name, values[0]);
             } else {
                 if (UpdaterEngine.log.isDebugEnabled()) {
                     UpdaterEngine.log.debug("commit set singlevalue property " + name + " on " + getPath());
                 }
                 origin = ((Node)parent.origin).setProperty(name, value);
             }
-        } else if (isMultiple) {
+        } else if (matchMultiple) {
             if (isMultiple()) {
                 if (UpdaterEngine.log.isDebugEnabled()) {
                     UpdaterEngine.log.debug("commit set multivalue property " + name + " on " + getPath());
@@ -180,7 +186,7 @@ final public class UpdaterProperty extends UpdaterItem implements Property {
                 if (UpdaterEngine.log.isDebugEnabled()) {
                     UpdaterEngine.log.warn("commit set multivalue from singlevalue property " + name + " on " + getPath());
                 }
-                origin = ((Node)parent.origin).setProperty(name, values[0]);
+                origin = ((Node)parent.origin).setProperty(name, new Value[] { value} );
             }
         } else {
             if (isMultiple()) {
