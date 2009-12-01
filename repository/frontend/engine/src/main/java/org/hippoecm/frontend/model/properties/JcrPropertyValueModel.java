@@ -28,7 +28,6 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.PropertyDefinition;
-import javax.xml.crypto.Data;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -44,7 +43,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Model of a property value.  Retrieves the value of a single valued property, or an indexed
  * value of a multi-valued property.  The type of the value returned depends on the JCR type
- * of the property.  I.e. JCR type string maps to {@link String}, date maps to {@link Data}.
+ * of the property.  I.e. JCR type string maps to {@link String}, date maps to {@link Date}.
  * <p>
  * One can also set and retrieve the underlying {@link Value}.
  */
