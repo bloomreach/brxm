@@ -792,20 +792,19 @@ public class UpdaterEngine {
                     }
                     if (nodeIter != null) {
                         log.info("migration update traverse iterated for module " + module.name + " (" + visitor.toString() + ")");
-                            while (nodeIter.hasNext()) {
-                                Node node = nodeIter.nextNode();
-                                String path = node.getPath();
-                                node = updaterSession.getRootNode();
-                                try {
-                                    if (!path.equals("/")) {
-                                        node = node.getNode(path.substring(1));
-                                    }
-                                    visitor.visit(node);
-                                } catch (PathNotFoundException ex) {
-                                    // deliberate ignore
-                                } catch (InvalidItemStateException ex) {
-                                    // deliberate ignore
+                        while (nodeIter.hasNext()) {
+                            Node node = nodeIter.nextNode();
+                            String path = node.getPath();
+                            node = updaterSession.getRootNode();
+                            try {
+                                if (!path.equals("/")) {
+                                    node = node.getNode(path.substring(1));
                                 }
+                                visitor.visit(node);
+                            } catch (PathNotFoundException ex) {
+                                // deliberate ignore
+                            } catch (InvalidItemStateException ex) {
+                                // deliberate ignore
                             }
                         }
                     }
