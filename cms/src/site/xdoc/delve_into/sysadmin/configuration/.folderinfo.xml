@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<info>
- <title>Configuration</title>             <!-- string -->
- <shortdesc>What does a system administrator have to configure in Hippo CMS?</shortdesc>     <!-- string -->
- <introduction>              <!-- tree -->
-     <span class='review'>Whole folder, and rewrite if necessary.</span>
- </introduction>
-</info>
