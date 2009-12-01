@@ -80,4 +80,9 @@ public class FilteredValidationResult implements IValidationResult {
         }
         return new Violation(newPaths, violation.getMessageKey(), violation.getParameters());
     }
+
+    public void detach() {
+        upstream.detach();
+    }
+
 }

@@ -22,10 +22,10 @@ import javax.jcr.Value;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
-import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +38,10 @@ public class TemplateTypeRenderer extends AbstractNodeRenderer {
     
     private static final long serialVersionUID = 1L;
 
-    private IStore<ITypeDescriptor> typeStore;
+    private ITypeLocator typeLocator;
 
-    public TemplateTypeRenderer(IStore<ITypeDescriptor> store) {
-        typeStore = store;
+    public TemplateTypeRenderer(ITypeLocator store) {
+        typeLocator = store;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class TemplateTypeRenderer extends AbstractNodeRenderer {
                 if (type.indexOf(':') < 0) {
                     return new Label(id, new ResourceModel("type-primitive"));
                 }
-                ITypeDescriptor descriptor = typeStore.load(type);
+                ITypeDescriptor descriptor = typeLocator.locate(type);
                 if (descriptor.isType(HippoNodeType.NT_DOCUMENT)) {
                     return new Label(id, new ResourceModel("type-document"));
                 }
@@ -76,7 +76,7 @@ public class TemplateTypeRenderer extends AbstractNodeRenderer {
                 Value[] values = ntNode.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
                 for (int i = 0; i < values.length; i++) {
                     Value value = values[i];
-                    ITypeDescriptor descriptor = typeStore.load(value.getString());
+                    ITypeDescriptor descriptor = typeLocator.locate(value.getString());
                     if (descriptor.isType(HippoNodeType.NT_DOCUMENT)) {
                         return new Label(id, new ResourceModel("type-document"));
                     }

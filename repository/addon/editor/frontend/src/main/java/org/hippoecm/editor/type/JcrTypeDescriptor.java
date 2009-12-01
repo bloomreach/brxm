@@ -319,14 +319,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     @Override
     public void detach() {
-        if (attached) {
-            for (IFieldDescriptor field : fields.values()) {
-                if (field instanceof IDetachable) {
-                    ((IDetachable) field).detach();
-                }
+        for (IFieldDescriptor field : fields.values()) {
+            if (field instanceof IDetachable) {
+                ((IDetachable) field).detach();
             }
-            attached = false;
         }
+        attached = false;
         super.detach();
     }
 

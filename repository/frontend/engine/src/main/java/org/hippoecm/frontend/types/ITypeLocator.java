@@ -17,9 +17,10 @@ package org.hippoecm.frontend.types;
 
 import java.util.List;
 
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.ocm.StoreException;
 
-public interface ITypeLocator {
+public interface ITypeLocator extends IDetachable {
 
     ITypeDescriptor locate(String type) throws StoreException;
 

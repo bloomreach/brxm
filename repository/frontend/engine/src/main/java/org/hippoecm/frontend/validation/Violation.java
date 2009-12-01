@@ -17,13 +17,13 @@ package org.hippoecm.frontend.validation;
 
 import java.util.Set;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 
 /**
  * Validation constraint violation.  Provides the list of {@link ModelPath}s that
  * led up to the violation, plus a message that describes the problem. 
  */
-public final class Violation implements IClusterable {
+public final class Violation implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     private Set<ModelPath> fieldPaths;
@@ -56,6 +56,12 @@ public final class Violation implements IClusterable {
         sb.append(", message: ");
         sb.append(messageKey);
         return sb.toString();
+    }
+
+    public void detach() {
+        for (ModelPath path : fieldPaths) {
+            path.detach();
+        }
     }
 
 }

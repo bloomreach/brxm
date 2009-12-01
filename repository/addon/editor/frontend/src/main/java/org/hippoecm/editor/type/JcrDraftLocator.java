@@ -52,7 +52,7 @@ public class JcrDraftLocator implements ITypeLocator, IDetachable {
     }
 
     public void detach() {
-        jcrTypeStore.detach();
+        locator.detach();
     }
 
 }

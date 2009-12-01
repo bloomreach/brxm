@@ -15,13 +15,14 @@
  */
 package org.hippoecm.frontend.validation;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.string.Strings;
+import org.hippoecm.frontend.types.IFieldDescriptor;
 
 /**
  * Path to a value that maintains references to {@link IFieldDescriptor}s.
  */
-public final class ModelPath implements IClusterable {
+public final class ModelPath implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     private ModelPathElement[] elements;
@@ -41,6 +42,12 @@ public final class ModelPath implements IClusterable {
             strings[i] = elements[i].toString();
         }
         return Strings.join("/", strings);
+    }
+
+    public void detach() {
+        for (ModelPathElement element : elements) {
+            element.detach();
+        }
     }
     
 }

@@ -184,6 +184,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             provider.detach();
         }
         helper.detach();
+        controller.detach();
         super.onDetach();
     }
 

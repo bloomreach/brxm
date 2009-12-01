@@ -43,4 +43,10 @@ public class ValidationResult implements IValidationResult {
         return violations.size() == 0;
     }
 
+    public void detach() {
+        for (Violation violation : violations) {
+            violation.detach();
+        }
+    }
+
 }

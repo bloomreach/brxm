@@ -18,6 +18,7 @@ package org.hippoecm.editor.type;
 import java.util.List;
 
 import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.model.DetachMonitor;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
@@ -51,7 +52,7 @@ public class JcrTypeLocator implements ITypeLocator, IDetachable {
     }
 
     public void detach() {
-        jcrTypeStore.detach();
+        locator.detach();
     }
 
 }

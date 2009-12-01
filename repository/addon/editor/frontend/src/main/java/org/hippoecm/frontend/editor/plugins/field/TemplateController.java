@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.AbstractProvider;
@@ -32,7 +32,7 @@ import org.hippoecm.frontend.validation.ModelPathElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateController<C extends IModel> implements IClusterable {
+public class TemplateController<C extends IModel> implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TemplateController.class);
@@ -85,6 +85,12 @@ public class TemplateController<C extends IModel> implements IClusterable {
             childTemplates.put(model, new FieldItemRenderer<C>(context, model, validationModel, control, element));
         } catch (TemplateEngineException ex) {
             log.error("Failed to open editor for new model", ex);
+        }
+    }
+
+    public void detach() {
+        for (Map.Entry<C, FieldItemRenderer<C>> entry : childTemplates.entrySet()) {
+            entry.getValue().detach();
         }
     }
 

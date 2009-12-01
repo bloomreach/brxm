@@ -28,7 +28,8 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.editor.type.JcrTypeStore;
+import org.hippoecm.editor.type.JcrDraftLocator;
+import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -50,6 +51,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
+import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,12 +64,25 @@ public class TypesListingPlugin extends AbstractListingPlugin {
 
     static final Logger log = LoggerFactory.getLogger(TypesListingPlugin.class);
 
-    private JcrTypeStore typeStore;
+    private ITypeLocator typeLocator;
 
     public TypesListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        typeStore = new JcrTypeStore();
+        IModel<Node> nodeModel = getModel();
+        if (nodeModel != null && nodeModel.getObject() != null) {
+            try {
+                Node node = nodeModel.getObject();
+                if (node.isNodeType(HippoNodeType.NT_NAMESPACE)) {
+                    typeLocator = new JcrDraftLocator(node.getName());
+                }
+            } catch (RepositoryException ex) {
+                log.error("Error determining node type for listing", ex);
+            }
+        }
+        if (typeLocator == null) {
+            typeLocator = new JcrTypeLocator();
+        }
     }
 
     @Override
@@ -85,7 +100,7 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         columns.add(column);
 
         column = new ListColumn<Node>(new StringResourceModel("typeslisting-type", this, null), null);
-        column.setRenderer(new TemplateTypeRenderer(typeStore));
+        column.setRenderer(new TemplateTypeRenderer(typeLocator));
         columns.add(column);
 
         column = new ListColumn<Node>(new StringResourceModel("typeslisting-state", this, null), "state");
@@ -106,7 +121,7 @@ public class TypesListingPlugin extends AbstractListingPlugin {
 
     @Override
     protected void onDetach() {
-        typeStore.detach();
+        typeLocator.detach();
         super.onDetach();
     }
 
