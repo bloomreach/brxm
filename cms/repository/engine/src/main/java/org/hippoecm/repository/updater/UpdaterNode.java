@@ -184,6 +184,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         boolean nodeLocationChanged;
         boolean nodeRelinked = false;
         String nodeName = getName();
+        String noSameNameSiblingWorkaround = "hipposys:unstructured";
 
         if (origin != null) {
             if (origin instanceof HippoNode) {
@@ -232,7 +233,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     }
                     origin = ((Node)parent.origin).getNode(nodeName);
                 } else {
-                    if(UpdaterEngine.log.isDebugEnabled()) {
+                     if(UpdaterEngine.log.isDebugEnabled()) {
                         UpdaterEngine.log.debug("commit create "+getPath()+" in "+((Node)parent.origin).getPath()+" (primary type "+((Node)parent.origin).getProperty("jcr:primaryType").getString()+") type "+getInternalProperty("jcr:primaryType")[0]);
                     }
                     if(!((Node)parent.origin).isCheckedOut()) {
@@ -240,7 +241,12 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     }
                     String[] primaryType = getInternalProperty("jcr:primaryType");
                     if (primaryType != null && primaryType.length > 0) {
-                        origin = ((Node)parent.origin).addNode(nodeName, primaryType[0]);
+                        try {
+                            origin = ((Node)parent.origin).addNode(nodeName, primaryType[0]);
+                            noSameNameSiblingWorkaround = null;
+                        } catch(ItemExistsException ex) {
+                            origin = ((Node)parent.origin).addNode(noSameNameSiblingWorkaround, primaryType[0]);
+                        }
                     } else {
                         origin = ((Node)parent.origin).addNode(nodeName);
                     }
@@ -367,6 +373,9 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     UpdaterEngine.log.debug("commit remove old origin "+oldOrigin.getPath());
                 }
                 oldOrigin.remove();
+                if (noSameNameSiblingWorkaround != null) {
+                    parent.origin.getSession().move(parent.origin.getPath() + "/" + noSameNameSiblingWorkaround, parent.origin.getPath() + "/" + nodeName);
+                }
             }
         }
     }
