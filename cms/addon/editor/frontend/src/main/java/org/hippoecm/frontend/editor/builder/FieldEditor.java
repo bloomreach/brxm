@@ -46,6 +46,8 @@ public class FieldEditor extends Panel {
         this.type = type;
         this.edit = edit;
 
+        setOutputMarkupId(true);
+
         prefix = null;
         String typeName = type.getType();
         if (typeName.indexOf(':') > 0) {
@@ -71,6 +73,10 @@ public class FieldEditor extends Panel {
                     }
                 } catch (TypeException e) {
                     error(e.getLocalizedMessage());
+                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    if (target != null) {
+                        target.addComponent(FieldEditor.this);
+                    }
                 }
             }
 
