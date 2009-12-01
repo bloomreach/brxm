@@ -332,7 +332,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             try {
                 return canRead((NodeId) id);
             } catch (NoSuchItemStateException e) {
-                // shouldn't happen, the id was already found
+                // This usually happens when the id is found in the index but not in the database
                 log.info("No item id found", e);
                 return false;
             }
