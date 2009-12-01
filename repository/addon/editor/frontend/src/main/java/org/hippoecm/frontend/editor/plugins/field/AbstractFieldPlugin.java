@@ -106,6 +106,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         helper = new FieldPluginHelper(context, config);
         if (helper.getValidationModel() != null && helper.getValidationModel() instanceof IObservable) {
             context.registerService(new Observer((IObservable) helper.getValidationModel()) {
+                private static final long serialVersionUID = 1L;
 
                 public void onEvent(Iterator events) {
                     for (ValidationFilter listener : new ArrayList<ValidationFilter>(listeners.values())) {
@@ -224,8 +225,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 IModel<P> model = getModel();
                 ITypeDescriptor subType = field.getTypeDescriptor();
                 AbstractProvider<C> provider = newProvider(field, subType, model);
-                if (ITemplateEngine.EDIT_MODE.equals(mode) && provider.size() == 0
-                        && field.getValidators().contains("required")) {
+                if (ITemplateEngine.EDIT_MODE.equals(mode) && provider.size() == 0) {
                     provider.addNew();
                 }
                 return provider;
@@ -256,8 +256,12 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     protected boolean canRemoveItem() {
         IFieldDescriptor field = helper.getField();
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null)
-                || (field.getValidators().contains("required") && provider.size() == 1)) {
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null))
+            return false;
+        if (!field.isMultiple()) {
+            return false;
+        }
+        if (field.getValidators().contains("required") && provider.size() == 1) {
             return false;
         }
         return true;
