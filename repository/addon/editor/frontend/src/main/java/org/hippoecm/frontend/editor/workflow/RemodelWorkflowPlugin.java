@@ -85,13 +85,12 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin<Namespace
                     sessionModel.getSession().refresh(false);
 
                     log.info("remodelling namespace " + prefix);
-                    try {
-                        workflow.updateModel(cnd, cargo);
-                    } finally {
-                        // log out; the session model will log in again.
-                        // Sessions cache path resolver information, which is incorrect after remapping the prefix.
-                        sessionModel.flush();
-                    }
+
+                    // log out; the session model will log in again after the updateModel workflow call
+                    // Sessions cache path resolver information, which is incorrect after remapping the prefix.
+                    sessionModel.flush();
+                    workflow.updateModel(cnd, cargo);
+
                     return null;
                 } catch (Exception ex) {
                     ex.printStackTrace();
