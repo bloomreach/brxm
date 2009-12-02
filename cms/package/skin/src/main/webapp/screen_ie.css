@@ -14,3 +14,7 @@ div.template-type-center-body, div.editor-perspective-center-body {
 .hippo-editor-field-html .htmlarea .xinha_iframe { margin: 0; border: 0px; padding: 0px;}
 .hippo-editor-field-html .htmlarea .toolbar {padding:4px; padding-right: 0px;}
 
+/* Fix for IE toolbar issue: HREPTWO-3073 */
+table.toolbarRow {
+  position: relative;
+}
