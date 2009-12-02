@@ -24,6 +24,9 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.Observable;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -37,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * should be used to represent the state.  Can be used with handles, documents and (document)
  * versions.
  */
-public class StateIconAttributes implements IDetachable {
+public class StateIconAttributes implements IObservable, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -46,12 +49,14 @@ public class StateIconAttributes implements IDetachable {
     static final Logger log = LoggerFactory.getLogger(StateIconAttributes.class);
 
     private JcrNodeModel nodeModel;
+    private Observable observable;
     private transient String cssClass;
     private transient String summary;
     private transient boolean loaded = false;
 
     public StateIconAttributes(JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
+        observable = new Observable(nodeModel);
     }
 
     public String getSummary() {
@@ -69,10 +74,12 @@ public class StateIconAttributes implements IDetachable {
         summary = null;
         cssClass = null;
         nodeModel.detach();
+        observable.detach();
     }
 
     void load() {
         if (!loaded) {
+            observable.setTarget(null);
             try {
                 Node node = nodeModel.getNode();
                 if (node != null) {
@@ -104,6 +111,8 @@ public class StateIconAttributes implements IDetachable {
                             summary = (String) new TypeTranslator(new JcrNodeTypeModel(
                                     HippoStdNodeType.NT_PUBLISHABLESUMMARY)).getValueName(
                                     HippoStdNodeType.HIPPOSTD_STATESUMMARY, stateModel).getObject();
+                            JcrNodeModel model = new JcrNodeModel(document);
+                            observable.setTarget(model);
                         }
                     }
                 }
@@ -113,4 +122,17 @@ public class StateIconAttributes implements IDetachable {
             loaded = true;
         }
     }
+
+    public void setObservationContext(IObservationContext<? extends IObservable> context) {
+        observable.setObservationContext(context);
+    }
+
+    public void startObservation() {
+        observable.startObservation();
+    }
+
+    public void stopObservation() {
+        observable.stopObservation();
+    }
+
 }
