@@ -27,7 +27,7 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.IDetachable;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.ILabelTreeNode;
 import org.hippoecm.frontend.wicket1985.Tree;
@@ -82,7 +82,7 @@ public abstract class JcrTree extends Tree {
     public String renderNode(TreeNode treeNode, int level) {
         String result = "unknown";
         if (treeNode instanceof IJcrTreeNode) {
-            Node node = ((IJcrTreeNode) treeNode).getNodeModel().getNode();
+            Node node = ((IJcrTreeNode) treeNode).getNodeModel().getObject();
             if (node != null) {
                 try {
                     result = node.getName();
@@ -130,11 +130,11 @@ public abstract class JcrTree extends Tree {
      * @return true if the node is virtual else false
      */
     public boolean isVirtual(IJcrTreeNode node) {
-        JcrNodeModel nodeModel = node.getNodeModel();
+        IModel<Node> nodeModel = node.getNodeModel();
         if (nodeModel == null) {
             return false;
         }
-        Node jcrNode = nodeModel.getNode();
+        Node jcrNode = nodeModel.getObject();
         if (jcrNode == null || !(jcrNode instanceof HippoNode)) {
             return false;
         }

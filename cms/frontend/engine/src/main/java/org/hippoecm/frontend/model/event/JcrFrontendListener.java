@@ -25,7 +25,7 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrFrontendListener extends NodeModelWrapper {
+public class JcrFrontendListener extends NodeModelWrapper<Void> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -43,7 +43,7 @@ public class JcrFrontendListener extends NodeModelWrapper {
 
     private String[] getMultiString(String name) throws RepositoryException {
         String[] result = null;
-        Node node = getNodeModel().getNode();
+        Node node = getNode();
         if (node.hasProperty(FrontendNodeType.FRONTEND_UUIDS)) {
             Value[] values = node.getProperty(FrontendNodeType.FRONTEND_UUIDS).getValues();
             result = new String[values.length];
@@ -56,7 +56,7 @@ public class JcrFrontendListener extends NodeModelWrapper {
     }
 
     public void start() {
-        Node node = getNodeModel().getNode();
+        Node node = getNode();
         if (node != null) {
             try {
                 boolean deep = false;

@@ -33,7 +33,7 @@ class ResourceEditor extends Panel {
 
     ResourceEditor(String id, JcrNodeModel nodeModel) {
         super(id);
-        JcrResourceStream stream = new JcrResourceStream(nodeModel.getNode());
+        JcrResourceStream stream = new JcrResourceStream(nodeModel);
         ResourceLink link = new ResourceLink("resource-link", new JcrResource(stream));
         add(link);
 

@@ -29,14 +29,13 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
+public class CndImportDialog extends AbstractDialog<Void> implements ITitleDecorator {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -49,7 +48,7 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
     Component message;
     Model msgText;
 
-    public CndImportDialog(MenuPlugin plugin) {
+    public CndImportDialog() {
         setMultiPart(true);
         setNonAjaxSubmit();
         add(fileUploadField = new FileUploadField("fileInput"));

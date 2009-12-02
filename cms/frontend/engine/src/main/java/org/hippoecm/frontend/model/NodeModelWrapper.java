@@ -20,7 +20,7 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
-public abstract class NodeModelWrapper implements IChainingModel<Node> {
+public abstract class NodeModelWrapper<T> implements IChainingModel<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -28,10 +28,18 @@ public abstract class NodeModelWrapper implements IChainingModel<Node> {
 
     protected JcrNodeModel nodeModel;
 
-    public NodeModelWrapper(JcrNodeModel nodeModel) {
-        this.nodeModel = nodeModel;
+    public NodeModelWrapper(IModel<Node> nodeModel) {
+        if (!(nodeModel instanceof JcrNodeModel)) {
+            this.nodeModel = new JcrNodeModel(nodeModel.getObject());
+        } else {
+            this.nodeModel = (JcrNodeModel) nodeModel;
+        }
     }
 
+    /**
+     * @deprecated
+     * Use getChainedModel() instead.
+     */
     public JcrNodeModel getNodeModel() {
         return nodeModel;
     }
@@ -48,12 +56,17 @@ public abstract class NodeModelWrapper implements IChainingModel<Node> {
         }
     }
 
-    public Node getObject() {
-        return nodeModel.getObject();
+    protected Node getNode() {
+        return nodeModel.getNode();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public T getObject() {
+        return (T) this;
     }
 
-    public void setObject(Node object) {
-        nodeModel.setObject(object);
+    public void setObject(T object) {
+        throw new UnsupportedOperationException();
     }
 
     public void detach() {

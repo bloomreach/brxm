@@ -28,7 +28,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 
-public class NodeDialog extends AbstractDialog implements ITitleDecorator {
+public class NodeDialog extends AbstractDialog<Node> implements ITitleDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

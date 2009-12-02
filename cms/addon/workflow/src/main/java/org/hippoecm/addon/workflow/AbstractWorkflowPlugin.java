@@ -42,7 +42,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractWorkflowPlugin extends RenderPlugin {
+abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

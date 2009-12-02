@@ -44,7 +44,7 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReportModel extends NodeModelWrapper implements IDataProvider, IObservable {
+public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider, IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -91,7 +91,7 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IObs
         if (!attached) {
             attached = true;
             try {
-                Node reportNode = nodeModel.getNode();
+                Node reportNode = nodeModel.getObject();
                 if (reportNode.isNodeType(ReportingNodeTypes.NT_REPORT)) {
                     Node queryNode = reportNode.getNode(ReportingNodeTypes.QUERY);
                     QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
@@ -152,7 +152,7 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider, IObs
 
     public void startObservation() {
         try {
-            Node node = getNodeModel().getNode();
+            Node node = getChainedModel().getObject();
             Node listenerNode = node.getNode(ReportingNodeTypes.LISTENER);
             listener = new JcrFrontendListener(obContext, new JcrNodeModel(listenerNode));
             listener.start();

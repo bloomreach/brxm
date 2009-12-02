@@ -82,7 +82,7 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
     public TreePath lookup(JcrNodeModel nodeModel) {
         IJcrTreeNode node = root;
         if (nodeModel != null) {
-            String basePath = root.getNodeModel().getItemModel().getPath();
+            String basePath = ((JcrNodeModel) root.getNodeModel()).getItemModel().getPath();
             String path = nodeModel.getItemModel().getPath();
             if (path != null && path.startsWith(basePath)) {
                 String[] elements = StringUtils.split(path.substring(basePath.length()), '/');
@@ -117,27 +117,30 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
     }
 
     public void startObservation() {
-        listener = new JcrEventListener(new IObservationContext<JcrNodeModel>() {
-            private static final long serialVersionUID = 1L;
+        listener = new JcrEventListener(
+                new IObservationContext<JcrNodeModel>() {
+                    private static final long serialVersionUID = 1L;
 
-            public void notifyObservers(EventCollection<IEvent<JcrNodeModel>> events) {
-                EventCollection<IEvent<ObservableTreeModel>> treeModelEvents = new EventCollection<IEvent<ObservableTreeModel>>();
-                for (IEvent<JcrNodeModel> event : events) {
-                    IEvent<ObservableTreeModel> treeModelEvent = new ObservableTreeModelEvent((JcrEvent) event);
-                    treeModelEvents.add(treeModelEvent);
-                }
-                observationContext.notifyObservers(treeModelEvents);
-            }
+                    public void notifyObservers(EventCollection<IEvent<JcrNodeModel>> events) {
+                        EventCollection<IEvent<ObservableTreeModel>> treeModelEvents = new EventCollection<IEvent<ObservableTreeModel>>();
+                        for (IEvent<JcrNodeModel> event : events) {
+                            IEvent<ObservableTreeModel> treeModelEvent = new ObservableTreeModelEvent((JcrEvent) event);
+                            treeModelEvents.add(treeModelEvent);
+                        }
+                        observationContext.notifyObservers(treeModelEvents);
+                    }
 
-            public void registerObserver(IObserver<?> observer) {
-                observationContext.registerObserver(observer);
-            }
+                    public void registerObserver(IObserver<?> observer) {
+                        observationContext.registerObserver(observer);
+                    }
 
-            public void unregisterObserver(IObserver<?> observer) {
-                observationContext.registerObserver(observer);
+                    public void unregisterObserver(IObserver<?> observer) {
+                        observationContext.registerObserver(observer);
 
-            }
-        }, Event.NODE_REMOVED | Event.NODE_ADDED, root.getNodeModel().getItemModel().getPath(), true, null, null);
+                    }
+                }, Event.NODE_REMOVED | Event.NODE_ADDED,
+                ((JcrNodeModel) root.getNodeModel()).getItemModel().getPath(), true,
+                null, null);
         listener.start();
     }
 

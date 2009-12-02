@@ -15,16 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.console.dialog;
 
+import javax.jcr.Node;
+
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
-import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
 
-public abstract class LookupDialog extends AbstractDialog {
+public abstract class LookupDialog extends AbstractDialog<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -57,7 +60,7 @@ public abstract class LookupDialog extends AbstractDialog {
         tree.setSelectedNode(selectedNode, treeModel);
     }
 
-    protected void onSelect(JcrNodeModel nodeModel) {
+    protected void onSelect(IModel<Node> nodeModel) {
     }
 
     @Override

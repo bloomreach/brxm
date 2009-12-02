@@ -40,7 +40,7 @@ public class ImageContainer extends Panel {
             final IPluginConfig pluginConfig) {
         super(wicketId, model);
 
-        stream = new JcrResourceStream(model.getNode());
+        stream = new JcrResourceStream(model);
         NonCachingImage img = new NonCachingImage("image", new JcrResource(stream)) {
             private static final long serialVersionUID = 1L;
 

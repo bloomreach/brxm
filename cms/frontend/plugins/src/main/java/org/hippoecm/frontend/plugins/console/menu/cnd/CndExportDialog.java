@@ -41,14 +41,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.hippoecm.tools.projectexport.DownloadLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CndExportDialog extends AbstractDialog {
+public class CndExportDialog extends AbstractDialog<Void> {
 
     static final Logger log = LoggerFactory.getLogger(CndExportDialog.class);
 
@@ -64,14 +63,13 @@ public class CndExportDialog extends AbstractDialog {
 
     String selectedNs;
 
-    public CndExportDialog(MenuPlugin plugin) {
-        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
-
+    public CndExportDialog() {
         final PropertyModel selectedNsModel = new PropertyModel(this, "selectedNs");
 
         List<String> nsPrefixes = null;
         try {
-            nsPrefixes = getNsPrefixes(nodeModel.getNode().getSession());
+            Session session = getJcrSession();
+            nsPrefixes = getNsPrefixes(session);
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
@@ -110,8 +108,7 @@ public class CndExportDialog extends AbstractDialog {
             protected void onUpdate(AjaxRequestTarget target) {
                 String export;
                 try {
-                    Node node = nodeModel.getNode();
-                    Session session = node.getSession();
+                    Session session = getJcrSession();
                     export = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), selectedNs);
                 } catch (RepositoryException e) {
                     log.error("RepositoryException while exporting NodeType Definitions of namespace : " + selectedNs,
@@ -152,6 +149,11 @@ public class CndExportDialog extends AbstractDialog {
         link.setOutputMarkupId(true);
         add(link);
         setCancelVisible(false);
+    }
+
+    private Session getJcrSession() {
+        Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        return session;
     }
 
     public IModel getTitle() {
