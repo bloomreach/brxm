@@ -39,7 +39,7 @@
     
     <hippoecm.version>2.06.14</hippoecm.version>
     <hst-configuration-editor.version>1.01.00</hst-configuration-editor.version>
-    <hst.version>2.04.02-SNAPSHOT</hst.version>
+    <hst.version>2.04.02</hst.version>
     
     <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
     <spring.version>2.5.6</spring.version>
