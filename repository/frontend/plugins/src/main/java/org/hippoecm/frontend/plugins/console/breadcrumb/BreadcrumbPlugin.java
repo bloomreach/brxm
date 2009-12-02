@@ -19,20 +19,25 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.string.Strings;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BreadcrumbPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static final Logger log = LoggerFactory.getLogger(BreadcrumbPlugin.class);
+    
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -52,7 +57,13 @@ public class BreadcrumbPlugin extends RenderPlugin {
             JcrNodeModel nodeModel = (JcrNodeModel) model;
             List<String> components = new LinkedList<String>();
             while (nodeModel != null) {
-                components.add((String) new NodeTranslator(nodeModel).getNodeName().getObject());
+                if (nodeModel.getNode() != null) {
+                    try {
+                        components.add(nodeModel.getNode().getName());
+                    } catch (RepositoryException e) {
+                        log.error("Error building breadcrumb path", e.getMessage());
+                    }
+                }
                 nodeModel = nodeModel.getParentModel();
             }
             Collections.reverse(components);
