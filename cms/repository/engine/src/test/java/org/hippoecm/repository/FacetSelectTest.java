@@ -15,18 +15,16 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Test;
 
@@ -113,12 +111,97 @@ public class FacetSelectTest extends TestCase {
     };
 
     @After
+    @Override
     public void tearDown() throws Exception {
         if(session.getRootNode().hasNode("test")) {
 	    session.getRootNode().getNode("test").remove();
 	}
 	session.save();
 	super.tearDown();
+    }
+
+    @Test
+    public void testRequestsLast() throws Exception {
+        final String[] data = new String[] {
+            "/test", "nt:unstructured",
+            "/test/docs", "hippo:testdocument",
+            "jcr:mixinTypes", "hippo:harddocument",
+            "/test/docs/doc", "hippo:handle",
+            "jcr:mixinTypes", "hippo:hardhandle",
+            "/test/docs/doc/hippo:request", "hipposys:request",
+            "/test/docs/doc/doc", "hippo:testdocument",
+            "jcr:mixinTypes", "hippo:harddocument",
+            "state", "published",
+            "/test/test1", "hippo:facetselect",
+            "hippo:docbase", "/test/docs",
+            "hippo:facets", "state",
+            "hippo:values", "published",
+            "hippo:modes", "single",
+            "/test/testa", "hippo:facetselect",
+            "hippo:docbase", "/test/docs/doc",
+            "hippo:facets", "state",
+            "hippo:values", "published",
+            "hippo:modes", "single",
+            "/test/test2", "hippo:facetselect",
+            "hippo:docbase", "/test/docs",
+            "hippo:facets", "state",
+            "hippo:values", "published",
+            "hippo:modes", "prefer-single",
+            "/test/testb", "hippo:facetselect",
+            "hippo:docbase", "/test/docs/doc",
+            "hippo:facets", "state",
+            "hippo:values", "published",
+            "hippo:modes", "prefer-single",
+            "/test/test3", "hippo:facetselect",
+            "hippo:docbase", "/test/docs",
+            "hippo:facets", "state",
+            "hippo:values", "published",
+            "hippo:modes", "prefer",
+            "/test/testc", "hippo:facetselect",
+            "hippo:docbase", "/test/docs/doc",
+            "hippo:facets", "state",
+            "hippo:values", "published",
+            "hippo:modes", "prefer",
+            "/test/test4", "hippo:facetselect",
+            "hippo:docbase", "/test/docs",
+            "hippo:facets", "state",
+            "hippo:values", "published",
+            "hippo:modes", "select",
+            "/test/testd", "hippo:facetselect",
+            "hippo:docbase", "/test/docs/doc",
+            "hippo:facets", "state",
+            "hippo:values", "published",
+            "hippo:modes", "select",
+            "/test/test5", "hippo:facetselect",
+            "hippo:docbase", "/test/docs",
+            "hippo:facets", null,
+            "hippo:values", null,
+            "hippo:modes", null,
+            "/test/teste", "hippo:facetselect",
+            "hippo:docbase", "/test/docs/doc",
+            "hippo:facets", null,
+            "hippo:values", null,
+            "hippo:modes", null,
+            "/test/test6", "hippo:mirror",
+            "hippo:docbase", "/test/docs",
+            "/test/testf", "hippo:mirror",
+            "hippo:docbase", "/test/docs/doc"
+        };
+        build(session, data);
+        session.save();
+        session.refresh(false);
+        assertEquals("doc",traverse(session, "/test/test1/doc").getNodes().nextNode().getName());
+        assertEquals("doc",traverse(session, "/test/testa").getNodes().nextNode().getName());
+        assertEquals("doc",traverse(session, "/test/test2/doc").getNodes().nextNode().getName());
+        assertEquals("doc",traverse(session, "/test/testb").getNodes().nextNode().getName());
+        assertEquals("doc",traverse(session, "/test/test3/doc").getNodes().nextNode().getName());
+        assertEquals("doc",traverse(session, "/test/testc").getNodes().nextNode().getName());
+        assertEquals("doc",traverse(session, "/test/test4/doc").getNodes().nextNode().getName());
+        assertEquals("doc",traverse(session, "/test/testd").getNodes().nextNode().getName());
+        assertEquals("doc",traverse(session, "/test/test5/doc").getNodes().nextNode().getName());
+        assertEquals("doc",traverse(session, "/test/teste").getNodes().nextNode().getName());
+        assertEquals("doc",traverse(session, "/test/test6/doc").getNodes().nextNode().getName());
+        assertEquals("doc",traverse(session, "/test/testf").getNodes().nextNode().getName());
     }
 
     @Test
@@ -194,5 +277,4 @@ public class FacetSelectTest extends TestCase {
         assertFalse(session.getRootNode().getNode("test/filterToParentOfFilter/filter1/three").getNodes().hasNext());
         assertFalse(session.getRootNode().getNode("test/filterToParentOfFilter/filter1/four").getNodes().hasNext());
     }
-
 }
