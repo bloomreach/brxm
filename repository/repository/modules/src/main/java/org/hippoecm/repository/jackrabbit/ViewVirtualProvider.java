@@ -163,9 +163,9 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                     }
                 }
                 ViewNodeId.Child[] childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
-                if (isHandle) {
+                /*if (isHandle) {
                     Arrays.sort(childrenArray);
-                }
+                }*/
                 for (int i = 0; i < childrenArray.length && (i == 0 || !(singledView && isHandle)); i++) {
                     state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
                 }

@@ -164,9 +164,4 @@ public class MirrorCombiFacetSelectTest extends TestCase {
     	assertTrue(session.getRootNode().getNode("test/facetselectnofilter/war-of-the-worlds/subtypemirror/brave-new-world").getNodes().getSize() == 2);
     	
     }
-    
-  
-    public void testSubTypeMirrorInheritFilterFromFacetSelect() throws Exception {
-    }
-    
 }
