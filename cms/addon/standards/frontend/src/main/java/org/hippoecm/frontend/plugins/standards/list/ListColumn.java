@@ -16,12 +16,21 @@
 package org.hippoecm.frontend.plugins.standards.list;
 
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
@@ -42,6 +51,8 @@ public class ListColumn<T> extends AbstractColumn<T> {
     private Comparator<T> comparator;
     private IListCellRenderer<T> renderer;
     private IListAttributeModifier<T> attributeModifier;
+    private IPluginContext context;
+    private List<IObserver> observers;
 
     public ListColumn(IModel<String> displayModel, String sortProperty) {
         super(displayModel, sortProperty);
@@ -71,15 +82,62 @@ public class ListColumn<T> extends AbstractColumn<T> {
         return attributeModifier;
     }
 
-    public void populateItem(Item<ICellPopulator<T>> item, String componentId, IModel<T> model) {
-        if (attributeModifier != null) {
-            AttributeModifier[] columnModifiers = attributeModifier.getColumnAttributeModifiers(model);
-            if (columnModifiers != null) {
-                for(AttributeModifier columnModifier : columnModifiers) {
-                    item.add(columnModifier);
+    void init(IPluginContext context) {
+        this.context = context;
+        this.observers = new LinkedList<IObserver>();
+    }
+
+    void destroy() {
+        if (context != null) {
+            for (IObserver observer : observers) {
+                context.unregisterService(observer, IObserver.class.getName());
+            }
+            observers.clear();
+            context = null;
+        }
+    }
+
+    @Override
+    public void detach() {
+        if (observers != null) {
+            for (IObserver observer : observers) {
+                IObservable observable = observer.getObservable();
+                if (observable instanceof IDetachable) {
+                    ((IDetachable) observable).detach();
                 }
             }
         }
-        item.add(new ListCell(componentId, model, renderer, attributeModifier));
+        super.detach();
+    }
+
+    public void populateItem(Item<ICellPopulator<T>> item, String componentId, IModel<T> model) {
+        final ListCell cell = new ListCell(componentId, model, renderer, attributeModifier, context);
+        if (attributeModifier != null) {
+            AttributeModifier[] columnModifiers = attributeModifier.getColumnAttributeModifiers(model);
+            if (columnModifiers != null) {
+                for (final AttributeModifier columnModifier : columnModifiers) {
+                    item.add(columnModifier);
+                    if (columnModifier instanceof IObservable && context != null) {
+                        IObserver observer = new IObserver<IObservable>() {
+
+                            public IObservable getObservable() {
+                                return (IObservable) columnModifier;
+                            }
+
+                            public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
+                                AjaxRequestTarget target = AjaxRequestTarget.get();
+                                if (target != null) {
+                                    target.addComponent(cell);
+                                }
+                            }
+
+                        };
+                        context.registerService(observer, IObserver.class.getName());
+                        observers.add(observer);
+                    }
+                }
+            }
+        }
+        item.add(cell);
     }
 }

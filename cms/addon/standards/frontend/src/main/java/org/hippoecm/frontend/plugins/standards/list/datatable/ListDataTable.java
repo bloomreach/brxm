@@ -36,11 +36,13 @@ import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.widgets.ManagedReuseStrategy;
 
@@ -57,6 +59,7 @@ public class ListDataTable<T> extends DataTable<T> {
     private IPluginContext context;
     private Map<Item<T>, IObserver> observers;
     private Set<Item<T>> dirty;
+    private TableDefinition definition;
     private TableSelectionListener<T> selectionListener;
     private final IDataProvider<T> provider;
 
@@ -68,9 +71,11 @@ public class ListDataTable<T> extends DataTable<T> {
     public ListDataTable(String id, TableDefinition<T> tableDefinition, ISortableDataProvider<T> dataProvider,
             TableSelectionListener<T> selectionListener, final boolean triState, IPagingDefinition pagingDefinition) {
         super(id, tableDefinition.getColumns(), dataProvider, pagingDefinition.getPageSize());
+
         setOutputMarkupId(true);
         setVersioned(false);
 
+        this.definition = tableDefinition;
         this.provider = dataProvider;
         this.selectionListener = selectionListener;
 
@@ -96,7 +101,7 @@ public class ListDataTable<T> extends DataTable<T> {
             }
         });
     }
-
+    
     @Override
     public MarkupContainer setDefaultModel(IModel<?> model) {
         if(observers != null) {
@@ -131,6 +136,7 @@ public class ListDataTable<T> extends DataTable<T> {
         this.context = context;
         this.dirty = new HashSet<Item<T>>();
         this.observers = new HashMap<Item<T>, IObserver>();
+        definition.init(context);
     }
 
     public void destroy() {
@@ -139,6 +145,7 @@ public class ListDataTable<T> extends DataTable<T> {
                 context.unregisterService(observer, IObserver.class.getName());
             }
         }
+        definition.destroy();
         observers = null;
         context = null;
         dirty = null;
@@ -187,23 +194,17 @@ public class ListDataTable<T> extends DataTable<T> {
         final OddEvenItem item = new OddEvenItem(id, index, model);
         item.setOutputMarkupId(true);
 
-        item.add(new AttributeAppender("class", new IModel() {
+        item.add(new AttributeAppender("class", new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
-            public Object getObject() {
+            @Override
+            protected String load() {
                 IModel selected = ListDataTable.this.getDefaultModel();
                 if (selected != null && selected.equals(model)) {
                     return "hippo-list-selected";
                 } else {
                     return null;
                 }
-            }
-
-            public void setObject(Object object) {
-                throw new UnsupportedOperationException();
-            }
-
-            public void detach() {
             }
         }, " "));
 

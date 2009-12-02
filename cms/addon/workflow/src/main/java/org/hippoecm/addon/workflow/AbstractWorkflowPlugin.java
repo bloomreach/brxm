@@ -16,6 +16,8 @@
 package org.hippoecm.addon.workflow;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +32,8 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -52,6 +56,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
 
     public static final String CATEGORIES = "workflow.categories";
 
+    private List<IObserver<JcrNodeModel>> observers;
     private PluginController plugins;
     private String[] categories;
     protected AbstractView view;
@@ -71,15 +76,27 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
             categories = new String[] {};
             log.warn("No categories ({}) defined", CATEGORIES);
         }
-        // It should not occur, but the lifecycle model currently can return null here.  To avoid NPEs we
-        // will disable the normal operability of the plugin at this time.
         IServiceReference serviceReference = context.getReference(this);
         plugins = new PluginController(context, config, serviceReference.getServiceId());
+        observers = new LinkedList<IObserver<JcrNodeModel>>();
     }
 
+    @Override
+    protected void onDetach() {
+        for (IObserver<JcrNodeModel> observer : observers) {
+            observer.getObservable().detach();
+        }
+        super.onDetach();
+    }
+    
     MenuHierarchy buildMenu(Set<Node> nodeSet) {
         final MenuHierarchy menu = new MenuHierarchy();
         plugins.stopRenderers();
+        IPluginContext context = getPluginContext();
+        for (IObserver<JcrNodeModel> observer : new ArrayList<IObserver<JcrNodeModel>>(observers)) {
+            context.unregisterService(observer, IObserver.class.getName());
+        }
+        observers.clear();
         List<Panel> list = new LinkedList<Panel>();
         for(Node documentNode : nodeSet) {
             if (documentNode != null) {
@@ -113,6 +130,21 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
                                         }
                                     }
                                     if (plugin != null) {
+                                        final JcrNodeModel nodeModel = new JcrNodeModel(documentNode);
+                                        IObserver<JcrNodeModel> observer = new IObserver<JcrNodeModel>() {
+
+                                            public JcrNodeModel getObservable() {
+                                                return nodeModel;
+                                            }
+
+                                            public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> events) {
+                                                modelChanged();
+                                            }
+                                            
+                                        };
+                                        observers.add(observer);
+                                        context.registerService(observer, IObserver.class.getName());
+
                                         plugin.visitChildren(new IVisitor() {
 
                                             public Object component(Component component) {

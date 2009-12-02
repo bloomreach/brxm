@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.plugin.IPluginContext;
 
 public class TableDefinition<T> implements IClusterable {
     @SuppressWarnings("unused")
@@ -39,11 +40,23 @@ public class TableDefinition<T> implements IClusterable {
     public TableDefinition(List<ListColumn<T>> columnList, boolean showColumnHeaders) {
         columns = new ArrayList<ListColumn<T>>();
         comparators = new HashMap<String, Comparator<T>>();
-        for (ListColumn<T> column: columnList) {
+        for (ListColumn<T> column : columnList) {
             columns.add(column);
             comparators.put(column.getSortProperty(), column.getComparator());
         }
         this.showColumnHeaders = showColumnHeaders;
+    }
+
+    public void init(IPluginContext context) {
+        for (ListColumn<T> column : columns) {
+            column.init(context);
+        }
+    }
+
+    public void destroy() {
+        for (ListColumn<T> column : columns) {
+            column.destroy();
+        }
     }
 
     public Map<String, Comparator<T>> getComparators() {

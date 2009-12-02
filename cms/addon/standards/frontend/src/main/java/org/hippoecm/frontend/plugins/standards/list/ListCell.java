@@ -15,12 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.AppendingStringBuffer;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
@@ -34,8 +42,17 @@ class ListCell extends Panel {
     private static final long serialVersionUID = 1L;
     static final Logger log = LoggerFactory.getLogger(ListCell.class);
 
-    public ListCell(String id, final IModel model, IListCellRenderer renderer, IListAttributeModifier attributeModifier) {
+    private List<IObserver> observers;
+    private IPluginContext context;
+
+    public ListCell(String id, final IModel model, IListCellRenderer renderer,
+            IListAttributeModifier attributeModifier, IPluginContext context) {
         super(id, model);
+
+        this.context = context;
+        this.observers = new LinkedList<IObserver>();
+
+        setOutputMarkupId(true);
 
         add(new AjaxEventBehavior("onclick") {
             private static final long serialVersionUID = 1L;
@@ -60,10 +77,37 @@ class ListCell extends Panel {
         if (attributeModifier != null) {
             AttributeModifier[] cellModifiers = attributeModifier.getCellAttributeModifiers(model);
             if (cellModifiers != null) {
-                for (AttributeModifier cellModifier : cellModifiers) {
+                for (final AttributeModifier cellModifier : cellModifiers) {
                     add(cellModifier);
+                    if (cellModifier instanceof IObservable) {
+                        IObserver observer = new IObserver<IObservable>() {
+
+                            public IObservable getObservable() {
+                                return (IObservable) cellModifier;
+                            }
+
+                            public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
+                                AjaxRequestTarget target = AjaxRequestTarget.get();
+                                if (target != null) {
+                                    target.addComponent(ListCell.this);
+                                }
+                            }
+
+                        };
+                        context.registerService(observer, IObserver.class.getName());
+                        observers.add(observer);
+                    }
                 }
             }
         }
+    }
+
+    @Override
+    protected void onRemove() {
+        for (IObserver observer : observers) {
+            context.unregisterService(observer, IObserver.class.getName());
+        }
+        observers.clear();
+        super.onRemove();
     }
 }

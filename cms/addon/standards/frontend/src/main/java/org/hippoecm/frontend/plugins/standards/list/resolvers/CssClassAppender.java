@@ -15,14 +15,26 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.model.IModel;
+import java.util.Iterator;
 
-public class CssClassAppender extends AttributeModifier {
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.IObserver;
+
+public class CssClassAppender extends AttributeModifier implements IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    private Component component;
+    private IObservationContext obContext;
+    private IObserver observer;
 
     public CssClassAppender(IModel<String> model) {
         super("class", true, model);
@@ -37,5 +49,41 @@ public class CssClassAppender extends AttributeModifier {
         } else if(replacementValue == null)
             return currentValue;
         return currentValue + " " + replacementValue;
+    }
+
+    @Override
+    public void bind(Component hostComponent) {
+        component = hostComponent;
+    }
+
+    public void setObservationContext(IObservationContext<? extends IObservable> context) {
+        this.obContext = context;
+    }
+
+    public void startObservation() {
+        if ((getReplaceModel() instanceof IObservable) && component.getOutputMarkupId()) {
+            final IObservable observable = (IObservable) getReplaceModel();
+            obContext.registerObserver(observer = new IObserver<IObservable>() {
+
+                public IObservable getObservable() {
+                    return observable;
+                }
+
+                public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
+                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    if (target != null) {
+                        target.addComponent(component);
+                    }
+                }
+                
+            });
+        }
+    }
+
+    public void stopObservation() {
+        if (observer != null) {
+            obContext.unregisterObserver(observer);
+            observer = null;
+        }
     }
 }

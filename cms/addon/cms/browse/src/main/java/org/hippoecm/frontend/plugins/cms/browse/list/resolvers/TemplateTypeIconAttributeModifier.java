@@ -23,8 +23,11 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.Observable;
+import org.hippoecm.frontend.model.event.ObservablePropertyModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -39,15 +42,17 @@ public class TemplateTypeIconAttributeModifier extends AbstractNodeAttributeModi
 
     static final Logger log = LoggerFactory.getLogger(TemplateTypeIconAttributeModifier.class);
 
-    private static class StateIconAttributes implements IDetachable {
+    private static class StateIconAttributes implements IDetachable, IObservable {
         private static final long serialVersionUID = 1L;
 
         private JcrNodeModel nodeModel;
+        private Observable observable;
         private transient String cssClass;
         private transient boolean loaded = false;
 
         StateIconAttributes(JcrNodeModel nodeModel) {
             this.nodeModel = nodeModel;
+            this.observable = new Observable(nodeModel);
         }
 
         @SuppressWarnings("unused")
@@ -60,11 +65,13 @@ public class TemplateTypeIconAttributeModifier extends AbstractNodeAttributeModi
             loaded = false;
             cssClass = null;
             nodeModel.detach();
+            observable.detach();
         }
 
         void load() {
             if (!loaded) {
                 cssClass = "document-16";
+                observable.setTarget(null);
                 try {
                     Node node = nodeModel.getNode();
                     if (node != null && node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
@@ -73,6 +80,7 @@ public class TemplateTypeIconAttributeModifier extends AbstractNodeAttributeModi
                         String currentUri = nsReg.getURI(prefix);
 
                         Node ntHandle = node.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+                        observable.setTarget(new JcrNodeModel(ntHandle));
                         NodeIterator variants = ntHandle.getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
 
                         Node current = null;
@@ -103,6 +111,18 @@ public class TemplateTypeIconAttributeModifier extends AbstractNodeAttributeModi
                 loaded = true;
             }
         }
+
+        public void setObservationContext(IObservationContext<? extends IObservable> context) {
+            observable.setObservationContext(context);
+        }
+
+        public void startObservation() {
+            observable.startObservation();
+        }
+
+        public void stopObservation() {
+            observable.stopObservation();
+        }
     }
 
     @Override
@@ -114,7 +134,7 @@ public class TemplateTypeIconAttributeModifier extends AbstractNodeAttributeModi
     public AttributeModifier[] getCellAttributeModifiers(Node node) {
         StateIconAttributes attrs = new StateIconAttributes(new JcrNodeModel(node));
         AttributeModifier[] attributes = new AttributeModifier[1];
-        attributes[0] = new CssClassAppender(new PropertyModel(attrs, "cssClass"));
+        attributes[0] = new CssClassAppender(new ObservablePropertyModel(attrs, "cssClass"));
         return attributes;
     }
 }

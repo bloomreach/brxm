@@ -25,6 +25,9 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.Observable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -34,23 +37,28 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
-    static class MimeTypeAttributeModel extends LoadableDetachableModel {
+    static class MimeTypeAttributeModel extends LoadableDetachableModel implements IObservable {
         private static final long serialVersionUID = 1L;
 
         private JcrNodeModel nodeModel;
+        private Observable observable;
 
         public MimeTypeAttributeModel(JcrNodeModel model) {
             this.nodeModel = model;
+            observable = new Observable(model);
         }
 
         @Override
         public void detach() {
             super.detach();
             nodeModel.detach();
+            observable.detach();
         }
-        
+
+        @Override
         protected Object load() {
             Node node = nodeModel.getNode();
+            observable.setTarget(null);
             if (node != null) {
                 try {
                     String cssClass;
@@ -59,7 +67,8 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
                         try {
                             Item primItem = imageSet.getPrimaryItem();
                             if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                                if(((Node)primItem).hasProperty("jcr:mimeType")) {
+                                observable.setTarget(new JcrNodeModel((Node) primItem));
+                                if (((Node) primItem).hasProperty("jcr:mimeType")) {
                                     Gallery.log.warn("Unset mime type of document");
                                     return null;
                                 }
@@ -93,6 +102,18 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
                 }
             }
             return null;
+        }
+
+        public void setObservationContext(IObservationContext<? extends IObservable> context) {
+            observable.setObservationContext(context);
+        }
+
+        public void startObservation() {
+            observable.startObservation();
+        }
+
+        public void stopObservation() {
+            observable.stopObservation();
         }
     }
 

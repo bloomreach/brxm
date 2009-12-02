@@ -20,8 +20,8 @@ import javax.jcr.Node;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.ObservablePropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +45,8 @@ public class StateIconAttributeModifier extends AbstractNodeAttributeModifier {
     public AttributeModifier[] getCellAttributeModifiers(Node node) {
         StateIconAttributes attrs = new StateIconAttributes(new JcrNodeModel(node));
         AttributeModifier[] attributes = new AttributeModifier[2];
-        attributes[0] = new CssClassAppender(new PropertyModel(attrs, "cssClass"));
-        attributes[1] = new AttributeAppender("title", new PropertyModel(attrs, "summary"), " ");
+        attributes[0] = new CssClassAppender(new ObservablePropertyModel(attrs, "cssClass"));
+        attributes[1] = new AttributeAppender("title", new ObservablePropertyModel(attrs, "summary"), " ");
         return attributes;
     }
 }
