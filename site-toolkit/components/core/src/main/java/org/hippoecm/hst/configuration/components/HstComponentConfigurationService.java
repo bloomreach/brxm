@@ -285,6 +285,8 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
             copy.orderedListConfigs.add(copyDescendant);
             // do not need them by name for copies
         }
+        // the copy is populated
+        populated.add(copy);
         return copy;
     }
 
@@ -347,11 +349,13 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                 // now we need to merge all the descendant components from the referenced component with this component.
 
                 for (HstComponentConfigurationService childToMerge : referencedComp.orderedListConfigs) {
+                    boolean alreadyAdded = false;
                     if (childToMerge.getReferenceComponent() != null) {
                         // populate child component if not yet happened
                         childToMerge.populateComponentReferences(rootComponentConfigurations, populated);
                         // after population, add it
                         addDeepCopy(childToMerge, populated, rootComponentConfigurations);
+                        alreadyAdded = true;
                     }
                     if (this.childConfByName.get(childToMerge.name) != null) {
                         // we have an overlay again because we have a component with the same name
@@ -360,7 +364,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                         existingChild.populateComponentReferences(rootComponentConfigurations, populated);
                         // merge the childToMerge with existingChild
                         existingChild.combine(childToMerge, rootComponentConfigurations, populated);
-                    } else {
+                    } else if(!alreadyAdded) {
                         // make a copy of the child
                         addDeepCopy(childToMerge, populated, rootComponentConfigurations);
                     }
