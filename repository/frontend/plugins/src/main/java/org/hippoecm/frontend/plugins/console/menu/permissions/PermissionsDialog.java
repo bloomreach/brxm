@@ -38,7 +38,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PermissionsDialog extends AbstractDialog {
+public class PermissionsDialog extends AbstractDialog<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

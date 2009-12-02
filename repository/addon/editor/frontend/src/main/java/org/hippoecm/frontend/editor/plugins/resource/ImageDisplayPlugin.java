@@ -23,7 +23,6 @@ import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
@@ -33,7 +32,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageDisplayPlugin extends RenderPlugin {
+public class ImageDisplayPlugin extends RenderPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -50,10 +49,10 @@ public class ImageDisplayPlugin extends RenderPlugin {
     }
     
     private void addResourceFragment() {
-        resource = new JcrResourceStream(((JcrNodeModel) getDefaultModel()).getNode());
+        resource = new JcrResourceStream(getModel());
         Fragment fragment = new Fragment("fragment", "unknown", this);
         try {
-            Node node = ((JcrNodeModel) getDefaultModel()).getNode();
+            Node node = getModelObject();
             String mimeType = node.getProperty("jcr:mimeType").getString();
             if (mimeType.indexOf('/') > 0) {
                 String category = mimeType.substring(0, mimeType.indexOf('/'));

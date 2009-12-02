@@ -86,7 +86,8 @@ import org.slf4j.LoggerFactory;
  * services (it is a multi-valued property) are invoked in order.
  * </ul>
  */
-public abstract class AbstractRenderService<T> extends Panel implements IObserver, IRenderService, IStringResourceProvider {
+public abstract class AbstractRenderService<T> extends Panel implements IObserver, IRenderService,
+        IStringResourceProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -242,6 +243,14 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
     @SuppressWarnings("unchecked")
     public T getModelObject() {
         return (T) getDefaultModelObject();
+    }
+
+    public final void setModel(IModel<T> model) {
+        setDefaultModel(model);
+    }
+
+    public final void setModelObject(T object) {
+        setDefaultModelObject(object);
     }
 
     // override model change methods

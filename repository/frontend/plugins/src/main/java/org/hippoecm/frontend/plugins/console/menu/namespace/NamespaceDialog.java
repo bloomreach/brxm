@@ -32,7 +32,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NamespaceDialog  extends AbstractDialog implements ITitleDecorator {
+public class NamespaceDialog  extends AbstractDialog<Node> implements ITitleDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

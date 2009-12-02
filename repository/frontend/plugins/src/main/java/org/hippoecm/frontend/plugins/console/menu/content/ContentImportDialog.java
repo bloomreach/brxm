@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.ItemExistsException;
+import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.lock.LockException;
@@ -52,7 +53,7 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ContentImportDialog  extends AbstractDialog implements ITitleDecorator {
+public class ContentImportDialog  extends AbstractDialog<Node> implements ITitleDecorator {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;

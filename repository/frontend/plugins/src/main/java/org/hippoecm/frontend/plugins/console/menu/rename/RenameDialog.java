@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.rename;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -30,7 +31,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RenameDialog extends AbstractDialog {
+public class RenameDialog extends AbstractDialog<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

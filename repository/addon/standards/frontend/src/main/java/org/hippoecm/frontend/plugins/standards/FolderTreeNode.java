@@ -50,8 +50,8 @@ public class FolderTreeNode extends JcrTreeNode {
 
     @Override
     public IJcrTreeNode getChild(String name) throws RepositoryException {
-        if (getNodeModel().getNode().hasNode(name)) {
-            JcrNodeModel childModel = new JcrNodeModel(getNodeModel().getNode().getNode(name));
+        if (getChainedModel().getObject().hasNode(name)) {
+            JcrNodeModel childModel = new JcrNodeModel(getChainedModel().getObject().getNode(name));
             return new FolderTreeNode(childModel, this);
         }
         return null;
@@ -60,7 +60,7 @@ public class FolderTreeNode extends JcrTreeNode {
     @Override
     protected List<TreeNode> loadChildren() throws RepositoryException {
         List<TreeNode> result = new ArrayList<TreeNode>();
-        List<Node> subNodes = subNodes(nodeModel.getNode());
+        List<Node> subNodes = subNodes(nodeModel.getObject());
         for (Node subNode : subNodes) {
             FolderTreeNode subfolder = new FolderTreeNode(new JcrNodeModel(subNode), this);
             result.add(subfolder);
@@ -75,7 +75,7 @@ public class FolderTreeNode extends JcrTreeNode {
 
     @Override
     public int getChildCount() {
-        Node jcrNode = this.nodeModel.getNode();
+        Node jcrNode = this.nodeModel.getObject();
         if (jcrNode instanceof HippoNode) {
             try {
                 HippoNode hippoNode = (HippoNode) jcrNode;

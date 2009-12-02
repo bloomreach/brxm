@@ -23,14 +23,16 @@ import java.util.Locale;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrResourceStream extends JcrNodeModel implements IResourceStream {
+public class JcrResourceStream extends NodeModelWrapper<Void> implements IResourceStream {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -40,8 +42,15 @@ public class JcrResourceStream extends JcrNodeModel implements IResourceStream {
 
     private transient InputStream stream;
 
+    /**
+     * @deprecated
+     */
     public JcrResourceStream(Node node) {
-        super(node);
+        this(new JcrNodeModel(node));
+    }
+
+    public JcrResourceStream(IModel<Node> model) {
+        super(model);
     }
 
     public void close() throws IOException {
@@ -68,7 +77,7 @@ public class JcrResourceStream extends JcrNodeModel implements IResourceStream {
             stream = getNode().getProperty("jcr:data").getStream();
         } catch (RepositoryException ex) {
             throw new ResourceStreamNotFoundException(ex);
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             throw new ResourceStreamNotFoundException(ex);
         }
         return stream;

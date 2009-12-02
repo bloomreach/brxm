@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * hippo:translated set, it is used to lookup the translated strings.  When no such mixin
  * is present or the node doesn't exist, the last element of the node path is returned.
  */
-public class NodeTranslator extends NodeModelWrapper {
+public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -59,7 +59,7 @@ public class NodeTranslator extends NodeModelWrapper {
     private NodeNameModel name;
     private transient TreeMap<String, Property> properties;
 
-    public NodeTranslator(JcrNodeModel nodeModel) {
+    public NodeTranslator(IModel<Node> nodeModel) {
         super(nodeModel);
         name = new NodeNameModel();
     }
@@ -105,7 +105,7 @@ public class NodeTranslator extends NodeModelWrapper {
 
         @Override
         protected String load() {
-            Node node = nodeModel.getNode();
+            Node node = nodeModel.getObject();
             String name = "node name";
             if (node != null) {
                 try {
@@ -165,8 +165,8 @@ public class NodeTranslator extends NodeModelWrapper {
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
                 }
-            } else {
-                String path = nodeModel.getItemModel().getPath();
+            } else if (nodeModel instanceof JcrNodeModel) {
+                String path = ((JcrNodeModel) nodeModel).getItemModel().getPath();
                 if (path != null) {
                     name = path.substring(path.lastIndexOf('/') + 1);
                     if (name.indexOf('[') > 0) {
@@ -193,7 +193,7 @@ public class NodeTranslator extends NodeModelWrapper {
         }
 
         public void startObservation() {
-            final JcrNodeModel parentModel = nodeModel.getParentModel();
+            final JcrNodeModel parentModel = ((JcrNodeModel) nodeModel).getParentModel();
             obContext.registerObserver(observer = new IObserver<JcrNodeModel>() {
                 private static final long serialVersionUID = 1L;
 
@@ -271,7 +271,7 @@ public class NodeTranslator extends NodeModelWrapper {
             protected String load() {
                 Property.this.attach();
                 String name = property;
-                Node node = nodeModel.getNode();
+                Node node = nodeModel.getObject();
                 if (node != null) {
                     try {
                         if (node.isNodeType("hippo:translated")) {
@@ -320,7 +320,7 @@ public class NodeTranslator extends NodeModelWrapper {
             protected String load() {
                 Property.this.attach();
                 String name = property;
-                Node node = nodeModel.getNode();
+                Node node = nodeModel.getObject();
                 if (node != null) {
                     try {
                         if (node.isNodeType("hippo:translated")) {

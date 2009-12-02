@@ -39,7 +39,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PropertyDialog extends AbstractDialog {
+public class PropertyDialog extends AbstractDialog<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

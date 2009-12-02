@@ -15,8 +15,10 @@
  */
 package org.hippoecm.frontend.util;
 
+import javax.jcr.Node;
+
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
-import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class MaxLengthNodeNameFormatter extends MaxLengthStringFormatter {
     @SuppressWarnings("unused")
@@ -32,23 +34,23 @@ public class MaxLengthNodeNameFormatter extends MaxLengthStringFormatter {
         super(maxLength, split, indentLength);
     }
 
-    public boolean isTooLong(JcrNodeModel nodeModel) {
+    public boolean isTooLong(IModel<Node> nodeModel) {
         return isTooLong(nodeModel, 0);
     }
 
-    public boolean isTooLong(JcrNodeModel nodeModel, int indent) {
+    public boolean isTooLong(IModel<Node> nodeModel, int indent) {
         return super.isTooLong(getName(nodeModel), indent);
     }
 
-    public String parse(JcrNodeModel nodeModel, int indent) {
+    public String parse(IModel<Node> nodeModel, int indent) {
         return super.parse(getName(nodeModel), indent);
     }
 
-    public String parse(JcrNodeModel nodeModel) {
+    public String parse(IModel<Node> nodeModel) {
         return parse(nodeModel, 0);
     }
 
-    protected String getName(JcrNodeModel nodeModel) {
-        return (String) new NodeTranslator(nodeModel).getNodeName().getObject();
+    protected String getName(IModel<Node> nodeModel) {
+        return new NodeTranslator(nodeModel).getNodeName().getObject();
     }
 }

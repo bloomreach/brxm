@@ -30,12 +30,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrNodeTypesProvider extends NodeModelWrapper implements IDataProvider {
+public class JcrNodeTypesProvider extends NodeModelWrapper<Void> implements IDataProvider<NodeType> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -43,14 +42,13 @@ public class JcrNodeTypesProvider extends NodeModelWrapper implements IDataProvi
 
     static final Logger log = LoggerFactory.getLogger(JcrNodeTypesProvider.class);
 
-    public JcrNodeTypesProvider(JcrNodeModel nodeModel) {
+    public JcrNodeTypesProvider(IModel<Node> nodeModel) {
         super(nodeModel);
     }
 
-    @SuppressWarnings("unchecked")
-    public Iterator iterator(int first, int count) {
-        List list = new ArrayList();
-        Node node = nodeModel.getNode();
+    public Iterator<NodeType> iterator(int first, int count) {
+        List<NodeType> list = new ArrayList<NodeType>();
+        Node node = nodeModel.getObject();
         if (node != null) {
             try {
                 NodeType[] nodeTypes = node.getMixinNodeTypes();
@@ -62,16 +60,15 @@ public class JcrNodeTypesProvider extends NodeModelWrapper implements IDataProvi
         return list.iterator();
     }
 
-    public IModel model(Object object) {
-        NodeType nodeType = (NodeType)object;
-        return new JcrNodeTypeModel(nodeType);
+    public IModel<NodeType> model(NodeType object) {
+        return new JcrNodeTypeModel(object);
     }
 
     public int size() {
         int result = 0;
         try {
-            if (nodeModel.getNode() != null) {
-                NodeType[] nodeTypes = nodeModel.getNode().getMixinNodeTypes();
+            if (nodeModel.getObject() != null) {
+                NodeType[] nodeTypes = nodeModel.getObject().getMixinNodeTypes();
                 result = nodeTypes.length;
             }
         } catch (RepositoryException e) {

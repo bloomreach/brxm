@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.console.menu;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -42,7 +44,7 @@ import org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowDialog;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.tools.projectexport.ExportDialog;
 
-public class MenuPlugin extends RenderPlugin {
+public class MenuPlugin extends RenderPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -55,7 +57,7 @@ public class MenuPlugin extends RenderPlugin {
         IDialogFactory dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new NodeDialog(MenuPlugin.this);
             }
         };
@@ -64,7 +66,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new DeleteDialog(MenuPlugin.this);
             }
         };
@@ -73,7 +75,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new SaveDialog(MenuPlugin.this);
             }
         };
@@ -82,7 +84,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new ResetDialog(MenuPlugin.this);
             }
         };
@@ -91,7 +93,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new ContentExportDialog(MenuPlugin.this);
             }
         };
@@ -100,7 +102,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new ContentImportDialog(MenuPlugin.this);
             }
         };
@@ -109,7 +111,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new PropertyDialog(MenuPlugin.this);
             }
         };
@@ -118,7 +120,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new RenameDialog(MenuPlugin.this);
             }
         };
@@ -127,7 +129,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new MoveDialog(MenuPlugin.this);
             }
         };
@@ -136,7 +138,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new CopyDialog(MenuPlugin.this);
             }
         };
@@ -145,8 +147,8 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
-                return new CndImportDialog(MenuPlugin.this);
+            public AbstractDialog<Void> createDialog() {
+                return new CndImportDialog();
             }
         };
         add(new DialogLink("cnd-import-dialog", new Model("CND Import"), dialogFactory, dialogService));
@@ -154,8 +156,8 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
-                return new CndExportDialog(MenuPlugin.this);
+            public AbstractDialog<Void> createDialog() {
+                return new CndExportDialog();
             }
         };
         add(new DialogLink("cnd-export-dialog", new Model("CND Export"), dialogFactory, dialogService));
@@ -163,7 +165,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new NamespaceDialog(MenuPlugin.this);
             }
         };
@@ -172,7 +174,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new CheckInOutDialog(MenuPlugin.this);
             }
         };
@@ -181,7 +183,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new WorkflowDialog(MenuPlugin.this);
             }
         };
@@ -190,7 +192,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Node> createDialog() {
                 return new PermissionsDialog(MenuPlugin.this);
             }
         };
@@ -199,7 +201,7 @@ public class MenuPlugin extends RenderPlugin {
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog() {
+            public AbstractDialog<Void> createDialog() {
                 return new ExportDialog();
             }
         };

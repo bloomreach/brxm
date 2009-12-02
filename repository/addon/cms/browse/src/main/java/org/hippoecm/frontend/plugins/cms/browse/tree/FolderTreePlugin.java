@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
+import javax.jcr.Node;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -25,6 +26,7 @@ import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.tree.ITreeState;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
@@ -86,8 +88,8 @@ public class FolderTreePlugin extends RenderPlugin {
                 if (workflowConfig != null && (node instanceof IJcrTreeNode)) {
                     ContextWorkflowPlugin content = new ContextWorkflowPlugin(context, workflowConfig);
                     content.bind(FolderTreePlugin.this, id);
-                    JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
-                    content.setDefaultModel(nodeModel);
+                    IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
+                    content.setModel(nodeModel);
                     return content;
                     /* FIMXE: the following section would be a better implementation, but plugins
                     loaded this way cannot instantiate plugins themselves.

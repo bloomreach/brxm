@@ -35,7 +35,7 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProvider {
+public class JcrPropertiesProvider extends NodeModelWrapper<Void> implements IDataProvider<Property> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -54,8 +54,8 @@ public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProv
     public Iterator<Property> iterator(int first, int count) {
         List<Property> list = new ArrayList<Property>();
         try {
-            if (nodeModel.getNode() != null) {
-                PropertyIterator it = nodeModel.getNode().getProperties();
+            if (nodeModel.getObject() != null) {
+                PropertyIterator it = nodeModel.getObject().getProperties();
                 if (it.getSize() > 0) {
                     it.skip(first);
                     for (int i = 0; i < count; i++) {
@@ -76,16 +76,15 @@ public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProv
         return list.iterator();
     }
 
-    public IModel model(Object object) {
-        Property prop = (Property) object;
-        return new JcrPropertyModel(prop);
+    public IModel<Property> model(Property object) {
+        return new JcrPropertyModel(object);
     }
 
     public int size() {
         int result = 0;
         try {
-            if (nodeModel.getNode() != null) {
-                PropertyIterator it = nodeModel.getNode().getProperties();
+            if (nodeModel.getObject() != null) {
+                PropertyIterator it = nodeModel.getObject().getProperties();
                 result = (int) it.getSize();
 
 //                result = result - 1; // For jcr:primaryType

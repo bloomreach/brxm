@@ -90,10 +90,10 @@ public class CopyDialog extends LookupDialog {
     }
 
     @Override
-    public void onSelect(JcrNodeModel model) {
+    public void onSelect(IModel<Node> model) {
         if (model != null) {
             try {
-                target = model.getNode().getPath() + "/";
+                target = model.getObject().getPath() + "/";
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
@@ -114,10 +114,10 @@ public class CopyDialog extends LookupDialog {
         try {
             JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
 
-            JcrNodeModel selectedNode = getSelectedNode().getNodeModel();
+            IModel<Node> selectedNode = getSelectedNode().getNodeModel();
             if (selectedNode != null && name != null && !"".equals(name)) {
-                JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
-                String targetPath = targetNodeModel.getNode().getPath();
+                IModel<Node> targetNodeModel = getSelectedNode().getNodeModel();
+                String targetPath = targetNodeModel.getObject().getPath();
                 if (!targetPath.endsWith("/")) {
                     targetPath += "/";
                 }

@@ -24,6 +24,12 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 public interface IJcrTreeNode extends TreeNode, IDetachable {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * @deprecated
+     * 
+     * Clients of this interface should only expect IModel<Node> as the return
+     * type.
+     */
     JcrNodeModel getNodeModel();
     
     IJcrTreeNode getChild(String name) throws RepositoryException;

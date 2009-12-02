@@ -28,7 +28,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrNodeTypeModel extends LoadableDetachableModel {
+public class JcrNodeTypeModel extends LoadableDetachableModel<NodeType> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -52,7 +52,7 @@ public class JcrNodeTypeModel extends LoadableDetachableModel {
     }
 
     @Override
-    protected Object load() {
+    protected NodeType load() {
         NodeType result = null;
         if (type != null) {
             try {
