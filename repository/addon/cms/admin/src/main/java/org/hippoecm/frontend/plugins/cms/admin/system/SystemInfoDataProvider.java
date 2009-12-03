@@ -127,21 +127,22 @@ public class SystemInfoDataProvider implements IDataProvider {
 
     private String getCMSVersion() {
         StringBuffer sb = new StringBuffer();
-        ServletContext servletContext = ((WebApplication) Application.get()).getServletContext();
+        InputStream istream = null;
         try {
-            InputStream istream = servletContext.getResourceAsStream("META-INF/MANIFEST.MF");
-            if (istream == null) {
-                File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
-                if (manifestFile.exists()) {
-                    istream = new FileInputStream(manifestFile);
-                }
+            try {
+                // try to get the version from the frontend-engine manifest
+                istream = HippoRepositoryFactory.getManifest(Home.class).openStream();
+            } catch (FileNotFoundException ex) {
+            } catch (IOException ex) {
             }
             if (istream == null) {
-                try {
-                    // try to get the version from the frontend-engine manifest
-                    istream = HippoRepositoryFactory.getManifest(Home.class).openStream();
-                } catch (FileNotFoundException ex) {
-                } catch (IOException ex) {
+                ServletContext servletContext = ((WebApplication) Application.get()).getServletContext();
+                istream = servletContext.getResourceAsStream("META-INF/MANIFEST.MF");
+                if (istream == null) {
+                    File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
+                    if (manifestFile.exists()) {
+                        istream = new FileInputStream(manifestFile);
+                    }
                 }
             }
             if (istream != null) {
