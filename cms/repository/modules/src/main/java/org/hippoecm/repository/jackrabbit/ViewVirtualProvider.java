@@ -163,9 +163,15 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                     }
                 }
                 ViewNodeId.Child[] childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
-                /*if (isHandle) {
+                System.err.println("BERRY#1");
+                    for(ViewNodeId.Child child : childrenArray)
+                    System.err.println("BERRY# "+child+" "+child.getKey());
+                if (isHandle) {
                     Arrays.sort(childrenArray);
-                }*/
+                }
+                System.err.println("BERRY#2");
+                    for(ViewNodeId.Child child : childrenArray)
+                    System.err.println("BERRY# "+child+" "+child.getKey());
                 for (int i = 0; i < childrenArray.length && (i == 0 || !(singledView && isHandle)); i++) {
                     state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
                 }
@@ -288,7 +294,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                         return -1;
                     }
                     // never return 0 (See Comparable api)
-                    return 1;
+                    return -1;
                 }
 
                 for (Map.Entry<Name, String> entry : order.entrySet()) {
