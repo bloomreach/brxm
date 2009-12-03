@@ -34,10 +34,7 @@
   </scm>
 
   <modules>
-    <module>migration</module>
-    <module>content-importer</module>
     <module>testutils</module>
-    <module>dropbox</module>
     <module>eclipse</module>
     <module>projectexport</module>
     <module>development-content</module>

@@ -37,6 +37,5 @@
     <module>common</module>
     <module>repository</module>
     <module>frontend</module>
-    <module>import</module>
   </modules>
 </project>
