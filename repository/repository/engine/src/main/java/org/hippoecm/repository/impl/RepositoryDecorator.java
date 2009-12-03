@@ -98,7 +98,7 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
                 InputStream istream = HippoRepositoryFactory.getManifest(getClass()).openStream();
                 if (istream != null) {
                     Manifest manifest = new Manifest(istream);
-                    return manifest.getMainAttributes().getValue("Implementation-Version");
+                    return manifest.getMainAttributes().getValue("Implementation-Version") + " build " + manifest.getMainAttributes().getValue("Implementation-Build");
                 } else {
                     return null;
                 }
