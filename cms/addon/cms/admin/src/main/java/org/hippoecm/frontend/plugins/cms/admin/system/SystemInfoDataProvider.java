@@ -38,6 +38,7 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepositoryFactory;
 
@@ -137,7 +138,8 @@ public class SystemInfoDataProvider implements IDataProvider {
             }
             if (istream == null) {
                 try {
-                    istream = HippoRepositoryFactory.getManifest(getClass()).openStream();
+                    // try to get the version from the frontend-engine manifest
+                    istream = HippoRepositoryFactory.getManifest(Home.class).openStream();
                 } catch (FileNotFoundException ex) {
                 } catch (IOException ex) {
                 }

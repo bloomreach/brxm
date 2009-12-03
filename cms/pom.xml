@@ -430,16 +430,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.2</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Implementation-Build>${buildNumber}</Implementation-Build>
-            </manifestEntries>
-          </archive>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -977,38 +967,6 @@
       <build>
         <plugins>
           <plugin>
-            <inherited>true</inherited>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>buildnumber-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>id1</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>create</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>id2</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>create</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>id3</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>create</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <doCheck>false</doCheck>
-              <doUpdate>false</doUpdate>
-            </configuration>
-          </plugin>
-          <plugin>
             <inherited>false</inherited>
             <artifactId>maven-clean-plugin</artifactId>
             <configuration>
@@ -1028,35 +986,6 @@
               </filesets>
             </configuration>
           </plugin>
-          <!--
-            To use this plugin: from the maven2 repository
-              http://people.apache.org/repo/m2-snapshot-repository/org/apache/maven/plugins/maven-pdf-plugin/
-            download the maven-pdf-plugin, both the latest jar and the latest pom file.  Install this in
-            your local maven repository using:
-              mvn -Dfile=...path-to-downloaded-jar... -DpomFile=...path-to-downloaded-pom... \
-                  -DgroupId=org.apache.maven.plugins -DartifactId=maven-pdf-plugin -Dversion=1.0-SNAPSHOT \
-                  install:install-file
-            Then generate the pdf documentation using:
-              mvn pdf:pdf
-            Then remove this comment and leave the plugin definition below in place
-          <plugin>
-            <artifactId>maven-pdf-plugin</artifactId>
-            <groupId>org.apache.maven.plugins</groupId>
-            <version>1.0-SNAPSHOT</version>
-            <executions>
-              <execution>
-                <id>site-pdf</id>
-                <phase>site</phase>
-                <goals>
-                  <goal>pdf</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          -->
         </plugins>
       </build>
     </profile>

@@ -93,7 +93,7 @@ public class LoginPlugin extends RenderPlugin {
             }
             if (istream == null) {
                 try {
-                    istream = HippoRepositoryFactory.getManifest(getClass()).openStream();
+                    istream = HippoRepositoryFactory.getManifest(Home.class).openStream();
                 } catch(FileNotFoundException ex) {
                 } catch(IOException ex) {
                 }
