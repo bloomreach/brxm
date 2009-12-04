@@ -19,6 +19,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -36,7 +37,7 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
 
     static final Logger log = LoggerFactory.getLogger(IconAttributeModifier.class);
 
-    private static class IconAttributeModel extends LoadableDetachableModel {
+    private static class IconAttributeModel extends LoadableDetachableModel<String> {
         private static final long serialVersionUID = 1L;
 
         private JcrNodeModel nodeModel;
@@ -51,8 +52,21 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
             nodeModel.detach();
         }
         
-        protected Object load() {
+        protected String load() {
             Node node = nodeModel.getNode();
+            String classValue = getIconClassname(node);
+            try {
+                if (classValue != null && node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
+                    Node child = node.getNode(node.getName());
+                    classValue += " " + StringUtils.replace(child.getPrimaryNodeType().getName(), ":", "-");
+								}
+            } catch (RepositoryException e) {
+                log.error("Unable to determine document-type-specific icon for document", e);
+            }
+            return classValue;
+        }
+
+        private String getIconClassname(Node node) {
             if (node != null) {
                 try {
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -104,7 +118,7 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
 
     @Override
     public AttributeModifier getColumnAttributeModifier(Node node) {
-        return new CssClassAppender(new Model("icon-16"));
+        return new CssClassAppender(new Model<String>("icon-16"));
     }
 
 }
