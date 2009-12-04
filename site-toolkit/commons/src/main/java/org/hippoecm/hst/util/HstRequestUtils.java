@@ -147,6 +147,11 @@ public class HstRequestUtils {
      */
     public static String getRequestServerName(HttpServletRequest request) {
         String requestHost = getFarthestRequestHost(request);
+        
+        if (requestHost == null) {
+            return request.getServerName();
+        }
+        
         int offset = requestHost.indexOf(':');
         
         if (offset != -1) {
@@ -163,6 +168,11 @@ public class HstRequestUtils {
      */
     public static int getRequestServerPort(HttpServletRequest request) {
         String requestHost = getFarthestRequestHost(request);
+        
+        if (requestHost == null) {
+            return request.getServerPort();
+        }
+        
         int offset = requestHost.indexOf(':');
         
         if (offset != -1) {
