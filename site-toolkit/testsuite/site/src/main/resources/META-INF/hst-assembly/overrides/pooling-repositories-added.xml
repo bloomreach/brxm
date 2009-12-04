@@ -41,6 +41,7 @@
 
   <bean id="javax.jcr.Repository.custom" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
         init-method="initialize" destroy-method="close">
+    <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
     <property name="repositoryAddress" value="${custom.repository.address}" />
     <property name="defaultCredentialsUserID" value="${custom.repository.user.name}" />
     <property name="defaultCredentialsPassword" value="${custom.repository.password}" />

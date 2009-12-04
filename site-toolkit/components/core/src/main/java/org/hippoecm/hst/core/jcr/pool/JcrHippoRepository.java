@@ -28,6 +28,11 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * JCR Repository implementation wrapping HippoRepository.
+ * 
+ * @version $Id$
+ */
 public class JcrHippoRepository implements Repository {
     
     private static final Logger log = LoggerFactory.getLogger(JcrHippoRepository.class);
@@ -39,6 +44,10 @@ public class JcrHippoRepository implements Repository {
     public JcrHippoRepository(String repositoryURI) {
         this.repositoryURI = repositoryURI;
         vmRepositoryUsed = (repositoryURI != null && repositoryURI.startsWith("vm:"));
+    }
+    
+    public JcrHippoRepository(HippoRepository hippoRepository) {
+        this.hippoRepository = hippoRepository;
     }
     
     private synchronized void initHippoRepository() throws RepositoryException {
