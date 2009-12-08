@@ -24,6 +24,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
+import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 import org.hippoecm.frontend.plugins.yui.javascript.IYuiListener;
@@ -97,6 +98,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
 
     @Override
     public void addHeaderContribution(IYuiContext context) {
+        context.addModule(HippoNamespace.NS, "layoutmanager");
         context.addTemplate(template);
         context.addOnDomLoad("YAHOO.hippo.LayoutManager.render()");
     }
