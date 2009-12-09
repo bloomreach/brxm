@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend;
 
+import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -1084,14 +1085,16 @@ public class JcrObservationManager implements ObservationManager {
     }
 
     private void cleanup() {
-        JcrListener ref;
+        Reference<? extends EventListener> ref;
         synchronized (listeners) {
             // cleanup weak-ref-table
             listeners.size();
 
             // cleanup gc'ed listeners
-            while ((ref = (JcrListener) listenerQueue.poll()) != null) {
-                ref.dispose();
+            while ((ref = listenerQueue.poll()) != null) {
+                if(ref.get() != null) {
+                    ((JcrListener)ref.get()).dispose();
+                }
             }
         }
     }

@@ -59,7 +59,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         IModel<String> focusModel;
         boolean focussed;
         boolean selected;
-        AbstractRenderService<?>.ExtensionPoint extPt;
+        AbstractRenderService.ExtensionPoint extPt;
 
         Section(String extension) {
             this.extension = extension;
@@ -84,7 +84,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         }
 
         public void detach() {
-            for (IRenderService service : extPt.getChildren()) {
+            for (IRenderService service : (List<IRenderService>) extPt.getChildren()) {
                 service.getComponent().detach();
             }
         }
@@ -135,7 +135,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         if (section.extPt.getChildren().size() > 0) {
-                            IRenderService renderer = section.extPt.getChildren().get(0);
+                            IRenderService renderer = (IRenderService) section.extPt.getChildren().get(0);
                             IModelReference modelService = context.getService(context.getReference(renderer)
                                     .getServiceId(), IModelReference.class);
                             if (modelService != null) {
@@ -157,7 +157,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 link.add(new Label("header", new StringResourceModel(label, SectionTreePlugin.this, null)));
 
                 if (section.extPt.getChildren().size() > 0) {
-                    Component c = section.extPt.getChildren().get(0).getComponent();
+                    Component c = ((IRenderService)section.extPt.getChildren().get(0)).getComponent();
                     item.add(c);
                     c.add(accordionManager.newAccordion());
                 } else {
@@ -182,7 +182,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         }
         if (sections != null) {
             for (Section section : sections) {
-                for (IRenderService service : section.extPt.getChildren()) {
+                for (IRenderService service : (List<IRenderService>) section.extPt.getChildren()) {
                     Component component = service.getComponent();
                     component.setVisible(section.focussed);
                 }
@@ -234,7 +234,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         IRenderService renderer = null;
         for (Section section : sections) {
             if (section.extPt.getChildren().size() > 0) {
-                IRenderService renderService = section.extPt.getChildren().get(0);
+                IRenderService renderService = (IRenderService) section.extPt.getChildren().get(0);
                 IModelReference modelService = getPluginContext().getService(
                         getPluginContext().getReference(renderService).getServiceId(), IModelReference.class);
                 if (modelService != null) {
