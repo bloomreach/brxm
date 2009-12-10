@@ -1214,7 +1214,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         
         // user is always allowed to do nothing
         if (privileges == null || privileges.length == 0) {
-            log.debug("No privileges to check for path: {}.", absPath);
+            log.debug("No privileges to check for path: {}.", npRes.getJCRPath(absPath));
             return true;
         }
 
@@ -1226,7 +1226,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             try {
                 return canRead(id);
             } catch (NoSuchItemStateException e) {
-                throw new PathNotFoundException("Path not found " + absPath, e);
+                throw new PathNotFoundException("Path not found " + npRes.getJCRPath(absPath), e);
             }
 
         }
@@ -1234,7 +1234,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         try {
             nodeState = (NodeState) getItemState(id);
         } catch (NoSuchItemStateException e) {
-            throw new PathNotFoundException("Path not found " + absPath, e);
+            throw new PathNotFoundException("Path not found " + npRes.getJCRPath(absPath), e);
         }
 
         if(nodeState.getStatus() == NodeState.STATUS_NEW) {
@@ -1242,7 +1242,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         }
 
         for (Privilege priv : privileges) {
-            log.debug("Checking [{}] : {}", priv.getName(), absPath);
+            if (log.isDebugEnabled()) {
+                log.debug("Checking [{}] : {}", priv.getName(), npRes.getJCRPath(absPath));
+            }
             boolean allowed = false;
             for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
                 if (log.isDebugEnabled()) {
@@ -1254,7 +1256,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                         if (isNodeInDomain(nodeState, fap)) {
                             allowed = true;
                             if (log.isInfoEnabled()) {
-                                log.info("GRANT: " + priv.getName() + " to user " + userId + " in domain " + fap + " for " + absPath);
+                                log.info("GRANT: " + priv.getName() + " to user " + userId + " in domain " + fap + " for " + npRes.getJCRPath(absPath));
                             }
                             if (priv.getName().equals("jcr:setProperties")) {
                                 readAccessCache.remove(id);
@@ -1262,13 +1264,13 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                             break;
                         }
                     } catch (NoSuchItemStateException e) {
-                        throw new PathNotFoundException("Unable to find path: " + absPath, e);
+                        throw new PathNotFoundException("Unable to find path: " + npRes.getJCRPath(absPath), e);
                     }
                 }
             }
             if (!allowed) {
                 if (log.isInfoEnabled()) {
-                    log.info("DENY: " + priv.getName() + " to user " + userId + " for " + absPath);
+                    log.info("DENY: " + priv.getName() + " to user " + userId + " for " + npRes.getJCRPath(absPath));
                 }
                 return false;
             }
