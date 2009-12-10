@@ -88,7 +88,7 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
     @Override
     public String getDescriptor(String key) {
         if(REP_NAME_DESC.equals(key)) {
-            return "Hippo ECM Repository";
+            return "Hippo Repository";
         } else if(REP_VENDOR_DESC.equals(key)) {
             return "Hippo B.V.";
         } else if(REP_VENDOR_URL_DESC.equals(key)) {
