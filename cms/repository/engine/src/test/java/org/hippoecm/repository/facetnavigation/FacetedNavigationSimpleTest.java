@@ -21,20 +21,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.PrintStream;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.updater.UpdaterProperty;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,7 +47,7 @@ public class FacetedNavigationSimpleTest extends TestCase {
         super.tearDown();
     }
 
-   // @Test
+    @Test
     public void testDirectSingleValuedFacetNavigation() throws RepositoryException, IOException {
     	commonStart();
     	
@@ -92,7 +84,7 @@ public class FacetedNavigationSimpleTest extends TestCase {
         
     }
     
-    //@Test
+    @Test
     public void testDirectMultiValuedFacetNavigation() throws RepositoryException, IOException {
         commonStart();
         Node testNode = session.getRootNode().getNode("test");
