@@ -58,7 +58,6 @@ public class Main extends Server {
         try {
             Connector connector = new SelectChannelConnector();
             connector.setPort(8080);
-            connector.setHost("127.0.0.1");
             main.addConnector(connector);
             WebAppContext wac = new WebAppContext();
             wac.setContextPath("/cms");
