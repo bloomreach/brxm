@@ -16,6 +16,7 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,16 +29,26 @@ import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
+import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path.Element;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldSelector;
+import org.apache.lucene.document.SetBasedFieldSelector;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopFieldDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
 import org.hippoecm.repository.jackrabbit.KeyValue;
@@ -226,12 +237,9 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                      */
                     FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, new String(propertyName),
                             (ServicingIndexingConfiguration) getIndexingConfig());
-                    
-                    BooleanQuery q = facetPropExists.getQuery();
-                    
+                
                     searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
 
-                  
                     collector = new FacetResultCollector(indexReader, new String(propertyName), (facet != null ? resultset.get(facet) : null),
                             hitsRequested);
                     searcher.search(searchQuery, collector);
@@ -239,27 +247,43 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     if(!hitsRequested.isCountOnlyForFacetExists()) {
                     	collector.setNumhits(numHits);
                     }
-
                 }
+                
+                return new ResultImpl(collector.getNumhits(), null);
+                
             } else {
                 // resultset is null, so search for HippoNodeType.HIPPO_RESULTSET
-                long timestamp = 0;
-                if (log.isDebugEnabled()) {
-                    timestamp = System.currentTimeMillis();
-                }
-                collector = new FacetResultCollector(indexReader, null, null, hitsRequested);
-                searcher.search(searchQuery, collector);
-                if (log.isDebugEnabled()) {
-                    log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - timestamp)
-                            + " ms for #" + collector.getNumhits() + ". Query: " + searchQuery.toString());
-                }
+                if (!hitsRequested.isResultRequested()) {
+                    // only fetch the count and return:
+                    Hits hits = searcher.search(searchQuery);
+                    return new ResultImpl(hits.length(), null);
+                } else {
+                    Set<String> fieldNames = new HashSet<String>();
+                    fieldNames.add(FieldNames.UUID);
+                    FieldSelector fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet<String>());
 
+                    int fetchTotal = hitsRequested.getOffset() + hitsRequested.getLimit();
+                    TopFieldDocs tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal, new Sort());
+                    ScoreDoc[] hits = tfDocs.scoreDocs;
+                    int position = hitsRequested.getOffset();
+
+                    HashSet<NodeId> nodeIdHits = new HashSet<NodeId>();
+                    while (position < hits.length) {
+                        Document d = indexReader.document(hits[position].doc, fieldSelector);
+                        Field uuidField = d.getField(FieldNames.UUID);
+                        if (uuidField != null) {
+                            nodeIdHits.add(NodeId.valueOf(uuidField.stringValue()));
+                        }
+                        position++;
+                    }
+                    return new ResultImpl(nodeIdHits.size(), nodeIdHits);
+                }
             }
 
         } catch (IllegalNameException e) {
-            e.printStackTrace();
+            log.error("Error during creating view: ", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error during creating view: ", e);
         } finally {
             if (searcher != null) {
                 try {
@@ -276,9 +300,9 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                 }
             }
         }
-
-        return this.new ResultImpl(collector.getNumhits(), collector.getHits());
-
+        // an exception happend
+        
+        return new ResultImpl(0, null);
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,

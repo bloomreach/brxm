@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Calendar;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.TestCase;
@@ -61,6 +62,9 @@ public class FacetedNavigationSimpleTest extends TestCase {
         session.save();
         
     	Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+    	
+    	//traverse(node);
+    	
     	assertNotNull(node);
     	// assert some facetednavigation nodes exists
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:color/hippo:resultset"));
@@ -342,4 +346,22 @@ public class FacetedNavigationSimpleTest extends TestCase {
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {"hippo:date"});
     }
     
+	 
+    private void traverse(Node navigation) throws RepositoryException {
+        traverse(navigation, "", 0);
+    }
+
+    private void traverse(Node navigation, String indent, int depth) throws RepositoryException {
+        depth++;
+        String countStr = "";
+        if(navigation.hasProperty("hippo:count")) {
+            countStr = " [" +  navigation.getProperty("hippo:count").getLong() + "]";
+        }
+        System.out.println(indent + navigation.getName() +  countStr);
+        NodeIterator it = navigation.getNodes();
+        indent += "\t";
+        while(it.hasNext()) {
+            traverse(it.nextNode(), indent, depth);
+        }
+    }
 }
