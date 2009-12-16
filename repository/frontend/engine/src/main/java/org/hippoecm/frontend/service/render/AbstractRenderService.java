@@ -481,11 +481,17 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         }
 
         protected void register() {
-            context.registerTracker(this, config.getString(extension));
+            if (config.containsKey(extension)) {
+                context.registerTracker(this, config.getString(extension));
+            } else {
+                log.debug("Extension {} has not been configured; not registering tracker", extension);
+            }
         }
 
         protected void unregister() {
-            context.registerTracker(this, config.getString(extension));
+            if (config.containsKey(extension)) {
+                context.unregisterTracker(this, config.getString(extension));
+            }
         }
 
         public List<IRenderService> getChildren() {

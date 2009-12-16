@@ -75,14 +75,24 @@ public class RenderService<T> extends AbstractRenderService<T> {
 
         @Override
         protected void register() {
-            getPluginContext().registerTracker(this, getPluginConfig().getString(id));
+            IPluginConfig config = getPluginConfig();
+            IPluginContext context = getPluginContext();
+            if (config.containsKey(id)) {
+                context.registerTracker(this, config.getString(id));
+            } else {
+                log.debug("Extension {} has not been configured; not registering tracker", extension);
+            }
         }
-        
+
         @Override
         protected void unregister() {
-            getPluginContext().unregisterTracker(this, getPluginConfig().getString(id));
+            IPluginConfig config = getPluginConfig();
+            IPluginContext context = getPluginContext();
+            if (config.containsKey(id)) {
+                context.unregisterTracker(this, config.getString(id));
+            }
         }
-        
+
         @Override
         public void onServiceAdded(IRenderService service, String name) {
             service.bind(RenderService.this, id);
