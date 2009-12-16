@@ -53,10 +53,10 @@ public class FacetedNavigationSimpleTest extends TestCase {
     	
     	Node testNode = session.getRootNode().getNode("test");
         createSimpleStructure1(testNode);
-        createFacetNode1(testNode);
+        createFacetNodeSingleValues(testNode);
         session.save();
         
-    	Node node = session.getRootNode().getNode("test/facetnavigation/hippo:facetnavigation");
+    	Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
     	assertNotNull(node);
     	// assert some facetednavigation nodes exists
         assertTrue(node.hasNode("brand/peugeot/color/hippo:resultset"));
@@ -89,9 +89,9 @@ public class FacetedNavigationSimpleTest extends TestCase {
         commonStart();
         Node testNode = session.getRootNode().getNode("test");
         createSimpleStructure2(testNode);
-        createFacetNode2(testNode);
+        createFacetNodeMultiValue(testNode);
         session.save();
-        Node node = testNode.getNode("facetnavigation/hippo:multivaluenavigation");
+        Node node = testNode.getNode("facetnavigation/hippo:navigation");
         assertNotNull(node);
         
         // assert some facetednavigation nodes exists (note, only one multivalued property)
@@ -114,11 +114,11 @@ public class FacetedNavigationSimpleTest extends TestCase {
         commonStart();
         Node testNode = session.getRootNode().getNode("test");
         createSimpleStructure1(testNode);
-        createFacetNode1(testNode);
+        createFacetNodeSingleValues(testNode);
         session.save();
         
         
-        Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:facetnavigation");
+        Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
         
         // without filter:
         assertNotNull(navigation.getNode("brand"));
@@ -149,9 +149,9 @@ public class FacetedNavigationSimpleTest extends TestCase {
         // with filter now:
 
         assertNotNull(testNode.getNode("filtered"));
-        assertNotNull(testNode.getNode("filtered/hippo:facetnavigation"));
+        assertNotNull(testNode.getNode("filtered/hippo:navigation"));
         
-        Node filteredNavigation = testNode.getNode("filtered/hippo:facetnavigation");
+        Node filteredNavigation = testNode.getNode("filtered/hippo:navigation");
         assertNotNull(filteredNavigation.getNode("brand"));
         // after filter, only 2 results here!
         assertEquals(2L,filteredNavigation.getNode("brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
@@ -168,6 +168,34 @@ public class FacetedNavigationSimpleTest extends TestCase {
         assertFalse(filteredNavigation.hasNode("brand/peugeot/color/hippo:resultset/car4/car1/car1"));
     }
     
+    
+    
+    @Test
+    public void testFacetsOnNodeType() throws RepositoryException, IOException {
+        commonStart();
+        
+        Node testNode = session.getRootNode().getNode("test");
+        createSimpleStructure1(testNode);
+        createFacetNodeWithPrimaryType(testNode);
+        session.save();
+        
+        Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+    
+        // the brand count:
+        assertNotNull(navigation.getNode("brand"));
+        assertEquals(4L,navigation.getNode("brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        
+        // the primary node type counts: note, that there are 5 cars, onyly 4 of them having a brand, hence, 5L hippo:testdocument's 
+        
+        assertNotNull(navigation.getNode("jcr:primaryType"));
+        assertEquals(5L,navigation.getNode("jcr:primaryType").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(5L,navigation.getNode("jcr:primaryType/hippo:testdocument").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        
+        assertNotNull(navigation.getNode("brand/peugeot/jcr:primaryType/hippo:testdocument"));
+        assertEquals(2L,navigation.getNode("brand/peugeot/jcr:primaryType/hippo:testdocument").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        
+        session.save();
+    }
     
     private void commonStart() throws RepositoryException{
     	session.getRootNode().addNode("test");
@@ -260,19 +288,27 @@ public class FacetedNavigationSimpleTest extends TestCase {
         car.setProperty("tags", tags2);
 	}
 
-	private void createFacetNode1(Node node) throws RepositoryException {
+	private void createFacetNodeSingleValues(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
         node.addMixin("mix:referenceable");
-        node = node.addNode("hippo:facetnavigation", HippoNodeType.NT_FACETNAVIGATION);
+        node = node.addNode("hippo:navigation", HippoNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "brand", "color", "product" });
     }
 	
-	private void createFacetNode2(Node node) throws RepositoryException {
+	private void createFacetNodeMultiValue(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
-        node = node.addNode("hippo:multivaluenavigation", HippoNodeType.NT_FACETNAVIGATION);
+        node = node.addNode("hippo:navigation", HippoNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "tags"});
+    }
+	
+	private void createFacetNodeWithPrimaryType(Node node) throws RepositoryException {
+        node = node.addNode("facetnavigation");
+        node = node.addNode("hippo:navigation", HippoNodeType.NT_FACETNAVIGATION);
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "jcr:primaryType", "brand"});
+        //node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {"brand"});
     }
     
 }
