@@ -39,6 +39,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
 import org.hippoecm.repository.jackrabbit.KeyValue;
@@ -49,7 +50,6 @@ import org.hippoecm.repository.query.lucene.FacetResultCollector;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
 import org.hippoecm.repository.query.lucene.FacetsQueryFilter;
 import org.hippoecm.repository.query.lucene.FixedScoreSimilarity;
-import org.hippoecm.repository.query.lucene.FixedScoreTermQuery;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
@@ -179,7 +179,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
          */
         org.apache.lucene.search.Query initialLuceneQuery = null;
         if (initialQuery != null && !initialQuery.xpath.equals("")) {
-            initialLuceneQuery = new FixedScoreTermQuery(new Term(ServicingFieldNames.HIPPO_PATH, initialQuery.xpath));
+            initialLuceneQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH, initialQuery.xpath));
         }
 
         BooleanQuery searchQuery = new BooleanQuery(true);
@@ -332,4 +332,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
 
     }
 
+    public String resolveLuceneTermToPropertyString(String resolvedFacet, String luceneTerm) {
+        return super.luceneTermToProperty(resolvedFacet, luceneTerm);
+    }
 }

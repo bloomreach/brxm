@@ -444,4 +444,6 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * language expected by the interface implementation.
      */
     public Q parse(String query);
+
+    public String resolveLuceneTermToPropertyString(String resolvedFacet, String luceneTerm);
 }

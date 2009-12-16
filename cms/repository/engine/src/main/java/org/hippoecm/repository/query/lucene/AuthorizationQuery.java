@@ -33,14 +33,13 @@ import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.security.FacetAuthConstants;
 import org.hippoecm.repository.security.domain.DomainRule;
@@ -190,15 +189,15 @@ public class AuthorizationQuery {
                                 return QueryHelper.negateQuery(b);
                             }
                         } else {
-                            Query wq = new WildcardQuery(new Term(internalFieldName, facetRule.getValue() + "?"));
+                            Query tq = new TermQuery(new Term(internalFieldName, facetRule.getValue()));
                             if (facetRule.isEqual()) {
-                                return wq;
+                                return tq;
                             } else {
                                 BooleanQuery b = new BooleanQuery(false);
                                 Query propExists = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,
                                         internalNameTerm));
                                 b.add(propExists, Occur.MUST);
-                                b.add(wq, Occur.MUST_NOT);
+                                b.add(tq, Occur.MUST_NOT);
                                 return b;
                             }
                         }

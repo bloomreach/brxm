@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
+import org.apache.jackrabbit.core.query.lucene.DateField;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.LongField;
@@ -42,7 +43,6 @@ import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.hippoecm.repository.jackrabbit.FacetTypeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,18 +210,18 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 // never facet;
                 break;
             case PropertyType.BOOLEAN:
-                indexFacet(doc, fieldName, value.toString() + FacetTypeConstants.BOOLEAN_POSTFIX);
+                indexFacet(doc, fieldName, value.toString());
                 break;
             case PropertyType.DATE:
-                // TODO : configurable resolution for dates: currently SECONDS
-                String dateToString = DateTools.timeToString(value.getDate().getTimeInMillis(), DateTools.Resolution.SECOND);
-                indexFacet(doc, fieldName, dateToString + FacetTypeConstants.DATE_POSTFIX);
+                //String dateToString = DateTools.timeToString(value.getDate().getTimeInMillis(), DateTools.Resolution.SECOND);
+                String dateToString = DateField.timeToString(value.getDate().getTimeInMillis());
+                indexFacet(doc, fieldName, dateToString);
                 break;
             case PropertyType.DOUBLE:
-                indexFacet(doc, fieldName, DoubleField.doubleToString(new Double(value.getDouble()).doubleValue()) + FacetTypeConstants.DOUBLE_POSTFIX);
+                indexFacet(doc, fieldName, DoubleField.doubleToString(new Double(value.getDouble()).doubleValue()));
                 break;
             case PropertyType.LONG:
-                indexFacet(doc, fieldName, LongField.longToString(new Long(value.getLong())) + FacetTypeConstants.LONG_POSTFIX);
+                indexFacet(doc, fieldName, LongField.longToString(new Long(value.getLong())));
                 break;
             case PropertyType.REFERENCE:
                 // never facet;
@@ -237,7 +237,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                         log.debug("truncating facet value because string length exceeds 255 chars. This is useless for facets");
                         str = str.substring(0, 255);
                     }
-                    indexFacet(doc, fieldName, str + FacetTypeConstants.STRING_POSTFIX);
+                    indexFacet(doc, fieldName, str);
                 }
                 break;
             case PropertyType.NAME:
@@ -249,7 +249,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 try {
                     // nodename in format: nsprefix:localname
                     String primaryNodeName = queryHandlerContext.getNamespaceRegistry().getPrefix(value.getQName().getNamespaceURI()) + ":" + value.getQName().getLocalName();
-                    indexFacet(doc, fieldName, primaryNodeName + FacetTypeConstants.STRING_POSTFIX);
+                    indexFacet(doc, fieldName, primaryNodeName);
                 } catch (NamespaceException e) {
                     log.error("Could not get primaryNodeName in format nsprefix:localname for '{}'", value.getQName());
                 }

@@ -27,6 +27,13 @@
 + * (nt:base) = hippo:ntunstructured multiple
 - *
 
+[hippo:testcardocument] > hippo:document
++ * (nt:base) = hippo:ntunstructured multiple
+- hippo:product (string)
+- hippo:brand (string)
+- hippo:color (string)
+- hippo:date (date)
+
 [hippo:testtagdocument] > hippo:document
 - * (String) multiple
 

@@ -54,7 +54,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
     		String currentFacet = facetNavigationNodeId.currentFacet;
     		String[] availableFacets = facetNavigationNodeId.availableFacets;
     	    String docbase = facetNavigationNodeId.docbase;
-    	    String[] ancestorAndSelfSubNavNames = facetNavigationNodeId.ancestorAndSelfSubNavNames; 
+    	    String[] ancestorAndSelfUsedLuceneTerms = facetNavigationNodeId.ancestorAndSelfUsedLuceneTerms; 
     	    
     	    Map<Name,String> inheritedFilter = facetNavigationNodeId.view;
     	    
@@ -115,14 +115,12 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                 if (entry.facetValue.length() > 1) {
                     List<KeyValue<String,String>> newSearch = new ArrayList<KeyValue<String,String>>(currentSearch);
                 	
-                    // nextTerm is the next facet value to search for (skip last char because this is the facet type constant)
-                    String nextFacet = entry.facetValue.substring(0, entry.facetValue.length() - 1);
-                    Character facetTypeConstant = entry.facetValue.charAt(entry.facetValue.length() - 1);
+                    String luceneTerm = entry.facetValue;
                     
-                    newSearch.add(new FacetKeyValue(resolvedFacet, nextFacet));
+                    newSearch.add(new FacetKeyValue(resolvedFacet, luceneTerm));
                     
                     List<KeyValue<String,String>> usedFacetValueCombis = new ArrayList<KeyValue<String,String>>(facetNavigationNodeId.usedFacetValueCombis);     
-                    KeyValue<String, String> facetValueCombi = new FacetKeyValue(currentFacet, nextFacet);
+                    KeyValue<String, String> facetValueCombi = new FacetKeyValue(currentFacet, luceneTerm);
                     
                     boolean stopSubNavigation = facetNavigationNodeId.stopSubNavigation;
                     if(!usedFacetValueCombis.contains(facetValueCombi)) {
@@ -134,8 +132,10 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                         stopSubNavigation = false;
                     }
                     try { 
-                        String name = getDisplayName(nextFacet, facetTypeConstant);
-                        Name childName = resolveName(NodeNameCodec.encode(name));
+                        String name = facetedEngine.resolveLuceneTermToPropertyString(resolvedFacet, luceneTerm);
+                        
+                        // use forceSimpleName = true in encode because value may contain ":" but this is not related to a namespace prefix
+                        Name childName = resolveName(NodeNameCodec.encode(name, true));
                         FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsSubNavigationProvider, state.getNodeId(), childName);
                         state.addChildNodeEntry(childName, childNodeId);
                         childNodeId.docbase = docbase;
@@ -143,13 +143,13 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                         childNodeId.currentSearch = newSearch;
                         childNodeId.currentFacet = currentFacet;
                         
-                        String[] newAncestorAndSelfSubNavNames = new String[ancestorAndSelfSubNavNames != null ? ancestorAndSelfSubNavNames.length + 1 : 1];
-                        if (ancestorAndSelfSubNavNames != null && ancestorAndSelfSubNavNames.length > 0) {
-                            System.arraycopy(ancestorAndSelfSubNavNames, 0, newAncestorAndSelfSubNavNames, 0, ancestorAndSelfSubNavNames.length);
+                        String[] newAncestorAndSelfUsedLuceneTerms = new String[ancestorAndSelfUsedLuceneTerms != null ? ancestorAndSelfUsedLuceneTerms.length + 1 : 1];
+                        if (ancestorAndSelfUsedLuceneTerms != null && ancestorAndSelfUsedLuceneTerms.length > 0) {
+                            System.arraycopy(ancestorAndSelfUsedLuceneTerms, 0, newAncestorAndSelfUsedLuceneTerms, 0, ancestorAndSelfUsedLuceneTerms.length);
                         }
-                        newAncestorAndSelfSubNavNames[newAncestorAndSelfSubNavNames.length - 1] = name;
+                        newAncestorAndSelfUsedLuceneTerms[newAncestorAndSelfUsedLuceneTerms.length - 1] = luceneTerm;
                         
-                        childNodeId.ancestorAndSelfSubNavNames = newAncestorAndSelfSubNavNames;
+                        childNodeId.ancestorAndSelfUsedLuceneTerms = newAncestorAndSelfUsedLuceneTerms;
                         childNodeId.usedFacetValueCombis = usedFacetValueCombis;
                         childNodeId.facetNodeNames = facetNavigationNodeId.facetNodeNames;
                         childNodeId.stopSubNavigation = stopSubNavigation;

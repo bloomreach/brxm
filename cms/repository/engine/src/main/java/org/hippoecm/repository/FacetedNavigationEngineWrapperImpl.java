@@ -90,4 +90,8 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     public Q parse(String query) {
         return upstream.parse(query);
     }
+
+    public String resolveLuceneTermToPropertyString(String resolvedFacet, String luceneTerm) {
+        return upstream.resolveLuceneTermToPropertyString(resolvedFacet, luceneTerm);
+    }
 }
