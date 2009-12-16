@@ -131,15 +131,23 @@ public class ActionValve extends AbstractValve
                     try {
                         if (!requestContext.isPortletContext()) {
                             responseState.flush();
-                            if(!responseState.getRedirectLocation().startsWith("/")) {
-                                throw new ContainerException("Can only redirect to an absolute path starting with a '/'");
+                            
+                            String location = responseState.getRedirectLocation();
+                            
+                            if (location.startsWith("http:") || location.startsWith("https:")) {
+                                servletResponse.sendRedirect(location);
+                            } else {
+                                if (!location.startsWith("/")) {
+                                    throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
+                                }
+                                
+                                /* 
+                                 * We will redirect to a URL containing the protocol + hostname + portnumber to avoid problems
+                                 * when redirecting behind a proxy.
+                                 */
+                                String url = requestContext.getVirtualHost().getBaseURL(servletRequest) + location;
+                                servletResponse.sendRedirect(url);
                             }
-                            /* 
-                             * We will redirect to a URL containing the protocol + hostname + portnumber to avoid problems
-                             * when redirecting behind a proxy.
-                             */
-                            String url = requestContext.getVirtualHost().getBaseURL(servletRequest) + responseState.getRedirectLocation();
-                            servletResponse.sendRedirect(url);
                         }
                     } catch (IOException e) {
                         log.warn("Unexpected exception during redirect to " + responseState.getRedirectLocation(), e);
