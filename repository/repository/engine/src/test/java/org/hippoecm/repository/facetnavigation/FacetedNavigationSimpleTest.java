@@ -63,14 +63,6 @@ public class FacetedNavigationSimpleTest extends TestCase {
         
     	Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
     	
-    	NodeIterator it = node.getNode("hippo:brand/hippo:resultset").getNodes();
-    	while(it.hasNext()) {
-    	    Node n = it.nextNode();
-    	    System.out.println(n.getProperty("hippo:brand").getString());
-    	}
-    	
-    	traverse(node);
-    	
     	assertNotNull(node);
     	// assert some facetednavigation nodes exists
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:color/hippo:resultset"));
@@ -353,21 +345,5 @@ public class FacetedNavigationSimpleTest extends TestCase {
     }
     
 	 
-    private void traverse(Node navigation) throws RepositoryException {
-        traverse(navigation, "", 0);
-    }
-
-    private void traverse(Node navigation, String indent, int depth) throws RepositoryException {
-        depth++;
-        String countStr = "";
-        if(navigation.hasProperty("hippo:count")) {
-            countStr = " [" +  navigation.getProperty("hippo:count").getLong() + "]";
-        }
-        System.out.println(indent + navigation.getName() +  countStr);
-        NodeIterator it = navigation.getNodes();
-        indent += "\t";
-        while(it.hasNext()) {
-            traverse(it.nextNode(), indent, depth);
-        }
-    }
+ 
 }
