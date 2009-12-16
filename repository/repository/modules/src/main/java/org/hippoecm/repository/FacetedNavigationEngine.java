@@ -232,6 +232,16 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
          * The offset in the resultset to start from.
          */
         private int offset = 0;
+        
+        /**
+         * The orderBy property when resultset is order, <code>null</code> if no ordering is needed
+         */
+        private String orderBy;
+        
+        /**
+         * When <code>orderBy</code> is not null, this is the order in which the resultset returns its hits.
+         */
+        private boolean descending = false;
 
         public int getLimit() {
             return limit;
@@ -264,6 +274,22 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
 		public void setCountOnlyForFacetExists(boolean countOnlyForFacetExists) {
 			this.countOnlyForFacetExists = countOnlyForFacetExists;
 		}
+
+		public String getOrderBy() {
+            return orderBy;
+        }
+
+        public void setOrderBy(String orderBy) {
+            this.orderBy = orderBy;
+        }
+
+        public void setDescending(boolean descending) {
+            this.descending = descending;
+        }
+        
+        public boolean isDescending() {
+            return this.descending;
+        }
     }
 
 

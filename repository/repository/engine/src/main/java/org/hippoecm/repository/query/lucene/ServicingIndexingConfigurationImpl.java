@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.jackrabbit.core.nodetype.xml.AdditionalNamespaceResolver;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationImpl;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;

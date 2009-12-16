@@ -15,11 +15,11 @@
  */
 package org.hippoecm.repository.query.lucene;
 
-import javax.jcr.NamespaceException;
-
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.Path.Element;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 
 public class ServicingNameFormat {
     @SuppressWarnings("unused")
@@ -41,5 +41,17 @@ public class ServicingNameFormat {
         int idx = internalName.indexOf(':');
         internalName = internalName.substring(0,idx+1) + ServicingFieldNames.HIPPO_FACET + internalName.substring(idx+1);
         return internalName;
+    }
+    
+    public static String getInteralPropertyPathName(NamespaceMappings nsMappings, String propertyPath) throws IllegalNameException{
+        StringBuffer internalName = new StringBuffer();
+        Element[] pathElements = PathFactoryImpl.getInstance().create(propertyPath).getElements();
+        internalName.append(nsMappings.translatePropertyName(pathElements[pathElements.length - 1].getName()));
+        for (int i = 0; i < pathElements.length - 1; i++) {
+            internalName.append("/");
+            internalName.append(nsMappings.translatePropertyName(pathElements[i].getName()));
+        }
+        
+        return new String(internalName);
     }
 }
