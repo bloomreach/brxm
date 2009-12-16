@@ -15,9 +15,7 @@
  */
 package org.hippoecm.repository.query.lucene;
 
-import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;

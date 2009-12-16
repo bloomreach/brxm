@@ -16,9 +16,6 @@
 package org.hippoecm.repository.query.lucene;
 
 import java.util.List;
-import java.util.Map;
-
-import javax.jcr.NamespaceException;
 
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
@@ -76,7 +73,7 @@ public class FacetsQuery {
                          * TODO HREPTWO-652 : when lucene 2.3.x or higher is used, replace wildcardquery
                          * below with FixedScoreTermQuery without wildcard, and use payload to get the type
                          */
-                            String internalName = ServicingNameFormat.getInternalFacetName(new String(propertyName), nsMappings);
+                            String internalName = ServicingNameFormat.getInternalFacetName(new String(propertyName));
                         	wq = new WildcardQuery(new Term(internalName, keyValue.getValue() + "?"));
                         	
                     	}
@@ -87,9 +84,7 @@ public class FacetsQuery {
                     }
                 } catch (IllegalNameException e) {
                     log.error(e.toString());
-                } catch (NamespaceException e) {
-                    log.error(e.toString());
-                }
+                } 
             }
         }
     }
