@@ -63,7 +63,13 @@ public class FacetedNavigationSimpleTest extends TestCase {
         
     	Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
     	
-    	//traverse(node);
+    	NodeIterator it = node.getNode("hippo:brand/hippo:resultset").getNodes();
+    	while(it.hasNext()) {
+    	    Node n = it.nextNode();
+    	    System.out.println(n.getProperty("hippo:brand").getString());
+    	}
+    	
+    	traverse(node);
     	
     	assertNotNull(node);
     	// assert some facetednavigation nodes exists

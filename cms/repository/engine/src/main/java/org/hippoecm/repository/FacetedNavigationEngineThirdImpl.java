@@ -18,6 +18,7 @@ package org.hippoecm.repository;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,9 +33,7 @@ import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.Path.Element;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldSelector;
@@ -48,7 +47,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TopFieldDocs;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
 import org.hippoecm.repository.jackrabbit.KeyValue;
@@ -60,6 +59,7 @@ import org.hippoecm.repository.query.lucene.FixedScoreSimilarity;
 import org.hippoecm.repository.query.lucene.InheritedFilterQuery;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
+import org.hippoecm.repository.query.lucene.ServicingNameFormat;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -225,22 +225,16 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                 		numHits = searcher.search(searchQuery).length();
                 	}
                 	
-                    StringBuffer propertyName = new StringBuffer();
-                    Element[] pathElements = PathFactoryImpl.getInstance().create(facet).getElements();
-                    propertyName.append(nsMappings.translatePropertyName(pathElements[pathElements.length-1].getName()));
-                    for(int i=0; i<pathElements.length-1; i++) {
-                        propertyName.append("/");
-                        propertyName.append(nsMappings.translatePropertyName(pathElements[i].getName()));
-                    }
+                	String propertyName = ServicingNameFormat.getInteralPropertyPathName(nsMappings, facet);
                     /*
                      * facetPropExists: the node must have the property as facet
                      */
-                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, new String(propertyName),
+                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet,propertyName,
                             (ServicingIndexingConfiguration) getIndexingConfig());
                 
                     searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
 
-                    collector = new FacetResultCollector(indexReader, new String(propertyName), (facet != null ? resultset.get(facet) : null),
+                    collector = new FacetResultCollector(indexReader, propertyName, (facet != null ? resultset.get(facet) : null),
                             hitsRequested);
                     searcher.search(searchQuery, collector);
                     // set the numHits value
@@ -263,11 +257,30 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     FieldSelector fieldSelector = new SetBasedFieldSelector(fieldNames, new HashSet<String>());
 
                     int fetchTotal = hitsRequested.getOffset() + hitsRequested.getLimit();
-                    TopFieldDocs tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal, new Sort());
+                    Sort sort = null;
+                    if(hitsRequested.getOrderBy() != null) {
+                        try {
+                        String propertyName = ServicingNameFormat.getInteralPropertyPathName(nsMappings, hitsRequested.getOrderBy());
+                        String internalFacetName = ServicingNameFormat.getInternalFacetName(propertyName);
+                        boolean reverse = hitsRequested.isDescending();
+                        sort = new Sort(internalFacetName, reverse);
+                        } catch (IllegalNameException e) {
+                            log.error("Cannot order by illegal name: '{}' : '{}'. Skip ordering", hitsRequested.getOrderBy(), e.getMessage());
+                        }
+                    }
+                    
+                    TopDocs tfDocs;
+                    if(sort == null) {
+                        // when sort == null, use this search without search as is more efficient
+                        tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal);
+                    } else {
+                        tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal, sort);
+                    }
                     ScoreDoc[] hits = tfDocs.scoreDocs;
                     int position = hitsRequested.getOffset();
-
-                    HashSet<NodeId> nodeIdHits = new HashSet<NodeId>();
+                    
+                    // LinkedHashSet because ordering should be kept!
+                    Set<NodeId> nodeIdHits = new LinkedHashSet<NodeId>();
                     while (position < hits.length) {
                         Document d = indexReader.document(hits[position].doc, fieldSelector);
                         Field uuidField = d.getField(FieldNames.UUID);

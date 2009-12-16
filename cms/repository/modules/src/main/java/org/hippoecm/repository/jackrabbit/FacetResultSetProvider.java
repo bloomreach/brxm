@@ -60,6 +60,14 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         String[] search;
         List<KeyValue<String, String>> preparedSearch;
         long count;
+        // default limit = 1000
+        int limit = 1000;
+        
+        // default, we do not order
+        public String resultSetOrderBy = null;
+        
+        // default descending is false
+        public boolean isDescending = false;
         
         FacetResultSetNodeId(NodeId parent, Name name) {
             super(FacetResultSetProvider.this, parent, name);
@@ -71,6 +79,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
             this.search = search;
             this.count = count;
         }
+        
 		public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, List<KeyValue<String, String>> currentSearch, int count) {
 			super(FacetResultSetProvider.this, parent, name);
             this.queryname = queryname;
@@ -78,6 +87,16 @@ public class FacetResultSetProvider extends HippoVirtualProvider
             this.preparedSearch = currentSearch;
             this.count = count;
 		}
+		
+		public void setLimit(int limit) {
+		    this.limit = limit;
+		}
+        public void setResultSetOrderBy(String resultSetOrderBy) {
+            this.resultSetOrderBy = resultSetOrderBy;
+        }
+        public void setDescending(boolean isDescending) {
+            this.isDescending = isDescending;
+        }
     }
 
     ViewVirtualProvider subNodesProvider;
@@ -179,9 +198,11 @@ public class FacetResultSetProvider extends HippoVirtualProvider
          */
         HitsRequested hitsRequested = new HitsRequested();
         hitsRequested.setResultRequested(true);
-        hitsRequested.setLimit(1000);
+        hitsRequested.setLimit(nodeId.limit);
         hitsRequested.setOffset(0);
-
+        hitsRequested.setOrderBy(nodeId.resultSetOrderBy);
+        hitsRequested.setDescending(nodeId.isDescending );
+        
         FacetedNavigationEngine.Result facetedResult;
         long t1 = 0, t2;
         if(log.isDebugEnabled())

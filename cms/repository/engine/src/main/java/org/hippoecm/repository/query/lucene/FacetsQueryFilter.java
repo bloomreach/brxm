@@ -22,17 +22,11 @@ import java.util.Map;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
-import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.query.lucene.caching.CachedQueryBitSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FacetsQueryFilter extends Filter {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    /** The logger instance for this class */
-    private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngine.class);
 
     private static final long serialVersionUID = 1L;
     private BitSet bits;
