@@ -58,6 +58,11 @@ import org.hippoecm.repository.query.lucene.caching.CachedQueryBitSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * class deprecated: never used anyway, but kept for reference because some examples of possible nice improvements
+ *
+ */
+@Deprecated 
 public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
     implements FacetedNavigationEngine<FacetedNavigationEngineFourthImpl.QueryImpl, FacetedNavigationEngineFourthImpl.ContextImpl> {
 
@@ -310,7 +315,9 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
             }
         }
 
-        return this.new ResultImpl(collector.getNumhits(), collector.getHits());
+        return null;
+        
+      //  return this.new ResultImpl(collector.getNumhits(), collector.getHits());
 
     }
 
