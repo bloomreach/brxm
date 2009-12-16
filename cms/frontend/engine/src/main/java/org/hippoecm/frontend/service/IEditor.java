@@ -24,7 +24,7 @@ import org.apache.wicket.model.IModel;
  * "document".  This can be achieved by using the edit mode or setting a different
  * (node) model.
  */
-public interface IEditor extends IClusterable {
+public interface IEditor<T> extends IClusterable {
     final static String SVN_ID = "$Id$";
 
     enum Mode {
@@ -42,9 +42,14 @@ public interface IEditor extends IClusterable {
     void close() throws EditorException;
 
     /**
+     * Requests focus on the editor.
+     */
+    void focus();
+
+    /**
      * The model that can be used to identify the editor.  For publishable documents,
      * this is the parent handle.
      */
-    IModel getModel();
+    IModel<T> getModel();
 
 }

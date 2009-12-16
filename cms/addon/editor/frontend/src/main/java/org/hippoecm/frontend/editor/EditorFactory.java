@@ -13,19 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.edit;
+package org.hippoecm.frontend.editor;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 
+/**
+ * Factory for Node {@link IEditor}s.  Use this class to create an editor for any Node.
+ * <p>
+ * This will likely be turned into a service at some point.  
+ */
 public class EditorFactory implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -34,36 +40,36 @@ public class EditorFactory implements IClusterable {
 
     private IPluginConfig config;
     private IPluginContext context;
-    private EditorManagerPlugin manager;
 
-    public EditorFactory(EditorManagerPlugin manager, IPluginContext context, IPluginConfig config) {
-        this.manager = manager;
+    public EditorFactory(IPluginContext context, IPluginConfig config) {
         this.context = context;
         this.config = config;
     }
 
-    public AbstractCmsEditor<JcrNodeModel> newEditor(final JcrNodeModel nodeModel, IEditor.Mode mode) throws CmsEditorException {
-        Node node = nodeModel.getNode();
+    public IEditor<Node> newEditor(IEditorContext manager, IModel<Node> nodeModel, IEditor.Mode mode) throws EditorException {
+        Node node = nodeModel.getObject();
+        AbstractCmsEditor<Node> editor;
         try {
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 if (node.hasNode(node.getName())) {
                     Node doc = node.getNode(node.getName());
                     if (doc.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-                        return new HippostdPublishableEditor(manager, context, config, nodeModel);
+                        editor = new HippostdPublishableEditor(manager, context, config, nodeModel);
                     } else {
-                        return new DefaultCmsEditor(manager, context, config, nodeModel, mode);
+                        editor = new DefaultCmsEditor(manager, context, config, nodeModel, mode);
                     }
                 } else {
-                    throw new CmsEditorException("Document has been deleted");
+                    throw new EditorException("Document has been deleted");
                 }
             } else if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                return new TemplateTypeEditor(manager, context, config, nodeModel, mode);
+                editor = new TemplateTypeEditor(manager, context, config, nodeModel, mode);
             } else {
-                return new DefaultCmsEditor(manager, context, config, nodeModel, mode);
+                editor = new DefaultCmsEditor(manager, context, config, nodeModel, mode);
             }
         } catch (RepositoryException e) {
-            throw new CmsEditorException("Could not determine type of editor required", e);
+            throw new EditorException("Could not determine type of editor required", e);
         }
+        editor.start();
+        return editor;
     }
-
 }

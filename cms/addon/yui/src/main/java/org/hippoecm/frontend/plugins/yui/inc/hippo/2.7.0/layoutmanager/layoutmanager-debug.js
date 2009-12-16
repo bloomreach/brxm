@@ -151,7 +151,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             getWireframe : function(id) {
-               if(id == this.root.id) {
+               if(this.root != null && id == this.root.id) {
                    return this.root;
                }
                return this.wireframes.get(id);
@@ -314,7 +314,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
              * Dom.getAncestorByClassName didn't work
              */
             _findUnitElement : function(el) {
-                while (el != null && el != document.body && el.id != this.root.id) {
+                while (el != null && el != document.body && (this.root == null || el.id != this.root.id)) {
                     if (Dom.hasClass(el, 'yui-layout-unit')) {
                         return el;
                     }
@@ -583,6 +583,87 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             loadDimensions : function() {
                 this.config.height = Dom.getClientHeight()-this.margins.h;
                 this.config.width = Dom.getClientWidth()-this.margins.w; //this works better than offsetWidth
+            }
+
+        });
+
+        /**
+         * Wireframe that functions as a root wireframe in a portlet environment
+         */
+        YAHOO.hippo.PortletWireframe = function(id, config) {
+            YAHOO.hippo.PortletWireframe.superclass.constructor.apply(this, arguments); 
+            
+            var units = [];
+            var body = { position: 'center', body: 'bd', grids: true, scroll: config.bodyScroll};
+            if(config.bodyGutter != null) {
+                body.gutter = config.bodyGutter;
+            }
+            units.push(body);
+            
+            if(Lang.isNumber(config.headerHeight) && config.headerHeight > 0) {
+                var header = {position: 'top', body: 'hd', height: config.headerHeight, scroll: config.headerScroll, resize: config.headerResize, grids: true};
+                if(config.headerGutter != null) {
+                  header.gutter = config.headerGutter;
+                }
+                units.push(header);
+            }
+            
+            if(Lang.isNumber(config.leftWidth) && config.leftWidth > 0) {
+                var left = {position: 'left', body: 'lt', width: config.leftWidth, scroll: config.leftScroll, resize: config.leftResize };
+                if(config.leftGutter != null) {
+                    left.gutter = config.leftGutter;
+                }
+                units.push(left);
+            }
+            
+            if(Lang.isNumber(config.rightWidth) && config.rightWidth > 0) {
+                var right = {position: 'right', body: 'rt', width: config.rightWidth, scroll: config.rightScroll, resize: config.rightResize };
+                units.push(right);
+            }
+
+            if(Lang.isNumber(config.footerHeight) && config.footerHeight > 0) {
+                var footer = {position: 'bottom', body: 'ft', height: config.footerHeight, scroll: config.footerScroll, resize: config.footerResize, grids: true};
+                if(config.footerGutter != null) {
+                  footer.gutter = config.footerGutter;
+                }
+                units.push(footer);
+            }
+
+            this.config.units = units;
+            this.margins = null;
+        };
+
+        YAHOO.extend(YAHOO.hippo.PortletWireframe, YAHOO.hippo.BaseWireframe, {
+            render: function() {
+                if(this.layout == null) {
+                    this.prepareConfig();
+                    this.layout = new YAHOO.widget.Layout(this.id, this.config)
+                    this.initLayout();
+                }
+                this.layout.render();
+            },
+
+            onLayoutResize : function() {
+            	YAHOO.hippo.PortletWireframe.superclass.onLayoutResize.call(this);
+                
+                //HREPTWO-3072 it seems the body with/height is set once by YUI-layout
+                //after a resize it's not updated, so we set it to auto instead
+                var el = Dom.get(this.id);
+                Dom.setStyle(el, 'width', 'auto');
+                Dom.setStyle(el, 'height', 'auto');
+            },
+            
+            prepareConfig : function() {
+            	var el = Dom.get(this.id);
+                this.margins  = new YAHOO.hippo.DomHelper().getMargin(el);
+                this.config.width = el.clientWidth - this.margins.w; //Width of the outer element
+                this.config.height = el.clientHeight - this.margins.h;
+            },
+
+            loadDimensions : function() {
+            	var el = Dom.get(this.id);
+                this.config.height = el.clientHeight;
+                this.config.width = el.clientWidth;
             }
 
         });

@@ -83,6 +83,7 @@ public class Main extends WebApplication {
     public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
     public final static String MAXUPLOAD_PARAM = "upload-limit";
     public final static ValueMap DEFAULT_CREDENTIALS = new ValueMap("username=,password=");
+    public final static String PLUGIN_APPLICATION_NAME = "config";
 
     @Override
     protected void init() {
@@ -260,12 +261,10 @@ public class Main extends WebApplication {
             }
 
             public CharSequence encode(IRequestTarget requestTarget) {
-                // TODO Auto-generated method stub
                 return null;
             }
 
             public boolean matches(IRequestTarget requestTarget) {
-                // TODO Auto-generated method stub
                 return false;
             }
         });

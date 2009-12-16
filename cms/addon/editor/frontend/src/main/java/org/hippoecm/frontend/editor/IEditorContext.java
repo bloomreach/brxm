@@ -13,20 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.service;
+package org.hippoecm.frontend.editor;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.service.IEditorManager;
 
-public interface IEditorManager extends IClusterable {
-    final static String SVN_ID = "$Id$";
+/**
+ * Callback interface to be used when instantiating an IEditor using the EditorFactory.
+ */
+public interface IEditorContext extends IClusterable {
 
-    String EDITOR_ID = "editor.id";
+    void onFocus();
 
-    <T> IEditor<T> getEditor(IModel<T> model);
+    void onClose();
 
-    <T> IEditor<T> openEditor(IModel<T> model) throws ServiceException;
-
-    <T> IEditor<T> openPreview(IModel<T> model) throws ServiceException;
+    IEditorManager getEditorManager();
 
 }

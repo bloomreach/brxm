@@ -32,6 +32,7 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.HippoNode;
@@ -100,7 +101,7 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
             try {
                 IModel<Node> nodeModel = getEditorModel(modelReference.getModel());
                 if (nodeModel != null && nodeModel.getObject() != null) {
-                    AbstractCmsEditor<JcrNodeModel> editor = editorMgr.getEditor(nodeModel);
+                    IEditor<Node> editor = editorMgr.getEditor(nodeModel);
                     if (editor == null) {
                         editor = editorMgr.openPreview(nodeModel);
                     }
