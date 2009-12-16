@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
-import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldSelector;
@@ -45,11 +44,11 @@ public class FacetResultCollector extends HitCollector {
     private int offset;
     private int limit;
 
-    public FacetResultCollector(IndexReader reader, String facet, Map<String, Count> facetMap, HitsRequested hitsRequested, NamespaceMappings nsMappings) {
+    public FacetResultCollector(IndexReader reader, String facet, Map<String, Count> facetMap, HitsRequested hitsRequested) {
         this.reader = reader;
         if (facet != null) {
             try {
-                this.internalName = ServicingNameFormat.getInternalFacetName(facet, nsMappings);
+                this.internalName = ServicingNameFormat.getInternalFacetName(facet);
             } catch (Exception ex) {
                 System.err.println(ex.getMessage());
                 ex.printStackTrace(System.err);
@@ -87,6 +86,7 @@ public class FacetResultCollector extends HitCollector {
             }
             if (facetMap != null) {
                 final TermFreqVector tfv = reader.getTermFreqVector(docid, internalName);
+               
                 if (tfv != null) {
                     numhits++;
                     for (int i = 0; i < tfv.getTermFrequencies().length; i++) {

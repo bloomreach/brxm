@@ -97,6 +97,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
         // plus index our facet specifics
 
         // TODO : only index facets for hippo:document + subtypes
+        
+        
         try {
 
             if (node.getParentId() != null) { // skip root node
@@ -202,6 +204,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     // below: When the QName is configured to be a facet, also index like one
     private void addFacetValue(Document doc, InternalValue value, String fieldName, Name name) {
+        
         switch (value.getType()) {
             case PropertyType.BINARY:
                 // never facet;
@@ -242,6 +245,13 @@ public class ServicingNodeIndexer extends NodeIndexer {
                     indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_PRIMARYTYPE, value.getQName());
                 } else if (name.equals(NameConstants.JCR_MIXINTYPES)) {
                     indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_MIXINTYPE, value.getQName());
+                }
+                try {
+                    // nodename in format: nsprefix:localname
+                    String primaryNodeName = queryHandlerContext.getNamespaceRegistry().getPrefix(value.getQName().getNamespaceURI()) + ":" + value.getQName().getLocalName();
+                    indexFacet(doc, fieldName, primaryNodeName + FacetTypeConstants.STRING_POSTFIX);
+                } catch (NamespaceException e) {
+                    log.error("Could not get primaryNodeName in format nsprefix:localname for '{}'", value.getQName());
                 }
                 break;
             default:
@@ -301,9 +311,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     private void indexFacet(Document doc, String fieldName, String value) {
         doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
-        int idx = fieldName.indexOf(':');
-        fieldName = fieldName.substring(0, idx + 1) + ServicingFieldNames.HIPPO_FACET + fieldName.substring(idx + 1);
-        doc.add(new Field(fieldName, value, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.YES));
+        String internalFacetName = ServicingNameFormat.getInternalFacetName(fieldName);       
+        doc.add(new Field(internalFacetName, value, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.YES));
     }
 
     protected void indexNodeTypeNameFacet(Document doc, String fieldName, Object internalValue) {

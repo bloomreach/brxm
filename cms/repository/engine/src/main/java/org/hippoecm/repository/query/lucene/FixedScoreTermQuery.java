@@ -36,12 +36,17 @@ import org.apache.lucene.util.ToStringUtils;
 This may be combined with other terms with a {@link BooleanQuery}.
  */
 public class FixedScoreTermQuery extends Query {
+    
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private Term term;
 
     private class FixedScoreTermWeight implements Weight {
+       
+        private static final long serialVersionUID = 1L;
         private Similarity similarity;
         private float value;
 

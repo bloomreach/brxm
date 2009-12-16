@@ -256,7 +256,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
                         timestamp = System.currentTimeMillis();
                     }
                     collector = new FacetResultCollector(indexReader, new String(propertyName), (facet != null ? resultset.get(facet) : null),
-                            hitsRequested, nsMappings);
+                            hitsRequested);
                     searcher.search(searchQuery,authorizationFilter, collector);
 
 
@@ -277,7 +277,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
                 if (log.isDebugEnabled()) {
                     timestamp = System.currentTimeMillis();
                 }
-                collector = new FacetResultCollector(indexReader, null, null, hitsRequested, nsMappings);
+                collector = new FacetResultCollector(indexReader, null, null, hitsRequested);
                 searcher.search(searchQuery, authorizationFilter, collector);
                 if (log.isDebugEnabled()) {
                     log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - timestamp)

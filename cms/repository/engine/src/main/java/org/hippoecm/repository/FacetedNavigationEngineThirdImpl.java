@@ -233,7 +233,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
                   
                     collector = new FacetResultCollector(indexReader, new String(propertyName), (facet != null ? resultset.get(facet) : null),
-                            hitsRequested, nsMappings);
+                            hitsRequested);
                     searcher.search(searchQuery, collector);
                     // set the numHits value
                     if(!hitsRequested.isCountOnlyForFacetExists()) {
@@ -247,7 +247,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                 if (log.isDebugEnabled()) {
                     timestamp = System.currentTimeMillis();
                 }
-                collector = new FacetResultCollector(indexReader, null, null, hitsRequested, nsMappings);
+                collector = new FacetResultCollector(indexReader, null, null, hitsRequested);
                 searcher.search(searchQuery, collector);
                 if (log.isDebugEnabled()) {
                     log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - timestamp)

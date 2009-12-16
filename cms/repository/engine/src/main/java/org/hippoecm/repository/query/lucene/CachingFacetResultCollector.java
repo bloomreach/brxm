@@ -55,7 +55,7 @@ public class CachingFacetResultCollector extends HitCollector {
         this.reader = reader;
 
         try {
-            this.internalName = ServicingNameFormat.getInternalFacetName(facet, nsMappings);
+            this.internalName = ServicingNameFormat.getInternalFacetName(facet);
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace(System.err);
