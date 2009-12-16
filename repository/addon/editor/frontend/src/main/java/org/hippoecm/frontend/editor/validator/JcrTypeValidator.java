@@ -32,13 +32,19 @@ public class JcrTypeValidator implements ITypeValidator {
     private static final long serialVersionUID = 1L;
 
     private Set<JcrFieldValidator> fieldValidators = new HashSet<JcrFieldValidator>();
+    private ITypeDescriptor type;
 
     public JcrTypeValidator(ITypeDescriptor type) throws StoreException {
+        this.type = type;
         for (IFieldDescriptor field : type.getFields().values()) {
-            fieldValidators.add(new JcrFieldValidator(field));
+            fieldValidators.add(new JcrFieldValidator(field, this));
         }
     }
 
+    public ITypeDescriptor getType() {
+        return type;
+    }
+    
     public Set<Violation> validate(IModel model) throws ValidationException {
         Set<Violation> violations = new HashSet<Violation>();
         for (JcrFieldValidator fieldValidator : fieldValidators) {

@@ -33,8 +33,9 @@ class BuiltinFieldDescriptor extends JavaFieldDescriptor {
 
     private static final Logger log = LoggerFactory.getLogger(BuiltinFieldDescriptor.class);
 
-    BuiltinFieldDescriptor(String prefix, ItemDefinition definition, ITypeLocator locator) throws StoreException {
-        super(prefix, locator.locate(getType(definition)));
+    BuiltinFieldDescriptor(String prefix, ItemDefinition definition, ITypeLocator locator, ITypeDescriptor declaringType)
+            throws StoreException {
+        super(prefix, getType(locator, definition, declaringType));
 
         setPath(definition.getName());
         if (definition instanceof NodeDefinition) {
@@ -63,18 +64,26 @@ class BuiltinFieldDescriptor extends JavaFieldDescriptor {
         }
     }
 
-    static String getType(ItemDefinition def) {
+    static ITypeDescriptor getType(ITypeLocator locator, ItemDefinition def, ITypeDescriptor containingType)
+            throws StoreException {
+        String type;
         if (def instanceof NodeDefinition) {
             NodeDefinition ntDef = (NodeDefinition) def;
             NodeType[] types = ntDef.getRequiredPrimaryTypes();
             if (types.length == 0) {
-                return "nt:base";
-            } else if (types.length > 1) {
-                log.warn("multiple primary types specified; this is not supported.  Only the first one is used.");
+                type = "nt:base";
+            } else {
+                type = types[0].getName();
+                if (types.length > 1) {
+                    log.warn("multiple primary types specified; this is not supported.  Only the first one is used.");
+                }
             }
-            return types[0].getName();
         } else {
-            return PropertyType.nameFromValue(((PropertyDefinition) def).getRequiredType());
+            type = PropertyType.nameFromValue(((PropertyDefinition) def).getRequiredType());
         }
+        if (type.equals(containingType.getType())) {
+            return containingType;
+        }
+        return locator.locate(type);
     }
 }
