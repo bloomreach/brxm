@@ -235,4 +235,8 @@ public class FacetedNavigationEngineFirstImpl
     public QueryImpl parse(String query) {
         return this . new QueryImpl(query);
     }
+
+    public String resolveLuceneTermToPropertyString(String resolvedFacet, String luceneTerm) {
+       return luceneTerm;
+    }
 }

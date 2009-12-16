@@ -20,6 +20,7 @@ import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public class FacetPropExistsQuery {
         Name nodeName;
         nodeName = NameFactoryImpl.getInstance().create(facet);
         if (indexingConfig.isFacet(nodeName)) {
-            Query q = new FixedScoreTermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalName));
+            Query q = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalName));
             this.query.add(q, Occur.MUST);
         } else {
             log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName() + " not allowed for facetted search. " +

@@ -29,8 +29,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.nodetype.PropDef;
-import org.apache.jackrabbit.core.query.lucene.DoubleField;
-import org.apache.jackrabbit.core.query.lucene.LongField;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
@@ -149,11 +147,13 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             facetSearchResultMap.put(resolvePath(facets[0]).toString(), facetSearchResult);
 
             List<KeyValue<String, String>> currentFacetQuery = new ArrayList<KeyValue<String, String>>();
+            String resolvedFacet = null;
             for (int i = 0; search != null && i < search.length; i++) {
                 Matcher matcher = facetPropertyPattern.matcher(search[i]);
                 if (matcher.matches() && matcher.groupCount() == 2) {
                     try {
-                        currentFacetQuery.add(new FacetKeyValue(resolvePath(matcher.group(1)).toString(), matcher.group(2)));
+                        resolvedFacet = resolvePath(matcher.group(1)).toString();
+                        currentFacetQuery.add(new FacetKeyValue(resolvedFacet, matcher.group(2)));
                     } catch (IllegalNameException ex) {
                         log.error("intermediate facet search broken", ex);
                         return state;
@@ -208,18 +208,19 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                     if (search != null && search.length > 0) {
                         System.arraycopy(search, 0, newSearch, 0, search.length);
                     }
-                    // nextTerm is the next facet value to search for (skip last char because this is the facet type constant)
-                    String nextFacet = entry.facetValue.substring(0, entry.facetValue.length() - 1);
-                    Character facetTypeConstant = entry.facetValue.charAt(entry.facetValue.length() - 1);
+                    
+                    String luceneTerm = entry.facetValue;
                     
                     if (facets[0].indexOf("#") == -1) {
-                        newSearch[newSearch.length - 1] = "@" + facets[0] + "='" + nextFacet + "'";
+                        newSearch[newSearch.length - 1] = "@" + facets[0] + "='" + luceneTerm + "'";
                     } else {
                         newSearch[newSearch.length - 1] = "@" + facets[0].substring(0, facets[0].indexOf("#")) + "='"
-                                + nextFacet + "'" + facets[0].substring(facets[0].indexOf("#"));
+                                + luceneTerm + "'" + facets[0].substring(facets[0].indexOf("#"));
                     }
                     try {
-                        String name = getDisplayName(nextFacet, facetTypeConstant);
+                        //String name = getDisplayName(nextFacet, facetTypeConstant);
+                        String name = facetedEngine.resolveLuceneTermToPropertyString(resolvedFacet, luceneTerm);
+                        
                         Name childName = resolveName(NodeNameCodec.encode(name, true));
                         FacetSearchNodeId childNodeId = new FacetSearchNodeId(subSearchProvider, state.getNodeId(),
                                 childName);
@@ -294,39 +295,6 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
         return populate(state);
     }
 
-    private String getDisplayName(String nextFacet, Character facetTypeConstant) {
-        int type = 0;
-        while (type < FacetTypeConstants.POSTFIXES.length) {
-            if (facetTypeConstant.equals(FacetTypeConstants.POSTFIXES[type])) {
-                break;
-            }
-            type++;
-        }
-        switch (type) {
-        case FacetTypeConstants.STRING:
-            return nextFacet;
-        case FacetTypeConstants.BOOLEAN:
-            return nextFacet;
-        case FacetTypeConstants.LONG:
-            return String.valueOf(LongField.stringToLong(nextFacet));
-        case FacetTypeConstants.DOUBLE:
-            return String.valueOf(DoubleField.stringToDouble(nextFacet));
-        case FacetTypeConstants.DATE:
-            return nextFacet;
-            // TODO : configurable representation of date nodes + resolution
-            //try {
-                //return String.valueOf(DateTools.stringToDate(nextFacet).toString());
-            //} catch (ParseException e) {
-            //    log.error("error parsing date " + e.getMessage());
-            //    return nextFacet;
-            //}
-            //return String.valueOf(DateField.stringToDate(nextFacet).toString());
-        default:
-            return nextFacet;
-        }
-
-    }
-    
     public class FacetSearchEntry implements Comparable<FacetSearchEntry> {
         private String facetValue;
         private Count count;

@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,9 +33,13 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.NodeIdIterator;
+import org.apache.jackrabbit.core.query.PropertyTypeRegistry.TypeMapping;
+import org.apache.jackrabbit.core.query.lucene.DateField;
+import org.apache.jackrabbit.core.query.lucene.DoubleField;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
+import org.apache.jackrabbit.core.query.lucene.LongField;
 import org.apache.jackrabbit.core.query.lucene.MultiIndex;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
@@ -46,6 +51,7 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.NodeStateIterator;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
@@ -466,5 +472,57 @@ public class ServicingSearchIndex extends SearchIndex {
         }
         
     }
-    
+ 
+    // method that translates a lucene term into the original property 
+    public String luceneTermToProperty(String resolvedFacet, String luceneTerm) {
+        
+        try {
+            // try to get the Name for resolvedFacet
+            Name facetName = NameFactoryImpl.getInstance().create(resolvedFacet);
+            TypeMapping[] typeMappings = getContext().getPropertyTypeRegistry().getPropertyTypes(facetName);
+            if(typeMappings.length == 0) {
+                log.debug("Property name '{}' not mapped in cnd: do not know how to convert from lucene term. Return lucene term", resolvedFacet);
+            }
+            else if(typeMappings.length > 1) {
+                log.debug("Same property name '{}' mapped to multiple types: do not know how to convert from lucene term. Return lucene term", resolvedFacet);
+            }  else {
+               int type =  typeMappings[0].type;
+               switch (type) {
+               case PropertyType.STRING:
+                   return luceneTerm;
+               case PropertyType.BOOLEAN:
+                   return luceneTerm;
+               case PropertyType.LONG:
+                   try {
+                       return String.valueOf(LongField.stringToLong(luceneTerm));
+                   } catch (NumberFormatException e) {
+                       log.debug("Cannot parse lucene term to long");
+                       return luceneTerm;
+                   }
+               case PropertyType.DOUBLE:
+                   try {
+                       return String.valueOf(DoubleField.stringToDouble(luceneTerm));
+                   } catch (NumberFormatException e) {
+                       log.debug("Cannot parse lucene term to double");
+                       return luceneTerm;
+                   }
+               case PropertyType.DATE:
+                   try {
+                       return String.valueOf(DateField.stringToTime(luceneTerm));
+                   } catch (NumberFormatException e) {
+                       log.debug("Cannot parse lucene term to date");
+                       return luceneTerm;
+                   }
+               case PropertyType.NAME:
+                   return luceneTerm;
+               default:
+                   return luceneTerm;
+               }
+            }
+        } catch (IllegalArgumentException e) {
+           log.debug("Cannot get Name for '{}'. Return the luceneTerm as is.", resolvedFacet); 
+        }
+        
+        return luceneTerm;
+    }
 }

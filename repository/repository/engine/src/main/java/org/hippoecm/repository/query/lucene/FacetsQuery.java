@@ -26,7 +26,7 @@ import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.WildcardQuery;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.jackrabbit.KeyValue;
 import org.slf4j.Logger;
@@ -64,21 +64,16 @@ public class FacetsQuery {
                             propertyName.append(nsMappings.translatePropertyName(pathElements[i].getName()));
                         }
                         
-                        Query wq ;
+                        Query tq ;
                         if(keyValue.getValue() == null) {
                         	// only make sure the document contains at least the facet (propertyName)
-                        	wq = new FacetPropExistsQuery(keyValue.getKey() , new String(propertyName), indexingConfig).getQuery();
+                        	tq = new FacetPropExistsQuery(keyValue.getKey() , new String(propertyName), indexingConfig).getQuery();
                         } else {
-                        /*
-                         * TODO HREPTWO-652 : when lucene 2.3.x or higher is used, replace wildcardquery
-                         * below with FixedScoreTermQuery without wildcard, and use payload to get the type
-                         */
                             String internalName = ServicingNameFormat.getInternalFacetName(new String(propertyName));
-                        	wq = new WildcardQuery(new Term(internalName, keyValue.getValue() + "?"));
+                        	tq = new TermQuery(new Term(internalName, keyValue.getValue()));
                         	
                     	}
-                        //Query q = new FixedScoreTermQuery(new Term(internalName, entry.getValue() + "?"));
-                        this.query.add(wq, Occur.MUST);
+                        this.query.add(tq, Occur.MUST);
                     } else {
                         log.warn("Property " + keyValue.getKey() + " not allowed for facetted search. " + "Add the property to the indexing configuration to be defined as FACET");
                     }

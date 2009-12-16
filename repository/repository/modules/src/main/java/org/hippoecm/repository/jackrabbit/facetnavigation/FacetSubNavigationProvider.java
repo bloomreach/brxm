@@ -52,7 +52,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
     	    String docbase = facetNavigationNodeId.docbase;
     	    Map<Name,String> inheritedFilter = facetNavigationNodeId.view;
     	    List<KeyValue<String, String>> usedFacetValueCombis = facetNavigationNodeId.usedFacetValueCombis;
-    	    
+    	 
             FacetedNavigationEngine.Query initialQuery;
             initialQuery = (docbase != null ? facetedEngine.parse(docbase) : null);
 
@@ -89,7 +89,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
         	    
         		Name childName = resolveName(NodeNameCodec.encode(nodeName));
         		FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
-            	  for(String value : facetNavigationNodeId.ancestorAndSelfSubNavNames) {
+            	  for(String value : facetNavigationNodeId.ancestorAndSelfUsedLuceneTerms) {
             		    KeyValue<String,String> facetValueCombi = new FacetKeyValue(facet, value);
                 		if(usedFacetValueCombis.indexOf(facetValueCombi) > -1) {
                            /*
@@ -104,7 +104,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
         		childNodeId.availableFacets = availableFacets;
                 childNodeId.facetNodeNames = facetNodeNames;
         		childNodeId.currentFacet = facet;
-        		childNodeId.ancestorAndSelfSubNavNames = facetNavigationNodeId.ancestorAndSelfSubNavNames;
+        		childNodeId.ancestorAndSelfUsedLuceneTerms = facetNavigationNodeId.ancestorAndSelfUsedLuceneTerms;
         		childNodeId.docbase = docbase;
         		childNodeId.currentSearch = currentSearch;
         		childNodeId.view = facetNavigationNodeId.view;

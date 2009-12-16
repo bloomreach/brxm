@@ -23,8 +23,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.nodetype.PropDef;
-import org.apache.jackrabbit.core.query.lucene.DoubleField;
-import org.apache.jackrabbit.core.query.lucene.LongField;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.FacetedNavigationEngine;
@@ -33,7 +31,6 @@ import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.DataProviderContext;
-import org.hippoecm.repository.jackrabbit.FacetTypeConstants;
 import org.hippoecm.repository.jackrabbit.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.HippoVirtualProvider;
 import org.hippoecm.repository.jackrabbit.IFilterNodeId;
@@ -90,11 +87,8 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
          */
         boolean stopSubNavigation = false;
         
-        /*
-         * the ancestors and self (only of SubNavigation nodes) stringName version before a org.apache.jackrabbit.spi.Name is created through
-         * NodeNameCodec.encode(name)
-         */  
-        String[] ancestorAndSelfSubNavNames;
+        
+        String[] ancestorAndSelfUsedLuceneTerms;
         
         /*
          * usedFacetValueCombis is the same as currentSearch, only the current search has as keys the string value
@@ -178,36 +172,4 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         
     }
     
-    String getDisplayName(String nextFacet, Character facetTypeConstant) {
-        int type = 0;
-        while (type < FacetTypeConstants.POSTFIXES.length) {
-            if (facetTypeConstant.equals(FacetTypeConstants.POSTFIXES[type])) {
-                break;
-            }
-            type++;
-        }
-        switch (type) {
-        case FacetTypeConstants.STRING:
-            return nextFacet;
-        case FacetTypeConstants.BOOLEAN:
-            return nextFacet;
-        case FacetTypeConstants.LONG:
-            return String.valueOf(LongField.stringToLong(nextFacet));
-        case FacetTypeConstants.DOUBLE:
-            return String.valueOf(DoubleField.stringToDouble(nextFacet));
-        case FacetTypeConstants.DATE:
-            return nextFacet;
-            // TODO : configurable representation of date nodes + resolution
-            //try {
-                //return String.valueOf(DateTools.stringToDate(nextFacet).toString());
-            //} catch (ParseException e) {
-            //    log.error("error parsing date " + e.getMessage());
-            //    return nextFacet;
-            //}
-            //return String.valueOf(DateField.stringToDate(nextFacet).toString());
-        default:
-            return nextFacet;
-        }
-
-    }
 }
