@@ -23,7 +23,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
-public abstract class Perspective extends RenderPlugin implements ITitleDecorator {
+public abstract class Perspective extends RenderPlugin<Void> implements ITitleDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -31,7 +31,7 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
 
     public static final String TITLE = "perspective.title";
 
-    private IModel title = new Model("title");
+    private IModel<String> title = new Model<String>("title");
 
     public Perspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -43,7 +43,7 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
 
     // ITitleDecorator
 
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         return title;
     }
 
