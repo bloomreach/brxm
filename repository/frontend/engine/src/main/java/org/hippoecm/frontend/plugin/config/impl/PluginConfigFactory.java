@@ -40,7 +40,7 @@ public class PluginConfigFactory implements IPluginConfigService {
         IApplicationFactory  builtinFactory = new BuiltinApplicationFactory();
 
         String appName = WebApplicationHelper.getConfigurationParameter((WebApplication) Application.get(),
-                "config", null);
+                Main.PLUGIN_APPLICATION_NAME, null);
         Session session = sessionModel.getSession();
         ValueMap credentials = sessionModel.getCredentials();
         if (Main.DEFAULT_CREDENTIALS.equals(credentials)) {

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.edit;
+package org.hippoecm.frontend.editor;
 
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -23,6 +23,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -56,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The editor model is the variant that is shown.
  */
-class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
+class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -64,15 +65,15 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
 
     private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
 
-    private JcrNodeModel editorModel;
+    private IModel<Node> editorModel;
 
-    HippostdPublishableEditor(final EditorManagerPlugin manager, IPluginContext context, IPluginConfig config,
-            JcrNodeModel model) throws CmsEditorException {
+    HippostdPublishableEditor(IEditorContext manager, IPluginContext context, IPluginConfig config,
+            IModel<Node> model) throws EditorException {
         super(manager, context, config, model, getMode(model));
     }
 
     @Override
-    protected JcrNodeModel getEditorModel() {
+    protected IModel<Node> getEditorModel() {
         switch (getMode()) {
         case EDIT:
             return getDraftModel(super.getEditorModel());
@@ -84,11 +85,11 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
 
     @Override
     public void setMode(Mode mode) throws EditorException {
-        JcrNodeModel editorModel = getEditorModel();
+        IModel<Node> editorModel = getEditorModel();
         if (mode != getMode() && editorModel != null) {
             WorkflowManager wflMgr = ((UserSession) Session.get()).getWorkflowManager();
             try {
-                Workflow workflow = wflMgr.getWorkflow("default", editorModel.getNode());
+                Workflow workflow = wflMgr.getWorkflow("default", editorModel.getObject());
                 if (workflow instanceof EditableWorkflow) {
                     Map<IEditorFilter, Object> contexts = preClose();
 
@@ -122,24 +123,22 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
                 throw new EditorException("Connection failure when setting editor mode", e);
             } catch (WorkflowException e) {
                 throw new EditorException("Workflow error when setting editor mode", e);
-            } catch (CmsEditorException e) {
-                throw new EditorException("Could not start editor", e);
             }
         }
     }
 
     @Override
-    protected void start() throws CmsEditorException {
+    protected void start() throws EditorException {
         super.start();
         editorModel = getEditorModel();
     }
 
     @Override
-    void refresh() {
-        final JcrNodeModel handle = getModel();
+    public void refresh() {
+        final IModel<Node> handle = getModel();
 
         // verify that the handle exists
-        if (handle.getNode() == null) {
+        if (handle.getObject() == null) {
             try {
                 close();
             } catch (EditorException ex) {
@@ -154,15 +153,13 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
             if (newMode != super.getMode()) {
                 super.setMode(newMode);
             } else {
-                JcrNodeModel newModel = getEditorModel();
+                IModel<Node> newModel = getEditorModel();
                 if (!newModel.equals(editorModel)) {
                     stop();
                     start();
                 }
             }
         } catch (EditorException ex) {
-            log.error("Could not close editor for empty handle");
-        } catch (CmsEditorException ex) {
             try {
                 close();
             } catch (EditorException ex2) {
@@ -171,25 +168,25 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
         }
     }
 
-    static Mode getMode(JcrNodeModel nodeModel) throws CmsEditorException {
+    static Mode getMode(IModel<Node> nodeModel) throws EditorException {
         // select draft if it exists
-        JcrNodeModel draftDocument = getDraftModel(nodeModel);
+        IModel<Node> draftDocument = getDraftModel(nodeModel);
         if (draftDocument != null) {
             return Mode.EDIT;
         }
 
         // show preview
-        JcrNodeModel previewDocument = getPreviewModel(nodeModel);
+        IModel<Node> previewDocument = getPreviewModel(nodeModel);
         if (previewDocument != null) {
             return Mode.VIEW;
         }
 
-        throw new CmsEditorException("unable to find draft or unpublished variants");
+        throw new EditorException("unable to find draft or unpublished variants");
     }
 
-    static JcrNodeModel getPreviewModel(JcrNodeModel handle) {
+    static IModel<Node> getPreviewModel(IModel<Node> handle) {
         try {
-            Node handleNode = handle.getNode();
+            Node handleNode = handle.getObject();
             Node published = null;
             if (handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
@@ -219,10 +216,10 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
         return null;
     }
 
-    static JcrNodeModel getDraftModel(JcrNodeModel handle) {
+    static IModel<Node> getDraftModel(IModel<Node> handle) {
         String user = ((UserSession) Session.get()).getCredentials().getString("username");
         try {
-            Node handleNode = handle.getNode();
+            Node handleNode = handle.getObject();
             if (handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
@@ -235,6 +232,8 @@ class HippostdPublishableEditor extends AbstractCmsEditor<JcrNodeModel> {
                         }
                     }
                 }
+            } else {
+                log.warn("Editor model is not a handle");
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());

@@ -24,11 +24,14 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.editor.EditorFactory;
+import org.hippoecm.frontend.editor.IEditorContext;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
@@ -47,16 +50,16 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
     private EditorFactory editorFactory;
     private BrowserObserver browser;
 
-    private List<AbstractCmsEditor<JcrNodeModel>> editors;
-    transient boolean active = false;
+    private List<IEditor<Node>> editors;
+    private transient boolean active = false;
 
     public EditorManagerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        editorFactory = new EditorFactory(this, context, config);
+        editorFactory = new EditorFactory(context, config);
         browser = new BrowserObserver(this, context, config);
 
-        editors = new LinkedList<AbstractCmsEditor<JcrNodeModel>>();
+        editors = new LinkedList<IEditor<Node>>();
         context.registerService(this, IRefreshable.class.getName());
 
         // register editor
@@ -65,18 +68,19 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
 
     public void detach() {
         browser.detach();
-        for (AbstractCmsEditor<JcrNodeModel> editor : editors) {
-            editor.detach();
+        for (IEditor<Node> editor : editors) {
+            if (editor instanceof IDetachable) {
+                ((IDetachable) editor).detach();
+            }
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public AbstractCmsEditor<JcrNodeModel> getEditor(IModel model) {
+    public IEditor<Node> getEditor(IModel model) {
         if (model instanceof JcrNodeModel) {
             JcrNodeModel editModel = getEditorModel((JcrNodeModel) model);
-            for (IEditor editor : editors) {
+            for (IEditor<Node> editor : editors) {
                 if (editor.getModel().equals(editModel)) {
-                    return (AbstractCmsEditor<JcrNodeModel>) editor;
+                    return editor;
                 }
             }
         } else {
@@ -85,7 +89,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         return null;
     }
 
-    public AbstractCmsEditor<JcrNodeModel> openEditor(IModel model) throws ServiceException {
+    public IEditor<Node> openEditor(IModel model) throws ServiceException {
         if (active) {
             throw new ServiceException("Cannot create editors recursively");
         }
@@ -103,7 +107,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         }
     }
 
-    public AbstractCmsEditor<JcrNodeModel> openPreview(IModel model) throws ServiceException {
+    public IEditor<Node> openPreview(IModel model) throws ServiceException {
         JcrNodeModel nodeModel = getEditorModel((JcrNodeModel) model);
 
         checkEditorDoesNotExist(nodeModel);
@@ -119,18 +123,31 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         }
     }
 
-    protected AbstractCmsEditor<JcrNodeModel> createEditor(JcrNodeModel model, IEditor.Mode mode)
+    protected IEditor<Node> createEditor(final IModel<Node> model, IEditor.Mode mode)
             throws ServiceException {
         try {
-            AbstractCmsEditor<JcrNodeModel> editor = editorFactory.newEditor(model, mode);
-            editor.start();
+            IEditor<Node> editor = editorFactory.newEditor(new IEditorContext() {
+
+                public IEditorManager getEditorManager() {
+                    return EditorManagerPlugin.this;
+                }
+
+                public void onClose() {
+                    EditorManagerPlugin.this.onClose(model);
+                }
+
+                public void onFocus() {
+                    EditorManagerPlugin.this.onFocus(model);
+                }
+                
+            }, model, mode);
 
             editors.add(editor);
             editor.focus();
 
-            onFocus(editor);
+            focusBrowser(model);
             return editor;
-        } catch (CmsEditorException ex) {
+        } catch (EditorException ex) {
             log.error(ex.getMessage());
             throw new ServiceException("Initialization failed", ex);
         }
@@ -140,11 +157,13 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
     public void refresh() {
         active = true;
         try {
-            List<AbstractCmsEditor<JcrNodeModel>> copy = new LinkedList<AbstractCmsEditor<JcrNodeModel>>(editors);
-            Iterator<AbstractCmsEditor<JcrNodeModel>> iter = copy.iterator();
+            List<IEditor<Node>> copy = new LinkedList<IEditor<Node>>(editors);
+            Iterator<IEditor<Node>> iter = copy.iterator();
             while (iter.hasNext()) {
-                AbstractCmsEditor<JcrNodeModel> editor = iter.next();
-                editor.refresh();
+                IEditor<Node> editor = iter.next();
+                if (editor instanceof IRefreshable) {
+                    ((IRefreshable) editor).refresh();
+                }
             }
         } finally {
             active = false;
@@ -153,22 +172,27 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
 
     // callback methods for editor events
 
-    void onFocus(AbstractCmsEditor<?> editor) {
-        if (editor.getModel() instanceof JcrNodeModel) {
-            JcrNodeModel nodeModel = (JcrNodeModel) editor.getModel();
-            browser.setModel(nodeModel);
+    void onFocus(IModel<Node> model) {
+        if (!active) {
+            active = true;
+            try {
+                focusBrowser(model);
+            } finally {
+                active = false;
+            }
         }
     }
 
-    void onClose(AbstractCmsEditor<?> editor) {
-        if (editor.getModel() instanceof JcrNodeModel) {
-            JcrNodeModel model = (JcrNodeModel) editor.getModel();
-            if (model != null) {
-                // cleanup internals
-                editors.remove(editor);
-                if (editors.size() == 0 && model.equals(browser.getModel())) {
-                    browser.setModel(new JcrNodeModel((Node) null));
-                }
+    private void focusBrowser(IModel<Node> nodeModel) {
+        browser.setModel((JcrNodeModel) nodeModel);
+    }
+
+    void onClose(IModel<Node> model) {
+        if (model != null) {
+            // cleanup internals
+            editors.remove(getEditor(model));
+            if (editors.size() == 0 && model.equals(browser.getModel())) {
+                browser.setModel(new JcrNodeModel((Node) null));
             }
         }
     }
@@ -186,4 +210,5 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         }
         return nodeModel;
     }
+
 }

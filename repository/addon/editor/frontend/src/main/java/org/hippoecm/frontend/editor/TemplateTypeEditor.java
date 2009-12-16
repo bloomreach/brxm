@@ -13,13 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.edit;
+package org.hippoecm.frontend.editor;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
@@ -27,7 +27,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class TemplateTypeEditor extends AbstractCmsEditor<JcrNodeModel> {
+class TemplateTypeEditor extends AbstractCmsEditor<Node> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -35,19 +35,21 @@ class TemplateTypeEditor extends AbstractCmsEditor<JcrNodeModel> {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateTypeEditor.class);
 
-    TemplateTypeEditor(final EditorManagerPlugin manager, IPluginContext context, IPluginConfig config,
-            JcrNodeModel model, Mode mode) throws CmsEditorException {
+    TemplateTypeEditor(IEditorContext manager, IPluginContext context, IPluginConfig config, IModel<Node> model,
+            Mode mode) throws EditorException {
         super(manager, context, config, model, mode);
     }
 
+    @Override
     public void refresh() {
-        Node node = getModel().getNode();
+        Node node = getModel().getObject();
         if (node == null) {
             try {
                 close();
             } catch (EditorException e) {
                 log.error("Could not close editor for null node", e);
             }
+            return;
         }
         try {
             if (node.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {

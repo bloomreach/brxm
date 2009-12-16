@@ -313,15 +313,12 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             setVisible(true);
             setMarkupId("xinha" + Integer.valueOf(Session.get().nextSequenceValue()));
 
-            add(callback = new AbstractAjaxBehavior() {
+            add(callback = new AbstractDefaultAjaxBehavior() {
                 private static final long serialVersionUID = 1L;
 
-                public void onRequest() {
-                    Request request = RequestCycle.get().getRequest();
-                    boolean save = Boolean.valueOf(request.getParameter("save")).booleanValue();
-                    if (save) {
-                        processInput();
-                    }
+                @Override
+                public void respond(AjaxRequestTarget target) {
+                    processInput();
                 }
             });
         }

@@ -12,7 +12,7 @@ AutoSave._pluginInfo = {
 Xinha.Config.prototype.AutoSave =
 {
   'timeoutLength' : 2000,
-  'callbackUrl' : '?save=true'
+  'callbackUrl' : ''
 }
 
 function AutoSave(editor) {
@@ -44,7 +44,7 @@ AutoSave.prototype.save = function() {
     
     this.editor._textArea.value = this.editor.outwardHtml(this.editor.getHTML());
     
-    var callbackUrl = this.editor.config.callbackUrl + "&save=true";
+    var callbackUrl = this.editor.config.callbackUrl;
     xmlHttpReq.open('POST', callbackUrl, false);
     xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xmlHttpReq.onreadystatechange = function() {

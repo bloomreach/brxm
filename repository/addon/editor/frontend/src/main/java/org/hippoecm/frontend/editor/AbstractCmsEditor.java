@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.edit;
+package org.hippoecm.frontend.editor;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -23,6 +23,7 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -38,7 +39,7 @@ import org.hippoecm.frontend.service.ServiceContext;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 
-class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
+class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -122,8 +123,8 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
 
     }
 
-    private EditorManagerPlugin manager;
-    private T model;
+    private IEditorContext editorContext;
+    private IModel<T> model;
     private IPluginContext context;
     private IPluginConfig config;
 
@@ -135,9 +136,9 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
     private String wicketId;
     private Mode mode;
 
-    AbstractCmsEditor(final EditorManagerPlugin manager, IPluginContext context, IPluginConfig config, T model,
-            Mode mode) throws CmsEditorException {
-        this.manager = manager;
+    AbstractCmsEditor(IEditorContext editorContext, IPluginContext context, IPluginConfig config, IModel<T> model,
+            Mode mode) throws EditorException {
+        this.editorContext = editorContext;
         this.model = model;
         this.context = context;
         this.config = config;
@@ -146,7 +147,7 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
         IPluginConfig previewConfig = config.getPluginConfig("cluster.preview.options");
         IPluginConfig editConfig = config.getPluginConfig("cluster.edit.options");
         if (!previewConfig.getString(RenderService.WICKET_ID).equals(editConfig.getString(RenderService.WICKET_ID))) {
-            throw new CmsEditorException("preview and edit clusters have different wicket.id values");
+            throw new EditorException("preview and edit clusters have different wicket.id values");
         }
 
         editorId = getClass().getName() + "." + (editorCount++);
@@ -165,17 +166,13 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
         if (mode != this.mode && cluster != null) {
             stop();
             this.mode = mode;
-            try {
-                start();
-            } catch (CmsEditorException ex) {
-                throw new EditorException("failed to restart editor", ex);
-            }
+            start();
         } else {
             this.mode = mode;
         }
     }
 
-    public T getModel() {
+    public IModel<T> getModel() {
         return model;
     }
 
@@ -189,7 +186,7 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
 
             postClose(filterContexts);
         }
-        manager.onClose(this);
+        editorContext.onClose();
     }
 
     protected Map<IEditorFilter, Object> preClose() throws EditorException {
@@ -220,11 +217,11 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
         return config;
     }
 
-    protected T getEditorModel() {
+    protected IModel<T> getEditorModel() {
         return model;
     }
 
-    protected void start() throws CmsEditorException {
+    protected void start() throws EditorException {
         String clusterName;
         IPluginConfig parameters;
         switch (mode) {
@@ -245,7 +242,7 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
                 IPluginConfigService.class);
         IClusterConfig clusterConfig = pluginConfigService.getCluster(clusterName);
         if (clusterConfig == null) {
-            throw new CmsEditorException("No cluster found with name " + clusterName);
+            throw new EditorException("No cluster found with name " + clusterName);
         }
 
         cluster = context.newCluster(clusterConfig, editorConfig);
@@ -257,7 +254,7 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
 
         String editorId = decorated.getString("editor.id");
         context.registerService(this, editorId);
-        context.registerService(manager, editorId);
+        context.registerService(editorContext.getEditorManager(), editorId);
 
         cluster.start();
 
@@ -266,9 +263,9 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
         if (renderer == null) {
             cluster.stop();
             context.unregisterService(this, editorId);
-            context.unregisterService(manager, editorId);
+            context.unregisterService(editorContext.getEditorManager(), editorId);
             modelService.destroy();
-            throw new CmsEditorException("No IRenderService found");
+            throw new EditorException("No IRenderService found");
         }
 
         String renderId = getRendererServiceId();
@@ -281,11 +278,7 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
             private static final long serialVersionUID = 1L;
 
             public void onFocus(IRenderService renderService) {
-                if (!manager.active) {
-                    manager.active = true;
-                    manager.onFocus(AbstractCmsEditor.this);
-                    manager.active = false;
-                }
+                editorContext.onFocus();
             }
 
         };
@@ -300,7 +293,7 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
         cluster.stop();
 
         String editorId = cluster.getClusterConfig().getString("editor.id");
-        context.unregisterService(manager, editorId);
+        context.unregisterService(editorContext.getEditorManager(), editorId);
         context.unregisterService(this, editorId);
 
         modelService.destroy();
@@ -319,10 +312,10 @@ class AbstractCmsEditor<T extends IModel> implements IEditor, IDetachable {
         renderer = null;
     }
 
-    void refresh() {
+    public void refresh() {
     }
 
-    void focus() {
+    public void focus() {
         if (renderer != null) {
             renderer.focus(null);
         }

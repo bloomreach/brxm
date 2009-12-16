@@ -13,20 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.edit;
+package org.hippoecm.frontend.editor;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.HippoNodeType;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class DefaultCmsEditor extends AbstractCmsEditor<JcrNodeModel> {
+class DefaultCmsEditor extends AbstractCmsEditor<Node> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -34,27 +35,27 @@ class DefaultCmsEditor extends AbstractCmsEditor<JcrNodeModel> {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultCmsEditor.class);
 
-    DefaultCmsEditor(EditorManagerPlugin manager, IPluginContext context, IPluginConfig config, JcrNodeModel model,
-            Mode mode) throws CmsEditorException {
+    DefaultCmsEditor(IEditorContext manager, IPluginContext context, IPluginConfig config, IModel<Node> model, Mode mode)
+            throws EditorException {
         super(manager, context, config, model, mode);
 
-        Node node = model.getNode();
+        Node node = model.getObject();
         if (node != null) {
             try {
                 if (node.isNodeType("nt:version") && Mode.EDIT == mode) {
-                    throw new CmsEditorException("Cannot edit version");
+                    throw new EditorException("Cannot edit version");
                 }
             } catch (RepositoryException e) {
-                throw new CmsEditorException("Error determining node type", e);
+                throw new EditorException("Error determining node type", e);
             }
         }
     }
 
     @Override
-    protected JcrNodeModel getEditorModel() {
-        JcrNodeModel model = super.getEditorModel();
+    protected IModel<Node> getEditorModel() {
+        IModel<Node> model = super.getEditorModel();
         try {
-            Node node = model.getNode();
+            Node node = model.getObject();
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 if (node.hasNode(node.getName())) {
                     return new JcrNodeModel(node.getNode(node.getName()));
@@ -73,7 +74,7 @@ class DefaultCmsEditor extends AbstractCmsEditor<JcrNodeModel> {
     }
 
     @Override
-    void refresh() {
+    public void refresh() {
         JcrNodeModel nodeModel = (JcrNodeModel) getModel();
 
         // close editor if model no longer exists
