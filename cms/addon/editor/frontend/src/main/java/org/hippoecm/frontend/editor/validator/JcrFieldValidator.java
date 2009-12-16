@@ -51,11 +51,15 @@ public class JcrFieldValidator implements ITypeValidator {
     private ITypeValidator typeValidator;
     private HtmlValidator htmlValidator;
 
-    public JcrFieldValidator(IFieldDescriptor field) throws StoreException {
+    public JcrFieldValidator(IFieldDescriptor field, JcrTypeValidator container) throws StoreException {
         this.field = field;
         this.fieldType = field.getTypeDescriptor();
         if (fieldType.isNode()) {
-            typeValidator = new JcrTypeValidator(fieldType);
+            if (fieldType.equals(container.getType())) {
+                typeValidator = container;
+            } else {
+                typeValidator = new JcrTypeValidator(fieldType);
+            }
         }
         if (field.getValidators().contains("non-empty")) {
             if (!"String".equals(fieldType.getType())) {
@@ -145,8 +149,7 @@ public class JcrFieldValidator implements ITypeValidator {
             Set<ModelPath> paths = new HashSet<ModelPath>();
             for (ModelPath childPath : childPaths) {
                 ModelPathElement[] elements = new ModelPathElement[childPath.getElements().length + 1];
-                System.arraycopy(childPath.getElements(), 0, elements, 1,
-                        childPath.getElements().length);
+                System.arraycopy(childPath.getElements(), 0, elements, 1, childPath.getElements().length);
                 elements[0] = new ModelPathElement(field, name, index);
                 paths.add(new ModelPath(elements));
             }
