@@ -20,12 +20,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -49,6 +53,7 @@ import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+import org.apache.jackrabbit.util.XMLChar;
 
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
@@ -144,6 +149,45 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     public Set<Principal> getUserPrincipals() {
         return helper.getUserPrincipals();
     }
+    
+    @Override
+    public void logout() {
+        helper.logout();
+    }
+
+    //------------------------------------------------< Namespace handling >--
+    @Override
+    public String getNamespacePrefix(String uri)
+            throws NamespaceException, RepositoryException {
+        // accessmanager is instantiated before the helper is set
+        if (helper == null) {
+            return super.getNamespacePrefix(uri);
+        }
+        return helper.getNamespacePrefix(uri);
+    }
+
+    @Override
+    public String getNamespaceURI(String prefix)
+            throws NamespaceException, RepositoryException {
+        // accessmanager is instantiated before the helper is set
+        if (helper == null) {
+            return super.getNamespaceURI(prefix);
+        }
+        return helper.getNamespaceURI(prefix);
+    }
+
+    @Override
+    public String[] getNamespacePrefixes()
+            throws RepositoryException {
+        return helper.getNamespacePrefixes();
+    }
+
+    @Override
+    public void setNamespacePrefix(String prefix, String uri)
+            throws NamespaceException, RepositoryException {
+        helper.setNamespacePrefix(prefix, uri);
+    }
+
 
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
         return helper.pendingChanges(node, nodeType, prune);
