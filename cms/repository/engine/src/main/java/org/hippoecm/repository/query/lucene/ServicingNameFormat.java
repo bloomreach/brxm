@@ -44,14 +44,16 @@ public class ServicingNameFormat {
     }
     
     public static String getInteralPropertyPathName(NamespaceMappings nsMappings, String propertyPath) throws IllegalNameException{
-        StringBuffer internalName = new StringBuffer();
-        Element[] pathElements = PathFactoryImpl.getInstance().create(propertyPath).getElements();
-        internalName.append(nsMappings.translatePropertyName(pathElements[pathElements.length - 1].getName()));
-        for (int i = 0; i < pathElements.length - 1; i++) {
-            internalName.append("/");
-            internalName.append(nsMappings.translatePropertyName(pathElements[i].getName()));
+        try {
+            StringBuffer internalName = new StringBuffer();
+            Element[] pathElements = PathFactoryImpl.getInstance().create(propertyPath).getElements();
+            internalName.append(nsMappings.translatePropertyName(pathElements[pathElements.length - 1].getName()));
+            for (int i = 0; i < pathElements.length - 1; i++) {
+                internalName.append("/");
+                internalName.append(nsMappings.translatePropertyName(pathElements[i].getName()));
+            } return new String(internalName);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalNameException("Error creating internl property path name for '"+ propertyPath +"'", e);
         }
-        
-        return new String(internalName);
     }
 }

@@ -26,6 +26,7 @@ import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.OrderBy;
 import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
@@ -87,7 +88,9 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
          */
         boolean stopSubNavigation = false;
         
-        
+        /*
+         * contains all the used key-value combinations for the current node and its ancestors
+         */
         String[] ancestorAndSelfUsedLuceneTerms;
         
         /*
@@ -102,6 +105,11 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         boolean singledView;
         LinkedHashMap<Name,String> view;
         LinkedHashMap<Name,String> order;
+        
+        // the list of properties to order the resultset on
+        List<OrderBy> orderByList;
+        // the limt of the resultset: default is 1000
+        int limit = 1000;
         
         FacetNavigationNodeId(HippoVirtualProvider provider, NodeId parent, Name name) {
             super(provider, parent, name);

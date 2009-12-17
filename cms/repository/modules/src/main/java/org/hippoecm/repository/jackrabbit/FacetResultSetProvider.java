@@ -36,7 +36,8 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
+import org.hippoecm.repository.HitsRequested;
+import org.hippoecm.repository.OrderBy;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,15 +60,13 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         String docbase;
         String[] search;
         List<KeyValue<String, String>> preparedSearch;
+        
+        // the list of properties to order the resultset on
+        List<OrderBy> orderByList;
+        
         long count;
         // default limit = 1000
         int limit = 1000;
-        
-        // default, we do not order
-        public String resultSetOrderBy = null;
-        
-        // default descending is false
-        public boolean isDescending = false;
         
         FacetResultSetNodeId(NodeId parent, Name name) {
             super(FacetResultSetProvider.this, parent, name);
@@ -89,13 +88,11 @@ public class FacetResultSetProvider extends HippoVirtualProvider
 		}
 		
 		public void setLimit(int limit) {
-		    this.limit = limit;
-		}
-        public void setResultSetOrderBy(String resultSetOrderBy) {
-            this.resultSetOrderBy = resultSetOrderBy;
+            this.limit = limit;
         }
-        public void setDescending(boolean isDescending) {
-            this.isDescending = isDescending;
+		
+		public void setOrderByList(List<OrderBy> orderByList) {
+            this.orderByList = orderByList;
         }
     }
 
@@ -200,9 +197,8 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         hitsRequested.setResultRequested(true);
         hitsRequested.setLimit(nodeId.limit);
         hitsRequested.setOffset(0);
-        hitsRequested.setOrderBy(nodeId.resultSetOrderBy);
-        hitsRequested.setDescending(nodeId.isDescending );
-        
+        hitsRequested.addOrderBy(nodeId.orderByList);
+          
         FacetedNavigationEngine.Result facetedResult;
         long t1 = 0, t2;
         if(log.isDebugEnabled())

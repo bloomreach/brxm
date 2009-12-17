@@ -16,6 +16,7 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -46,6 +47,7 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -258,14 +260,20 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
                     int fetchTotal = hitsRequested.getOffset() + hitsRequested.getLimit();
                     Sort sort = null;
-                    if(hitsRequested.getOrderBy() != null) {
-                        try {
-                        String propertyName = ServicingNameFormat.getInteralPropertyPathName(nsMappings, hitsRequested.getOrderBy());
-                        String internalFacetName = ServicingNameFormat.getInternalFacetName(propertyName);
-                        boolean reverse = hitsRequested.isDescending();
-                        sort = new Sort(internalFacetName, reverse);
-                        } catch (IllegalNameException e) {
-                            log.error("Cannot order by illegal name: '{}' : '{}'. Skip ordering", hitsRequested.getOrderBy(), e.getMessage());
+                    if(hitsRequested.getOrderByList().size() > 0) {
+                        List<SortField> sortFields = new ArrayList<SortField>();
+                        for(OrderBy orderBy : hitsRequested.getOrderByList()) {
+                            try {
+                                String propertyName = ServicingNameFormat.getInteralPropertyPathName(nsMappings, orderBy.getName());
+                                String internalFacetName = ServicingNameFormat.getInternalFacetName(propertyName);
+                                boolean reverse = orderBy.isDescending();
+                                sortFields.add(new SortField(internalFacetName, reverse));
+                            } catch (IllegalNameException e) {
+                                log.error("Cannot order by illegal name: '{}' : '{}'. Skip name ", orderBy.getName(), e.getMessage());
+                            }
+                        }
+                        if(sortFields.size() > 0) {
+                            sort = new Sort(sortFields.toArray(new SortField[sortFields.size()]));
                         }
                     }
                     
