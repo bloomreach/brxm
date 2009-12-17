@@ -29,8 +29,8 @@ import org.apache.lucene.document.SetBasedFieldSelector;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.search.HitCollector;
+import org.hippoecm.repository.HitsRequested;
 import org.hippoecm.repository.FacetedNavigationEngine.Count;
-import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 
 public class CachingFacetResultCollector extends HitCollector {
     @SuppressWarnings("unused")

@@ -221,6 +221,56 @@ public class FacetedNavigationSimpleTest extends TestCase {
         
     }
     
+    @Test
+    public void testSortResultSetOnStringProperty() throws RepositoryException, IOException {
+        commonStart();
+        Node testNode = session.getRootNode().getNode("test");
+        createSimpleStructure1(testNode);
+        createFacetNodeSingleValues(testNode);
+        session.save();
+
+        Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        
+        // the resultset shoult be sorted on {hippo:brand (descending) and then on hippo:color (descending), see createFacetNodeSingleValues}
+        NodeIterator it = navigation.getNode("hippo:brand/hippo:resultset").getNodes();
+        String prevBrandValue = null;
+        while(it.hasNext()) {
+            Node n = it.nextNode();
+            String brand = n.getProperty("hippo:brand").getString();
+            if(prevBrandValue != null) {
+                int compare = prevBrandValue.compareTo(brand);
+                // if sorted correctly, compare must be >= 0
+                assertTrue("Sorting of resultset failed",compare >= 0);
+            }
+            prevBrandValue = brand;
+        } 
+    }
+    
+    @Test
+    public void testLimitResultSet() throws RepositoryException, IOException {
+        commonStart();
+        Node testNode = session.getRootNode().getNode("test");
+        createSimpleStructure1(testNode);
+        
+        createFacetNodeSingleValues(testNode);
+        session.save();
+
+        Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        
+        assertEquals(4L,navigation.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        
+        
+        // and now, add a limit to the resultset!
+        navigation.setProperty(HippoNodeType.HIPPO_FACETLIMIT, 1L);
+        session.save();
+        
+        navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        
+        // And now the resultset should be just 1 as we have set the limit to 1
+        assertEquals(1L,navigation.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+          
+    }
+    
     private void commonStart() throws RepositoryException{
     	session.getRootNode().addNode("test");
     	session.save();
@@ -321,6 +371,9 @@ public class FacetedNavigationSimpleTest extends TestCase {
         node = node.addNode("hippo:navigation", HippoNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:brand", "hippo:color", "hippo:product" });
+        node.setProperty(HippoNodeType.HIPPO_FACETSORTBY, new String[] { "hippo:brand", "hippo:color"});
+        node.setProperty(HippoNodeType.HIPPO_FACETSORTORDER, new String[] { "descending", "descending"});
+
     }
 	
 	private void createFacetNodeMultiValue(Node node) throws RepositoryException {
@@ -344,6 +397,4 @@ public class FacetedNavigationSimpleTest extends TestCase {
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {"hippo:date"});
     }
     
-	 
- 
 }

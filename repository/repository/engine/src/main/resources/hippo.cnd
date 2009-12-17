@@ -85,6 +85,9 @@
 - hippo:facetnodenames (string) multiple
 - hippo:docbase (string) mandatory
 - hippo:modes (string) multiple
+- hippo:limit (long)
+- hippo:sortby (string) multiple
+- hippo:sortorder (string) multiple < 'descending', 'ascending'
 + * (hippo:abstractfacetnavigation) multiple ignore
 
 [hippo:facetselect] > nt:base

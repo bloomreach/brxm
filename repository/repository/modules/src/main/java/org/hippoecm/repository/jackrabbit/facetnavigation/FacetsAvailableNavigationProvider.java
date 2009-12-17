@@ -18,7 +18,7 @@ import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
+import org.hippoecm.repository.HitsRequested;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.jackrabbit.FacetKeyValue;
@@ -154,8 +154,11 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                         childNodeId.facetNodeNames = facetNavigationNodeId.facetNodeNames;
                         childNodeId.stopSubNavigation = stopSubNavigation;
                 		childNodeId.view = facetNavigationNodeId.view;
-        				childNodeId.order = facetNavigationNodeId.order;
+                        childNodeId.order = facetNavigationNodeId.order;
         				childNodeId.singledView = facetNavigationNodeId.singledView;
+                        childNodeId.limit = facetNavigationNodeId.limit;
+                        childNodeId.orderByList = facetNavigationNodeId.orderByList;
+                        
                     } catch (RepositoryException ex) {
                         log.warn("cannot add virtual child in facet search: " + ex.getMessage());
                     }
@@ -176,6 +179,8 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             FacetResultSetProvider.FacetResultSetNodeId childNodeId;
             childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), resultSetChildName, null,
                     docbase, resultSetSearch, count);
+            childNodeId.setLimit(facetNavigationNodeId.limit);
+            childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
             state.addChildNodeEntry(resultSetChildName, childNodeId);
             
     	}

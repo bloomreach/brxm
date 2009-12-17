@@ -13,7 +13,7 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.FacetedNavigationEngine;
-import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
+import org.hippoecm.repository.HitsRequested;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.jackrabbit.FacetKeyValue;
@@ -110,6 +110,9 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
         		childNodeId.view = facetNavigationNodeId.view;
 				childNodeId.order = facetNavigationNodeId.order;
 				childNodeId.singledView = facetNavigationNodeId.singledView;
+                childNodeId.limit = facetNavigationNodeId.limit;
+                childNodeId.orderByList = facetNavigationNodeId.orderByList;
+                
 				childNodeId.usedFacetValueCombis = new ArrayList<KeyValue<String,String>>(usedFacetValueCombis);
         		state.addChildNodeEntry(childName, childNodeId);
         		
@@ -120,6 +123,9 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
             FacetResultSetProvider.FacetResultSetNodeId childNodeId;
             childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), resultSetChildName, null,
                     docbase, currentSearch, count);
+            childNodeId.setLimit(facetNavigationNodeId.limit);
+            childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
+            
             state.addChildNodeEntry(resultSetChildName, childNodeId);
     	}
         return state;

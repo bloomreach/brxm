@@ -16,6 +16,7 @@
 
 package org.hippoecm.repository;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -211,87 +212,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
       }
     }
 
-    public static class HitsRequested {
-        /**
-         * Wether results should be returned at all.
-         */
-        private boolean resultRequested;
-
-        /**
-         * when true, it is indicated through this boolean that only when the lucene hit has the property, it is returned in the count
-         * Default is false
-         */
-        private boolean countOnlyForFacetExists = false;
-        
-        /**
-         * How many results should be returned.  Defaults to 10, large values imply slow responses.
-         */
-        private int limit = 10;
-
-        /**
-         * The offset in the resultset to start from.
-         */
-        private int offset = 0;
-        
-        /**
-         * The orderBy property when resultset is order, <code>null</code> if no ordering is needed
-         */
-        private String orderBy;
-        
-        /**
-         * When <code>orderBy</code> is not null, this is the order in which the resultset returns its hits.
-         */
-        private boolean descending = false;
-
-        public int getLimit() {
-            return limit;
-        }
-
-        public void setLimit(int limit) {
-            this.limit = limit;
-        }
-
-        public int getOffset() {
-            return offset;
-        }
-
-        public void setOffset(int offset) {
-            this.offset = offset;
-        }
-
-        public boolean isResultRequested() {
-            return resultRequested;
-        }
-
-        public void setResultRequested(boolean resultRequested) {
-            this.resultRequested = resultRequested;
-        }
-
-		public boolean isCountOnlyForFacetExists() {
-			return countOnlyForFacetExists;
-		}
-
-		public void setCountOnlyForFacetExists(boolean countOnlyForFacetExists) {
-			this.countOnlyForFacetExists = countOnlyForFacetExists;
-		}
-
-		public String getOrderBy() {
-            return orderBy;
-        }
-
-        public void setOrderBy(String orderBy) {
-            this.orderBy = orderBy;
-        }
-
-        public void setDescending(boolean descending) {
-            this.descending = descending;
-        }
-        
-        public boolean isDescending() {
-            return this.descending;
-        }
-    }
-
+    
 
     /** An instance of a Result class contains the matching documents of a faceted view.
      */
