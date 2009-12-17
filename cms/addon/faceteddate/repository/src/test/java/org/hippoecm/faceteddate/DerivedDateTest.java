@@ -162,7 +162,10 @@ public class DerivedDateTest extends TestCase {
         assertNotNull(traverse(session, "/test/search/" + date.get(Calendar.DAY_OF_MONTH) + "/hippo:resultset/doc"));
     }
 
-    @Test
+    /**
+     * TODO fix me, see HREPTWO-3555
+     */
+    @Ignore
     public void testSearchMultiLevel() throws Exception {
         root.addNode("docs","nt:unstructured").addMixin("mix:referenceable");
         Node doc = root.getNode("docs").addNode("doc", "hippo:datedocument1");
