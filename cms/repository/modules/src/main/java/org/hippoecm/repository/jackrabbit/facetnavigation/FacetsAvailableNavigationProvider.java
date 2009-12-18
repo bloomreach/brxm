@@ -112,58 +112,54 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             Arrays.sort(facetNavigationEntry);
             
             for(FacetNavigationEntry entry : facetNavigationEntry) {
-                if (entry.facetValue.length() > 1) {
-                    List<KeyValue<String,String>> newSearch = new ArrayList<KeyValue<String,String>>(currentSearch);
-                	
-                    String luceneTerm = entry.facetValue;
+                List<KeyValue<String,String>> newSearch = new ArrayList<KeyValue<String,String>>(currentSearch);
+            	
+                String luceneTerm = entry.facetValue;
+                
+                newSearch.add(new FacetKeyValue(resolvedFacet, luceneTerm));
+                
+                List<KeyValue<String,String>> usedFacetValueCombis = new ArrayList<KeyValue<String,String>>(facetNavigationNodeId.usedFacetValueCombis);     
+                KeyValue<String, String> facetValueCombi = new FacetKeyValue(currentFacet, luceneTerm);
+                
+                boolean stopSubNavigation = facetNavigationNodeId.stopSubNavigation;
+                if(!usedFacetValueCombis.contains(facetValueCombi)) {
+                    usedFacetValueCombis.add(facetValueCombi);
+                    /*
+                     * perhaps stopNavigation was already true, but, since it is a new unique facetvalue combi, we need
+                     * to populate it further: this happens when a facet has multiple property values
+                     */ 
+                    stopSubNavigation = false;
+                }
+                try { 
+                    String name = facetedEngine.resolveLuceneTermToPropertyString(resolvedFacet, luceneTerm);
                     
-                    newSearch.add(new FacetKeyValue(resolvedFacet, luceneTerm));
+                    // use forceSimpleName = true in encode because value may contain ":" but this is not related to a namespace prefix
+                    Name childName = resolveName(NodeNameCodec.encode(name, true));
+                    FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsSubNavigationProvider, state.getNodeId(), childName);
+                    state.addChildNodeEntry(childName, childNodeId);
+                    childNodeId.docbase = docbase;
+                    childNodeId.availableFacets = availableFacets;
+                    childNodeId.currentSearch = newSearch;
+                    childNodeId.currentFacet = currentFacet;
                     
-                    List<KeyValue<String,String>> usedFacetValueCombis = new ArrayList<KeyValue<String,String>>(facetNavigationNodeId.usedFacetValueCombis);     
-                    KeyValue<String, String> facetValueCombi = new FacetKeyValue(currentFacet, luceneTerm);
-                    
-                    boolean stopSubNavigation = facetNavigationNodeId.stopSubNavigation;
-                    if(!usedFacetValueCombis.contains(facetValueCombi)) {
-                        usedFacetValueCombis.add(facetValueCombi);
-                        /*
-                         * perhaps stopNavigation was already true, but, since it is a new unique facetvalue combi, we need
-                         * to populate it further: this happens when a facet has multiple property values
-                         */ 
-                        stopSubNavigation = false;
+                    String[] newAncestorAndSelfUsedLuceneTerms = new String[ancestorAndSelfUsedLuceneTerms != null ? ancestorAndSelfUsedLuceneTerms.length + 1 : 1];
+                    if (ancestorAndSelfUsedLuceneTerms != null && ancestorAndSelfUsedLuceneTerms.length > 0) {
+                        System.arraycopy(ancestorAndSelfUsedLuceneTerms, 0, newAncestorAndSelfUsedLuceneTerms, 0, ancestorAndSelfUsedLuceneTerms.length);
                     }
-                    try { 
-                        String name = facetedEngine.resolveLuceneTermToPropertyString(resolvedFacet, luceneTerm);
-                        
-                        // use forceSimpleName = true in encode because value may contain ":" but this is not related to a namespace prefix
-                        Name childName = resolveName(NodeNameCodec.encode(name, true));
-                        FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsSubNavigationProvider, state.getNodeId(), childName);
-                        state.addChildNodeEntry(childName, childNodeId);
-                        childNodeId.docbase = docbase;
-                        childNodeId.availableFacets = availableFacets;
-                        childNodeId.currentSearch = newSearch;
-                        childNodeId.currentFacet = currentFacet;
-                        
-                        String[] newAncestorAndSelfUsedLuceneTerms = new String[ancestorAndSelfUsedLuceneTerms != null ? ancestorAndSelfUsedLuceneTerms.length + 1 : 1];
-                        if (ancestorAndSelfUsedLuceneTerms != null && ancestorAndSelfUsedLuceneTerms.length > 0) {
-                            System.arraycopy(ancestorAndSelfUsedLuceneTerms, 0, newAncestorAndSelfUsedLuceneTerms, 0, ancestorAndSelfUsedLuceneTerms.length);
-                        }
-                        newAncestorAndSelfUsedLuceneTerms[newAncestorAndSelfUsedLuceneTerms.length - 1] = luceneTerm;
-                        
-                        childNodeId.ancestorAndSelfUsedLuceneTerms = newAncestorAndSelfUsedLuceneTerms;
-                        childNodeId.usedFacetValueCombis = usedFacetValueCombis;
-                        childNodeId.facetNodeNames = facetNavigationNodeId.facetNodeNames;
-                        childNodeId.stopSubNavigation = stopSubNavigation;
-                		childNodeId.view = facetNavigationNodeId.view;
-                        childNodeId.order = facetNavigationNodeId.order;
-        				childNodeId.singledView = facetNavigationNodeId.singledView;
-                        childNodeId.limit = facetNavigationNodeId.limit;
-                        childNodeId.orderByList = facetNavigationNodeId.orderByList;
-                        
-                    } catch (RepositoryException ex) {
-                        log.warn("cannot add virtual child in facet search: " + ex.getMessage());
-                    }
-                } else {
-                    log.debug("facet value with only facet type constant found. Skip result");
+                    newAncestorAndSelfUsedLuceneTerms[newAncestorAndSelfUsedLuceneTerms.length - 1] = luceneTerm;
+                    
+                    childNodeId.ancestorAndSelfUsedLuceneTerms = newAncestorAndSelfUsedLuceneTerms;
+                    childNodeId.usedFacetValueCombis = usedFacetValueCombis;
+                    childNodeId.facetNodeNames = facetNavigationNodeId.facetNodeNames;
+                    childNodeId.stopSubNavigation = stopSubNavigation;
+            		childNodeId.view = facetNavigationNodeId.view;
+                    childNodeId.order = facetNavigationNodeId.order;
+    				childNodeId.singledView = facetNavigationNodeId.singledView;
+                    childNodeId.limit = facetNavigationNodeId.limit;
+                    childNodeId.orderByList = facetNavigationNodeId.orderByList;
+                    
+                } catch (RepositoryException ex) {
+                    log.warn("cannot add virtual child in facet search: " + ex.getMessage());
                 }
             }
             
