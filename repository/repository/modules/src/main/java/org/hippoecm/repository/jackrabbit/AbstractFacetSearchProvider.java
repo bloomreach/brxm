@@ -199,42 +199,38 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             Arrays.sort(facetSearchEntry);
             
             for(FacetSearchEntry entry : facetSearchEntry) {
-                if (entry.facetValue.length() > 1) {
-                    String[] newFacets = new String[Math.max(0, facets.length - 1)];
-                    if (facets.length > 1) {
-                        System.arraycopy(facets, 1, newFacets, 0, facets.length - 1);
-                    }
-                    String[] newSearch = new String[search != null ? search.length + 1 : 1];
-                    if (search != null && search.length > 0) {
-                        System.arraycopy(search, 0, newSearch, 0, search.length);
-                    }
-                    
-                    String luceneTerm = entry.facetValue;
-                    
-                    if (facets[0].indexOf("#") == -1) {
-                        newSearch[newSearch.length - 1] = "@" + facets[0] + "='" + luceneTerm + "'";
-                    } else {
-                        newSearch[newSearch.length - 1] = "@" + facets[0].substring(0, facets[0].indexOf("#")) + "='"
-                                + luceneTerm + "'" + facets[0].substring(facets[0].indexOf("#"));
-                    }
-                    try {
-                        //String name = getDisplayName(nextFacet, facetTypeConstant);
-                        String name = facetedEngine.resolveLuceneTermToPropertyString(resolvedFacet, luceneTerm);
-                        
-                        Name childName = resolveName(NodeNameCodec.encode(name, true));
-                        FacetSearchNodeId childNodeId = new FacetSearchNodeId(subSearchProvider, state.getNodeId(),
-                                childName);
-                        state.addChildNodeEntry(childName, childNodeId);
-                        childNodeId.queryname = queryname;
-                        childNodeId.docbase = docbase;
-                        childNodeId.facets = newFacets;
-                        childNodeId.search = newSearch;
-                        childNodeId.count = entry.count.count;
-                    } catch (RepositoryException ex) {
-                        log.warn("cannot add virtual child in facet search: " + ex.getMessage());
-                    }
+                String[] newFacets = new String[Math.max(0, facets.length - 1)];
+                if (facets.length > 1) {
+                    System.arraycopy(facets, 1, newFacets, 0, facets.length - 1);
+                }
+                String[] newSearch = new String[search != null ? search.length + 1 : 1];
+                if (search != null && search.length > 0) {
+                    System.arraycopy(search, 0, newSearch, 0, search.length);
+                }
+                
+                String luceneTerm = entry.facetValue;
+                
+                if (facets[0].indexOf("#") == -1) {
+                    newSearch[newSearch.length - 1] = "@" + facets[0] + "='" + luceneTerm + "'";
                 } else {
-                    log.info("facet value with only facet type constant found. Skip result");
+                    newSearch[newSearch.length - 1] = "@" + facets[0].substring(0, facets[0].indexOf("#")) + "='"
+                            + luceneTerm + "'" + facets[0].substring(facets[0].indexOf("#"));
+                }
+                try {
+                    //String name = getDisplayName(nextFacet, facetTypeConstant);
+                    String name = facetedEngine.resolveLuceneTermToPropertyString(resolvedFacet, luceneTerm);
+                    
+                    Name childName = resolveName(NodeNameCodec.encode(name, true));
+                    FacetSearchNodeId childNodeId = new FacetSearchNodeId(subSearchProvider, state.getNodeId(),
+                            childName);
+                    state.addChildNodeEntry(childName, childNodeId);
+                    childNodeId.queryname = queryname;
+                    childNodeId.docbase = docbase;
+                    childNodeId.facets = newFacets;
+                    childNodeId.search = newSearch;
+                    childNodeId.count = entry.count.count;
+                } catch (RepositoryException ex) {
+                    log.warn("cannot add virtual child in facet search: " + ex.getMessage());
                 }
             }
             
