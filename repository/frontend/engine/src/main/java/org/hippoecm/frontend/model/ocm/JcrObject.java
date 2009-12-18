@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -51,8 +52,16 @@ abstract public class JcrObject implements IDetachable, IObservable {
     private IObservationContext<JcrObject> obContext;
     private boolean observing = false;
 
-    public JcrObject(JcrNodeModel nodeModel) {
-        this.nodeModel = nodeModel;
+    public JcrObject(IModel<Node> nodeModel) {
+        if (nodeModel instanceof JcrNodeModel) {
+            this.nodeModel = (JcrNodeModel) nodeModel;
+        } else {
+            Node node = nodeModel.getObject();
+            if (node == null) {
+                throw new RuntimeException("No node in model for " + this);
+            }
+            this.nodeModel = new JcrNodeModel(node);
+        }
     }
 
     protected Node getNode() throws ItemNotFoundException {
