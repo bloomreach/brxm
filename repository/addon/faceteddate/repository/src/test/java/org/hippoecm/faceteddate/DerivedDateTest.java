@@ -38,6 +38,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.util.Utilities;
 
+@Ignore
 public class DerivedDateTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
