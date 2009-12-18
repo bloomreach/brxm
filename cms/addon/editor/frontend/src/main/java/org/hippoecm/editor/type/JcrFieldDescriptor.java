@@ -88,6 +88,10 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
 
     public ITypeDescriptor getTypeDescriptor() {
         try {
+            String fieldType = getType();
+            if (fieldType.equals(type.getType())) {
+                return type;
+            }
             return type.locator.locate(getType());
         } catch (StoreException e) {
             throw new RuntimeException("Field type cannot be resolved", e);
