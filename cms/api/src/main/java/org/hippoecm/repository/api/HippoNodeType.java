@@ -411,6 +411,22 @@ public interface HippoNodeType {
      * 
      */
     final public static String HIPPO_FACETNODENAMES = "hippo:facetnodenames";
+    
+    /**
+     * 
+     */
+    final public static String HIPPO_FACETLIMIT = "hippo:limit";
+    
+    /**
+     * 
+     */
+    final public static String HIPPO_FACETSORTBY = "hippo:sortby";
+    
+    /**
+     * 
+     */
+    final public static String HIPPO_FACETSORTORDER = "hippo:sortorder";
+    
     /**
      * Deprecated name for field descriptor nodes.  Use field name as node name instead.
      */
