@@ -51,7 +51,14 @@ public class ServicingNameFormat {
             for (int i = 0; i < pathElements.length - 1; i++) {
                 internalName.append("/");
                 internalName.append(nsMappings.translatePropertyName(pathElements[i].getName()));
-            } return new String(internalName);
+            } 
+            String name = new String(internalName);
+            if(name.indexOf("$") > -1) {
+                // $ used for date properties to define something like year, month
+                int pos = name.indexOf("$");
+                name = name.substring(0, pos) + ServicingFieldNames.DATE_NUMBER_DELIMITER + name.substring(pos+1);
+            }
+            return name;
         } catch (IllegalArgumentException e) {
             throw new IllegalNameException("Error creating internl property path name for '"+ propertyPath +"'", e);
         }

@@ -15,16 +15,12 @@
  */
 package org.hippoecm.repository.query.lucene;
 
-public class ServicingFieldNames {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
-    /**
-     * Private constructor.
-     */
-    private ServicingFieldNames() {
-    }
-
+public interface ServicingFieldNames {
+   
+    // never used chars in lucene, so can be used as delimiter
+    public static final char DATE_RESOLUTION_DELIMITER = '\uFAFA';
+    public static final char DATE_NUMBER_DELIMITER = '\uFAFB';
+    
     /**
      * Lucene field name which is used to index the localname of a node to be able to sort on nodes
      */
