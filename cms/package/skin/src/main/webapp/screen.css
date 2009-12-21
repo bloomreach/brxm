@@ -1295,4 +1295,82 @@ body.hippo-root div.yui-log-container {
 .resource-upload input[type="submit"] {  padding:0; margin:0;}
 
 
+/* Xinha preview style, taken form http://www.w3.org/TR/CSS2/sample.html */
+
+/* default font settings */
+.hippo-editor-field-html-preview h1 { font-size: 2em; }
+.hippo-editor-field-html-preview h2 { font-size: 1.5em; }
+.hippo-editor-field-html-preview h3 { font-size: 1.17em; }
+.hippo-editor-field-html-preview h4,
+.hippo-editor-field-html-preview p,
+.hippo-editor-field-html-preview blockquote, 
+.hippo-editor-field-html-preview ul,
+.hippo-editor-field-html-preview fieldset, 
+.hippo-editor-field-html-preview form,
+.hippo-editor-field-html-preview ol, 
+.hippo-editor-field-html-preview dl,
+.hippo-editor-field-html-preview dir,
+.hippo-editor-field-html-preview h1,
+.hippo-editor-field-html-preview h2,
+.hippo-editor-field-html-preview h3,
+.hippo-editor-field-html-preview h4,
+.hippo-editor-field-html-preview h5,
+.hippo-editor-field-html-preview h6,
+.hippo-editor-field-html-preview menu { margin-top: 3px; margin-bottom: 3px; }
+
+.hippo-editor-field-html-preview h5 { font-size: .83em; }
+.hippo-editor-field-html-preview h6 { font-size: .75em; }
+.hippo-editor-field-html-preview h1,
+.hippo-editor-field-html-preview h2,
+.hippo-editor-field-html-preview h3,
+.hippo-editor-field-html-preview h4,
+.hippo-editor-field-html-preview h5,
+.hippo-editor-field-html-preview h6,
+.hippo-editor-field-html-preview b,
+.hippo-editor-field-html-preview strong { font-weight: bolder }
+.hippo-editor-field-html-preview blockquote { margin-left: 40px; margin-right: 40px }
+.hippo-editor-field-html-preview i, 
+.hippo-editor-field-html-preview cite, 
+.hippo-editor-field-html-preview em,
+.hippo-editor-field-html-preview address { font-style: italic }
+.hippo-editor-field-html-preview pre, 
+.hippo-editor-field-html-preview tt, 
+.hippo-editor-field-html-preview code,
+.hippo-editor-field-html-preview kbd, 
+.hippo-editor-field-html-preview samp { font-family: monospace }
+.hippo-editor-field-html-preview pre { white-space: pre }
+
+.hippo-editor-field-html-preview small, 
+.hippo-editor-field-html-preview sub, 
+.hippo-editor-field-html-preview sup { font-size: .83em }
+.hippo-editor-field-html-preview sub { vertical-align: sub }
+.hippo-editor-field-html-preview sup { vertical-align: super }
+
+.hippo-editor-field-html-preview s, 
+.hippo-editor-field-html-preview strike, 
+.hippo-editor-field-html-preview del { text-decoration: line-through }
+
+.hippo-editor-field-html-preview hr { border: 1px inset }
+
+.hippo-editor-field-html-preview ol, 
+.hippo-editor-field-html-preview ul, 
+.hippo-editor-field-html-preview dir,
+.hippo-editor-field-html-preview menu, 
+.hippo-editor-field-html-preview dd { margin-left: 40px }
+.hippo-editor-field-html-preview ol { list-style-type: decimal; }
+.hippo-editor-field-html-preview ol ul, 
+.hippo-editor-field-html-preview ul ol,
+.hippo-editor-field-html-preview ul ul, 
+.hippo-editor-field-html-preview ol ol { margin-top: 0; margin-bottom: 0 }
+.hippo-editor-field-html-preview li { display: list-item; }
+
+.hippo-editor-field-html-preview ol li { list-style-type: decimal;}
+.hippo-editor-field-html-preview ul li { list-style-type: disc;}
+
+.hippo-editor-field-html-preview u, 
+.hippo-editor-field-html-preview ins { text-decoration: underline }
+.hippo-editor-field-html-preview br:before { content: "\A"; white-space: pre-line }
+.hippo-editor-field-html-preview center { text-align: center }
+
+
 
