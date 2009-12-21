@@ -80,6 +80,13 @@ AutoResize.prototype.getDim = function(vWidth, vHeight) {
 }
 
 AutoResize.prototype.checkResize = function(editor) {
+    //If fullscreen, delegate event to fullscreen plugin
+    var t = editor.plugins["FullscreenCompatible"];
+    if(typeof(t) === 'object' && typeof(t.instance.editor._isFullScreen) === 'boolean' && t.instance.editor._isFullScreen) {
+        t.instance.editor._fullscreenCompatible(true);
+        return;
+    }
+    
     if(this.timeout != null) {
         window.clearTimeout(this.timeout);
         this.timeout = null;
@@ -102,7 +109,6 @@ AutoResize.prototype.doResize = function(editor) {
 
         if(this.dim.w != newDim.w || this.dim.h != newDim.h) {
             this.dim = newDim;
-            
             editor.sizeEditor(newDim.w + 'px', newDim.h + 'px', true, true);
             if(Xinha.is_ie) {
                 this.DOM.setStyle(this.findParent(), 'height', this.dim.h + 'px');

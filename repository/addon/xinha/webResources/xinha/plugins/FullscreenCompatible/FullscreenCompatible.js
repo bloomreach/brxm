@@ -35,26 +35,33 @@ FullscreenCompatible.prototype._lc = function(string) {
     return Xinha._lc(string, {url : _editor_url + 'modules/FullScreen/lang/',context:"FullScreen"});
 };
 
+
+
 /** fullScreen makes an editor take up the full window space (and resizes when the browser is resized)
  *  the principle is the same as the "popupwindow" functionality in the original htmlArea, except
  *  this one doesn't popup a window (it just uses to positioning hackery) so it's much more reliable
  *  and much faster to switch between
  */
 
-Xinha.prototype._fullscreenCompatible = function()
+Xinha.prototype._fullscreenCompatible = function(resize)
 {
   var e = this;
   function sizeItUp()
   {
-    if(!e._isFullScreen || e._sizing) return false;
+    if(!e._isFullScreen || e._sizing) {
+        return false;
+    }
+    
     e._sizing = true;
     // Width & Height of window
     var dim = Xinha.viewportSize();
-    e.originalSizes = {
-      x:   parseInt(e._htmlArea.style.width),
-      y:   parseInt(e._htmlArea.style.height),
-      dim: dim
-    };
+    if(e.originalSizes == null) {
+        e.originalSizes = {
+            x:   parseInt(e._htmlArea.style.width),
+            y:   parseInt(e._htmlArea.style.height),
+            dim: dim
+        };
+    } 
 
     var h = dim.y - e.config.fullScreenMargins[0] -  e.config.fullScreenMargins[2];
     var w = dim.x - e.config.fullScreenMargins[1] -  e.config.fullScreenMargins[3];
@@ -72,13 +79,11 @@ Xinha.prototype._fullscreenCompatible = function()
     if(e.originalSizes != null) 
     {
         var os = e.originalSizes;
-        var nDim = Xinha.viewportSize();
-        var nW = os.x + (nDim.x - os.dim.x);
-        var nH = os.y + (nDim.y - os.dim.y);
-        e.sizeEditor( nW + 'px', nH + 'px', e.config.sizeIncludesBars, e.config.sizeIncludesPanels);     
+        e.sizeEditor( os.x + 'px', os.y + 'px', e.config.sizeIncludesBars, e.config.sizeIncludesPanels);     
         e.originalSizes = null;
+    } else {
+        e.initSize();
     }
-    else e.initSize();
 
     e._sizing = false;
     if ( e._toolbarObjects.fullscreen ) e._toolbarObjects.fullscreen.swapImage([_editor_url + cfg.imgURL + 'ed_buttons_main.gif',8,0]); 
@@ -95,14 +100,20 @@ Xinha.prototype._fullscreenCompatible = function()
       window.setTimeout(resetScroll,150);
     }
   }
+  
+  if(resize === true) {
+      sizeItUp();
+      //change original sizes rel to viewport changes
+      var vp = Xinha.viewportSize();
+      e.originalSizes.x += (vp.x - e.originalSizes.dim.x);
+      e.originalSizes.y += (vp.y - e.originalSizes.dim.y);
+      return;
+  }
+  
 
   if(typeof this._isFullScreen == 'undefined')
   {
     this._isFullScreen = false;
-    if(e.target != e._iframe)
-    {
-      Xinha._addEvent(window, 'resize', sizeItUp);
-    }
   }
 
   // Gecko has a bug where if you change position/display on a
