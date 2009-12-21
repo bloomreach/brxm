@@ -123,7 +123,8 @@ public class BinariesServletTest {
         binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList(
                 "application/pdf", "application/rtf", "application/excel"));
 
-        String filenamePropertyName = binariesServlet.contentDispositionFilenameProperty = "myschema:filename";
+        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename" };
+        String filenamePropertyName = binariesServlet.contentDispositionFilenamePropertyNames[0];
 
         Property filenameProperty = createMock(Property.class);
         expect(filenameProperty.getString()).andReturn("filename.pdf");
@@ -156,7 +157,8 @@ public class BinariesServletTest {
         binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList(
                 "application/pdf", "application/rtf", "application/excel"));
 
-        String filenamePropertyName = binariesServlet.contentDispositionFilenameProperty = "myschema:filename";
+        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename" };
+        String filenamePropertyName = binariesServlet.contentDispositionFilenamePropertyNames[0];
 
         Node binaryFileNode = createMock(Node.class);
         expect(binaryFileNode.hasProperty(filenamePropertyName)).andReturn(false);
@@ -205,7 +207,8 @@ public class BinariesServletTest {
         binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList(
                 "application/pdf", "application/rtf", "application/excel"));
 
-        binariesServlet.contentDispositionFilenameProperty = "myschema:filename";
+        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename" };
+        String filenamePropertyName = binariesServlet.contentDispositionFilenamePropertyNames[0];
 
         Property filenameProperty = createMock(Property.class);
 
@@ -216,5 +219,37 @@ public class BinariesServletTest {
         verify(binaryFileNode, filenameProperty);
 
         assertFalse(response.containsHeader("Content-Disposition"));
+    }
+    
+    /**
+     * Precondition: All possible init-params are set with glob expression parameter ('application/*').
+     *
+     * Pass condition: Content types init-param is properly parsed as an array of Strings and the filename property is
+     *                 properly retrieved from init-params.
+     */
+    @Test
+    public void testSetContentDispositionHeaderWithGlobConfigs() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        binariesServlet.contentDispositionContentTypes = new HashSet<String>(Arrays.asList("application/*"));
+
+        binariesServlet.contentDispositionFilenamePropertyNames = new String [] { "myschema:filename", "myschema:filename2" };
+
+        Property filenameProperty = createMock(Property.class);
+        expect(filenameProperty.getString()).andReturn("filename.pdf");
+
+        Node binaryFileNode = createMock(Node.class);
+        expect(binaryFileNode.hasProperty(binariesServlet.contentDispositionFilenamePropertyNames[0])).andReturn(false);
+        expect(binaryFileNode.hasProperty(binariesServlet.contentDispositionFilenamePropertyNames[1])).andReturn(true);
+        expect(binaryFileNode.getProperty(binariesServlet.contentDispositionFilenamePropertyNames[1])).andReturn(filenameProperty);
+
+        replay(binaryFileNode, filenameProperty);
+        binariesServlet.addContentDispositionHeader(request, response, "application/pdf", binaryFileNode);
+        verify(binaryFileNode, filenameProperty);
+        
+        Map<String, String> headerParams = MimeUtil.getHeaderParams((String) response.getHeader("Content-Disposition"));
+        assertEquals("attachment", headerParams.get(""));
+        assertEquals("filename.pdf", DecoderUtil.decodeEncodedWords(headerParams.get("filename")));
     }
 }

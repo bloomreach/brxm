@@ -65,12 +65,14 @@ import org.slf4j.LoggerFactory;
  * &lt;init-param&gt;
  *     &lt;param-name&gt;contentDispositionContentTypes&lt;/param-name&gt;
  *     &lt;param-value&gt;
- *         application/pdf
- *         application/rtf
+ *         application/pdf,
+ *         application/rtf,
  *         application/excel
  *     &lt;/param-value&gt;
  * &lt;/init-param&gt;
  * </pre>
+ * 
+ * In the above init param configuration, you can also set glob style configurations such as '*&#x2F;*' or 'application&#x2F;*'.
  *
  * Also, you can configure the JCR property to get the file name from. The file name is used to send along in the
  * HTTP response for content dispositioning. To configure this, set the "contentDispositionFilenameProperty" init
@@ -82,6 +84,9 @@ import org.slf4j.LoggerFactory;
  *     &lt;param-value&gt;demosite:filename&lt;/param-value&gt;
  * &lt;/init-param&gt;
  * </pre>
+ * 
+ * You can also configure multiple JCR property names in the above init parameter by comma-separated value. 
+ * 
  *
  * @author Tom van Zummeren
  * @version $Id$
@@ -112,7 +117,7 @@ public class BinariesServlet extends HttpServlet {
     
     Set<String> contentDispositionContentTypes;
 
-    String contentDispositionFilenameProperty;
+    String [] contentDispositionFilenamePropertyNames;
 
     /**
      * {@inheritDoc}
@@ -129,13 +134,13 @@ public class BinariesServlet extends HttpServlet {
         
         primaryItem = config.getInitParameter(PRIMARYITEM_INIT_PARAM);
         
-        contentDispositionFilenameProperty = config.getInitParameter(CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM);
+        contentDispositionFilenamePropertyNames = StringUtils.split(config.getInitParameter(CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM), ", \t\r\n");
 
         // Parse mime types from init-param
         contentDispositionContentTypes = new HashSet<String>();
         String mimeTypesString = config.getInitParameter(CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM);
         if (mimeTypesString != null) {
-            contentDispositionContentTypes.addAll(Arrays.asList(StringUtils.split(mimeTypesString)));
+            contentDispositionContentTypes.addAll(Arrays.asList(StringUtils.split(mimeTypesString, ", \t\r\n")));
         }
     }
 
@@ -318,15 +323,33 @@ public class BinariesServlet extends HttpServlet {
      * @throws javax.jcr.RepositoryException when something goes wrong during repository access
      */
     void addContentDispositionHeader(HttpServletRequest request, HttpServletResponse response, String responseContentType, Node binaryFileNode) throws RepositoryException {
-        if (contentDispositionContentTypes.contains(responseContentType)) {
+        boolean isContentDispositionType = contentDispositionContentTypes.contains(responseContentType);
+        
+        if (!isContentDispositionType) {
+            isContentDispositionType = contentDispositionContentTypes.contains("*/*");
+            
+            if (!isContentDispositionType) {
+                int offset = responseContentType.indexOf('/');
+                if (offset != -1) {
+                    isContentDispositionType = contentDispositionContentTypes.contains(responseContentType.substring(0, offset) + "/*");
+                }
+            }
+        }
+        
+        if (isContentDispositionType) {
             // The response content type matches one of the configured content types so add a Content-Disposition
             // header to the response
             StringBuilder headerValue = new StringBuilder("attachment");
             
-            if (contentDispositionFilenameProperty != null
-                    && binaryFileNode.hasProperty(contentDispositionFilenameProperty)) {
+            if (contentDispositionFilenamePropertyNames != null && contentDispositionFilenamePropertyNames.length > 0) {
+                String fileName = null;
+                for (String name : contentDispositionFilenamePropertyNames) {
+                    if (binaryFileNode.hasProperty(name)) {
+                        fileName = binaryFileNode.getProperty(name).getString();
+                        break;
+                    }
+                }
                 // A filename is set for the binary node, so add this to the Content-Disposition header value
-                String fileName = binaryFileNode.getProperty(contentDispositionFilenameProperty).getString();
                 if (!StringUtils.isBlank(fileName)) {
                     String encodedFilename = encodeContentDispositionFileName(request, response, fileName);
                     headerValue.append("; filename=\"").append(encodedFilename).append("\"");

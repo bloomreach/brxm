@@ -63,7 +63,7 @@ public class HeadContributionsTag extends TagSupport {
     }
     
     public void setCategoryIncludes(String categoryIncludes) {
-        this.categoryIncludes = new HashSet<String>(Arrays.asList(StringUtils.split(categoryIncludes, ", ")));
+        this.categoryIncludes = new HashSet<String>(Arrays.asList(StringUtils.split(categoryIncludes, ", \t")));
     }
     
     public String getCategoryIncludes() {
@@ -75,7 +75,7 @@ public class HeadContributionsTag extends TagSupport {
     }
     
     public void setCategoryExcludes(String categoryExcludes) {
-        this.categoryExcludes = new HashSet<String>(Arrays.asList(StringUtils.split(categoryExcludes, ", ")));
+        this.categoryExcludes = new HashSet<String>(Arrays.asList(StringUtils.split(categoryExcludes, ", \t")));
     }
     
     public String getCategoryExcludes() {

@@ -157,8 +157,7 @@ public class HstContainerServlet extends HttpServlet {
     /**
      * The primary method invoked when the servlet is executed.
      */
-    @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    private void invoke(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
         try {
             if (!HstServices.isAvailable()) {
@@ -192,9 +191,11 @@ public class HstContainerServlet extends HttpServlet {
     
     }
 
+    // To allow any HTTP methods (REST services need all http methods), service() method should be directly overriden.
     @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        doGet(req, res);
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        invoke(request, response);
     }
 
     private String getConfigOrContextInitParameter(String paramName, String defaultValue) {
