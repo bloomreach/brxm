@@ -372,7 +372,15 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                 if(UpdaterEngine.log.isDebugEnabled()) {
                     UpdaterEngine.log.debug("commit remove old origin "+oldOrigin.getPath());
                 }
-                oldOrigin.remove();
+                try {
+                    oldOrigin.remove();
+                } catch (RepositoryException ex) {
+                    try {
+                        UpdaterEngine.log.warn("cannot remove no longer available old origin node "+origin.getPath());
+                    } catch(RepositoryException e) {
+                        UpdaterEngine.log.warn("cannot remove no longer available old origin node");
+                    }
+                }
                 if (noSameNameSiblingWorkaround != null) {
                     parent.origin.getSession().move(parent.origin.getPath() + "/" + noSameNameSiblingWorkaround, parent.origin.getPath() + "/" + nodeName);
                 }
