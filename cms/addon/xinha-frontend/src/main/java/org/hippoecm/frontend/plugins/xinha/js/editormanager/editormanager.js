@@ -39,28 +39,6 @@ if (!YAHOO.hippo.EditorManager) {
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, HippoAjax = YAHOO.hippo.HippoAjax;
         
         /**
-         * This xinha plugin is used as an indicator for Xinha's load status
-         */
-        EditorManagerPlugin._pluginInfo = {
-            name :"EditorManagerPlugin",
-            version :"1.0",
-            developer :"Arthur Bogaart",
-            developer_url :"http://www.onehippo.org",
-            c_owner :"Arthur Bogaart",
-            sponsor :"",
-            sponsor_url :"",
-            license :""
-        }
-
-        function EditorManagerPlugin(editor) {
-            this.editor = editor;
-        }
-        
-        EditorManagerPlugin.prototype.onGenerateOnce = function() {
-            YAHOO.hippo.EditorManager.registerEditor(this.editor._textArea.getAttribute("id"), this.editor._framework.table);
-        }
-
-        /**
          * The editor-manager controls the life-cycle of Xinha editors.
          * Optionally, Xinha instances can be cached in the browser DOM, turned off by default.
          */
@@ -255,6 +233,11 @@ if (!YAHOO.hippo.EditorManager) {
                 }
                 
                 if(!this.usePool) {
+                    var me = this;
+                    //register onload callback
+                    editor.xinha._onGenerate = function() {
+                        me.editorLoaded(editor);
+                    }
                     Xinha.startEditors([ editor.xinha ]);
                 } else {
                     var id = 'POOLID-' + editor.name;
@@ -312,13 +295,10 @@ if (!YAHOO.hippo.EditorManager) {
                 this.pool.appendChild(poolEl);
             },
 
-            /**
-             * Workaround! Using the EditorManagerPlugin as an indicator of Xinha's load status.
-             * Better would be a Xinha LoadSucces callback function but it doesn't exist.
-             */
-            registerEditor : function(xId, xTable) {
+            editorLoaded : function(editor) {
+                var xId = editor.xinha._textArea.getAttribute("id");
+                var xTable = editor.xinha._framework.table;
                 this.registerCleanup(xTable, xId);
-                var editor = this.editors.get(xId);
                 editor.lastData = editor.xinha.getInnerHTML();
                 
                 //Workaround for http://issues.onehippo.com/browse/HREPTWO-2960

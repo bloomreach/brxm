@@ -37,35 +37,12 @@ YAHOO.namespace('hippo');
 if (!YAHOO.hippo.EditorManager) {
     (function() {
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, HippoAjax = YAHOO.hippo.HippoAjax;
-        
-        /**
-         * This xinha plugin is used as an indicator for Xinha's load status
-         */
-        EditorManagerPlugin._pluginInfo = {
-            name :"EditorManagerPlugin",
-            version :"1.0",
-            developer :"Arthur Bogaart",
-            developer_url :"http://www.onehippo.org",
-            c_owner :"Arthur Bogaart",
-            sponsor :"",
-            sponsor_url :"",
-            license :""
-        }
-
-        function EditorManagerPlugin(editor) {
-            this.editor = editor;
-        }
-        
-        EditorManagerPlugin.prototype.onGenerateOnce = function() {
-            YAHOO.hippo.EditorManager.registerEditor(this.editor._textArea.getAttribute("id"), this.editor._framework.table);
-        }
 
         /**
          * The editor-manager controls the life-cycle of Xinha editors.
          * Optionally, Xinha instances can be cached in the browser DOM, turned off by default.
          */
         YAHOO.hippo.EditorManagerImpl = function() {
-            //this._init();
         };
 
         YAHOO.hippo.EditorManagerImpl.prototype = {
@@ -76,14 +53,6 @@ if (!YAHOO.hippo.EditorManager) {
             initialized : false,
             usePool : false,
             pool: null,
-
-//            _init : function() {
-//                //Save open editors when a WicketAjax callback is executed
-//                var me = this;
-//                Wicket.Ajax.registerPreCallHandler(function() {
-//                    me.saveEditors();
-//                });
-//            },
 
             init : function(editorUrl, editorLang, editorSkin) {
                 if (this.initialized) {
@@ -221,9 +190,6 @@ if (!YAHOO.hippo.EditorManager) {
                 //make editors 
                 var xinha = Xinha.makeEditors([ editor.name ], xinhaConfig, editor.config.plugins)[editor.name];
                 
-                //Register EditorManagerPlugin
-                xinha.registerPlugin(EditorManagerPlugin);
-                
                 //concatenate default properties with configured properties
                 xinha.config = this._appendProperties(xinha.config, editor.config.properties);
                 //console.log('Adding properties to xinha[' + editor.name + ']');// + Lang.dump(editor.config.properties));
@@ -278,6 +244,11 @@ if (!YAHOO.hippo.EditorManager) {
                 var st = new Date();
                 
                 if(!this.usePool) {
+                    var me = this;
+                    //register onload callback
+                    editor.xinha._onGenerate = function() {
+                        me.editorLoaded(editor);
+                    }
                     Xinha.startEditors([ editor.xinha ]);
                     editor._timer = st;
                 } else {
@@ -330,13 +301,12 @@ if (!YAHOO.hippo.EditorManager) {
             },
             
             cleanup : function(name) {
-                var st = new Date();
                 var editor = this.activeEditors.remove(name);
                 if(this.usePool) {
                     this.saveInPool(editor);
                 }
                 //Xinha.collectGarbageForIE(); //TODO: doesn't work like this
-                this.log('Xinha[' + name + '] - Cleanup took ' + (new Date().getTime() - st.getTime()) + 'ms')
+                this.log('Xinha[' + name + '] - Cleanup executed');
             },
             
             saveInPool : function(editor) {
@@ -349,22 +319,20 @@ if (!YAHOO.hippo.EditorManager) {
                 this.pool.appendChild(poolEl);
             },
 
-            /**
-             * Workaround! Using the EditorManagerPlugin as an indicator of Xinha's load status.
-             * Better would be a Xinha LoadSucces callback function but it doesn't exist.
-             */
-            registerEditor : function(xId, xTable) {
+            editorLoaded : function(editor) {
+                var xId = editor.xinha._textArea.getAttribute("id");
+                var xTable = editor.xinha._framework.table;
                 this.registerCleanup(xTable, xId);
-                var editor = this.editors.get(xId);
+         
                 editor.lastData = editor.xinha.getInnerHTML();
                 
-              //Workaround for http://issues.onehippo.com/browse/HREPTWO-2960
-              //Test if IE8, than set&remove focus on Xinha to prevent UI lockup
-              if(YAHOO.env.ua.ie >= 8) {
+                //Workaround for http://issues.onehippo.com/browse/HREPTWO-2960
+                //Test if IE8, than set&remove focus on Xinha to prevent UI lockup
+                if(YAHOO.env.ua.ie >= 8) {
                   editor.xinha.activateEditor();
                   editor.xinha.focusEditor();
                   editor.xinha.deactivateEditor();
-              }
+                }
 
                 this.log('Xinhap[' + xId + '] - Render took ' + (new Date().getTime() - editor._timer.getTime()) + 'ms');
             },
