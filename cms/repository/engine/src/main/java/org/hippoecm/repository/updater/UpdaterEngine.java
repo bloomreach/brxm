@@ -38,6 +38,7 @@ import javax.jcr.InvalidItemStateException;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
@@ -794,9 +795,9 @@ public class UpdaterEngine {
                         log.info("migration update traverse iterated for module " + module.name + " (" + visitor.toString() + ")");
                         while (nodeIter.hasNext()) {
                             Node node = nodeIter.nextNode();
-                            String path = node.getPath();
-                            node = updaterSession.getRootNode();
                             try {
+                                String path = node.getPath();
+                                node = updaterSession.getRootNode();
                                 if (!path.equals("/")) {
                                     node = node.getNode(path.substring(1));
                                 }
@@ -804,6 +805,8 @@ public class UpdaterEngine {
                             } catch (PathNotFoundException ex) {
                                 // deliberate ignore
                             } catch (InvalidItemStateException ex) {
+                                // deliberate ignore
+                           } catch (ItemNotFoundException ex) {
                                 // deliberate ignore
                             }
                         }
