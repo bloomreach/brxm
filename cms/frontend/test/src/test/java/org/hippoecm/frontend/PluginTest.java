@@ -18,21 +18,24 @@ package org.hippoecm.frontend;
 import java.io.PrintStream;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.DummyPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -80,7 +83,26 @@ public abstract class PluginTest extends TestCase {
         session.save();
 
         JcrApplicationFactory jcrAppFactory = new JcrApplicationFactory(new JcrNodeModel("/config"));
-        tester = new HippoTester(server, session, jcrAppFactory);
+        tester = new HippoTester(new Main() {
+
+            public HippoRepository getRepository() throws RepositoryException {
+                return server;
+            };
+            
+            public org.apache.wicket.Session newSession(org.apache.wicket.Request request, org.apache.wicket.Response response) {
+                UserSession userSession = (UserSession) super.newSession(request, response);
+                userSession.login(CREDENTIALS, new LoadableDetachableModel<Session>() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected Session load() {
+                        return session;
+                    }
+                    
+                });
+                return userSession;
+            };
+        }, jcrAppFactory);
 
         home = tester.startPluginPage();
         JavaPluginConfig config = new JavaPluginConfig("dummy");

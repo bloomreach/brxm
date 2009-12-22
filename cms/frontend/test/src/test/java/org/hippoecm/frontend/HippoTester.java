@@ -50,6 +50,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.IRequestCycleProcessor;
 import org.apache.wicket.util.tester.WicketTester;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
@@ -250,24 +251,15 @@ public class HippoTester extends WicketTester {
     private IApplicationFactory appFactory;
 
     public HippoTester() {
-        this(null, new DummySession(), null);
+        this(null);
     }
 
     public HippoTester(IApplicationFactory factory) {
-        this(null, new DummySession(), factory);
-    }
-
-    public HippoTester(final HippoRepository repository, final javax.jcr.Session jcrSession, IApplicationFactory jcrAppFactory) {
-        super(new Main() {
+        this(new Main() {
             
             @Override
             public HippoRepository getRepository() throws RepositoryException {
-                return repository;
-            }
-
-            @Override
-            protected IRequestCycleProcessor newRequestCycleProcessor() {
-                return new PluginRequestCycleProcessor();
+                return null;
             }
 
             @Override
@@ -277,13 +269,17 @@ public class HippoTester extends WicketTester {
 
                     @Override
                     protected javax.jcr.Session load() {
-                        return jcrSession;
+                        return new DummySession();
                     }
                     
                 });
                 return session;
             }
-        });
+        }, factory);
+    }
+
+    public HippoTester(Main main, IApplicationFactory jcrAppFactory) {
+        super(main);
 
         this.appFactory = jcrAppFactory;
     }
