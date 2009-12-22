@@ -32,6 +32,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.repository.TestCase;
+import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -79,15 +80,7 @@ public abstract class PluginTest extends TestCase {
         session.save();
 
         JcrApplicationFactory jcrAppFactory = new JcrApplicationFactory(new JcrNodeModel("/config"));
-        tester = new HippoTester(new JcrSessionModel(CREDENTIALS) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected Object load() {
-                return session;
-            }
-
-        }, jcrAppFactory);
+        tester = new HippoTester(server, session, jcrAppFactory);
 
         home = tester.startPluginPage();
         JavaPluginConfig config = new JavaPluginConfig("dummy");

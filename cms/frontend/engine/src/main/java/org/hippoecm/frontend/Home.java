@@ -30,7 +30,6 @@ import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.dialog.DialogServiceFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.model.event.ObservableRegistry;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -77,8 +76,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
         context.registerTracker(this, "service.root");
 
-        JcrSessionModel sessionModel = ((UserSession) getSession()).getJcrSessionModel();
-        pluginConfigService = new PluginConfigFactory(sessionModel, appFactory);
+        pluginConfigService = new PluginConfigFactory((UserSession) getSession(), appFactory);
         context.registerService(pluginConfigService, IPluginConfigService.class.getName());
 
         obRegistry = new ObservableRegistry(context, null);

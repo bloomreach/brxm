@@ -19,17 +19,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 
-import javax.servlet.http.HttpServletResponse;
-
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Time;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,18 +40,17 @@ public class JcrResourceRequestTarget implements IRequestTarget {
 
     private static final Logger log = LoggerFactory.getLogger(JcrResourceRequestTarget.class);
 
-    private JcrNodeModel nodeModel;
+    private Node node;
 
-    public JcrResourceRequestTarget(JcrNodeModel node) {
-        this.nodeModel = node;
+    public JcrResourceRequestTarget(Node node) {
+        this.node = node;
     }
+
+    @Override
     protected void finalize() throws Throwable {
-       try {
-           nodeModel.getNode().getSession().logout();
-       } catch(NullPointerException ex) {
-           // deliberate ignore
-       } catch(RepositoryException ex) {
-           // deliberate ignore
+       if (node != null) {
+           log.warn(getClass() + " was not detached");
+           detach(null);
        }
        super.finalize();
     }
@@ -71,8 +68,6 @@ public class JcrResourceRequestTarget implements IRequestTarget {
     public void respond(RequestCycle requestCycle) {
         InputStream stream = null;
         try {
-            Node node = (nodeModel != null ? nodeModel.getNode(): null);
-
             if (node == null) {
                 HttpServletResponse response = ((WebResponse) requestCycle.getResponse()).getHttpServletResponse();
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -148,6 +143,17 @@ public class JcrResourceRequestTarget implements IRequestTarget {
      * @see org.apache.wicket.IRequestTarget#detach(org.apache.wicket.RequestCycle)
      */
     public void detach(RequestCycle requestCycle) {
-        nodeModel.detach();
+        if (node != null) {
+            try {
+                Node stackNode = node;
+                node = null;
+                stackNode.getSession().logout();
+            } catch(NullPointerException ex) {
+                // deliberate ignore
+            } catch(RepositoryException ex) {
+                // deliberate ignore
+            }
+        }
     }
+
 }

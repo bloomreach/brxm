@@ -74,7 +74,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                 currentPassword = "";
                 newPassword = "";
                 checkPassword = "";
-                username = ((UserSession) Session.get()).getCredentials().getString("username");
+                username = ((UserSession) Session.get()).getJcrSession().getUserID();
                 IDialogService dialogService = getDialogService();
                 if (setUserNode() && canChangePassword()) {
                     dialogService.show(new ChangePasswordShortcutPlugin.Dialog(context, config));

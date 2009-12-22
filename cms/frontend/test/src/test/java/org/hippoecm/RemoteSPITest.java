@@ -24,11 +24,13 @@ import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
 import org.hippoecm.repository.TestCase;
+import org.junit.Ignore;
 import org.junit.internal.runners.InitializationError;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 
+@Ignore
 @RunWith(RemoteSPITest.class)
 @Suite.SuiteClasses({
     org.hippoecm.frontend.config.PluginConfigTest.class,

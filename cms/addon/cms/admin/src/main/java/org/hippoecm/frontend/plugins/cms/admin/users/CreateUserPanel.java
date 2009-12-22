@@ -111,7 +111,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
                     user.create();
                     user.savePassword(password);
                     log.info("User '" + username + "' created by "
-                            + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
+                            + ((UserSession) Session.get()).getJcrSession().getUserID());
                     UserDataProvider.setDirty();
                     Session.get().info(getString("user-created", userModel));
                     // one up

@@ -24,25 +24,26 @@ import javax.jcr.Session;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.FacetSearchObserver;
-import org.hippoecm.frontend.InvalidLoginPage;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrSessionModel extends LoadableDetachableModel {
+/**
+ * A Session model that uses the Main application to construct a JCR session.  When the model is attached,
+ * pending changes are persisted.
+ * <p>
+ * Plugins can subclass this model to refine the way the session is obtained.
+ */
+public class JcrSessionModel extends LoadableDetachableModel<Session> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -53,41 +54,44 @@ public class JcrSessionModel extends LoadableDetachableModel {
 
     private static final Logger log = LoggerFactory.getLogger(JcrSessionModel.class);
 
-    private ValueMap credentials;
-    private transient ClassLoader classLoader = null;
-    private transient WorkflowManager workflowManager = null;
-    private transient FacetSearchObserver facetSearchObserver = null;
+    private final IValueMap credentials;
 
-    public JcrSessionModel(ValueMap credentials) {
+    public JcrSessionModel(IValueMap credentials) {
         this.credentials = credentials;
-        /* Warning: non-trivial side effect of getObject() operation below,
-         * this causes the invalid-login (username/password mismatch)
-         * to be displayed.
-         */
-        getObject();
     }
 
-    public void logout() {
-        log.info("[" + getRemoteAddr() + "] Logout as " + credentials.getStringValue("username") + " from Hippo CMS 7");
-        flush();
-        credentials = Main.DEFAULT_CREDENTIALS;
-    }
-
-    public void flush() {
-        Session session = (Session) getObject();
+    protected void flush() {
+        Session session = getObject();
         if (session != null) {
-            session.logout();
-            detach();
+            log.error("Flushing session of " + session.getUserID());
+            if (session.isLive()) {
+                try {
+                    session.save();
+                    if (session.getRootNode().hasNode("hippo:log")) {
+                        try {
+                            Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow(
+                                    "internal", session.getRootNode().getNode("hippo:log"));
+                            if (workflow instanceof EventLoggerWorkflow) {
+                                ((EventLoggerWorkflow) workflow).logEvent(session.getUserID(), "Repository", "logout");
+                            }
+                        } catch (AccessDeniedException e) {
+                            log.debug("Access denied when logging logout", e);
+                        }
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Error when logging out", e);
+                } catch (RemoteException e) {
+                    log.error("Remote error when logging out", e);
+                }
+                session.logout();
+            }
+            super.detach();
         }
-    }
-
-    public ValueMap getCredentials() {
-        return credentials;
     }
 
     public Session getSession() {
         try {
-            Session session = (Session) getObject();
+            Session session = getObject();
             if (session == null) {
                 return null;
             }
@@ -98,68 +102,20 @@ public class JcrSessionModel extends LoadableDetachableModel {
             detach();
         }
         // this will call load() only if detached
-        return (Session) getObject();
-    }
-
-    public ClassLoader getClassLoader() {
-        if (classLoader == null) {
-            Session session = getSession();
-            if (session != null) {
-                try {
-                    classLoader = ((HippoSession)session).getSessionClassLoader();
-                } catch(RepositoryException ex) {
-                    log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                }
-            }
-        }
-        return classLoader;
-    }
-
-    public WorkflowManager getWorkflowManager() {
-        if (workflowManager == null) {
-            try {
-                HippoWorkspace workspace = (HippoWorkspace) getSession().getWorkspace();
-                workflowManager = workspace.getWorkflowManager();
-            } catch (RepositoryException ex) {
-                ex.printStackTrace();
-                workflowManager = null;
-            }
-        }
-        return workflowManager;
-    }
-
-    public FacetSearchObserver getFacetSearchObserver() {
-        if (facetSearchObserver == null) {
-            facetSearchObserver = new FacetSearchObserver(getSession());
-        }
-        return facetSearchObserver;
+        return getObject();
     }
 
     @Override
     public void detach() {
+        log.info("[" + getRemoteAddr() + "] Logout as " + credentials.getStringValue("username") + " from Hippo CMS 7");
         if (isAttached()) {
-            javax.jcr.Session session = (javax.jcr.Session)getObject();
-            if (session.isLive()) {
-                session.logout();
-            }
-            classLoader = null;
-            workflowManager = null;
-            facetSearchObserver = null;
+            flush();
         }
         super.detach();
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        if (isAttached()) {
-            javax.jcr.Session session = (javax.jcr.Session)getObject();
-            session.logout();
-        }
-        super.finalize();
-    }
-
-    @Override
-    protected Object load() {
+    protected Session load() {
         javax.jcr.Session result = null;
         boolean fatalError = false;
         try {
@@ -170,16 +126,18 @@ public class JcrSessionModel extends LoadableDetachableModel {
             if (repository != null && username != null && password != null) {
                 result = repository.login(username, password.toCharArray());
                 try {
-                    if(result.getRootNode().hasNode(HippoNodeType.LOG_PATH) && result.getRootNode().getNode(HippoNodeType.LOG_PATH).getProperty("hippolog:enabled").getBoolean()) {
-                        Workflow workflow = ((HippoWorkspace)result.getWorkspace()).getWorkflowManager().getWorkflow("internal",
-                            result.getRootNode().getNode(HippoNodeType.LOG_PATH));
-                        if(workflow instanceof EventLoggerWorkflow) {
-                            ((EventLoggerWorkflow)workflow).logEvent(result.getUserID(), "Repository", "login");
+                    if (result.getRootNode().hasNode(HippoNodeType.LOG_PATH)
+                            && result.getRootNode().getNode(HippoNodeType.LOG_PATH).getProperty("hippolog:enabled")
+                                    .getBoolean()) {
+                        Workflow workflow = ((HippoWorkspace) result.getWorkspace()).getWorkflowManager().getWorkflow(
+                                "internal", result.getRootNode().getNode(HippoNodeType.LOG_PATH));
+                        if (workflow instanceof EventLoggerWorkflow) {
+                            ((EventLoggerWorkflow) workflow).logEvent(result.getUserID(), "Repository", "login");
                         }
                         result.getRootNode().getNode(HippoNodeType.LOG_PATH).refresh(true);
                     }
                 } catch (AccessDeniedException e) {
-                    log.debug("Unable to log login event (maybe trying as Anonymous?): " +  e.getMessage());
+                    log.debug("Unable to log login event (maybe trying as Anonymous?): " + e.getMessage());
                 } catch (RepositoryException e) {
                     log.error("RepositoryException while logging login event", e);
                 } catch (RemoteException e) {
@@ -196,13 +154,6 @@ public class JcrSessionModel extends LoadableDetachableModel {
         if (fatalError) {
             // there's no sense in continuing
             throw new AbortWithHttpStatusException(503, false);
-        }
-        
-        if (result == null) {
-            credentials = Main.DEFAULT_CREDENTIALS;
-            Main main = (Main) Application.get();
-            main.resetConnection();
-            throw new RestartResponseException(InvalidLoginPage.class);
         }
         return result;
     }

@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.logout;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -36,10 +35,7 @@ public class LogoutPlugin extends RenderPlugin {
         super(context, config);
 
         UserSession session = (UserSession) getSession();
-        ValueMap credentials = session.getCredentials();
-        if (credentials != null) {
-            username = credentials.getString("username");
-        }
+        username = session.getJcrSession().getUserID();
 
         add(new Label("username", new PropertyModel(this, "username")));
         add(new LogoutLink("logout-link", context));

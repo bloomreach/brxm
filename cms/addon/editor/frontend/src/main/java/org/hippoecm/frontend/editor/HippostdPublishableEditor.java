@@ -217,7 +217,7 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
     }
 
     static IModel<Node> getDraftModel(IModel<Node> handle) {
-        String user = ((UserSession) Session.get()).getCredentials().getString("username");
+        String user = ((UserSession) Session.get()).getJcrSession().getUserID();
         try {
             Node handleNode = handle.getObject();
             if (handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {

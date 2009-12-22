@@ -154,7 +154,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         try {
             user.delete();
             log.info("User '" + username + "' deleted by "
-                    + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
+                    + ((UserSession) Session.get()).getJcrSession().getUserID());
             UserDataProvider.setDirty();
             Session.get().info(getString("user-removed", model));
             // one up
