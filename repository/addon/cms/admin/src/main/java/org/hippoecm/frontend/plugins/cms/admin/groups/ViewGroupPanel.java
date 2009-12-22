@@ -108,7 +108,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         try {
             group.delete();
             log.info("Group '" + groupname + "' deleted by "
-                    + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
+                    + ((UserSession) Session.get()).getJcrSession().getUserID());
             GroupDataProvider.setDirty();
             Session.get().info(getString("group-removed", model));
             // one up

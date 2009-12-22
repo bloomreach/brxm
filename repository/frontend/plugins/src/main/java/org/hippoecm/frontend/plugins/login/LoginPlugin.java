@@ -53,9 +53,7 @@ import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.value.ValueMap;
-
 import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -220,7 +218,7 @@ public class LoginPlugin extends RenderPlugin {
         public void onDetach() {
             WebRequest webRequest = ((WebRequestCycle)RequestCycle.get()).getWebRequest();
             if (!webRequest.getHttpServletRequest().getMethod().equals("POST") && !webRequest.isAjax()) {
-                ((UserSession)getSession()).getJcrSessionModel().flush();
+                ((UserSession)getSession()).releaseJcrSession();
             }
             super.onDetach();
         }
@@ -231,7 +229,7 @@ public class LoginPlugin extends RenderPlugin {
             String username = usernameTextField.getDefaultModelObjectAsString();
             HttpSession session = ((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
             ConcurrentLoginFilter.validateSession(session, username, false);
-            userSession.setJcrSessionModel(new JcrSessionModel(credentials));
+            userSession.login(credentials);
             userSession.setLocale(new Locale(selectedLocale));
             userSession.getJcrSession();
             redirect();

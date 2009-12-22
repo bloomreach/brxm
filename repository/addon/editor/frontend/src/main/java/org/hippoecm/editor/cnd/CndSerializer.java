@@ -30,12 +30,10 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.wicket.IClusterable;
 import org.hippoecm.editor.type.JcrNamespace;
 import org.hippoecm.editor.type.JcrTypeDescriptor;
 import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
@@ -48,11 +46,9 @@ import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CndSerializer implements IClusterable {
+public class CndSerializer {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: CndSerializer.java 18973 2009-07-23 10:01:26Z fvlankvelt $";
-
-    private static final long serialVersionUID = 1L;
 
     private static Logger log = LoggerFactory.getLogger(CndSerializer.class);
 
@@ -159,15 +155,15 @@ public class CndSerializer implements IClusterable {
         }
     }
 
-    private JcrSessionModel jcrSession;
+    private Session jcrSession;
     private Map<String, String> namespaces;
     private LinkedHashMap<String, TypeEntry> types;
     private HashMap<String, String> pseudoTypes;
     private ITypeLocator oldTypeLocator;
     private ITypeLocator newTypeLocator;
 
-    public CndSerializer(JcrSessionModel sessionModel, final String namespace) throws StoreException {
-        this.jcrSession = sessionModel;
+    public CndSerializer(Session session, final String namespace) throws StoreException {
+        this.jcrSession = session;
 
         final JcrTypeStore jcrTypeStore = new JcrTypeStore();
         IStore<ITypeDescriptor> oldBuiltinTypeStore = new BuiltinTypeStore();
@@ -247,10 +243,9 @@ public class CndSerializer implements IClusterable {
         pseudoTypes = new HashMap<String, String>();
 
         try {
-            Session session = jcrSession.getSession();
-            JcrNamespace jcrNamespace = new JcrNamespace(session, namespace);
+            JcrNamespace jcrNamespace = new JcrNamespace(jcrSession, namespace);
             String uri = jcrNamespace.getCurrentUri();
-            Node nsNode = session.getRootNode().getNode(jcrNamespace.getPath().substring(1));
+            Node nsNode = jcrSession.getRootNode().getNode(jcrNamespace.getPath().substring(1));
 
             NodeIterator typeIter = nsNode.getNodes();
             while (typeIter.hasNext()) {
@@ -324,7 +319,7 @@ public class CndSerializer implements IClusterable {
     private void addNamespace(String prefix) {
         if (!namespaces.containsKey(prefix)) {
             try {
-                namespaces.put(prefix, jcrSession.getSession().getNamespaceURI(prefix));
+                namespaces.put(prefix, jcrSession.getNamespaceURI(prefix));
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
@@ -337,8 +332,8 @@ public class CndSerializer implements IClusterable {
             String last = namespace;
             int pos = namespace.lastIndexOf('/');
             try {
-                for (String registered : jcrSession.getSession().getNamespacePrefixes()) {
-                    String uri = jcrSession.getSession().getNamespaceURI(registered);
+                for (String registered : jcrSession.getNamespacePrefixes()) {
+                    String uri = jcrSession.getNamespaceURI(registered);
                     if (uri.startsWith(namespace.substring(0, pos + 1))) {
                         if (isLater(uri, last)) {
                             last = uri;
@@ -388,7 +383,7 @@ public class CndSerializer implements IClusterable {
             return "internal";
         }
         try {
-            NamespaceRegistry nsReg = jcrSession.getSession().getWorkspace().getNamespaceRegistry();
+            NamespaceRegistry nsReg = jcrSession.getWorkspace().getNamespaceRegistry();
             return nsReg.getURI(prefix);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());

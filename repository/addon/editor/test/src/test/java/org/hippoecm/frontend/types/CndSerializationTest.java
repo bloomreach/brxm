@@ -32,7 +32,6 @@ import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 import org.apache.wicket.Session;
 import org.hippoecm.editor.cnd.CndSerializer;
 import org.hippoecm.frontend.PluginTest;
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.junit.Test;
 
@@ -42,8 +41,8 @@ public class CndSerializationTest extends PluginTest {
 
     @Test
     public void testSerialization() throws Exception {
-        JcrSessionModel sessionModel = ((UserSession) Session.get()).getJcrSessionModel();
-        CndSerializer serializer = new CndSerializer(sessionModel, "test");
+        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        CndSerializer serializer = new CndSerializer(session, "test");
         String cnd = serializer.getOutput();
 
         CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new StringReader(cnd), "test");

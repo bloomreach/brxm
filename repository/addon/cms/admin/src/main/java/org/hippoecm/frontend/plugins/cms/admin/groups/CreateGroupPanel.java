@@ -77,7 +77,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
                 try {
                     group.create();
                     log.info("Group '" + groupname + "' created by "
-                            + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
+                            + ((UserSession) Session.get()).getJcrSession().getUserID());
                     GroupDataProvider.setDirty();
                     Session.get().info(getString("group-created", groupModel));
                     // one up

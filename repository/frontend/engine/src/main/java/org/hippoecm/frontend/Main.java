@@ -60,9 +60,7 @@ import org.apache.wicket.util.resource.UrlResourceStream;
 import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
 import org.apache.wicket.util.string.StringValueConversionException;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.JcrSessionModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -82,27 +80,11 @@ public class Main extends WebApplication {
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
     public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
     public final static String MAXUPLOAD_PARAM = "upload-limit";
-    public final static ValueMap DEFAULT_CREDENTIALS = new ValueMap("username=,password=");
     public final static String PLUGIN_APPLICATION_NAME = "config";
 
     @Override
     protected void init() {
         super.init();
-
-        getSecuritySettings().setAuthorizationStrategy(new IAuthorizationStrategy() {
-
-            public boolean isActionAuthorized(Component component, Action action) {
-                return true;
-            }
-
-            public boolean isInstantiationAuthorized(Class componentClass) {
-                if (Home.class.isAssignableFrom(componentClass)) {
-                    UserSession session = (UserSession) Session.get();
-                    session.getJcrSession();
-                }
-                return true;
-            }
-        });
 
         getPageSettings().setVersionPagesByDefault(false);
 
@@ -242,14 +224,14 @@ public class Main extends WebApplication {
                 // FIXME: workaround use a subsession because we can't refresh the session
                 // the logout is actually performed by the JcrResourceRequestTarget
                 UserSession session = (UserSession) Session.get();
-                ValueMap credentials = session.getCredentials();
-                javax.jcr.Session subSession = null;
+                IValueMap credentials = session.getCredentials();
                 try {
-                    subSession = session.getJcrSession().impersonate(
+                    javax.jcr.Session subSession = session.getJcrSession().impersonate(
                             new javax.jcr.SimpleCredentials(credentials.getString("username"), credentials.getString(
                                     "password").toCharArray()));
-                    Node node = ((HippoWorkspace)subSession.getWorkspace()).getHierarchyResolver().getNode(subSession.getRootNode(), path);
-                    return new JcrResourceRequestTarget(new JcrNodeModel(node));
+                    Node node = ((HippoWorkspace) subSession.getWorkspace()).getHierarchyResolver().getNode(
+                            subSession.getRootNode(), path);
+                    return new JcrResourceRequestTarget(node);
                 } catch (PathNotFoundException e) {
                     log.info("binary not found " + e.getMessage());
                 } catch (javax.jcr.LoginException ex) {
@@ -313,13 +295,13 @@ public class Main extends WebApplication {
     }
 
     @Override
-    public Class getHomePage() {
+    public Class<Home> getHomePage() {
         return org.hippoecm.frontend.Home.class;
     }
 
     @Override
     public Session newSession(Request request, Response response) {
-        return new UserSession(request, new JcrSessionModel(DEFAULT_CREDENTIALS));
+        return new UserSession(request);
     }
 
     @Override

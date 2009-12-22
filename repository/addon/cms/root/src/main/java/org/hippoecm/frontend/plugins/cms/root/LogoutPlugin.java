@@ -20,15 +20,10 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.util.value.ValueMap;
-
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -36,6 +31,8 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LogoutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -52,8 +49,7 @@ public class LogoutPlugin extends RenderPlugin {
         super(context, config);
 
         UserSession session = (UserSession) getSession();
-        ValueMap credentials = session.getCredentials();
-        username = credentials.getString("username");
+        username = session.getJcrSession().getUserID();
 
         add(new Label("username", new PropertyModel(this, "username")));
 

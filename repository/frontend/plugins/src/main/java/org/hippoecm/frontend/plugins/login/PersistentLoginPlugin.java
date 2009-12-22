@@ -26,16 +26,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.Cookie;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
-
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
@@ -48,6 +44,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PersistentLoginPlugin extends LoginPlugin {
     @SuppressWarnings("unused")
@@ -128,20 +126,18 @@ public class PersistentLoginPlugin extends LoginPlugin {
                         }
                     }
                     UserSession userSession = (UserSession)getSession();
-                    userSession.setJcrSessionModel(new JcrSessionModel(credentials));
+                    userSession.login(credentials);
                     userSession.getJcrSession();
                     throw new RestartResponseException(Home.class, new PageParameters(RequestCycle.get().getRequest().getParameterMap()));
                 } catch (LoginException ex) {
                     // deliberately ignored
                 } catch (RepositoryException ex) {
                     log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                    credentials = Main.DEFAULT_CREDENTIALS;
                     Main main = (Main)Application.get();
                     main.resetConnection();
                     throw new RestartResponseException(InvalidLoginPage.class);
                 } catch (RemoteException ex) {
                     log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                    credentials = Main.DEFAULT_CREDENTIALS;
                     Main main = (Main)Application.get();
                     main.resetConnection();
                     throw new RestartResponseException(InvalidLoginPage.class);
@@ -152,9 +148,9 @@ public class PersistentLoginPlugin extends LoginPlugin {
         @Override
         public final void onSubmit() {
             UserSession userSession = (UserSession)getSession();
-            userSession.setJcrSessionModel(new JcrSessionModel(credentials) {
+            userSession.login(credentials, new JcrSessionModel(credentials) {
                 @Override
-                protected Object load() {
+                protected javax.jcr.Session load() {
                     javax.jcr.Session result = null;
                     try {
                         Main main = (Main)Application.get();
@@ -211,12 +207,6 @@ public class PersistentLoginPlugin extends LoginPlugin {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage());
                     } catch (IOException ex) {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                    }
-                    if (result == null) {
-                        credentials = Main.DEFAULT_CREDENTIALS;
-                        Main main = (Main)Application.get();
-                        main.resetConnection();
-                        throw new RestartResponseException(InvalidLoginPage.class);
                     }
                     return result;
                 }

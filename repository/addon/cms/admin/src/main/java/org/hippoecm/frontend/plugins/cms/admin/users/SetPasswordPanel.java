@@ -87,7 +87,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
                 try {
                     user.savePassword(password);
                     log.info("User '" + username + "' password set by "
-                            + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
+                            + ((UserSession) Session.get()).getJcrSession().getUserID());
                     Session.get().info(getString("user-password-set", model));
                     // one up
                     List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();

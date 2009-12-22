@@ -28,10 +28,8 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Application;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.form.TextField;
 import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -75,9 +73,9 @@ public class LoginPlugin extends org.hippoecm.frontend.plugins.login.LoginPlugin
         @Override
         public final void onSubmit() {
             UserSession userSession = (UserSession) getSession();
-            userSession.setJcrSessionModel(new JcrSessionModel(credentials) {
+            userSession.login(credentials, new JcrSessionModel(credentials) {
                 @Override
-                protected Object load() {
+                protected javax.jcr.Session load() {
                     javax.jcr.Session result = null;
                     try {
                         Main main = (Main)Application.get();
@@ -121,13 +119,6 @@ public class LoginPlugin extends org.hippoecm.frontend.plugins.login.LoginPlugin
                         log.info("Invalid login as user: " + credentials.getString("username"));
                     } catch (RepositoryException e) {
                         log.error(e.getMessage());
-                    }
-
-                    if (result == null) {
-                        credentials = Main.DEFAULT_CREDENTIALS;
-                        Main main = (Main)Application.get();
-                        main.resetConnection();
-                        throw new RestartResponseException(InvalidLoginPage.class);
                     }
                     return result;
                 }

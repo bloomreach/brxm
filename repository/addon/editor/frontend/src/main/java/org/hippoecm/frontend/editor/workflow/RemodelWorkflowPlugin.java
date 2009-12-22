@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
@@ -39,7 +40,6 @@ import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.action.NewCompoundTypeAction;
 import org.hippoecm.frontend.editor.workflow.action.NewDocumentTypeAction;
 import org.hippoecm.frontend.editor.workflow.dialog.RemodelDialog;
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -76,19 +76,19 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin<Namespace
             @Override
             protected String execute(NamespaceWorkflow workflow) throws Exception {
                 try {
-                    JcrSessionModel sessionModel = ((UserSession) Session.get()).getJcrSessionModel();
+                    javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
                     Map<String, Serializable> hints = workflow.hints();
                     String prefix = (String) hints.get("prefix");
-                    String cnd = new CndSerializer(sessionModel, prefix).getOutput();
-                    Map<String,List<Change>> cargo = makeCargo(sessionModel.getSession(), prefix);
-                    sessionModel.getSession().save();
-                    sessionModel.getSession().refresh(false);
+                    String cnd = new CndSerializer(session, prefix).getOutput();
+                    Map<String,List<Change>> cargo = makeCargo(session, prefix);
+                    session.save();
+                    session.refresh(false);
 
                     log.info("remodelling namespace " + prefix);
 
                     // log out; the session model will log in again after the updateModel workflow call
                     // Sessions cache path resolver information, which is incorrect after remapping the prefix.
-                    sessionModel.flush();
+                    ((UserSession) Session.get()).releaseJcrSession();
                     workflow.updateModel(cnd, cargo);
 
                     return null;

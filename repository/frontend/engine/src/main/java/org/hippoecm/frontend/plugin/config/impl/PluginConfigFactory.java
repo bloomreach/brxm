@@ -17,16 +17,14 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.util.List;
 
-import javax.jcr.Session;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.util.value.ValueMap;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.WebApplicationHelper;
-import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.session.UserSession;
 
 public class PluginConfigFactory implements IPluginConfigService {
     @SuppressWarnings("unused")
@@ -36,30 +34,31 @@ public class PluginConfigFactory implements IPluginConfigService {
 
     private IPluginConfigService pluginConfigService;
 
-    public PluginConfigFactory(JcrSessionModel sessionModel, IApplicationFactory defaultFactory) {
-        IApplicationFactory  builtinFactory = new BuiltinApplicationFactory();
+    public PluginConfigFactory(UserSession userSession, IApplicationFactory defaultFactory) {
+        IApplicationFactory builtinFactory = new BuiltinApplicationFactory();
 
         String appName = WebApplicationHelper.getConfigurationParameter((WebApplication) Application.get(),
                 Main.PLUGIN_APPLICATION_NAME, null);
-        Session session = sessionModel.getSession();
-        ValueMap credentials = sessionModel.getCredentials();
-        if (Main.DEFAULT_CREDENTIALS.equals(credentials)) {
+        IValueMap credentials = userSession.getCredentials();
+        if (UserSession.DEFAULT_CREDENTIALS.equals(credentials)) {
             appName = "login";
         }
 
         IPluginConfigService baseService;
-        if (session == null || !session.isLive()) {
+        try {
+            if (appName == null) {
+                baseService = defaultFactory.getDefaultApplication();
+                if (baseService == null) {
+                    baseService = builtinFactory.getDefaultApplication();
+                }
+            } else {
+                baseService = defaultFactory.getApplication(appName);
+                if (baseService == null) {
+                    baseService = builtinFactory.getDefaultApplication();
+                }
+            }
+        } catch (Exception e) {
             baseService = builtinFactory.getApplication("login");
-        } else if (appName == null) {
-            baseService = defaultFactory.getDefaultApplication();
-            if (baseService == null) {
-                baseService = builtinFactory.getDefaultApplication();
-            }
-        } else {
-            baseService = defaultFactory.getApplication(appName);
-            if (baseService == null) {
-                baseService = builtinFactory.getDefaultApplication();
-            }
         }
         pluginConfigService = baseService;
     }

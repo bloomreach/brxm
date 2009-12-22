@@ -28,14 +28,12 @@ import javax.servlet.http.Cookie;
 import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
-import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -127,7 +125,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected Object load() {
+                protected javax.jcr.Session load() {
                     javax.jcr.Session result = null;
                     try {
                         Main main = (Main) Application.get();
@@ -193,16 +191,10 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     } catch (RemoteException ex) {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage());
                     }
-                    if (result == null) {
-                        credentials = Main.DEFAULT_CREDENTIALS;
-                        Main main = (Main) Application.get();
-                        main.resetConnection();
-                        throw new RestartResponseException(InvalidLoginPage.class);
-                    }
                     return result;
                 }
             };
-            userSession.setJcrSessionModel(sessionModel);
+            userSession.login(credentials, sessionModel);
             ConcurrentLoginFilter.validateSession(((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest()
                     .getSession(true), usernameTextField.getDefaultModelObjectAsString(), false);
             userSession.setLocale(new Locale(selectedLocale));
