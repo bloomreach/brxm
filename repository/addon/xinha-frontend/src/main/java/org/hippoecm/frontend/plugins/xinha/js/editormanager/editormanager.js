@@ -182,10 +182,7 @@ if (!YAHOO.hippo.EditorManager) {
                 //make editor
                 var xinha = Xinha.makeEditors([ editor.name ], xinhaConfig, editor.config.plugins)[editor.name];
                 
-                //Register EditorManagerPlugin
-                xinha.registerPlugin(EditorManagerPlugin);
-                
-                //concat default properties with configured properties
+                //concatenate default properties with configured properties
                 xinha.config = this._appendProperties(xinha.config, editor.config.properties);
 
                 //configure toolbar
