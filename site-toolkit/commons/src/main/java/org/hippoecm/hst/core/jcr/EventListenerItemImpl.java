@@ -15,9 +15,8 @@
  */
 package org.hippoecm.hst.core.jcr;
 
+import javax.jcr.observation.Event;
 import javax.jcr.observation.EventListener;
-
-import org.apache.jackrabbit.spi.Event;
 
 public class EventListenerItemImpl implements EventListenerItem {
     

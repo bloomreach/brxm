@@ -34,7 +34,7 @@
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-pipelines.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-request.xml" />
-  <import resource="classpath:/org/hippoecm/hst/core/jcr/pool/GeneralMultiplePoolingRepository.xml" />
+  <import resource="classpath:/org/hippoecm/hst/core/GeneralMultiplePoolingRepository.xml" />
   
   <bean id="javax.jcr.Credentials.hstconfigreader" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="${hstconfigreader.repository.user.name}"/>

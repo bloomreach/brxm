@@ -20,7 +20,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.Invocation;
-import org.hippoecm.hst.proxy.ProxyFactory;
+import org.hippoecm.hst.core.jcr.pool.util.ProxyFactory;
 
 public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator, PoolingRepositoryAware {
     

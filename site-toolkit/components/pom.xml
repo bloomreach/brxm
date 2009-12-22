@@ -29,6 +29,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>session-pool</module>
         <module>core</module>
     </modules>
     

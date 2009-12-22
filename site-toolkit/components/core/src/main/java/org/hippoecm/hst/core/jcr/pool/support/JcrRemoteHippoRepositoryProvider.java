@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.jcr.pool;
+package org.hippoecm.hst.core.jcr.pool.support;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
@@ -25,6 +25,8 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.ClassUtils;
+import org.hippoecm.hst.core.jcr.pool.JcrHippoRepository;
+import org.hippoecm.hst.core.jcr.pool.JcrHippoRepositoryProvider;
 import org.hippoecm.repository.HippoRepositoryImpl;
 import org.hippoecm.repository.decorating.client.ClientServicesAdapterFactory;
 

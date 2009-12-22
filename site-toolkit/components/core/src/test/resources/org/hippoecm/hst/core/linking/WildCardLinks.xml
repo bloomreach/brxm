@@ -24,7 +24,7 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
     
-  <import resource="classpath:/org/hippoecm/hst/core/jcr/pool/GeneralMultiplePoolingRepository.xml" />
+  <import resource="classpath:/org/hippoecm/hst/core/GeneralMultiplePoolingRepository.xml" />
        
   <bean id="org.hippoecm.hst.configuration.HstSitesManager" class="org.hippoecm.hst.configuration.HstSitesManagerImpl">
     <property name="repository" ref="javax.jcr.Repository" />

@@ -30,12 +30,11 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
-import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestBasicPoolingRepository extends AbstractSpringTestCase {
+public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCase {
     
     protected BasicPoolingRepository poolingRepository;
     protected BasicPoolingRepository readOnlyPoolingRepository;

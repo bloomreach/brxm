@@ -27,12 +27,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
-import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestMultipleRepository extends AbstractSpringTestCase {
+public class TestMultipleRepository extends AbstractSessionPoolSpringTestCase {
     
     protected MultipleRepository multipleRepository;
     protected Repository repository;
