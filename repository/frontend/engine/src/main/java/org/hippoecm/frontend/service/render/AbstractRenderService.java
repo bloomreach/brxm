@@ -375,7 +375,6 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
             if (target != null) {
                 target.addComponent(this);
             }
-            redraw = false;
         }
         for (Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {
             for (IRenderService service : entry.getValue().getChildren()) {
@@ -464,6 +463,12 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         return null;
     }
 
+    @Override
+    protected void onBeforeRender() {
+        redraw = false;
+        super.onBeforeRender();
+    }
+    
     /**
      * Base class for extension points.  Registers as a {@link ServiceTracker} for a
      * {@link IRenderService} extension.
