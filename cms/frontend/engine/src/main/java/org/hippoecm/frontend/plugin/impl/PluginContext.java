@@ -23,7 +23,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.wicket.IClusterable;
@@ -246,7 +245,8 @@ public class PluginContext implements IPluginContext, IDetachable {
 
     public void registerTracker(IServiceTracker<? extends IClusterable> listener, String name) {
         if (name == null) {
-            log.warn("listener name is null");
+            log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
+                    + " is registering a service tracker with a null name");
         }
         if (!stopping) {
             List<IServiceTracker<? extends IClusterable>> list = listeners.get(name);
@@ -274,22 +274,29 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     // DO NOT CALL THIS API
+    @SuppressWarnings("unchecked")
     public void connect(IPlugin plugin) {
         if (initializing) {
             this.plugin = plugin;
             Map<String, List> listeners = new LinkedHashMap(this.listeners);
             initializing = false;
-            for (Map.Entry<String, List> entry : (Set<Map.Entry<String, List>>) listeners.entrySet()) {
+
+            log.debug("registering trackers for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
+            for (Map.Entry<String, List> entry : listeners.entrySet()) {
                 List<IServiceTracker<? extends IClusterable>> list = entry.getValue();
                 for (IServiceTracker<? extends IClusterable> listener : list) {
                     manager.registerTracker(listener, entry.getKey());
                 }
             }
+
+            log.debug("registering services for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
             for (ServiceRegistration registration : registrations.values()) {
                 registration.notifyTrackers();
             }
             registrations.clear();
+
             if (plugin != null) {
+                log.debug("starting plugin {}", plugin.getClass().getName());
                 plugin.start();
             }
         } else {
@@ -317,12 +324,14 @@ public class PluginContext implements IPluginContext, IDetachable {
                 plugin.stop();
             }
 
+            log.debug("stopping clusters for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
             ClusterControl[] controls = children.values().toArray(new ClusterControl[children.size()]);
             for (ClusterControl control : controls) {
                 control.stop();
             }
 
             if (!initializing) {
+                log.debug("unregistering trackers for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
                 for (Map.Entry<String, List<IServiceTracker<? extends IClusterable>>> entry : listeners.entrySet()) {
                     for (IServiceTracker<? extends IClusterable> service : entry.getValue()) {
                         manager.unregisterTracker(service, entry.getKey());
@@ -331,12 +340,14 @@ public class PluginContext implements IPluginContext, IDetachable {
             }
             listeners.clear();
 
+            log.debug("releasing service factory instances for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
             for (Map.Entry<IServiceFactory<IClusterable>, IClusterable> entry : instances.entrySet()) {
                 entry.getKey().releaseService(this, entry.getValue());
             }
             instances.clear();
 
             if (!initializing) {
+                log.debug("unregistering services for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
                 for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
                     for (IClusterable service : entry.getValue()) {
                         manager.unregisterService(service, entry.getKey());
