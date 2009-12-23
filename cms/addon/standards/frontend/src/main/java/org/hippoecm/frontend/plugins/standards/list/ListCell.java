@@ -79,7 +79,7 @@ class ListCell extends Panel {
             if (cellModifiers != null) {
                 for (final AttributeModifier cellModifier : cellModifiers) {
                     add(cellModifier);
-                    if (cellModifier instanceof IObservable) {
+                    if (context != null && (cellModifier instanceof IObservable)) {
                         IObserver observer = new IObserver<IObservable>() {
 
                             public IObservable getObservable() {
