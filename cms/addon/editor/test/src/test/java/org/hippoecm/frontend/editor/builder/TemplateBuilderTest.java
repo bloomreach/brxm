@@ -344,10 +344,10 @@ public class TemplateBuilderTest extends PluginTest {
         refreshPage();
 
         // remove
-        tester.clickLink("root:extension.form:template:preview:view:1:item:remove");
+        tester.clickLink("root:extension.form:template:preview:view:1:item:head:remove");
         
         // remove
-        tester.clickLink("root:extension.form:template:preview:view:1:item:remove");
+        tester.clickLink("root:extension.form:template:preview:view:1:item:head:remove");
     }
 
     @Test
@@ -381,10 +381,10 @@ public class TemplateBuilderTest extends PluginTest {
         refreshPage();
 
         // down
-        tester.clickLink("root:extension.form:template:preview:view:1:item:transitions:1:link");
+        tester.clickLink("root:extension.form:template:preview:view:1:item:head:transitions:1:link");
 
         // remove
-        tester.clickLink("root:extension.form:template:preview:view:1:item:remove");
+        tester.clickLink("root:extension.form:template:preview:view:1:item:head:remove");
     }
 
 }

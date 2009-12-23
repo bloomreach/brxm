@@ -161,7 +161,7 @@ public class TwoColumnTest extends PluginTest {
         tester.assertComponent("root:preview:extension.left:preview:view:1:item:preview", RenderPlugin.class);
 
         // move to right
-        tester.clickLink("root:preview:extension.left:preview:view:1:item:transitions:1:link");
+        tester.clickLink("root:preview:extension.left:preview:view:1:item:head:transitions:1:link");
         
         restartCluster();
 
