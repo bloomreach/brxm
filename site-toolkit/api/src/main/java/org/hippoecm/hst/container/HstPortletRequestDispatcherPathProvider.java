@@ -36,6 +36,8 @@ public interface HstPortletRequestDispatcherPathProvider {
     
     String getServletPath(PortletRequest request) throws PortletException;
     
+    String getPathInfo(PortletRequest request) throws PortletException;
+    
     void destroy();
     
 }

@@ -29,25 +29,37 @@ import javax.portlet.PortletSession;
 
 public class DefaultPortletRequestDispatcherImpl implements HstPortletRequestDispatcherPathProvider {
 
-    private static final String ATTRIBUTE_NAME = "hstPortletRequestDispatcherPathProvider.attributeName";
-    private static final String PROPERTY_PATH = "hstPortletRequestDispatcherPathProvider.propertyPath";
+    private static final String SERVLET_PATH_ATTRIBUTE_NAME = "hstPortletRequestDispatcherPathProvider.servletPath.attributeName";
+    private static final String SERVLET_PATH_PROPERTY_PATH = "hstPortletRequestDispatcherPathProvider.servletPath.propertyPath";
     private static final String SERVLET_PATH_MAP = "hstPortletRequestDispatcherPathProvider.servletPathMap";
 
+    private static final String PATH_INFO_ATTRIBUTE_NAME = "hstPortletRequestDispatcherPathProvider.pathInfo.attributeName";
+    private static final String PATH_INFO_PROPERTY_PATH = "hstPortletRequestDispatcherPathProvider.pathInfo.propertyPath";
+    private static final String PATH_INFO_PREFIX_EXCLUDE = "hstPortletRequestDispatcherPathProvider.pathInfo.prefixExclude";
+    
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
     private Map<String, PropertyDescriptor> propertyDescriptorCache;
 
-    private String attributeName;
-    private String propertyPath;
+    private String servletPathAttributeName;
+    private String servletPathPropertyPath;
     private Map<Object, String> servletPathMap;
+    
+    private String pathInfoAttributeName;
+    private String pathInfoPropertyPath;
+    private String pathInfoPrefixExclude;
     
     public DefaultPortletRequestDispatcherImpl() {
         
     }
 
     public void init(PortletConfig config) throws PortletException {
-        attributeName = config.getInitParameter(ATTRIBUTE_NAME);
-        propertyPath = config.getInitParameter(PROPERTY_PATH);
+        servletPathAttributeName = config.getInitParameter(SERVLET_PATH_ATTRIBUTE_NAME);
+        servletPathPropertyPath = config.getInitParameter(SERVLET_PATH_PROPERTY_PATH);
         servletPathMap = new HashMap<Object, String>();
+        
+        pathInfoAttributeName = config.getInitParameter(PATH_INFO_ATTRIBUTE_NAME);
+        pathInfoPropertyPath = config.getInitParameter(PATH_INFO_PROPERTY_PATH);
+        pathInfoPrefixExclude = config.getInitParameter(PATH_INFO_PREFIX_EXCLUDE);
 
         String servletPathMapParam = config.getInitParameter(SERVLET_PATH_MAP);
 
@@ -70,25 +82,25 @@ public class DefaultPortletRequestDispatcherImpl implements HstPortletRequestDis
         String servletPath = null;
         Object bean = null;
         
-        if (attributeName != null) {
-            bean = request.getAttribute(attributeName);
+        if (servletPathAttributeName != null) {
+            bean = request.getAttribute(servletPathAttributeName);
             
             if (bean == null) {
                 PortletSession portletSession = request.getPortletSession();
                 
                 if (portletSession != null) {
-                    bean = portletSession.getAttribute(attributeName);
+                    bean = portletSession.getAttribute(servletPathAttributeName);
                     
                     if (bean == null) {
-                        bean = portletSession.getAttribute(attributeName, PortletSession.APPLICATION_SCOPE);
+                        bean = portletSession.getAttribute(servletPathAttributeName, PortletSession.APPLICATION_SCOPE);
                     }
                 }
             }
         }
         
-        if (bean != null) {
+        if (bean != null && servletPathPropertyPath != null) {
             try {
-                Object value = getPropertyByPath(bean, propertyPath);
+                Object value = getPropertyByPath(bean, servletPathPropertyPath);
                 
                 if (value != null) {
                     servletPath = servletPathMap.get(value);
@@ -99,6 +111,41 @@ public class DefaultPortletRequestDispatcherImpl implements HstPortletRequestDis
         }
         
         return servletPath;
+    }
+    
+    public String getPathInfo(PortletRequest request) throws PortletException {
+        String pathInfo = null;
+        Object bean = null;
+        
+        if (pathInfoAttributeName != null) {
+            bean = request.getAttribute(pathInfoAttributeName);
+            
+            if (bean == null) {
+                PortletSession portletSession = request.getPortletSession();
+                
+                if (portletSession != null) {
+                    bean = portletSession.getAttribute(pathInfoAttributeName);
+                    
+                    if (bean == null) {
+                        bean = portletSession.getAttribute(pathInfoAttributeName, PortletSession.APPLICATION_SCOPE);
+                    }
+                }
+            }
+        }
+        
+        if (bean != null && pathInfoPropertyPath != null) {
+            try {
+                pathInfo = (String) getPropertyByPath(bean, pathInfoPropertyPath);
+                
+                if (pathInfoPrefixExclude != null && pathInfo.startsWith(pathInfoPrefixExclude)) {
+                    pathInfo = pathInfo.substring(pathInfoPrefixExclude.length());
+                }
+            } catch (Exception e) {
+                throw new PortletException(e);
+            }
+        }
+        
+        return pathInfo;
     }
 
     public void destroy() {
