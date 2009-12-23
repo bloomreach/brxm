@@ -876,7 +876,7 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 /* field template editing */
 .hippo-editor-template-field {padding: 2px; background-color: #bbb;}
 .hippo-editor-template-field-controls {height: 20px; padding-left: 5px; padding-right: 5px; background-color: white;}
-.active .hippo-editor-template-field-controls {background-color: #fedc89;}
+.hippo-editor-template-field-controls.active {background-color: #fedc89;}
 .hippo-editor-template-field-controls ul {float: right;}
 .hippo-editor-template-field-controls li {display: inline; }
 .hippo-editor-template-field-controls li a {float: left; display:block; background-position: center center; width: 16px; height: 16px;}
