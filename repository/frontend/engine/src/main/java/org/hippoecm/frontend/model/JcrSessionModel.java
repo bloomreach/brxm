@@ -63,7 +63,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     protected void flush() {
         Session session = getObject();
         if (session != null) {
-            log.error("Flushing session of " + session.getUserID());
+            log.debug("Flushing session of {}", session.getUserID());
             if (session.isLive()) {
                 try {
                     session.save();
