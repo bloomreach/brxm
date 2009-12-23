@@ -132,7 +132,11 @@ public class UserSession extends WebSession {
 
     protected IModel<Session> getJcrSessionModel() {
         synchronized (jcrSessions) {
-            return jcrSessions.get(this).jcrSession;
+            JcrSessionReference ref = jcrSessions.get(this);
+            if (ref != null) {
+                return ref.jcrSession;
+            }
+            return null;
         }
     }
 
