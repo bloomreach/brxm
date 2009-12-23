@@ -75,21 +75,24 @@ public class ChildNodeProvider extends AbstractProvider<JcrNodeModel> {
     public void addNew() {
         load();
 
-        if (prototype != null) {
-            try {
-                Node parent = (Node) getItemModel().getObject();
-                if (parent != null) {
+        try {
+            Node parent = (Node) getItemModel().getObject();
+            if (parent != null) {
+                Node node;
+                if (prototype != null) {
                     HippoSession session = (HippoSession) ((UserSession) Session.get()).getJcrSession();
-                    Node node = session.copy(prototype.getNode(), parent.getPath() + "/" + descriptor.getPath());
-                    elements.addLast(new JcrNodeModel(node));
+                    node = session.copy(prototype.getNode(), parent.getPath() + "/" + descriptor.getPath());
                 } else {
-                    log.warn("No parent available to initialize child node");
+                    log.info("No prototype available to initialize child node for field {} with type {}", descriptor
+                            .getName(), descriptor.getTypeDescriptor().getType());
+                    node = parent.addNode(descriptor.getPath(), descriptor.getTypeDescriptor().getType());
                 }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
+                elements.addLast(new JcrNodeModel(node));
+            } else {
+                log.warn("No parent available to initialize child node");
             }
-        } else {
-            log.warn("No prototype available to initialize child node");
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
     }
 
