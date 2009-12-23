@@ -222,16 +222,9 @@ public class UserSession extends WebSession {
         classLoader.detach();
         workflowManager.detach();
         facetSearchObserver = null;
-        JcrSessionReference sessionRef = null;
-        synchronized (jcrSessions) {
-            sessionRef = jcrSessions.remove(this);
-        }
-        if (sessionRef != null) {
-            if (sessionRef.jcrSession != null) {
-                sessionRef.jcrSession.detach();
-            }
-        }
-        credentials = null;
+
+        doLogin(DEFAULT_CREDENTIALS, new JcrSessionModel(DEFAULT_CREDENTIALS));
+
         ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getSession(false).invalidate();
         dirty();
         throw new RestartResponseException(WebApplication.get().getHomePage());
