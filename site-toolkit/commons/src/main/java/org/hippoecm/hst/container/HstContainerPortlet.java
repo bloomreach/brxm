@@ -300,15 +300,18 @@ public class HstContainerPortlet extends GenericPortlet {
             hstServletPath = this.defaultHstServletPath;
         }
         
+        String containerHstPathInfo = null;
+        
         if (!isEditMode) {
-            String containerHstPathInfo = hstPortletRequestDispatcherPathProvider.getPathInfo(request);
+            containerHstPathInfo = hstPortletRequestDispatcherPathProvider.getPathInfo(request);
             
             if (containerHstPathInfo != null) {
                 hstPathInfo = containerHstPathInfo;
             }
         }
         
-        String hstDispUrl = getHstDispatchUrl(request, response, hstServletPath, hstPathInfo);
+        boolean readDispPathParam = (containerHstPathInfo == null);
+        String hstDispUrl = getHstDispatchUrl(request, response, hstServletPath, hstPathInfo, readDispPathParam);
         
         HstResponseState portletResponseState = new HstPortletResponseState(request, response);
         request.setAttribute(HstResponseState.class.getName(), portletResponseState);
@@ -344,16 +347,24 @@ public class HstContainerPortlet extends GenericPortlet {
     }
     
     protected String getHstDispatchUrl(PortletRequest request, PortletResponse response, String hstServletPath, String hstPathInfo) {
+        return getHstDispatchUrl(request, response, hstServletPath, hstPathInfo, true);
+    }
+    
+    protected String getHstDispatchUrl(PortletRequest request, PortletResponse response, String hstServletPath, String hstPathInfo, boolean readDispPathParam) {
         StringBuilder hstDispUrl = new StringBuilder(100);
-
-        String lifecyclePhase = (String) request.getAttribute(PortletRequest.LIFECYCLE_PHASE);
-        boolean isActionResponse = PortletRequest.ACTION_PHASE.equals(lifecyclePhase);
-        boolean isViewMode = PortletMode.VIEW.equals(request.getPortletMode());
         
-        String hstDispPathParam = request.getParameter(HST_PATH_PARAM_NAME + request.getPortletMode().toString());
+        String hstDispPathParam = null;
         
-        if (hstDispPathParam == null && (isViewMode || isActionResponse)) {
-            hstDispPathParam = request.getParameter(HST_PATH_PARAM_NAME);
+        if (readDispPathParam) {
+            String lifecyclePhase = (String) request.getAttribute(PortletRequest.LIFECYCLE_PHASE);
+            boolean isActionResponse = PortletRequest.ACTION_PHASE.equals(lifecyclePhase);
+            boolean isViewMode = PortletMode.VIEW.equals(request.getPortletMode());
+            
+            hstDispPathParam = request.getParameter(HST_PATH_PARAM_NAME + request.getPortletMode().toString());
+            
+            if (hstDispPathParam == null && (isViewMode || isActionResponse)) {
+                hstDispPathParam = request.getParameter(HST_PATH_PARAM_NAME);
+            }
         }
         
         if (hstDispPathParam != null) {
