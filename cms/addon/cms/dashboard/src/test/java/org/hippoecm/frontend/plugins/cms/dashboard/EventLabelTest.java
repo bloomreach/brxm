@@ -64,10 +64,10 @@ public class EventLabelTest extends PluginTest {
 
     Node createEventNode(Long timestamp, String method, String user) throws NoSuchNodeTypeException, LockException,
             VersionException, ConstraintViolationException, RepositoryException {
-        return createEventNode(timestamp, method, user, new Value[0]);
+        return createEventNode(timestamp, method, user, null);
     }
 
-    Node createEventNode(Long timestamp, String method, String user, Value[] arguments) throws ItemExistsException,
+    Node createEventNode(Long timestamp, String method, String user, String[] arguments) throws ItemExistsException,
             PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException,
             ConstraintViolationException, RepositoryException {
         Node node = root.getNode("test").addNode(timestamp.toString(), "hippolog:item");
@@ -75,7 +75,9 @@ public class EventLabelTest extends PluginTest {
         node.setProperty("hippolog:eventClass", EventLabelTest.class.getName());
         node.setProperty("hippolog:eventMethod", method);
         node.setProperty("hippolog:eventUser", user);
-        node.setProperty("hippolog:eventArguments", arguments);
+        if (arguments != null) {
+            node.setProperty("hippolog:eventArguments", arguments);
+        }
         return node;
     }
 
@@ -148,6 +150,30 @@ public class EventLabelTest extends PluginTest {
         EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName());
         TestLabel testLabel = new TestLabel(label);
         assertEquals("One minute ago, testUser called test method on testDocument", testLabel.getModelObject());
+    }
+
+    @Test
+    public void testDeleteDocumentEvent() throws Exception {
+        Node docNode = root.getNode("test").addNode("testDocument");
+        Long timestamp = Calendar.getInstance().getTimeInMillis();
+        Node eventNode = createEventNode(timestamp, "delete", "testUser");
+        eventNode.setProperty("hippolog:eventDocument", docNode.getPath());
+
+        DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
+        IModel<String> nameModel = parser.getName();
+        assertEquals("testDocument", nameModel.getObject());
+    }
+
+    @Test
+    public void testDeleteFolderEvent() throws Exception {
+        Node docNode = root.getNode("test").addNode("testDocument");
+        Long timestamp = Calendar.getInstance().getTimeInMillis();
+        Node eventNode = createEventNode(timestamp, "delete", "testUser", new String[] { "child" });
+        eventNode.setProperty("hippolog:eventDocument", docNode.getPath());
+
+        DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
+        IModel<String> nameModel = parser.getName();
+        assertEquals("child", nameModel.getObject());
     }
 
 }

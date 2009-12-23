@@ -50,7 +50,7 @@ public class DocumentEvent extends JcrObject {
     private String targetVariant;
     private boolean targetVariantExists;
 
-    public DocumentEvent(JcrNodeModel nodeModel) {
+    public DocumentEvent(IModel<Node> nodeModel) {
         super(nodeModel);
 
         try {
@@ -147,13 +147,13 @@ public class DocumentEvent extends JcrObject {
         return null;
     }
 
-    public IModel getName() {
-        if ("delete".equals(getMethod())) {
-            return new LoadableDetachableModel() {
+    public IModel<String> getName() {
+        if ("delete".equals(getMethod()) && getArgument(0) != null) {
+            return new LoadableDetachableModel<String>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected Object load() {
+                protected String load() {
                     return getArgument(0);
                 }
 
