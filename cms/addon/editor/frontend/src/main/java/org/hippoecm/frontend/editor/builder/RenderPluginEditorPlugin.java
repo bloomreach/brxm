@@ -26,6 +26,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
@@ -72,6 +73,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     protected IClusterControl previewControl;
     private IObserver configObserver;
     private Map<String, ServiceTracker<ILayoutAware>> trackers;
+    private WebMarkupContainer container;
 
     public RenderPluginEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -80,8 +82,11 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         builderContext = new BuilderContext(context, config);
         final boolean editable = (builderContext.getMode() == Mode.EDIT);
 
+        container = new WebMarkupContainer("head");
+        container.setOutputMarkupId(true);
+
         // add transitions from parent container
-        add(new RefreshingView<ILayoutTransition>("transitions") {
+        container.add(new RefreshingView<ILayoutTransition>("transitions") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -128,7 +133,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
         });
 
-        add(new AjaxLink("remove") {
+        container.add(new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -143,6 +148,24 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
         }.setVisible(editable));
 
+        container.add(new AttributeAppender("class", new IModel() {
+            private static final long serialVersionUID = 1L;
+
+            public Object getObject() {
+                if (builderContext.hasFocus()) {
+                    return "active";
+                }
+                return "";
+            }
+
+            public void setObject(Object object) {
+            }
+
+            public void detach() {
+            }
+        }, " "));
+        add(container);
+        
         if (editable) {
             add(new AjaxEventBehavior("onclick") {
                 private static final long serialVersionUID = 1L;
@@ -159,32 +182,21 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
             });
 
-            add(new AttributeAppender("class", new IModel() {
-                private static final long serialVersionUID = 1L;
-
-                public Object getObject() {
-                    if (builderContext.hasFocus()) {
-                        return "active";
-                    }
-                    return "";
-                }
-
-                public void setObject(Object object) {
-                }
-
-                public void detach() {
-                }
-            }, " "));
-
             builderContext.addBuilderListener(new IBuilderListener() {
                 private static final long serialVersionUID = 1L;
 
                 public void onBlur() {
-                    redraw();
+                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    if (target != null) {
+                        target.addComponent(container);
+                    }
                 }
 
                 public void onFocus() {
-                    redraw();
+                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    if (target != null) {
+                        target.addComponent(container);
+                    }
                 }
                 
             });

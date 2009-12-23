@@ -41,7 +41,7 @@ public class ListViewPluginEditorPlugin extends RenderPluginEditorPlugin {
         super(context, config);
 
         // disable remove link
-        get("remove").setVisible(false);
+        get("head:remove").setVisible(false);
     }
 
     @Override
