@@ -52,6 +52,14 @@ abstract public class JcrObject implements IDetachable, IObservable {
     private IObservationContext<JcrObject> obContext;
     private boolean observing = false;
 
+    /**
+     * Legacy constructor, to provide binary compatibility with 2.10.
+     */
+    @Deprecated
+    public JcrObject(JcrNodeModel model) {
+        this((IModel<Node>) model);
+    }
+    
     public JcrObject(IModel<Node> nodeModel) {
         if (nodeModel instanceof JcrNodeModel) {
             this.nodeModel = (JcrNodeModel) nodeModel;
