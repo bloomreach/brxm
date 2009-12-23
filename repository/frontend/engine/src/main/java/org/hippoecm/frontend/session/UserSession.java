@@ -78,6 +78,11 @@ public class UserSession extends WebSession {
         this(request, new JcrSessionModel(DEFAULT_CREDENTIALS));
     }
 
+    @Deprecated
+    public UserSession(Request request, JcrSessionModel sessionModel) {
+        this(request, (IModel<Session>) sessionModel);
+    }
+    
     public UserSession(Request request, IModel<Session> sessionModel) {
         super(request);
 
