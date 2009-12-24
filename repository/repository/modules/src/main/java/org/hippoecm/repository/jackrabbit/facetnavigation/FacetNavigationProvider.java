@@ -15,6 +15,7 @@ import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.hippoecm.repository.OrderBy;
+import org.hippoecm.repository.ParsedFacet;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
@@ -97,9 +98,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         }
         
         if (facets != null && facets.length > 0) {
-            boolean mapFacets = false;
             if(facetNodeNames != null) {
-                mapFacets = true;
                 if(facets.length != facetNodeNames.length) {
                     log.error("When using multivalued property '{}', it must have equal number of values" +
                     		"as for property '{}'", HippoNodeType.HIPPO_FACETNODENAMES, HippoNodeType.HIPPO_FACETS);
@@ -109,15 +108,24 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
             int i = 0;
         	for(String facet : facets){
         		try {
-        		    String nodeName = facet;
-        		    if(mapFacets && facetNodeNames[i] != null && !"".equals(facetNodeNames[i])) {
-        		        nodeName = facetNodeNames[i];
+        		    String configuredNodeName = null;
+        		    if(facetNodeNames != null && facetNodeNames[i] != null && !"".equals(facetNodeNames[i])) {
+        		        configuredNodeName = facetNodeNames[i];
         		    }
-	        		Name childName = resolveName(NodeNameCodec.encode(nodeName));
+        		    ParsedFacet parsedFacet;
+        		    try {
+        		        parsedFacet = new ParsedFacet(facet, configuredNodeName, this);
+                    } catch (Exception e) {
+                        log.error("Malformed facet range configuration '"+facet+"'. Valid format is "+VALID_RANGE_EXAMPLE,
+                                        e);
+                        return state;
+                    }
+                    
+	        		Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
 	        		FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
 	        		childNodeId.availableFacets = facets;
                     childNodeId.facetNodeNames = facetNodeNames;
-	        		childNodeId.currentFacet = facet;
+                    childNodeId.currentFacet = facet;
 	        		childNodeId.docbase = docbase;
 	        		if(limit > -1) {
 	        		    childNodeId.limit = limit;

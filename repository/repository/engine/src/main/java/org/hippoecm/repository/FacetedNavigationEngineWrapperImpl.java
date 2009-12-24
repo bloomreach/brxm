@@ -68,15 +68,21 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
         upstream.purge();
     }
 
-    public Result view(String queryName, Q initialQuery, C authorization,
-                       List<KeyValue<String, String>> facetsQuery, Q openQuery,
-                       Map<String,Map<String,Count>> resultset,
-                       Map<Name,String> inheritedFilter,
-                       HitsRequested hitsRequested) throws UnsupportedOperationException {
+    public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
+            List<FacetRange> rangeQuery, Q openQuery, Map<String, Map<String, Count>> resultset,
+            Map<Name, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException {
         Result result;
-        // System.err.println("FacetedNavigationEngineWrapperImpl.view(\"" + queryName + "\"," + initialQuery + ",\"" + authorization + "\",\"" + facetsQuery + "\",\"..,..,..,"  + hitsRequested + ")");
+        result = upstream.view(queryName, initialQuery, authorization, facetsQuery, rangeQuery, openQuery, resultset,
+                inheritedFilter, hitsRequested);
+        return result;
+    }
+    
+    public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
+            Q openQuery, Map<String, Map<String, Count>> resultset, Map<Name, String> inheritedFilter,
+            HitsRequested hitsRequested) throws UnsupportedOperationException {
+        Result result;
         result = upstream.view(queryName, initialQuery, authorization, facetsQuery, openQuery, resultset,
-        		inheritedFilter, hitsRequested);
+                inheritedFilter, hitsRequested);
         return result;
     }
 
@@ -91,7 +97,4 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
         return upstream.parse(query);
     }
 
-    public String resolveLuceneTermToPropertyString(String resolvedFacet, String luceneTerm) {
-        return upstream.resolveLuceneTermToPropertyString(resolvedFacet, luceneTerm);
-    }
 }

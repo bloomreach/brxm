@@ -175,8 +175,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
         /*
          * facetsQuery: get the query for the facets that are asked for
          */
-        FacetsQuery facetsQuery = new FacetsQuery(facetsQueryList, nsMappings,
-                (ServicingIndexingConfiguration) getIndexingConfig());
+        FacetsQuery facetsQuery = new FacetsQuery(facetsQueryList, nsMappings);
 
 
         /*
@@ -253,14 +252,13 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
                     /*
                      * facetPropExists: the node must have the property as facet
                      */
-                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, new String(propertyName),
-                            (ServicingIndexingConfiguration) getIndexingConfig());
+                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, new String(propertyName));
                     searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
 
                     if (log.isDebugEnabled()) {
                         timestamp = System.currentTimeMillis();
                     }
-                    collector = new FacetResultCollector(indexReader, new String(propertyName), (facet != null ? resultset.get(facet) : null),
+                    collector = new FacetResultCollector(indexReader, new String(propertyName), resultset.get(facet), null,
                             hitsRequested);
                     searcher.search(searchQuery,authorizationFilter, collector);
 
@@ -282,7 +280,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
                 if (log.isDebugEnabled()) {
                     timestamp = System.currentTimeMillis();
                 }
-                collector = new FacetResultCollector(indexReader, null, null, hitsRequested);
+                collector = new FacetResultCollector(indexReader, null, null, null, hitsRequested);
                 searcher.search(searchQuery, authorizationFilter, collector);
                 if (log.isDebugEnabled()) {
                     log.debug("lucene query with collector took: \t" + (System.currentTimeMillis() - timestamp)
@@ -339,7 +337,13 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
 
     }
 
-    public String resolveLuceneTermToPropertyString(String resolvedFacet, String luceneTerm) {
-        return super.luceneTermToProperty(resolvedFacet, luceneTerm);
+    public org.hippoecm.repository.FacetedNavigationEngine.Result view(String queryName, QueryImpl initialQuery,
+            ContextImpl authorization, List<KeyValue<String, String>> facetsQuery, List<FacetRange> rangeQuery,
+            QueryImpl openQuery,
+            Map<String, Map<String, org.hippoecm.repository.FacetedNavigationEngine.Count>> resultset,
+            Map<Name, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException {
+        // TODO Auto-generated method stub
+        return null;
     }
+
 }

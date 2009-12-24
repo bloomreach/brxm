@@ -29,7 +29,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
-import org.apache.jackrabbit.core.query.lucene.DateField;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.LongField;
@@ -44,10 +43,8 @@ import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.extractor.TextExtractor;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.DateTools.Resolution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -220,12 +217,13 @@ public class ServicingNodeIndexer extends NodeIndexer {
             case PropertyType.DATE:
                 
                 Map<String, String> resolutions = new HashMap<String,String>();
-                resolutions.put("year", DateTools.timeToString(value.getDate().getTimeInMillis(), DateTools.Resolution.YEAR));
-                resolutions.put("month", DateTools.timeToString(value.getDate().getTimeInMillis(), DateTools.Resolution.MONTH));
-                resolutions.put("day", DateTools.timeToString(value.getDate().getTimeInMillis(), DateTools.Resolution.DAY));
-                resolutions.put("hour", DateTools.timeToString(value.getDate().getTimeInMillis(), DateTools.Resolution.HOUR));
-                resolutions.put("minute", DateTools.timeToString(value.getDate().getTimeInMillis(), DateTools.Resolution.MINUTE));
-                resolutions.put("second", DateTools.timeToString(value.getDate().getTimeInMillis(), DateTools.Resolution.SECOND));
+                resolutions.put("year", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.YEAR));
+                resolutions.put("month", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.MONTH));
+                resolutions.put("week", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.WEEK));
+                resolutions.put("day", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.DAY));
+                resolutions.put("hour", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.HOUR));
+                resolutions.put("minute", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.MINUTE));
+                resolutions.put("second", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.SECOND));
                 
                 Map<String, Integer> byDateNumbers = new HashMap<String, Integer>();
                 byDateNumbers.put("year", value.getDate().get(Calendar.YEAR));
@@ -238,14 +236,16 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 byDateNumbers.put("minute", value.getDate().get(Calendar.MINUTE));
                 byDateNumbers.put("second", value.getDate().get(Calendar.SECOND));
                 
-                String dateToString = DateField.timeToString(value.getDate().getTimeInMillis());
+                String dateToString = String.valueOf(value.getDate().getTimeInMillis());
                 
                 indexDateFacet(doc, fieldName, dateToString, resolutions, byDateNumbers);
                 break;
             case PropertyType.DOUBLE:
+                // TODO index properly as facet double
                 indexFacet(doc, fieldName, DoubleField.doubleToString(new Double(value.getDouble()).doubleValue()));
                 break;
             case PropertyType.LONG:
+                // TODO index properly as facet long
                 indexFacet(doc, fieldName, LongField.longToString(new Long(value.getLong())));
                 break;
             case PropertyType.REFERENCE:
@@ -349,13 +349,15 @@ public class ServicingNodeIndexer extends NodeIndexer {
             String compoundFieldName = fieldName+ServicingFieldNames.DATE_RESOLUTION_DELIMITER+keyValue.getKey();
             doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, compoundFieldName, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
             internalFacetName = ServicingNameFormat.getInternalFacetName(compoundFieldName);     
-            doc.add(new Field(internalFacetName, keyValue.getValue() , Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.YES));
+            // no termvectors storing needed.
+            doc.add(new Field(internalFacetName, keyValue.getValue() , Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
         }
         
         for(Entry<String, Integer> keyValue : byDateNumbers.entrySet()) {
             String compoundFieldName = fieldName+ServicingFieldNames.DATE_NUMBER_DELIMITER+keyValue.getKey();
             doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, compoundFieldName, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
             internalFacetName = ServicingNameFormat.getInternalFacetName(compoundFieldName);  
+            // include termvectors!
             doc.add(new Field(internalFacetName, String.valueOf(keyValue.getValue()) , Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.YES));
         } 
     }

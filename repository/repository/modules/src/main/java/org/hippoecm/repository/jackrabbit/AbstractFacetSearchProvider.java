@@ -208,19 +208,17 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                     System.arraycopy(search, 0, newSearch, 0, search.length);
                 }
                 
-                String luceneTerm = entry.facetValue;
+                String facetValue = entry.facetValue;
                 
                 if (facets[0].indexOf("#") == -1) {
-                    newSearch[newSearch.length - 1] = "@" + facets[0] + "='" + luceneTerm + "'";
+                    newSearch[newSearch.length - 1] = "@" + facets[0] + "='" + facetValue + "'";
                 } else {
                     newSearch[newSearch.length - 1] = "@" + facets[0].substring(0, facets[0].indexOf("#")) + "='"
-                            + luceneTerm + "'" + facets[0].substring(facets[0].indexOf("#"));
+                            + facetValue + "'" + facets[0].substring(facets[0].indexOf("#"));
                 }
                 try {
-                    //String name = getDisplayName(nextFacet, facetTypeConstant);
-                    String name = facetedEngine.resolveLuceneTermToPropertyString(resolvedFacet, luceneTerm);
                     
-                    Name childName = resolveName(NodeNameCodec.encode(name, true));
+                    Name childName = resolveName(NodeNameCodec.encode(facetValue, true));
                     FacetSearchNodeId childNodeId = new FacetSearchNodeId(subSearchProvider, state.getNodeId(),
                             childName);
                     state.addChildNodeEntry(childName, childNodeId);

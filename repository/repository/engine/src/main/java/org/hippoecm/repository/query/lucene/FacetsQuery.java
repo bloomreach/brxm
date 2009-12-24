@@ -18,9 +18,7 @@ package org.hippoecm.repository.query.lucene;
 import java.util.List;
 
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
@@ -44,31 +42,24 @@ public class FacetsQuery {
      */
     private BooleanQuery query;
 
-    public FacetsQuery(List<KeyValue<String, String>> facetsQuery, NamespaceMappings nsMappings,
-                       ServicingIndexingConfiguration indexingConfig) {
+    public FacetsQuery(List<KeyValue<String, String>> facetsQuery, NamespaceMappings nsMappings) {
         this.query = new BooleanQuery(true);
 
         if (facetsQuery != null) {
             for (KeyValue<String, String> keyValue : facetsQuery ) {
-                Name propertyName;
                 try {
-                    propertyName = NameFactoryImpl.getInstance().create(keyValue.getKey());
-                    if (indexingConfig.isFacet(propertyName)) {
-                        
-                        String internalName = ServicingNameFormat.getInteralPropertyPathName(nsMappings, keyValue.getKey());
-                        Query tq ;
-                        if(keyValue.getValue() == null) {
-                        	// only make sure the document contains at least the facet (propertyName)
-                        	tq = new FacetPropExistsQuery(keyValue.getKey() , internalName, indexingConfig).getQuery();
-                        } else {
-                            String internalFacetName = ServicingNameFormat.getInternalFacetName(internalName);
-                        	tq = new TermQuery(new Term(internalFacetName, keyValue.getValue()));
-                        	
-                    	}
-                        this.query.add(tq, Occur.MUST);
+                    String internalName = ServicingNameFormat.getInteralPropertyPathName(nsMappings, keyValue.getKey());
+                    Query tq;
+                    if (keyValue.getValue() == null) {
+                        // only make sure the document contains at least the facet (propertyName)
+                        tq = new FacetPropExistsQuery(keyValue.getKey(), internalName).getQuery();
                     } else {
-                        log.warn("Property " + keyValue.getKey() + " not allowed for facetted search. " + "Add the property to the indexing configuration to be defined as FACET");
+                        String internalFacetName = ServicingNameFormat.getInternalFacetName(internalName);
+                        tq = new TermQuery(new Term(internalFacetName, keyValue.getValue()));
+
                     }
+                    this.query.add(tq, Occur.MUST);
+
                 } catch (IllegalNameException e) {
                     log.error(e.toString());
                 } 

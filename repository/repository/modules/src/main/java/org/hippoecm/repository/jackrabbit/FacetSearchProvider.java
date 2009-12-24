@@ -33,7 +33,7 @@ public class FacetSearchProvider extends AbstractFacetSearchProvider
     }
 
     @Override
-    public void initialize() throws RepositoryException {
+    protected void initialize() throws RepositoryException {
         super.initialize();
         subSearchProvider = (FacetSubSearchProvider) lookup(FacetSubSearchProvider.class.getName());
         subNodesProvider  = (FacetResultSetProvider) lookup(FacetResultSetProvider.class.getName());

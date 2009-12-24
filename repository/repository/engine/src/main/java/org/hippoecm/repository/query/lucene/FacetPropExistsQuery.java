@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.query.lucene;
 
-import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
@@ -39,18 +37,12 @@ public class FacetPropExistsQuery {
      */
     private BooleanQuery query;
 
-    public FacetPropExistsQuery(String facet, String internalName, ServicingIndexingConfiguration indexingConfig) {
+    public FacetPropExistsQuery(String facet, String internalName) {
         this.query = new BooleanQuery(true);
 
-        Name nodeName;
-        nodeName = NameFactoryImpl.getInstance().create(facet);
-        if (indexingConfig.isFacet(nodeName)) {
-            Query q = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalName));
-            this.query.add(q, Occur.MUST);
-        } else {
-            log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName() + " not allowed for facetted search. " +
-                    "Add the property to the indexing configuration to be defined as FACET");
-        }
+         Query q = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalName));
+         this.query.add(q, Occur.MUST);
+       
     }
 
     public BooleanQuery getQuery() {

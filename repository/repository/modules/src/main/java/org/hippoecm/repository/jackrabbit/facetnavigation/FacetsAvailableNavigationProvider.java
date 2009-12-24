@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
@@ -15,10 +14,10 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
+import org.hippoecm.repository.FacetRange;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.HitsRequested;
+import org.hippoecm.repository.ParsedFacet;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.jackrabbit.FacetKeyValue;
@@ -36,7 +35,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
     protected FacetResultSetProvider subNodesProvider = null;
 	
     @Override
-    public void initialize() throws RepositoryException {
+    protected void initialize() throws RepositoryException {
         super.initialize();
         facetsSubNavigationProvider = (FacetSubNavigationProvider) lookup(FacetSubNavigationProvider.class.getName());
         subNodesProvider  = (FacetResultSetProvider) lookup(FacetResultSetProvider.class.getName());
@@ -50,44 +49,50 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
     	NodeId nodeId = state.getNodeId();
     	if (nodeId instanceof FacetNavigationNodeId) {
     		FacetNavigationNodeId facetNavigationNodeId = (FacetNavigationNodeId)nodeId;
-    		List<KeyValue<String, String>> currentSearch = facetNavigationNodeId.currentSearch;
+            List<KeyValue<String, String>> currentSearch = facetNavigationNodeId.currentSearch;
+            List<FacetRange> currentRanges = facetNavigationNodeId.currentRanges;
     		String currentFacet = facetNavigationNodeId.currentFacet;
     		String[] availableFacets = facetNavigationNodeId.availableFacets;
     	    String docbase = facetNavigationNodeId.docbase;
-    	    String[] ancestorAndSelfUsedLuceneTerms = facetNavigationNodeId.ancestorAndSelfUsedLuceneTerms; 
+    	    String[] ancestorAndSelfUsedCombinations = facetNavigationNodeId.ancestorAndSelfUsedCombinations; 
     	    
     	    Map<Name,String> inheritedFilter = facetNavigationNodeId.view;
     	    
-    	    String resolvedFacet = null;
+    	    ParsedFacet parsedFacet;
             try {
-            	resolvedFacet = resolvePath(currentFacet).toString();
-            } catch (IllegalNameException e) {
-            	log.warn("Cannot resolve path for facet: '{}' : {}", currentFacet, e.getMessage());
-            } catch (NamespaceException e) {
-            	log.warn("Cannot resolve path for facet: '{}' : {}", currentFacet, e.getMessage());
-            } catch (MalformedPathException e) {
-            	log.warn("Cannot resolve path for facet: '{}' : {}", currentFacet, e.getMessage());
+                parsedFacet = new ParsedFacet(currentFacet, null, this);
+            } catch (Exception e) {
+                log.error("Malformed facet range configuration '{}'. Valid format is "+VALID_RANGE_EXAMPLE,
+                        currentFacet);
+                return state;
             }
-            if(resolvedFacet == null) {
+            
+            if(parsedFacet.getNamespacedProperty() == null) {
             	return state;
             }
-    	    
     		Map<String, Map<String, FacetedNavigationEngine.Count>> facetSearchResultMap;
             facetSearchResultMap = new TreeMap<String, Map<String, FacetedNavigationEngine.Count>>();
+            
             Map<String, FacetedNavigationEngine.Count> facetSearchResult;
             facetSearchResult = new TreeMap<String, FacetedNavigationEngine.Count>();
             
-            facetSearchResultMap.put(resolvedFacet, facetSearchResult);
+            if(parsedFacet.getRangeConfig() != null) {
+                // include the rangeConfig
+                facetSearchResultMap.put(parsedFacet.getNamespacedProperty()+"$"+parsedFacet.getRangeConfig(), facetSearchResult);
+            } else {
+                // normal resolvedFacet
+                facetSearchResultMap.put(parsedFacet.getNamespacedProperty(), facetSearchResult);
+            }
             
             FacetedNavigationEngine.Query initialQuery;
             initialQuery = (docbase != null ? facetedEngine.parse(docbase) : null);
 
             HitsRequested hitsRequested = new HitsRequested();
             hitsRequested.setResultRequested(false);
-            hitsRequested.setCountOnlyForFacetExists(true);
+            hitsRequested.setFixedDrillPath(false);
             
             FacetedNavigationEngine.Result facetedResult;
-            facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, null,
+            facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, null,
                     facetSearchResultMap, inheritedFilter , hitsRequested);
          
             int count = facetedResult.length();
@@ -102,24 +107,30 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             // add child node subnavigation:
             
             // facetSearchResult logicals default order is the natural descending order of the count. Therefore, we need to create sort the facetSearchResult first.
-            FacetNavigationEntry[] facetNavigationEntry = new FacetNavigationEntry[facetSearchResult.size()];
+            FacetNavigationEntry[] facetNavigationEntries = new FacetNavigationEntry[facetSearchResult.size()];
             int i = 0;
             for (Map.Entry<String, FacetedNavigationEngine.Count> entry : facetSearchResult.entrySet()) {
-                facetNavigationEntry[i] = new FacetNavigationEntry(entry.getKey(), entry.getValue());
+                facetNavigationEntries[i] = new FacetNavigationEntry(entry.getKey(), entry.getValue());
                 i++;
             }
             // sort according count
-            Arrays.sort(facetNavigationEntry);
+            Arrays.sort(facetNavigationEntries);
             
-            for(FacetNavigationEntry entry : facetNavigationEntry) {
+            for(FacetNavigationEntry entry : facetNavigationEntries) {
                 List<KeyValue<String,String>> newSearch = new ArrayList<KeyValue<String,String>>(currentSearch);
-            	
-                String luceneTerm = entry.facetValue;
-                
-                newSearch.add(new FacetKeyValue(resolvedFacet, luceneTerm));
+            	List<FacetRange> newRanges = new ArrayList<FacetRange>(currentRanges);
+                if(parsedFacet.getRangeConfig() != null) {
+                    for(FacetRange range : parsedFacet.getFacetRanges()){
+                        if(range.getName().equals(entry.facetValue)) {
+                            newRanges.add(range);
+                        }
+                    }
+                } else { 
+                   newSearch.add(new FacetKeyValue(parsedFacet.getNamespacedProperty(), entry.facetValue));
+                }
                 
                 List<KeyValue<String,String>> usedFacetValueCombis = new ArrayList<KeyValue<String,String>>(facetNavigationNodeId.usedFacetValueCombis);     
-                KeyValue<String, String> facetValueCombi = new FacetKeyValue(currentFacet, luceneTerm);
+                KeyValue<String, String> facetValueCombi = new FacetKeyValue(currentFacet, entry.facetValue);
                 
                 boolean stopSubNavigation = facetNavigationNodeId.stopSubNavigation;
                 if(!usedFacetValueCombis.contains(facetValueCombi)) {
@@ -131,24 +142,24 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                     stopSubNavigation = false;
                 }
                 try { 
-                    String name = facetedEngine.resolveLuceneTermToPropertyString(resolvedFacet, luceneTerm);
-                    
                     // use forceSimpleName = true in encode because value may contain ":" but this is not related to a namespace prefix
-                    Name childName = resolveName(NodeNameCodec.encode(name, true));
+                    Name childName = resolveName(NodeNameCodec.encode(entry.facetValue, true));
                     FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsSubNavigationProvider, state.getNodeId(), childName);
                     state.addChildNodeEntry(childName, childNodeId);
                     childNodeId.docbase = docbase;
                     childNodeId.availableFacets = availableFacets;
                     childNodeId.currentSearch = newSearch;
+                    childNodeId.currentRanges = newRanges;
+                    childNodeId.count = entry.count.count;
                     childNodeId.currentFacet = currentFacet;
                     
-                    String[] newAncestorAndSelfUsedLuceneTerms = new String[ancestorAndSelfUsedLuceneTerms != null ? ancestorAndSelfUsedLuceneTerms.length + 1 : 1];
-                    if (ancestorAndSelfUsedLuceneTerms != null && ancestorAndSelfUsedLuceneTerms.length > 0) {
-                        System.arraycopy(ancestorAndSelfUsedLuceneTerms, 0, newAncestorAndSelfUsedLuceneTerms, 0, ancestorAndSelfUsedLuceneTerms.length);
+                    String[] newAncestorAndSelfUsedCombinations = new String[ancestorAndSelfUsedCombinations != null ? ancestorAndSelfUsedCombinations.length + 1 : 1];
+                    if (ancestorAndSelfUsedCombinations != null && ancestorAndSelfUsedCombinations.length > 0) {
+                        System.arraycopy(ancestorAndSelfUsedCombinations, 0, newAncestorAndSelfUsedCombinations, 0, ancestorAndSelfUsedCombinations.length);
                     }
-                    newAncestorAndSelfUsedLuceneTerms[newAncestorAndSelfUsedLuceneTerms.length - 1] = luceneTerm;
+                    newAncestorAndSelfUsedCombinations[newAncestorAndSelfUsedCombinations.length - 1] = entry.facetValue;
                     
-                    childNodeId.ancestorAndSelfUsedLuceneTerms = newAncestorAndSelfUsedLuceneTerms;
+                    childNodeId.ancestorAndSelfUsedCombinations = newAncestorAndSelfUsedCombinations;
                     childNodeId.usedFacetValueCombis = usedFacetValueCombis;
                     childNodeId.facetNodeNames = facetNavigationNodeId.facetNodeNames;
                     childNodeId.stopSubNavigation = stopSubNavigation;
@@ -170,11 +181,11 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             Name resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
             List<KeyValue<String, String>> resultSetSearch = new ArrayList<KeyValue<String, String>>(currentSearch);
             // we add here the 'facet' without value, to make sure we only get results having at least the current facet as property
-            resultSetSearch.add(new FacetKeyValue(resolvedFacet, null));
+            resultSetSearch.add(new FacetKeyValue(parsedFacet.getNamespacedProperty(), null));
            
             FacetResultSetProvider.FacetResultSetNodeId childNodeId;
             childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), resultSetChildName, null,
-                    docbase, resultSetSearch, count);
+                    docbase, resultSetSearch, currentRanges, count);
             childNodeId.setLimit(facetNavigationNodeId.limit);
             childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
             state.addChildNodeEntry(resultSetChildName, childNodeId);
