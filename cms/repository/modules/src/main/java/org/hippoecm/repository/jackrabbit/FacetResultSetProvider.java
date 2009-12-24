@@ -35,6 +35,7 @@ import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.hippoecm.repository.FacetRange;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.HitsRequested;
 import org.hippoecm.repository.OrderBy;
@@ -60,6 +61,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         String docbase;
         String[] search;
         List<KeyValue<String, String>> preparedSearch;
+        List<FacetRange> currentRanges;
         
         // the list of properties to order the resultset on
         List<OrderBy> orderByList;
@@ -79,11 +81,12 @@ public class FacetResultSetProvider extends HippoVirtualProvider
             this.count = count;
         }
         
-		public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, List<KeyValue<String, String>> currentSearch, int count) {
+		public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, List<KeyValue<String, String>> currentSearch, List<FacetRange> currentRanges, int count) {
 			super(FacetResultSetProvider.this, parent, name);
             this.queryname = queryname;
             this.docbase = docbase;
             this.preparedSearch = currentSearch;
+            this.currentRanges = currentRanges;
             this.count = count;
 		}
 		
@@ -131,6 +134,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         String queryname = nodeId.queryname;
         String docbase = nodeId.docbase;
         String[] search = nodeId.search;
+        List<FacetRange> currentRanges = nodeId.currentRanges;
         long count = nodeId.count;
         
         Map<Name,String> inheritedFilter = null;
@@ -203,7 +207,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         long t1 = 0, t2;
         if(log.isDebugEnabled())
             t1 = System.currentTimeMillis();
-        facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, null, inheritedFilter,
+        facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, currentRanges, null, null, inheritedFilter,
                                            hitsRequested);
         if(log.isDebugEnabled()) {
             t2 = System.currentTimeMillis();

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.query.lucene;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.lucene.index.IndexReader;
@@ -22,17 +24,21 @@ import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.search.HitCollector;
 import org.hippoecm.repository.HitsRequested;
 import org.hippoecm.repository.FacetedNavigationEngine.Count;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FacetResultCollector extends HitCollector {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private static final Logger log = LoggerFactory.getLogger(FacetResultCollector.class);
     private IndexReader reader;
     private String internalName;
     private int numhits;
     private Map<String, Count> facetMap;
+    private List<String[]> facetRangeList;
 
-    public FacetResultCollector(IndexReader reader, String facet, Map<String, Count> facetMap, HitsRequested hitsRequested) {
+    public FacetResultCollector(IndexReader reader, String facet, Map<String, Count> facetMap, List<String[]> facetRangeList, HitsRequested hitsRequested) {
         this.reader = reader;
         if (facet != null) {
             try {
@@ -44,7 +50,12 @@ public class FacetResultCollector extends HitCollector {
         }
         this.numhits = 0;
         this.facetMap = facetMap;
+        if(facetRangeList != null) {
+            this.facetRangeList = validateRanges(facetRangeList);
+        }
     }
+
+    
 
     public final void collect(final int docid, final float score) {
         try {
@@ -54,11 +65,17 @@ public class FacetResultCollector extends HitCollector {
                 if (tfv != null) {
                     numhits++;
                     for (int i = 0; i < tfv.getTermFrequencies().length; i++) {
-                        Count count = facetMap.get(tfv.getTerms()[i]);
-                        if (count == null) {
-                            facetMap.put(tfv.getTerms()[i], new Count(1));
+                        if(facetRangeList == null) {
+                            addToFacetMap(tfv.getTerms()[i]);
                         } else {
-                            count.count += 1;
+                            String term = tfv.getTerms()[i];
+                            for(String[] facetRange : facetRangeList){
+                                // items are already validated in construcutor, so no checks for length of array or null checks
+                                if(term.compareTo(facetRange[1]) >= 0 && term.compareTo(facetRange[2]) < 0) {
+                                    // add the facet name to the resultset
+                                    addToFacetMap(facetRange[0]);
+                                }  
+                            }
                         }
                     }
                 }
@@ -69,11 +86,32 @@ public class FacetResultCollector extends HitCollector {
         }
     }
 
+    private void addToFacetMap(String term) {
+        Count count = facetMap.get(term);
+        if (count == null) {
+            facetMap.put(term, new Count(1));
+        } else {
+            count.count += 1;
+        }
+    }
+
     public int getNumhits() {
         return numhits;
     }
 
     public void setNumhits(int numhits) {
         this.numhits = numhits;
+    }
+    
+    private List<String[]> validateRanges(List<String[]> ranges2validate) {
+        List<String[]> validatedList = new ArrayList<String[]>();
+        for(String[] facetRange : ranges2validate) {
+            if(facetRange.length == 3 && facetRange[0] != null && facetRange[1] != null && facetRange[2] != null) {
+                validatedList.add(facetRange);
+            } else {
+                log.error("Invalid range found: '{}'. Skipping this range", facetRange);
+            }
+        }
+        return validatedList;
     }
 }

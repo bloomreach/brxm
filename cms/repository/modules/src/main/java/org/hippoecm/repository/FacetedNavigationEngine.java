@@ -327,6 +327,31 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
     public void purge();
 
     /**
+     * This method is used to build a Query object from a query encoded in a
+     * string.  The language used, either XPATH, SQL or other should match the
+     * language expected by the interface implementation.
+     */
+    public Q parse(String query);
+
+    /**
+     * The second view method is trimmed down version of the first one and used
+     * not the obtained the facet-value counts of a faceted navigation query,
+     *   but used when the actual resultset is required.  In this case.
+     */
+    public Result view(String queryName, Q initialQuery, C authorization,
+             List<KeyValue<String, String>> facetsQuery, Q openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested);
+
+    
+    /**
+     * @see #view(String, org.hippoecm.repository.FacetedNavigationEngine.Query, org.hippoecm.repository.FacetedNavigationEngine.Context, List, List, org.hippoecm.repository.FacetedNavigationEngine.Query, Map, Map, HitsRequested) 
+     */
+    public Result view(String queryName, Q initialQuery, C authorization,
+               List<KeyValue<String, String>> facetsQuery, Q openQuery,
+               Map<String,Map<String,Count>> resultset,
+               Map<Name,String> inheritedFilter,
+               HitsRequested hitsRequested) throws UnsupportedOperationException;
+
+    /**
      * While the other methods in this interface are meant for informing the
      * engine on changes, the view method is used to query the faceted navigation
      * engine.
@@ -342,6 +367,10 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * representing the equality terms which should be AND'ed to compose the
      * facets query as in the description of this interface.  This map
      * may be empty.
+     * @param rangeQuery A List from FacetRange's
+     * representing the ranges that should be AND'ed to compose the
+     * range query as in the description of this interface.  This map
+     * may be empty or null.
      * @param openQuery The open query as described in the description of this
      * interface.  This may be <code>null</code> indicating no open search
      * query.  When not-<code>null</code> the implementation may throw an
@@ -371,25 +400,9 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * returns <code>null</code>.
      */
     public Result view(String queryName, Q initialQuery, C authorization,
-               List<KeyValue<String, String>> facetsQuery, Q openQuery,
+               List<KeyValue<String, String>> facetsQuery, List<FacetRange> rangeQuery, Q openQuery,
                Map<String,Map<String,Count>> resultset,
                Map<Name,String> inheritedFilter,
                HitsRequested hitsRequested) throws UnsupportedOperationException;
 
-    /**
-     * The second view method is trimmed down version of the first one and used
-     * not the obtained the facet-value counts of a faceted navigation query,
-     *   but used when the actual resultset is required.  In this case.
-     */
-    public Result view(String queryName, Q initialQuery, C authorization,
-             List<KeyValue<String, String>> facetsQuery, Q openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested);
-
-    /**
-     * This method is used to build a Query object from a query encoded in a
-     * string.  The language used, either XPATH, SQL or other should match the
-     * language expected by the interface implementation.
-     */
-    public Q parse(String query);
-
-    public String resolveLuceneTermToPropertyString(String resolvedFacet, String luceneTerm);
 }

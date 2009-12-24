@@ -87,7 +87,48 @@ public class FacetedNavigationSimpleTest extends TestCase {
         assertEquals(node.getNode("hippo:brand/peugeot/hippo:color/hippo:resultset").getNodes().getSize(),node.getNode("hippo:brand/peugeot/hippo:color").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         assertEquals(node.getNode("hippo:brand/peugeot/hippo:product/car/hippo:resultset").getNodes().getSize(),node.getNode("hippo:brand/peugeot/hippo:product/car").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         assertEquals(node.getNode("hippo:brand/peugeot/hippo:product/car/hippo:color/grey/hippo:resultset").getNodes().getSize(),node.getNode("hippo:brand/peugeot/hippo:product/car/hippo:color/grey").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+
+    }
+    
+    @Test
+    public void testFacetNodeNameNavigation() throws RepositoryException, IOException {
+        commonStart();
         
+        Node testNode = session.getRootNode().getNode("test");
+        createSimpleStructure1(testNode);
+        createFacetNodeSingleValues(testNode);
+
+        testNode.getNode("facetnavigation/hippo:navigation").setProperty(HippoNodeType.HIPPO_FACETNODENAMES, new String[] { "brand", "color", "product" });
+        
+        session.save();
+        
+        Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        
+        assertNotNull(node);
+        // assert some facetednavigation nodes exists
+        assertTrue(node.hasNode("brand/peugeot/color/hippo:resultset"));
+        assertTrue(node.hasNode("brand/peugeot/color/grey"));
+        assertTrue(node.hasNode("brand/peugeot/color/grey/hippo:resultset"));
+        assertTrue(node.hasNode("brand/peugeot/product/car"));
+        assertTrue(node.hasNode("brand/peugeot/product/car/color/grey"));
+        
+        // assert that after iterating the same key-value twice, there are no child nodes below this node:
+        assertTrue(node.hasNode("brand/peugeot/brand/peugeot"));
+        assertFalse(node.getNode("brand/peugeot/brand/peugeot").hasNodes());
+        
+        // assert some counts:
+        assertEquals(4L,node.getNode("brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(4L,node.getNode("brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong()) ;
+        assertEquals(2L,node.getNode("brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong()) ;
+        assertEquals(2L,node.getNode("brand/peugeot/brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong()) ;
+        
+        // assert some counts are equal to number of nodes in resultset
+        assertEquals(node.getNode("brand/hippo:resultset").getNodes().getSize(),node.getNode("brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("brand/peugeot/hippo:resultset").getNodes().getSize(),node.getNode("brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("brand/peugeot/color/hippo:resultset").getNodes().getSize(),node.getNode("brand/peugeot/color").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("brand/peugeot/product/car/hippo:resultset").getNodes().getSize(),node.getNode("brand/peugeot/product/car").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("brand/peugeot/product/car/color/grey/hippo:resultset").getNodes().getSize(),node.getNode("brand/peugeot/product/car/color/grey").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+
     }
     
     @Test
@@ -214,7 +255,7 @@ public class FacetedNavigationSimpleTest extends TestCase {
         // we must have a node "/hippo:navigation/hippo:date/" + globalCal.getTimeInMillis() as date nodes are displayed in millisec and there should be 4 of them
         
         Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
-      
+       
         assertNotNull(navigation.getNode("hippo:date"));
         assertNotNull(navigation.getNode("hippo:date/"+globalCal.getTimeInMillis()));
         assertEquals(4L,navigation.getNode("hippo:date/"+globalCal.getTimeInMillis()).getProperty(HippoNodeType.HIPPO_COUNT).getLong());

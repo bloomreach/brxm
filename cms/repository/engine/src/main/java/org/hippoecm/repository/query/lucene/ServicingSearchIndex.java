@@ -473,56 +473,24 @@ public class ServicingSearchIndex extends SearchIndex {
         
     }
  
-    // method that translates a lucene term into the original property 
-    public String luceneTermToProperty(String resolvedFacet, String luceneTerm) {
-        
+    // jcrPropertyName is of format : {namespace}:localname
+    public int getPropertyType(String namespacedProperty){
         try {
-            // try to get the Name for resolvedFacet
-            Name facetName = NameFactoryImpl.getInstance().create(resolvedFacet);
+            // try to get the Name for jcrPropertyName
+            Name facetName = NameFactoryImpl.getInstance().create(namespacedProperty);
             TypeMapping[] typeMappings = getContext().getPropertyTypeRegistry().getPropertyTypes(facetName);
             if(typeMappings.length == 0) {
-                log.debug("Property name '{}' not mapped in cnd: do not know how to convert from lucene term. Return lucene term", resolvedFacet);
+                log.debug("Property name '{}' not mapped in cnd: do not know how to convert from lucene term. Return lucene term", namespacedProperty);
             }
             else if(typeMappings.length > 1) {
-                log.debug("Same property name '{}' mapped to multiple types: do not know how to convert from lucene term. Return lucene term", resolvedFacet);
+                log.debug("Same property name '{}' mapped to multiple types: do not know how to convert from lucene term. Return lucene term", namespacedProperty);
             }  else {
-               int type =  typeMappings[0].type;
-               switch (type) {
-               case PropertyType.STRING:
-                   return luceneTerm;
-               case PropertyType.BOOLEAN:
-                   return luceneTerm;
-               case PropertyType.LONG:
-                   try {
-                       return String.valueOf(LongField.stringToLong(luceneTerm));
-                   } catch (NumberFormatException e) {
-                       log.debug("Cannot parse lucene term to long");
-                       return luceneTerm;
-                   }
-               case PropertyType.DOUBLE:
-                   try {
-                       return String.valueOf(DoubleField.stringToDouble(luceneTerm));
-                   } catch (NumberFormatException e) {
-                       log.debug("Cannot parse lucene term to double");
-                       return luceneTerm;
-                   }
-               case PropertyType.DATE:
-                   try {
-                       return String.valueOf(DateField.stringToTime(luceneTerm));
-                   } catch (NumberFormatException e) {
-                       log.debug("Cannot parse lucene term to date");
-                       return luceneTerm;
-                   }
-               case PropertyType.NAME:
-                   return luceneTerm;
-               default:
-                   return luceneTerm;
-               }
+               return typeMappings[0].type;
             }
         } catch (IllegalArgumentException e) {
-           log.debug("Cannot get Name for '{}'. Return the luceneTerm as is.", resolvedFacet); 
+           log.debug("Cannot get Name for '{}'. Return the luceneTerm as is.", namespacedProperty); 
         }
-        
-        return luceneTerm;
+        return PropertyType.UNDEFINED;
     }
+    
 }

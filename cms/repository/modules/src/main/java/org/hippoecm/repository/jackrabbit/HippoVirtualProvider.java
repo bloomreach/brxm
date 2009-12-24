@@ -104,11 +104,11 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         return stateMgr.lookupProvider(providerName);
     }
 
-    protected final Name resolveName(String name) throws IllegalNameException, NamespaceException {
+    public final Name resolveName(String name) throws IllegalNameException, NamespaceException {
         return stateMgr.getQName(name);
     }
 
-    protected final Path resolvePath(String path) throws IllegalNameException, NamespaceException, MalformedPathException {
+    public final Path resolvePath(String path) throws IllegalNameException, NamespaceException, MalformedPathException {
         return stateMgr.getQPath(path);
     }
 

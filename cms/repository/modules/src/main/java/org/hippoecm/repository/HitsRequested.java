@@ -25,12 +25,6 @@ public class HitsRequested {
     private boolean resultRequested;
 
     /**
-     * when true, it is indicated through this boolean that only when the lucene hit has the property, it is returned in the count
-     * Default is false
-     */
-    private boolean countOnlyForFacetExists = false;
-    
-    /**
      * How many results should be returned.  Defaults to 10, large values imply slow responses.
      */
     private int limit = 10;
@@ -39,6 +33,8 @@ public class HitsRequested {
      * The offset in the resultset to start from.
      */
     private int offset = 0;
+    
+    private boolean fixedDrillPath = true;
     
     /**
      * The orderBy property when resultset is order, <code>null</code> if no ordering is needed
@@ -69,14 +65,6 @@ public class HitsRequested {
         this.resultRequested = resultRequested;
     }
 
-    public boolean isCountOnlyForFacetExists() {
-        return countOnlyForFacetExists;
-    }
-
-    public void setCountOnlyForFacetExists(boolean countOnlyForFacetExists) {
-        this.countOnlyForFacetExists = countOnlyForFacetExists;
-    }
-
     public List<OrderBy> getOrderByList() {
         return this.orderByList;
     }
@@ -89,6 +77,14 @@ public class HitsRequested {
         if(addOrderByList != null) {
             this.orderByList.addAll(addOrderByList);
         }
+    }
+
+    public boolean isFixedDrillPath() {
+        return fixedDrillPath;
+    }
+
+    public void setFixedDrillPath(boolean fixedDrillPath) {
+        this.fixedDrillPath = fixedDrillPath;
     }
     
 }

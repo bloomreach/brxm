@@ -32,6 +32,8 @@ import javax.security.auth.Subject;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.jackrabbit.KeyValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FacetedNavigationEngineFirstImpl
   implements FacetedNavigationEngine<FacetedNavigationEngineFirstImpl.QueryImpl,
@@ -39,7 +41,9 @@ public class FacetedNavigationEngineFirstImpl
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+    private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngineFirstImpl.class);
 
+    
     class QueryImpl extends FacetedNavigationEngine.Query {
         String xpath;
         public QueryImpl(String xpath) {
@@ -161,11 +165,15 @@ public class FacetedNavigationEngineFirstImpl
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-                       List<KeyValue<String,String>> facetsQuery, QueryImpl openQuery,
-                       Map<String,Map<String,Count>> resultset,
-                       Map<Name,String> inheritedFilter,
-                       HitsRequested hitsRequested) throws UnsupportedOperationException {
+            List<KeyValue<String,String>> facetsQuery, List<FacetRange> rangeQuery, QueryImpl openQuery,
+            Map<String,Map<String,Count>> resultset,
+            Map<Name,String> inheritedFilter,
+            HitsRequested hitsRequested) throws UnsupportedOperationException {
         try {
+            if(rangeQuery != null) {
+                log.error("Ranges are unsupported in this engine");
+                return this . new ResultImpl(0, null);
+            }
             Session session = authorization.session;
             int resultNodeCount = 0;
             for(String facet : resultset.keySet()) {
@@ -197,6 +205,14 @@ public class FacetedNavigationEngineFirstImpl
             System.err.println(ex.getClass().getName()+": "+ex.getMessage());
             throw new UnsupportedOperationException(); // FIXME
         }
+    }
+    
+    public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
+                       List<KeyValue<String,String>> facetsQuery, QueryImpl openQuery,
+                       Map<String,Map<String,Count>> resultset,
+                       Map<Name,String> inheritedFilter,
+                       HitsRequested hitsRequested) throws UnsupportedOperationException {
+        return this.view(queryName, initialQuery, authorization, facetsQuery, null, openQuery, resultset, inheritedFilter, hitsRequested);
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
@@ -236,7 +252,4 @@ public class FacetedNavigationEngineFirstImpl
         return this . new QueryImpl(query);
     }
 
-    public String resolveLuceneTermToPropertyString(String resolvedFacet, String luceneTerm) {
-       return luceneTerm;
-    }
 }

@@ -25,6 +25,7 @@ import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
+import org.hippoecm.repository.FacetRange;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.OrderBy;
 import org.hippoecm.repository.FacetedNavigationEngine.Context;
@@ -41,6 +42,8 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    protected static final String VALID_RANGE_EXAMPLE = "hippo:date$[{name:'this week', resolution:'week', begin:-1, end:0}, {name:'last 7 days', resolution:'day', begin:-7, end:0 }]";
+    
     FacetedNavigationEngine<Query, Context> facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
 
@@ -83,6 +86,9 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         String[] facetNodeNames;
         String currentFacet;
        
+        // the count property of this node
+        int count;
+        
         /*
          * when true, the FacetSubNavigationProvider will stop populating adding child nodeId's to this NodeId
          */
@@ -91,7 +97,7 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         /*
          * contains all the used key-value combinations for the current node and its ancestors
          */
-        String[] ancestorAndSelfUsedLuceneTerms;
+        String[] ancestorAndSelfUsedCombinations;
         
         /*
          * usedFacetValueCombis is the same as currentSearch, only the current search has as keys the string value
@@ -99,6 +105,8 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
          */
         List<KeyValue<String, String>> usedFacetValueCombis = new ArrayList<KeyValue<String, String>>();
         List<KeyValue<String, String>> currentSearch = new ArrayList<KeyValue<String, String>>();
+        List<FacetRange> currentRanges = new ArrayList<FacetRange>();
+        
         /*
          * the filter info to propagate
          */

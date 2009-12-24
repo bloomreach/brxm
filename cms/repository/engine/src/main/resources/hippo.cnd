@@ -77,6 +77,7 @@
 
 [hippo:abstractfacetnavigation]
 - hippo:count (long)
+- hippo:filters (string) multiple
 + * (hippo:abstractfacetnavigation) multiple ignore
 + hippo:resultset (hippo:facetresult) = hippo:facetresult
 
@@ -88,6 +89,7 @@
 - hippo:limit (long)
 - hippo:sortby (string) multiple
 - hippo:sortorder (string) multiple < 'descending', 'ascending'
+- hippo:filters (string) multiple
 + * (hippo:abstractfacetnavigation) multiple ignore
 
 [hippo:facetselect] > nt:base

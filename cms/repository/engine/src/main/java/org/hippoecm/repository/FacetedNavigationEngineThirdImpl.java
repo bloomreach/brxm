@@ -17,6 +17,7 @@ package org.hippoecm.repository;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
@@ -41,6 +43,7 @@ import org.apache.lucene.document.FieldSelector;
 import org.apache.lucene.document.SetBasedFieldSelector;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Hits;
@@ -55,9 +58,11 @@ import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
 import org.hippoecm.repository.jackrabbit.KeyValue;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
+import org.hippoecm.repository.query.lucene.FacetRangeQuery;
 import org.hippoecm.repository.query.lucene.FacetResultCollector;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
 import org.hippoecm.repository.query.lucene.FixedScoreSimilarity;
+import org.hippoecm.repository.query.lucene.HippoDateTools;
 import org.hippoecm.repository.query.lucene.InheritedFilterQuery;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
@@ -155,18 +160,21 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
-            List<KeyValue<String, String>> facetsQueryList, QueryImpl openQuery, Map<String, Map<String, Count>> resultset,
+            List<KeyValue<String, String>> facetsQueryList, List<FacetRange> rangeQuery, QueryImpl openQuery, Map<String, Map<String, Count>> resultset,
             Map<Name,String> inheritedFilter, HitsRequested hitsRequested)
             throws UnsupportedOperationException {
-
         NamespaceMappings nsMappings = getNamespaceMappings();
 
         /*
          * facetsQuery: get the query for the facets that are asked for
          */
-        FacetsQuery facetsQuery = new FacetsQuery(facetsQueryList, nsMappings,
-                (ServicingIndexingConfiguration) getIndexingConfig());
+        FacetsQuery facetsQuery = new FacetsQuery(facetsQueryList, nsMappings);
         
+        /*
+         * facetRangeQuery : get the query for the ranges of facet values
+         */
+        FacetRangeQuery facetRangeQuery = new FacetRangeQuery(rangeQuery, nsMappings,  this);
+         
         /*
          * inheritedFilter: get the query representation of the interited filters (for example from facetselect)
          */
@@ -174,6 +182,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         InheritedFilterQuery inheritedFilterQuery = new InheritedFilterQuery(inheritedFilter, nsMappings,
                 (ServicingIndexingConfiguration) getIndexingConfig());
 
+        
+        
         /*
          * initialQuery: get the query for initialQuery. This is the hippo:docbase value. 
          */
@@ -191,8 +201,13 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         if (facetsQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
         }
+        
+        if(facetRangeQuery.getQuery().clauses().size() > 0) {
+            searchQuery.add(facetRangeQuery.getQuery(), Occur.MUST);
+        }
+        
         if(inheritedFilterQuery.getQuery().clauses().size() > 0) {
-        	searchQuery.add(inheritedFilterQuery.getQuery(), Occur.MUST);
+            searchQuery.add(inheritedFilterQuery.getQuery(), Occur.MUST);
         }
         // TODO perhaps create cached user specific filter for authorisation to gain speed
         if (contextImpl.authorizationQuery.getQuery().clauses().size() > 0) {
@@ -222,26 +237,72 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                      * in the query without this facet. Therefor, first get the count query without
                      * FacetPropExistsQuery.
                      */
-                	int numHits = 0;
-                	if(!hitsRequested.isCountOnlyForFacetExists()) {
-                		numHits = searcher.search(searchQuery).length();
-                	}
-                	
-                	String propertyName = ServicingNameFormat.getInteralPropertyPathName(nsMappings, facet);
+                    int numHits = 0;
+                    if(hitsRequested.isFixedDrillPath()) {
+                        // only in the case of the fixed drillpath we use the count where the facet does not need to exist
+                        numHits = searcher.search(searchQuery).length();
+                    }
+                    
+                    ParsedFacet parsedFacet = null;
+                    try {
+                        parsedFacet = new ParsedFacet(facet, null);
+                    } catch (Exception e) {
+                        log.error("Error parsing facet: ", e);
+                        return new ResultImpl(0, null);
+                    }
+                    
+                    String propertyName = ServicingNameFormat.getInteralPropertyPathName(nsMappings, parsedFacet.getNamespacedProperty());
+                    
+                    // facet range list has the follow String[] format: String[0] = facetName, String[1] = from, String[2] = to
+                    List<String[]> facetRangeList = null;
+                    if (parsedFacet.getFacetRanges() != null) {
+                        // we have facet ranges
+                        facetRangeList = new ArrayList<String[]>();
+                        int type = getPropertyType(parsedFacet.getNamespacedProperty());
+                        switch (type) {
+
+                        case PropertyType.DATE:
+                            
+                             // parse the date config
+                             for(FacetRange facetRange : parsedFacet.getFacetRanges()){
+                                 Calendar calBegin = Calendar.getInstance();
+                                 Calendar calEnd = Calendar.getInstance();
+                                 HippoDateTools.Resolution resolution = HippoDateTools.Resolution.RESOLUTIONSMAP.get(facetRange.getResolution());
+                                 if(resolution == null) {
+                                     log.error("Skipping unknown resolution : '{}' for facet ranges", facetRange.getResolution());
+                                 }
+                                 calBegin.add(resolution.getCalendarField(), (int)facetRange.getBegin());
+                                 calEnd.add(resolution.getCalendarField(), (int)facetRange.getEnd());
+                                 
+                                 long begin = HippoDateTools.round(calBegin.getTimeInMillis(), resolution);
+                                 long end = HippoDateTools.round(calEnd.getTimeInMillis(), resolution);
+                                 String[] facetRangeItem = new String[3];
+                                 facetRangeItem[0] = facetRange.getName();
+                                 facetRangeItem[1] = String.valueOf(begin);
+                                 facetRangeItem[2] = String.valueOf(end);
+                                 facetRangeList.add(facetRangeItem);
+                             }
+                             break;
+                        default:
+                            log.error("Range faceted browsing is not supported for property type beloning to '{}'", parsedFacet.getNamespacedProperty());
+                            return new ResultImpl(0, null);
+                        }
+                    }
+                    
                     /*
                      * facetPropExists: the node must have the property as facet
                      */
-                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet,propertyName,
-                            (ServicingIndexingConfiguration) getIndexingConfig());
+                    
+                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet,propertyName);
                 
                     searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
 
-                    collector = new FacetResultCollector(indexReader, propertyName, (facet != null ? resultset.get(facet) : null),
+                    collector = new FacetResultCollector(indexReader, propertyName, resultset.get(facet), facetRangeList,
                             hitsRequested);
                     searcher.search(searchQuery, collector);
                     // set the numHits value
-                    if(!hitsRequested.isCountOnlyForFacetExists()) {
-                    	collector.setNumhits(numHits);
+                    if(hitsRequested.isFixedDrillPath()) {
+                        collector.setNumhits(numHits);
                     }
                 }
                 
@@ -267,7 +328,29 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                                 String propertyName = ServicingNameFormat.getInteralPropertyPathName(nsMappings, orderBy.getName());
                                 String internalFacetName = ServicingNameFormat.getInternalFacetName(propertyName);
                                 boolean reverse = orderBy.isDescending();
-                                sortFields.add(new SortField(internalFacetName, reverse));
+                                
+                                /*
+                                 * Ard: we need to check here unfortanetly whether the field we want to sort on in Lucene is actually indexed
+                                 * because, imo, Lucene incorrectly throws a RunTimeException (lucene 2.3.2) in  {@link ExtendedFieldCacheImpl#createValue(IndexReader, Object)}
+                                 * when trying to sort on a non existing lucene field. Therefor the check below, otherwise 
+                                 * 
+                                 * tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal, sort);
+                                 * 
+                                 * throws an exception when the sort contains a non indexed field
+                                 */ 
+                                
+                                TermEnum termEnum = indexReader.terms(new Term (internalFacetName, ""));
+                                Term term = termEnum.term();
+                                if (term == null) {
+                                  log.warn("Cannot sort on non-indexed property '{}'. Skip sorting on this property.", orderBy.getName());
+                                }
+                                if (term.field().equals(internalFacetName)) {
+                                   // found a field with internalFacetName: we can sort on it! 
+                                   sortFields.add(new SortField(internalFacetName, reverse));
+                                } else {
+                                    log.warn("Cannot sort on non-indexed property '{}'. Skip sorting on this property.", orderBy.getName());
+                                }
+                                termEnum.close();
                             } catch (IllegalNameException e) {
                                 log.error("Cannot order by illegal name: '{}' : '{}'. Skip name ", orderBy.getName(), e.getMessage());
                             }
@@ -283,6 +366,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                         tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal);
                     } else {
                         tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal, sort);
+                        //tfDocs = searcher.search(searchQuery, (Filter) null, fetchTotal);
                     }
                     ScoreDoc[] hits = tfDocs.scoreDocs;
                     int position = hitsRequested.getOffset();
@@ -325,6 +409,14 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         
         return new ResultImpl(0, null);
     }
+    
+    public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
+            List<KeyValue<String, String>> facetsQueryList, QueryImpl openQuery, Map<String, Map<String, Count>> resultset,
+            Map<Name,String> inheritedFilter, HitsRequested hitsRequested)
+            throws UnsupportedOperationException {
+        
+        return this.view(queryName, initialQuery, contextImpl, facetsQueryList, null, openQuery, resultset, inheritedFilter, hitsRequested);
+    }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
              List<KeyValue<String, String>> facetsQuery, QueryImpl openQuery,Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
@@ -344,8 +436,4 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
     }
 
-
-    public String resolveLuceneTermToPropertyString(String resolvedFacet, String luceneTerm) {
-        return super.luceneTermToProperty(resolvedFacet, luceneTerm);
-    }
 }
