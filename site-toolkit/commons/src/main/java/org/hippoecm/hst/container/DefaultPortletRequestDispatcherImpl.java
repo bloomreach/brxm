@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletException;
+import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
@@ -114,6 +115,19 @@ public class DefaultPortletRequestDispatcherImpl implements HstPortletRequestDis
     }
     
     public String getPathInfo(PortletRequest request) throws PortletException {
+        //TODO: For now, if it is action phase, just return null to not use container provided path info.
+        //      In action phase, the request action parameters should be cared by the container provided path info.
+        String lifecyclePhase = (String) request.getAttribute(PortletRequest.LIFECYCLE_PHASE);
+        if (PortletRequest.ACTION_PHASE.equals(lifecyclePhase)) {
+            return null;
+        }
+        
+        //TODO: For now, if it is edit mode, just return null to not use container provided path info.
+        //      In edit mode, the dedicated hst site map item should care the request.
+        if (PortletMode.EDIT.equals(request.getPortletMode())) {
+            return null;
+        }
+        
         String pathInfo = null;
         Object bean = null;
         

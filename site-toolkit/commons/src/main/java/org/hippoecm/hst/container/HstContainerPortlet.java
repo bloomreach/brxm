@@ -300,14 +300,10 @@ public class HstContainerPortlet extends GenericPortlet {
             hstServletPath = this.defaultHstServletPath;
         }
         
-        String containerHstPathInfo = null;
+        String containerHstPathInfo = hstPortletRequestDispatcherPathProvider.getPathInfo(request);
         
-        if (!isEditMode) {
-            containerHstPathInfo = hstPortletRequestDispatcherPathProvider.getPathInfo(request);
-            
-            if (containerHstPathInfo != null) {
-                hstPathInfo = containerHstPathInfo;
-            }
+        if (containerHstPathInfo != null) {
+            hstPathInfo = containerHstPathInfo;
         }
         
         boolean readDispPathParam = (containerHstPathInfo == null);
