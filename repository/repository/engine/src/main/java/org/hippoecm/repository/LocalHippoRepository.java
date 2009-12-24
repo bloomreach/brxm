@@ -331,7 +331,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             Session syncSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
 
-            for(String cndName : new String[] { "hippo.cnd", "hipposys.cnd", "hipposysedit.cnd" }) {
+            // TODO HREPTWO-3571: hippofacnav.cnd must be removed when faceted navigation is moved to its own subproject, and should be added through extension.xml, see
+            
+            for(String cndName : new String[] { "hippo.cnd", "hipposys.cnd", "hipposysedit.cnd", "hippofacnav.cnd" }) {
                 try {
                     log.info("Initializing nodetypes from: " + cndName);
                     initializeNodetypes(syncSession.getWorkspace(), getClass().getClassLoader().getResourceAsStream(cndName), cndName);

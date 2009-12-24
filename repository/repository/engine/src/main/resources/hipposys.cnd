@@ -45,10 +45,6 @@
 - hipposys:search (string) multiple
 + hippo:resultset (hippo:facetresult) = hippo:facetresult
 
-[hipposys:facetsavailablenavigation] > hippo:abstractfacetnavigation
-
-[hipposys:facetsubnavigation] > hippo:abstractfacetnavigation
-
 // REPOSITORY WORKFLOW, OCM AND QUERY
 
 [hipposys:type] > nt:base

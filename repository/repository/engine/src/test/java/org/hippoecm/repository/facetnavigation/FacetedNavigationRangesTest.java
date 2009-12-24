@@ -33,6 +33,7 @@ import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.hippoecm.repository.query.lucene.HippoDateTools;
 import org.junit.After;
 import org.junit.Before;
@@ -126,10 +127,10 @@ public class FacetedNavigationRangesTest extends TestCase {
         createDateStructure1(testNode);
         
         Node navigation = testNode.addNode("facetnavigation");
-        Node facetNavigation = navigation.addNode("hippo:navigation", HippoNodeType.NT_FACETNAVIGATION);
+        Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        facetNavigation.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {"hippo:date$[{name:'yesterday', resolution:'day', begin:-1, end:0}, {name:'today', resolution:'day', begin:0, end:1}]"});
-        facetNavigation.setProperty(HippoNodeType.HIPPO_FACETNODENAMES, new String[] {"range"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] {"hippo:date$[{name:'yesterday', resolution:'day', begin:-1, end:0}, {name:'today', resolution:'day', begin:0, end:1}]"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"range"});
         
         session.save();
 

@@ -75,23 +75,6 @@
 - hippo:facets (string) mandatory multiple
 + hippo:resultset (hippo:facetresult) = hippo:facetresult
 
-[hippo:abstractfacetnavigation]
-- hippo:count (long)
-- hippo:filters (string) multiple
-+ * (hippo:abstractfacetnavigation) multiple ignore
-+ hippo:resultset (hippo:facetresult) = hippo:facetresult
-
-[hippo:facetnavigation] 
-- hippo:facets (string) mandatory multiple
-- hippo:facetnodenames (string) multiple
-- hippo:docbase (string) mandatory
-- hippo:modes (string) multiple
-- hippo:limit (long)
-- hippo:sortby (string) multiple
-- hippo:sortorder (string) multiple < 'descending', 'ascending'
-- hippo:filters (string) multiple
-+ * (hippo:abstractfacetnavigation) multiple ignore
-
 [hippo:facetselect] > nt:base
 - hippo:docbase (string) mandatory
 - hippo:facets (string) mandatory multiple
