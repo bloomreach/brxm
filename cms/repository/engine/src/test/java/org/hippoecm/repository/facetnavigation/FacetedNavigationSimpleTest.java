@@ -30,6 +30,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,7 +99,7 @@ public class FacetedNavigationSimpleTest extends TestCase {
         createSimpleStructure1(testNode);
         createFacetNodeSingleValues(testNode);
 
-        testNode.getNode("facetnavigation/hippo:navigation").setProperty(HippoNodeType.HIPPO_FACETNODENAMES, new String[] { "brand", "color", "product" });
+        testNode.getNode("facetnavigation/hippo:navigation").setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { "brand", "color", "product" });
         
         session.save();
         
@@ -302,7 +303,7 @@ public class FacetedNavigationSimpleTest extends TestCase {
         
         
         // and now, add a limit to the resultset!
-        navigation.setProperty(HippoNodeType.HIPPO_FACETLIMIT, 1L);
+        navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETLIMIT, 1L);
         session.save();
         
         navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
@@ -409,33 +410,33 @@ public class FacetedNavigationSimpleTest extends TestCase {
 	private void createFacetNodeSingleValues(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
         node.addMixin("mix:referenceable");
-        node = node.addNode("hippo:navigation", HippoNodeType.NT_FACETNAVIGATION);
+        node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:brand", "hippo:color", "hippo:product" });
-        node.setProperty(HippoNodeType.HIPPO_FACETSORTBY, new String[] { "hippo:brand", "hippo:color"});
-        node.setProperty(HippoNodeType.HIPPO_FACETSORTORDER, new String[] { "descending", "descending"});
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:brand", "hippo:color", "hippo:product" });
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTBY, new String[] { "hippo:brand", "hippo:color"});
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER, new String[] { "descending", "descending"});
 
     }
 	
 	private void createFacetNodeMultiValue(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
-        node = node.addNode("hippo:navigation", HippoNodeType.NT_FACETNAVIGATION);
+        node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "tags"});
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "tags"});
     }
 	
 	private void createFacetNodeWithPrimaryType(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
-        node = node.addNode("hippo:navigation", HippoNodeType.NT_FACETNAVIGATION);
+        node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "jcr:primaryType", "hippo:brand"});
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "jcr:primaryType", "hippo:brand"});
     }
 	
 	private void createFacetNodeDateValue(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
-        node = node.addNode("hippo:navigation", HippoNodeType.NT_FACETNAVIGATION);
+        node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {"hippo:date"});
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] {"hippo:date"});
     }
     
 }

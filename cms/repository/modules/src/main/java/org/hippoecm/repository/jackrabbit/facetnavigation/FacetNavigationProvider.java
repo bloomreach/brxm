@@ -40,15 +40,15 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
 		super.initialize();
 		facetsAvailableNavigationProvider = (FacetsAvailableNavigationProvider) lookup(FacetsAvailableNavigationProvider.class.getName());
 		docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
-        facetsName = resolveName(HippoNodeType.HIPPO_FACETS);
-        facetNodeNamesName = resolveName(HippoNodeType.HIPPO_FACETNODENAMES);
+        facetsName = resolveName(FacNavNodeType.HIPPOFACNAV_FACETS);
+        facetNodeNamesName = resolveName(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES);
 
-        facetLimit = resolveName(HippoNodeType.HIPPO_FACETLIMIT);
-        facetSortBy = resolveName(HippoNodeType.HIPPO_FACETSORTBY);
-        facetSortOrder = resolveName(HippoNodeType.HIPPO_FACETSORTORDER);
+        facetLimit = resolveName(FacNavNodeType.HIPPOFACNAV_FACETLIMIT);
+        facetSortBy = resolveName(FacNavNodeType.HIPPOFACNAV_FACETSORTBY);
+        facetSortOrder = resolveName(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER);
         
-		virtualNodeName = resolveName(HippoNodeType.NT_FACETSAVAILABLENAVIGATION);
-		register(resolveName(HippoNodeType.NT_FACETNAVIGATION), virtualNodeName);
+		virtualNodeName = resolveName(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION);
+		register(resolveName(FacNavNodeType.NT_FACETNAVIGATION), virtualNodeName);
 	}
 	
 	@Override
@@ -77,7 +77,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
 
             orderByList = new ArrayList<OrderBy>();
             if(sortorders != null && sortorders.length != sortbys.length) {
-                log.error("When using multivalued '{}', and '{}', then both should have equal number of values (or delete property "+HippoNodeType.HIPPO_FACETSORTORDER+" at all)", HippoNodeType.HIPPO_FACETSORTBY, HippoNodeType.HIPPO_FACETSORTORDER);
+                log.error("When using multivalued '{}', and '{}', then both should have equal number of values (or delete property "+FacNavNodeType.HIPPOFACNAV_FACETSORTORDER+" at all)", FacNavNodeType.HIPPOFACNAV_FACETSORTBY, FacNavNodeType.HIPPOFACNAV_FACETSORTORDER);
                 return state;
             }
             for(int i = 0; i < sortbys.length; i++) {
@@ -101,7 +101,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
             if(facetNodeNames != null) {
                 if(facets.length != facetNodeNames.length) {
                     log.error("When using multivalued property '{}', it must have equal number of values" +
-                    		"as for property '{}'", HippoNodeType.HIPPO_FACETNODENAMES, HippoNodeType.HIPPO_FACETS);
+                    		"as for property '{}'", FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, FacNavNodeType.HIPPOFACNAV_FACETS);
                     return state;
                 }
             }

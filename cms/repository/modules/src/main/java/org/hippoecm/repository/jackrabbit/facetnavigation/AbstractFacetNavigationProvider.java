@@ -63,7 +63,7 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
     @Override
     protected void initialize() throws RepositoryException {
         countName = resolveName(HippoNodeType.HIPPO_COUNT);
-        subCountPropDef = lookupPropDef(resolveName(HippoNodeType.NT_ABSTRACTFACETNAVIGATION), countName);
+        subCountPropDef = lookupPropDef(resolveName(FacNavNodeType.NT_ABSTRACTFACETNAVIGATION), countName);
     }
 
     @Override

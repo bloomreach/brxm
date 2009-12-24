@@ -32,6 +32,7 @@ import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,10 +99,10 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
         createDateStructure1(testNode);
         
         Node navigation = testNode.addNode("facetnavigation");
-        Node facetNavigation = navigation.addNode("hippo:navigation", HippoNodeType.NT_FACETNAVIGATION);
+        Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        facetNavigation.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {"hippo:date$year", "hippo:date$month", "hippo:date$day"});
-        facetNavigation.setProperty(HippoNodeType.HIPPO_FACETNODENAMES, new String[] {"year", "month", "day"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] {"hippo:date$year", "hippo:date$month", "hippo:date$day"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year", "month", "day"});
         
         session.save();
 

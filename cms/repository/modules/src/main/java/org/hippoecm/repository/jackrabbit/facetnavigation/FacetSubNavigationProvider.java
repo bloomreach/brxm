@@ -40,7 +40,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
         super.initialize();
         facetsAvailableNavigationProvider = (FacetsAvailableNavigationProvider) lookup(FacetsAvailableNavigationProvider.class.getName());
         subNodesProvider  = (FacetResultSetProvider) lookup(FacetResultSetProvider.class.getName());
-        virtualNodeName = resolveName(HippoNodeType.NT_FACETSUBNAVIGATION);
+        virtualNodeName = resolveName(FacNavNodeType.NT_FACETSUBNAVIGATION);
         register(null, virtualNodeName);
     }
 
@@ -139,9 +139,9 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
     @Override
     public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         NodeState state = createNew(nodeId, virtualNodeName, parentId);
-        state.setDefinitionId(lookupNodeDef(getNodeState(parentId), resolveName(HippoNodeType.NT_FACETSUBNAVIGATION),
+        state.setDefinitionId(lookupNodeDef(getNodeState(parentId), resolveName(FacNavNodeType.NT_FACETSUBNAVIGATION),
                 nodeId.name).getId());
-        state.setNodeTypeName(resolveName(HippoNodeType.NT_FACETSUBNAVIGATION));
+        state.setNodeTypeName(resolveName(FacNavNodeType.NT_FACETSUBNAVIGATION));
 
         return populate(state);
     }

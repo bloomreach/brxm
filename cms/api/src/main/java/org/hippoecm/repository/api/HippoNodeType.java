@@ -168,22 +168,6 @@ public interface HippoNodeType {
      * 
      */
     final public static String NT_FACETSUBSEARCH = "hipposys:facetsubsearch";
-    /**
-     * 
-     */
-    final public static String NT_ABSTRACTFACETNAVIGATION = "hippo:abstractfacetnavigation";
-    /**
-     * 
-     */
-    final public static String NT_FACETNAVIGATION = "hippo:facetnavigation";
-    /**
-     * 
-     */
-    final public static String NT_FACETSAVAILABLENAVIGATION = "hipposys:facetsavailablenavigation";
-    /**
-     * 
-     */
-    final public static String NT_FACETSUBNAVIGATION = "hipposys:facetsubnavigation";
     
     /**
      * 
@@ -407,25 +391,7 @@ public interface HippoNodeType {
      * 
      */
     final public static String HIPPO_FACETS = "hippo:facets";
-    /**
-     * 
-     */
-    final public static String HIPPO_FACETNODENAMES = "hippo:facetnodenames";
     
-    /**
-     * 
-     */
-    final public static String HIPPO_FACETLIMIT = "hippo:limit";
-    
-    /**
-     * 
-     */
-    final public static String HIPPO_FACETSORTBY = "hippo:sortby";
-    
-    /**
-     * 
-     */
-    final public static String HIPPO_FACETSORTORDER = "hippo:sortorder";
     
     /**
      * Deprecated name for field descriptor nodes.  Use field name as node name instead.
