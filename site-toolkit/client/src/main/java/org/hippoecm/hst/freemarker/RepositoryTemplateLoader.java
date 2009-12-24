@@ -18,6 +18,9 @@ package org.hippoecm.hst.freemarker;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.Credentials;
 import javax.jcr.Item;
@@ -26,7 +29,12 @@ import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
+import javax.jcr.observation.ObservationManager;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.site.HstServices;
 
 import freemarker.cache.TemplateLoader;
@@ -38,46 +46,100 @@ public class RepositoryTemplateLoader implements TemplateLoader{
     
     private Credentials defaultCredentials;
     
+    private Session observerSession;
+    
+    private Map<String, RepositorySource> cache =  Collections.synchronizedMap(new HashMap<String, RepositorySource>());
+    
     public void closeTemplateSource(Object templateSource) throws IOException {
         return;
     }
 
-    /*
-     * TODO return a self validatin object registring itself to some event aware cache : it must implement an equals method such that:
-     * newlyFoundSource.equals(cachedTemplate.source); returns false if the source has changed in the repository: see 
-     * freemarker.cache.TemplateCache#getTemplate
-     */
-    
     public Object findTemplateSource(String templateSource) throws IOException {
-       // if templateSource starts with '/repository://' we need the repository loader. Otherwise, return null
-       if(templateSource != null && templateSource.startsWith("/repository://")) {
-        // the name is our identifier of the source
-           return templateSource;
-       }
         
+        if(templateSource != null && templateSource.startsWith("/repository://")) {
+           if (repository == null) {
+              synchronized (this) {
+                  doInit();
+              }
+           }
+           if(repository == null) {
+               return null;
+           }
+           String absPath = "/" + ((String)templateSource).substring("/repository://".length());
+           RepositorySource source = cache.get(absPath);
+           if(source != null) {
+               return source;
+           } 
+           synchronized(this) {
+               source = cache.get(absPath);
+               if(source == null) {
+                   source = getRepositoryTemplate(absPath);
+                   cache.put(absPath, source);
+               }
+           }
+           return source;
+       }
        // the templateSource is not a repository source: return null
        return null;
     }
 
     public long getLastModified(Object templateSource) {
-        return 0;
+        if(templateSource instanceof RepositorySource) {
+            return ((RepositorySource)templateSource).getPlaceHolderLastModified();
+        } else {
+            // cannot happen
+            return -1;
+        }
+        
     }
 
     public Reader getReader(Object templateSource, String encoding) throws IOException {
+        if(templateSource instanceof RepositorySource) {
+            return new StringReader(((RepositorySource)templateSource).getTemplate());
+        } else {
+            // cannot happen
+        }
+        return null;
+    }
+    
+    private void doInit() {
+        if(repository != null) {
+            return;
+        }
+        
+        if (HstServices.isAvailable()) {
+            this.defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".default");
+            this.repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+        }
+        // do not log out observerSession!
+        try {
+             observerSession = getSession();
+             ObservationManager obMgr;
+             obMgr = observerSession.getWorkspace().getObservationManager();
+             EventListener listener = new TemplateChangeListener();
+             // TODO : only catch event from hst:script nodetype
+             String[] nodeTypes = {HstNodeTypes.NODETYPE_HST_SCRIPT};
+             obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED | Event.NODE_REMOVED
+                     | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, "/", true, null, nodeTypes, true);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+     }
+
+    private RepositorySource getRepositoryTemplate(String absPath) {
         String template = null;
         Session session = null;
         try {
             session = getSession();
-            String repositoryLocation = "/" + ((String)templateSource).substring("/repository://".length());
-            if(session.itemExists(repositoryLocation)) {
-                Item item = session.getItem(repositoryLocation);
+            if(session.itemExists(absPath)) {
+                Item item = session.getItem(absPath);
                 if(item.isNode()) {
-                    template = ((Node)item).getProperty("template").getValue().getString();
+                    template = ((Node)item).getProperty(HstNodeTypes.SCRIPT_PROPERTY_TEMPLATE).getValue().getString();
                 } else {
                     template = ((Property)item).getValue().getString();
                 }
+                return new RepositorySource(template);
             }
-            
         } catch (RepositoryException e) {
             e.printStackTrace();
         } finally {
@@ -85,25 +147,14 @@ public class RepositoryTemplateLoader implements TemplateLoader{
                 session.logout();
             }
         }
-        
         if(template == null ) {
-            template = "Template source '"+ ((String)templateSource).substring(1) +"' not found in the repository. ";
+            template = "Template source '"+ absPath +"' not found in the repository. ";
         }
-        return new StringReader(template);
+        return RepositorySource.repositorySourceNotFound;
     }
-
-    
     
     private Session getSession() throws RepositoryException {
         Session session = null;
-    
-        if (this.repository == null) {
-            if (HstServices.isAvailable()) {
-                this.defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".default");
-                this.repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
-            }
-        }
-
         if (this.repository != null) {
             if (this.defaultCredentials != null) {
                 session = this.repository.login(this.defaultCredentials);
@@ -113,5 +164,26 @@ public class RepositoryTemplateLoader implements TemplateLoader{
         }
      
         return session;
+    }
+    
+    
+    private class TemplateChangeListener implements EventListener {
+        
+        public void onEvent(EventIterator events) {
+            while(events.hasNext()){
+                Event event = events.nextEvent();
+                try {
+                    String toEvict = event.getPath();
+                    cache.remove(toEvict);
+                    // and evict the parent (if a property changed, we need to evict the parent which is the node):
+                    if (toEvict.indexOf("/") > -1) {
+                        toEvict = toEvict.substring(0, toEvict.lastIndexOf("/"));
+                        cache.remove(toEvict);
+                    }
+                } catch (RepositoryException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

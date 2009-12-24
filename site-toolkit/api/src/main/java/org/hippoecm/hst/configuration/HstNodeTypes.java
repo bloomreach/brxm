@@ -31,6 +31,7 @@ public interface HstNodeTypes {
     public final static String NODETYPE_HST_SITEMENUITEM = "hst:sitemenuitem";
     public final static String NODETYPE_HST_VIRTUALHOSTS = "hst:virtualhosts";
     public final static String NODETYPE_HST_VIRTUALHOST = "hst:virtualhost";
+    public final static String NODETYPE_HST_SCRIPT = "hst:script";
 
     public final static String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     public final static String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
@@ -43,9 +44,10 @@ public interface HstNodeTypes {
     public final static String COMPONENT_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
     public final static String COMPONENT_PROPERTY_PARAMETER_VALUES = "hst:parametervalues";
     
-    
-    public final static String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
 
+    public final static String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
+    public final static String SCRIPT_PROPERTY_TEMPLATE =  "hst:template";
+    
     public final static String SITEMAPITEM_PROPERTY_VALUE =  "hst:value";
     public final static String SITEMAPITEM_PROPERTY_ROLES =  "hst:roles";
     public final static String SITEMAPITEM_PROPERTY_SECURED =  "hst:secured";
@@ -87,4 +89,6 @@ public interface HstNodeTypes {
     public final static String NODENAME_HST_COMPONENTS = "hst:components";
     public final static String NODENAME_HST_PAGES = "hst:pages";
     public final static String NODENAME_HST_TEMPLATES = "hst:templates";
+    
+    
 }
