@@ -80,20 +80,32 @@ public class LoginPlugin extends RenderPlugin {
         add(versionLabel = new Label("version"));
         add(buildLabel = new Label("build"));
         add(repositoryLabel = new Label("repository"));
-        ServletContext servletContext = ((WebApplication)getApplication()).getServletContext();
+        
+        // set default cms version from frontend-engine jar
         try {
+            InputStream istream = HippoRepositoryFactory.getManifest(Home.class).openStream();
+            if (istream != null) {
+                Manifest manifest = new Manifest(istream);
+                Attributes atts = manifest.getMainAttributes();
+                if (atts.getValue("Implementation-Version") != null) {
+                    versionLabel.setDefaultModel(new Model(atts.getValue("Implementation-Version")));
+                }
+                if (atts.getValue("Implementation-Build") != null) {
+                    buildLabel.setDefaultModel(new Model(atts.getValue("Implementation-Build")));
+                }
+            }
+        } catch(FileNotFoundException ex) {
+        } catch(IOException ex) {
+        }
+        
+        // allow version overwrites from war
+        try {
+            ServletContext servletContext = ((WebApplication)getApplication()).getServletContext();
             InputStream istream = servletContext.getResourceAsStream("META-INF/MANIFEST.MF");
             if (istream == null) {
                 File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
                 if(manifestFile.exists()) {
                     istream = new FileInputStream(manifestFile);
-                }
-            }
-            if (istream == null) {
-                try {
-                    istream = HippoRepositoryFactory.getManifest(Home.class).openStream();
-                } catch(FileNotFoundException ex) {
-                } catch(IOException ex) {
                 }
             }
             if (istream != null) {
@@ -109,6 +121,8 @@ public class LoginPlugin extends RenderPlugin {
         } catch(IOException ex) {
             // delibate ignore
         }
+        
+        // set repository version
         if(((UserSession) getSession()).getJcrSession() != null) {
             Repository repository = ((UserSession) getSession()).getJcrSession().getRepository();
             if(repository != null) {
