@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.login;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -59,16 +58,24 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoginPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
+
     private static final long serialVersionUID = 1L;
 
     private static final String LOCALE_COOKIE = "loc";
-    
+
     protected ValueMap credentials = new ValueMap();
+
+    private static String cmsVersion;
+    private static String cmsBuild;
+    private static String repositoryVersion;
 
     public LoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -80,63 +87,85 @@ public class LoginPlugin extends RenderPlugin {
         add(versionLabel = new Label("version"));
         add(buildLabel = new Label("build"));
         add(repositoryLabel = new Label("repository"));
-        
-        // set default cms version from frontend-engine jar
-        try {
-            InputStream istream = HippoRepositoryFactory.getManifest(Home.class).openStream();
-            if (istream != null) {
-                Manifest manifest = new Manifest(istream);
-                Attributes atts = manifest.getMainAttributes();
-                if (atts.getValue("Implementation-Version") != null) {
-                    versionLabel.setDefaultModel(new Model(atts.getValue("Implementation-Version")));
-                }
-                if (atts.getValue("Implementation-Build") != null) {
-                    buildLabel.setDefaultModel(new Model(atts.getValue("Implementation-Build")));
-                }
-            }
-        } catch(FileNotFoundException ex) {
-        } catch(IOException ex) {
-        }
-        
-        // allow version overwrites from war
-        try {
-            ServletContext servletContext = ((WebApplication)getApplication()).getServletContext();
-            InputStream istream = servletContext.getResourceAsStream("META-INF/MANIFEST.MF");
-            if (istream == null) {
-                File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
-                if(manifestFile.exists()) {
-                    istream = new FileInputStream(manifestFile);
-                }
-            }
-            if (istream != null) {
-                Manifest manifest = new Manifest(istream);
-                Attributes atts = manifest.getMainAttributes();
-                if (atts.getValue("Implementation-Version") != null) {
-                    versionLabel.setDefaultModel(new Model(atts.getValue("Implementation-Version")));
-                }
-                if (atts.getValue("Implementation-Build") != null) {
-                    buildLabel.setDefaultModel(new Model(atts.getValue("Implementation-Build")));
-                }
-            }
-        } catch(IOException ex) {
-            // delibate ignore
-        }
-        
-        // set repository version
-        if(((UserSession) getSession()).getJcrSession() != null) {
-            Repository repository = ((UserSession) getSession()).getJcrSession().getRepository();
-            if(repository != null) {
-                StringBuffer sb = new StringBuffer();
-                sb.append(repository.getDescriptor(Repository.REP_NAME_DESC));
-                sb.append(" ");
-                sb.append(repository.getDescriptor(Repository.REP_VERSION_DESC));
-                repositoryLabel.setDefaultModel(new Model(new String(sb)));
-            }
-        }
+
+        versionLabel.setDefaultModel(new Model<String>(getCMSVersion()));
+        buildLabel.setDefaultModel(new Model<String>(getCMSBuild()));
+        repositoryLabel.setDefaultModel(new Model<String>(getRepositoryVersion()));
     }
 
     protected SignInForm createSignInForm(String id) {
         return new SignInForm(id);
+    }
+
+    private String getCMSVersion() {
+        if (cmsVersion == null || cmsBuild == null) {
+            // set default cms version from frontend-engine jar
+            try {
+                InputStream istream = HippoRepositoryFactory.getManifest(Home.class).openStream();
+                if (istream != null) {
+                    Manifest manifest = new Manifest(istream);
+                    Attributes atts = manifest.getMainAttributes();
+                    if (atts.getValue("Implementation-Version") != null) {
+                        cmsVersion = atts.getValue("Implementation-Version");
+                    }
+                    if (atts.getValue("Implementation-Build") != null) {
+                        cmsBuild = atts.getValue("Implementation-Build");
+                    }
+                }
+            } catch (IOException ex) {
+                log.info("Unable to determine CMS version and build info from Home.class manifest.", ex.getMessage());
+            }
+
+            // allow version overwrites from war
+            try {
+                ServletContext servletContext = ((WebApplication) getApplication()).getServletContext();
+                InputStream istream = servletContext.getResourceAsStream("META-INF/MANIFEST.MF");
+                if (istream == null) {
+                    File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
+                    if (manifestFile.exists()) {
+                        istream = new FileInputStream(manifestFile);
+                    }
+                }
+                if (istream != null) {
+                    Manifest manifest = new Manifest(istream);
+                    Attributes atts = manifest.getMainAttributes();
+                    if (atts.getValue("Implementation-Version") != null
+                            && atts.getValue("Implementation-Version").length() > 0) {
+                        cmsVersion = atts.getValue("Implementation-Version");
+                    }
+                    if (atts.getValue("Implementation-Build") != null
+                            && atts.getValue("Implementation-Build").length() > 0) {
+                        cmsBuild = atts.getValue("Implementation-Build");
+                    }
+                }
+            } catch (IOException ex) {
+                log.info("Unable to determine CMS version and build from war override.", ex.getMessage());
+            }
+        }
+        return cmsVersion;
+    }
+
+    private String getCMSBuild() {
+        if (cmsBuild == null) {
+            getCMSVersion();
+        }
+        return cmsBuild;
+    }
+
+    private String getRepositoryVersion() {
+        if (repositoryVersion == null) {
+            StringBuilder sb = new StringBuilder();
+            if (((UserSession) getSession()).getJcrSession() != null) {
+                Repository repository = ((UserSession) getSession()).getJcrSession().getRepository();
+                if (repository != null) {
+                    sb.append(repository.getDescriptor(Repository.REP_NAME_DESC));
+                    sb.append(" ");
+                    sb.append(repository.getDescriptor(Repository.REP_VERSION_DESC));
+                }
+            }
+            repositoryVersion = sb.toString();
+        }
+        return repositoryVersion;
     }
 
     @Override
@@ -147,18 +176,18 @@ public class LoginPlugin extends RenderPlugin {
 
     protected class SignInForm extends Form {
         private static final long serialVersionUID = 1L;
-        
+
         protected final DropDownChoice locale;
         private List<String> locales = Arrays.asList(new String[] { "nl", "en" });
         public String selectedLocale;
         protected final RequiredTextField usernameTextField;
-        protected final PasswordTextField passwordTextField; 
+        protected final PasswordTextField passwordTextField;
         private Label userLabel;
         private Map parameters;
-        
+
         public SignInForm(final String id) {
             super(id);
-            
+
             parameters = RequestCycle.get().getRequest().getParameterMap();
 
             // by default, use the user's browser settings for the locale
@@ -166,10 +195,10 @@ public class LoginPlugin extends RenderPlugin {
             if (locales.contains(getSession().getLocale().getLanguage())) {
                 selectedLocale = getSession().getLocale().getLanguage();
             }
-            
+
             // check if user has previously selected a locale
-            Cookie[] cookies = ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
-            if(cookies != null) {
+            Cookie[] cookies = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
+            if (cookies != null) {
                 for (int i = 0; i < cookies.length; i++) {
                     if (LOCALE_COOKIE.equals(cookies[i].getName())) {
                         if (locales.contains(cookies[i].getValue())) {
@@ -180,20 +209,20 @@ public class LoginPlugin extends RenderPlugin {
                 }
             }
 
-            add(usernameTextField = new RequiredTextField("username",  new StringPropertyModel(credentials, "username")));
+            add(usernameTextField = new RequiredTextField("username", new StringPropertyModel(credentials, "username")));
             add(passwordTextField = new PasswordTextField("password", new StringPropertyModel(credentials, "password")));
             add(locale = new DropDownChoice("locale", new PropertyModel(this, "selectedLocale"), locales));
 
             passwordTextField.setResetPassword(false);
-            
+
             locale.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
 
                 protected void onUpdate(AjaxRequestTarget target) {
                     //immediately set the locale when the user changes it
                     Cookie localeCookie = new Cookie(LOCALE_COOKIE, selectedLocale);
-                    localeCookie.setMaxAge(365*24*3600); // expire one year from now
-                    ((WebResponse)RequestCycle.get().getResponse()).addCookie(localeCookie);
+                    localeCookie.setMaxAge(365 * 24 * 3600); // expire one year from now
+                    ((WebResponse) RequestCycle.get().getResponse()).addCookie(localeCookie);
                     getSession().setLocale(new Locale(selectedLocale));
                     setResponsePage(this.getFormComponent().getPage());
                 }
@@ -201,11 +230,14 @@ public class LoginPlugin extends RenderPlugin {
 
             usernameTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
+
                 protected void onUpdate(AjaxRequestTarget target) {
                     String username = this.getComponent().getDefaultModelObjectAsString();
-                    HttpSession session = ((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
-                    if(ConcurrentLoginFilter.isConcurrentSession(session, username)) {
-                        userLabel.setDefaultModel(new StringResourceModel("alreadylogin", LoginPlugin.this, null, new Object[] {username}));
+                    HttpSession session = ((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest()
+                            .getSession(true);
+                    if (ConcurrentLoginFilter.isConcurrentSession(session, username)) {
+                        userLabel.setDefaultModel(new StringResourceModel("alreadylogin", LoginPlugin.this, null,
+                                new Object[] { username }));
                     } else {
                         userLabel.setDefaultModel(new Model(""));
                     }
@@ -216,6 +248,7 @@ public class LoginPlugin extends RenderPlugin {
 
             passwordTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
+
                 protected void onUpdate(AjaxRequestTarget target) {
                     credentials.put("password", this.getComponent().getDefaultModelObjectAsString());
                 }
@@ -230,9 +263,9 @@ public class LoginPlugin extends RenderPlugin {
 
         @Override
         public void onDetach() {
-            WebRequest webRequest = ((WebRequestCycle)RequestCycle.get()).getWebRequest();
+            WebRequest webRequest = ((WebRequestCycle) RequestCycle.get()).getWebRequest();
             if (!webRequest.getHttpServletRequest().getMethod().equals("POST") && !webRequest.isAjax()) {
-                ((UserSession)getSession()).releaseJcrSession();
+                ((UserSession) getSession()).releaseJcrSession();
             }
             super.onDetach();
         }
@@ -241,7 +274,7 @@ public class LoginPlugin extends RenderPlugin {
         public void onSubmit() {
             UserSession userSession = (UserSession) getSession();
             String username = usernameTextField.getDefaultModelObjectAsString();
-            HttpSession session = ((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
+            HttpSession session = ((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
             ConcurrentLoginFilter.validateSession(session, username, false);
             userSession.login(credentials);
             userSession.setLocale(new Locale(selectedLocale));
