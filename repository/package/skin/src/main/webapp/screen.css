@@ -1029,8 +1029,8 @@ border-bottom: 1px solid #afafaf; border-left: none; border-right: 1px solid #af
 .hippo-controlpanel-membership-item-label{display: block; width: 200px}
 
 .hippo-controlpanel-breadcrumbs{background: url("images/hippo-panels-headerback.png") repeat-x; border-bottom: 1px dotted #afafaf; font-weight: bold}
-.hippo-controlpanel-breadcrumbs-backbutton{background: url("images/hippo-controlpanel-back.png") no-repeat; display: block; padding: 8px; padding-left: 33px;}
-.hippo-controlpanel-breadcrumbs span a, .hippo-controlpanel-breadcrumbs span em{font-weight: normal; color: #666666; padding: 4px; padding-right: 8px; background: url("images/hippo-controlpanel-breacrumbs-arrow.png") no-repeat right center; margin-right: 0px;}
+.hippo-controlpanel-breadcrumbs-backbutton{display: block; padding: 8px; padding-left: 4px;}
+.hippo-controlpanel-breadcrumbs span a, .hippo-controlpanel-breadcrumbs span em{font-weight: bold; color: #666666; padding: 4px 2px 4px 8px; background: url("images/hippo-controlpanel-breacrumbs-arrow.png") no-repeat left center; margin-right: 0px;}
 .hippo-controlpanel-breadcrumbs a:hover{text-decoration: underline}
 
 .hippo-controlpanel-navigation li{display: block; float: left}
