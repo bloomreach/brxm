@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -58,58 +59,98 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
 
     // dynamically reload value
     private transient boolean loaded = false;
-    private transient List<Value> values = null;
+    private transient List<T> object = null;
 
-    private final JcrItemModel itemModel;
+    private final JcrItemModel<Property> itemModel;
     private int type = NO_TYPE;
 
     // Constructor
-    public JcrMultiPropertyValueModel(JcrItemModel itemModel) {
+    public JcrMultiPropertyValueModel(JcrItemModel<Property> itemModel) {
         this.itemModel = itemModel;
     }
 
     public Property getProperty() {
-        return (Property) itemModel.getObject();
+        return itemModel.getObject();
     }
 
-    public int getType() {
-        if (type == NO_TYPE) {
-            if ((values != null) && (values.size() > 0)) {
-                type = values.get(0).getType();
-            }
-            else {
-                try {
-                    PropertyDefinition def = getProperty().getDefinition();
-                    if (def != null) {
-                        type = def.getRequiredType();
-                    }
-                    else {
-                        type = PropertyType.UNDEFINED;
-                    }
-                }
-                catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
-                    type = PropertyType.UNDEFINED;
-                }
-            }
-        }
-        return type;
-    }
-
-    public JcrItemModel getItemModel() {
+    public JcrItemModel<Property> getItemModel() {
         return itemModel;
     }
 
-    @SuppressWarnings("unchecked")
     public List<T> getObject() {
-        try {
-            load();
+        if (!loaded) {
+            object = load();
+            loaded = true;
+        }
+        return object;
+    }
 
-            if (values == null) {
-                return null;
+    public void detach() {
+        loaded = false;
+        object = null;
+        itemModel.detach();
+    }
+
+    public void setObject(final List<T> objects) {
+        if (!loaded) {
+            throw new RuntimeException("model is not attached; cannot store list");
+        }
+
+        if (objects == null) {
+            setValues(new ArrayList<Value>(0));
+        } else {
+            List<Value> values = new ArrayList<Value>(objects.size());
+            try {
+                ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
+                for (int i = 0; i < objects.size(); i++) {
+                    switch (type) {
+                    case PropertyType.BOOLEAN:
+                        values.add(factory.createValue((Boolean) objects.get(i)));
+                        break;
+                    case PropertyType.DATE:
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime((Date) objects.get(i));
+                        values.add(factory.createValue(calendar));
+                        break;
+                    case PropertyType.DOUBLE:
+                        values.add(factory.createValue((Double) objects.get(i)));
+                        break;
+                    case PropertyType.LONG:
+                        values.add(factory.createValue((Long) objects.get(i)));
+                        break;
+                    default:
+                        // skip empty string as it cannot be an id in a list UI
+                        if (!objects.get(i).toString().equals("")) {
+                            values.add(factory.createValue(objects.get(i).toString(),
+                                    (type == PropertyType.UNDEFINED ? PropertyType.STRING : type)));
+                        }
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+                return;
             }
+            setValues(values);
+        }
+    }
 
-            int type = getType();
+    @SuppressWarnings("unchecked")
+    protected List<T> load() {
+        try {
+            List<Value> values = getValues();
+
+            if (type == NO_TYPE) {
+                if (values.size() > 0) {
+                    type = values.get(0).getType();
+                } else {
+                    PropertyDefinition def = getProperty().getDefinition();
+                    if (def != null) {
+                        type = def.getRequiredType();
+                    } else {
+                        type = PropertyType.UNDEFINED;
+                    }
+                }
+            }
 
             switch (type) {
             case PropertyType.BOOLEAN:
@@ -146,85 +187,30 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
                 }
                 return (List<T>) strings;
             }
-        }
-        catch (RepositoryException ex) {
+        } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
         return null;
     }
 
-    public void setObject(final List<T> objects) {
-        load();
-
-        if (objects == null) {
-            setValues(new ArrayList<Value>(0));
-        }
-        else {
-            List<Value> values = new ArrayList<Value>(objects.size());
-            try {
-                ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
-                int type = getType();
-                for (int i = 0; i < objects.size(); i++) {
-                    switch (type) {
-                    case PropertyType.BOOLEAN:
-                        values.add(factory.createValue((Boolean) objects.get(i)));
-                        break;
-                    case PropertyType.DATE:
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime((Date) objects.get(i));
-                        values.add(factory.createValue(calendar));
-                        break;
-                    case PropertyType.DOUBLE:
-                        values.add(factory.createValue((Double) objects.get(i)));
-                        break;
-                    case PropertyType.LONG:
-                        values.add(factory.createValue((Long) objects.get(i)));
-                        break;
-                    default:
-                        // skip empty string as it cannot be an id in a list UI
-                        if (!objects.get(i).toString().equals("")) {
-                            values.add(factory.createValue(objects.get(i).toString(),
-                                (type == PropertyType.UNDEFINED ? PropertyType.STRING : type)));
-                        }
-                    }
-                }
-            }
-            catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-                return;
-            }
-            setValues(values);
-        }
-    }
-
-    public void detach() {
-        loaded = false;
-        values = null;
-        itemModel.detach();
-    }
-
     private void setValues(List<Value> values) {
-        this.values = values;
-        
         try {
             Property prop = getProperty();
             if (prop.getDefinition() == null) {
-                throw new IllegalStateException("property " + prop.getName()
-                        + " has no definition");
+                throw new IllegalStateException("property " + prop.getName() + " has no definition");
             }
             if (!prop.getDefinition().isMultiple()) {
-                throw new IllegalStateException("definition of property " + prop.getName()
-                        + " is not multiple");
+                throw new IllegalStateException("definition of property " + prop.getName() + " is not multiple");
             }
 
+            Value[] jcrValues = values.toArray(new Value[values.size()]);
             if (itemModel.exists()) {
 
                 // set new values
-                prop.setValue(values.toArray(new Value[]{}));
-            } 
-            else {
+                prop.setValue(jcrValues);
+            } else {
                 // create new property and set new values
-                Node node = (Node) itemModel.getParentModel().getObject();
+                Node node = itemModel.getParentModel().getObject();
                 String name;
                 if (prop.getDefinition().getName().equals("*")) {
                     String path = itemModel.getPath();
@@ -233,48 +219,38 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
                     name = prop.getDefinition().getName();
                 }
 
-                Value[] newValues = new Value[this.values.size()];
-                for (int i = 0; i < this.values.size(); i++) {
-                    newValues[i] = this.values.get(i);
-                }
-                node.setProperty(name, newValues);
+                node.setProperty(name, jcrValues);
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
     }
-    
-    private void load() {
-        if (!loaded) {
-            if (itemModel.exists()) {
-                try {
-                    Property prop = getProperty();
-                    if (prop.getDefinition() == null) {
-                        throw new IllegalStateException("property " + prop.getName()
-                                + " has no definition");
-                    }
-                    if (!prop.getDefinition().isMultiple()) {
-                        throw new IllegalStateException("definition of property " + prop.getName()
-                                + " is not multiple");
-                    }
 
-                    values = Arrays.asList(prop.getValues());
+    private List<Value> getValues() {
+        if (itemModel.exists()) {
+            try {
+                Property prop = getProperty();
+                if (prop.getDefinition() == null) {
+                    throw new IllegalStateException("property " + prop.getName() + " has no definition");
                 }
-                catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
-                    values = null;
+                if (!prop.getDefinition().isMultiple()) {
+                    throw new IllegalStateException("definition of property " + prop.getName() + " is not multiple");
                 }
+
+                return Arrays.asList(prop.getValues());
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
             }
-            loaded = true;
         }
+        return Collections.emptyList();
     }
 
     // override Object
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("property",
-                itemModel.getPath()).append("values", values).toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("property", itemModel.getPath())
+                .append("values", object).toString();
     }
 
     @SuppressWarnings("unchecked")
