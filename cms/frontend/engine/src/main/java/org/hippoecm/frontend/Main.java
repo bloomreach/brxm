@@ -300,7 +300,7 @@ public class Main extends WebApplication {
     }
 
     @Override
-    public Session newSession(Request request, Response response) {
+    public UserSession newSession(Request request, Response response) {
         return new UserSession(request);
     }
 

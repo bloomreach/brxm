@@ -85,12 +85,14 @@ public abstract class PluginTest extends TestCase {
         JcrApplicationFactory jcrAppFactory = new JcrApplicationFactory(new JcrNodeModel("/config"));
         tester = new HippoTester(new Main() {
 
+            @Override
             public HippoRepository getRepository() throws RepositoryException {
                 return server;
             };
             
-            public org.apache.wicket.Session newSession(org.apache.wicket.Request request, org.apache.wicket.Response response) {
-                UserSession userSession = (UserSession) super.newSession(request, response);
+            @Override
+            public UserSession newSession(org.apache.wicket.Request request, org.apache.wicket.Response response) {
+                UserSession userSession = super.newSession(request, response);
                 userSession.login(CREDENTIALS, new LoadableDetachableModel<Session>() {
                     private static final long serialVersionUID = 1L;
 
@@ -126,7 +128,7 @@ public abstract class PluginTest extends TestCase {
     }
 
     protected void printComponents(final PrintStream out) {
-        home.visitChildren(new IVisitor() {
+        home.visitChildren(new IVisitor<Component>() {
 
             public Object component(Component component) {
                 String name = component.getClass().getName();
