@@ -232,6 +232,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                         UpdaterEngine.log.debug("commit autocreated "+origin.getPath());
                     }
                     origin = ((Node)parent.origin).getNode(nodeName);
+                    noSameNameSiblingWorkaround = null;
                 } else {
                      if(UpdaterEngine.log.isDebugEnabled()) {
                         UpdaterEngine.log.debug("commit create "+getPath()+" in "+((Node)parent.origin).getPath()+" (primary type "+((Node)parent.origin).getProperty("jcr:primaryType").getString()+") type "+getInternalProperty("jcr:primaryType")[0]);
@@ -245,15 +246,21 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                             origin = ((Node)parent.origin).addNode(nodeName, primaryType[0]);
                             noSameNameSiblingWorkaround = null;
                         } catch(ItemExistsException ex) {
+                            if(UpdaterEngine.log.isDebugEnabled()) {
+                                UpdaterEngine.log.debug("commit work around no-same-name-sibling "+parent.origin.getPath()+"/"+noSameNameSiblingWorkaround);
+                            }
                             origin = ((Node)parent.origin).addNode(noSameNameSiblingWorkaround, primaryType[0]);
                         }
                     } else {
                         origin = ((Node)parent.origin).addNode(nodeName);
+                        noSameNameSiblingWorkaround = null;
                     }
                     if (oldOrigin != null) {
                         nodeRelinked = true;
                     }
                 }
+            } else {
+                noSameNameSiblingWorkaround = null;
             }
         } else if(nodeLocationChanged) {
             String name = nodeName;
@@ -269,6 +276,9 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             if(origin == null) {
                 UpdaterEngine.log.error("could not find moved node in "+parent.origin.getPath()+" named "+name);
             }
+            noSameNameSiblingWorkaround = null;
+        } else {
+            noSameNameSiblingWorkaround = null;
         }
 
         if (!hollow) {
@@ -381,9 +391,12 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                         UpdaterEngine.log.warn("cannot remove no longer available old origin node");
                     }
                 }
-                if (noSameNameSiblingWorkaround != null) {
-                    parent.origin.getSession().move(parent.origin.getPath() + "/" + noSameNameSiblingWorkaround, parent.origin.getPath() + "/" + nodeName);
+            }
+            if (noSameNameSiblingWorkaround != null) {
+                if (UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.debug("commit restore from no-same-name-sibling "+parent.origin.getPath()+"/"+nodeName);
                 }
+                parent.origin.getSession().move(parent.origin.getPath() + "/" + noSameNameSiblingWorkaround, parent.origin.getPath() + "/" + nodeName);
             }
         }
     }

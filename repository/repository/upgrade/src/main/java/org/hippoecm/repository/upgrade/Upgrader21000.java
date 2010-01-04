@@ -76,25 +76,25 @@ public class Upgrader21000 implements UpdaterModule {
                 }
             });
         }
-        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hipposysedit:field") {
-            @Override
-            public void leaving(final Node node, int level) throws RepositoryException {
-                if(node.hasProperty("hipposysedit:name")) {
-                    Property nameProperty = node.getProperty("hipposysedit:name");
-                    if(node.getName().equals("hipposysedit:field")) {
-                        context.setName(node, nameProperty.getString());
-                    }
-                    nameProperty.remove();
-                }
-                if(node.hasProperty("hipposysedit:mandatory")) {
-                    node.getProperty("hipposysedit:mandatory").remove();
-                }
-            }
-        });
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hipposysedit:nodetype") {
             @Override
             public void leaving(final Node node, int level) throws RepositoryException {
                 context.setName(node, "hipposysedit_1_1:nodetype");
+                context.setPrimaryNodeType(node, "hipposysedit_1_1:nodetype");
+                for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
+                    Node field = iter.nextNode();
+                    context.setPrimaryNodeType(field, "hipposysedit_1_1:field");
+                    if(field.hasProperty("hipposysedit_1_1:name")) {
+                        Property nameProperty = field.getProperty("hipposysedit_1_1:name");
+                        if(field.getName().equals("hipposysedit:field")) {
+                            context.setName(field, nameProperty.getString());
+                        }
+                        nameProperty.remove();
+                    }
+                    if(field.hasProperty("hipposysedit_1_1:mandatory")) {
+                        field.getProperty("hipposysedit_1_1:mandatory").remove();
+                    }
+                }
             }
         });
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", "-",
