@@ -36,7 +36,7 @@
 [defaultcontent:news] > defaultcontent:basedocument
 - defaultcontent:title (string)
 - defaultcontent:introduction (string)
-+ defaultcontent:date (hippostd:date)
+- defaultcontent:date (date)
 + defaultcontent:body (hippostd:html)
 + defaultcontent:internallink (hippo:mirror)
 

@@ -254,49 +254,9 @@
           <sv:property sv:name="hippostd:stateSummary" sv:type="String">
             <sv:value>new</sv:value>
           </sv:property>
-          <sv:node sv:name="defaultcontent:date">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:date</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-              <sv:value>mix:referenceable</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:uuid" sv:type="String">
-              <sv:value>77f937e2-1432-4523-a7d4-926b6442a3e4</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            </sv:property>
-            <sv:property sv:name="hippostd:date" sv:type="Date">
-              <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:dayofmonth" sv:type="Long">
-              <sv:value>26</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:dayofweek" sv:type="Long">
-              <sv:value>4</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:dayofyear" sv:type="Long">
-              <sv:value>86</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:hourofday" sv:type="Long">
-              <sv:value>12</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:minute" sv:type="Long">
-              <sv:value>3</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:month" sv:type="Long">
-              <sv:value>2</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:second" sv:type="Long">
-              <sv:value>0</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:weekofyear" sv:type="Long">
-              <sv:value>13</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:year" sv:type="Long">
-              <sv:value>2008</sv:value>
-            </sv:property>
-          </sv:node>
+          <sv:property sv:name="defaultcontent:date" sv:type="Date">
+            <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+          </sv:property>
           <sv:node sv:name="defaultcontent:body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippostd:html</sv:value>
