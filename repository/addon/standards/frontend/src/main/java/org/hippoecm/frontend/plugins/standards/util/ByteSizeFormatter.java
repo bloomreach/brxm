@@ -16,14 +16,9 @@
 
 package org.hippoecm.frontend.plugins.standards.util;
 
-import java.text.DecimalFormat;
-import java.text.ParseException;
-
-import javax.swing.text.NumberFormatter;
+import java.text.NumberFormat;
 
 import org.apache.wicket.IClusterable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Formats numeric byte values into human-readable strings.
@@ -34,21 +29,29 @@ public class ByteSizeFormatter implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    static final Logger log = LoggerFactory.getLogger(ByteSizeFormatter.class);
+    private static final double ONE_KB = new Double(1024);
+    private static final double ONE_MB = Math.pow(ONE_KB, 2);
+    private static final double ONE_GB = Math.pow(ONE_KB, 3);
 
-    private static final long ONE_KB = 1024;
-    private static final long ONE_MB = ONE_KB * ONE_KB;
-    private static final long ONE_GB = ONE_KB * ONE_KB * ONE_KB;
+    private static final String DEFAULT_BYTES_SUFFIX = " bytes";
+    private static final String DEFAULT_KB_SUFFIX = " KB";
+    private static final String DEFAULT_MB_SUFFIX = " MB";
+    private static final String DEFAULT_GB_SUFFIX = " GB";
+    private static final int DEFAULT_DECIMAL_PLACES = 2;
 
-    private String gigabyteSuffix;
-    private String megabyteSuffix;
-    private String kilobyteSuffix;
-    private String byteSuffix;
+    private final String gigabyteSuffix;
+    private final String megabyteSuffix;
+    private final String kilobyteSuffix;
+    private final String byteSuffix;
 
-    private NumberFormatter formatter;
+    private NumberFormat numberFormat = NumberFormat.getInstance();
 
     public ByteSizeFormatter() {
-        this(" GB", " MB", " KB", " B", 2);
+        this(DEFAULT_DECIMAL_PLACES);
+    }
+
+    public ByteSizeFormatter(int decimalPlaces) {
+        this(DEFAULT_GB_SUFFIX, DEFAULT_MB_SUFFIX, DEFAULT_KB_SUFFIX, DEFAULT_BYTES_SUFFIX, decimalPlaces);
     }
 
     public ByteSizeFormatter(String gigabyteSuffix, String megabyteSuffix, String kilobyteSuffix, String byteSuffix,
@@ -58,28 +61,24 @@ public class ByteSizeFormatter implements IClusterable {
         this.kilobyteSuffix = kilobyteSuffix;
         this.byteSuffix = byteSuffix;
 
-        String numberFormat = decimalPlaces > 0 ? "0.0" : "0";
-        for (int i = 1; i < decimalPlaces; i++) {
-            numberFormat += "0";
-        }
-        formatter = new NumberFormatter(new DecimalFormat(numberFormat));
+        numberFormat.setMaximumFractionDigits(decimalPlaces);
     }
 
-    public String format(long byteSize) {
-        try {
-            if (byteSize > ONE_GB) {
-                return formatter.valueToString(new Double(byteSize / ONE_GB)) + gigabyteSuffix;
-            } else if (byteSize > ONE_MB) {
-                return formatter.valueToString(new Double(byteSize / ONE_MB)) + megabyteSuffix;
-            } else if (byteSize > ONE_KB) {
-                return formatter.valueToString(new Double(byteSize / ONE_KB)) + kilobyteSuffix;
-            }
-        } catch (ParseException e) {
-            if (log.isErrorEnabled()) {
-                log.error("Unable to format byte size " + byteSize, e);
-            }
+    /** Formats filesize in bytes as appropriate to bytes, KB, MB or GB
+     *
+     * @param filesize in bytes
+     * @return formatted filesize
+     **/
+    public String format(long filesize) {
+        if (Math.abs(filesize) < ONE_KB) {
+            return filesize + byteSuffix;
+        } else if (Math.abs(filesize) < ONE_MB) {
+            return new StringBuilder(numberFormat.format(filesize / ONE_KB)).append(kilobyteSuffix).toString();
+        } else if (Math.abs(filesize) < ONE_GB) {
+            return new StringBuilder(numberFormat.format(filesize / ONE_MB)).append(megabyteSuffix).toString();
+        } else {
+            return new StringBuilder(numberFormat.format(filesize / ONE_GB)).append(gigabyteSuffix).toString();
         }
-        return byteSize + byteSuffix;
     }
 
 }

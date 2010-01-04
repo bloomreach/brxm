@@ -41,6 +41,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     private static final Logger log = LoggerFactory.getLogger(ImageDisplayPlugin.class);
 
     private JcrResourceStream resource;
+    ByteSizeFormatter formatter = new ByteSizeFormatter();
 
     public ImageDisplayPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -61,7 +62,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
                     fragment.add(new NonCachingImage("image", new JcrResource(resource)));
                 } else {
                     fragment = new Fragment("fragment", "embed", this);
-                    fragment.add(new Label("filesize", new Model<String>(new ByteSizeFormatter().format(resource.length()))));
+                    fragment.add(new Label("filesize", new Model<String>(formatter.format(resource.length()))));
                     fragment.add(new Label("mimetype", new Model<String>(resource.getContentType())));
                     fragment.add(new ResourceLink("link", new JcrResource(resource)));
                 }
