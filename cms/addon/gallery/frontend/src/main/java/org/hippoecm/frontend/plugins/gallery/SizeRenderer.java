@@ -23,48 +23,35 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
+import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class SizeRenderer extends AbstractNodeRenderer {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
-    public static final long ONE_KB = 1024;
-    public static final long ONE_MB = ONE_KB * ONE_KB;
-    public static final long ONE_GB = ONE_KB * ONE_MB;
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
+    ByteSizeFormatter formatter = new ByteSizeFormatter(1);
 
     @Override
     protected Component getViewer(String id, Node node) throws RepositoryException {
-        String size;
         if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
             Node imageSet = node.getNode(node.getName());
             try {
                 Item primItem = imageSet.getPrimaryItem();
                 if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                     long length = ((Node) primItem).getProperty("jcr:data").getLength();
-                    if (length / ONE_GB > 0) {
-                        size = String.valueOf(length / ONE_GB) + " GB";
-                    } else if (length / ONE_MB > 0) {
-                        size = String.valueOf(length / ONE_MB) + " MB";
-                    } else if (length / ONE_KB > 0) {
-                        size = String.valueOf(length / ONE_KB) + " KB";
-                    } else {
-                        size = String.valueOf(length) + " bytes";
-                    }
+                    return new Label(id, formatter.format(length));
                 } else {
                     Gallery.log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
-                    return new Label(id);
                 }
             } catch (ItemNotFoundException e) {
                 Gallery.log.warn("ImageSet must have a primary item. " + node.getPath()
                         + " probably not of correct image set type");
-                return new Label(id);
             }
-        } else {
-            return new Label(id);
         }
-        return new Label(id, size);
+        return new Label(id);
     }
 
 }
