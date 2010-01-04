@@ -51,33 +51,32 @@ public class FacetRangeQuery {
                 try {
                     String internalName = ServicingNameFormat.getInteralPropertyPathName(nsMappings, facetRange.getNamespacedProperty());
                   
-                    int type = searchIndex.getPropertyType(facetRange.getNamespacedProperty());
+                    int type = facetRange.getRangeType();
+                    
                     switch (type) {
-
-                    case PropertyType.DATE:
-                        HippoDateTools.Resolution resolution = HippoDateTools.Resolution.RESOLUTIONSMAP.get(facetRange.getResolution());
-                        if(resolution == null) {
-                            log.error("Unknown resolution : '{}'. Skip range", facetRange.getResolution());
-                        }
-                        String compoundInternalName = internalName+ServicingFieldNames.DATE_RESOLUTION_DELIMITER+facetRange.getResolution();
-                        String internalFacetName = ServicingNameFormat.getInternalFacetName(compoundInternalName);
-                        Calendar calBegin = Calendar.getInstance();
-                        Calendar calEnd = Calendar.getInstance();
-                        calBegin.add(resolution.getCalendarField(), (int)facetRange.getBegin());
-                        calEnd.add(resolution.getCalendarField(), (int)facetRange.getEnd());
-                        
-                        String begin = HippoDateTools.timeToString(calBegin.getTimeInMillis(), resolution);
-                        String end = HippoDateTools.timeToString(calEnd.getTimeInMillis(), resolution);
-                        
-                        ConstantScoreRangeQuery constantScoreRangeQuery = new ConstantScoreRangeQuery(internalFacetName, begin, end, true, false);
-                        query.add(constantScoreRangeQuery, Occur.MUST);
-
-                         break;
-                    default:
-                        log.error("Range faceted browsing is not supported for property type belonging to '{}'", facetRange.getNamespacedProperty());
-                        break;
+                        case PropertyType.DATE:
+                            HippoDateTools.Resolution resolution = HippoDateTools.Resolution.RESOLUTIONSMAP.get(facetRange.getResolution());
+                            if(resolution == null) {
+                                log.warn("Unknown resolution : '{}'. Skip range", facetRange.getResolution());
+                            }
+                            String compoundInternalName = internalName+ServicingFieldNames.DATE_RESOLUTION_DELIMITER+facetRange.getResolution();
+                            String internalFacetName = ServicingNameFormat.getInternalFacetName(compoundInternalName);
+                            Calendar calBegin = Calendar.getInstance();
+                            Calendar calEnd = Calendar.getInstance();
+                            calBegin.add(resolution.getCalendarField(), (int)facetRange.getBegin());
+                            calEnd.add(resolution.getCalendarField(), (int)facetRange.getEnd());
+                            
+                            String begin = HippoDateTools.timeToString(calBegin.getTimeInMillis(), resolution);
+                            String end = HippoDateTools.timeToString(calEnd.getTimeInMillis(), resolution);
+                            
+                            ConstantScoreRangeQuery constantScoreRangeQuery = new ConstantScoreRangeQuery(internalFacetName, begin, end, true, false);
+                            query.add(constantScoreRangeQuery, Occur.MUST);
+    
+                             break;
+                        default:
+                            log.warn("Range faceted browsing is not supported for property type belonging to '{}'", facetRange.getNamespacedProperty());
+                            break;
                     }
-                   // ConstantScoreRangeQuery rangeQuery = new ConstantScoreRangeQuery(internalName, , , true, true);
                 } catch (IllegalNameException e) {
                     log.error(e.toString());
                 }  

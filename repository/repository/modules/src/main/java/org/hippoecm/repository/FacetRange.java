@@ -15,8 +15,10 @@
  */
 package org.hippoecm.repository;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.jcr.PropertyType;
 
 
 public class FacetRange{
@@ -28,21 +30,25 @@ public class FacetRange{
     
     private String resolution;
     
+    private int rangeType;
+    
+    
     // default begin
     private double begin = Integer.MIN_VALUE;
  
     // default end
     private double end = Integer.MAX_VALUE;
-    private static final Set<String> SUPPORTED_RESOLUTIONS = new HashSet<String>();
-    private static final String SUPPORTED_RESOLUTIONS_STRING = "year, month, week, day or hour";
+    
+    private static final Map<String, Integer> SUPPORTED_RESOLUTIONS = new HashMap<String, Integer>();
+    
     static {
-        SUPPORTED_RESOLUTIONS.add("year");
-        SUPPORTED_RESOLUTIONS.add("month");
-        SUPPORTED_RESOLUTIONS.add("week");
-        SUPPORTED_RESOLUTIONS.add("day");
-        SUPPORTED_RESOLUTIONS.add("hour");
-        //supportedResolutions.add("long");
-        //supportedResolutions.add("double");
+        SUPPORTED_RESOLUTIONS.put("year", PropertyType.DATE);
+        SUPPORTED_RESOLUTIONS.put("month", PropertyType.DATE);
+        SUPPORTED_RESOLUTIONS.put("week", PropertyType.DATE);
+        SUPPORTED_RESOLUTIONS.put("day", PropertyType.DATE);
+        SUPPORTED_RESOLUTIONS.put("hour", PropertyType.DATE);
+        //supportedResolutions.add("long", PropertyType.LONG);
+        //supportedResolutions.add("double", PropertyType.DOUBLE);
     }
     
     public String getNamespacedProperty() {
@@ -65,11 +71,27 @@ public class FacetRange{
         return resolution;
     }
 
+    /*
+     * returns the type of range as an integer according javax.jcr.PropertyType values.
+     */
+    public int getRangeType(){
+        return this.rangeType;
+    }
+    
     public void setResolution(String resolution) {
-        if(!SUPPORTED_RESOLUTIONS.contains(resolution)) {
-            throw new IllegalArgumentException("Unsupported resolution '"+resolution+"'. Supported resolutions are '" + SUPPORTED_RESOLUTIONS_STRING +"'");
+        if(!SUPPORTED_RESOLUTIONS.containsKey(resolution)) {
+            StringBuilder supportedResolutions = new StringBuilder();
+            for(String res :  SUPPORTED_RESOLUTIONS.keySet()) {
+                if(supportedResolutions.length() != 0) {
+                    supportedResolutions.append(", ");
+                }
+                supportedResolutions.append(res);
+            }
+            supportedResolutions.insert(0, "[").append("]");
+            throw new IllegalArgumentException("Unsupported resolution '"+resolution+"'. Supported resolutions are '" + supportedResolutions.toString() +"'");
         }
         this.resolution = resolution;
+        this.rangeType = SUPPORTED_RESOLUTIONS.get(resolution);
     }
     
     public double getBegin() {

@@ -256,37 +256,35 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     // facet range list has the follow String[] format: String[0] = facetName, String[1] = from, String[2] = to
                     List<String[]> facetRangeList = null;
                     if (parsedFacet.getFacetRanges() != null) {
-                        // we have facet ranges
-                        facetRangeList = new ArrayList<String[]>();
-                        int type = getPropertyType(parsedFacet.getNamespacedProperty());
-                        switch (type) {
-
-                        case PropertyType.DATE:
-                            
-                             // parse the date config
-                             for(FacetRange facetRange : parsedFacet.getFacetRanges()){
-                                 Calendar calBegin = Calendar.getInstance();
-                                 Calendar calEnd = Calendar.getInstance();
-                                 HippoDateTools.Resolution resolution = HippoDateTools.Resolution.RESOLUTIONSMAP.get(facetRange.getResolution());
-                                 if(resolution == null) {
-                                     log.error("Skipping unknown resolution : '{}' for facet ranges", facetRange.getResolution());
-                                 }
-                                 calBegin.add(resolution.getCalendarField(), (int)facetRange.getBegin());
-                                 calEnd.add(resolution.getCalendarField(), (int)facetRange.getEnd());
-                                 
-                                 long begin = HippoDateTools.round(calBegin.getTimeInMillis(), resolution);
-                                 long end = HippoDateTools.round(calEnd.getTimeInMillis(), resolution);
-                                 String[] facetRangeItem = new String[3];
-                                 facetRangeItem[0] = facetRange.getName();
-                                 facetRangeItem[1] = String.valueOf(begin);
-                                 facetRangeItem[2] = String.valueOf(end);
-                                 facetRangeList.add(facetRangeItem);
+                         // we have facet ranges
+                         facetRangeList = new ArrayList<String[]>();
+                         for(FacetRange facetRange : parsedFacet.getFacetRanges()){
+                             int type = facetRange.getRangeType();
+                             switch (type) { 
+                                 case PropertyType.DATE:
+                                     // parse the date config
+                                     Calendar calBegin = Calendar.getInstance();
+                                     Calendar calEnd = Calendar.getInstance();
+                                     HippoDateTools.Resolution resolution = HippoDateTools.Resolution.RESOLUTIONSMAP.get(facetRange.getResolution());
+                                     if(resolution == null) {
+                                         log.error("Skipping unknown resolution : '{}' for facet ranges", facetRange.getResolution());
+                                     }
+                                     calBegin.add(resolution.getCalendarField(), (int)facetRange.getBegin());
+                                     calEnd.add(resolution.getCalendarField(), (int)facetRange.getEnd());
+                                     
+                                     long begin = HippoDateTools.round(calBegin.getTimeInMillis(), resolution);
+                                     long end = HippoDateTools.round(calEnd.getTimeInMillis(), resolution);
+                                     String[] facetRangeItem = new String[3];
+                                     facetRangeItem[0] = facetRange.getName();
+                                     facetRangeItem[1] = String.valueOf(begin);
+                                     facetRangeItem[2] = String.valueOf(end);
+                                     facetRangeList.add(facetRangeItem);
+                                     break;
+                                 default:
+                                     log.error("Range faceted browsing is not supported for property type beloning to '{}'", parsedFacet.getNamespacedProperty());
+                                     return new ResultImpl(0, null);
                              }
-                             break;
-                        default:
-                            log.error("Range faceted browsing is not supported for property type beloning to '{}'", parsedFacet.getNamespacedProperty());
-                            return new ResultImpl(0, null);
-                        }
+                         }
                     }
                     
                     /*

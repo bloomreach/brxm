@@ -62,7 +62,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             try {
                 parsedFacet = new ParsedFacet(currentFacet, null, this);
             } catch (Exception e) {
-                log.error("Malformed facet range configuration '{}'. Valid format is "+VALID_RANGE_EXAMPLE,
+                log.warn("Malformed facet range configuration '{}'. Valid format is "+VALID_RANGE_EXAMPLE,
                         currentFacet);
                 return state;
             }
