@@ -27,7 +27,7 @@ import org.hippoecm.hst.util.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Node(jcrType="hipposys:facetsubnavigation")
+@Node(jcrType="hippofacnav:facetsubnavigation")
 public class HippoFacetSubNavigation extends AbstractHippoFacetChildNavigation {
     
     private static Logger log = LoggerFactory.getLogger(HippoFacetSubNavigation.class);

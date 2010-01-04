@@ -18,7 +18,7 @@ package org.hippoecm.hst.content.beans.standard.facetnavigation;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
 
-@Node(jcrType="hippo:facetnavigation")
+@Node(jcrType="hippofacnav:facetnavigation")
 public class HippoFacetNavigation extends HippoFolder {
 
 }

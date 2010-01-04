@@ -17,7 +17,7 @@ package org.hippoecm.hst.content.beans.standard.facetnavigation;
 
 import org.hippoecm.hst.content.beans.Node;
 
-@Node(jcrType="hipposys:facetsavailablenavigation")
+@Node(jcrType="hippofacnav:facetsavailablenavigation")
 public class HippoFacetsAvailableNavigation extends AbstractHippoFacetChildNavigation {
 
 
