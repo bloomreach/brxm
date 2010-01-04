@@ -46,11 +46,8 @@ import javax.transaction.xa.XAResource;
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
-import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.request.IRequestCycleProcessor;
 import org.apache.wicket.util.tester.WicketTester;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
@@ -263,8 +260,8 @@ public class HippoTester extends WicketTester {
             }
 
             @Override
-            public Session newSession(Request request, Response response) {
-                UserSession session = new UserSession(request, new LoadableDetachableModel<javax.jcr.Session>() {
+            public UserSession newSession(Request request, Response response) {
+                return new UserSession(request, new LoadableDetachableModel<javax.jcr.Session>() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -273,7 +270,6 @@ public class HippoTester extends WicketTester {
                     }
                     
                 });
-                return session;
             }
         }, factory);
     }
