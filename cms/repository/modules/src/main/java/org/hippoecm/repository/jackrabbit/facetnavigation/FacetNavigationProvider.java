@@ -77,7 +77,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
 
             orderByList = new ArrayList<OrderBy>();
             if(sortorders != null && sortorders.length != sortbys.length) {
-                log.error("When using multivalued '{}', and '{}', then both should have equal number of values (or delete property "+FacNavNodeType.HIPPOFACNAV_FACETSORTORDER+" at all)", FacNavNodeType.HIPPOFACNAV_FACETSORTBY, FacNavNodeType.HIPPOFACNAV_FACETSORTORDER);
+                log.warn("When using multivalued '{}', and '{}', then both should have equal number of values (or delete property "+FacNavNodeType.HIPPOFACNAV_FACETSORTORDER+" at all)", FacNavNodeType.HIPPOFACNAV_FACETSORTBY, FacNavNodeType.HIPPOFACNAV_FACETSORTORDER);
                 return state;
             }
             for(int i = 0; i < sortbys.length; i++) {
@@ -90,9 +90,9 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                         orderByList.add(new OrderBy(propertyName.toString()));
                     }
                 } catch (IllegalNameException e){
-                    log.error("Skipping illegal name as sortby : " + sortbys[i] + " because : " +  e.getMessage());
+                    log.warn("Skipping illegal name as sortby : " + sortbys[i] + " because : " +  e.getMessage());
                 } catch (NamespaceException e) {
-                    log.error("Skipping illegal name as sortby : " + sortbys[i] + " because : " +  e.getMessage());
+                    log.warn("Skipping illegal name as sortby : " + sortbys[i] + " because : " +  e.getMessage());
                 }
             }
         }
@@ -100,7 +100,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         if (facets != null && facets.length > 0) {
             if(facetNodeNames != null) {
                 if(facets.length != facetNodeNames.length) {
-                    log.error("When using multivalued property '{}', it must have equal number of values" +
+                    log.warn("When using multivalued property '{}', it must have equal number of values" +
                     		"as for property '{}'", FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, FacNavNodeType.HIPPOFACNAV_FACETS);
                     return state;
                 }
@@ -116,7 +116,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         		    try {
         		        parsedFacet = new ParsedFacet(facet, configuredNodeName, this);
                     } catch (Exception e) {
-                        log.error("Malformed facet range configuration '"+facet+"'. Valid format is "+VALID_RANGE_EXAMPLE,
+                        log.warn("Malformed facet range configuration '"+facet+"'. Valid format is "+VALID_RANGE_EXAMPLE,
                                         e);
                         return state;
                     }
@@ -135,9 +135,9 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
 	        		state.addChildNodeEntry(childName, childNodeId);
 	        		i++;
         		} catch (IllegalNameException e){
-        			log.error("Skipping illegal name as facet : " + facet + " because : " +  e.getMessage());
+        			log.warn("Skipping illegal name as facet : " + facet + " because : " +  e.getMessage());
         		} catch (NamespaceException e) {
-        			log.error("Skipping illegal name as facet : " + facet + " because : " +  e.getMessage());
+        			log.warn("Skipping illegal name as facet : " + facet + " because : " +  e.getMessage());
         		}
         	}
         }

@@ -473,6 +473,8 @@ public class ServicingSearchIndex extends SearchIndex {
         
     }
  
+    // TODO for some reason, jackrabbit's PropertyTypeRegistry sometimes seem to incorrectly return that it does not know the type of some property. Hence, for now, better not
+    // use this method
     // jcrPropertyName is of format : {namespace}:localname
     public int getPropertyType(String namespacedProperty){
         try {
