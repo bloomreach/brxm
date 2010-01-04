@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,7 +105,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     protected Map<String, Set<String>> prototypes() throws RepositoryException {
-        Map<String, Set<String>> types = new TreeMap<String, Set<String>>();
+        Map<String, Set<String>> types = new LinkedHashMap<String, Set<String>>();
         try {
             QueryManager qmgr = userSession.getWorkspace().getQueryManager();
             Vector<Node> foldertypes = new Vector<Node>();
