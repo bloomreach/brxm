@@ -252,6 +252,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
         }
         if (destination != null) {
             destination.accept(new TraversingItemVisitor.Default() {
+                @Override
                 public void visit(Node node) throws RepositoryException {
                     if (node instanceof HippoNode) {
                         try {
@@ -267,8 +268,18 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
                     super.visit(node);
                 }
 
+                @Override
                 protected void leaving(Node node, int level) throws RepositoryException {
                     if (node.isNodeType(HippoNodeType.NT_DERIVED)) {
+                        if (!node.isCheckedOut()) {
+                            for (int depth = node.getDepth(); depth > 0; depth--) {
+                                Node ancestor = (Node) node.getAncestor(depth);
+                                if (ancestor.isNodeType("mix:versionable")) {
+                                    ancestor.checkout();
+                                    break;
+                                }
+                            }
+                        }
                         node.setProperty("hippo:compute", (String) null);
                     }
                 }
