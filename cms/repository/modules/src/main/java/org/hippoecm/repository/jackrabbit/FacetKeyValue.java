@@ -16,7 +16,9 @@
 package org.hippoecm.repository.jackrabbit;
 
 
-public class FacetKeyValue implements KeyValue<String, String>{
+public class FacetKeyValue implements KeyValue<String, String> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private String key;
     private String value;

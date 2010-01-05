@@ -24,6 +24,9 @@ import org.apache.wicket.model.IDetachable;
  * led up to the violation, plus a message that describes the problem. 
  */
 public final class Violation implements IDetachable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private Set<ModelPath> fieldPaths;

@@ -19,6 +19,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ValidationResult implements IValidationResult {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private Set<Violation> violations;

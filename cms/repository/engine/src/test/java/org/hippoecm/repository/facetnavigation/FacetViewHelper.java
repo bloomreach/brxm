@@ -20,7 +20,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 public class FacetViewHelper {
-
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
     
     public static void traverse(Node navigation) throws RepositoryException {
         traverse(navigation, "", 0);

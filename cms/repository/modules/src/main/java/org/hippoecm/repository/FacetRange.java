@@ -20,8 +20,9 @@ import java.util.Map;
 
 import javax.jcr.PropertyType;
 
-
-public class FacetRange{
+public class FacetRange {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private String name;
     

@@ -19,15 +19,14 @@ import org.hippoecm.frontend.PluginTest;
 import org.junit.Test;
 
 public class FieldPluginTest extends PluginTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testCssForInvalidField() throws Exception {
-        
     }
 
     @Test
     public void templateReceivesFilteredValidationResult() throws Exception {
-        
     }
-
 }

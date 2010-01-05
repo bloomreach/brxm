@@ -19,6 +19,8 @@ import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.config.impl.BuiltinApplicationFactory;
 
 public class NoRepositoryAvailablePage extends Home {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public NoRepositoryAvailablePage() {
         super(new BuiltinApplicationFactory());

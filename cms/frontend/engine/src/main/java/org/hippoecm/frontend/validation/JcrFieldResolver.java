@@ -33,6 +33,9 @@ import org.slf4j.LoggerFactory;
  * Creates a model from a container model, using a {@link ModelPath}.
  */
 public class JcrFieldResolver implements IFieldResolver {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(JcrFieldResolver.class);
