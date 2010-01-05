@@ -20,9 +20,9 @@ import java.util.Set;
 import org.apache.wicket.IClusterable;
 
 public interface IValidationListener extends IClusterable {
+    final static String SVN_ID = "$Id$";
 
     void onValidation(IValidationResult result);
 
     void onResolve(Set<Violation> violations);
-
 }

@@ -21,6 +21,7 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.plugin.IClusterControl;
 
 public interface ITemplateFactory<C extends IModel> extends IClusterable {
+    final static String SVN_ID = "$Id$";
 
     IClusterControl getTemplate(C model) throws TemplateEngineException;
 }
