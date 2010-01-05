@@ -16,7 +16,7 @@
 
 package org.hippoecm.frontend.plugins.standards.util;
 
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 
 import org.apache.wicket.IClusterable;
 
@@ -44,7 +44,7 @@ public class ByteSizeFormatter implements IClusterable {
     private final String kilobyteSuffix;
     private final String byteSuffix;
 
-    private NumberFormat numberFormat = NumberFormat.getInstance();
+    private DecimalFormat numberFormat;
 
     public ByteSizeFormatter() {
         this(DEFAULT_DECIMAL_PLACES);
@@ -60,7 +60,9 @@ public class ByteSizeFormatter implements IClusterable {
         this.megabyteSuffix = megabyteSuffix;
         this.kilobyteSuffix = kilobyteSuffix;
         this.byteSuffix = byteSuffix;
-
+        
+        numberFormat = new DecimalFormat("#,##0.###");
+        numberFormat.getDecimalFormatSymbols().setDecimalSeparator(',');
         numberFormat.setMaximumFractionDigits(decimalPlaces);
     }
 
