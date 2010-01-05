@@ -25,8 +25,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
 
     private final Logger log = LoggerFactory.getLogger(FacetNavigationProvider.class);
     
-	protected FacetsAvailableNavigationProvider facetsAvailableNavigationProvider = null;
-	
+    protected FacetsAvailableNavigationProvider facetsAvailableNavigationProvider = null;
+
     Name docbaseName;
     Name facetsName;
     Name facetNodeNamesName;
@@ -35,11 +35,11 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
     Name facetSortBy;
     Name facetSortOrder;
     
-	@Override
-	protected void initialize() throws RepositoryException {
-		super.initialize();
-		facetsAvailableNavigationProvider = (FacetsAvailableNavigationProvider) lookup(FacetsAvailableNavigationProvider.class.getName());
-		docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
+    @Override
+    protected void initialize() throws RepositoryException {
+        super.initialize();
+        facetsAvailableNavigationProvider = (FacetsAvailableNavigationProvider) lookup(FacetsAvailableNavigationProvider.class.getName());
+        docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
         facetsName = resolveName(FacNavNodeType.HIPPOFACNAV_FACETS);
         facetNodeNamesName = resolveName(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES);
 
@@ -47,14 +47,14 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         facetSortBy = resolveName(FacNavNodeType.HIPPOFACNAV_FACETSORTBY);
         facetSortOrder = resolveName(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER);
         
-		virtualNodeName = resolveName(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION);
-		register(resolveName(FacNavNodeType.NT_FACETNAVIGATION), virtualNodeName);
-	}
-	
-	@Override
-	public NodeState populate(NodeState state) throws RepositoryException {
-		NodeId nodeId = state.getNodeId();
-		
+        virtualNodeName = resolveName(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION);
+        register(resolveName(FacNavNodeType.NT_FACETNAVIGATION), virtualNodeName);
+    }
+
+    @Override
+    public NodeState populate(NodeState state) throws RepositoryException {
+        NodeId nodeId = state.getNodeId();
+
         String[] property = getProperty(nodeId, docbaseName);
         String docbase = (property != null && property.length > 0 ? property[0] : null);
         int limit = -1;
@@ -100,52 +100,51 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         if (facets != null && facets.length > 0) {
             if(facetNodeNames != null) {
                 if(facets.length != facetNodeNames.length) {
-                    log.warn("When using multivalued property '{}', it must have equal number of values" +
-                    		"as for property '{}'", FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, FacNavNodeType.HIPPOFACNAV_FACETS);
+                    log.warn("When using multivalued property '{}', it must have equal number of values" + "as for property '{}'", FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, FacNavNodeType.HIPPOFACNAV_FACETS);
                     return state;
                 }
             }
             int i = 0;
-        	for(String facet : facets){
-        		try {
-        		    String configuredNodeName = null;
-        		    if(facetNodeNames != null && facetNodeNames[i] != null && !"".equals(facetNodeNames[i])) {
-        		        configuredNodeName = facetNodeNames[i];
-        		    }
-        		    ParsedFacet parsedFacet;
-        		    try {
-        		        parsedFacet = new ParsedFacet(facet, configuredNodeName, this);
+            for(String facet : facets) {
+                try {
+                    String configuredNodeName = null;
+                    if(facetNodeNames != null && facetNodeNames[i] != null && !"".equals(facetNodeNames[i])) {
+                        configuredNodeName = facetNodeNames[i];
+                    }
+                    ParsedFacet parsedFacet;
+                    try {
+                        parsedFacet = new ParsedFacet(facet, configuredNodeName, this);
                     } catch (Exception e) {
                         log.warn("Malformed facet range configuration '"+facet+"'. Valid format is "+VALID_RANGE_EXAMPLE,
                                         e);
                         return state;
                     }
                     
-	        		Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
-	        		FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
-	        		childNodeId.availableFacets = facets;
+                    Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
+                    FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
+                    childNodeId.availableFacets = facets;
                     childNodeId.facetNodeNames = facetNodeNames;
                     childNodeId.currentFacet = facet;
-	        		childNodeId.docbase = docbase;
-	        		if(limit > -1) {
-	        		    childNodeId.limit = limit;
-	        		}
-	        		childNodeId.orderByList = orderByList;
-	        		inheritParentFilters(childNodeId, state);
-	        		state.addChildNodeEntry(childName, childNodeId);
-	        		i++;
-        		} catch (IllegalNameException e){
-        			log.warn("Skipping illegal name as facet : " + facet + " because : " +  e.getMessage());
-        		} catch (NamespaceException e) {
-        			log.warn("Skipping illegal name as facet : " + facet + " because : " +  e.getMessage());
-        		}
-        	}
+                    childNodeId.docbase = docbase;
+                    if(limit > -1) {
+                        childNodeId.limit = limit;
+                    }
+                    childNodeId.orderByList = orderByList;
+                    inheritParentFilters(childNodeId, state);
+                    state.addChildNodeEntry(childName, childNodeId);
+                    i++;
+                } catch (IllegalNameException e){
+                    log.warn("Skipping illegal name as facet : " + facet + " because : " +  e.getMessage());
+                } catch (NamespaceException e) {
+                    log.warn("Skipping illegal name as facet : " + facet + " because : " +  e.getMessage());
+                }
+            }
         }
-	    
-	    return state;
-	}
 
-	protected final int getPropertyAsInt(NodeId nodeId, Name propName) throws NumberFormatException{
+        return state;
+    }
+
+    protected final int getPropertyAsInt(NodeId nodeId, Name propName) throws NumberFormatException{
         PropertyState propState = getPropertyState(new PropertyId(nodeId, propName));
         if(propState == null) {
             if(log.isDebugEnabled()) {
@@ -175,5 +174,5 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         }
         throw new NumberFormatException("Cannot parse value for property '"+propName+"' to an integer");
     }
-	
+
 }

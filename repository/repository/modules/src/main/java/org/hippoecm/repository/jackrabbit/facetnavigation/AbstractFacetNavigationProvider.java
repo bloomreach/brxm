@@ -124,28 +124,28 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         }
 
         public LinkedHashMap<Name, String> getOrder() {
-        	if(this.order != null) {
-        		return new LinkedHashMap<Name, String>(this.order);
-        	} 
-        	return null;
-		}
+            if(this.order != null) {
+                return new LinkedHashMap<Name, String>(this.order);
+            } 
+            return null;
+        }
 
-		public LinkedHashMap<Name, String> getView() {
-			if(this.view != null) {
-				return new LinkedHashMap<Name, String>(this.view);
-			}
-			return null;
-		}
+        public LinkedHashMap<Name, String> getView() {
+            if(this.view != null) {
+                return new LinkedHashMap<Name, String>(this.view);
+            }
+            return null;
+        }
 
-		public boolean isSingledView() {
-			return this.singledView;
-		}
+        public boolean isSingledView() {
+            return this.singledView;
+        }
     }
     
 
-	public void inheritParentFilters(FacetNavigationNodeId childNodeId, NodeState state) {
-	    if(state.getNodeId() instanceof IFilterNodeId) {
-	        IFilterNodeId filterNodeId = (IFilterNodeId)state.getNodeId();
+    public void inheritParentFilters(FacetNavigationNodeId childNodeId, NodeState state) {
+        if(state.getNodeId() instanceof IFilterNodeId) {
+            IFilterNodeId filterNodeId = (IFilterNodeId)state.getNodeId();
             if(filterNodeId.getView() != null) {
                 childNodeId.view = new LinkedHashMap<Name,String>(filterNodeId.getView());
             }
@@ -153,17 +153,17 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
                 childNodeId.order = new LinkedHashMap<Name,String>(filterNodeId.getOrder());
             }
             childNodeId.singledView = filterNodeId.isSingledView();
-	    } else if (state.getParentId()!=null && state.getParentId() instanceof IFilterNodeId) {
-			IFilterNodeId filterNodeId = (IFilterNodeId)state.getParentId();
-			if(filterNodeId.getView() != null) {
-				childNodeId.view = new LinkedHashMap<Name,String>(filterNodeId.getView());
-			}
-			if(filterNodeId.getOrder() != null) {
-				childNodeId.order = new LinkedHashMap<Name,String>(filterNodeId.getOrder());
-			}
-			childNodeId.singledView = filterNodeId.isSingledView();
-		}
-	}
+        } else if (state.getParentId()!=null && state.getParentId() instanceof IFilterNodeId) {
+            IFilterNodeId filterNodeId = (IFilterNodeId)state.getParentId();
+            if(filterNodeId.getView() != null) {
+                childNodeId.view = new LinkedHashMap<Name,String>(filterNodeId.getView());
+            }
+            if(filterNodeId.getOrder() != null) {
+                childNodeId.order = new LinkedHashMap<Name,String>(filterNodeId.getOrder());
+            }
+            childNodeId.singledView = filterNodeId.isSingledView();
+        }
+    }
     
     public class FacetNavigationEntry implements Comparable<FacetNavigationEntry> {
         String facetValue;
@@ -178,10 +178,10 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
                throw new NullPointerException();
            }
            if(entry.equals(this)) {
-        	   return 0;
+               return 0;
            }
            if(entry.count.count - this.count.count == 0) {
-        	   return 1;
+               return 1;
            }
            return (entry.count.count - this.count.count);
         }

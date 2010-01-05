@@ -25,29 +25,24 @@ import org.apache.jackrabbit.spi.Name;
  * to propagate filtering state through its virtual node id. 
  * 
  */
-
 public interface IFilterNodeId {
+    /**
+     * whether this virtual node id is singledView, in other words, below its handle, show at most 1 single node
+     * @return <code>true</code> when the virtual node id is singledView
+     */
+    boolean isSingledView();
 
-	/**
-	 * 
-	/**
-	 * whether this virtual node id is singledView, in other words, below its handle, show at most 1 single node
-	 * @return <code>true</code> when the virtual node id is singledView
-	 */
-	boolean isSingledView();
-	
-	/**
-	 * Implementation can best return a new Map containing the key value pairs because the maps should not be changed
-	 * on an existing virtual node when being inherited by another provider
-	 * @return the LinkedHashMap<Name,String> containing the view filter. If no view, return <code>null</code> or empty map
-	 */
-	LinkedHashMap<Name,String> getView();
-	
-	/**
-	 * Implementation can best return a new Map containing the key value pairs because the maps should not be changed
-	 * on an existing virtual node when being inherited by another provider
-	 * @return the LinkedHashMap<Name,String> containing the order filter. If no order, return <code>null</code> or empty map
-	 */
-	LinkedHashMap<Name,String> getOrder();
-	
+    /**
+     * Implementation can best return a new Map containing the key value pairs because the maps should not be changed
+     * on an existing virtual node when being inherited by another provider
+     * @return the LinkedHashMap<Name,String> containing the view filter. If no view, return <code>null</code> or empty map
+     */
+    LinkedHashMap<Name,String> getView();
+
+    /**
+     * Implementation can best return a new Map containing the key value pairs because the maps should not be changed
+     * on an existing virtual node when being inherited by another provider
+     * @return the LinkedHashMap<Name,String> containing the order filter. If no order, return <code>null</code> or empty map
+     */
+    LinkedHashMap<Name,String> getOrder();
 }

@@ -50,8 +50,8 @@ public class InheritedFilterQuery {
         if (inheritedFilter != null) {
             for (Map.Entry<Name, String> entry : inheritedFilter.entrySet()) {
                 try {
-                	Name nodeName = entry.getKey();
-                	String field = nsMappings.translatePropertyName(nodeName);
+                    Name nodeName = entry.getKey();
+                    String field = nsMappings.translatePropertyName(nodeName);
                     Term t = new Term(FieldNames.PROPERTIES, FieldNames.createNamedValue(field, entry.getValue()));
                     Query wq = new TermQuery(t);
                     this.query.add(wq, Occur.MUST);

@@ -114,10 +114,10 @@ public class FacetSelectTest extends TestCase {
     @Override
     public void tearDown() throws Exception {
         if(session.getRootNode().hasNode("test")) {
-	    session.getRootNode().getNode("test").remove();
-	}
-	session.save();
-	super.tearDown();
+            session.getRootNode().getNode("test").remove();
+        }
+        session.save();
+        super.tearDown();
     }
 
     @Test

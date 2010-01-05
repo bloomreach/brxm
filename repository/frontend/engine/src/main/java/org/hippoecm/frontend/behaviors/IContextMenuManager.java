@@ -29,5 +29,5 @@ import org.apache.wicket.Component;
 public interface IContextMenuManager {
     final static String SVN_ID = "$Id$";
 
-	void showContextMenu(IContextMenu active);
+    void showContextMenu(IContextMenu active);
 }

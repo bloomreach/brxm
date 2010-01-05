@@ -143,7 +143,7 @@
         <sv:value>sql</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:statement" sv:type="String">
-	<!-- As per request of HREPTWO-3159 also display rejected requests -->
+        <!-- As per request of HREPTWO-3159 also display rejected requests -->
         <sv:value>SELECT * FROM hippo:request</sv:value>
       </sv:property>
     </sv:node>

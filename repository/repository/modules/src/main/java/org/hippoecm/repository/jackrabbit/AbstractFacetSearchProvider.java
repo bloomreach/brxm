@@ -302,10 +302,10 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                throw new NullPointerException();
            }
            if(entry.equals(this)) {
-        	   return 0;
+               return 0;
            }
            if(entry.count.count - this.count.count == 0) {
-        	   return 1;
+               return 1;
            }
            return (entry.count.count - this.count.count);
         }

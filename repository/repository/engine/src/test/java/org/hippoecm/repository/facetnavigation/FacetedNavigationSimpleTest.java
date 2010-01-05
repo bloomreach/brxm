@@ -55,17 +55,17 @@ public class FacetedNavigationSimpleTest extends TestCase {
 
     @Test
     public void testDirectSingleValuedFacetNavigation() throws RepositoryException, IOException {
-    	commonStart();
-    	
-    	Node testNode = session.getRootNode().getNode("test");
+        commonStart();
+
+        Node testNode = session.getRootNode().getNode("test");
         createSimpleStructure1(testNode);
         createFacetNodeSingleValues(testNode);
         session.save();
         
-    	Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
-    	
-    	assertNotNull(node);
-    	// assert some facetednavigation nodes exists
+        Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        assertNotNull(node);
+        // assert some facetednavigation nodes exists
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:color/hippo:resultset"));
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:color/grey"));
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:color/grey/hippo:resultset"));
@@ -75,7 +75,7 @@ public class FacetedNavigationSimpleTest extends TestCase {
         // assert that after iterating the same key-value twice, there are no child nodes below this node:
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:brand/peugeot"));
         assertFalse(node.getNode("hippo:brand/peugeot/hippo:brand/peugeot").hasNodes());
-    	
+
         // assert some counts:
         assertEquals(4L,node.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         assertEquals(4L,node.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong()) ;
@@ -314,80 +314,78 @@ public class FacetedNavigationSimpleTest extends TestCase {
     }
     
     private void commonStart() throws RepositoryException{
-    	session.getRootNode().addNode("test");
-    	session.save();
+        session.getRootNode().addNode("test");
+        session.save();
     }
     
-	private void createSimpleStructure1(Node test) throws RepositoryException {
-    	Node documents = test.addNode("documents","nt:unstructured");
-    	documents.addMixin("mix:referenceable");
-		Node cars = documents.addNode("cars","nt:unstructured");
-		documents.addMixin("mix:referenceable");
-		/*
-		 * car 0
-		 * car that has no facets, so should not be visible at all in facet
-		 */ 
-    	Node car = cars.addNode("car0","hippo:handle");
-    	car.addMixin("hippo:hardhandle");
-    	car = car.addNode("car0","hippo:testcardocument");
-    	car.addMixin("hippo:harddocument");
-    	
-    	
-		// car 1
-    	car  = cars.addNode("car1","hippo:handle");
-    	car.addMixin("hippo:hardhandle");
+    private void createSimpleStructure1(Node test) throws RepositoryException {
+        Node documents = test.addNode("documents","nt:unstructured");
+        documents.addMixin("mix:referenceable");
+        Node cars = documents.addNode("cars","nt:unstructured");
+        documents.addMixin("mix:referenceable");
+        /*
+         * car 0
+         * car that has no facets, so should not be visible at all in facet
+         */ 
+        Node car = cars.addNode("car0","hippo:handle");
+        car.addMixin("hippo:hardhandle");
+        car = car.addNode("car0","hippo:testcardocument");
+        car.addMixin("hippo:harddocument");
+ 
+        // car 1
+        car  = cars.addNode("car1","hippo:handle");
+        car.addMixin("hippo:hardhandle");
         car = car.addNode("car1","hippo:testcardocument");
-    	car.addMixin("hippo:harddocument");
-    	car.setProperty("hippo:brand", "mercedes");
-    	car.setProperty("hippo:color", "grey");
-    	car.setProperty("hippo:product", "car");
-    	car.setProperty("hippo:date", globalCal);
-    	
-    	// car 2
-    	car  = cars.addNode("car2","hippo:handle");
-        car.addMixin("hippo:hardhandle");
-    	car = car.addNode("car2","hippo:testcardocument");
-    	car.addMixin("hippo:harddocument");
-    	car.setProperty("hippo:brand", "volkswagen");
-    	car.setProperty("hippo:color", "grey");
-    	car.setProperty("hippo:product", "car");
+        car.addMixin("hippo:harddocument");
+        car.setProperty("hippo:brand", "mercedes");
+        car.setProperty("hippo:color", "grey");
+        car.setProperty("hippo:product", "car");
         car.setProperty("hippo:date", globalCal);
-    	
-    	// car 3
-    	car  = cars.addNode("car3","hippo:handle");
+
+        // car 2
+        car  = cars.addNode("car2","hippo:handle");
         car.addMixin("hippo:hardhandle");
-    	car = car.addNode("car3","hippo:testcardocument");
-    	car.addMixin("hippo:harddocument");
-    	car.setProperty("hippo:brand", "peugeot");
-    	car.setProperty("hippo:color", "blue");
-    	car.setProperty("hippo:product", "car");
+        car = car.addNode("car2","hippo:testcardocument");
+        car.addMixin("hippo:harddocument");
+        car.setProperty("hippo:brand", "volkswagen");
+        car.setProperty("hippo:color", "grey");
+        car.setProperty("hippo:product", "car");
         car.setProperty("hippo:date", globalCal);
-    	
-    	test.save();
-    	
-    	// car 4
-    	car  = cars.addNode("car4","hippo:handle");
+
+        // car 3
+        car  = cars.addNode("car3","hippo:handle");
         car.addMixin("hippo:hardhandle");
-    	car = car.addNode("car4","hippo:testcardocument");
-    	car.addMixin("hippo:harddocument");
-    	
-    	// add a facetselect to car 1
-    	String docbase = cars.getNode("car1").getUUID();
-    	Node facetselect = car.addNode("car1", HippoNodeType.NT_FACETSELECT);
-    	facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, docbase);
+        car = car.addNode("car3","hippo:testcardocument");
+        car.addMixin("hippo:harddocument");
+        car.setProperty("hippo:brand", "peugeot");
+        car.setProperty("hippo:color", "blue");
+        car.setProperty("hippo:product", "car");
+        car.setProperty("hippo:date", globalCal);
+
+        test.save();
+
+        // car 4
+        car  = cars.addNode("car4","hippo:handle");
+        car.addMixin("hippo:hardhandle");
+        car = car.addNode("car4","hippo:testcardocument");
+        car.addMixin("hippo:harddocument");
+
+        // add a facetselect to car 1
+        String docbase = cars.getNode("car1").getUUID();
+        Node facetselect = car.addNode("car1", HippoNodeType.NT_FACETSELECT);
+        facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, docbase);
         facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[]{});
         facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[]{});
         facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[]{});
-    	
-    	car.setProperty("hippo:brand", "peugeot");
-    	car.setProperty("hippo:color", "grey");
-    	car.setProperty("hippo:product", "car");
+ 
+        car.setProperty("hippo:brand", "peugeot");
+        car.setProperty("hippo:color", "grey");
+        car.setProperty("hippo:product", "car");
         car.setProperty("hippo:date", globalCal);
-    	
-	}
-	
-	private void createSimpleStructure2(Node test) throws RepositoryException {
-	    Node documents = test.addNode("documents","nt:unstructured");
+    }
+
+    private void createSimpleStructure2(Node test) throws RepositoryException {
+        Node documents = test.addNode("documents","nt:unstructured");
         documents.addMixin("mix:referenceable");
         Node cars = documents.addNode("cars","nt:unstructured");
         
@@ -405,9 +403,9 @@ public class FacetedNavigationSimpleTest extends TestCase {
         car.addMixin("hippo:harddocument");
         String[] tags2 = {"toyota", "environment", "economical", "lease"};
         car.setProperty("tags", tags2);
-	}
+    }
 
-	private void createFacetNodeSingleValues(Node node) throws RepositoryException {
+    private void createFacetNodeSingleValues(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
         node.addMixin("mix:referenceable");
         node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -417,22 +415,22 @@ public class FacetedNavigationSimpleTest extends TestCase {
         node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER, new String[] { "descending", "descending"});
 
     }
-	
-	private void createFacetNodeMultiValue(Node node) throws RepositoryException {
+
+    private void createFacetNodeMultiValue(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
         node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
         node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "tags"});
     }
-	
-	private void createFacetNodeWithPrimaryType(Node node) throws RepositoryException {
+
+    private void createFacetNodeWithPrimaryType(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
         node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
         node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "jcr:primaryType", "hippo:brand"});
     }
-	
-	private void createFacetNodeDateValue(Node node) throws RepositoryException {
+
+    private void createFacetNodeDateValue(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
         node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());

@@ -56,7 +56,6 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     }
 
     public class FacetResultSetNodeId extends HippoNodeId {
-    	private static final long serialVersionUID = 1L;
         String queryname;
         String docbase;
         String[] search;
@@ -81,20 +80,20 @@ public class FacetResultSetProvider extends HippoVirtualProvider
             this.count = count;
         }
         
-		public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, List<KeyValue<String, String>> currentSearch, List<FacetRange> currentRanges, int count) {
-			super(FacetResultSetProvider.this, parent, name);
+        public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, List<KeyValue<String, String>> currentSearch, List<FacetRange> currentRanges, int count) {
+            super(FacetResultSetProvider.this, parent, name);
             this.queryname = queryname;
             this.docbase = docbase;
             this.preparedSearch = currentSearch;
             this.currentRanges = currentRanges;
             this.count = count;
-		}
-		
-		public void setLimit(int limit) {
+        }
+
+        public void setLimit(int limit) {
             this.limit = limit;
         }
-		
-		public void setOrderByList(List<OrderBy> orderByList) {
+
+        public void setOrderByList(List<OrderBy> orderByList) {
             this.orderByList = orderByList;
         }
     }
@@ -143,15 +142,15 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         LinkedHashMap<Name,String> order = null;
         
         if (state.getParentId()!=null && state.getParentId() instanceof IFilterNodeId) {
-			IFilterNodeId filterNodeId = (IFilterNodeId)state.getParentId();
-			if(filterNodeId.getView() != null) {
-				inheritedFilter = new LinkedHashMap<Name,String>(filterNodeId.getView());
-				view =  new LinkedHashMap<Name,String>(filterNodeId.getView());
-			}
-			if(filterNodeId.getOrder() != null) {
-				order = new LinkedHashMap<Name,String>(filterNodeId.getOrder());
-			}
-			singledView = filterNodeId.isSingledView();
+            IFilterNodeId filterNodeId = (IFilterNodeId)state.getParentId();
+            if(filterNodeId.getView() != null) {
+                inheritedFilter = new LinkedHashMap<Name,String>(filterNodeId.getView());
+                view =  new LinkedHashMap<Name,String>(filterNodeId.getView());
+            }
+            if(filterNodeId.getOrder() != null) {
+                order = new LinkedHashMap<Name,String>(filterNodeId.getOrder());
+            }
+            singledView = filterNodeId.isSingledView();
         }
         
         /*
@@ -160,24 +159,24 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         List<KeyValue<String, String>> currentFacetQuery = nodeId.preparedSearch;
         
         if(currentFacetQuery == null) {
-	        currentFacetQuery = new ArrayList<KeyValue<String,String>>();
-	        for(int i=0; search != null && i < search.length; i++) {
-	            Matcher matcher = facetPropertyPattern.matcher(search[i]);
-	            if(matcher.matches() && matcher.groupCount() == 2) {
-	                try {
-	                    currentFacetQuery.add(new FacetKeyValue(resolvePath(matcher.group(1)).toString(), matcher.group(2)));
-	                } catch(IllegalNameException ex) {
-	                    log.error("Could not resolve path for: '{}'. Return unpopulated state", matcher.group(1));
-	                    return state;
-	                } catch(NamespaceException ex) {
-	                    log.error("Could not resolve path for: '{}'. Return unpopulated state", matcher.group(1));
-	                    return state;
-	                } catch(MalformedPathException ex) {
-	                    log.error("Could not resolve path for: '{}'. Return unpopulated state", matcher.group(1));
-	                    return state;
-	                }
-	            }
-	        }
+            currentFacetQuery = new ArrayList<KeyValue<String,String>>();
+            for(int i=0; search != null && i < search.length; i++) {
+                Matcher matcher = facetPropertyPattern.matcher(search[i]);
+                if(matcher.matches() && matcher.groupCount() == 2) {
+                    try {
+                        currentFacetQuery.add(new FacetKeyValue(resolvePath(matcher.group(1)).toString(), matcher.group(2)));
+                    } catch(IllegalNameException ex) {
+                        log.error("Could not resolve path for: '{}'. Return unpopulated state", matcher.group(1));
+                        return state;
+                    } catch(NamespaceException ex) {
+                        log.error("Could not resolve path for: '{}'. Return unpopulated state", matcher.group(1));
+                        return state;
+                    } catch(MalformedPathException ex) {
+                        log.error("Could not resolve path for: '{}'. Return unpopulated state", matcher.group(1));
+                        return state;
+                    }
+                }
+            }
         }
         FacetedNavigationEngine.Query initialQuery;
         initialQuery = facetedEngine.parse(docbase);
