@@ -255,7 +255,7 @@
             <sv:value>new</sv:value>
           </sv:property>
           <sv:property sv:name="defaultcontent:date" sv:type="Date">
-            <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+            <sv:value>2010-01-05T09:03:00.000+01:00</sv:value>
           </sv:property>
           <sv:node sv:name="defaultcontent:body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
