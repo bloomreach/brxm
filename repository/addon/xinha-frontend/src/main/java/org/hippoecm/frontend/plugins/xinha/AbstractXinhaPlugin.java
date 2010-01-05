@@ -201,10 +201,11 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                                 + "/";
 
                         String processed = XinhaHtmlProcessor.prefixImageLinks(text, prefix);
-                        processed = XinhaHtmlProcessor.decorateInternalLinks(text, il);
-                        getResponse().write(processed);
+                        processed = XinhaHtmlProcessor.decorateInternalLinks(processed, il);
+                        replaceComponentTagBody(markupStream, openTag, processed);
+                    } else {
+                        renderComponentTagBody(markupStream, openTag);
                     }
-                    renderComponentTagBody(markupStream, openTag);
                 }
             });
         }
