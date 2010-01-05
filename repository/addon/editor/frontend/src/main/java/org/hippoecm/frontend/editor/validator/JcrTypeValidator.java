@@ -29,6 +29,9 @@ import org.hippoecm.frontend.validation.Violation;
  * Validator for generic jcr node types.
  */
 public class JcrTypeValidator implements ITypeValidator {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private Set<JcrFieldValidator> fieldValidators = new HashSet<JcrFieldValidator>();

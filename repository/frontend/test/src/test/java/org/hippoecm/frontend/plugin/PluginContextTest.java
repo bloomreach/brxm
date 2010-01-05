@@ -37,6 +37,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class PluginContextTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public interface ITestService extends IClusterable {
 

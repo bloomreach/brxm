@@ -29,6 +29,9 @@ import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 
 public class Upgrader21000 implements UpdaterModule {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+    
     public void register(final UpdaterContext context) {
         context.registerName("upgrade-v21000");
         context.registerStartTag("v20902");

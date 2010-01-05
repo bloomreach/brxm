@@ -16,6 +16,9 @@
 package org.hippoecm.repository;
 
 public class OrderBy {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private String name;
     private boolean descending;
     

@@ -22,6 +22,8 @@ import java.util.Set;
 import org.junit.Test;
 
 public class HtmlValidatorTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testValidHtml() throws Exception {

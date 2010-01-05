@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory;
  * path is not used more than once.
  */
 public class TemplateTypeValidator implements ITypeValidator {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TemplateTypeValidator.class);

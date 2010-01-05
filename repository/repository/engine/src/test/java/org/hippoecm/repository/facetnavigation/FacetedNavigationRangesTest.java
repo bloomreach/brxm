@@ -40,11 +40,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class FacetedNavigationRangesTest extends TestCase {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
    
     private final static Calendar start = Calendar.getInstance();
-    static {
-       
-    }
     private final static Calendar onehourbefore = Calendar.getInstance();
     static {
         onehourbefore.setTimeInMillis(start.getTimeInMillis());

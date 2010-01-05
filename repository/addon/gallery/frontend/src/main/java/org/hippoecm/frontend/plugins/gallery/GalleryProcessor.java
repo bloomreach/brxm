@@ -21,5 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 public interface GalleryProcessor {
+    final static String SVN_ID = "$Id$";
+
     public void makeImage(Node node, InputStream istream, String mimeType, String filename) throws RepositoryException;
 }

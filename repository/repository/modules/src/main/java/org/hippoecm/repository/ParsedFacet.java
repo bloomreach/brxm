@@ -24,6 +24,9 @@ import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.jackrabbit.HippoVirtualProvider;
 
 public class ParsedFacet {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     String displayFacetName;
     
     // property in format {namespace}localname
