@@ -22,6 +22,7 @@ import org.hippoecm.frontend.service.IEditorManager;
  * Callback interface to be used when instantiating an IEditor using the EditorFactory.
  */
 public interface IEditorContext extends IClusterable {
+    final static String SVN_ID = "$Id$";
 
     void onFocus();
 

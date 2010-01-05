@@ -21,6 +21,8 @@ import java.util.List;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class InheritingPluginConfig extends AbstractPluginDecorator {
+    final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private IPluginConfig fallback;

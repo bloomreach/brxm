@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.editor.validator;
 
 public interface IFeedbackLogger {
+    final static String SVN_ID = "$Id$";
 
     void warn(String messageKey, Object[] parameters);
 

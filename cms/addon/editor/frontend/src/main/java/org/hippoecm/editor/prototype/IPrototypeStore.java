@@ -19,6 +19,7 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
 public interface IPrototypeStore<T> extends IClusterable {
+    final static String SVN_ID = "$Id$";
 
     IModel<T> getPrototype(String name, boolean draft);
 

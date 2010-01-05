@@ -21,6 +21,7 @@ import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 
 public interface ITemplateStore extends IStore<IClusterConfig> {
+    final static String SVN_ID = "$Id$";
 
     List<String> getMetadataEditors();
 

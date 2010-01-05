@@ -22,6 +22,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 
 public interface ITemplateLocator extends IClusterable {
+    final static String SVN_ID = "$Id$";
     
     IClusterConfig getTemplate(Map<String, Object> criteria) throws StoreException;
 

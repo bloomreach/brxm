@@ -26,6 +26,7 @@ import org.hippoecm.frontend.validation.Violation;
  * A validator for a type; validates values for a number of fields.
  */
 public interface ITypeValidator extends IClusterable {
+    final static String SVN_ID = "$Id$";
 
     Set<Violation> validate(IModel model) throws ValidationException;
 
