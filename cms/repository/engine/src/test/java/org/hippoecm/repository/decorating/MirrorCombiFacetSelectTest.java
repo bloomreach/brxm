@@ -66,7 +66,7 @@ public class MirrorCombiFacetSelectTest extends TestCase {
     };
     
     private static String[] content2 = new String[] {
-    	"/test/documents/articles/war-of-the-worlds/war-of-the-worlds/mirror", "hippo:mirror",
+        "/test/documents/articles/war-of-the-worlds/war-of-the-worlds/mirror", "hippo:mirror",
         "hippo:docbase", "/test/documents/articles/foo",
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds/subtypemirror", "hippo:subtypemirror",
         "hippo:docbase", "/test/documents/articles/foo",
@@ -112,56 +112,55 @@ public class MirrorCombiFacetSelectTest extends TestCase {
     @Test
     public void testMirrorInheritFilterFromFacetSelect() throws Exception {
         
-    	session.refresh(false);
+        session.refresh(false);
  
-    	// directly to the mirror, then below the 'brave-new-world' handle, we expect 2 document variants
-    	assertTrue(session.getRootNode().getNode("test/documents/articles/war-of-the-worlds/war-of-the-worlds/mirror").hasNode("brave-new-world"));
-    	assertTrue(session.getRootNode().getNode("test/documents/articles/war-of-the-worlds/war-of-the-worlds/mirror/brave-new-world").getNodes().getSize() == 2);
+        // directly to the mirror, then below the 'brave-new-world' handle, we expect 2 document variants
+        assertTrue(session.getRootNode().getNode("test/documents/articles/war-of-the-worlds/war-of-the-worlds/mirror").hasNode("brave-new-world"));
+        assertTrue(session.getRootNode().getNode("test/documents/articles/war-of-the-worlds/war-of-the-worlds/mirror/brave-new-world").getNodes().getSize() == 2);
       
-    	
-    	// now we go through the facetselect with filter to the mirror: now we expect the mirror to inherit the filter from facetselect, this only 
-    	// have 1 document variant below brave-new-world:
-    	
-    	assertTrue(session.getRootNode().getNode("test/normalselect").hasNode("war-of-the-worlds/mirror"));
-    	assertTrue(session.getRootNode().getNode("test/normalselect/war-of-the-worlds/mirror").hasNode("brave-new-world"));
-    	
-    	// Now the count is 1 for a facetselect with filter and mode 'select' !!!
-    	assertTrue(session.getRootNode().getNode("test/normalselect/war-of-the-worlds/mirror/brave-new-world").getNodes().getSize() == 1);
-    	
-    	
-    	// now we go through the singledview facetselect with filter to the mirror: now we expect the mirror to inherit the filter from facetselect, this only 
-    	// have 1 document variant below brave-new-world:
-    	
-    	assertTrue(session.getRootNode().getNode("test/singledview").hasNode("war-of-the-worlds/mirror"));
-    	assertTrue(session.getRootNode().getNode("test/singledview/war-of-the-worlds/mirror").hasNode("brave-new-world"));
-    	
-    	// Now the count is 1 for a facetselect with filter and mode 'single' !!!
-    	assertTrue(session.getRootNode().getNode("test/singledview/war-of-the-worlds/mirror/brave-new-world").getNodes().getSize() == 1);
-    	
-    	// now we go through the facetselectnofilter with *no* filter to the mirror: now we expect the mirror to again have 2 document variants
-    	
-    	assertTrue(session.getRootNode().getNode("test/facetselectnofilter").hasNode("war-of-the-worlds/mirror"));
-    	assertTrue(session.getRootNode().getNode("test/facetselectnofilter/war-of-the-worlds/mirror").hasNode("brave-new-world"));
-    	
-    	// Now the count is 2 for a facetselect with *no* filter
-    	assertTrue(session.getRootNode().getNode("test/facetselectnofilter/war-of-the-worlds/mirror/brave-new-world").getNodes().getSize() == 2);
-    	
-    	
-    	// SAME CYCLE FOR SUBTYPE OF MIRROR
-    	
-    	assertTrue(session.getRootNode().getNode("test/singledview").hasNode("war-of-the-worlds/subtypemirror"));
-    	assertTrue(session.getRootNode().getNode("test/singledview/war-of-the-worlds/subtypemirror").hasNode("brave-new-world"));
-    	
-    	// Now the count is 1 for a facetselect with filter and mode 'single' !!!
-    	assertTrue(session.getRootNode().getNode("test/singledview/war-of-the-worlds/subtypemirror/brave-new-world").getNodes().getSize() == 1);
-    	
-    	// now we go through the facetselectnofilter with *no* filter to the mirror: now we expect the mirror to again have 2 document variants
-    	
-    	assertTrue(session.getRootNode().getNode("test/facetselectnofilter").hasNode("war-of-the-worlds/subtypemirror"));
-    	assertTrue(session.getRootNode().getNode("test/facetselectnofilter/war-of-the-worlds/subtypemirror").hasNode("brave-new-world"));
-    	
-    	// Now the count is 2 for a facetselect with *no* filter
-    	assertTrue(session.getRootNode().getNode("test/facetselectnofilter/war-of-the-worlds/subtypemirror/brave-new-world").getNodes().getSize() == 2);
-    	
+        // now we go through the facetselect with filter to the mirror: now we expect the mirror to inherit the filter from facetselect, this only 
+        // have 1 document variant below brave-new-world:
+    
+        assertTrue(session.getRootNode().getNode("test/normalselect").hasNode("war-of-the-worlds/mirror"));
+        assertTrue(session.getRootNode().getNode("test/normalselect/war-of-the-worlds/mirror").hasNode("brave-new-world"));
+    
+        // Now the count is 1 for a facetselect with filter and mode 'select' !!!
+        assertTrue(session.getRootNode().getNode("test/normalselect/war-of-the-worlds/mirror/brave-new-world").getNodes().getSize() == 1);
+    
+    
+        // now we go through the singledview facetselect with filter to the mirror: now we expect the mirror to inherit the filter from facetselect, this only 
+        // have 1 document variant below brave-new-world:
+    
+        assertTrue(session.getRootNode().getNode("test/singledview").hasNode("war-of-the-worlds/mirror"));
+        assertTrue(session.getRootNode().getNode("test/singledview/war-of-the-worlds/mirror").hasNode("brave-new-world"));
+    
+        // Now the count is 1 for a facetselect with filter and mode 'single' !!!
+        assertTrue(session.getRootNode().getNode("test/singledview/war-of-the-worlds/mirror/brave-new-world").getNodes().getSize() == 1);
+    
+        // now we go through the facetselectnofilter with *no* filter to the mirror: now we expect the mirror to again have 2 document variants
+    
+        assertTrue(session.getRootNode().getNode("test/facetselectnofilter").hasNode("war-of-the-worlds/mirror"));
+        assertTrue(session.getRootNode().getNode("test/facetselectnofilter/war-of-the-worlds/mirror").hasNode("brave-new-world"));
+    
+        // Now the count is 2 for a facetselect with *no* filter
+        assertTrue(session.getRootNode().getNode("test/facetselectnofilter/war-of-the-worlds/mirror/brave-new-world").getNodes().getSize() == 2);
+    
+    
+        // SAME CYCLE FOR SUBTYPE OF MIRROR
+    
+        assertTrue(session.getRootNode().getNode("test/singledview").hasNode("war-of-the-worlds/subtypemirror"));
+        assertTrue(session.getRootNode().getNode("test/singledview/war-of-the-worlds/subtypemirror").hasNode("brave-new-world"));
+    
+        // Now the count is 1 for a facetselect with filter and mode 'single' !!!
+        assertTrue(session.getRootNode().getNode("test/singledview/war-of-the-worlds/subtypemirror/brave-new-world").getNodes().getSize() == 1);
+    
+        // now we go through the facetselectnofilter with *no* filter to the mirror: now we expect the mirror to again have 2 document variants
+    
+        assertTrue(session.getRootNode().getNode("test/facetselectnofilter").hasNode("war-of-the-worlds/subtypemirror"));
+        assertTrue(session.getRootNode().getNode("test/facetselectnofilter/war-of-the-worlds/subtypemirror").hasNode("brave-new-world"));
+    
+        // Now the count is 2 for a facetselect with *no* filter
+        assertTrue(session.getRootNode().getNode("test/facetselectnofilter/war-of-the-worlds/subtypemirror/brave-new-world").getNodes().getSize() == 2);
+    
     }
 }

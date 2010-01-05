@@ -93,9 +93,9 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
 
     @Test
     public void testDatesFacetNavigation() throws RepositoryException, IOException {
-    	commonStart();
-    	
-    	Node testNode = session.getRootNode().getNode("test");
+        commonStart();
+ 
+        Node testNode = session.getRootNode().getNode("test");
         createDateStructure1(testNode);
         
         Node navigation = testNode.addNode("facetnavigation");
@@ -130,15 +130,15 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
     
     
     private void commonStart() throws RepositoryException{
-    	session.getRootNode().addNode("test");
-    	session.save();
+        session.getRootNode().addNode("test");
+        session.save();
     }
     
-	private void createDateStructure1(Node test) throws RepositoryException {
-    	Node documents = test.addNode("documents","nt:unstructured");
-    	documents.addMixin("mix:referenceable");
-		Node dateDocs = documents.addNode("datedocs","nt:unstructured");
-		documents.addMixin("mix:referenceable");
+    private void createDateStructure1(Node test) throws RepositoryException {
+        Node documents = test.addNode("documents","nt:unstructured");
+        documents.addMixin("mix:referenceable");
+        Node dateDocs = documents.addNode("datedocs","nt:unstructured");
+        documents.addMixin("mix:referenceable");
 
         addDateDoc(dateDocs, "datedoc1", start);
         addDateDoc(dateDocs, "datedoc2", onehourbefore);
@@ -149,12 +149,9 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
         addDateDoc(dateDocs, "datedoc7", twomonthsbefore);
         addDateDoc(dateDocs, "datedoc8", yearbefore);
         addDateDoc(dateDocs, "datedoc9", twoyearbefore);
-		
-    	test.save();
-    	
-    	
-    	
-	}
+
+        test.save();
+    }
 
     private void addDateDoc(Node dateDocs, String name, Calendar cal) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
         Node dateDoc  = dateDocs.addNode(name,"hippo:handle");
@@ -164,5 +161,5 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
         dateDoc.setProperty("hippo:date", cal);
         
     }
-	
+
 }

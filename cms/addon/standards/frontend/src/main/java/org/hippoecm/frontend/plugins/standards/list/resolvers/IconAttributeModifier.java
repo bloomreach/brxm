@@ -59,7 +59,7 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
                 if (classValue != null && node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
                     Node child = node.getNode(node.getName());
                     classValue += " " + StringUtils.replace(child.getPrimaryNodeType().getName(), ":", "-");
-								}
+                }
             } catch (RepositoryException e) {
                 log.error("Unable to determine document-type-specific icon for document", e);
             }

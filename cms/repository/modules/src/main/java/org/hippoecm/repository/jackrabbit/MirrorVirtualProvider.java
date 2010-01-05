@@ -67,7 +67,7 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
 
     @Override
     protected void initialize() throws RepositoryException {
-    	docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
+        docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
         jcrUUIDName = resolveName("jcr:uuid");
         jcrMixinTypesName = resolveName("jcr:mixinTypes");
         hippoUUIDName = resolveName(HippoNodeType.HIPPO_UUID);

@@ -24,16 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider {
-
-	@SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
 
     private final Logger log = LoggerFactory.getLogger(FacetSubNavigationProvider.class);
     
     protected FacetsAvailableNavigationProvider facetsAvailableNavigationProvider = null;
     protected FacetResultSetProvider subNodesProvider = null;
-    
 
     @Override
     protected void initialize() throws RepositoryException {
@@ -43,20 +40,18 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
         virtualNodeName = resolveName(FacNavNodeType.NT_FACETSUBNAVIGATION);
         register(null, virtualNodeName);
     }
-
  
     @Override
     public NodeState populate(NodeState state) throws RepositoryException {
-    	NodeId nodeId = state.getNodeId();
-    	if (nodeId instanceof FacetNavigationNodeId) {
-    		FacetNavigationNodeId facetNavigationNodeId = (FacetNavigationNodeId)nodeId;
+        NodeId nodeId = state.getNodeId();
+        if (nodeId instanceof FacetNavigationNodeId) {
+            FacetNavigationNodeId facetNavigationNodeId = (FacetNavigationNodeId)nodeId;
             List<KeyValue<String, String>> currentSearch = facetNavigationNodeId.currentSearch;
             List<FacetRange> currentRanges = facetNavigationNodeId.currentRanges;
-    		String[] availableFacets = facetNavigationNodeId.availableFacets;
-    		String[] facetNodeNames = facetNavigationNodeId.facetNodeNames;
-    	    String docbase = facetNavigationNodeId.docbase;
-    	    List<KeyValue<String, String>> usedFacetValueCombis = facetNavigationNodeId.usedFacetValueCombis;
-    	 
+            String[] availableFacets = facetNavigationNodeId.availableFacets;
+            String[] facetNodeNames = facetNavigationNodeId.facetNodeNames;
+            String docbase = facetNavigationNodeId.docbase;
+            List<KeyValue<String, String>> usedFacetValueCombis = facetNavigationNodeId.usedFacetValueCombis;
 
             HitsRequested hitsRequested = new HitsRequested();
             hitsRequested.setResultRequested(false);
@@ -74,9 +69,8 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                 return state;
             }
             int i = 0;
-        	for(String facet : availableFacets){ 
-        	    
-        	    String configuredNodeName = null;
+            for(String facet : availableFacets){ 
+                String configuredNodeName = null;
                 if(facetNodeNames != null && facetNodeNames[i] != null && !"".equals(facetNodeNames[i])) {
                     configuredNodeName = facetNodeNames[i];
                 }
@@ -88,40 +82,39 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                                     facet);
                     return state;
                 }
-        	   
+
                 i++;
-        	    
-        		Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
-        		FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
-            	  for(String value : facetNavigationNodeId.ancestorAndSelfUsedCombinations) {
-            		    KeyValue<String,String> facetValueCombi = new FacetKeyValue(facet, value);
-                		if(usedFacetValueCombis.indexOf(facetValueCombi) > -1) {
+
+                Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
+                FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
+                for(String value : facetNavigationNodeId.ancestorAndSelfUsedCombinations) {
+                    KeyValue<String,String> facetValueCombi = new FacetKeyValue(facet, value);
+                    if(usedFacetValueCombis.indexOf(facetValueCombi) > -1) {
                            /*
                             * the exact facet value combination is already populated before in the tree. We populate the key-value
                             * combi one more time, to have a consistent faceted navigation view, but, after that, we do not populate the 
                             * childs anymore, also to avoid recursion
                             */
-                		   childNodeId.stopSubNavigation = true;
+                           childNodeId.stopSubNavigation = true;
                            break;  
                         }
-            	  }
-        		childNodeId.availableFacets = availableFacets;
+                }
+                childNodeId.availableFacets = availableFacets;
                 childNodeId.facetNodeNames = facetNodeNames;
-        		childNodeId.currentFacet = facet;
-        		childNodeId.ancestorAndSelfUsedCombinations = facetNavigationNodeId.ancestorAndSelfUsedCombinations;
-        		childNodeId.docbase = docbase;
+                childNodeId.currentFacet = facet;
+                childNodeId.ancestorAndSelfUsedCombinations = facetNavigationNodeId.ancestorAndSelfUsedCombinations;
+                childNodeId.docbase = docbase;
                 childNodeId.currentSearch = currentSearch;
                 childNodeId.currentRanges = currentRanges;
-        		childNodeId.view = facetNavigationNodeId.view;
-				childNodeId.order = facetNavigationNodeId.order;
-				childNodeId.singledView = facetNavigationNodeId.singledView;
+                childNodeId.view = facetNavigationNodeId.view;
+                childNodeId.order = facetNavigationNodeId.order;
+                childNodeId.singledView = facetNavigationNodeId.singledView;
                 childNodeId.limit = facetNavigationNodeId.limit;
                 childNodeId.orderByList = facetNavigationNodeId.orderByList;
                 
-				childNodeId.usedFacetValueCombis = new ArrayList<KeyValue<String,String>>(usedFacetValueCombis);
-        		state.addChildNodeEntry(childName, childNodeId);
-        		
-        	}
+                childNodeId.usedFacetValueCombis = new ArrayList<KeyValue<String,String>>(usedFacetValueCombis);
+                state.addChildNodeEntry(childName, childNodeId);
+            }
           
             // add child node resultset:
             Name resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
@@ -132,7 +125,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
             childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
             
             state.addChildNodeEntry(resultSetChildName, childNodeId);
-    	}
+        }
         return state;
     }
     

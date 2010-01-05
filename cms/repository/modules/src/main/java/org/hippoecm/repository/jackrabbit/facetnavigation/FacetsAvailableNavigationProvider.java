@@ -31,9 +31,9 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
 
     private final Logger log = LoggerFactory.getLogger(FacetsAvailableNavigationProvider.class);
     
-	protected FacetSubNavigationProvider facetsSubNavigationProvider = null; 
+    protected FacetSubNavigationProvider facetsSubNavigationProvider = null; 
     protected FacetResultSetProvider subNodesProvider = null;
-	
+
     @Override
     protected void initialize() throws RepositoryException {
         super.initialize();
@@ -46,19 +46,19 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
  
     @Override
     public NodeState populate(NodeState state) throws RepositoryException {
-    	NodeId nodeId = state.getNodeId();
-    	if (nodeId instanceof FacetNavigationNodeId) {
-    		FacetNavigationNodeId facetNavigationNodeId = (FacetNavigationNodeId)nodeId;
+        NodeId nodeId = state.getNodeId();
+        if (nodeId instanceof FacetNavigationNodeId) {
+            FacetNavigationNodeId facetNavigationNodeId = (FacetNavigationNodeId)nodeId;
             List<KeyValue<String, String>> currentSearch = facetNavigationNodeId.currentSearch;
             List<FacetRange> currentRanges = facetNavigationNodeId.currentRanges;
-    		String currentFacet = facetNavigationNodeId.currentFacet;
-    		String[] availableFacets = facetNavigationNodeId.availableFacets;
-    	    String docbase = facetNavigationNodeId.docbase;
-    	    String[] ancestorAndSelfUsedCombinations = facetNavigationNodeId.ancestorAndSelfUsedCombinations; 
-    	    
-    	    Map<Name,String> inheritedFilter = facetNavigationNodeId.view;
-    	    
-    	    ParsedFacet parsedFacet;
+            String currentFacet = facetNavigationNodeId.currentFacet;
+            String[] availableFacets = facetNavigationNodeId.availableFacets;
+            String docbase = facetNavigationNodeId.docbase;
+            String[] ancestorAndSelfUsedCombinations = facetNavigationNodeId.ancestorAndSelfUsedCombinations; 
+     
+            Map<Name,String> inheritedFilter = facetNavigationNodeId.view;
+
+            ParsedFacet parsedFacet;
             try {
                 parsedFacet = new ParsedFacet(currentFacet, null, this);
             } catch (Exception e) {
@@ -68,9 +68,9 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             }
             
             if(parsedFacet.getNamespacedProperty() == null) {
-            	return state;
+                return state;
             }
-    		Map<String, Map<String, FacetedNavigationEngine.Count>> facetSearchResultMap;
+            Map<String, Map<String, FacetedNavigationEngine.Count>> facetSearchResultMap;
             facetSearchResultMap = new TreeMap<String, Map<String, FacetedNavigationEngine.Count>>();
             
             Map<String, FacetedNavigationEngine.Count> facetSearchResult;
@@ -93,7 +93,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             
             FacetedNavigationEngine.Result facetedResult;
             facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, null,
-                    facetSearchResultMap, inheritedFilter , hitsRequested);
+            facetSearchResultMap, inheritedFilter, hitsRequested);
          
             int count = facetedResult.length();
 
@@ -118,7 +118,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             
             for(FacetNavigationEntry entry : facetNavigationEntries) {
                 List<KeyValue<String,String>> newSearch = new ArrayList<KeyValue<String,String>>(currentSearch);
-            	List<FacetRange> newRanges = new ArrayList<FacetRange>(currentRanges);
+                List<FacetRange> newRanges = new ArrayList<FacetRange>(currentRanges);
                 if(parsedFacet.getRangeConfig() != null) {
                     for(FacetRange range : parsedFacet.getFacetRanges()){
                         if(range.getName().equals(entry.facetValue)) {
@@ -163,9 +163,9 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                     childNodeId.usedFacetValueCombis = usedFacetValueCombis;
                     childNodeId.facetNodeNames = facetNavigationNodeId.facetNodeNames;
                     childNodeId.stopSubNavigation = stopSubNavigation;
-            		childNodeId.view = facetNavigationNodeId.view;
+                    childNodeId.view = facetNavigationNodeId.view;
                     childNodeId.order = facetNavigationNodeId.order;
-    				childNodeId.singledView = facetNavigationNodeId.singledView;
+                    childNodeId.singledView = facetNavigationNodeId.singledView;
                     childNodeId.limit = facetNavigationNodeId.limit;
                     childNodeId.orderByList = facetNavigationNodeId.orderByList;
                     
@@ -189,8 +189,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             childNodeId.setLimit(facetNavigationNodeId.limit);
             childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
             state.addChildNodeEntry(resultSetChildName, childNodeId);
-            
-    	}
+        }
         
         return state;
     }
