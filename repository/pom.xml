@@ -64,7 +64,7 @@
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
     <org.apache.geronimo.specs.jta.version>1.1</org.apache.geronimo.specs.jta.version>
     <org.apache.derby.version>10.2.1.6</org.apache.derby.version>
-    <org.slf4j.version>1.4.3</org.slf4j.version>
+    <org.slf4j.version>1.5.8</org.slf4j.version>
     <poi.version>3.0.2-FINAL</poi.version>
     <org.textmining.version>0.4</org.textmining.version>
     <javax.servlet.version>2.3</javax.servlet.version>
@@ -73,6 +73,7 @@
     <lucene.version>2.2.0</lucene.version>
     <wicket.version>1.4.3</wicket.version>
     <nekohtml.version>1.9.13</nekohtml.version>
+    <jetty.version>6.1.22</jetty.version>
 
     <!-- use UTF-8 encoding for filtered file copy -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -538,6 +539,14 @@
         <groupId>javax.jcr</groupId>
         <artifactId>jcr</artifactId>
         <version>${javax.jcr.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.jcr</groupId>
+        <artifactId>jcr</artifactId>
+        <classifier>sources</classifier>
+        <version>${javax.jcr.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
@@ -605,22 +614,25 @@
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
         <version>1.1.1</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${org.slf4j.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${org.slf4j.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>${org.slf4j.version}</version>
         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl104-over-slf4j</artifactId>
-        <version>${org.slf4j.version}</version>
       </dependency>
       <dependency>
         <groupId>jpox</groupId>

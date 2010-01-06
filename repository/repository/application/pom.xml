@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-  Copyright 2007-2008 Hippo.
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007-2010 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -12,7 +13,8 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -35,6 +37,15 @@
 
   <dependencies>
     <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
       <version>2.12.00-SNAPSHOT</version>
@@ -49,24 +60,9 @@
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
       <version>2.12.00-SNAPSHOT</version>
     </dependency>
-
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- FIXME: this should be up to the container, but the jetty plugin won't load it -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>${org.slf4j.version}</version>
-      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -123,7 +119,7 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.12</version>
+        <version>${jetty.version}</version>
         <configuration>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <connectors>
@@ -131,8 +127,73 @@
               <port>8081</port>
             </connector>
           </connectors>
-          <contextPath>/</contextPath>
+          <jettyEnvXml>jetty-config/jetty-env.xml</jettyEnvXml>
+          <webAppConfig>
+            <contextPath>/</contextPath>
+            <serverClasses>
+              <!-- Copied from WebAppContext with SLF4J removed -->
+              <filter>-org.mortbay.jetty.plus.jaas.</filter>
+              <filter>org.mortbay.jetty.</filter>
+            </serverClasses>
+            <systemClasses>
+              <!-- Copied from WebAppContext with Commons Logging and Log4j removed -->
+              <filter>java.</filter>
+              <filter>javax.servlet.</filter>
+              <filter>javax.xml.</filter>
+              <filter>org.mortbay.</filter>
+              <filter>org.xml.</filter>
+              <filter>org.w3c.</filter>
+            </systemClasses>
+          </webAppConfig>
+          <systemProperties>
+            <systemProperty>
+              <name>log4j.configuration</name>
+              <value>file:jetty-config/log4j.xml</value>
+            </systemProperty>
+          </systemProperties>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+            <version>${javax.jcr.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${org.slf4j.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-api</artifactId>
+            <version>${atomikos.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jta</artifactId>
+            <version>${atomikos.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions</artifactId>
+            <version>${atomikos.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>atomikos-util</artifactId>
+            <version>${atomikos.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -141,7 +202,7 @@
           <skip>true</skip>
         </configuration>
       </plugin>
-   </plugins>
+    </plugins>
   </build>
 
   <profiles>
@@ -303,5 +364,5 @@
       </build>
     </profile>
   </profiles>
-
 </project>
+
