@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
@@ -78,13 +78,29 @@ class EditableTypes extends AbstractList implements Serializable, IObservable {
                 String name;
                 if ("system".equals(nsNode.getName())) {
                     name = ttNode.getName();
+                } else if ("hippo".equals(nsNode.getName())) {
+                    name = "hippo:" + ttNode.getName();
                 } else {
                     name = nsNode.getName() + ":" + ttNode.getName();
 
-                    // skip types that haven't been persisted yet
+                    String namespace;
                     try {
-                        ntMgr.getNodeType(name);
-                    } catch (NoSuchNodeTypeException ex) {
+                        namespace = nsNode.getSession().getNamespaceURI(nsNode.getName());
+                    } catch (NamespaceException ex) {
+                        continue;
+                    }
+                    Node ntNode = null;
+                    Node ntVersions = ttNode.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE);
+                    NodeIterator ntVersionIter = ntVersions.getNodes();
+                    while (ntVersionIter.hasNext()) {
+                        Node ntVersion = ntVersionIter.nextNode();
+                        if (ntVersion.isNodeType(HippoNodeType.NT_REMODEL)) {
+                            if (ntVersion.getProperty(HippoNodeType.HIPPO_URI).getString().equals(namespace)) {
+                                ntNode = ntVersion;
+                            }
+                        }
+                    }
+                    if (ntNode == null) {
                         continue;
                     }
                 }
