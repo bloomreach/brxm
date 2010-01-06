@@ -159,6 +159,10 @@ if (!YAHOO.hippo.EditorManager) {
                     return;
                 }
                 editor.pluginsLoaded = true;
+                
+                Xinha.prototype.initSize = function() {
+                    //don't use Xinha default initSize method
+                }
 
                 var xinhaConfig = new Xinha.Config();
                 if (!Lang.isUndefined(editor.config.styleSheets)
