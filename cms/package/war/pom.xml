@@ -326,21 +326,13 @@
                 <exclude>WEB-INF/web.xml</exclude>
               </excludes>
             </overlay>
-            <!-- FIXME: the jar shouldn't be in the war in the first place -->
-            <overlay>
-              <groupId>org.hippoecm</groupId>
-              <artifactId>hippo-ecm-repository-application</artifactId>
-              <excludes>
-                <exclude>WEB-INF/lib/slf4j-jdk14-*.jar</exclude>
-              </excludes>
-            </overlay>
           </overlays>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.12</version>
+        <version>${jetty.version}</version>
         <configuration>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <connectors>
@@ -348,44 +340,71 @@
               <port>8080</port>
             </connector>
           </connectors>
-          <contextPath>/cms</contextPath>
+          <jettyEnvXml>jetty-config/jetty-env.xml</jettyEnvXml>
+          <webAppConfig>
+            <contextPath>/</contextPath>
+            <serverClasses>
+              <!-- Copied from WebAppContext with SLF4J removed -->
+              <filter>-org.mortbay.jetty.plus.jaas.</filter>
+              <filter>org.mortbay.jetty.</filter>
+            </serverClasses>
+            <systemClasses>
+              <!-- Copied from WebAppContext with Commons Logging and Log4j removed -->
+              <filter>java.</filter>
+              <filter>javax.servlet.</filter>
+              <filter>javax.xml.</filter>
+              <filter>org.mortbay.</filter>
+              <filter>org.xml.</filter>
+              <filter>org.w3c.</filter>
+            </systemClasses>
+          </webAppConfig>
+          <systemProperties>
+            <systemProperty>
+              <name>log4j.configuration</name>
+              <value>file:jetty-config/log4j.xml</value>
+            </systemProperty>
+          </systemProperties>
         </configuration>
         <dependencies>
           <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jsp-2.1</artifactId>
-            <version>6.1.12</version>
-            <exclusions>
-              <exclusion>
-                <groupId>org.eclipse.jdt</groupId>
-                <artifactId>core</artifactId>
-              </exclusion>
-            </exclusions>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+            <version>${javax.jcr.version}</version>
           </dependency>
-          <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${org.slf4j.version}</version>
+          </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-api</artifactId>
-            <version>3.1.4</version>
-            <scope>runtime</scope>
+            <version>${atomikos.version}</version>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jta</artifactId>
-            <version>3.1.4</version>
-            <scope>runtime</scope>
+            <version>${atomikos.version}</version>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions</artifactId>
-            <version>3.1.4</version>
-            <scope>runtime</scope>
+            <version>${atomikos.version}</version>
           </dependency>
           <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>atomikos-util</artifactId>
-            <version>3.1.4</version>
-            <scope>runtime</scope>
+            <version>${atomikos.version}</version>
           </dependency>
         </dependencies>
       </plugin>

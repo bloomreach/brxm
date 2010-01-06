@@ -39,29 +39,70 @@
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
+
+  <category additivity="false" name="org.apache.jackrabbit">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+
   <category additivity="false" name="org.apache.jackrabbit.core">
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
 
-
-  <category additivity="false" name="org.hippoecm.security">
-    <level value="warn"/>
-    <appender-ref ref="console"/>
-  </category>
-
-  <category additivity="false" name="org.jpox.util">
+  <category additivity="false" name="JPOX">
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
 
-  <category additivity="false" name="org.jpox">
+  <category additivity="false" name="JPOX.Plugin">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+
+  <category additivity="false" name="org.apache.wicket">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.apache.wicket.Localizer">
+    <level value="error"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.impl.WorkflowManagerImpl">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.ocm.FieldManagerImpl">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.ocm.StoreManagerImpl">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.ocm">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.LocalHippoRepository">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.DerivedDataEngine">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="true" name="org.hippoecm.tools.projectexport">
+    <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="true" name="org.hippoecm.frontend.plugins.standardworkflow.ExtendedFolderWorkflowPlugin">
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
 
   <root>
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
     <appender-ref ref="root"/>
   </root>
