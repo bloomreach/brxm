@@ -199,6 +199,9 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             Arrays.sort(facetSearchEntry);
             
             for(FacetSearchEntry entry : facetSearchEntry) {
+                if ("".equals(entry.facetValue)) {
+                    continue;
+                }
                 String[] newFacets = new String[Math.max(0, facets.length - 1)];
                 if (facets.length > 1) {
                     System.arraycopy(facets, 1, newFacets, 0, facets.length - 1);
@@ -302,10 +305,10 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                throw new NullPointerException();
            }
            if(entry.equals(this)) {
-               return 0;
+        	   return 0;
            }
            if(entry.count.count - this.count.count == 0) {
-               return 1;
+        	   return 1;
            }
            return (entry.count.count - this.count.count);
         }
