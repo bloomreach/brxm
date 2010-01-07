@@ -34,6 +34,7 @@
 - hippofacnav:facetnodenames (string) multiple
 - hippofacnav:modes (string) multiple
 - hippofacnav:limit (long)
+- hippofacnav:facetvalueslimit (long)
 - hippofacnav:sortby (string) multiple
 - hippofacnav:sortorder (string) multiple < 'descending', 'ascending'
 - hippofacnav:filters (string) multiple
