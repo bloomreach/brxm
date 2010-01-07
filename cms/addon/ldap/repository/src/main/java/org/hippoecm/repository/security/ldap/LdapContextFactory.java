@@ -23,8 +23,8 @@ import javax.naming.NamingException;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Default implementation of {@link LdapContextFactory} that can be configured or extended to
@@ -49,7 +49,7 @@ public class LdapContextFactory {
     protected static final String SUN_CONNECTION_POOLING_PROPERTY = "com.sun.jndi.ldap.connect.pool";
     protected static final String SUN_CONNECTION_TIMEOUT_PROPERTY = "com.sun.jndi.ldap.connect.timeout";
 
-    private final static Log log = LogFactory.getLog(LdapContextFactory.class);
+    private final static Logger log = LoggerFactory.getLogger(LdapContextFactory.class);
 
     private String authentication = "simple";
 
