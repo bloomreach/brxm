@@ -279,14 +279,14 @@ public class BaseHstComponent extends GenericHstComponent {
      */
     public HippoFolderBean getGalleryBaseBean(HstRequest request){
         try {
-            HippoBean assets = (HippoBean)this.getObjectBeanManager(request).getObject("/content/assets");
-            if(assets instanceof HippoFolderBean) {
-                return (HippoFolderBean)assets;
+            HippoBean gallery = (HippoBean)this.getObjectBeanManager(request).getObject("/content/gallery");
+            if(gallery instanceof HippoFolderBean) {
+                return (HippoFolderBean)gallery;
             } else {
-                log.warn("Asset base folder not of type folder. Cannot return folder bean for it. Return null");
+                log.warn("Gallery base folder not of type folder. Cannot return folder bean for it. Return null");
             }
         } catch (ObjectBeanManagerException e) {
-           log.warn("Cannot find the root Asset folder. Return null");
+           log.warn("Cannot find the root Gallery folder. Return null");
         }
         return null;
     }
@@ -297,11 +297,11 @@ public class BaseHstComponent extends GenericHstComponent {
      */
     public HippoFolderBean getAssetBaseBean(HstRequest request){
         try {
-            HippoBean gallery = (HippoBean)this.getObjectBeanManager(request).getObject("/content/assets");
-            if(gallery instanceof HippoFolderBean) {
-                return (HippoFolderBean)gallery;
+            HippoBean assets = (HippoBean)this.getObjectBeanManager(request).getObject("/content/assets");
+            if(assets instanceof HippoFolderBean) {
+                return (HippoFolderBean)assets;
             } else {
-                log.warn("Gallery base folder not of type folder. Cannot return folder bean for it. Return null");
+                log.warn("Assets base folder not of type folder. Cannot return folder bean for it. Return null");
             }
         } catch (ObjectBeanManagerException e) {
            log.warn("Cannot find the root Asset folder. Return null");
