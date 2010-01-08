@@ -201,12 +201,14 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
 
     private JcrNodeModel getEditorModel(JcrNodeModel nodeModel) {
         Node node = nodeModel.getNode();
-        try {
-            if (node.getDepth() > 0 && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                return new JcrNodeModel(node.getParent());
+        if (node != null) {
+            try {
+                if (node.getDepth() > 0 && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    return new JcrNodeModel(node.getParent());
+                }
+            } catch (RepositoryException ex) {
+                log.error("error resolving editor model", ex);
             }
-        } catch (RepositoryException ex) {
-            log.error("error resolving editor model", ex);
         }
         return nodeModel;
     }

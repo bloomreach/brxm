@@ -476,4 +476,24 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         IEditor editor = mgr.openPreview(new JcrNodeModel(version));
     }
 
+    @Test
+    public void deleteDocumentClosesEditor() throws Exception {
+        createDocument("document");
+        start(config);
+
+        // open preview
+        JcrNodeModel model = new JcrNodeModel("/test/content/document");
+        IEditorManager editorMgr = context.getService("editor.manager", IEditorManager.class);
+        IEditor editor = editorMgr.openEditor(model);
+        assertEquals(model, modelReference.getModel());
+        home.detach();
+        model.detach();
+
+        session.getRootNode().getNode("test/content").remove();
+        session.save();
+        home.processEvents();
+
+        assertEquals(0, getPreviews().size());
+    }
+
 }
