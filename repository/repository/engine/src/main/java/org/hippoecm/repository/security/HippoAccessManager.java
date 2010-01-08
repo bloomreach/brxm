@@ -596,7 +596,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             if (isInstanceOfType(nodeState, facetRule.getValue())) {
                 match = true;
                 log.trace("Found match : {} for nodeType: {}", nodeState.getId(), facetRule.getValue());
-            } else if (hasMixinWithValue(nodeState, facetRule.getValue())) {
+            } else if (hasMixinWithValue(nodeState, facetRule)) {
                 match = true;
                 log.trace("Found match : {} for mixinType: {}", nodeState.getId(), facetRule.getValue());
             }
@@ -836,11 +836,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
     /**
      * Check if the node has a mixin type with a specific value
      * @param nodeState the node to check
-     * @param value the mixin type to check for. This is the String representation of the Name
+     * @param rule the mixin type to check for.
      * @return true if the node has the mixin type
      * @throws RepositoryException
      */
-    private boolean hasMixinWithValue(NodeState nodeState, String value) throws NoSuchItemStateException,
+    private boolean hasMixinWithValue(NodeState nodeState, FacetRule rule) throws NoSuchItemStateException,
             RepositoryException {
         if (!nodeState.hasPropertyName(NameConstants.JCR_MIXINTYPES)) {
             return false;
@@ -855,12 +855,12 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             if (iVal.getType() == PropertyType.NAME) {
 
                 // WILDCARD match
-                if (value.equals(FacetAuthConstants.WILDCARD)) {
+                if (rule.getValue().equals(FacetAuthConstants.WILDCARD)) {
                     return true;
                 }
 
-                log.trace("Checking facetVal: {} (name) -> {}", value, iVal.getQName());
-                if (iVal.getQName().toString().equals(value)) {
+                log.trace("Checking facetVal: {} (name) -> {}", rule.getValueName(), iVal.getQName());
+                if (iVal.getQName().toString().equals(rule.getValueName())) {
                     return true;
                 }
             }
