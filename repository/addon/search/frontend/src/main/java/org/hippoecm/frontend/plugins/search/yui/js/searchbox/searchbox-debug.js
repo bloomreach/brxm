@@ -34,7 +34,7 @@ YAHOO.extend(YAHOO.hippo.SearchBox, YAHOO.hippo.HippoAutoComplete, {
         YAHOO.hippo.SearchBox.superclass.initConfig.call(this, config);
         this.itemSelectEvent.subscribe(function(sType, aArgs) {
             var data = aArgs[2];
-            var url = config.callbackUrl + '&browse=' + encodeURIComponent(data.url);
+            var url = config.callbackUrl + '&browse=' + encodeURIComponent(data.path);
             config.callbackFunction(url);
             this._clearTextboxValue();
         });

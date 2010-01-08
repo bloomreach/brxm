@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,33 +25,34 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.RowIterator;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NodeComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentsProvider extends SortableDataProvider<Node> {
+public class SearchDocumentsProvider extends SortableDataProvider<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(DocumentsProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchDocumentsProvider.class);
 
-    private IModel<Node> folder;
-    private DocumentListFilter filter;
+    private IModel<BrowserSearchResult> bsrModel;
     private Map<String, Comparator<Node>> comparators;
 
     private transient List<Node> entries = null;
 
-    public DocumentsProvider(IModel<Node> model, DocumentListFilter filter, Map<String, Comparator<Node>> comparators) {
-        this.folder = model;
-        this.filter = filter;
+    public SearchDocumentsProvider(IModel<BrowserSearchResult> model, Map<String, Comparator<Node>> comparators) {
+        this.bsrModel = model;
         this.comparators = comparators;
     }
 
@@ -79,38 +80,35 @@ public class DocumentsProvider extends SortableDataProvider<Node> {
         }
 
         entries = new ArrayList<Node>();
-        Node node = folder.getObject();
-        if (node != null) {
+        BrowserSearchResult result = bsrModel.getObject();
+        if (result != null) {
+            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             try {
-                NodeIterator subNodes = filter.filter(node, node.getNodes());
-                while (subNodes.hasNext()) {
-                    Node subNode = subNodes.nextNode();
-                    //Skip deleted documents
-                    if (subNode.isNodeType(HippoNodeType.NT_HANDLE) && !subNode.hasNode(subNode.getName())) {
-                        continue;
-                    }
-                    entries.add(subNode);
+                RowIterator rows = result.getQueryResult().getRows();
+                while (rows.hasNext()) {
+                    String path = rows.nextRow().getValue("jcr:path").getString();
+                    entries.add((Node) session.getItem(path));
                 }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+
+            SortState sortState = getSortState();
+            if (sortState != null && sortState.isSorted()) {
+                String sortProperty = sortState.getProperty();
+                if (sortProperty != null) {
+                    Comparator<Node> comparator = comparators.get(sortProperty);
+                    if (comparator != null) {
+                        Collections.sort(entries, comparator);
+                        if (sortState.isDescending()) {
+                            Collections.reverse(entries);
+                        }
+                        Collections.sort(entries, new FoldersFirstComparator());
+                    }
+                }
             }
         } else {
-            log.info("Jcr node in JcrNodeModel is null, returning empty list");
-        }
-
-        SortState sortState = getSortState();
-        if (sortState != null && sortState.isSorted()) {
-            String sortProperty = sortState.getProperty();
-            if (sortProperty != null) {
-                Comparator<Node> comparator = comparators.get(sortProperty);
-                if (comparator != null) {
-                    Collections.sort(entries, comparator);
-                    if (sortState.isDescending()) {
-                        Collections.reverse(entries);
-                    }
-                    Collections.sort(entries, new FoldersFirstComparator());
-                }
-            }
+            log.info("No search result available");
         }
     }
 
