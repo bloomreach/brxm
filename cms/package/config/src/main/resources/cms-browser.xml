@@ -31,6 +31,9 @@
     <sv:property sv:name="browser.viewers" sv:type="String">
       <sv:value>cms-folder-views</sv:value>
     </sv:property>
+    <sv:property sv:name="search.views" sv:type="String">
+      <sv:value>cms-search-views</sv:value>
+    </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
     </sv:property>
@@ -51,6 +54,9 @@
     </sv:property>
     <sv:property sv:name="model.folder.root" sv:type="String">
       <sv:value>/content/documents</sv:value>
+    </sv:property>
+    <sv:property sv:name="model.search" sv:type="String">
+      <sv:value>model.browse.search</sv:value>
     </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>browse-perspective-title</sv:value>
@@ -112,6 +118,9 @@
     <sv:property sv:name="extension.browser" sv:type="String">
       <sv:value>service.browse.tree</sv:value>
     </sv:property>
+    <sv:property sv:name="extension.search" sv:type="String">
+      <sv:value>service.browse.search</sv:value>
+    </sv:property>
     <sv:property sv:name="extension.list" sv:type="String">
       <sv:value>service.browse.list</sv:value>
     </sv:property>
@@ -123,6 +132,7 @@
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.browser</sv:value>
+      <sv:value>extension.search</sv:value>
       <sv:value>extension.list</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
@@ -204,6 +214,23 @@
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>model.browse.folder</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="searchPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.search.BrowserSearchPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.search</sv:value>
+    </sv:property>
+    <sv:property sv:name="model.folder" sv:type="String">
+      <sv:value>model.browse.folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="model.search" sv:type="String">
+      <sv:value>model.browse.search</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="documentsTreeLoader">

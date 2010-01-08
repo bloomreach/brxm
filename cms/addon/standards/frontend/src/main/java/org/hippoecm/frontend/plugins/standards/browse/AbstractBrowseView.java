@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.standards.browse;
 
 import java.util.Iterator;
-import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -46,9 +45,15 @@ public abstract class AbstractBrowseView implements IBrowseService<JcrNodeModel>
     private static final Logger log = LoggerFactory.getLogger(AbstractBrowseView.class);
 
     public static final String VIEWERS = "browser.viewers";
+    public static final String SEARCH_VIEWS = "search.views";
+
+    enum ViewerType {
+        FOLDER, SEARCH
+    }
 
     private String viewerName;
     private IClusterControl viewer;
+    private ViewerType viewerType;
 
     private IPluginContext context;
     private IPluginConfig config;
@@ -76,33 +81,86 @@ public abstract class AbstractBrowseView implements IBrowseService<JcrNodeModel>
                 }
 
                 public void onEvent(Iterator<? extends IEvent<IModelReference<Node>>> event) {
-                    onFolderChanged(folderReference.getModel());
+                    updateView();
                 }
 
             }, IObserver.class.getName());
         }
-    }
-    
-    public void start() {
-        final IModelReference<Node> folderReference = context.getService(config.getString("model.folder"),
-                IModelReference.class);
-        if (folderReference != null) {
-            IModel<Node> model = folderReference.getModel();
-            if (model != null) {
-                onFolderChanged(model);
+
+        if (config.getString("model.search") != null) {
+            @SuppressWarnings("unchecked")
+            final IModelReference<BrowserSearchResult> searchModelReference = context.getService(config
+                    .getString("model.search"), IModelReference.class);
+            if (searchModelReference != null) {
+                context.registerService(new IObserver<IModelReference<BrowserSearchResult>>() {
+                    private static final long serialVersionUID = 1L;
+
+                    public IModelReference<BrowserSearchResult> getObservable() {
+                        return searchModelReference;
+                    }
+
+                    public void onEvent(Iterator<? extends IEvent<IModelReference<BrowserSearchResult>>> event) {
+                        updateView();
+                    }
+
+                }, IObserver.class.getName());
             }
         }
     }
 
-    protected boolean showFolder(Node node, List<String> viewers) throws RepositoryException {
-        for (String type : viewers) {
-            if (node.isNodeType(type)) {
-                if (!type.equals(viewerName)) {
-                    resetViewer();
+    public void start() {
+        updateView();
+    }
 
-                    IPluginConfigService pluginConfig = context.getService(IPluginConfigService.class.getName(),
-                            IPluginConfigService.class);
-                    IClusterConfig cluster = pluginConfig.getCluster(config.getString(VIEWERS) + "/" + type);
+    protected void updateView() {
+        @SuppressWarnings("unchecked")
+        final IModelReference<Node> folderReference = context.getService(config.getString("model.folder"),
+                IModelReference.class);
+        if (folderReference == null) {
+            return;
+        }
+        IModel<Node> folder = folderReference.getModel();
+
+        IModel<BrowserSearchResult> search = null;
+        if (config.getString("model.search") != null) {
+            @SuppressWarnings("unchecked")
+            final IModelReference<BrowserSearchResult> searchModelReference = context.getService(config
+                    .getString("model.search"), IModelReference.class);
+            if (searchModelReference != null) {
+                search = searchModelReference.getModel();
+            }
+        }
+
+        boolean shown = false;
+        try {
+            Node node = folder.getObject();
+            if (node == null) {
+                return;
+            }
+
+            if (search != null && search.getObject() != null) {
+                shown = showSearch(search.getObject());
+            } else {
+                shown = showFolder(node);
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        if (!shown) {
+            stopViewer();
+        }
+    }
+
+    private boolean showFolder(Node node) throws RepositoryException {
+        IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+                IPluginConfigService.class);
+        String viewerFolder = config.getString(VIEWERS);
+        for (String type : pluginConfigService.listClusters(config.getString(VIEWERS))) {
+            if (node.isNodeType(type)) {
+                if (viewerType != ViewerType.FOLDER || !type.equals(viewerName)) {
+                    stopViewer();
+
+                    IClusterConfig cluster = pluginConfigService.getCluster(viewerFolder + "/" + type);
                     IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("browser.options"));
                     parameters.put("wicket.id", getExtensionPoint());
                     parameters.put("model.folder", config.getString("model.folder"));
@@ -110,8 +168,7 @@ public abstract class AbstractBrowseView implements IBrowseService<JcrNodeModel>
                     viewer = context.newCluster(cluster, parameters);
                     viewer.start();
                     viewerName = type;
-
-                    onShowFolder();
+                    viewerType = ViewerType.FOLDER;
                 }
                 return true;
             }
@@ -119,37 +176,36 @@ public abstract class AbstractBrowseView implements IBrowseService<JcrNodeModel>
         return false;
     }
 
-    protected void onFolderChanged(IModel<Node> model) {
-        boolean shown = false;
-        try {
-            Node node = model.getObject();
-            if (node == null) {
-                return;
-            }
-            Node root = node.getSession().getRootNode();
-            IPluginConfigService pluginConfig = context.getService(IPluginConfigService.class.getName(),
-                    IPluginConfigService.class);
-            do {
-                shown = showFolder(node, pluginConfig.listClusters(config.getString(VIEWERS)));
-                if (!node.isSame(root)) {
-                    node = node.getParent();
-                } else {
-                    break;
+    private boolean showSearch(BrowserSearchResult bsr) throws RepositoryException {
+        IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+                IPluginConfigService.class);
+        String viewerFolder = config.getString(SEARCH_VIEWS);
+        for (String queryName : pluginConfigService.listClusters(config.getString(SEARCH_VIEWS))) {
+            if (queryName.equals(bsr.getQueryName())) {
+                if (viewerType != ViewerType.SEARCH || !queryName.equals(viewerName)) {
+                    stopViewer();
+
+                    IClusterConfig cluster = pluginConfigService.getCluster(viewerFolder + "/" + queryName);
+                    IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("browser.options"));
+                    parameters.put("wicket.id", getExtensionPoint());
+                    parameters.put("model.search", config.getString("model.search"));
+                    viewer = context.newCluster(cluster, parameters);
+                    viewer.start();
+                    viewerName = queryName;
+                    viewerType = ViewerType.SEARCH;
                 }
-            } while (!shown);
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+                return true;
+            }
         }
-        if (!shown) {
-            resetViewer();
-        }
+        return false;
     }
 
-    private void resetViewer() {
+    private void stopViewer() {
         if (viewer != null) {
             viewer.stop();
             viewer = null;
             viewerName = null;
+            viewerType = null;
         }
     }
 
@@ -163,9 +219,6 @@ public abstract class AbstractBrowseView implements IBrowseService<JcrNodeModel>
     }
 
     protected abstract String getExtensionPoint();
-
-    protected void onShowFolder() {
-    }
 
     protected void onBrowse() {
     }

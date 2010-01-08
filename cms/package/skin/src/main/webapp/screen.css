@@ -279,6 +279,7 @@ padding-right: 9px;
 
 .hippo-search .yui-ac-ft {text-align: right; padding-right:4px; font-weight: bold;}
 
+.hippo-browser-search  {margin: 3px;}
 
 /* Default Table lists */
 /* ================================================ */
@@ -618,7 +619,6 @@ body .hippo-picker-properties div.text-input input{border: 1px solid #afafaf; pa
 .hippo-browser-documents-small .hippo-browser-documents-small-files{border-left: 1px solid #afafaf; border-right: 1px solid #afafaf; background: white;}
 .hippo-browser-documents-small .hippo-browser-documents-small-folders{background: #f4f4f4; border-left: 1px solid #afafaf; border-bottom: 0px; border-top: 0px }
 /* this is nasty and temporary, YUI wireframe needs an update */
-.hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details{margin-top: 25px;}
 
 .hippo-browser-documents-small .hippo-browser-documents-small-files {background: #ffffff url('images/document-list-back.png') repeat-x;}
 /* toolbar requires some tweaks here */

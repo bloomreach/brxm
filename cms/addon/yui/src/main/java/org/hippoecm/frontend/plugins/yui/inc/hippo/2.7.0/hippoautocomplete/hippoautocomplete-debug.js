@@ -45,7 +45,7 @@ YAHOO.namespace("hippo");
         var ds = new YAHOO.util.ScriptNodeDataSource(this.callbackUrl);
         ds.getUtility = YAHOO.util.Get;
         ds.responseType = YAHOO.util.ScriptNodeDataSource.TYPE_JSON;
-        ds.responseSchema = respSchema
+        ds.responseSchema = respSchema;
 
         args[2] = ds;
         YAHOO.hippo.HippoAutoComplete.superclass.constructor.apply(this, args); 

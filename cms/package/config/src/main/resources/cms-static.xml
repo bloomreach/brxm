@@ -584,15 +584,6 @@
       <sv:property sv:name="query.delay" sv:type="Double">
         <sv:value>3.0</sv:value>
       </sv:property>
-      <sv:property sv:name="schema.fields" sv:type="String">
-        <sv:value>label</sv:value>
-        <sv:value>url</sv:value>
-        <sv:value>state</sv:value>
-        <sv:value>excerpt</sv:value>
-      </sv:property>
-      <sv:property sv:name="schema.result.list" sv:type="String">
-        <sv:value>response.results</sv:value>
-      </sv:property>
       <sv:property sv:name="use.shadow" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
