@@ -122,7 +122,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     /** hippo decorated root session */
     private HippoSession rootSession;
 
-    protected final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
+    protected static final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
 
     private JackrabbitRepository jackrabbitRepository = null;
     private DecoratorFactoryImpl hippoRepositoryFactory;
@@ -261,7 +261,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 for(int i=0; i<files.length; i++)
                     delete(files[i]);
             }
-            path.delete();
+            if (!path.delete()) {
+                log.warn("Unable to delete path: {}", path);
+            }
         }
     }
 
