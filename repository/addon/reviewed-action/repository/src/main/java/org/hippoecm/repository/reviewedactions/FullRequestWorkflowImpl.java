@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements FullRequestWorkflow {
@@ -83,15 +84,15 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
             if (unpublishedWorkflow == null) {
                 throw new WorkflowException("cannot publish document when no changes present");
             }
-            unpublishedWorkflow.setWorkflowContext(getWorkflowContext().getWorkflowContext(document)); // FIXME; should use workflow chaining
-            unpublishedWorkflow.doSchedPublish(request.getScheduledDate());
+            Workflow wf = getWorkflowContext().getWorkflowContext(document).getWorkflow("default");
+            ((FullReviewedActionsWorkflow)wf).publish(request.getScheduledDate());
             request = null;
         } else if(PublicationRequest.SCHEDDEPUBLISH.equals(requestType)) {
             if (publishedWorkflow == null) {
                 throw new WorkflowException("cannot depublish document when not published");
             }
-            publishedWorkflow.setWorkflowContext(getWorkflowContext().getWorkflowContext(document)); // FIXME; should use workflow chaining
-            publishedWorkflow.doSchedDepublish(request.getScheduledDate());
+            Workflow wf = getWorkflowContext().getWorkflowContext(document).getWorkflow("default");
+            ((FullReviewedActionsWorkflow)wf).depublish(request.getScheduledDate());
             request = null;
         } else if(PublicationRequest.REJECTED.equals(requestType)) {
             throw new WorkflowException("request has already been rejected");
