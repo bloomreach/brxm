@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Calendar;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -404,10 +405,19 @@ public class JCRJobStore implements JobStore {
         Node triggerNode;
         try {
             Session session = getSession(ctxt);
-            if (triggerName.startsWith("/")) {
-                triggerNode = session.getRootNode().getNode(triggerName.substring(1));
-            } else {
-                triggerNode = session.getNodeByUUID(triggerName);
+            session.refresh(true);
+            try {
+                if (triggerName.startsWith("/")) {
+                    triggerNode = session.getRootNode().getNode(triggerName.substring(1));
+                } else {
+                    triggerNode = session.getNodeByUUID(triggerName);
+                }
+            } catch (PathNotFoundException ex) {
+                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                return;
+            } catch (ItemNotFoundException ex) {
+                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                return;
             }
             triggerNode.setProperty("hipposched:nextFireTime", triggerNode.getProperty("hipposched:fireTime").getValue());
             triggerNode.save();
