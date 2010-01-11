@@ -77,8 +77,8 @@ public class OverlayNamespaceResolver implements NamespaceResolver {
             try {
                 return upstream.getPrefix(uri);
             } catch (RepositoryException ex) {
-                throw new NamespaceException("namespace "+prefix+" not defined", ex);
+                throw new NamespaceException("namespace " + uri + " not defined", ex);
             }
-         }
+        }
     }
 }
