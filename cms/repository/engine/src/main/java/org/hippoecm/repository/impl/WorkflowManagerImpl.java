@@ -879,7 +879,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             } else if(specification instanceof Document) {
                 String uuid = ((Document)specification).getIdentity();
                 Node node = subjectSession.getNodeByUUID(uuid);
-                return newContext(workflowDefinition, subjectSession, null);
+                return newContext(workflowDefinition, subjectSession, node);
             }
             log.debug("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
             throw new MappingException("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
@@ -905,6 +905,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         protected abstract WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowModule specification);
+
+        protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, Node newSubject) {
+            return new WorkflowContextNodeImpl(workflowDefinition, subjectSession, newSubject, module);
+        }
         
         public abstract Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException;
 
