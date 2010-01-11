@@ -28,6 +28,9 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextField;
@@ -56,13 +59,16 @@ import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
@@ -78,13 +84,23 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
     private WorkflowAction reorderAction;
 
+    protected StringCodec nodeNameCodec;
+    protected StringCodec localizeCodec;
+
     public FolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
+        StringCodecFactory stringCodecFactory = new StringCodecFactory();
+        String encoder = getPluginConfig().getString("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
+        localizeCodec = stringCodecFactory.getStringCodec(encoder);
+        encoder = getPluginConfig().getString("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
+        nodeNameCodec = stringCodecFactory.getStringCodec(encoder);
 
         add(new Label("new"));
 
         add(new WorkflowAction("rename", new StringResourceModel("rename-title", this, null)) {
-            public String name;
+            public String targetName;
+            public String uriName;
 
             @Override
             protected ResourceReference getIcon() {
@@ -93,10 +109,13 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
             @Override
             protected Dialog createRequestDialog() {
-                name = getInputNodeName();
-                return new WorkflowAction.NameDialog(new StringResourceModel("rename-title", FolderWorkflowPlugin.this,
-                        null), new StringResourceModel("rename-text", FolderWorkflowPlugin.this, null),
-                        new PropertyModel(this, "name"));
+                try {
+                    uriName =  ((WorkflowDescriptorModel)getDefaultModel()).getNode().getName();
+                    targetName = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                } catch(RepositoryException ex) {
+                    uriName = targetName = "";
+                }
+                return new RenameDocumentDialog(this, new StringResourceModel("rename-title", FolderWorkflowPlugin.this, null));
             }
 
             @Override
@@ -105,9 +124,15 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 // and there is some logic here to look up the parent.  The real solution is
                 // in the visual component to merge two workflows.
                 Node node = model.getNode();
+                String nodeName = nodeNameCodec.encode(uriName);
+                String localName = localizeCodec.encode(targetName);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                workflow.rename(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""), NodeNameCodec.encode(name, true));
+                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
+                if(!nodeName.equals(localName)) {
+                    defaultWorkflow.localizeName(localName);
+                }
+                FolderWorkflow folderWorkflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
+                folderWorkflow.rename(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""), nodeName);
             }
         });
 
@@ -214,20 +239,19 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 for (final String category : prototypes.keySet()) {
                     String categoryLabel = new StringResourceModel("add-category", this, null,
                             new Object[] { new StringResourceModel(category, this, null) }).getString();
-                    list.add(new WorkflowAction("id", categoryLabel, new ResourceReference(getClass(), category
-                            + "-16.png")) {
+                    list.add(new WorkflowAction("id", categoryLabel, new ResourceReference(getClass(), category + "-16.png")) {
                         public String prototype;
                         public String targetName;
+                        public String uriName;
 
                         @Override
                         protected Dialog createRequestDialog() {
-                            return new FolderWorkflowDialog(this, new StringResourceModel(category,
+                            return new AddDocumentDialog(this, new StringResourceModel(category,
                                     FolderWorkflowPlugin.this, null), category, prototypes.get(category));
                         }
 
                         @Override
-                        protected String execute(FolderWorkflow wf) throws Exception {
-                            FolderWorkflow workflow = wf;
+                        protected String execute(FolderWorkflow workflow) throws Exception {
                             if (prototype == null) {
                                 throw new IllegalArgumentException("You need to select a type");
                             }
@@ -239,12 +263,17 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                                     log.error("unknown folder type " + prototype);
                                     return "Unknown folder type " + prototype;
                                 }
-                                String path = workflow.add(category, prototype, NodeNameCodec.encode(targetName, true));
-
+                                String nodeName = nodeNameCodec.encode(uriName);
+                                String localName = localizeCodec.encode(targetName);
+                                String path = workflow.add(category, prototype, nodeName);
                                 ((UserSession) Session.get()).getJcrSession().refresh(true);
-
                                 JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
                                 select(nodeModel);
+                                if(!nodeName.equals(localName)) {
+                                    WorkflowManager workflowMgr = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+                                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", nodeModel.getNode());
+                                    defaultWorkflow.localizeName(localName);
+                                }
                             } else {
                                 log.error("no workflow defined on model for selected node");
                             }
@@ -336,26 +365,40 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
         }
     }
 
-    public class FolderWorkflowDialog extends WorkflowAction.WorkflowDialog {
+    public class AddDocumentDialog extends WorkflowAction.WorkflowDialog {
         private String category;
         private Set<String> prototypes;
         private IModel title;
         private Label typelabel;
+        private TextField nameComponent;
+        private TextField uriComponent;
+        private boolean uriModified = false;
 
-        public FolderWorkflowDialog(WorkflowAction action, IModel title, String category, Set<String> prototypes) {
+        public AddDocumentDialog(WorkflowAction action, IModel title, String category, Set<String> prototypes) {
             action.super();
             this.title = title;
             this.category = category;
             this.prototypes = prototypes;
 
-            PropertyModel nameModel = new PropertyModel(action, "targetName");
-            PropertyModel prototypeModel = new PropertyModel(action, "prototype");
+            final PropertyModel<String> nameModel = new PropertyModel<String>(action, "targetName");
+            final PropertyModel<String> uriModel = new PropertyModel<String>(action, "uriName");
+            final PropertyModel<String> prototypeModel = new PropertyModel<String>(action, "prototype");
 
-            TextField text = new TextField("name", nameModel);
-            text.setRequired(true);
-            text.setLabel(new StringResourceModel("name-label", FolderWorkflowPlugin.this, null));
-            setFocus(text);
-            add(text);
+            nameComponent = new TextField<String>("name", nameModel);
+            nameComponent.setRequired(true);
+            nameComponent.setLabel(new StringResourceModel("name-label", FolderWorkflowPlugin.this, null));
+            nameComponent.add(new OnChangeAjaxBehavior() {
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    if (!uriModified) {
+                        uriModel.setObject(nodeNameCodec.encode(nameModel.getObject()));
+                        target.addComponent(uriComponent);
+                    }
+                }
+            });
+            nameComponent.setOutputMarkupId(true);
+            setFocus(nameComponent);
+            add(nameComponent);
 
             add(typelabel = new Label("typelabel", new StringResourceModel("document-type", FolderWorkflowPlugin.this,
                     null)));
@@ -390,9 +433,23 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 prototypeModel.setObject(null);
                 add(new Label("notypes", "There are no types available for : [" + category
                         + "] First create document types please."));
-                text.setVisible(false);
+                nameComponent.setVisible(false);
                 typelabel.setVisible(false);
             }
+
+            add(uriComponent = new TextField<String>("uriinput", uriModel));
+            uriComponent.setEnabled(uriModified);
+            uriComponent.setOutputMarkupId(true);
+
+            add(new AjaxCheckBox("uricheck", new PropertyModel<Boolean>(this, "uriModified")) {
+                protected void onUpdate(AjaxRequestTarget target) {
+                    uriComponent.setEnabled(uriModified);
+                    if (uriModified == false) {
+                        uriModel.setObject(nodeNameCodec.encode(nameModel.getObject()));
+                    }
+                    target.addComponent(AddDocumentDialog.this);
+                }
+            });
         }
 
         @Override
@@ -404,6 +461,61 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
         public IValueMap getProperties() {
             return MEDIUM;
         }
+    }
 
+    public class RenameDocumentDialog extends WorkflowAction.WorkflowDialog {
+        private IModel title;
+        private TextField nameComponent;
+        private TextField uriComponent;
+        private boolean uriModified = false;
+
+        public RenameDocumentDialog(WorkflowAction action, IModel title) {
+            action.super();
+            this.title = title;
+
+            final PropertyModel<String> nameModel = new PropertyModel<String>(action, "targetName");
+            final PropertyModel<String> uriModel = new PropertyModel<String>(action, "uriName");
+
+            nameComponent = new TextField<String>("name", nameModel);
+            nameComponent.setRequired(true);
+            nameComponent.setLabel(new StringResourceModel("name-label", FolderWorkflowPlugin.this, null));
+            nameComponent.add(new OnChangeAjaxBehavior() {
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    if (!uriModified) {
+                        uriModel.setObject(nodeNameCodec.encode(nameModel.getObject()));
+                        target.addComponent(uriComponent);
+                    }
+                }
+            });
+            nameComponent.setOutputMarkupId(true);
+            setFocus(nameComponent);
+            add(nameComponent);
+
+            add(uriComponent = new TextField<String>("uriinput", uriModel));
+            uriComponent.setEnabled(uriModified);
+            uriComponent.setOutputMarkupId(true);
+
+            add(new AjaxCheckBox("uricheck", new PropertyModel<Boolean>(this, "uriModified")) {
+                protected void onUpdate(AjaxRequestTarget target) {
+                    uriComponent.setEnabled(uriModified);
+                    if (uriModified == false) {
+                        uriModel.setObject(nodeNameCodec.encode(nameModel.getObject()));
+                    }
+                    target.addComponent(RenameDocumentDialog.this);
+                    target.addComponent(uriComponent);
+                }
+            });
+        }
+
+        @Override
+        public IModel getTitle() {
+            return title;
+        }
+
+        @Override
+        public IValueMap getProperties() {
+            return MEDIUM;
+        }
     }
 }

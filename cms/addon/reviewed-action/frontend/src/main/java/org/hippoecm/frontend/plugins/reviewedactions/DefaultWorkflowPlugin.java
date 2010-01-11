@@ -36,6 +36,7 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -147,7 +148,11 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                name = getInputNodeName();
+                try {
+                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                } catch(RepositoryException ex) {
+                    name = "";
+                }
                 return new WorkflowAction.NameDialog(new StringResourceModel("rename-title",
                         DefaultWorkflowPlugin.this, null), new StringResourceModel("rename-text",
                         DefaultWorkflowPlugin.this, null), new PropertyModel(this, "name"));
@@ -158,9 +163,13 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 if (name == null || name.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
-                if (name.equals(getInputNodeName())) {
-                    // shortcut, the node was not actually renamed
-                    return null;
+                try {
+                    if (name.equals(((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName())) {
+                        // shortcut, the node was not actually renamed
+                        return null;
+                    }
+                } catch(RepositoryException ex) {
+                    // deliberate ignore
                 }
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
                 workflow.rename(NodeNameCodec.encode(name, true));
@@ -180,7 +189,11 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                name = getInputNodeName();
+                try {
+                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                } catch(RepositoryException ex) {
+                    name = "";
+                }
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
                         DefaultWorkflowPlugin.this, null), new StringResourceModel("move-text",
                         DefaultWorkflowPlugin.this, null), new PropertyModel(this, "name"), destination);

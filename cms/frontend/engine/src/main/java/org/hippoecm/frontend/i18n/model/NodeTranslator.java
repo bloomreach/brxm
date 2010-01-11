@@ -112,6 +112,11 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
                     // return the name specified by the hippo:translated mixin,
                     // falling back to the decoded node name itself.
                     name = NodeNameCodec.decode(node.getName());
+                    if (!node.isNodeType(HippoNodeType.NT_TRANSLATED) && node.isNodeType(HippoNodeType.NT_DOCUMENT) &&
+                        node.getParent().isNodeType(HippoNodeType.NT_HANDLE) &&
+                        node.getParent().isNodeType(HippoNodeType.NT_TRANSLATED)) {
+                        node = node.getParent();
+                    }
                     if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
                         Locale locale = Session.get().getLocale();
                         NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
@@ -122,6 +127,9 @@ public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
                                 String language = child.getProperty("hippo:language").getString();
                                 if (locale.getLanguage().equals(language)) {
                                     return child.getProperty("hippo:message").getString();
+                                }
+                                if (language.equals("")) {
+                                    name = child.getProperty("hippo:message").getString();
                                 }
                             }
                         }

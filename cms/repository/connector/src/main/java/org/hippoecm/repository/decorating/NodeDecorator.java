@@ -52,7 +52,7 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected Node node;
+    protected final Node node;
     protected HippoSession session;
 
     protected NodeDecorator(DecoratorFactory factory, Session session, Node node) {
@@ -60,8 +60,6 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
         this.session = (HippoSession) session;
         this.node = node;
     }
-
-    public abstract Node getCanonicalNode() throws RepositoryException;
 
     public static Node unwrap(Node node) {
         if (node instanceof NodeDecorator) {

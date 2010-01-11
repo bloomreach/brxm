@@ -164,23 +164,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             throw new WorkflowException("unsupported operation");
         }
 
-        /**
-         * Get the name of the node this workflow operates on
-         * 
-         * @return The name of the node that the workflow operates on or an empty String if an error occurs
-         * @throws RepositoryException
-         */
-        protected String getInputNodeName() {
-            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) getDefaultModel();
-            try {
-                return new NodeTranslator(new JcrNodeModel(workflowDescriptorModel.getNode())).getNodeName()
-                        .getObject().toString();
-            } catch (RepositoryException e) {
-                log.error("Error translating node name", e);
-            }
-            return "";
-        }
-
         @Deprecated
         public class WorkflowDialog extends AbstractDialog {
 

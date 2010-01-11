@@ -36,6 +36,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +102,11 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                name = getInputNodeName();
+                try {
+                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                } catch(RepositoryException ex) {
+                    name = "";
+                }
                 documents = new HashSet<String>();
                 Session session = ((UserSession)getSession()).getJcrSession();
                 Query query = null;
@@ -170,7 +175,11 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                name = getInputNodeName();
+                try {
+                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                } catch(RepositoryException ex) {
+                    name = "";
+                }
                 documents = new HashSet<String>();
                 Session session = ((UserSession)getSession()).getJcrSession();
                 Query query = null;

@@ -157,6 +157,17 @@
             <sv:value>false</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="hideTranslation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:name="child" sv:type="String">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="display" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="addfolderPlugin">

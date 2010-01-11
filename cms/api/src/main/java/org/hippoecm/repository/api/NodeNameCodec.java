@@ -88,6 +88,8 @@ public final class NodeNameCodec {
     /** Padding characters */
     private static final char[] PADDING = new char[] {'0', '0', '0'};
 
+    private boolean forceSimpleName;
+
     /**
      * <p>Encode the name to a valid JCR name. If the name is prefixed with a
      * namespace, the prefix is not encoded but returned as-is.</p>
