@@ -835,7 +835,7 @@ public class UpdaterEngine {
         UpdaterContext context;
         boolean isCollecting = false;
         boolean isExecuting = false;
-        Set<Node> collection = collection = new HashSet<Node>();
+        Set<Node> collection = new HashSet<Node>();
 
         NamespaceVisitorImpl(NamespaceRegistry nsReg, NamespaceVisitor definition) throws RepositoryException, ParseException {
             this.namespace = definition.prefix;
