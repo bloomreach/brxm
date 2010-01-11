@@ -860,7 +860,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                 }
 
                 log.trace("Checking facetVal: {} (name) -> {}", rule.getValueName(), iVal.getQName());
-                if (iVal.getQName().toString().equals(rule.getValueName())) {
+                if (iVal.getQName().equals(rule.getValueName())) {
                     return true;
                 }
             }
