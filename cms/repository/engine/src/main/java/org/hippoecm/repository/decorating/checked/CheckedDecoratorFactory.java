@@ -183,7 +183,7 @@ public class CheckedDecoratorFactory implements DecoratorFactory {
     }
 
     public HierarchyResolver getHierarchyResolverDecorator(SessionDecorator session, HierarchyResolver hierarchyResolver) {
-        if(hierarchyResolver instanceof HierarchyResolver)
+        if(hierarchyResolver instanceof HierarchyResolverDecorator)
             return hierarchyResolver;
         return new HierarchyResolverDecorator(session, hierarchyResolver);
     }
