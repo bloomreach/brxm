@@ -84,15 +84,15 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Map<String,Serializable> hints() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Map<String,Serializable> info = new TreeMap<String,Serializable>();
-        info.put("add", new Boolean(true));
-        info.put("list", new Boolean(false));
-        info.put("archive", new Boolean(true));
-        info.put("delete", new Boolean(true));
-        info.put("rename", new Boolean(true));
-        info.put("copy", new Boolean(true));
-        info.put("duplicate", new Boolean(true));
-        info.put("move", new Boolean(true));
-        info.put("reorder", new Boolean(subject.getPrimaryNodeType().hasOrderableChildNodes()));
+        info.put("add", Boolean.valueOf(true));
+        info.put("list", Boolean.valueOf(false));
+        info.put("archive", Boolean.valueOf(true));
+        info.put("delete", Boolean.valueOf(true));
+        info.put("rename", Boolean.valueOf(true));
+        info.put("copy", Boolean.valueOf(true));
+        info.put("duplicate", Boolean.valueOf(true));
+        info.put("move", Boolean.valueOf(true));
+        info.put("reorder", Boolean.valueOf(subject.getPrimaryNodeType().hasOrderableChildNodes()));
         info.put("prototypes", (Serializable) prototypes());
         return info;
     }
