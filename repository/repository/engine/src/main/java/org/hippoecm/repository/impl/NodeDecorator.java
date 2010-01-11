@@ -15,6 +15,13 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemExistsException;
@@ -24,6 +31,7 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -38,19 +46,11 @@ import javax.jcr.query.RowIterator;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
-import org.apache.jackrabbit.core.NodeImpl;
-import org.apache.jackrabbit.core.WorkspaceImpl;
-
 import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.decorating.DecoratorFactory;
-import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
-import org.hippoecm.repository.jackrabbit.HippoNodeId;
-import org.hippoecm.repository.jackrabbit.ItemManager;
-import org.hippoecm.repository.jackrabbit.SessionImpl;
-import org.hippoecm.repository.jackrabbit.XASessionImpl;
 
 public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecorator implements HippoNode {
     @SuppressWarnings("unused")
@@ -60,7 +60,6 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         super(factory, session, node);
     }
 
-    @Override
     public Node getCanonicalNode() throws RepositoryException {
         // Note that HREPTWO-2127 is still unresolved, even though the
         // previous implementation did have problems with it, but the current
@@ -268,5 +267,78 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         } finally {
             ((SessionDecorator)getSession()).postMountEnabled(true);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public String getLocalName() throws RepositoryException {
+        Node handle = getParent();
+        Localized localized = getLocalized(null);
+        if(node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
+            Node bestCandidateNode = null;
+            Localized bestCandidate = null;
+            for(NodeIterator iter = handle.getNodes(HippoNodeType.HIPPO_TRANSLATION); iter.hasNext(); ) {
+                Node currentCandidateNode = iter.nextNode();
+                Localized currentCandidate = Localized.getInstance(currentCandidateNode);
+                Localized resultCandidate = localized.matches(bestCandidate, currentCandidate);
+                if(resultCandidate == currentCandidate) {
+                    bestCandidate = currentCandidate;
+                    bestCandidateNode = currentCandidateNode;
+                }
+            }
+            if(bestCandidateNode != null && bestCandidateNode.hasProperty(HippoNodeType.HIPPO_MESSAGE)) {
+                return bestCandidateNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
+            }
+        }
+        return getName();
+    }
+
+    public Localized getLocalized(Locale locale) throws RepositoryException {
+        Localized localized = null;
+        Node handle, node;
+        if (isNodeType(HippoNodeType.NT_HANDLE)) {
+            handle = node = this;
+        } else {
+            handle = getParent();
+            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                node = handle;
+            } else {
+                handle = null;
+                node = this;
+            }
+        }
+        if (handle != null && node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            Map<String, List<String>> locales = new TreeMap<String, List<String>>();
+            if (handle.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
+                for (Value discriminatorValue : handle.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues()) {
+                    String discriminator = discriminatorValue.getString();
+                    if (node.hasProperty(discriminator)) {
+                        Property discriminatorProperty = node.getProperty(discriminator);
+                        if (discriminatorProperty.getDefinition().isMultiple()) {
+                            List<String> list = new LinkedList<String>();
+                            for (Value value : discriminatorProperty.getValues()) {
+                                list.add(value.getString());
+                            }
+                            locales.put(discriminator, list);
+                        } else {
+                            locales.put(discriminator, Collections.singletonList(discriminatorProperty.getString()));
+                        }
+                    } else {
+                        locales.put(discriminator, null);
+                    }
+                }
+            }
+            if (locales.size() > 0) {
+                localized = Localized.getInstance(locales);
+            }
+        }
+        if (localized == null) {
+            if (locale != null)
+                localized = Localized.getInstance(locale);
+        } else {
+            localized = Localized.getInstance(locale);
+        }
+        return localized;
     }
 }

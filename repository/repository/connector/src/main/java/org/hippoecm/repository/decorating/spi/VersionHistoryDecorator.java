@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.decorating.spi;
 
+import java.util.Locale;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.version.VersionHistory;
@@ -38,4 +39,7 @@ public class VersionHistoryDecorator extends org.hippoecm.repository.decorating.
         return NodeDecorator.getCanonicalNode(session, remoteSession, node);
     }
 
+    public String getLocalName() throws RepositoryException {
+        return NodeDecorator.getLocalName(session, remoteSession, node);
+    }
 }

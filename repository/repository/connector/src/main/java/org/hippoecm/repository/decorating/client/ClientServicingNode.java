@@ -17,6 +17,7 @@ package org.hippoecm.repository.decorating.client;
 
 import java.rmi.RemoteException;
 
+import java.util.Locale;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -47,6 +48,14 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
         try {
             RemoteNode remoteCanonical = remote.getCanonicalNode();
             return ( remoteCanonical == null ? null : getNode(getSession(), remoteCanonical));
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
+
+    public String getLocalName() throws RepositoryException {
+        try {
+            return remote.getLocalName(Locale.getDefault());
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }

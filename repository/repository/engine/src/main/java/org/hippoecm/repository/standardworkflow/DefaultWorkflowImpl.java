@@ -17,13 +17,17 @@ package org.hippoecm.repository.standardworkflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
@@ -34,6 +38,7 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.impl.NodeDecorator;
 
 public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
@@ -131,6 +136,88 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
             throw new WorkflowException("cannot delete document which is not contained in a folder");
     }
 
+    public void localizeName(Localized localized, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Node node;
+        if (subject.isNodeType(HippoNodeType.NT_HANDLE)) {
+            node = subject;
+        } else {
+            node = subject.getParent();
+            if (!node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                node = subject;
+            }
+        }
+        localizeName(node, localized, newName);
+    }
+
+    public void localizeName(Locale locale, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Node node, handle;
+        if (subject.isNodeType(HippoNodeType.NT_HANDLE)) {
+            handle = node = subject;
+        } else {
+            handle = subject.getParent();
+            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                node = handle;
+            } else {
+                handle = null;
+                node = subject;
+            }
+        }
+        Localized localized;
+        if (handle != null) {
+            localized = ((NodeDecorator)subject).getLocalized(locale);
+        } else
+            localized = Localized.getInstance(locale);
+        localizeName(node, localized, newName);
+    }
+
+    public void localizeName(String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Node node, handle;
+        if (subject.isNodeType(HippoNodeType.NT_HANDLE)) {
+            handle = node = subject;
+        } else {
+            handle = subject.getParent();
+            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                node = handle;
+            } else {
+                handle = null;
+                node = subject;
+            }
+        }
+        Localized localized;
+        if (handle != null) {
+            localized = ((NodeDecorator)org.hippoecm.repository.decorating.checked.NodeDecorator.unwrap(subject)).getLocalized(null);
+            if (localized == null) {
+                localized = Localized.getInstance();
+            }
+        } else
+            localized = Localized.getInstance();
+        localizeName(node, localized, newName);
+    }
+
+    private void localizeName(Node node, Localized localized, String newName) throws RepositoryException {
+        // find the existing localName
+        Node translationNode = null;
+        if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
+            for (NodeIterator iter = node.getNodes(HippoNodeType.HIPPO_TRANSLATION); iter.hasNext(); ) {
+                translationNode = iter.nextNode();
+                Localized translationLocalized = Localized.getInstance(translationNode);
+                if (localized.equals(translationLocalized)) {
+                    break;
+                } else {
+                    translationNode = null;
+                }
+            }
+        } else {
+            node.addMixin(HippoNodeType.NT_TRANSLATED);
+        }
+        if (translationNode == null) {
+            translationNode = node.addNode(HippoNodeType.HIPPO_TRANSLATION, HippoNodeType.NT_TRANSLATION);
+            localized.setTranslation(translationNode);
+        }
+        translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, newName);
+        node.save();
+    }
+
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
         Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
         Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
@@ -148,5 +235,4 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
         else
             throw new WorkflowException("cannot move document which is not contained in a folder");
     }
-
 }

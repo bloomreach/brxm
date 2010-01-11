@@ -15,18 +15,14 @@
  */
 package org.hippoecm.repository.impl;
 
-import java.util.Calendar;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Node;
 import javax.jcr.version.Version;
-import javax.jcr.version.VersionHistory;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
-/**
- */
 public class VersionDecorator extends org.hippoecm.repository.decorating.VersionDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -47,4 +43,7 @@ public class VersionDecorator extends org.hippoecm.repository.decorating.Version
         }
     }
 
+    public String getLocalName() throws RepositoryException {
+        return ((HippoNode)version).getLocalName();
+    }
 }

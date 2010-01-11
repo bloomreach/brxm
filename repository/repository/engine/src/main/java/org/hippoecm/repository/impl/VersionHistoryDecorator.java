@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.version.VersionHistory;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
 /**
@@ -39,5 +40,9 @@ public class VersionHistoryDecorator extends org.hippoecm.repository.decorating.
         } else {
             return null;
         }
+    }
+
+    public String getLocalName() throws RepositoryException {
+        return ((HippoNode)versionHistory).getLocalName();
     }
 }

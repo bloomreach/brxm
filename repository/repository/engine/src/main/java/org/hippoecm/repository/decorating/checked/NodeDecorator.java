@@ -102,6 +102,11 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
         }
     }
 
+    public String getLocalName() throws RepositoryException {
+        check();
+        return node.getLocalName();
+    }
+
     public static Node unwrap(Node node) {
         if (node instanceof NodeDecorator) {
             node = (Node) ((NodeDecorator) node).unwrap();

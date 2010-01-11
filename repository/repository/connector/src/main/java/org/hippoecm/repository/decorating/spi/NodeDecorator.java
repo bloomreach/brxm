@@ -20,7 +20,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.jcr2spi.NodeImpl;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.DecoratorFactory;
@@ -61,4 +60,28 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         }
     }
 
+    public String getLocalName() throws RepositoryException {
+        return getLocalName(session, remoteSession, this);
+    }
+
+    static String getLocalName(Session session, HippoSession remoteSession, final Node node) throws RepositoryException {
+        String path = node.getPath();
+        if (path == null) {
+            return null;
+        }
+        if ("/".equals(path)) {
+            return ((HippoNode)session.getRootNode()).getLocalName();
+        }
+        try {
+            Node remote = remoteSession.getRootNode().getNode(node.getPath().substring(1));
+            remote = ((HippoNode) remote).getCanonicalNode();
+            if (remote == null) {
+                return null;
+            }
+            return ((HippoNode)session.getRootNode().getNode(remote.getPath().substring(1))).getLocalName();
+        } catch (PathNotFoundException ex) {
+            // Node is new or has been moved
+            return node.getName();
+        }
+    }
 }
