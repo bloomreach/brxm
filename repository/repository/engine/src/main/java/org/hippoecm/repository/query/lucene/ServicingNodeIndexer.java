@@ -246,7 +246,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 break;
             case PropertyType.LONG:
                 // TODO index properly as facet long
-                indexFacet(doc, fieldName, LongField.longToString(new Long(value.getLong())));
+                indexFacet(doc, fieldName, value.getString());
                 break;
             case PropertyType.REFERENCE:
                 // never facet;
