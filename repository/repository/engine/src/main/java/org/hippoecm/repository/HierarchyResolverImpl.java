@@ -69,7 +69,7 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                         if(child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                             relPath = child.getName();
                             if(child.getIndex() > 1) {
-                                relPath = relPath += "[" + Integer.toString(child.getIndex()) + "]";
+                                relPath += "[" + Integer.toString(child.getIndex()) + "]";
                             }
                         }
                     }
