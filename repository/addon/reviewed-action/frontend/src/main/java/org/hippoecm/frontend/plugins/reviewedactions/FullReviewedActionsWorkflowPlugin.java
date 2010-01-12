@@ -56,7 +56,6 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -81,9 +80,6 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
     public String inUseBy = "";
 
-    protected StringCodec nodeNameCodec;
-    protected StringCodec localizeCodec;
-
     StdWorkflow infoAction;
     StdWorkflow infoEditAction;
     WorkflowAction editAction;
@@ -100,12 +96,6 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
     public FullReviewedActionsWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        StringCodecFactory stringCodecFactory = new StringCodecFactory();
-        String encoder = getPluginConfig().getString("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
-        localizeCodec = stringCodecFactory.getStringCodec(encoder);
-        encoder = getPluginConfig().getString("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
-        nodeNameCodec = stringCodecFactory.getStringCodec(encoder);
 
         final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel("hippostd:publishableSummary"));
         add(infoAction = new StdWorkflow("info", "info") {
@@ -302,8 +292,8 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                     throw new WorkflowException("No name for destination given");
                 }
                 Node node = ((WorkflowDescriptorModel)getDefaultModel()).getNode();
-                String nodeName = nodeNameCodec.encode(uriName);
-                String localName = localizeCodec.encode(targetName);
+                String nodeName = getNodeNameCodec().encode(uriName);
+                String localName = getLocalizeCodec().encode(targetName);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if(!nodeName.equals(localName)) {
@@ -467,6 +457,18 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         return getPluginContext().getService(getPluginConfig().getString("editor.id"), IEditorManager.class);
     }
 
+    protected StringCodec getLocalizeCodec() {
+        StringCodecFactory stringCodecFactory = new StringCodecFactory();
+        String encoder = getPluginConfig().getString("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
+        return stringCodecFactory.getStringCodec(encoder);
+    }
+
+    protected StringCodec getNodeNameCodec() {
+        StringCodecFactory stringCodecFactory = new StringCodecFactory();
+        String encoder = getPluginConfig().getString("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
+        return stringCodecFactory.getStringCodec(encoder);
+    }
+
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
@@ -596,7 +598,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     if (!uriModified) {
-                        uriModel.setObject(nodeNameCodec.encode(nameModel.getObject()));
+                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
                         target.addComponent(uriComponent);
                     }
                 }
@@ -614,7 +616,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 protected void onUpdate(AjaxRequestTarget target) {
                     uriComponent.setEnabled(uriModified);
                     if (uriModified == false) {
-                        uriModel.setObject(nodeNameCodec.encode(nameModel.getObject()));
+                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
                     }
                     target.addComponent(RenameDocumentDialog.this);
                 }
