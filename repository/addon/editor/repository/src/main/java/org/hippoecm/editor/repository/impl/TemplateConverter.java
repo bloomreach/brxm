@@ -72,6 +72,9 @@ public class TemplateConverter implements UpdaterModule {
                     if (node.getParent().getName().equals(prefix)) {
                         Node draft = null, current = null;
                         String uri = node.getSession().getNamespaceURI(prefix);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Converting " + node.getPath() + " from uri " + uri);
+                        }
                         if (node.hasNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE)) {
                             for (NodeIterator iter = node.getNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE).getNodes(HippoNodeType.HIPPOSYSEDIT_NODETYPE); iter.hasNext();) {
                                 Node candidate = iter.nextNode();
@@ -88,8 +91,14 @@ public class TemplateConverter implements UpdaterModule {
                         }
                         String newVersion = VersionNumber.versionFromURI(uri).next().toString();
                         final String oldVersion = VersionNumber.versionFromURI(uri).toString();
+                        if (log.isDebugEnabled()) {
+                            log.debug("Old version: " + oldVersion + ", new: " + newVersion);
+                        }
                         if (draft != null) {
                             if (draft.isNodeType(HippoNodeType.NT_REMODEL)) {
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Creating new nodetype revision by copying old one " + draft.getPath());
+                                }
                                 draft = ((HippoSession)draft.getSession()).copy(draft, draft.getPath());
                             }
                             draft.addMixin(HippoNodeType.NT_REMODEL);

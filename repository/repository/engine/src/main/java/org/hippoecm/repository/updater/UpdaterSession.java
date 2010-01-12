@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -70,12 +72,13 @@ final public class UpdaterSession implements HippoSession {
     private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(UpdaterSession.class);
-    
+
     Session upstream;
     ValueFactory valueFactory;
     UpdaterNode root;
     UpdaterWorkspace workspace;
     private Map<String, List<UpdaterProperty>> references;
+    Map<String, String> namespaces = new HashMap<String, String>();
 
     public UpdaterSession(Session session) throws UnsupportedRepositoryOperationException, RepositoryException {
         this.upstream = session;
@@ -333,20 +336,69 @@ final public class UpdaterSession implements HippoSession {
         throw new UpdaterException("illegal method");
     }
 
-    public void setNamespacePrefix(String newPrefix, String existingUri) throws NamespaceException, RepositoryException {
-        upstream.setNamespacePrefix(newPrefix, existingUri);
+    //------------------------------------------------< Namespace handling >--
+
+    // We need to use our own namespace mapping, since we're wrapping the root session.
+    // It's namespace cache is never invalidated, so it cannot be used.
+
+    public void setNamespacePrefix(String prefix, String uri) throws NamespaceException, RepositoryException {
+        if (namespaces.containsValue(uri)) {
+            String previous = namespaces.get(prefix);
+            if (previous != null && !previous.equals(uri)) {
+                throw new NamespaceException("Namespace already mapped");
+            }
+        }
+        namespaces.put(prefix, uri);
     }
 
     public String[] getNamespacePrefixes() throws RepositoryException {
-        return upstream.getNamespacePrefixes();
+        NamespaceRegistry registry = upstream.getWorkspace().getNamespaceRegistry();
+        String[] uris = registry.getURIs();
+        for (int i = 0; i < uris.length; i++) {
+            getNamespacePrefix(uris[i]);
+        }
+
+        return namespaces.keySet().toArray(new String[namespaces.size()]);
     }
 
     public String getNamespaceURI(String prefix) throws NamespaceException, RepositoryException {
-        return upstream.getNamespaceURI(prefix);
+        String uri = namespaces.get(prefix);
+        if (uri == null) {
+            // Not in local mappings, try the global ones
+            uri = upstream.getWorkspace().getNamespaceRegistry().getURI(prefix);
+            if (namespaces.containsValue(uri)) {
+                // The global URI is locally mapped to some other prefix,
+                // so there are no mappings for this prefix
+                throw new NamespaceException("Namespace not found: " + prefix);
+            }
+            // Add the mapping to the local set, we already know that
+            // the prefix is not taken
+            namespaces.put(prefix, uri);
+        }
+
+        return uri;
     }
 
     public String getNamespacePrefix(String uri) throws NamespaceException, RepositoryException {
-        return upstream.getNamespacePrefix(uri);
+        Iterator<Map.Entry<String, String>> iterator = namespaces.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> entry = iterator.next();
+            if (entry.getValue().equals(uri)) {
+                return entry.getKey();
+            }
+        }
+
+        // The following throws an exception if the URI is not found, that's OK
+        String prefix = upstream.getWorkspace().getNamespaceRegistry().getPrefix(uri);
+
+        // Generate a new prefix if the global mapping is already taken
+        String base = prefix;
+        for (int i = 2; namespaces.containsKey(prefix); i++) {
+            prefix = base + i;
+        }
+
+        namespaces.put(prefix, uri);
+        return prefix;
     }
 
     @Deprecated
