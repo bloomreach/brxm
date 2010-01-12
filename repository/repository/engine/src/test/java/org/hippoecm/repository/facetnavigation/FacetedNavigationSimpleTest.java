@@ -40,7 +40,7 @@ public class FacetedNavigationSimpleTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 
     private final Calendar globalCal = Calendar.getInstance();
-    
+
     @Before
     @Override
     public void setUp() throws Exception {
@@ -61,7 +61,7 @@ public class FacetedNavigationSimpleTest extends TestCase {
         createSimpleStructure1(testNode);
         createFacetNodeSingleValues(testNode);
         session.save();
-        
+
         Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
 
         assertNotNull(node);
@@ -71,40 +71,48 @@ public class FacetedNavigationSimpleTest extends TestCase {
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:color/grey/hippo:resultset"));
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:product/car"));
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:product/car/hippo:color/grey"));
-        
+
         // assert that after iterating the same key-value twice, there are no child nodes below this node:
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:brand/peugeot"));
         assertFalse(node.getNode("hippo:brand/peugeot/hippo:brand/peugeot").hasNodes());
 
         // assert some counts:
-        assertEquals(4L,node.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        assertEquals(4L,node.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong()) ;
-        assertEquals(2L,node.getNode("hippo:brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong()) ;
-        assertEquals(2L,node.getNode("hippo:brand/peugeot/hippo:brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong()) ;
-        
+        assertEquals(4L, node.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(4L, node.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(2L, node.getNode("hippo:brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(2L, node.getNode("hippo:brand/peugeot/hippo:brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+
         // assert some counts are equal to number of nodes in resultset
-        assertEquals(node.getNode("hippo:brand/hippo:resultset").getNodes().getSize(),node.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        assertEquals(node.getNode("hippo:brand/peugeot/hippo:resultset").getNodes().getSize(),node.getNode("hippo:brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        assertEquals(node.getNode("hippo:brand/peugeot/hippo:color/hippo:resultset").getNodes().getSize(),node.getNode("hippo:brand/peugeot/hippo:color").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        assertEquals(node.getNode("hippo:brand/peugeot/hippo:product/car/hippo:resultset").getNodes().getSize(),node.getNode("hippo:brand/peugeot/hippo:product/car").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        assertEquals(node.getNode("hippo:brand/peugeot/hippo:product/car/hippo:color/grey/hippo:resultset").getNodes().getSize(),node.getNode("hippo:brand/peugeot/hippo:product/car/hippo:color/grey").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("hippo:brand/hippo:resultset").getNodes().getSize(), node.getNode("hippo:brand")
+                .getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("hippo:brand/peugeot/hippo:resultset").getNodes().getSize(), node.getNode(
+                "hippo:brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("hippo:brand/peugeot/hippo:color/hippo:resultset").getNodes().getSize(), node
+                .getNode("hippo:brand/peugeot/hippo:color").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("hippo:brand/peugeot/hippo:product/car/hippo:resultset").getNodes().getSize(), node
+                .getNode("hippo:brand/peugeot/hippo:product/car").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("hippo:brand/peugeot/hippo:product/car/hippo:color/grey/hippo:resultset").getNodes()
+                .getSize(), node.getNode("hippo:brand/peugeot/hippo:product/car/hippo:color/grey").getProperty(
+                HippoNodeType.HIPPO_COUNT).getLong());
 
     }
-    
+
     @Test
     public void testFacetNodeNameNavigation() throws RepositoryException, IOException {
         commonStart();
-        
+
         Node testNode = session.getRootNode().getNode("test");
         createSimpleStructure1(testNode);
         createFacetNodeSingleValues(testNode);
 
-        testNode.getNode("facetnavigation/hippo:navigation").setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { "brand", "color", "product" });
-        
+        testNode.getNode("facetnavigation/hippo:navigation").setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES,
+                new String[] { "brand", "color", "product" });
+
         session.save();
-        
+
         Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
-        
+
         assertNotNull(node);
         // assert some facetednavigation nodes exists
         assertTrue(node.hasNode("brand/peugeot/color/hippo:resultset"));
@@ -112,26 +120,31 @@ public class FacetedNavigationSimpleTest extends TestCase {
         assertTrue(node.hasNode("brand/peugeot/color/grey/hippo:resultset"));
         assertTrue(node.hasNode("brand/peugeot/product/car"));
         assertTrue(node.hasNode("brand/peugeot/product/car/color/grey"));
-        
+
         // assert that after iterating the same key-value twice, there are no child nodes below this node:
         assertTrue(node.hasNode("brand/peugeot/brand/peugeot"));
         assertFalse(node.getNode("brand/peugeot/brand/peugeot").hasNodes());
-        
+
         // assert some counts:
-        assertEquals(4L,node.getNode("brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        assertEquals(4L,node.getNode("brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong()) ;
-        assertEquals(2L,node.getNode("brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong()) ;
-        assertEquals(2L,node.getNode("brand/peugeot/brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong()) ;
-        
+        assertEquals(4L, node.getNode("brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(4L, node.getNode("brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(2L, node.getNode("brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(2L, node.getNode("brand/peugeot/brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+
         // assert some counts are equal to number of nodes in resultset
-        assertEquals(node.getNode("brand/hippo:resultset").getNodes().getSize(),node.getNode("brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        assertEquals(node.getNode("brand/peugeot/hippo:resultset").getNodes().getSize(),node.getNode("brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        assertEquals(node.getNode("brand/peugeot/color/hippo:resultset").getNodes().getSize(),node.getNode("brand/peugeot/color").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        assertEquals(node.getNode("brand/peugeot/product/car/hippo:resultset").getNodes().getSize(),node.getNode("brand/peugeot/product/car").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        assertEquals(node.getNode("brand/peugeot/product/car/color/grey/hippo:resultset").getNodes().getSize(),node.getNode("brand/peugeot/product/car/color/grey").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("brand/hippo:resultset").getNodes().getSize(), node.getNode("brand").getProperty(
+                HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("brand/peugeot/hippo:resultset").getNodes().getSize(), node.getNode("brand/peugeot")
+                .getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("brand/peugeot/color/hippo:resultset").getNodes().getSize(), node.getNode(
+                "brand/peugeot/color").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("brand/peugeot/product/car/hippo:resultset").getNodes().getSize(), node.getNode(
+                "brand/peugeot/product/car").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(node.getNode("brand/peugeot/product/car/color/grey/hippo:resultset").getNodes().getSize(), node
+                .getNode("brand/peugeot/product/car/color/grey").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
 
     }
-    
+
     @Test
     public void testDirectMultiValuedFacetNavigation() throws RepositoryException, IOException {
         commonStart();
@@ -141,22 +154,22 @@ public class FacetedNavigationSimpleTest extends TestCase {
         session.save();
         Node node = testNode.getNode("facetnavigation/hippo:navigation");
         assertNotNull(node);
-        
+
         // assert some facetednavigation nodes exists (note, only one multivalued property)
         assertTrue(node.hasNode("tags/lease"));
         assertTrue(node.hasNode("tags/lease/tags/lease"));
         assertTrue(node.hasNode("tags/toyota"));
-        
+
         assertTrue(node.hasNode("tags/toyota/tags/economical/tags/economical"));
         assertTrue(node.hasNode("tags/toyota/tags/economical/tags/toyota"));
-        
+
         // when accessing an already use combination, assure no child node are present:
 
         assertTrue(node.getNode("tags/toyota/tags/economical/tags/economical").getNodes().getSize() == 0);
         assertTrue(node.getNode("tags/toyota/tags/economical/tags/toyota").getNodes().getSize() == 0);
-       
+
     }
-    
+
     @Test
     public void testInheritFilterFacetNavigation() throws RepositoryException, IOException {
         commonStart();
@@ -164,50 +177,50 @@ public class FacetedNavigationSimpleTest extends TestCase {
         createSimpleStructure1(testNode);
         createFacetNodeSingleValues(testNode);
         session.save();
-        
-        
+
         Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
-        
+
         // without filter:
         assertNotNull(navigation.getNode("hippo:brand"));
-        assertEquals(4L,navigation.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(4L, navigation.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         assertNotNull(navigation.getNode("hippo:brand/mercedes"));
         assertNotNull(navigation.getNode("hippo:brand/peugeot/hippo:color/hippo:resultset"));
         assertNotNull(navigation.getNode("hippo:brand/peugeot/hippo:color/hippo:resultset/car4"));
         // car 4 has a link to car 1
         assertNotNull(navigation.getNode("hippo:brand/peugeot/hippo:color/hippo:resultset/car4/car1"));
         assertNotNull(navigation.getNode("hippo:brand/peugeot/hippo:color/hippo:resultset/car4/car1/car1"));
-        
+
         /*
          * let's create a facetselect with filter, that points to the faceted navigation.
          * The criteria is, that we only want to see brand = peugeot. This needs to be 
          * reflected in the count numbers & resultset and facetvalue in the faceted navigation as well
-         */  
-        
+         */
+
         testNode = session.getRootNode().getNode("test");
         String docbase = testNode.getNode("facetnavigation").getUUID();
         Node facetselect = testNode.addNode("filtered", HippoNodeType.NT_FACETSELECT);
         facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, docbase);
-        facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[]{"select"});
-        facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[]{"hippo:brand"});
-        facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[]{"peugeot"});
+        facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "select" });
+        facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:brand" });
+        facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "peugeot" });
         session.save();
         session.refresh(false);
-        
+
         // with filter now:
 
         assertNotNull(testNode.getNode("filtered"));
         assertNotNull(testNode.getNode("filtered/hippo:navigation"));
-        
+
         Node filteredNavigation = testNode.getNode("filtered/hippo:navigation");
         assertNotNull(filteredNavigation.getNode("hippo:brand"));
         // after filter, only 2 results here!
-        assertEquals(2L,filteredNavigation.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(2L, filteredNavigation.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         // mercedes should not resolve through filter
         assertFalse(filteredNavigation.hasNode("hippo:brand/mercedes"));
 
         assertTrue(filteredNavigation.hasNode("hippo:brand/peugeot"));
-        assertEquals(2L, filteredNavigation.getNode("hippo:brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(2L, filteredNavigation.getNode("hippo:brand/peugeot").getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
         assertNotNull(filteredNavigation.getNode("hippo:brand/peugeot/hippo:color/hippo:resultset/car4"));
         // car 4 has a link to car 1 so the handle is visible
         assertNotNull(filteredNavigation.getNode("hippo:brand/peugeot/hippo:color/hippo:resultset/car4/car1"));
@@ -215,193 +228,263 @@ public class FacetedNavigationSimpleTest extends TestCase {
 
         assertFalse(filteredNavigation.hasNode("hippo:brand/peugeot/hippo:color/hippo:resultset/car4/car1/car1"));
     }
-    
-    
-    
+
     @Test
     public void testFacetsOnNodeType() throws RepositoryException, IOException {
         commonStart();
-        
+
         Node testNode = session.getRootNode().getNode("test");
         createSimpleStructure1(testNode);
         createFacetNodeWithPrimaryType(testNode);
         session.save();
-        
+
         Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
         // the brand count:
         assertNotNull(navigation.getNode("hippo:brand"));
-        assertEquals(4L,navigation.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        
+        assertEquals(4L, navigation.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+
         // the primary node type counts: note, that there are 5 cars, onyly 4 of them having a brand, hence, 5L hippo:testdocument's 
-        
+
         assertNotNull(navigation.getNode("jcr:primaryType"));
-        assertEquals(5L,navigation.getNode("jcr:primaryType").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(5L, navigation.getNode("jcr:primaryType").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         String encodeNodeName = NodeNameCodec.encode("hippo:testcardocument", true);
-        assertEquals(5L,navigation.getNode("jcr:primaryType/"+encodeNodeName).getProperty(HippoNodeType.HIPPO_COUNT).getLong());  
-        assertNotNull(navigation.getNode("hippo:brand/peugeot/jcr:primaryType/"+encodeNodeName));
-        assertEquals(2L,navigation.getNode("hippo:brand/peugeot/jcr:primaryType/"+encodeNodeName).getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        
+        assertEquals(5L, navigation.getNode("jcr:primaryType/" + encodeNodeName).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+        assertNotNull(navigation.getNode("hippo:brand/peugeot/jcr:primaryType/" + encodeNodeName));
+        assertEquals(2L, navigation.getNode("hippo:brand/peugeot/jcr:primaryType/" + encodeNodeName).getProperty(
+                HippoNodeType.HIPPO_COUNT).getLong());
+
         session.save();
     }
-    
+
     @Test
     public void testFacetsOnDateValue() throws RepositoryException, IOException {
         commonStart();
-        
+
         Node testNode = session.getRootNode().getNode("test");
         createSimpleStructure1(testNode);
         createFacetNodeDateValue(testNode);
         session.save();
-    
+
         // we must have a node "/hippo:navigation/hippo:date/" + globalCal.getTimeInMillis() as date nodes are displayed in millisec and there should be 4 of them
-        
+
         Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
-       
+
         assertNotNull(navigation.getNode("hippo:date"));
-        assertNotNull(navigation.getNode("hippo:date/"+globalCal.getTimeInMillis()));
-        assertEquals(4L,navigation.getNode("hippo:date/"+globalCal.getTimeInMillis()).getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        
+        assertNotNull(navigation.getNode("hippo:date/" + globalCal.getTimeInMillis()));
+        assertEquals(4L, navigation.getNode("hippo:date/" + globalCal.getTimeInMillis()).getProperty(
+                HippoNodeType.HIPPO_COUNT).getLong());
+
     }
-    
+
     @Test
     public void testSortResultSetOnStringProperty() throws RepositoryException, IOException {
         commonStart();
         Node testNode = session.getRootNode().getNode("test");
         createSimpleStructure1(testNode);
         createFacetNodeSingleValues(testNode);
+
         session.save();
 
         Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
-        
+        navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTBY, new String[] { "hippo:brand", "hippo:color" });
+        navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER, new String[] { "descending", "descending" });
+        session.save();
+        navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
         // the resultset shoult be sorted on {hippo:brand (descending) and then on hippo:color (descending), see createFacetNodeSingleValues}
         NodeIterator it = navigation.getNode("hippo:brand/hippo:resultset").getNodes();
         String prevBrandValue = null;
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             Node n = it.nextNode();
             String brand = n.getProperty("hippo:brand").getString();
-            if(prevBrandValue != null) {
+            if (prevBrandValue != null) {
                 int compare = prevBrandValue.compareTo(brand);
                 // if sorted correctly, compare must be >= 0
-                assertTrue("Sorting of resultset failed",compare >= 0);
+                assertTrue("Sorting of resultset failed", compare >= 0);
             }
             prevBrandValue = brand;
-        } 
+        }
     }
-    
+
+    @Test
+    public void testSortResultSetOnLongProperty() throws RepositoryException, IOException {
+        commonStart();
+        Node testNode = session.getRootNode().getNode("test");
+        createSimpleStructure1(testNode);
+        createFacetNodeSingleValues(testNode);
+
+        session.save();
+
+        Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTBY, new String[] { "hippo:travelled" });
+        navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER, new String[] { "descending" });
+        session.save();
+        navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        // the resultset shoult be sorted on {hippo:brand (descending) and then on hippo:color (descending), see createFacetNodeSingleValues}
+        NodeIterator it = navigation.getNode("hippo:brand/hippo:resultset").getNodes();
+        long prevLongValue = Long.MAX_VALUE;
+        while (it.hasNext()) {
+            Node n = it.nextNode();
+            long travelled = n.getProperty("hippo:travelled").getLong();
+            // if sorted correctly (descending), travelled must be equal or larger then prev long
+            assertTrue("Sorting of resultset failed", travelled <= prevLongValue);
+            prevLongValue = travelled;
+        }
+    }
+
+    @Test
+    public void testSortResultSetOnDoubleProperty() throws RepositoryException, IOException {
+        commonStart();
+        Node testNode = session.getRootNode().getNode("test");
+        createSimpleStructure1(testNode);
+        createFacetNodeSingleValues(testNode);
+
+        session.save();
+
+        Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTBY, new String[] { "hippo:price" });
+        navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER, new String[] { "descending" });
+        session.save();
+        navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        // the resultset shoult be sorted on {hippo:brand (descending) and then on hippo:color (descending), see createFacetNodeSingleValues}
+        NodeIterator it = navigation.getNode("hippo:brand/hippo:resultset").getNodes();
+        double prevDoubleValue = Double.MAX_VALUE;
+        while (it.hasNext()) {
+            Node n = it.nextNode();
+            double price = n.getProperty("hippo:price").getDouble();
+            // if sorted correctly (descending), travelled must be equal or larger then prev long
+            assertTrue("Sorting of resultset failed", price <= prevDoubleValue);
+            prevDoubleValue = price;
+        }
+    }
+
     @Test
     public void testLimitResultSet() throws RepositoryException, IOException {
         commonStart();
         Node testNode = session.getRootNode().getNode("test");
         createSimpleStructure1(testNode);
-        
+
         createFacetNodeSingleValues(testNode);
         session.save();
 
         Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
-        
-        assertEquals(4L,navigation.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        
-        
+
+        assertEquals(4L, navigation.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+
         // and now, add a limit to the resultset!
         navigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETLIMIT, 1L);
         session.save();
-        
+
         navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
-        
+
         // And now the resultset should be just 1 as we have set the limit to 1
-        assertEquals(1L,navigation.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-          
+        assertEquals(1L, navigation.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+
     }
-    
-    private void commonStart() throws RepositoryException{
+
+    private void commonStart() throws RepositoryException {
         session.getRootNode().addNode("test");
         session.save();
     }
-    
+
     private void createSimpleStructure1(Node test) throws RepositoryException {
-        Node documents = test.addNode("documents","nt:unstructured");
+        Node documents = test.addNode("documents", "nt:unstructured");
         documents.addMixin("mix:referenceable");
-        Node cars = documents.addNode("cars","nt:unstructured");
+        Node cars = documents.addNode("cars", "nt:unstructured");
         documents.addMixin("mix:referenceable");
         /*
          * car 0
          * car that has no facets, so should not be visible at all in facet
-         */ 
-        Node car = cars.addNode("car0","hippo:handle");
+         */
+        Node car = cars.addNode("car0", "hippo:handle");
         car.addMixin("hippo:hardhandle");
-        car = car.addNode("car0","hippo:testcardocument");
+        car = car.addNode("car0", "hippo:testcardocument");
         car.addMixin("hippo:harddocument");
- 
+
         // car 1
-        car  = cars.addNode("car1","hippo:handle");
+        car = cars.addNode("car1", "hippo:handle");
         car.addMixin("hippo:hardhandle");
-        car = car.addNode("car1","hippo:testcardocument");
+        car = car.addNode("car1", "hippo:testcardocument");
         car.addMixin("hippo:harddocument");
         car.setProperty("hippo:brand", "mercedes");
         car.setProperty("hippo:color", "grey");
         car.setProperty("hippo:product", "car");
         car.setProperty("hippo:date", globalCal);
+        car.setProperty("hippo:price", 12000.0D);
+        car.setProperty("hippo:travelled", 122000L);
 
         // car 2
-        car  = cars.addNode("car2","hippo:handle");
+        car = cars.addNode("car2", "hippo:handle");
         car.addMixin("hippo:hardhandle");
-        car = car.addNode("car2","hippo:testcardocument");
+        car = car.addNode("car2", "hippo:testcardocument");
         car.addMixin("hippo:harddocument");
         car.setProperty("hippo:brand", "volkswagen");
         car.setProperty("hippo:color", "grey");
         car.setProperty("hippo:product", "car");
         car.setProperty("hippo:date", globalCal);
+        car.setProperty("hippo:price", 13000.0D);
+        car.setProperty("hippo:travelled", 129000L);
 
         // car 3
-        car  = cars.addNode("car3","hippo:handle");
+        car = cars.addNode("car3", "hippo:handle");
         car.addMixin("hippo:hardhandle");
-        car = car.addNode("car3","hippo:testcardocument");
+        car = car.addNode("car3", "hippo:testcardocument");
         car.addMixin("hippo:harddocument");
         car.setProperty("hippo:brand", "peugeot");
         car.setProperty("hippo:color", "blue");
         car.setProperty("hippo:product", "car");
         car.setProperty("hippo:date", globalCal);
+        car.setProperty("hippo:price", 11900.0D);
+        car.setProperty("hippo:travelled", 99000L);
 
         test.save();
 
         // car 4
-        car  = cars.addNode("car4","hippo:handle");
+        car = cars.addNode("car4", "hippo:handle");
         car.addMixin("hippo:hardhandle");
-        car = car.addNode("car4","hippo:testcardocument");
+        car = car.addNode("car4", "hippo:testcardocument");
         car.addMixin("hippo:harddocument");
 
         // add a facetselect to car 1
         String docbase = cars.getNode("car1").getUUID();
         Node facetselect = car.addNode("car1", HippoNodeType.NT_FACETSELECT);
         facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, docbase);
-        facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[]{});
-        facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[]{});
-        facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[]{});
- 
+        facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
+        facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {});
+        facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {});
+
         car.setProperty("hippo:brand", "peugeot");
         car.setProperty("hippo:color", "grey");
         car.setProperty("hippo:product", "car");
         car.setProperty("hippo:date", globalCal);
+        car.setProperty("hippo:price", 14000.0D);
+        car.setProperty("hippo:travelled", 72340L);
+
     }
 
     private void createSimpleStructure2(Node test) throws RepositoryException {
-        Node documents = test.addNode("documents","nt:unstructured");
+        Node documents = test.addNode("documents", "nt:unstructured");
         documents.addMixin("mix:referenceable");
-        Node cars = documents.addNode("cars","nt:unstructured");
-        
+        Node cars = documents.addNode("cars", "nt:unstructured");
+
         // car 1
-        Node car  = cars.addNode("car1","hippo:handle");
+        Node car = cars.addNode("car1", "hippo:handle");
         car.addMixin("hippo:hardhandle");
-        car = car.addNode("car1","hippo:testtagdocument");
+        car = car.addNode("car1", "hippo:testtagdocument");
         car.addMixin("hippo:harddocument");
-        String[] tags1 = {"mercedes", "expensive", "lease"};
-        car.setProperty("tags",tags1);
+        String[] tags1 = { "mercedes", "expensive", "lease" };
+        car.setProperty("tags", tags1);
         // car 2
-        car  = cars.addNode("car2","hippo:handle");
+        car = cars.addNode("car2", "hippo:handle");
         car.addMixin("hippo:hardhandle");
-        car = car.addNode("car2","hippo:testtagdocument");
+        car = car.addNode("car2", "hippo:testtagdocument");
         car.addMixin("hippo:harddocument");
-        String[] tags2 = {"toyota", "environment", "economical", "lease"};
+        String[] tags2 = { "toyota", "environment", "economical", "lease" };
         car.setProperty("tags", tags2);
     }
 
@@ -410,9 +493,8 @@ public class FacetedNavigationSimpleTest extends TestCase {
         node.addMixin("mix:referenceable");
         node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:brand", "hippo:color", "hippo:product" });
-        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTBY, new String[] { "hippo:brand", "hippo:color"});
-        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER, new String[] { "descending", "descending"});
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:brand", "hippo:color",
+                "hippo:product" });
 
     }
 
@@ -420,21 +502,21 @@ public class FacetedNavigationSimpleTest extends TestCase {
         node = node.addNode("facetnavigation");
         node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "tags"});
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "tags" });
     }
 
     private void createFacetNodeWithPrimaryType(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
         node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "jcr:primaryType", "hippo:brand"});
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "jcr:primaryType", "hippo:brand" });
     }
 
     private void createFacetNodeDateValue(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
         node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] {"hippo:date"});
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date" });
     }
-    
+
 }

@@ -26,18 +26,18 @@ import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.jackrabbit.KeyValue;
 
 public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngine.Query, C extends FacetedNavigationEngine.Context>
-  implements FacetedNavigationEngine<Q,C>
-{
+        implements FacetedNavigationEngine<Q, C> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private FacetedNavigationEngine<Q,C> upstream;
+    private FacetedNavigationEngine<Q, C> upstream;
 
-    public FacetedNavigationEngineWrapperImpl(FacetedNavigationEngine<Q,C> upstream) {
+    public FacetedNavigationEngineWrapperImpl(FacetedNavigationEngine<Q, C> upstream) {
         this.upstream = upstream;
     }
 
-    public C prepare(String principal, Subject subject, List<Q> initialQueries, Session session) throws RepositoryException {
+    public C prepare(String principal, Subject subject, List<Q> initialQueries, Session session)
+            throws RepositoryException {
         Context context = upstream.prepare(principal, subject, initialQueries, session);
         return (C) context;
     }
@@ -46,7 +46,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
         upstream.unprepare(authorization);
     }
 
-    public void reload(Map<Name,String[]> facetValues) {
+    public void reload(Map<Name, String[]> facetValues) {
         upstream.reload(facetValues);
     }
 
@@ -60,7 +60,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
         return rtvalue;
     }
 
-    public void notify(String docId, Map<Name,String[]> oldFacets, Map<Name,String[]> newFacets) {
+    public void notify(String docId, Map<Name, String[]> oldFacets, Map<Name, String[]> newFacets) {
         upstream.notify(docId, oldFacets, newFacets);
     }
 
@@ -76,7 +76,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
                 inheritedFilter, hitsRequested);
         return result;
     }
-    
+
     public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
             Q openQuery, Map<String, Map<String, Count>> resultset, Map<Name, String> inheritedFilter,
             HitsRequested hitsRequested) throws UnsupportedOperationException {
@@ -86,10 +86,11 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
         return result;
     }
 
-    public Result view(String queryName, Q initialQuery, C authorization,
-                        List<KeyValue<String, String>> facetsQuery, Q openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
+    public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
+            Q openQuery, Map<Name, String> inheritedFilter, HitsRequested hitsRequested) {
         Result result;
-        result = upstream.view(queryName, initialQuery, authorization, facetsQuery, openQuery, inheritedFilter, hitsRequested);
+        result = upstream.view(queryName, initialQuery, authorization, facetsQuery, openQuery, inheritedFilter,
+                hitsRequested);
         return result;
     }
 

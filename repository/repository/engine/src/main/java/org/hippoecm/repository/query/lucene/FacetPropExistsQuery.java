@@ -16,10 +16,8 @@
 package org.hippoecm.repository.query.lucene;
 
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,17 +33,13 @@ public class FacetPropExistsQuery {
     /**
      * The lucene query
      */
-    private BooleanQuery query;
+    private Query query;
 
-    public FacetPropExistsQuery(String facet, String internalName) {
-        this.query = new BooleanQuery(true);
-
-         Query q = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalName));
-         this.query.add(q, Occur.MUST);
-       
+    public FacetPropExistsQuery(String internalName) {
+        this.query = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalName));
     }
 
-    public BooleanQuery getQuery() {
+    public Query getQuery() {
         return query;
     }
 }
