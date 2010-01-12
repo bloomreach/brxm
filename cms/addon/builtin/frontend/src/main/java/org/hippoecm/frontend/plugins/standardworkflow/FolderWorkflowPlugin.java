@@ -84,17 +84,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
     private WorkflowAction reorderAction;
 
-    protected StringCodec nodeNameCodec;
-    protected StringCodec localizeCodec;
-
     public FolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
-
-        StringCodecFactory stringCodecFactory = new StringCodecFactory();
-        String encoder = getPluginConfig().getString("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
-        localizeCodec = stringCodecFactory.getStringCodec(encoder);
-        encoder = getPluginConfig().getString("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
-        nodeNameCodec = stringCodecFactory.getStringCodec(encoder);
 
         add(new Label("new"));
 
@@ -124,8 +115,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 // and there is some logic here to look up the parent.  The real solution is
                 // in the visual component to merge two workflows.
                 Node node = model.getNode();
-                String nodeName = nodeNameCodec.encode(uriName);
-                String localName = localizeCodec.encode(targetName);
+                String nodeName = getNodeNameCodec().encode(uriName);
+                String localName = getLocalizeCodec().encode(targetName);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if(!nodeName.equals(localName)) {
@@ -263,8 +254,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                                     log.error("unknown folder type " + prototype);
                                     return "Unknown folder type " + prototype;
                                 }
-                                String nodeName = nodeNameCodec.encode(uriName);
-                                String localName = localizeCodec.encode(targetName);
+                                String nodeName = getNodeNameCodec().encode(uriName);
+                                String localName = getLocalizeCodec().encode(targetName);
                                 String path = workflow.add(category, prototype, nodeName);
                                 ((UserSession) Session.get()).getJcrSession().refresh(true);
                                 JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
@@ -365,6 +356,18 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
         }
     }
 
+    protected StringCodec getLocalizeCodec() {
+        StringCodecFactory stringCodecFactory = new StringCodecFactory();
+        String encoder = getPluginConfig().getString("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
+        return stringCodecFactory.getStringCodec(encoder);
+    }
+
+    protected StringCodec getNodeNameCodec() {
+        StringCodecFactory stringCodecFactory = new StringCodecFactory();
+        String encoder = getPluginConfig().getString("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
+        return stringCodecFactory.getStringCodec(encoder);
+    }
+
     public class AddDocumentDialog extends WorkflowAction.WorkflowDialog {
         private String category;
         private Set<String> prototypes;
@@ -391,7 +394,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     if (!uriModified) {
-                        uriModel.setObject(nodeNameCodec.encode(nameModel.getObject()));
+                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
                         target.addComponent(uriComponent);
                     }
                 }
@@ -445,7 +448,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 protected void onUpdate(AjaxRequestTarget target) {
                     uriComponent.setEnabled(uriModified);
                     if (uriModified == false) {
-                        uriModel.setObject(nodeNameCodec.encode(nameModel.getObject()));
+                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
                     }
                     target.addComponent(AddDocumentDialog.this);
                 }
@@ -483,7 +486,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     if (!uriModified) {
-                        uriModel.setObject(nodeNameCodec.encode(nameModel.getObject()));
+                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
                         target.addComponent(uriComponent);
                     }
                 }
@@ -500,7 +503,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 protected void onUpdate(AjaxRequestTarget target) {
                     uriComponent.setEnabled(uriModified);
                     if (uriModified == false) {
-                        uriModel.setObject(nodeNameCodec.encode(nameModel.getObject()));
+                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
                     }
                     target.addComponent(RenameDocumentDialog.this);
                     target.addComponent(uriComponent);
