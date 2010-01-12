@@ -73,12 +73,12 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
     static {
         yearbefore.set(2008, 11, 23, 10, 46);
     }
-    
+
     private final static Calendar twoyearbefore = Calendar.getInstance();
     static {
         twoyearbefore.set(2007, 11, 23, 10, 46);
     }
-    
+
     @Before
     @Override
     public void setUp() throws Exception {
@@ -94,16 +94,18 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
     @Test
     public void testDatesFacetNavigation() throws RepositoryException, IOException {
         commonStart();
- 
+
         Node testNode = session.getRootNode().getNode("test");
         createDateStructure1(testNode);
-        
+
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
-        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] {"hippo:date$year", "hippo:date$month", "hippo:date$day"});
-        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year", "month", "day"});
-        
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
+                .getUUID());
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",
+                "hippo:date$month", "hippo:date$day" });
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { "year", "month", "day" });
+
         session.save();
 
         int currentYear = start.get(Calendar.YEAR);
@@ -111,33 +113,35 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
         int twoYearsAgo = twoyearbefore.get(Calendar.YEAR);
         int currentMonth = start.get(Calendar.MONTH);
         int currentDay = start.get(Calendar.DAY_OF_MONTH);
-        
+
         Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
-    
+
         assertNotNull(node.getNode("year"));
         assertNotNull(node.getNode("year").getNode(String.valueOf(currentYear)));
-       
-        assertTrue(node.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT).getLong() == 7L);
-        assertTrue(node.getNode("year").getNode(String.valueOf(yearAgo)).getProperty(HippoNodeType.HIPPO_COUNT).getLong() == 1L);
-        assertTrue(node.getNode("year").getNode(String.valueOf(twoYearsAgo)).getProperty(HippoNodeType.HIPPO_COUNT).getLong() == 1L);
-        
+
+        assertTrue(node.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 7L);
+        assertTrue(node.getNode("year").getNode(String.valueOf(yearAgo)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 1L);
+        assertTrue(node.getNode("year").getNode(String.valueOf(twoYearsAgo)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 1L);
+
         assertNotNull(node.getNode("month"));
         assertNotNull(node.getNode("month").getNode(String.valueOf(currentMonth)));
-        
+
         assertNotNull(node.getNode("day"));
         assertNotNull(node.getNode("day").getNode(String.valueOf(currentDay)));
     }
-    
-    
-    private void commonStart() throws RepositoryException{
+
+    private void commonStart() throws RepositoryException {
         session.getRootNode().addNode("test");
         session.save();
     }
-    
+
     private void createDateStructure1(Node test) throws RepositoryException {
-        Node documents = test.addNode("documents","nt:unstructured");
+        Node documents = test.addNode("documents", "nt:unstructured");
         documents.addMixin("mix:referenceable");
-        Node dateDocs = documents.addNode("datedocs","nt:unstructured");
+        Node dateDocs = documents.addNode("datedocs", "nt:unstructured");
         documents.addMixin("mix:referenceable");
 
         addDateDoc(dateDocs, "datedoc1", start);
@@ -151,15 +155,18 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
         addDateDoc(dateDocs, "datedoc9", twoyearbefore);
 
         test.save();
+
     }
 
-    private void addDateDoc(Node dateDocs, String name, Calendar cal) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
-        Node dateDoc  = dateDocs.addNode(name,"hippo:handle");
+    private void addDateDoc(Node dateDocs, String name, Calendar cal) throws ItemExistsException,
+            PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException,
+            ConstraintViolationException, RepositoryException {
+        Node dateDoc = dateDocs.addNode(name, "hippo:handle");
         dateDoc.addMixin("hippo:hardhandle");
-        dateDoc = dateDoc.addNode(name,"hippo:testcardocument");
+        dateDoc = dateDoc.addNode(name, "hippo:testcardocument");
         dateDoc.addMixin("hippo:harddocument");
         dateDoc.setProperty("hippo:date", cal);
-        
+
     }
 
 }

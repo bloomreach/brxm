@@ -82,7 +82,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     private QueryHandlerContext queryHandlerContext;
 
-    public ServicingNodeIndexer(NodeState node, QueryHandlerContext queryHandlerContext, NamespaceMappings mappings, TextExtractor extractor) {
+    public ServicingNodeIndexer(NodeState node, QueryHandlerContext queryHandlerContext, NamespaceMappings mappings,
+            TextExtractor extractor) {
         super(node, queryHandlerContext.getItemStateManager(), mappings, extractor);
         this.queryHandlerContext = queryHandlerContext;
     }
@@ -99,16 +100,13 @@ public class ServicingNodeIndexer extends NodeIndexer {
         // plus index our facet specifics
 
         // TODO : only index facets for hippo:document + subtypes
-        
-        
-        try {
 
+        try {
             if (node.getParentId() != null) { // skip root node
                 NodeState parent = (NodeState) stateProvider.getItemState(node.getParentId());
                 ChildNodeEntry child = parent.getChildNodeEntry(node.getNodeId());
                 if (child == null) {
-                    throw new RepositoryException("Missing child node entry " +
-                            "for node with id: " + node.getNodeId());
+                    throw new RepositoryException("Missing child node entry " + "for node with id: " + node.getNodeId());
                 }
                 String nodename = child.getName().getLocalName();
                 String prefix = null;
@@ -117,7 +115,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
                     nodename = prefix + ":" + nodename;
                 }
                 // index the nodename to sort on
-                doc.add(new Field(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, nodename, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
+                doc.add(new Field(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, nodename, Field.Store.NO,
+                        Field.Index.NO_NORMS, Field.TermVector.NO));
 
                 for (Iterator childNodeIter = node.getChildNodeEntries().iterator(); childNodeIter.hasNext();) {
                     ChildNodeEntry childNode = (ChildNodeEntry) childNodeIter.next();
@@ -132,7 +131,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
                                 InternalValue[] values = propState.getValues();
                                 if (!isHippoPath(propName) && isFacet(propName)) {
                                     for (int i = 0; i < values.length; i++) {
-                                        String s = resolver.getJCRName(propState.getName()) + "/" + resolver.getJCRName(childNode.getName());
+                                        String s = resolver.getJCRName(propState.getName()) + "/"
+                                                + resolver.getJCRName(childNode.getName());
                                         addFacetValue(doc, values[i], s, propState.getName());
                                     }
                                 }
@@ -144,7 +144,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                         }
                     }
                 }
-                
+
                 /**
                  * index the nodename to search on. We index this as hippo:_localname, a pseudo property which does not really exist but
                  * only meant to search on
@@ -188,7 +188,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
             return;
         }
         String fieldName = hippo_ns_prefix + ":" + FieldNames.FULLTEXT_PREFIX + "_localname";
-        Field localNameField = new Field(fieldName, localName, Field.Store.NO, Field.Index.TOKENIZED, Field.TermVector.NO);
+        Field localNameField = new Field(fieldName, localName, Field.Store.NO, Field.Index.TOKENIZED,
+                Field.TermVector.NO);
         localNameField.setBoost(5);
         doc.add(localNameField);
 
@@ -206,87 +207,95 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     // below: When the QName is configured to be a facet, also index like one
     private void addFacetValue(Document doc, InternalValue value, String fieldName, Name name) {
-        
+
         switch (value.getType()) {
-            case PropertyType.BINARY:
-                // never facet;
-                break;
-            case PropertyType.BOOLEAN:
-                indexFacet(doc, fieldName, value.toString());
-                break;
-            case PropertyType.DATE:
-                
-                Map<String, String> resolutions = new HashMap<String,String>();
-                resolutions.put("year", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.YEAR));
-                resolutions.put("month", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.MONTH));
-                resolutions.put("week", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.WEEK));
-                resolutions.put("day", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.DAY));
-                resolutions.put("hour", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.HOUR));
-                resolutions.put("minute", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.MINUTE));
-                resolutions.put("second", HippoDateTools.timeToString(value.getDate().getTimeInMillis(), HippoDateTools.Resolution.SECOND));
-                
-                Map<String, Integer> byDateNumbers = new HashMap<String, Integer>();
-                byDateNumbers.put("year", value.getDate().get(Calendar.YEAR));
-                byDateNumbers.put("month", value.getDate().get(Calendar.MONTH));
-                byDateNumbers.put("week", value.getDate().get(Calendar.WEEK_OF_YEAR));
-                byDateNumbers.put("dayofyear", value.getDate().get(Calendar.DAY_OF_YEAR));
-                byDateNumbers.put("dayofweek", value.getDate().get(Calendar.DAY_OF_WEEK));
-                byDateNumbers.put("day", value.getDate().get(Calendar.DAY_OF_MONTH));
-                byDateNumbers.put("hour", value.getDate().get(Calendar.HOUR_OF_DAY));
-                byDateNumbers.put("minute", value.getDate().get(Calendar.MINUTE));
-                byDateNumbers.put("second", value.getDate().get(Calendar.SECOND));
-                
-                String dateToString = String.valueOf(value.getDate().getTimeInMillis());
-                
-                indexDateFacet(doc, fieldName, dateToString, resolutions, byDateNumbers);
-                break;
-            case PropertyType.DOUBLE:
-                // TODO index properly as facet double
-                indexFacet(doc, fieldName, DoubleField.doubleToString(new Double(value.getDouble()).doubleValue()));
-                break;
-            case PropertyType.LONG:
-                // TODO index properly as facet long
-                indexFacet(doc, fieldName, LongField.longToString(Long.valueOf(value.getLong())));
-                break;
-            case PropertyType.REFERENCE:
-                // never facet;
-                break;
-            case PropertyType.PATH:
-                // never facet;
-                break;
-            case PropertyType.STRING:
-                // never index uuid as facet
-                if (!name.equals(NameConstants.JCR_UUID)) {
-                    String str = value.toString();
-                    if (str.length() > 255) {
-                        log.debug("truncating facet value because string length exceeds 255 chars. This is useless for facets");
-                        str = str.substring(0, 255);
-                    }
-                    indexFacet(doc, fieldName, str);
+        case PropertyType.BINARY:
+            // never facet;
+            break;
+        case PropertyType.BOOLEAN:
+            indexFacet(doc, fieldName, value.toString());
+            break;
+        case PropertyType.DATE:
+
+            Map<String, String> resolutions = new HashMap<String, String>();
+            resolutions.put("year", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
+                    HippoDateTools.Resolution.YEAR));
+            resolutions.put("month", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
+                    HippoDateTools.Resolution.MONTH));
+            resolutions.put("week", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
+                    HippoDateTools.Resolution.WEEK));
+            resolutions.put("day", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
+                    HippoDateTools.Resolution.DAY));
+            resolutions.put("hour", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
+                    HippoDateTools.Resolution.HOUR));
+            resolutions.put("minute", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
+                    HippoDateTools.Resolution.MINUTE));
+            resolutions.put("second", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
+                    HippoDateTools.Resolution.SECOND));
+
+            Map<String, Integer> byDateNumbers = new HashMap<String, Integer>();
+            byDateNumbers.put("year", value.getDate().get(Calendar.YEAR));
+            byDateNumbers.put("month", value.getDate().get(Calendar.MONTH));
+            byDateNumbers.put("week", value.getDate().get(Calendar.WEEK_OF_YEAR));
+            byDateNumbers.put("dayofyear", value.getDate().get(Calendar.DAY_OF_YEAR));
+            byDateNumbers.put("dayofweek", value.getDate().get(Calendar.DAY_OF_WEEK));
+            byDateNumbers.put("day", value.getDate().get(Calendar.DAY_OF_MONTH));
+            byDateNumbers.put("hour", value.getDate().get(Calendar.HOUR_OF_DAY));
+            byDateNumbers.put("minute", value.getDate().get(Calendar.MINUTE));
+            byDateNumbers.put("second", value.getDate().get(Calendar.SECOND));
+
+            String dateToString = String.valueOf(value.getDate().getTimeInMillis());
+
+            indexDateFacet(doc, fieldName, dateToString, resolutions, byDateNumbers);
+            break;
+        case PropertyType.DOUBLE:
+            indexDoubleFacet(doc, fieldName, value.getDouble());
+            break;
+        case PropertyType.LONG:
+            indexLongFacet(doc, fieldName, value.getLong());
+            break;
+        case PropertyType.REFERENCE:
+            // never facet;
+            break;
+        case PropertyType.PATH:
+            // never facet;
+            break;
+        case PropertyType.STRING:
+            // never index uuid as facet
+            if (!name.equals(NameConstants.JCR_UUID)) {
+                String str = value.toString();
+                if (str.length() > 255) {
+                    log
+                            .debug("truncating facet value because string length exceeds 255 chars. This is useless for facets");
+                    str = str.substring(0, 255);
                 }
-                break;
-            case PropertyType.NAME:
-                if (name.equals(NameConstants.JCR_PRIMARYTYPE)) {
-                    indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_PRIMARYTYPE, value.getQName());
-                } else if (name.equals(NameConstants.JCR_MIXINTYPES)) {
-                    indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_MIXINTYPE, value.getQName());
-                }
-                try {
-                    // nodename in format: nsprefix:localname
-                    String primaryNodeName = queryHandlerContext.getNamespaceRegistry().getPrefix(value.getQName().getNamespaceURI()) + ":" + value.getQName().getLocalName();
-                    indexFacet(doc, fieldName, primaryNodeName);
-                } catch (NamespaceException e) {
-                    log.error("Could not get primaryNodeName in format nsprefix:localname for '{}'", value.getQName());
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("illegal internal value type");
+                indexStringFacet(doc, fieldName, str);
+            }
+            break;
+        case PropertyType.NAME:
+            if (name.equals(NameConstants.JCR_PRIMARYTYPE)) {
+                indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_PRIMARYTYPE, value.getQName());
+            } else if (name.equals(NameConstants.JCR_MIXINTYPES)) {
+                indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_MIXINTYPE, value.getQName());
+            }
+            try {
+                // nodename in format: nsprefix:localname
+                String primaryNodeName = queryHandlerContext.getNamespaceRegistry().getPrefix(
+                        value.getQName().getNamespaceURI())
+                        + ":" + value.getQName().getLocalName();
+                indexFacet(doc, fieldName, primaryNodeName);
+            } catch (NamespaceException e) {
+                log.error("Could not get primaryNodeName in format nsprefix:localname for '{}'", value.getQName());
+            }
+            break;
+        default:
+            throw new IllegalArgumentException("illegal internal value type");
         }
     }
 
     @Override
     protected void addStringValue(Document doc, String fieldName, Object internalValue, boolean tokenized,
-                                  boolean includeInNodeIndex, float boost, boolean useInExcerpt) {
+            boolean includeInNodeIndex, float boost, boolean useInExcerpt) {
         if (!addedAllExcludeFieldNames) {
             // init only when not all excluded nodenames have been resolved before
             synchronized (this) {
@@ -297,7 +306,12 @@ public class ServicingNodeIndexer extends NodeIndexer {
                         excludeFieldNamesFromNodeScope.add(resolver.getJCRName(n));
                     } catch (NamespaceException e) {
                         excCount++;
-                        log.debug("Cannot (yet) add name " + n + " to the exlude set from nodescope. Most likely the namespace still has to be registered.", e.getMessage());
+                        log
+                                .debug(
+                                        "Cannot (yet) add name "
+                                                + n
+                                                + " to the exlude set from nodescope. Most likely the namespace still has to be registered.",
+                                        e.getMessage());
                     }
                 }
                 if (excCount == 0) {
@@ -315,7 +329,12 @@ public class ServicingNodeIndexer extends NodeIndexer {
                         excludePropertiesSingleIndexTerm.add(resolver.getJCRName(n));
                     } catch (NamespaceException e) {
                         excCount++;
-                        log.debug("Cannot (yet) add name " + n + " to the exlude set for properties not to index a single term from. Most likely the namespace still has to be registered.", e.getMessage());
+                        log
+                                .debug(
+                                        "Cannot (yet) add name "
+                                                + n
+                                                + " to the exlude set for properties not to index a single term from. Most likely the namespace still has to be registered.",
+                                        e.getMessage());
                     }
                 }
                 if (excCount == 0) {
@@ -334,32 +353,64 @@ public class ServicingNodeIndexer extends NodeIndexer {
         }
     }
 
-    private void indexFacet(Document doc, String fieldName, String value) {
-        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
-        String internalFacetName = ServicingNameFormat.getInternalFacetName(fieldName);       
-        doc.add(new Field(internalFacetName, value, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.YES));
+    private void indexFacet(Document doc, String fieldName, String value, Field.TermVector termVector) {
+        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NO_NORMS,
+                Field.TermVector.NO));
+        String internalFacetName = ServicingNameFormat.getInternalFacetName(fieldName);
+        doc.add(new Field(internalFacetName, value, Field.Store.NO, Field.Index.NO_NORMS, termVector));
     }
 
-    private void indexDateFacet(Document doc, String fieldName, String value, Map<String, String> resolutions, Map<String, Integer> byDateNumbers) {
-        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
-        String internalFacetName = ServicingNameFormat.getInternalFacetName(fieldName);       
-        doc.add(new Field(internalFacetName, value, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.YES));
-        
-        for(Entry<String, String> keyValue : resolutions.entrySet()) {
-            String compoundFieldName = fieldName+ServicingFieldNames.DATE_RESOLUTION_DELIMITER+keyValue.getKey();
-            doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, compoundFieldName, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
-            internalFacetName = ServicingNameFormat.getInternalFacetName(compoundFieldName);     
-            // no termvectors storing needed.
-            doc.add(new Field(internalFacetName, keyValue.getValue() , Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
+    private void indexFacet(Document doc, String fieldName, String value) {
+        indexFacet(doc, fieldName, value, Field.TermVector.NO);
+    }
+
+    private void indexDateFacet(Document doc, String fieldName, String value, Map<String, String> resolutions,
+            Map<String, Integer> byDateNumbers) {
+        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NO_NORMS,
+                Field.TermVector.NO));
+        String internalFacetName = ServicingNameFormat.getInternalFacetName(fieldName);
+        doc.add(new Field(internalFacetName, value, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
+
+        for (Entry<String, String> keyValue : resolutions.entrySet()) {
+            String compoundFieldName = fieldName + ServicingFieldNames.DATE_RESOLUTION_DELIMITER + keyValue.getKey();
+            indexFacet(doc, compoundFieldName, keyValue.getValue());
         }
-        
-        for(Entry<String, Integer> keyValue : byDateNumbers.entrySet()) {
-            String compoundFieldName = fieldName+ServicingFieldNames.DATE_NUMBER_DELIMITER+keyValue.getKey();
-            doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, compoundFieldName, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
-            internalFacetName = ServicingNameFormat.getInternalFacetName(compoundFieldName);  
-            // include termvectors!
-            doc.add(new Field(internalFacetName, String.valueOf(keyValue.getValue()) , Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.YES));
-        } 
+
+        for (Entry<String, Integer> keyValue : byDateNumbers.entrySet()) {
+            String compoundFieldName = fieldName + ServicingFieldNames.DATE_NUMBER_DELIMITER + keyValue.getKey();
+            indexFacet(doc, compoundFieldName, String.valueOf(keyValue.getValue()));
+        }
+    }
+
+    private void indexLongFacet(Document doc, String fieldName, long value) {
+        indexFacet(doc, fieldName, String.valueOf(value));
+        String compoundFieldName = fieldName + ServicingFieldNames.LONG_POSTFIX;
+        // for efficient range queries on long fields, we also index a legical format and store term vector
+        indexFacet(doc, compoundFieldName, LongField.longToString(value), Field.TermVector.YES);
+    }
+
+    private void indexStringFacet(Document doc, String fieldName, String value) {
+        indexFacet(doc, fieldName, value);
+
+        // lowercase index the the first, first 2 and first 3 chars in seperate fields
+        for (int i = 1; i <= 3; i++) {
+            String ngram = fieldName + ServicingFieldNames.STRING_DELIMITER + i
+                    + ServicingFieldNames.STRING_CHAR_POSTFIX;
+            ;
+            if (value.length() > i) {
+                indexFacet(doc, ngram, value.substring(0, i).toLowerCase());
+            } else {
+                indexFacet(doc, ngram, value.toLowerCase());
+            }
+        }
+
+    }
+
+    private void indexDoubleFacet(Document doc, String fieldName, double value) {
+        indexFacet(doc, fieldName, String.valueOf(value));
+        String compoundFieldName = fieldName + ServicingFieldNames.DOUBLE_POSTFIX;
+        // for efficient range queries on long fields, we also index a legical format and store term vector
+        indexFacet(doc, compoundFieldName, DoubleField.doubleToString(value), Field.TermVector.YES);
     }
 
     protected void indexNodeTypeNameFacet(Document doc, String fieldName, Object internalValue) {
@@ -378,14 +429,16 @@ public class ServicingNodeIndexer extends NodeIndexer {
         for (int i = 0; i < values.length; i++) {
             InternalValue value = values[i];
             if (value.getType() == PropertyType.STRING) {
-                doc.add(new Field(ServicingFieldNames.HIPPO_PATH, value.toString(), Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
+                doc.add(new Field(ServicingFieldNames.HIPPO_PATH, value.toString(), Field.Store.NO,
+                        Field.Index.NO_NORMS, Field.TermVector.NO));
             }
         }
 
         // make lexical sorting on depth possible. Max depth = 999;
         String depth = String.valueOf(values.length);
         depth = "000".substring(depth.length()).concat(depth);
-        doc.add(new Field(ServicingFieldNames.HIPPO_DEPTH, depth, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
+        doc.add(new Field(ServicingFieldNames.HIPPO_DEPTH, depth, Field.Store.NO, Field.Index.NO_NORMS,
+                Field.TermVector.NO));
     }
 
     /**
@@ -426,8 +479,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
      *
      * @param e the base exception.
      */
-    private void throwRepositoryException(Exception e)
-            throws RepositoryException {
+    private void throwRepositoryException(Exception e) throws RepositoryException {
         String msg = "Error while indexing node: " + node.getNodeId() + " of " + "type: " + node.getNodeTypeName();
         throw new RepositoryException(msg, e);
     }

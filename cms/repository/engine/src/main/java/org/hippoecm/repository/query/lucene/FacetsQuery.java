@@ -46,13 +46,13 @@ public class FacetsQuery {
         this.query = new BooleanQuery(true);
 
         if (facetsQuery != null) {
-            for (KeyValue<String, String> keyValue : facetsQuery ) {
+            for (KeyValue<String, String> keyValue : facetsQuery) {
                 try {
                     String internalName = ServicingNameFormat.getInteralPropertyPathName(nsMappings, keyValue.getKey());
                     Query tq;
                     if (keyValue.getValue() == null) {
                         // only make sure the document contains at least the facet (propertyName)
-                        tq = new FacetPropExistsQuery(keyValue.getKey(), internalName).getQuery();
+                        tq = new FacetPropExistsQuery(internalName).getQuery();
                     } else {
                         String internalFacetName = ServicingNameFormat.getInternalFacetName(internalName);
                         tq = new TermQuery(new Term(internalFacetName, keyValue.getValue()));
@@ -62,7 +62,7 @@ public class FacetsQuery {
 
                 } catch (IllegalNameException e) {
                     log.error(e.toString());
-                } 
+                }
             }
         }
     }

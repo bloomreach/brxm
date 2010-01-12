@@ -21,6 +21,10 @@ public interface ServicingFieldNames {
     // never used chars in lucene, so can be used as delimiter
     public static final char DATE_RESOLUTION_DELIMITER = '\uFAFA';
     public static final char DATE_NUMBER_DELIMITER = '\uFAFB';
+    public static final char LONG_POSTFIX = '\uFAFC';
+    public static final char DOUBLE_POSTFIX = '\uFAFD';
+    public static final char STRING_DELIMITER = '\uFAFF';
+    public static final String STRING_CHAR_POSTFIX = "chars";
     
     /**
      * Lucene field name which is used to index the localname of a node to be able to sort on nodes

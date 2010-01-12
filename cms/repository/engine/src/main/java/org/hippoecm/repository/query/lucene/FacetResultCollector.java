@@ -38,11 +38,11 @@ public class FacetResultCollector extends HitCollector {
     private Map<String, Count> facetMap;
     private List<String[]> facetRangeList;
 
-    public FacetResultCollector(IndexReader reader, String facet, Map<String, Count> facetMap, List<String[]> facetRangeList, HitsRequested hitsRequested) {
+    public FacetResultCollector(IndexReader reader, String propertyName, Map<String, Count> facetMap, List<String[]> facetRangeList, HitsRequested hitsRequested) {
         this.reader = reader;
-        if (facet != null) {
+        if (propertyName != null) {
             try {
-                this.internalName = ServicingNameFormat.getInternalFacetName(facet);
+                this.internalName = ServicingNameFormat.getInternalFacetName(propertyName);
             } catch (Exception ex) {
                 System.err.println(ex.getMessage());
                 ex.printStackTrace(System.err);

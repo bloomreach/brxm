@@ -189,8 +189,7 @@ count template that go with them.
 
  * @version draft
  */
-public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query,C extends FacetedNavigationEngine.Context>
-{
+public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query, C extends FacetedNavigationEngine.Context> {
     final static String SVN_ID = "$Id$";
 
     /**
@@ -202,30 +201,31 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * notified of a change.
      */
     class Count {
-      public Count(int initialCount) {
-        count = initialCount;
-      }
-      public int count;
-      public String toString() {
-        return Integer.toString(count);
-      }
-    }
+        public Count(int initialCount) {
+            count = initialCount;
+        }
 
-    
+        public int count;
+
+        public String toString() {
+            return Integer.toString(count);
+        }
+    }
 
     /** An instance of a Result class contains the matching documents of a faceted view.
      */
     abstract class Result implements Iterable<NodeId> {
-      /**
-       * Total number of matches (even if iterator will return only a few.
-       * @return the number of hits
-       */
-      public abstract int length();
-      /**
-       * An iterator over the matched documents.  Returns NodeId's
-       * @return an iterator over java.lang.String.
-       */
-      public abstract Iterator<NodeId> iterator();
+        /**
+         * Total number of matches (even if iterator will return only a few.
+         * @return the number of hits
+         */
+        public abstract int length();
+
+        /**
+         * An iterator over the matched documents.  Returns NodeId's
+         * @return an iterator over java.lang.String.
+         */
+        public abstract Iterator<NodeId> iterator();
     }
 
     /** An abstract class passed between invocations of the parse()
@@ -255,7 +255,8 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @see #unprepare(C)
      */
 
-    public C prepare(String userId, Subject subject, List<Q> initialQueries, Session session) throws RepositoryException;
+    public C prepare(String userId, Subject subject, List<Q> initialQueries, Session session)
+            throws RepositoryException;
 
     /**
      * This method is called when a user logouts from the system.
@@ -283,7 +284,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      *
      * @see #requiresReload()
      */
-    public void reload(Map<Name,String[]> facetValues);
+    public void reload(Map<Name, String[]> facetValues);
 
     /**
      * If the implementation of this interface requires to be informed of facet
@@ -317,7 +318,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * @param oldFacets the old set of facet values
      * @param newFacets the new set of facet values, not just the changed values
      */
-    public void notify(String docId, Map<Name,String[]> oldFacets, Map<Name,String[]> newFacets);
+    public void notify(String docId, Map<Name, String[]> oldFacets, Map<Name, String[]> newFacets);
 
     /**
      * The purge method is used to inform the engine that it should clear out
@@ -338,18 +339,15 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * not the obtained the facet-value counts of a faceted navigation query,
      *   but used when the actual resultset is required.  In this case.
      */
-    public Result view(String queryName, Q initialQuery, C authorization,
-             List<KeyValue<String, String>> facetsQuery, Q openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested);
+    public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
+            Q openQuery, Map<Name, String> inheritedFilter, HitsRequested hitsRequested);
 
-    
     /**
      * @see #view(String, org.hippoecm.repository.FacetedNavigationEngine.Query, org.hippoecm.repository.FacetedNavigationEngine.Context, List, List, org.hippoecm.repository.FacetedNavigationEngine.Query, Map, Map, HitsRequested) 
      */
-    public Result view(String queryName, Q initialQuery, C authorization,
-               List<KeyValue<String, String>> facetsQuery, Q openQuery,
-               Map<String,Map<String,Count>> resultset,
-               Map<Name,String> inheritedFilter,
-               HitsRequested hitsRequested) throws UnsupportedOperationException;
+    public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
+            Q openQuery, Map<String, Map<String, Count>> resultset, Map<Name, String> inheritedFilter,
+            HitsRequested hitsRequested) throws UnsupportedOperationException;
 
     /**
      * While the other methods in this interface are meant for informing the
@@ -399,10 +397,8 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * count as returned by the length() method, but where the iterator
      * returns <code>null</code>.
      */
-    public Result view(String queryName, Q initialQuery, C authorization,
-               List<KeyValue<String, String>> facetsQuery, List<FacetRange> rangeQuery, Q openQuery,
-               Map<String,Map<String,Count>> resultset,
-               Map<Name,String> inheritedFilter,
-               HitsRequested hitsRequested) throws UnsupportedOperationException;
+    public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
+            List<FacetRange> rangeQuery, Q openQuery, Map<String, Map<String, Count>> resultset,
+            Map<Name, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException;
 
 }

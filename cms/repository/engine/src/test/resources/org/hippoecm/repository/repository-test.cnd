@@ -33,6 +33,8 @@
 - hippo:brand (string)
 - hippo:color (string)
 - hippo:date (date)
+- hippo:travelled (long)
+- hippo:price (double)
 
 [hippo:testtagdocument] > hippo:document
 - * (String) multiple

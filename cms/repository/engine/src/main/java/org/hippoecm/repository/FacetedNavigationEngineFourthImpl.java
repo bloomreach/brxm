@@ -252,7 +252,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
                     /*
                      * facetPropExists: the node must have the property as facet
                      */
-                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery(facet, new String(propertyName));
+                    FacetPropExistsQuery facetPropExists = new FacetPropExistsQuery( new String(propertyName));
                     searchQuery.add(facetPropExists.getQuery(), Occur.MUST);
 
                     if (log.isDebugEnabled()) {

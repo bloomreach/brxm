@@ -34,35 +34,35 @@ public interface FacNavNodeType {
      * 
      */
     final public static String NT_FACETSUBNAVIGATION = "hippofacnav:facetsubnavigation";
-    
+
     /**
      * 
      */
     final public static String HIPPOFACNAV_FACETS = "hippofacnav:facets";
-    
+
     /**
      * 
      */
     final public static String HIPPOFACNAV_FACETNODENAMES = "hippofacnav:facetnodenames";
-    
+
     /**
      * 
      */
     final public static String HIPPOFACNAV_FACETLIMIT = "hippofacnav:limit";
-    
+
     /**
      * 
      */
     final public static String HIPPOFACNAV_FACETSORTBY = "hippofacnav:sortby";
-    
+
     /**
      * 
      */
     final public static String HIPPOFACNAV_FACETSORTORDER = "hippofacnav:sortorder";
-    
+
     /**
      * 
      */
     final public static String HIPPOFACNAV_FILTERS = "hippofacnav:filters";
-    
+
 }

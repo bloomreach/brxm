@@ -22,27 +22,34 @@ import javax.jcr.RepositoryException;
 public class FacetViewHelper {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     public static void traverse(Node navigation) throws RepositoryException {
         traverse(navigation, "", 0);
     }
 
     public static void traverse(Node navigation, String indent, int depth) throws RepositoryException {
         depth++;
-        if(depth > 12) {
+        if (depth > 12) {
             return;
         }
         String countStr = "";
-        if(navigation.hasProperty("hippo:count")) {
-            countStr = " [" +  navigation.getProperty("hippo:count").getLong() + "]";
+        if (navigation.hasProperty("hippo:count")) {
+            countStr = " [" + navigation.getProperty("hippo:count").getLong() + "]";
         }
-        System.out.println(indent + navigation.getName() +  countStr);
+        if (navigation.hasProperty("hippo:price")) {
+            countStr += " = " + navigation.getProperty("hippo:price").getDouble() + "$ ";
+        }
+        if (navigation.hasProperty("hippo:travelled")) {
+            countStr += " = " + navigation.getProperty("hippo:travelled").getLong() + "km ";
+        }
+        System.out.println(indent + navigation.getName() + countStr);
+
         //if(!navigation.getName().equals("hippo:resultset")) { 
-            NodeIterator it = navigation.getNodes();
-            indent += "\t";
-            while(it.hasNext()) {
-                traverse(it.nextNode(), indent, depth);
-            }
+        NodeIterator it = navigation.getNodes();
+        indent += "\t";
+        while (it.hasNext()) {
+            traverse(it.nextNode(), indent, depth);
+        }
         //}
     }
 }
