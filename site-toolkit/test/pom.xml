@@ -37,6 +37,12 @@
       <artifactId>hippo-ecm-repository-connector</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
     <!-- repository engine -->
     <dependency>
       <groupId>org.hippoecm</groupId>
