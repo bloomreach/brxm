@@ -150,6 +150,12 @@
           <contextPath>/cms</contextPath>
         </configuration>
         <dependencies>
+          <dependency>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+            <scope>runtime</scope>
+            <version>1.0</version>
+          </dependency>
           <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
           <dependency>
             <groupId>com.atomikos</groupId>
