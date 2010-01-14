@@ -30,6 +30,9 @@ public class FacetNodeView {
     
     // default, there is no limit
     int limit = Integer.MAX_VALUE;
+
+    String sortorder;
+    String sortby;
     
     public FacetNodeView(String facetNodeNameConfiguration) throws IllegalArgumentException{
         if(facetNodeNameConfiguration == null) {
@@ -50,15 +53,17 @@ public class FacetNodeView {
         
         try {
             JSONObject jsonObject = JSONObject.fromObject( jsonString );  
-            Object sortby = jsonObject.get("sortby");
-            if(sortby != null && !(sortby instanceof String)) {
+            Object sortbyObj = jsonObject.get("sortby");
+            if(sortbyObj != null && !(sortbyObj instanceof String)) {
                 throw new IllegalArgumentException("'sortby' most be of type String if configured: not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'");
             }
+            sortby = (String)sortbyObj;
             
-            Object sortorder = jsonObject.get("sortorder");
-            if(sortorder!= null && !(sortorder instanceof String)) {
+            Object sortorderObj = jsonObject.get("sortorder");
+            if(sortorderObj!= null && !(sortorderObj instanceof String)) {
                 throw new IllegalArgumentException("'sortorder' most be of type String if configured: not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'");
             }
+            sortorder = (String)sortorderObj;
             
             Object newLimit = jsonObject.get("limit");
             if(newLimit != null) {
@@ -71,7 +76,7 @@ public class FacetNodeView {
                 this.limit = (Integer)newLimit;
             }
             
-            comparator = AbstractFacetNavigationProvider.getComparator((String)sortby, (String)sortorder);
+            comparator = AbstractFacetNavigationProvider.getComparator(sortby, sortorder);
             
         } catch (JSONException e) {
             throw new IllegalArgumentException("Not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'", e);

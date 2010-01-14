@@ -17,6 +17,8 @@ package org.hippoecm.repository.jackrabbit.facetnavigation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -87,7 +89,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                 return state;
             }
             Map<String, Map<String, FacetedNavigationEngine.Count>> facetSearchResultMap;
-            facetSearchResultMap = new TreeMap<String, Map<String, FacetedNavigationEngine.Count>>();
+            facetSearchResultMap = new HashMap<String, Map<String, FacetedNavigationEngine.Count>>();
 
             Map<String, FacetedNavigationEngine.Count> facetSearchResult;
             facetSearchResult = new TreeMap<String, FacetedNavigationEngine.Count>();
@@ -133,7 +135,31 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             
             if(facetNavigationNodeId.currentFacetNodeView != null && facetNavigationNodeId.currentFacetNodeView.comparator != null) {
                 Arrays.sort(facetNavigationEntries, facetNavigationNodeId.currentFacetNodeView.comparator);
-            } else {
+            } else if (parsedFacet.getFacetRanges() != null ) {
+                // special case: we need to order by the configured ranges if there are ranges configured:
+                List<FacetRange> ranges = parsedFacet.getFacetRanges();
+                if (facetNavigationNodeId.currentFacetNodeView.sortorder != null
+                        && "descending".equals(facetNavigationNodeId.currentFacetNodeView.sortorder)) {
+                    
+                    // first copy the list entries:
+                    List<FacetRange> listToReverse = new ArrayList<FacetRange>(ranges);
+                    
+                    // reverse order
+                    Collections.reverse(listToReverse);
+                    ranges = listToReverse;
+                }
+                
+                // fill the facet navigation entry array again, ordered by config
+                List<FacetNavigationEntry> entryList = new ArrayList<FacetNavigationEntry>();
+                for(FacetRange range : ranges) {
+                    if(facetSearchResult.containsKey(range.getName())) {
+                        entryList.add(new FacetNavigationEntry(range.getName(), facetSearchResult.get(range.getName())));
+                    }
+                }
+                
+                facetNavigationEntries = entryList.toArray(new FacetNavigationEntry[entryList.size()]);
+            }
+            else {
                 // default sorting is on count
                 Arrays.sort(facetNavigationEntries);
             }

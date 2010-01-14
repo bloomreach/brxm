@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit.facetnavigation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -208,8 +209,9 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
     final static FacetNavigationEntryComparator<FacetNavigationEntry> ASCENDING_FACETVALUE_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(true);
     
     
-    static class FacetNavigationEntryComparator<T extends FacetNavigationEntry> implements Comparator<FacetNavigationEntry>{
+    static class FacetNavigationEntryComparator<T extends FacetNavigationEntry> implements Comparator<FacetNavigationEntry> , Serializable{
 
+        private static final long serialVersionUID = 1L;
         private boolean ascending;
         
         public FacetNavigationEntryComparator(boolean ascending) {
@@ -295,10 +297,11 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
             }
             throw new IllegalArgumentException("Unsupported sortorder configured: '"+sortorder+"'. Only 'descending' or 'ascending' is supported");
         } else if (sortby.equals("config")) {
-            
+            // sorting by config, we return null, as we need to sort by hand
+            return null;
         } else {
             throw new IllegalArgumentException("Only supported sortby values are 'facetvalue', 'count' or 'config' but configured one is: '"+sortby+"'");
         }
-        return null;
+        
     }
 }
