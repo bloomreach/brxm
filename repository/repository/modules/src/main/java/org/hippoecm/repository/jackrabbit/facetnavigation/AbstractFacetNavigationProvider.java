@@ -16,6 +16,7 @@
 package org.hippoecm.repository.jackrabbit.facetnavigation;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -43,6 +44,7 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
     private final static String SVN_ID = "$Id$";
 
     protected static final String VALID_RANGE_EXAMPLE = "hippo:date$[{name:'this week', resolution:'week', begin:-1, end:0}, {name:'last 7 days', resolution:'day', begin:-7, end:0 }]";
+    protected static final String VALID_NODENAME_EXAMPLE = "date${sortby:'facetvalue', sortorder:'descending'}";
     
     FacetedNavigationEngine<Query, Context> facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
@@ -83,7 +85,10 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         /*
          * Contains the possible translations for the facets --> facet node name
          */
-        String[] facetNodeNames;
+        FacetNodeView[] facetNodeViews;
+
+        public FacetNodeView currentFacetNodeView;
+        
         String currentFacet;
        
         // the count property of this node
@@ -168,6 +173,7 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
     public class FacetNavigationEntry implements Comparable<FacetNavigationEntry> {
         String facetValue;
         Count count;
+      
         public FacetNavigationEntry(String facetValue, Count count) {
             this.facetValue = facetValue;
             this.count = count;
@@ -188,4 +194,111 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         
     }
     
+    /*
+     * Comparator which compares on the count of a FacetNavigationEntry
+     */
+    final static FacetNavigationEntryComparator<FacetNavigationEntry> DESCENDING_COUNT_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(false);
+    final static FacetNavigationEntryComparator<FacetNavigationEntry> ASCENDING_COUNT_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(true);
+    
+    /*
+     * Comparator which compares on the FacetNavigationEntry facetValue: if both values are parseable as double, they are compare as double.
+     * Otherwise, String comparison is used
+     */
+    final static FacetNavigationEntryComparator<FacetNavigationEntry> DESCENDING_FACETVALUE_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(false);
+    final static FacetNavigationEntryComparator<FacetNavigationEntry> ASCENDING_FACETVALUE_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(true);
+    
+    
+    static class FacetNavigationEntryComparator<T extends FacetNavigationEntry> implements Comparator<FacetNavigationEntry>{
+
+        private boolean ascending;
+        
+        public FacetNavigationEntryComparator(boolean ascending) {
+          this.ascending = ascending;
+        }
+
+        public int compare(FacetNavigationEntry o1, FacetNavigationEntry o2) {
+            
+            // if o1 or o2 is null, an NPE is correctly thrown
+            if(o2.equals(this)) {
+                return 0;
+            }
+            
+            if (this == DESCENDING_COUNT_COMPARATOR || this == ASCENDING_COUNT_COMPARATOR) {
+            
+                if(o2.count.count - o1.count.count == 0) {
+                    if(ascending) {
+                        return -1;
+                    }
+                    return 1;
+                }
+                int compare = (o2.count.count - o1.count.count);
+                if(ascending) {
+                    compare = -compare;
+                }
+                return compare;
+                
+            } else if (this == DESCENDING_FACETVALUE_COMPARATOR || this == ASCENDING_FACETVALUE_COMPARATOR){
+                String value1 = o1.facetValue;
+                String value2 = o2.facetValue;
+                if(value1 == null || value2 == null) {
+                    int compare = 1;
+                    if(!ascending) {
+                        compare = -compare;
+                    }
+                    return value1 == null? compare : -compare;
+                }
+                try {
+                    Double double1 = Double.parseDouble(value1);
+                    Double double2 = Double.parseDouble(value2);
+                    int compare = double1.compareTo(double2);
+                    if(!ascending) {
+                        compare = -compare;
+                    }
+                    return compare;
+                } catch(NumberFormatException e) {
+                    //  not both are of type double
+                }
+                // simple string comparison
+                int compare = value1.compareTo(value2);
+                if(!ascending) {
+                    compare = -compare;
+                }
+                return compare;
+            }
+            if(!ascending) {
+                return -1;
+            }
+            return 1;
+        }
+        
+    }
+
+    public static FacetNavigationEntryComparator<FacetNavigationEntry> getComparator(String sortby, String sortorder) throws IllegalArgumentException{
+        if(sortby == null) {
+            // default sorting is done on the count 
+            return DESCENDING_COUNT_COMPARATOR;
+        }
+        if(sortby.equals("facetvalue")) {
+            if(sortorder == null || "ascending".equals(sortorder)) {
+                return ASCENDING_FACETVALUE_COMPARATOR;
+            } 
+            if("descending".equals(sortorder)) {
+                return DESCENDING_FACETVALUE_COMPARATOR;
+            }
+            throw new IllegalArgumentException("Unsupported sortorder configured: '"+sortorder+"'. Only 'descending' or 'ascending' is supported");
+        } else if (sortby.equals("count")) {
+            if(sortorder == null || "descending".equals(sortorder)) {
+                return DESCENDING_COUNT_COMPARATOR;
+            } 
+            if("ascending".equals(sortorder)) {
+                return ASCENDING_COUNT_COMPARATOR;
+            }
+            throw new IllegalArgumentException("Unsupported sortorder configured: '"+sortorder+"'. Only 'descending' or 'ascending' is supported");
+        } else if (sortby.equals("config")) {
+            
+        } else {
+            throw new IllegalArgumentException("Only supported sortby values are 'facetvalue', 'count' or 'config' but configured one is: '"+sortby+"'");
+        }
+        return null;
+    }
 }

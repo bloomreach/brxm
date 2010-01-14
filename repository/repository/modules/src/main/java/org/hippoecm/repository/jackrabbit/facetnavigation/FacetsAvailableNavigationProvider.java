@@ -130,19 +130,25 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                 facetNavigationEntries[i] = new FacetNavigationEntry(entry.getKey(), entry.getValue());
                 i++;
             }
-            // sort according count
-            Arrays.sort(facetNavigationEntries);
+            
+            if(facetNavigationNodeId.currentFacetNodeView != null && facetNavigationNodeId.currentFacetNodeView.comparator != null) {
+                Arrays.sort(facetNavigationEntries, facetNavigationNodeId.currentFacetNodeView.comparator);
+            } else {
+                // default sorting is on count
+                Arrays.sort(facetNavigationEntries);
+            }
+            
 
             int number = 0;
             for (FacetNavigationEntry entry : facetNavigationEntries) {
                 if ("".equals(entry.facetValue)) {
                     continue;
                 }
-                // populating more then X facet values is useless, hence truncating at a thousand, which is already way too large to make sense for facet values
-                //if (number >= 100) {
-                //    System.out.println("break for facet : " + currentFacet);
-                //    break;
-                //}
+                // if the currentFacetNodeView has a configured limit of the number of facet values, we stop when we are at the configured limit
+                if (facetNavigationNodeId.currentFacetNodeView != null && number >= facetNavigationNodeId.currentFacetNodeView.limit) {
+                    log.debug("Stop populating facetvalues because we reached the configured limit of '{}'", String.valueOf(facetNavigationNodeId.currentFacetNodeView.limit));
+                    break;
+                }
                 number++;
 
                 List<KeyValue<String, String>> newSearch = new ArrayList<KeyValue<String, String>>(currentSearch);
@@ -193,7 +199,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
 
                     childNodeId.ancestorAndSelfUsedCombinations = newAncestorAndSelfUsedCombinations;
                     childNodeId.usedFacetValueCombis = usedFacetValueCombis;
-                    childNodeId.facetNodeNames = facetNavigationNodeId.facetNodeNames;
+                    childNodeId.facetNodeViews = facetNavigationNodeId.facetNodeViews;
                     childNodeId.stopSubNavigation = stopSubNavigation;
                     childNodeId.view = facetNavigationNodeId.view;
                     childNodeId.order = facetNavigationNodeId.order;
@@ -236,4 +242,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
 
         return populate(state);
     }
+    
+    
+   
 }
