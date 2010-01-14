@@ -51,6 +51,12 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
      * @return
      */
     Name getHippoRequestName();
+    
+    /**
+     * Returns QName of the hippo:paths property
+     * @return
+     */
+    Name getHippoPathPropertyName();
 
     /**
      * Returns <code>true</code> if the property with the given name is a hippo path

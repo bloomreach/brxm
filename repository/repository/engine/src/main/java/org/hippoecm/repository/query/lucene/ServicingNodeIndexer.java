@@ -97,12 +97,14 @@ public class ServicingNodeIndexer extends NodeIndexer {
     protected Document createDoc() throws RepositoryException {
         // index the jackrabbit way
         Document doc = super.createDoc();
-        // plus index our facet specifics
-
-        // TODO : only index facets for hippo:document + subtypes
-
+        
+        // plus index our facet specifics & hippo extra's 
+        boolean indexFacets = false;
         try {
             if (node.getParentId() != null) { // skip root node
+                // we only index the node's facets it and only if it contains a hippo:path property: in other words, it is a hippo:harddocument
+                indexFacets = node.hasPropertyName(servicingIndexingConfig.getHippoPathPropertyName());
+                
                 NodeState parent = (NodeState) stateProvider.getItemState(node.getParentId());
                 ChildNodeEntry child = parent.getChildNodeEntry(node.getNodeId());
                 if (child == null) {
@@ -118,61 +120,66 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 doc.add(new Field(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, nodename, Field.Store.NO,
                         Field.Index.NO_NORMS, Field.TermVector.NO));
 
-                for (Iterator childNodeIter = node.getChildNodeEntries().iterator(); childNodeIter.hasNext();) {
-                    ChildNodeEntry childNode = (ChildNodeEntry) childNodeIter.next();
-                    NodeState childState = (NodeState) stateProvider.getItemState(childNode.getId());
-                    if (servicingIndexingConfig.isChildAggregate(childState.getNodeTypeName())) {
-                        Set props = childState.getPropertyNames();
-                        for (Iterator it = props.iterator(); it.hasNext();) {
-                            Name propName = (Name) it.next();
-                            PropertyId id = new PropertyId(childNode.getId(), propName);
-                            try {
-                                PropertyState propState = (PropertyState) stateProvider.getItemState(id);
-                                InternalValue[] values = propState.getValues();
-                                if (!isHippoPath(propName) && isFacet(propName)) {
-                                    for (int i = 0; i < values.length; i++) {
-                                        String s = resolver.getJCRName(propState.getName()) + "/"
-                                                + resolver.getJCRName(childNode.getName());
-                                        addFacetValue(doc, values[i], s, propState.getName());
-                                    }
-                                }
-                            } catch (NoSuchItemStateException e) {
-                                throwRepositoryException(e);
-                            } catch (ItemStateException e) {
-                                throwRepositoryException(e);
-                            }
-                        }
-                    }
-                }
-
                 /**
                  * index the nodename to search on. We index this as hippo:_localname, a pseudo property which does not really exist but
                  * only meant to search on
                  */
                 indexNodeName(doc, child.getName().getLocalName());
+                
+                // TODO ARD: imo this code does not belong in the node indexer: if aggregation is needed, it should be in the servicing search index arranged 
+                if(indexFacets) {
+                    for (Iterator childNodeIter = node.getChildNodeEntries().iterator(); childNodeIter.hasNext();) {
+                        ChildNodeEntry childNode = (ChildNodeEntry) childNodeIter.next();
+                        NodeState childState = (NodeState) stateProvider.getItemState(childNode.getId());
+                        if (servicingIndexingConfig.isChildAggregate(childState.getNodeTypeName())) {
+                            Set props = childState.getPropertyNames();
+                            for (Iterator it = props.iterator(); it.hasNext();) {
+                                Name propName = (Name) it.next();
+                                PropertyId id = new PropertyId(childNode.getId(), propName);
+                                try {
+                                    PropertyState propState = (PropertyState) stateProvider.getItemState(id);
+                                    InternalValue[] values = propState.getValues();
+                                    if (!isHippoPath(propName) && isFacet(propName)) {
+                                        for (int i = 0; i < values.length; i++) {
+                                            String s = resolver.getJCRName(propState.getName()) + "/"
+                                                    + resolver.getJCRName(childNode.getName());
+                                            addFacetValue(doc, values[i], s, propState.getName());
+                                        }
+                                    }
+                                } catch (NoSuchItemStateException e) {
+                                    throwRepositoryException(e);
+                                } catch (ItemStateException e) {
+                                    throwRepositoryException(e);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         } catch (ItemStateException e) {
             throwRepositoryException(e);
         }
-
-        Set props = node.getPropertyNames();
-        for (Iterator it = props.iterator(); it.hasNext();) {
-            Name propName = (Name) it.next();
-            PropertyId id = new PropertyId(node.getNodeId(), propName);
-            try {
-                PropertyState propState = (PropertyState) stateProvider.getItemState(id);
-                InternalValue[] values = propState.getValues();
-                if (isHippoPath(propName)) {
-                    indexPath(doc, values, propState.getName());
-                } else if (isFacet(propName)) {
-                    for (int i = 0; i < values.length; i++) {
-                        addFacetValue(doc, values[i], resolver.getJCRName(propState.getName()), propState.getName());
+        
+        if(indexFacets) {
+            Set props = node.getPropertyNames();
+            for (Iterator it = props.iterator(); it.hasNext();) {
+                Name propName = (Name) it.next();
+                PropertyId id = new PropertyId(node.getNodeId(), propName);
+                try {
+                    PropertyState propState = (PropertyState) stateProvider.getItemState(id);
+                    InternalValue[] values = propState.getValues();
+                    if (isHippoPath(propName)) {
+                        indexPath(doc, values, propState.getName());
+                    } else if (isFacet(propName)) {
+                        for (int i = 0; i < values.length; i++) {
+                            addFacetValue(doc, values[i], resolver.getJCRName(propState.getName()), propState.getName());
+                        }
                     }
+                } catch (NoSuchItemStateException e) {
+                    throwRepositoryException(e);
+                } catch (ItemStateException e) {
+                    throwRepositoryException(e);
                 }
-            } catch (NoSuchItemStateException e) {
-                throwRepositoryException(e);
-            } catch (ItemStateException e) {
-                throwRepositoryException(e);
             }
         }
         return doc;
