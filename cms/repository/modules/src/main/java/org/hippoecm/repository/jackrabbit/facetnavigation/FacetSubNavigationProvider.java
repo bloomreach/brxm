@@ -64,7 +64,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
             List<KeyValue<String, String>> currentSearch = facetNavigationNodeId.currentSearch;
             List<FacetRange> currentRanges = facetNavigationNodeId.currentRanges;
             String[] availableFacets = facetNavigationNodeId.availableFacets;
-            String[] facetNodeNames = facetNavigationNodeId.facetNodeNames;
+            FacetNodeView[] facetNodeViews = facetNavigationNodeId.facetNodeViews;
             String docbase = facetNavigationNodeId.docbase;
             List<KeyValue<String, String>> usedFacetValueCombis = facetNavigationNodeId.usedFacetValueCombis;
 
@@ -79,15 +79,17 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
             propState.setMultiValued(false);
             state.addPropertyName(countName);
             
-            if(facetNavigationNodeId.stopSubNavigation) {
+            if(facetNavigationNodeId.stopSubNavigation || facetNavigationNodeId.count == 0) {
                 // we are done with this facet - value combination
                 return state;
             }
             int i = 0;
             for(String facet : availableFacets){ 
                 String configuredNodeName = null;
-                if(facetNodeNames != null && facetNodeNames[i] != null && !"".equals(facetNodeNames[i])) {
-                    configuredNodeName = facetNodeNames[i];
+                FacetNodeView currentFacetNodeView = null;
+                if(facetNodeViews != null && facetNodeViews[i] != null && facetNodeViews[i].facetNodeName != null && !"".equals(facetNodeViews[i].facetNodeName)) {
+                    configuredNodeName = facetNodeViews[i].facetNodeName;
+                    currentFacetNodeView = facetNodeViews[i];
                 }
                 ParsedFacet parsedFacet;
                 try {
@@ -115,7 +117,8 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                         }
                 }
                 childNodeId.availableFacets = availableFacets;
-                childNodeId.facetNodeNames = facetNodeNames;
+                childNodeId.facetNodeViews = facetNodeViews;
+                childNodeId.currentFacetNodeView = currentFacetNodeView;
                 childNodeId.currentFacet = facet;
                 childNodeId.ancestorAndSelfUsedCombinations = facetNavigationNodeId.ancestorAndSelfUsedCombinations;
                 childNodeId.docbase = docbase;

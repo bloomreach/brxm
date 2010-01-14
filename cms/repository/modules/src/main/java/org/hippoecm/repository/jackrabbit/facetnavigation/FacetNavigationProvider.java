@@ -114,19 +114,36 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
             }
         }
         
+        FacetNodeView[] facetNodeViews = null;
         if (facets != null && facets.length > 0) {
             if(facetNodeNames != null) {
                 if(facets.length != facetNodeNames.length) {
                     log.warn("When using multivalued property '{}', it must have equal number of values" + "as for property '{}'", FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, FacNavNodeType.HIPPOFACNAV_FACETS);
                     return state;
                 }
+                // parse the facet node names to FacetNodeView objects.
+                
+                facetNodeViews = new FacetNodeView[facetNodeNames.length];
+                int i = 0;
+                for(String facetNodeName : facetNodeNames) {
+                    try {
+                        facetNodeViews[i] = new FacetNodeView(facetNodeName);
+                        i++;
+                    } catch (Exception e) {
+                        log.warn("Malformed + '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+ "'configuration. Valid format is" + VALID_NODENAME_EXAMPLE , 
+                                e);
+                        return state;
+                    }
+                }
             }
             int i = 0;
             for(String facet : facets) {
                 try {
                     String configuredNodeName = null;
-                    if(facetNodeNames != null && facetNodeNames[i] != null && !"".equals(facetNodeNames[i])) {
-                        configuredNodeName = facetNodeNames[i];
+                    FacetNodeView currentFacetNodeView = null;
+                    if(facetNodeViews != null && facetNodeViews[i] != null  && facetNodeViews[i].facetNodeName != null &&  !"".equals(facetNodeViews[i].facetNodeName)) {
+                        configuredNodeName = facetNodeViews[i].facetNodeName;
+                        currentFacetNodeView = facetNodeViews[i];
                     }
                     ParsedFacet parsedFacet;
                     try {
@@ -140,7 +157,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                     Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
                     FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
                     childNodeId.availableFacets = facets;
-                    childNodeId.facetNodeNames = facetNodeNames;
+                    childNodeId.facetNodeViews = facetNodeViews;
+                    childNodeId.currentFacetNodeView = currentFacetNodeView;
                     childNodeId.currentFacet = facet;
                     childNodeId.docbase = docbase;
                     if(limit > -1) {
