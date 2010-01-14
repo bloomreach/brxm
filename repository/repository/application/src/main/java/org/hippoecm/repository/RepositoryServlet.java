@@ -163,7 +163,7 @@ public class RepositoryServlet extends HttpServlet {
             try {
                 registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
                 registry.rebind(url.getName(), rmiRepository); // connection exception happens here
-                log.warn("Using exsisting rmi server on " + url.getHost() + ":" + url.getPort());
+                log.warn("Using existing rmi server on " + url.getHost() + ":" + url.getPort());
             } catch (ConnectException e) {
                 registry = LocateRegistry.createRegistry(url.getPort());
                 registry.rebind(url.getName(), rmiRepository);
