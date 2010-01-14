@@ -21,15 +21,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.Calendar;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
-import org.hippoecm.repository.query.lucene.HippoDateTools;
 import org.junit.Test;
+
 
 public class FacetedNavigationRangesTest extends AbstractFacetNavigationTest {
     @SuppressWarnings("unused")
@@ -51,7 +51,7 @@ public class FacetedNavigationRangesTest extends AbstractFacetNavigationTest {
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
-        String[] ranges = new String[] {"hippo:date$[{name:'yesterday', resolution:'day', begin:-1, end:0}, {name:'today', resolution:'day', begin:0, end:1}]"};
+        String[] ranges = new String[] {"hippo:date$[{name:'today', resolution:'day', begin:0, end:1}, {name:'yesterday', resolution:'day', begin:-1, end:0}]"};
         
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS,ranges);
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { "range" });
@@ -60,6 +60,8 @@ public class FacetedNavigationRangesTest extends AbstractFacetNavigationTest {
 
         Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
 
+        FacetViewHelper.traverse(node);
+        
         assertNotNull(node.getNode("range"));
         assertNotNull(node.getNode("range/today"));
         assertNotNull(node.getNode("range/today/hippo:resultset"));
@@ -112,11 +114,19 @@ public class FacetedNavigationRangesTest extends AbstractFacetNavigationTest {
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
                 .getUUID());
-        facetNavigation
-                .setProperty(
-                        FacNavNodeType.HIPPOFACNAV_FACETS,
-                        new String[] { "hippo:price$[{name:'less 10.000', resolution:'double', end:10000},{name:'10.000 - 20.000', resolution:'double', begin:10000, end:20000},{name:'more 20.000', resolution:'double', begin:20000}, {name:'all prices', resolution:'double'}]" });
+        
+        String[] facetRanges = {"hippo:price$[" +
+        		"{name:'less 10.000', resolution:'double', end:10000}," +
+                "{name:'10.000 - 20.000', resolution:'double', begin:10000, end:20000}," +
+                "{name:'more 20.000', resolution:'double', begin:20000}, " +
+                "{name:'all prices', resolution:'double'}" +
+                "]"};
+        
+        facetNavigation.setProperty(
+                        FacNavNodeType.HIPPOFACNAV_FACETS,facetRanges);
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { "price" });
+        
+        // below is the order of the result set
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTBY, new String[] { "hippo:price" });
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER, new String[] { "descending" });
 
@@ -149,6 +159,63 @@ public class FacetedNavigationRangesTest extends AbstractFacetNavigationTest {
 
     }
 
+    
+    @Test
+    public void testFacetRangeOrdering() throws RepositoryException, IOException {
+        commonStart();
+        Node testNode = session.getRootNode().getNode("test");
+        createDateStructure1(testNode);
+
+        Node navigation = testNode.addNode("facetnavigation");
+        Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
+                .getUUID());
+
+        String[] facetRanges = { "hippo:price$[" 
+                + "{name:'first', resolution:'double', end:10000},"
+                + "{name:'second', resolution:'double', begin:10000, end:20000},"
+                + "{name:'third', resolution:'double', begin:20000}, "
+                + "{name:'fourth', resolution:'double'}" + "]" };
+        
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, facetRanges);
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { "price" });
+
+        session.save();
+
+        Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        // by default, ranges are ordered in order that they are configured, We thus expect first --> second --> third --> fourth
+        
+        assertNotNull(node.getNode("price"));
+        
+        
+        String[] orderOfNodes = {"first","second","third","fourth", "hippo:resultset"};
+
+        NodeIterator it = node.getNode("price").getNodes();
+        int i = 0;
+        while(it.hasNext()) {
+            assertEquals(it.nextNode().getName(), orderOfNodes[i]);
+            i++;
+        }
+        
+        // now test reversed order:
+        
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { "price${sortby:'config', sortorder:'descending'}" });
+        session.save();
+        
+        node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        
+        String[] reversedOrderOfNodes = {"fourth","third","second","first", "hippo:resultset"};
+
+        it = node.getNode("price").getNodes();
+        i = 0;
+        while(it.hasNext()) {
+            assertEquals(it.nextNode().getName(), reversedOrderOfNodes[i]);
+            i++;
+        }
+        
+    }
+    
     @Test
     public void testLongRanges() throws RepositoryException, IOException {
         commonStart();

@@ -145,14 +145,16 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
                 .getUUID());
-        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { 
-                "year${sortby:'facetvalue', sortorder:'ascending', limit:2}"
+                "year${sortby:'facetvalue', sortorder:'ascending', limit:2}",
+                "month${sortby:'facetvalue', sortorder:'descending'}"
                 });
 
         session.save();
 
         Node nav1 = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+      
         // we have set a limit of 2, ordered on facetvalue (year number), ascending, hence these expectations
         assertNotNull(nav1.getNode("year"));
         assertEquals(9L, nav1.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT)
