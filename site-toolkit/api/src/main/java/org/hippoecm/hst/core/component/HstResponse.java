@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.w3c.dom.Element;
@@ -257,5 +258,28 @@ public interface HstResponse extends HttpServletResponse {
      * @throws IOException If the response was committed
      */
     void forward(String pathInfo) throws IOException;
+    
+    /**
+     * Adds the specified cookie to the response. This method can be called
+     * multiple times to set more than one cookie.
+     * 
+     * <P><EM>Note: Please be sure to set cookie path before adding cookie for safety
+     * like the following example:</EM></P>
+     * <PRE>{@code Cookie cookie = new Cookie("testcookie", "testvalue");
+     * cookie.setPath("/");
+     * response.addCookie(cookie);
+     * }</PRE>
+     * <P>
+     * Sometimes, a user agent could not accept cookies
+     * when the response triggers page redirection with Set-Cookie header.
+     * It's possibly because it regards the state as an unverifiable transaction
+     * for some reason.
+     * By setting path, the cookie can be specified more as a subset of the current domain,
+     * and this makes sure that the cookie accepted safely by the user agent.
+     * </P>
+     * 
+     * @param cookie the Cookie to return to the client
+     */
+    void addCookie(Cookie cookie);
     
 }
