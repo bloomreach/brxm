@@ -21,7 +21,7 @@ import net.sf.json.JSONObject;
 import org.hippoecm.repository.jackrabbit.facetnavigation.AbstractFacetNavigationProvider.FacetNavigationEntry;
 import org.hippoecm.repository.jackrabbit.facetnavigation.AbstractFacetNavigationProvider.FacetNavigationEntryComparator;
 
-public class FacetNodeView {
+public class FacetNodeView implements Cloneable {
 
     String facetNodeName;
     
@@ -30,10 +30,32 @@ public class FacetNodeView {
     
     // default, there is no limit
     int limit = Integer.MAX_VALUE;
+    
+    // default, a facet is visible
+    boolean visible = true;
 
+    // if this facet is only visible after some other facet is chosen, this facet is held by 'afterFacet'
+    String afterFacet = null;
+    
     String sortorder;
     String sortby;
     
+    
+    @Override
+    protected Object clone() {
+        try {
+            FacetNodeView clone = (FacetNodeView) super.clone();
+            // note that the clone shares the same comparator instance, but this is never an issue as many instances share
+            // the same comparator instances (they are final static's)
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            // this cannot happen, since we are Cloneable
+            throw new InternalError();
+        }
+
+    }
+
+
     public FacetNodeView(String facetNodeNameConfiguration) throws IllegalArgumentException{
         if(facetNodeNameConfiguration == null) {
             throw new IllegalArgumentException("the facetNodeNameConfiguration is not allowed to be null");
@@ -74,6 +96,12 @@ public class FacetNodeView {
                     throw new IllegalArgumentException("'limit' can not be a negative number: not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'");
                 }
                 this.limit = (Integer)newLimit;
+            }
+            
+            Object afterObj = jsonObject.get("after");
+            if(afterObj != null && afterObj instanceof String) {
+                this.visible = false;
+                this.afterFacet = (String)afterObj;
             }
             
             comparator = AbstractFacetNavigationProvider.getComparator(sortby, sortorder);

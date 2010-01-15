@@ -16,6 +16,7 @@
 package org.hippoecm.repository.facetnavigation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -133,6 +134,9 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
         assertNotNull(node.getNode("day").getNode(String.valueOf(currentDay)));
     }
 
+    /*
+     * This test is to make sure sorting of the found facet values which are translated to nodenames are working as expected
+     */
     @Test
     public void testFacetSortingFacetNavigation() throws RepositoryException, IOException {
         
@@ -222,7 +226,74 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
         
     }
     
-    
+    /*
+     * This test is to make sure that you can configure that some facets are available only after some other facet has been chosen.
+     */
+    @Test
+    public void testFacetsAvailableFacetNavigation() throws RepositoryException, IOException {
+        
+        commonStart();
+
+        Node testNode = session.getRootNode().getNode("test");
+        createDateStructure1(testNode);
+
+        Node navigation = testNode.addNode("facetnavigation");
+        Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
+                .getUUID());
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { 
+                "hippo:date$year",  
+                "hippo:date$month",
+                "hippo:date$day",
+                "hippo:brand"
+                });
+        
+        /*
+         * below, we configure, that the month facet will only be used *after* at least, the year facet has been chosen.
+         * 
+         * Thus initial available facets must be 'year' and 'brand'. After 'year' is chosen, 'month' becomes avaible. After month, day will be.
+         * 
+         * If after 'year' we browse through facet 'brand', still 'month' needs to be available
+         */ 
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { 
+                "year",
+                "month${after:'year'}",
+                "day${after:'month'}",
+                "brand"
+                });
+
+        session.save();
+
+        Node nav = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        assertNotNull(nav.getNode("year"));
+        assertNotNull(nav.getNode("year").getNode("2009"));
+
+        // month should not be there yet, just as day
+        assertFalse(nav.hasNode("month"));
+        assertFalse(nav.hasNode("day"));
+        
+        // after year, the month is available, 
+        assertTrue(nav.getNode("year").getNode("2009").hasNode("month"));
+        // but not yet the day
+        assertFalse(nav.getNode("year").getNode("2009").hasNode("day"));
+        
+        // after year and month, the day is available
+        assertTrue(nav.getNode("year").getNode("2009").getNode("month").getNode("11").hasNode("day"));
+
+        // also with brand in between, the month must be visible when year has been selected before:
+        assertTrue(nav.getNode("year").getNode("2009").getNode("brand").getNode("peugeot").hasNode("month"));
+        // also with brand in between, the day must be visible when year and month has been selected before:
+        assertTrue(nav.getNode("year").getNode("2009").getNode("brand").getNode("peugeot").getNode("month").getNode("11").hasNode("day"));
+        
+        assertNotNull(nav.getNode("brand"));
+        assertNotNull(nav.getNode("brand").getNode("peugeot"));
+        
+        assertTrue(nav.getNode("brand").getNode("peugeot").hasNode("year"));
+        assertFalse(nav.getNode("brand").getNode("peugeot").hasNode("month"));
+        assertTrue(nav.getNode("brand").getNode("peugeot").getNode("year").getNode("2009").hasNode("month"));
+        
+    }
     
     private void commonStart() throws RepositoryException {
         session.getRootNode().addNode("test");
@@ -232,31 +303,32 @@ public class FacetedNavigationDateBrowsingTest extends TestCase {
     private void createDateStructure1(Node test) throws RepositoryException {
         Node documents = test.addNode("documents", "nt:unstructured");
         documents.addMixin("mix:referenceable");
-        Node dateDocs = documents.addNode("datedocs", "nt:unstructured");
+        Node carDocs = documents.addNode("cardocs", "nt:unstructured");
         documents.addMixin("mix:referenceable");
 
-        addDateDoc(dateDocs, "datedoc1", start);
-        addDateDoc(dateDocs, "datedoc2", onehourearlier);
-        addDateDoc(dateDocs, "datedoc3", onedayearlier);
-        addDateDoc(dateDocs, "datedoc4", threedayearlier);
-        addDateDoc(dateDocs, "datedoc5", monthearlier);
-        addDateDoc(dateDocs, "datedoc6", monthandadayearlier);
-        addDateDoc(dateDocs, "datedoc7", twomonthsearlier);
-        addDateDoc(dateDocs, "datedoc8", yearearlier);
-        addDateDoc(dateDocs, "datedoc9", twoyearearlier);
+        addCarDoc(carDocs, "cardoc1", start);
+        addCarDoc(carDocs, "cardoc2", onehourearlier);
+        addCarDoc(carDocs, "cardoc3", onedayearlier);
+        addCarDoc(carDocs, "cardoc4", threedayearlier);
+        addCarDoc(carDocs, "cardoc5", monthearlier);
+        addCarDoc(carDocs, "cardoc6", monthandadayearlier);
+        addCarDoc(carDocs, "cardoc7", twomonthsearlier);
+        addCarDoc(carDocs, "cardoc8", yearearlier);
+        addCarDoc(carDocs, "cardoc9", twoyearearlier);
 
         test.save();
 
     }
 
-    private void addDateDoc(Node dateDocs, String name, Calendar cal) throws ItemExistsException,
+    private void addCarDoc(Node carDocs, String name, Calendar cal) throws ItemExistsException,
             PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException,
             ConstraintViolationException, RepositoryException {
-        Node dateDoc = dateDocs.addNode(name, "hippo:handle");
-        dateDoc.addMixin("hippo:hardhandle");
-        dateDoc = dateDoc.addNode(name, "hippo:testcardocument");
-        dateDoc.addMixin("hippo:harddocument");
-        dateDoc.setProperty("hippo:date", cal);
+        Node carDoc = carDocs.addNode(name, "hippo:handle");
+        carDoc.addMixin("hippo:hardhandle");
+        carDoc = carDoc.addNode(name, "hippo:testcardocument");
+        carDoc.addMixin("hippo:harddocument");
+        carDoc.setProperty("hippo:date", cal);
+        carDoc.setProperty("hippo:brand", "peugeot");
 
     }
 

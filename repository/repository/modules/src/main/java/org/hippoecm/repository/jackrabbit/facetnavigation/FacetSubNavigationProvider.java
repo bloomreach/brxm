@@ -64,7 +64,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
             List<KeyValue<String, String>> currentSearch = facetNavigationNodeId.currentSearch;
             List<FacetRange> currentRanges = facetNavigationNodeId.currentRanges;
             String[] availableFacets = facetNavigationNodeId.availableFacets;
-            FacetNodeView[] facetNodeViews = facetNavigationNodeId.facetNodeViews;
+            
             String docbase = facetNavigationNodeId.docbase;
             List<KeyValue<String, String>> usedFacetValueCombis = facetNavigationNodeId.usedFacetValueCombis;
 
@@ -83,14 +83,44 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                 // we are done with this facet - value combination
                 return state;
             }
-            int i = 0;
+            int i = -1;
             for(String facet : availableFacets){ 
+                i++;
                 String configuredNodeName = null;
                 FacetNodeView currentFacetNodeView = null;
+                
+                FacetNodeView[] facetNodeViews = facetNavigationNodeId.facetNodeViews;
+                
                 if(facetNodeViews != null && facetNodeViews[i] != null && facetNodeViews[i].facetNodeName != null && !"".equals(facetNodeViews[i].facetNodeName)) {
                     configuredNodeName = facetNodeViews[i].facetNodeName;
                     currentFacetNodeView = facetNodeViews[i];
+                    if(!currentFacetNodeView.visible) {
+                        // the current facet node view is not yet visible (first another facet might have to be chosen before it becomes visible)
+                        // for example, month might only be shown when year is already picked
+                        continue;
+                    }
+                    // check if some facet node views should be switched from invisible to visible. If so, we need to first create a copy of FacetNodeViews[] and use this modified version 
+                    boolean modified = false;
+                    List<FacetNodeView> newFacetNodeViewsList = new ArrayList<FacetNodeView>();
+                    for(FacetNodeView fnv : facetNodeViews) {
+                        if(!fnv.visible && fnv.afterFacet != null && fnv.afterFacet.equals(configuredNodeName)) {
+                            // from now on it is visible. First clone the entry before modifying it of course
+                            FacetNodeView clone = (FacetNodeView)fnv.clone();
+                            clone.visible = true;
+                            newFacetNodeViewsList.add(clone);
+                            modified = true;
+                        } else {
+                            newFacetNodeViewsList.add(fnv);
+                        }
+                    }
+                    if(modified) {
+                        // some facet node view has been switched to visible, hence, we have to change the facetNodeViews reference
+                        facetNodeViews = newFacetNodeViewsList.toArray(new FacetNodeView[newFacetNodeViewsList.size()]);
+                    }
                 }
+                
+                
+                
                 ParsedFacet parsedFacet;
                 try {
                     parsedFacet = new ParsedFacet(facet, configuredNodeName, this);
@@ -99,8 +129,6 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                                     facet);
                     return state;
                 }
-
-                i++;
 
                 Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
                 FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
