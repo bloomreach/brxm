@@ -147,6 +147,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
     @Override
     public void logout() {
         helper.logout();
+        super.logout();
     }
 
     //------------------------------------------------< Namespace handling >--

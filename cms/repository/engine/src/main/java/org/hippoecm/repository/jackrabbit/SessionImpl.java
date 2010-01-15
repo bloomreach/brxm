@@ -153,6 +153,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     @Override
     public void logout() {
         helper.logout();
+        super.logout();
     }
 
     //------------------------------------------------< Namespace handling >--
