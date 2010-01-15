@@ -118,22 +118,27 @@ public class PingServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         int resultStatus = HttpServletResponse.SC_OK;
         String resultMessage = "OK - Repository online and accessible";
+        Exception exception = null;
         try {
             findNodeInRepository();
         } catch (PingException e) {
             resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
             resultMessage = e.getMessage();
+            exception = e;
         } catch (RuntimeException e) {
             resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
             resultMessage = "FAILURE - Serious problem with the ping servlet. Might have lost repository access: "
                     + e.getClass().getName() + ": " + e.getMessage();
+            exception = e;
         }
 
         res.setContentType("text/plain");
         res.setStatus(resultStatus);
         PrintWriter writer = res.getWriter();
         writer.println(resultMessage);
-
+        if (exception != null) {
+            exception.printStackTrace(writer);
+        }
         closeHttpSession(req);
     }
 
@@ -194,7 +199,11 @@ public class PingServlet extends HttpServlet {
     private void lookupNode(Session session) throws PingException {
         String msg;
         try {
-            session.getRootNode().getNode(checkNode);
+            if (checkNode.length() == 0) {
+                session.getRootNode();
+            } else {
+                session.getRootNode().getNode(checkNode);
+            }
         } catch (PathNotFoundException e) {
             msg = "FAILURE - Path for node to lookup '" + checkNode + "' is not found by ping servelt. ";
             throw new PingException(msg, e);
