@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.jcr.LoginException;
-import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 
 /**
  * A simple servlet that can be used to check if the repository is up-n-running. This
@@ -117,46 +116,25 @@ public class PingServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        res.setContentType("text/plain");
-        PrintWriter writer = res.getWriter();
+        int resultStatus = HttpServletResponse.SC_OK;
+        String resultMessage = "OK - Repository online and accessible";
         try {
-            HippoRepository hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryLocation);
-            if (hippoRepository != null) {
-                try {
-                    Session session = hippoRepository.login(username, password.toCharArray());
-                    if (session.isLive()) {
-                        try {
-                            Node node = session.getRootNode().getNode(checkNode);
-                            if (node != null) {
-                                res.setStatus(HttpServletResponse.SC_OK);
-                                writer.println("OK - Repository online and accessible");
-                            } else {
-                                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                                writer.println("FAILURE - Failed to obtain node: /" + checkNode);
-
-                            }
-                        } catch (PathNotFoundException e) {
-                            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                            writer.println("FAILURE - Failed to obtain node: /" + checkNode);
-
-                        }
-                    }
-                    session.logout();
-                } catch (LoginException ex) {
-                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    writer.println("FAILURE - Login failure.");
-                }
-            } else {
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                writer.println("FAILURE - Failed to obtain repository.");
-            }
-        } catch (Throwable ex) {
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            writer.println("FAILURE - Error occured:");
-            writer.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(writer);
+            findNodeInRepository();
+        } catch (PingException e) {
+            resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            resultMessage = e.getMessage();
+        } catch (RuntimeException e) {
+            resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            resultMessage = "FAILURE - Serious problem with the ping servlet. Might have lost repository access: "
+                    + e.getClass().getName() + ": " + e.getMessage();
         }
-        closeSession(req);
+
+        res.setContentType("text/plain");
+        res.setStatus(resultStatus);
+        PrintWriter writer = res.getWriter();
+        writer.println(resultMessage);
+
+        closeHttpSession(req);
     }
 
     @Override
@@ -165,10 +143,73 @@ public class PingServlet extends HttpServlet {
     }
 
     /**
+     * Reads a node from the repository and throws an exception if the repository cannot be found, we cannot obtain
+     * a session of the configured path cannot be found.
+     *
+     * @throws PingException when the repository cannot be opened
+     */
+    private void findNodeInRepository() throws PingException {
+        HippoRepository hippoRepository;
+        try {
+            hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryLocation);
+        } catch (RepositoryException e) {
+            String msg = "FAILURE - Problem obtaining repository connection in ping servlet : Is the property"
+                    + " repository-address configured as a context-param?";
+            throw new PingException(msg, e);
+        }
+        Session session = obtainSession(hippoRepository);
+        if (session.isLive()) {
+            lookupNode(session);
+        }
+        session.logout();
+
+    }
+
+    /**
+     * Logs in to the provided repository and returns the session
+     * @param hippoRepository HippoRepository used to obtain a session
+     * @throws PingException thrown when the provided credentials cannot be used to login to the repository
+     * @return Session that we logged in to with the provided credentials
+     */
+    private Session obtainSession(HippoRepository hippoRepository) throws PingException {
+        try {
+            return hippoRepository.login(username, password.toCharArray());
+        } catch (LoginException e) {
+            String msg = "FAILURE - Wrong credentials for obtaining session from repository in ping servlet : " + ""
+                    + "Are the 'check-username' and check-password configured as an init-param or context-param?";
+            throw new PingException(msg, e);
+        } catch (RepositoryException e) {
+            String msg = "FAILURE - Problem obtaining session from repository in ping servlet : Are the 'check-username' and"
+                    + " check-password configured as an init-param or context-param?";
+            throw new PingException(msg, e);
+        }
+    }
+
+    /**
+     * Use the provided session to lookup a node with the configured path
+     *
+     * @param session Session to use for obtaining the node
+     * @throws PingException Exception thrown when the path for the node cannot be found
+     */
+    private void lookupNode(Session session) throws PingException {
+        String msg;
+        try {
+            session.getRootNode().getNode(checkNode);
+        } catch (PathNotFoundException e) {
+            msg = "FAILURE - Path for node to lookup '" + checkNode + "' is not found by ping servelt. ";
+            throw new PingException(msg, e);
+        } catch (RepositoryException e) {
+            msg = "FAILURE - Could not obtain a node, which is at this point unexpected since we already have a connection."
+                    + "Maybe we lost the connection to the repository.";
+            throw new PingException(msg, e);
+        }
+    }
+
+    /**
      * Try to close the session if there is one associated with the request.
      * @param req The HttpServletRequest
      */
-    private void closeSession(HttpServletRequest req) {
+    private void closeHttpSession(HttpServletRequest req) {
         if (req != null) {
             // close open session
             HttpSession httpSession = req.getSession(false);
@@ -194,5 +235,20 @@ public class PingServlet extends HttpServlet {
             value = defaultValue;
         }
         return value;
+    }
+
+    /**
+     * Internal Exception class to be used internally to communicate the exception during the ping of the repository
+     */
+    private static final class PingException extends Exception {
+        private static final long serialVersionUID = 1L;
+
+        private PingException(String s) {
+            super(s);
+        }
+
+        private PingException(String s, Exception e) {
+            super(s, e);
+        }
     }
 }
