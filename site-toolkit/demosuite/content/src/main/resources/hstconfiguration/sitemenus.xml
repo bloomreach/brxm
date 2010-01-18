@@ -37,6 +37,48 @@
                 <sv:value>true</sv:value>
             </sv:property>
         </sv:node>
+        <sv:node sv:name="News1">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemenuitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:depth" sv:type="Long">
+                <sv:value>1</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+                <sv:value>news1</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:repobased" sv:type="Boolean">
+                <sv:value>true</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="News2">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemenuitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:depth" sv:type="Long">
+                <sv:value>1</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+                <sv:value>news2</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:repobased" sv:type="Boolean">
+                <sv:value>true</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="NewsCtxOnly">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemenuitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:depth" sv:type="Long">
+                <sv:value>1</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+                <sv:value>newsctxonly/foo/bar</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:repobased" sv:type="Boolean">
+                <sv:value>true</sv:value>
+            </sv:property>
+        </sv:node>
         <sv:node sv:name="Search">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemenuitem</sv:value>
@@ -51,6 +93,12 @@
             </sv:property>
             <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
                 <sv:value>faceted</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:depth" sv:type="Long">
+                <sv:value>1</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:repobased" sv:type="Boolean">
+                <sv:value>true</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
