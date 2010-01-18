@@ -52,9 +52,12 @@ public abstract class XinhaImageService implements IDetachable {
         //TODO: fix drag-drop replacing
         ImageItem item = createImageItem(model);
         if (attachImageItem(item)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("xinha_editors.").append(getXinhaName()).append(".plugins.InsertImage.instance.insertImage(")
-                    .append('{').append(XinhaImage.URL).append(": '").append(item.getUrl()).append("'}, false)");
+            StringBuilder sb = new StringBuilder(80);
+            sb.append("xinha_editors.").append(getXinhaName()).append(".plugins.InsertImage.instance.insertImage(");
+            sb.append("{ ");
+            sb.append(XinhaImage.URL).append(": '").append(item.getUrl()).append("'");
+            sb.append(", ").append(XinhaImage.FACET_SELECT).append(": '").append(item.getFacetSelectPath()).append("'");
+            sb.append(" }, false)");
             return sb.toString();
         }
         return null;
@@ -70,10 +73,13 @@ public abstract class XinhaImageService implements IDetachable {
                 if (isAttacheable()) {
                     if (isReplacing()) {
                         ImageItem remove = createImageItem(getInitialValues());
-                        detachImageItem(remove);
+                        if (remove != null) {
+                            detachImageItem(remove);
+                        }
                     }
                     ImageItem item = createImageItem(getNodeModel());
                     if (attachImageItem(item)) {
+                        setFacetSelectPath(item.getFacetSelectPath());
                         setUrl(item.getUrl());
                     }
                 }
@@ -82,6 +88,7 @@ public abstract class XinhaImageService implements IDetachable {
             public void delete() {
                 ImageItem item = createImageItem(this);
                 detachImageItem(item);
+                setFacetSelectPath("");
                 setUrl("");
             }
 

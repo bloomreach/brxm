@@ -124,7 +124,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             add(HeaderContributor.forJavaScript(XINHA_MODAL_JS));
 
             String nodePath = getValueModel().getJcrPropertymodel().getItemModel().getParentModel().getPath();
-            configuration.addProperty("prefix", XinhaUtil.encode(BINARIES_PREFIX + nodePath));
+            configuration.addProperty("prefix", XinhaUtil.encodeResourceURL(XinhaUtil.encode(BINARIES_PREFIX + nodePath + "/")));
+            configuration.addProperty("isPortletContext", Boolean.toString(XinhaUtil.isPortletContext()));
 
             JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
             imageService = new XinhaImageService(nodeModel) {
@@ -196,9 +197,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                     String text = (String) getDefaultModelObject();
                     if (text != null) {
                         JcrPropertyValueModel propertyValueModel = getValueModel();
-                        String prefix = XinhaUtil.encode(BINARIES_PREFIX
-                                + propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath())
-                                + "/";
+                        String prefix = XinhaUtil.encodeResourceURL(XinhaUtil.encode(BINARIES_PREFIX
+                                + propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath()) + "/");
 
                         String processed = XinhaHtmlProcessor.prefixImageLinks(text, prefix);
                         processed = XinhaHtmlProcessor.decorateInternalLinks(processed, il);

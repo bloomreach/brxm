@@ -23,15 +23,21 @@ import java.util.Map;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.Session;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.XinhaUtil;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,34 +56,34 @@ public class ImageItemFactory implements IClusterable {
     public ImageItemFactory(JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
     }
-
+    
+    //TODO: Logic here is same as XinhaImage.createInitialModel, should only be here in factory. Remove from XinhaImage. 
     public ImageItem createImageItem(Map<String, String> values) {
-        String urlValue = values.get(XinhaImage.URL);
-        if (urlValue != null) {
-            urlValue = XinhaUtil.decode(urlValue);
-            if (urlValue.startsWith(BINARIES_PREFIX)) {
+        //TODO: handle facetselect value
+        String url = values.get(XinhaImage.URL);
+        if (url != null) {
+            url = XinhaUtil.decode(url);
+            if (url.startsWith(BINARIES_PREFIX)) {
+                
                 // find the nodename of the facetselect
-                String resourcePath = urlValue.substring(BINARIES_PREFIX.length());
-                JcrNodeModel linkedImageModel = new JcrNodeModel(resourcePath).getParentModel();
-                Node virtualImageNode = linkedImageModel.getNode();
-                if (virtualImageNode != null) {
+                url = XinhaUtil.decode(url.substring(BINARIES_PREFIX.length()));
+                if(!Strings.isEmpty(url)) {
                     try {
-                        Node imageNode;
-                        if (virtualImageNode instanceof HippoNode) {
-                            imageNode = ((HippoNode) virtualImageNode).getCanonicalNode();
-                        } else {
-                            imageNode = virtualImageNode;
+                        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                        HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
+                        Node root = session.getRootNode();
+                        Node node = ((HippoNode) workspace.getHierarchyResolver().getNode(root, url)).getCanonicalNode();
+                        if(node != null) {
+                            while(!node.equals(root) && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                node = node.getParent();
+                            }
+                            return createImageItem(node);
                         }
-                        if (imageNode != null) {
-                            ImageItem item = createImageItem(imageNode);
-                            item.setFacetName(virtualImageNode.getParent().getName());
-                            return item;
-                        }
+                    } catch (PathNotFoundException e) {
+                        log.error("Error retrieving canonical node for imageNode[" + url + "]", e);
                     } catch (RepositoryException e) {
-                        log.error("Error retrieving canonical node for imageNode[" + resourcePath + "]", e);
+                        log.error("Error retrieving canonical node for imageNode[" + url + "]", e);
                     }
-                } else {
-                    log.error("Error retrieving virtual node for imageNode[" + resourcePath + "]");
                 }
             }
         }
@@ -99,7 +105,6 @@ public class ImageItemFactory implements IClusterable {
                 resourceDefinitions.add(nd.getName());
             }
         }
-        String path = node.getPath();
         return new ImageItem(node.getPath(), node.getParent().getUUID(), node.getPrimaryItem().getName(), node
                 .getName(), resourceDefinitions, nodeModel.getNode().getPath());
     }
@@ -162,12 +167,35 @@ public class ImageItemFactory implements IClusterable {
             return facetName;
         }
         
-        public String getUrl() {
-            String url = "binaries" + parentPath + "/" + facetName;
+        public String getFacetSelectPath() {
             if (selectedResourceDefinition != null) {
-                return XinhaUtil.encode(url + "/{_document}/" + selectedResourceDefinition);
+                return facetName + "/{_document}/" + selectedResourceDefinition;
+            } else {
+                return facetName;
             }
-            return XinhaUtil.encode(url);
+        }
+        
+        public String getUrl() {
+            String url = null;
+            String parentUrl = "binaries" + parentPath + "/";
+
+            if (!XinhaUtil.isPortletContext()) {
+                if (selectedResourceDefinition != null) {
+                    url = XinhaUtil.encode(parentUrl + facetName + "/{_document}/" + selectedResourceDefinition);
+                } else {
+                    url = XinhaUtil.encode(parentUrl + facetName);
+                }
+            } else {
+                parentUrl = XinhaUtil.encodeResourceURL(XinhaUtil.encode(parentUrl));
+                url = 
+                    new StringBuilder(80).append(parentUrl)
+                    .append(parentUrl.indexOf('?') == -1 ? '?' : '&')
+                    .append("_path=")
+                    .append(getFacetSelectPath())
+                    .toString();
+            }
+            
+            return url;
         }
 
         public boolean isValid() {

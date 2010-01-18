@@ -29,11 +29,12 @@ public class XinhaHtmlProcessor {
     private static Pattern LINK_AND_IMAGES_PATTERN = Pattern.compile("<(a|img)(\\s+)(.*?)(src|href)=\"(.*?)\"(.*?)>",
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
     private static Pattern IMG_PATTERN = Pattern.compile("<img[^>]+>", Pattern.CASE_INSENSITIVE);
-    private static Pattern SRC_PATTERN = Pattern.compile("src=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
+    private static Pattern SRC_PATTERN = Pattern.compile("src=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
+    private static Pattern FACET_SELECT_PATTERN = Pattern.compile("facetselect=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
 
     private static Pattern LINK_PATTERN = Pattern.compile("<a[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern HREF_PATTERN = Pattern.compile("href=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
-    
+
     /**
      * Prefix the targets of relative image links in a text.  Text and prefix may
      * neither be null.
@@ -41,30 +42,46 @@ public class XinhaHtmlProcessor {
     public static String prefixImageLinks(String text, String prefix) {
         StringBuffer processed = new StringBuffer();
         Matcher m = IMG_PATTERN.matcher(text);
+
         while (m.find()) {
             String img = m.group();
             StringBuffer newImg = new StringBuffer();
             Matcher s = SRC_PATTERN.matcher(img);
+
             if (s.find()) {
                 String src = s.group();
-                // skip src=
-                String link = src.substring(4);
-                if (link.charAt(0) == '"') {
-                    link = link.substring(1);
-                }
-                if (link.charAt(link.length() - 1) == '"') {
-                    link = link.substring(0, link.length() - 1);
-                }
-                if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                    s.appendReplacement(newImg, ("src=\"" + prefix + link + "\"").replace("\\", "\\\\").replace("$",
-                            "\\$"));
+                Matcher fs = FACET_SELECT_PATTERN.matcher(img);
+
+                if (fs.find()) {
+                    String link = fs.group(1);
+
+                    if (!link.startsWith("http:") && !link.startsWith("https:")) {
+                        if (XinhaUtil.isPortletContext()) {
+                            s.appendReplacement(newImg, ("src=\"" + prefix + "?_path=" + link + "\"").replace("\\",
+                                    "\\\\").replace("$", "\\$"));
+                        } else {
+                            s.appendReplacement(newImg, ("src=\"" + prefix + link + "\"").replace("\\", "\\\\")
+                                    .replace("$", "\\$"));
+                        }
+                    } else {
+                        s.appendReplacement(newImg, src.replace("\\", "\\\\").replace("$", "\\$"));
+                    }
                 } else {
-                    s.appendReplacement(newImg, src.replace("\\", "\\\\").replace("$", "\\$"));
+                    String link = s.group(1);
+
+                    if (!link.startsWith("http:") && !link.startsWith("https:")) {
+                        s.appendReplacement(newImg, ("src=\"" + prefix + link + "\"").replace("\\", "\\\\").replace(
+                                "$", "\\$"));
+                    } else {
+                        s.appendReplacement(newImg, src.replace("\\", "\\\\").replace("$", "\\$"));
+                    }
                 }
             }
+
             s.appendTail(newImg);
             m.appendReplacement(processed, newImg.toString().replace("\\", "\\\\").replace("$", "\\$"));
         }
+
         m.appendTail(processed);
 
         return processed.toString();
@@ -95,7 +112,7 @@ public class XinhaHtmlProcessor {
     }
 
     public static String decorateInternalLinks(String text, ILinkDecorator decorator) {
-        
+
         StringBuffer processed = new StringBuffer();
         Matcher m = LINK_PATTERN.matcher(text);
         while (m.find()) {
@@ -114,8 +131,8 @@ public class XinhaHtmlProcessor {
                     link = link.substring(0, link.length() - 1);
                 }
                 if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                    s.appendReplacement(newAnchor, ("href=\"" + decorator.decorate(link) + "\"").replace("\\", "\\\\").replace("$",
-                            "\\$"));
+                    s.appendReplacement(newAnchor, ("href=\"" + decorator.decorate(link) + "\"").replace("\\", "\\\\")
+                            .replace("$", "\\$"));
                 } else {
                     s.appendReplacement(newAnchor, href.replace("\\", "\\\\").replace("$", "\\$"));
                 }
@@ -127,7 +144,7 @@ public class XinhaHtmlProcessor {
 
         return processed.toString();
     }
-    
+
     public static interface ILinkDecorator {
         String decorate(String input);
     }
