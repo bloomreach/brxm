@@ -14,325 +14,290 @@
     See the License for the specific language governing permissions and
     limitations under the License. -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="products">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippostd:folder</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+    <sv:value>hippo:harddocument</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:paths" sv:type="String">
+    <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
+    <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
+    <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
+    <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
+    <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
+  <sv:property sv:name="hippostd:foldertype" sv:type="String">
+    <sv:value>new-folder</sv:value>
+    <sv:value>new-document</sv:value>
+  </sv:property>
+  <sv:node sv:name="Alfa Romeo">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:folder</sv:value>
+      <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+      <sv:value>hippo:hardhandle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
+      <sv:value>db72e3c9-3bab-40df-9d28-e466974af710</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:paths" sv:type="String">
-        <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
-        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-        <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-        <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
-    <sv:property sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-folder</sv:value>
-        <sv:value>new-document</sv:value>
-    </sv:property>
-    <sv:node sv:name="Alfa Romeo 156 2.0 TwinSpark">
+    <sv:node sv:name="Alfa Romeo">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>demosite:product</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippostd:taggable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>004e68f5-bd6e-4562-a489-383fa6c3c2e0</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:brand" sv:type="String">
+        <sv:value>Alfa Romeo</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:color" sv:type="String">
+        <sv:value>grey</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:constructiondate" sv:type="Date">
+        <sv:value>2010-01-11T15:00:17.613+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:created" sv:type="Date">
+        <sv:value>2009-12-18T14:03:48.173+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:price" sv:type="Double">
+        <sv:value>7234.0</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:product" sv:type="String">
+        <sv:value>car</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:mileage" sv:type="Long">
+        <sv:value>125356</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:holder" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>new</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:tags" sv:type="String">
+        <sv:value>Alfa Romeo</sv:value>
+        <sv:value>italian</sv:value>
+      </sv:property>
+      <sv:node sv:name="demosite:body">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:handle</sv:value>
+          <sv:value>hippostd:html</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:hardhandle</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>db72e3c9-3bab-40df-9d28-e466974af710</sv:value>
-        </sv:property>
-        <sv:node sv:name="Alfa Romeo 156 2.0 TwinSpark">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>demosite:product</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                <sv:value>hippo:harddocument</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:uuid" sv:type="String">
-                <sv:value>08a4a5a2-a3b9-4066-9670-833e75cbb22d</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:brand" sv:type="String">
-                <sv:value>Alfa Romeo</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:color" sv:type="String">
-                <sv:value>grey</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:product" sv:type="String">
-                <sv:value>car</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:paths" sv:type="String">
-                <sv:value>08a4a5a2-a3b9-4066-9670-833e75cbb22d</sv:value>
-                <sv:value>db72e3c9-3bab-40df-9d28-e466974af710</sv:value>
-                <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
-                <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-                <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-                <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-                <sv:value>products/Alfa Romeo 156 2.0 TwinSpark/Alfa Romeo 156 2.0 TwinSpark[2]</sv:value>
-                <sv:value>products/Alfa Romeo 156 2.0 TwinSpark</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:holder" sv:type="String">
-                <sv:value>admin</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:state" sv:type="String">
-                <sv:value>published</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-                <sv:value>changed</sv:value>
-            </sv:property>
-            <sv:node sv:name="demosite:body">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hippostd:html</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippostd:content" sv:type="String">
-                    <sv:value>&lt;html&gt; &lt;body&gt;
-                        &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
-                        &lt;/html&gt;</sv:value>
-                </sv:property>
-            </sv:node>
-        </sv:node>
-        <sv:node sv:name="Alfa Romeo 156 2.0 TwinSpark">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>demosite:product</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                <sv:value>hippo:harddocument</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:uuid" sv:type="String">
-                <sv:value>617103ed-0c47-43b7-a629-eb14926920d5</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:brand" sv:type="String">
-                <sv:value>Alfa Romeo</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:color" sv:type="String">
-                <sv:value>grey</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:product" sv:type="String">
-                <sv:value>car</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:paths" sv:type="String">
-                <sv:value>617103ed-0c47-43b7-a629-eb14926920d5</sv:value>
-                <sv:value>db72e3c9-3bab-40df-9d28-e466974af710</sv:value>
-                <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
-                <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-                <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-                <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-                <sv:value>products/Alfa Romeo 156 2.0 TwinSpark/Alfa Romeo 156 2.0 TwinSpark</sv:value>
-                <sv:value>products/Alfa Romeo 156 2.0 TwinSpark</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:holder" sv:type="String">
-                <sv:value>admin</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:state" sv:type="String">
-                <sv:value>unpublished</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-                <sv:value>changed</sv:value>
-            </sv:property>
-            <sv:node sv:name="demosite:body">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hippostd:html</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippostd:content" sv:type="String">
-                    <sv:value>&lt;html&gt; &lt;body&gt; &lt;p&gt;body
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;html&gt; &lt;body&gt; &lt;p&gt;body
                         l&lt;/p&gt; &lt;/body&gt; &lt;/html&gt;</sv:value>
-                </sv:property>
-            </sv:node>
-        </sv:node>
+        </sv:property>
+      </sv:node>
     </sv:node>
-    <sv:node sv:name="Alfa Romeo Alfa-147 1.6">
+  </sv:node>
+  <sv:node sv:name="Alfa Romeo2">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:hardhandle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>c8f1e54f-b2ed-480b-8bbb-87b148ed3585</sv:value>
+    </sv:property>
+    <sv:node sv:name="Alfa Romeo2">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>demosite:product</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippostd:taggable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>7b628362-8b10-4219-b3a8-33660f381d3b</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:brand" sv:type="String">
+        <sv:value>Alfa Romeo</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:color" sv:type="String">
+        <sv:value>grey</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:constructiondate" sv:type="Date">
+        <sv:value>2010-01-06T15:00:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:created" sv:type="Date">
+        <sv:value>2010-01-18T14:03:48.173+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:price" sv:type="Double">
+        <sv:value>3245.0</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:product" sv:type="String">
+        <sv:value>car</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:mileage" sv:type="Long">
+        <sv:value>92354</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:holder" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>new</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:tags" sv:type="String">
+        <sv:value>Alfa Romeo</sv:value>
+        <sv:value>italian</sv:value>
+      </sv:property>
+      <sv:node sv:name="demosite:body">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:handle</sv:value>
+          <sv:value>hippostd:html</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:hardhandle</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>c8f1e54f-b2ed-480b-8bbb-87b148ed3585</sv:value>
-        </sv:property>
-        <sv:node sv:name="Alfa Romeo Alfa-147 1.6">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>demosite:product</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                <sv:value>hippo:harddocument</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:uuid" sv:type="String">
-                <sv:value>7be0001e-b3dd-437e-92c4-bee0cdee7fba</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:brand" sv:type="String">
-                <sv:value>Alfa Romeo</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:color" sv:type="String">
-                <sv:value>grey</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:product" sv:type="String">
-                <sv:value>car</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:paths" sv:type="String">
-                <sv:value>7be0001e-b3dd-437e-92c4-bee0cdee7fba</sv:value>
-                <sv:value>c8f1e54f-b2ed-480b-8bbb-87b148ed3585</sv:value>
-                <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
-                <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-                <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-                <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-                <sv:value>products/Alfa Romeo Alfa-147 1.6</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:holder" sv:type="String">
-                <sv:value>admin</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:state" sv:type="String">
-                <sv:value>unpublished</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-                <sv:value>new</sv:value>
-            </sv:property>
-            <sv:node sv:name="demosite:body">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hippostd:html</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippostd:content" sv:type="String">
-                    <sv:value>&lt;html&gt; &lt;body&gt;
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;html&gt; &lt;body&gt;
                         &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
                         &lt;/html&gt;</sv:value>
-                </sv:property>
-            </sv:node>
-        </sv:node>
+        </sv:property>
+      </sv:node>
     </sv:node>
-    <sv:node sv:name="Nissan Vanette 2.3 DSL E">
+  </sv:node>
+  <sv:node sv:name="Nissan">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:hardhandle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>7ab888be-308b-4075-b256-c68e117480bc</sv:value>
+    </sv:property>
+    <sv:node sv:name="Nissan">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>demosite:product</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippostd:taggable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>c4400ed1-d661-4ef2-8e09-868f7627b447</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:brand" sv:type="String">
+        <sv:value>Nissan</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:color" sv:type="String">
+        <sv:value>blue</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:constructiondate" sv:type="Date">
+        <sv:value>2010-01-09T15:00:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:created" sv:type="Date">
+        <sv:value>2010-01-14T14:03:48.173+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:price" sv:type="Double">
+        <sv:value>1240.0</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:product" sv:type="String">
+        <sv:value>car</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:mileage" sv:type="Long">
+        <sv:value>234555</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:holder" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>changed</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:tags" sv:type="String">
+        <sv:value>Nissan</sv:value>
+      </sv:property>
+      <sv:node sv:name="demosite:body">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:handle</sv:value>
+          <sv:value>hippostd:html</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:hardhandle</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>7ab888be-308b-4075-b256-c68e117480bc</sv:value>
-        </sv:property>
-        <sv:node sv:name="Nissan Vanette 2.3 DSL E">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>demosite:product</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                <sv:value>hippo:harddocument</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:uuid" sv:type="String">
-                <sv:value>3af6858a-9f16-4da9-ae8b-f4dab7c38c6b</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:brand" sv:type="String">
-                <sv:value>Nissan</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:color" sv:type="String">
-                <sv:value>blue</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:product" sv:type="String">
-                <sv:value>car</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:paths" sv:type="String">
-                <sv:value>3af6858a-9f16-4da9-ae8b-f4dab7c38c6b</sv:value>
-                <sv:value>7ab888be-308b-4075-b256-c68e117480bc</sv:value>
-                <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
-                <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-                <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-                <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-                <sv:value>products/Nissan Vanette 2.3 DSL E</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:holder" sv:type="String">
-                <sv:value>admin</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:state" sv:type="String">
-                <sv:value>published</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-                <sv:value>live</sv:value>
-            </sv:property>
-            <sv:node sv:name="demosite:body">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hippostd:html</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippostd:content" sv:type="String">
-                    <sv:value>&lt;html&gt; &lt;body&gt;
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;html&gt; &lt;body&gt;
                         &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
                         &lt;/html&gt;</sv:value>
-                </sv:property>
-            </sv:node>
-        </sv:node>
+        </sv:property>
+      </sv:node>
     </sv:node>
-    <sv:node sv:name="Opel Vivaro 2.5CDTI Tecshift 145PK L2H1">
+  </sv:node>
+  <sv:node sv:name="Opel">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:hardhandle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>26b29234-9325-4e75-bf51-775cabe254f8</sv:value>
+    </sv:property>
+    <sv:node sv:name="Opel">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>demosite:product</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippostd:taggable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>af5926d4-0e34-42b5-bd3b-cda90646066c</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:brand" sv:type="String">
+        <sv:value>Opel</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:color" sv:type="String">
+        <sv:value>grey</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:constructiondate" sv:type="Date">
+        <sv:value>2010-01-11T15:01:22.614+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:created" sv:type="Date">
+        <sv:value>2010-01-08T14:03:48.173+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:price" sv:type="Double">
+        <sv:value>4240.0</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:product" sv:type="String">
+        <sv:value>car</sv:value>
+      </sv:property>
+      <sv:property sv:name="demosite:mileage" sv:type="Long">
+        <sv:value>123456</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:holder" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>new</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:tags" sv:type="String">
+        <sv:value>Opel</sv:value>
+      </sv:property>
+      <sv:node sv:name="demosite:body">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:handle</sv:value>
+          <sv:value>hippostd:html</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:hardhandle</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>26b29234-9325-4e75-bf51-775cabe254f8</sv:value>
-        </sv:property>
-        <sv:node sv:name="Opel Vivaro 2.5CDTI Tecshift 145PK L2H1">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>demosite:product</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                <sv:value>hippo:harddocument</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:uuid" sv:type="String">
-                <sv:value>36219765-12fb-40e8-af20-469fc6701e89</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:brand" sv:type="String">
-                <sv:value>Opel Vivaro</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:color" sv:type="String">
-                <sv:value>grey</sv:value>
-            </sv:property>
-            <sv:property sv:name="demosite:product" sv:type="String">
-                <sv:value>car</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:paths" sv:type="String">
-                <sv:value>36219765-12fb-40e8-af20-469fc6701e89</sv:value>
-                <sv:value>26b29234-9325-4e75-bf51-775cabe254f8</sv:value>
-                <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
-                <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-                <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-                <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-                <sv:value>products/Opel Vivaro 2.5CDTI Tecshift 145PK L2H1</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:holder" sv:type="String">
-                <sv:value>admin</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:state" sv:type="String">
-                <sv:value>unpublished</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-                <sv:value>new</sv:value>
-            </sv:property>
-            <sv:node sv:name="demosite:body">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hippostd:html</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippostd:content" sv:type="String">
-                    <sv:value>&lt;html&gt; &lt;body&gt;
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;html&gt; &lt;body&gt;
                         &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
                         &lt;/html&gt;</sv:value>
-                </sv:property>
-            </sv:node>
-        </sv:node>
+        </sv:property>
+      </sv:node>
     </sv:node>
+  </sv:node>
 </sv:node>
