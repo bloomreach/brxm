@@ -48,11 +48,34 @@
         <c:choose>
           <c:when test="${empty resultset}">
           	Navigate the faceted tree to see the results here
+
+            <br/>
+            <br/>
+            <br/>
+            Wanna populate some dummy news items to see faceted navigation in real action? <b>node</b> adding moren then, say 1000 news items takes some time.
+         <form action="<hst:actionURL/>" method>
+            <input type="hidden" name="number" value="5"/>
+            <input type="submit" value="add 5 more random cars"/>
+         </form>
+         <form action="<hst:actionURL/>" method>
+             <input type="hidden" name="number" value="25"/>
+             <input type="submit" value="add 25 more random cars"/>
+         </form>
+         <form action="<hst:actionURL/>" method>
+             <input type="hidden" name="number" value="100"/>
+             <input type="submit" value="add 100 more random cars"/>
+         </form>
+         <form action="<hst:actionURL/>" method>
+             <input type="hidden" name="number" value="250"/>
+             <input type="submit" value="add 250 more random cars"/>
+         </form>
           </c:when>
           <c:otherwise>
 	        <c:forEach var="result" items="${resultset}">
 	          <ul class="list-overview">
-	            <hst:link var="link" hippobean="${result}"/>                         
+	            <hst:link var="link" hippobean="${result}">
+	            <hst:sitemapitem preferPath="/faceted"/>
+	            </hst:link>
 	            <li class="title">
 	               <c:choose>
 			          <c:when test="${empty result.title}">
