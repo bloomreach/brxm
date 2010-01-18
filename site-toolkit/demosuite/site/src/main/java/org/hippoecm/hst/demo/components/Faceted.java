@@ -17,6 +17,10 @@ package org.hippoecm.hst.demo.components;
 
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
@@ -24,10 +28,11 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.demo.beans.ProductBean;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Faceted extends AbstractSearchComponent {
+public class Faceted extends BaseHstComponent {
 
     public static final Logger log = LoggerFactory.getLogger(Faceted.class);
     
@@ -49,5 +54,35 @@ public class Faceted extends AbstractSearchComponent {
             request.setAttribute("subnavigation", currentBean);
         }
     }
- 
+
+    @Override
+    public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+       
+        DummyCarDocsCreator carCreator = new DummyCarDocsCreator();
+        
+        Session writableSession = null;
+        try {
+            writableSession = this.getPersistableSession(request);
+            String rootByPath = this.getHstSite(request).getCanonicalContentPath();
+            rootByPath = PathUtils.normalizePath(rootByPath);
+            String numberStr = request.getParameter("number");
+            int number = Integer.parseInt(numberStr);
+            
+            carCreator.createCars(writableSession, rootByPath, number);
+            
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        } catch (NumberFormatException e) {
+            log.error(e.getMessage());
+        } finally {
+            if(writableSession != null) {
+                writableSession.logout();
+            }
+        }
+        
+        
+        
+        
+    }
+       
 }
