@@ -301,7 +301,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 if(!nodeName.equals(localName)) {
                     defaultWorkflow.localizeName(localName);
                 }
-                ((FullReviewedActionsWorkflow)wf).rename(targetName);
+                ((FullReviewedActionsWorkflow)wf).rename(nodeName);
                 return null;
             }
         });
@@ -584,7 +584,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         private IModel title;
         private TextField nameComponent;
         private TextField uriComponent;
-        private boolean uriModified = false;
+        private boolean uriModified;
 
         public RenameDocumentDialog(WorkflowAction action, IModel title) {
             action.super();
@@ -592,6 +592,10 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             final PropertyModel<String> nameModel = new PropertyModel<String>(action, "targetName");
             final PropertyModel<String> uriModel = new PropertyModel<String>(action, "uriName");
+
+            String s1 = nameModel.getObject();
+            String s2 = uriModel.getObject();
+            uriModified = !s1.equals(s2);
 
             nameComponent = new TextField<String>("name", nameModel);
             nameComponent.setRequired(true);
