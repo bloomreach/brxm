@@ -19,6 +19,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -32,14 +38,19 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,8 +149,9 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        add(new WorkflowAction("rename", new StringResourceModel("rename-label", this, null)) {
-            public String name;
+        add(renameAction = new WorkflowAction("rename", new StringResourceModel("rename-label", this, null)) {
+            public String targetName;
+            public String uriName;
 
             @Override
             protected ResourceReference getIcon() {
@@ -149,30 +161,28 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                    uriName =  ((WorkflowDescriptorModel)getDefaultModel()).getNode().getName();
+                    targetName = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
                 } catch(RepositoryException ex) {
-                    name = "";
+                    uriName = targetName = "";
                 }
-                return new WorkflowAction.NameDialog(new StringResourceModel("rename-title",
-                        DefaultWorkflowPlugin.this, null), new StringResourceModel("rename-text",
-                        DefaultWorkflowPlugin.this, null), new PropertyModel(this, "name"));
+                return new RenameDocumentDialog(this, new StringResourceModel("rename-title", DefaultWorkflowPlugin.this, null));
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                if (name == null || name.trim().equals("")) {
+                if (targetName == null || targetName.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
-                try {
-                    if (name.equals(((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName())) {
-                        // shortcut, the node was not actually renamed
-                        return null;
-                    }
-                } catch(RepositoryException ex) {
-                    // deliberate ignore
+                Node node = ((WorkflowDescriptorModel)getDefaultModel()).getNode();
+                String nodeName = getNodeNameCodec().encode(uriName);
+                String localName = getLocalizeCodec().encode(targetName);
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
+                if(!nodeName.equals(localName)) {
+                    defaultWorkflow.localizeName(localName);
                 }
-                DefaultWorkflow workflow = (DefaultWorkflow) wf;
-                workflow.rename(NodeNameCodec.encode(name, true));
+                ((DefaultWorkflow)wf).rename(targetName);
                 return null;
             }
         });
@@ -242,6 +252,18 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
         });
     }
 
+    protected StringCodec getLocalizeCodec() {
+        StringCodecFactory stringCodecFactory = new StringCodecFactory();
+        String encoder = getPluginConfig().getString("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
+        return stringCodecFactory.getStringCodec(encoder);
+    }
+
+    protected StringCodec getNodeNameCodec() {
+        StringCodecFactory stringCodecFactory = new StringCodecFactory();
+        String encoder = getPluginConfig().getString("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
+        return stringCodecFactory.getStringCodec(encoder);
+    }
+
     @Override
     public void onModelChanged() {
         try {
@@ -255,6 +277,68 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
+        }
+    }
+
+    public class RenameDocumentDialog extends WorkflowAction.WorkflowDialog {
+        private IModel title;
+        private TextField nameComponent;
+        private TextField uriComponent;
+        private boolean uriModified = false;
+
+        public RenameDocumentDialog(WorkflowAction action, IModel title) {
+            action.super();
+            this.title = title;
+
+            final PropertyModel<String> nameModel = new PropertyModel<String>(action, "targetName");
+            final PropertyModel<String> uriModel = new PropertyModel<String>(action, "uriName");
+
+            nameComponent = new TextField<String>("name", nameModel);
+            nameComponent.setRequired(true);
+            nameComponent.setLabel(new StringResourceModel("name-label", DefaultWorkflowPlugin.this, null));
+            nameComponent.add(new OnChangeAjaxBehavior() {
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    if (!uriModified) {
+                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
+                        target.addComponent(uriComponent);
+                    }
+                }
+            });
+            nameComponent.setOutputMarkupId(true);
+            setFocus(nameComponent);
+            add(nameComponent);
+
+            add(uriComponent = new TextField<String>("uriinput", uriModel));
+            uriComponent.setEnabled(uriModified);
+            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel() {
+                @Override
+                public Object getObject() {
+                    return (uriComponent.isEnabled() ? "grayedin" : "grayedout");
+                }
+            }));
+            uriComponent.setOutputMarkupId(true);
+
+            add(new AjaxCheckBox("uricheck", new PropertyModel<Boolean>(this, "uriModified")) {
+                protected void onUpdate(AjaxRequestTarget target) {
+                    uriComponent.setEnabled(uriModified);
+                    if (uriModified == false) {
+                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
+                    }
+                    target.addComponent(RenameDocumentDialog.this);
+                    target.addComponent(uriComponent);
+                }
+            });
+        }
+
+        @Override
+        public IModel getTitle() {
+            return title;
+        }
+
+        @Override
+        public IValueMap getProperties() {
+            return MEDIUM;
         }
     }
 }

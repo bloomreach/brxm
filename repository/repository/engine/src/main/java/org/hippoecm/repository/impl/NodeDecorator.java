@@ -273,23 +273,35 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
      * @inheritDoc
      */
     public String getLocalName() throws RepositoryException {
-        Node handle = getParent();
-        Localized localized = getLocalized(null);
-        if(node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
-            Node bestCandidateNode = null;
-            Localized bestCandidate = null;
-            for(NodeIterator iter = handle.getNodes(HippoNodeType.HIPPO_TRANSLATION); iter.hasNext(); ) {
-                Node currentCandidateNode = iter.nextNode();
-                Localized currentCandidate = Localized.getInstance(currentCandidateNode);
-                Localized resultCandidate = localized.matches(bestCandidate, currentCandidate);
-                if(resultCandidate == currentCandidate) {
-                    bestCandidate = currentCandidate;
-                    bestCandidateNode = currentCandidateNode;
+        Node node = this;
+        if (!node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
+            if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                Node handle = node.getParent();
+                if (handle.isNodeType(HippoNodeType.NT_HANDLE) && handle.isNodeType(HippoNodeType.NT_TRANSLATED)) {
+                    node = handle;
+                } else {
+                    return getName();
                 }
+            } else {
+                return getName();
             }
-            if(bestCandidateNode != null && bestCandidateNode.hasProperty(HippoNodeType.HIPPO_MESSAGE)) {
-                return bestCandidateNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
+        }
+        Localized localized = getLocalized(null);
+        if (localized == null)
+            localized = Localized.getInstance();
+        Node bestCandidateNode = null;
+        Localized bestCandidate = null;
+        for (NodeIterator iter = node.getNodes(HippoNodeType.HIPPO_TRANSLATION); iter.hasNext(); ) {
+            Node currentCandidateNode = iter.nextNode();
+            Localized currentCandidate = Localized.getInstance(currentCandidateNode);
+            Localized resultCandidate = localized.matches(bestCandidate, currentCandidate);
+            if (resultCandidate == currentCandidate) {
+                bestCandidate = currentCandidate;
+                bestCandidateNode = currentCandidateNode;
             }
+        }
+        if (bestCandidateNode != null && bestCandidateNode.hasProperty(HippoNodeType.HIPPO_MESSAGE)) {
+            return bestCandidateNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
         }
         return getName();
     }

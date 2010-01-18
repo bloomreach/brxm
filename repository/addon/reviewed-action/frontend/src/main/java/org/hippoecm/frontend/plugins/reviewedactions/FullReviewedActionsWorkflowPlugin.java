@@ -30,6 +30,7 @@ import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -50,6 +51,7 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DeleteDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.WhereUsedDialog;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -609,7 +611,12 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
             add(uriComponent = new TextField<String>("uriinput", uriModel));
             uriComponent.setEnabled(uriModified);
-            uriComponent.add(new AttributeAppender("bgcolor", new Model("#f4f4f4"), " "));
+            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel() {
+                @Override
+                public Object getObject() {
+                    return (uriComponent.isEnabled() ? "grayedin" : "grayedout");
+                }
+            }));
             uriComponent.setOutputMarkupId(true);
 
             add(new AjaxCheckBox("uricheck", new PropertyModel<Boolean>(this, "uriModified")) {
@@ -619,6 +626,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                         uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
                     }
                     target.addComponent(RenameDocumentDialog.this);
+                    target.addComponent(uriComponent);
                 }
             });
         }
