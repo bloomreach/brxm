@@ -38,6 +38,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -52,6 +53,7 @@ import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
@@ -442,6 +444,12 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
             add(uriComponent = new TextField<String>("uriinput", uriModel));
             uriComponent.setEnabled(uriModified);
+            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel() {
+                @Override
+                public Object getObject() {
+                    return (uriComponent.isEnabled() ? "grayedin" : "grayedout");
+                }
+            }));
             uriComponent.setOutputMarkupId(true);
 
             add(new AjaxCheckBox("uricheck", new PropertyModel<Boolean>(this, "uriModified")) {
@@ -451,6 +459,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                         uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
                     }
                     target.addComponent(AddDocumentDialog.this);
+                    target.addComponent(uriComponent);
                 }
             });
         }
@@ -470,7 +479,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
         private IModel title;
         private TextField nameComponent;
         private TextField uriComponent;
-        private boolean uriModified = false;
+        private boolean uriModified;
 
         public RenameDocumentDialog(WorkflowAction action, IModel title) {
             action.super();
@@ -478,6 +487,10 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
             final PropertyModel<String> nameModel = new PropertyModel<String>(action, "targetName");
             final PropertyModel<String> uriModel = new PropertyModel<String>(action, "uriName");
+
+            String s1 = nameModel.getObject();
+            String s2 = uriModel.getObject();
+            uriModified = !s1.equals(s2);
 
             nameComponent = new TextField<String>("name", nameModel);
             nameComponent.setRequired(true);
@@ -497,6 +510,12 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
             add(uriComponent = new TextField<String>("uriinput", uriModel));
             uriComponent.setEnabled(uriModified);
+            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel() {
+                @Override
+                public Object getObject() {
+                    return (uriComponent.isEnabled() ? "grayedin" : "grayedout");
+                }
+            }));
             uriComponent.setOutputMarkupId(true);
 
             add(new AjaxCheckBox("uricheck", new PropertyModel<Boolean>(this, "uriModified")) {

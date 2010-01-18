@@ -70,20 +70,20 @@ public final class Localized implements Serializable {
 
     public boolean matches(Localized other) {
         Locale otherLocale = other.getLocale();
-        if(locale.getLanguage() != null)
-            if(otherLocale.getLanguage() != null) {
+        if(locale != null && locale.getLanguage() != null)
+            if(otherLocale != null && otherLocale.getLanguage() != null) {
                 if(!locale.getLanguage().equals(otherLocale.getLanguage()))
                     return false;
             } else
                 return false;
-        if(locale.getCountry() != null)
-            if(otherLocale.getCountry() != null) {
+        if(locale != null && locale.getCountry() != null)
+            if(otherLocale != null && otherLocale.getCountry() != null) {
                 if(!locale.getCountry().equals(otherLocale.getCountry()))
                     return false;
             } else
                 return false;
-        if(locale.getVariant() != null)
-            if(otherLocale.getVariant() != null) {
+        if(locale != null && locale.getVariant() != null)
+            if(otherLocale != null && otherLocale.getVariant() != null) {
                 if(!locale.getVariant().equals(otherLocale.getVariant()))
                     return false;
             } else
@@ -92,22 +92,22 @@ public final class Localized implements Serializable {
     }
 
     public Localized matches(Localized candidate1, Localized candidate2) {
-        Locale locale1 = candidate1.getLocale();
-        Locale locale2 = candidate2.getLocale();
-        if(candidate1 != null || !matches(candidate1)) {
+        if(candidate1 == null) {
             if(candidate2 != null && matches(candidate2)) {
                 return candidate2;
             } else {
                 return null;
             }
-        } else if(candidate2 != null) {
-            if(matches(candidate2)) {
-                return candidate2;
+        } else if(candidate2 == null) {
+            if(matches(candidate1)) {
+                return candidate1;
             } else {
                 return null;
             }
         }
-        if(locale.getLanguage() != null) {
+        Locale locale1 = candidate1.getLocale();
+        Locale locale2 = candidate2.getLocale();
+        if(locale != null && locale.getLanguage() != null) {
             if(locale1.getLanguage()==null) {
                 if(locale2.getLanguage()!=null) {
                     return candidate2;
@@ -122,7 +122,7 @@ public final class Localized implements Serializable {
             } else if(locale2.getLanguage()!=null)
                 return candidate1;
         }
-        if(locale.getCountry() != null) {
+        if(locale != null && locale.getCountry() != null) {
             if(locale1.getCountry()==null) {
                 if(locale2.getCountry()!=null) {
                     return candidate2;
@@ -137,7 +137,7 @@ public final class Localized implements Serializable {
             } else if(locale2.getCountry()!=null)
                 return candidate1;
         }
-        if(locale.getVariant() != null) {
+        if(locale != null && locale.getVariant() != null) {
             if(locale1.getVariant()==null) {
                 if(locale2.getVariant()!=null) {
                     return candidate2;
@@ -159,11 +159,17 @@ public final class Localized implements Serializable {
         if(node.isNodeType(HippoNodeType.NT_TRANSLATION)) {
             if(node.hasProperty(HippoNodeType.HIPPO_LANGUAGE)) {
                 String language = node.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
-                return getInstance(new Locale(language));
-            } else
+                if(language == null || language.trim().equals("")) {
+                    return getInstance();
+                } else {
+                    return getInstance(new Locale(language));
+                }
+            } else {
                 return getInstance();
-        } else
+            }
+        } else {
             return null;
+        }
     }
 
     public void setTranslation(Node node) throws RepositoryException{

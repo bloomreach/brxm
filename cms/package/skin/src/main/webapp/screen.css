@@ -648,7 +648,7 @@ body .hippo-picker-properties div.text-input input{border: 1px solid #afafaf; pa
 .hippo-tree div.wicket-tree div.row, 
 .hippo-tree div.wicket-tree div.row-selected{padding-top: 2px; padding-bottom: 2px;}
 
-.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown {visibility: hidden};
+.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown {visibility: hidden}
 .hippo-tree div.wicket-tree div.row .hippo-tree-dropdown-icon-container {background: transparent;}
 .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container, 
 .hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
@@ -1372,5 +1372,5 @@ body.hippo-root div.yui-log-container {
 .hippo-editor-field-html-preview br:before { content: "\A"; white-space: pre-line }
 .hippo-editor-field-html-preview center { text-align: center }
 
-
-
+.hippo-window-form td input.grayedout { background-color: #F4F4F4; }
+.hippo-window-form td input.grayedin { }
