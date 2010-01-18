@@ -22,11 +22,14 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.XinhaUtil;
 import org.hippoecm.frontend.plugins.xinha.dialog.DocumentLink;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +44,7 @@ public abstract class XinhaImage extends DocumentLink {
 
     public static final String BASE = "f_base";
     public static final String URL = "f_url";
+    public static final String FACET_SELECT = "f_facetselect";
     public static final String ALT = "f_alt";
     public static final String BORDER = "f_border";
     public static final String ALIGN = "f_align";
@@ -61,19 +65,28 @@ public abstract class XinhaImage extends DocumentLink {
         return (String) get(URL);
     }
     
+    public void setFacetSelectPath(String facetSelectPath) {
+        put(FACET_SELECT, facetSelectPath);
+    }
+    
+    public String getFacetSelectPath() {
+        return (String) get(FACET_SELECT);
+    }
+    
     @Override
     protected JcrNodeModel createInitialModel(JcrNodeModel parentModel) {
-        String url = getUrl();
-        if (url != null && url.startsWith(BINARIES_PREFIX)) {
-
-            // find the nodename of the facetselect
-            String path = XinhaUtil.decode(url.substring(BINARIES_PREFIX.length()));
-            UserSession session = (UserSession) Session.get();
+        String path = getInitialNodePath(parentModel);
+        if(!Strings.isEmpty(path)) {
             try {
-                HippoNode node = (HippoNode) session.getJcrSession().getRootNode().getNode(path).getParent();
-                Node imageNode = node.getCanonicalNode();
-                if (imageNode != null) {
-                    return new JcrNodeModel(imageNode.getPath());
+                javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
+                Node root = session.getRootNode();
+                Node node = ((HippoNode) workspace.getHierarchyResolver().getNode(root, path)).getCanonicalNode();
+                if(node != null) {
+                    while(!node.equals(root) && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        node = node.getParent();
+                    }
+                    return new JcrNodeModel(node);
                 }
             } catch (PathNotFoundException e) {
                 log.error("Error retrieving canonical node for imageNode[" + path + "]", e);
@@ -84,4 +97,16 @@ public abstract class XinhaImage extends DocumentLink {
         return null;
     }
 
+    protected String getInitialNodePath(JcrNodeModel parentModel) {
+        String path = getFacetSelectPath();
+        if (!Strings.isEmpty(path)) {
+            path = XinhaUtil.decode(parentModel.getItemModel().getPath() + "/" + path);
+        } else { 
+            path = getUrl();
+            if (!Strings.isEmpty(path) && path.startsWith(BINARIES_PREFIX)) {
+                path = XinhaUtil.decode(path.substring(BINARIES_PREFIX.length()));
+            }
+        }
+        return path;
+    }
 }
