@@ -106,7 +106,15 @@ public class HeadElementImpl implements HeadElement
     
     public Map<String, String> getAttributeMap()
     {
-        return attributes;
+        return Collections.unmodifiableMap(attributes);
+    }
+    
+    public void setAttribute(String name, String value) {
+        attributes.put(name, value);
+    }
+    
+    public String removeAttribute(String name) {
+        return attributes.remove(name);
     }
     
     public String getTextContent()

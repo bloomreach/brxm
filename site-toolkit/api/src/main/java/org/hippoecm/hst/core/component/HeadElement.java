@@ -27,20 +27,73 @@ import java.util.Map;
 public interface HeadElement extends Serializable
 {
     
+    /**
+     * Return the tag name of the head contribution element
+     * @return
+     */
     String getTagName();
     
+    /**
+     * Checks if the head contribution element has the attribute specified by the attribute name
+     * @param name
+     * @return
+     */
     boolean hasAttribute(String name);
     
+    /**
+     * Returns the attribute value of the head contribution element specified by the attribute name.
+     * Returns null if there's no attribute specified by the attribute name.
+     * @param name
+     * @return
+     */
     String getAttribute(String name);
     
+    /**
+     * Returns unmodifiable attribute map of the head contribution element.
+     * Returns an empty unmodifiable attribute map if there's no attribute.
+     * @return
+     */
     Map<String, String> getAttributeMap();
     
+    /**
+     * Sets attribute on the head contribution element.
+     * Returns null if there's no attribute in the head contribution element.
+     * @param name
+     * @param value
+     */
+    void setAttribute(String name, String value);
+    
+    /**
+     * Removes the attribute from the head contribution element specified by the attribute name.
+     * Returns the attribute value if the attribute exists, or returns null if the attribute doesn't exist.
+     * @param name
+     * @return
+     */
+    String removeAttribute(String name);
+    
+    /**
+     * Returns the text content of the head contribution element.
+     * @return
+     */
     String getTextContent();
     
+    /**
+     * Sets the text content of the head contribution element.
+     * @param textContent
+     */
     void setTextContent(String textContent);
     
+    /**
+     * Checks if the head contribution element contains child head elements.
+     * @return
+     */
     boolean hasChildHeadElements();
     
+    /**
+     * Returns the collection of the child head elements.
+     * Returns an empty collection if there's no child head elements.
+     * @return
+     */
     Collection<HeadElement> getChildHeadElements();
     
 }

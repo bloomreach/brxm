@@ -25,6 +25,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.core.component.HeadElement;
 import org.hippoecm.hst.core.component.HeadElementImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -130,20 +131,30 @@ public class HeadContributionsTag extends TagSupport {
                                 continue;
                             }
                             
+                            HeadElement outHeadElement = new HeadElementImpl(headElement);
+                            if (outHeadElement.hasAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE)) {
+                                outHeadElement.removeAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE);
+                            }
+                            
                             if (xhtml) {
-                                pageContext.getOut().println(HeadElementUtils.toXhtmlString(new HeadElementImpl(headElement)));
+                                pageContext.getOut().println(HeadElementUtils.toXhtmlString(outHeadElement));
                             } else {
-                                pageContext.getOut().println(HeadElementUtils.toHtmlString(new HeadElementImpl(headElement)));
+                                pageContext.getOut().println(HeadElementUtils.toHtmlString(outHeadElement));
                             }
                             
                             pageContext.getOut().flush();
                         }
                     } else {
                         for (Element headElement : headElements) {
+                            HeadElement outHeadElement = new HeadElementImpl(headElement);
+                            if (outHeadElement.hasAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE)) {
+                                outHeadElement.removeAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE);
+                            }
+                            
                             if (xhtml) {
-                                pageContext.getOut().println(HeadElementUtils.toXhtmlString(new HeadElementImpl(headElement)));
+                                pageContext.getOut().println(HeadElementUtils.toXhtmlString(outHeadElement));
                             } else {
-                                pageContext.getOut().println(HeadElementUtils.toHtmlString(new HeadElementImpl(headElement)));
+                                pageContext.getOut().println(HeadElementUtils.toHtmlString(outHeadElement));
                             }
                             
                             pageContext.getOut().flush();
