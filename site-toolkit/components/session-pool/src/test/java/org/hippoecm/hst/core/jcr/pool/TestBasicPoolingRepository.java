@@ -21,7 +21,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.jcr.Node;
@@ -30,6 +32,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 
+import org.hippoecm.hst.core.ResourceVisitor;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -195,6 +198,62 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
         
         assertTrue("The job queue is not empty.", jobQueue.isEmpty());
         assertTrue("Active session count is not zero.", 0 == poolingRepository.getNumActive());
+    }
+    
+    @Test
+    public void testImpersonatedNonPooledSessionLifeCycleManagement() throws Exception {
+        PooledSessionResourceManagement pooledSessionLifecycleManagement = new PooledSessionResourceManagement();
+        poolingRepository.setResourceLifecycleManagement(pooledSessionLifecycleManagement);
+        poolingRepository.getResourceLifecycleManagement().setActive(true);
+        
+        // retrieve a pooled session from the pool
+        
+        Session session = poolingRepository.login();
+        assertTrue("The session was not a pooled session.", session instanceof PooledSession);
+
+        // now the managed session count must be 1.
+        final List<Session> managedSessions = new ArrayList<Session>();
+        pooledSessionLifecycleManagement.visitResources(new ResourceVisitor() {
+            public Object resource(Object resource) {
+                managedSessions.add((Session) resource);
+                return null;
+            }
+        });
+        assertEquals("The managed session count is wrong.", 1, managedSessions.size());
+        
+        // Now retrieve an impersonated session which is not from the pool.
+        
+        Session impersonatedNonPooledSession = session.impersonate(new SimpleCredentials("editor", "editor".toCharArray()));
+        assertNotNull("The impersonated session is null", impersonatedNonPooledSession);
+        assertFalse("The session was not a non-pooled session.", impersonatedNonPooledSession instanceof PooledSession);
+        
+        // now the managed session count must be 2.
+        managedSessions.clear();
+        pooledSessionLifecycleManagement.visitResources(new ResourceVisitor() {
+            public Object resource(Object resource) {
+                managedSessions.add((Session) resource);
+                return null;
+            }
+        });
+        assertEquals("The managed session count is wrong.", 2, managedSessions.size());
+        
+        // also, the impersonated non pooled session must be live
+        assertTrue("The impersonated session is not live.", impersonatedNonPooledSession.isLive());
+        
+        pooledSessionLifecycleManagement.disposeAllResources();
+        
+        // now the managed session count must be 0.
+        managedSessions.clear();
+        pooledSessionLifecycleManagement.visitResources(new ResourceVisitor() {
+            public Object resource(Object resource) {
+                managedSessions.add((Session) resource);
+                return null;
+            }
+        });
+        assertEquals("The managed session count is wrong.", 0, managedSessions.size());
+        
+        // also, the impersonated non pooled session must be not live now.
+        assertFalse("The impersonated session is still live.", impersonatedNonPooledSession.isLive());
     }
     
     @Ignore

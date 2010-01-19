@@ -20,11 +20,13 @@ import javax.jcr.Session;
 
 import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.Invocation;
+import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.jcr.pool.util.ProxyFactory;
 
 public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator, PoolingRepositoryAware {
     
     protected PoolingRepository poolingRepository;
+    protected boolean manageLifecycleOnImpersonatedSession = true;
 
     public PooledSessionDecoratorProxyFactoryImpl() {
     }
@@ -56,7 +58,11 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
     public void setPoolingRepository(PoolingRepository poolingRepository) {
         this.poolingRepository = poolingRepository;
     }
-
+    
+    public void setManageLifecycleOnImpersonatedSession(boolean manageLifecycleOnImpersonatedSession) {
+        this.manageLifecycleOnImpersonatedSession = manageLifecycleOnImpersonatedSession;
+    }
+    
     protected class PooledSessionInterceptor implements Interceptor {
         
         private boolean passivated;
@@ -111,11 +117,19 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                         // from another session pool repository based on the credentials.
                         Credentials credentials = (Credentials) invocation.getArguments()[0];
                         ret = poolingRepository.impersonate(credentials);
+                        
                         // if the poolingRepository returns null, it means the poolingRepository cannot retrieve
                         // a pooled session with the credentials.
                         // in this case, just proceeed to allow impersonation by underlying JCR session.
                         if (ret == null) {
                             ret = invocation.proceed();
+                            
+                            if (manageLifecycleOnImpersonatedSession && ret != null) {
+                                ResourceLifecycleManagement pooledSessionLifecycleManagement = poolingRepository.getResourceLifecycleManagement();
+                                if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
+                                    pooledSessionLifecycleManagement.registerResource(ret);
+                                }
+                            }
                         }
                     } else {
                         ret = invocation.proceed();

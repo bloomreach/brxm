@@ -18,12 +18,15 @@ package org.hippoecm.hst.core.jcr.pool;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.jcr.Session;
+
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
+import org.hippoecm.hst.core.ResourceVisitor;
 
 public class PooledSessionResourceManagement implements ResourceLifecycleManagement {
     
     private ThreadLocal<Boolean> tlActiveState = new ThreadLocal<Boolean>();
-    private ThreadLocal<Set<PooledSession>> tlPooledSessions = new ThreadLocal<Set<PooledSession>>();
+    private ThreadLocal<Set<Session>> tlPooledSessions = new ThreadLocal<Set<Session>>();
 
     public boolean isActive() {
         Boolean activeState = tlActiveState.get();
@@ -40,46 +43,62 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
     }
 
     public void registerResource(Object session) {
-        Set<PooledSession> sessions = tlPooledSessions.get();
+        Set<Session> sessions = tlPooledSessions.get();
         
         if (sessions == null) {
-            sessions = new HashSet<PooledSession>();
-            sessions.add((PooledSession) session);
+            sessions = new HashSet<Session>();
+            sessions.add((Session) session);
             tlPooledSessions.set(sessions);
         } else {
-            sessions.add((PooledSession) session);
+            sessions.add((Session) session);
         }
     }
     
     public void unregisterResource(Object session) {
-        Set<PooledSession> sessions = tlPooledSessions.get();
+        Set<Session> sessions = tlPooledSessions.get();
         
         if (sessions != null) {
-            sessions.remove((PooledSession) session);
+            sessions.remove((Session) session);
         }
     }
     
-    public void disposeResource(Object session) {
+    public void disposeResource(Object sessionObject) {
         try {
-            ((PooledSession) session).logout();
-        } catch (IllegalStateException e) {
+            Session session = (Session) sessionObject;
+            
+            if (session instanceof PooledSession) {
+                session.logout();
+            } else {
+                // for impersonated non-pooled session 
+                if (session.isLive()) {
+                    session.logout();
+                }
+            }
+        } catch (Exception ignore) {
             // just ignore on pooled session which is already returned to the pool.
         }
         
-        unregisterResource(session);
+        unregisterResource(sessionObject);
     }
     
     public void disposeAllResources() {
-        Set<PooledSession> sessions = tlPooledSessions.get();
+        Set<Session> sessions = tlPooledSessions.get();
         
         if (sessions != null) {
             // do not iterate through the Set because this will lead to concurrent modification exceptions
-            PooledSession [] sessionArray = sessions.toArray(new PooledSession[sessions.size()]);
+            Session [] sessionArray = sessions.toArray(new Session[sessions.size()]);
             
-            for (PooledSession session : sessionArray) {
+            for (Session session : sessionArray) {
                 try {
-                    session.logout();
-                } catch (IllegalStateException e) {
+                    if (session instanceof PooledSession) {
+                        session.logout();
+                    } else {
+                        // for impersonated non-pooled session 
+                        if (session.isLive()) {
+                            session.logout();
+                        }
+                    }
+                } catch (Exception ignore) {
                     // just ignore on pooled session which is already returned to the pool.
                 }
             }
@@ -87,5 +106,31 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
             sessions.clear();
         }
     }
+    
+    public Object visitResources(ResourceVisitor visitor) {
+        if (visitor == null) {
+            throw new IllegalArgumentException("argument visitor may not be null");
+        }
 
+        Set<Session> sessions = tlPooledSessions.get();
+        
+        if (sessions != null) {
+            // do not iterate through the Set because this will lead to concurrent modification exceptions
+            Session [] sessionArray = sessions.toArray(new Session[sessions.size()]);
+            
+            for (Session session : sessionArray) {
+                Object value = null;
+    
+                // Call visitor
+                value = visitor.resource(session);
+
+                // If visitor returns a non-null value, it halts the traversal
+                if (value != ResourceVisitor.CONTINUE_TRAVERSAL) {
+                    return value;
+                }
+            }
+        }
+        
+        return null;
+    }
 }

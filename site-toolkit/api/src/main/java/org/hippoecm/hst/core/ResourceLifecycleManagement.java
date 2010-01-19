@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core;
 
+
 /**
  * Resource management interface.
  * Some resource pool such as JCR session pool can expose an implementation
@@ -64,5 +65,15 @@ public interface ResourceLifecycleManagement {
      * Dispose all the resources.
      */
     void disposeAllResources();
+    
+    /**
+     * Traverses all the resource, calling the visitor's visit method at each one.
+     * 
+     * @param visitor
+     *            The visitor to call back to
+     * @return The return value from a visitor which halted the traversal, or null if the entire
+     *         traversal occurred
+     */
+    Object visitResources(ResourceVisitor visitor);
     
 }
