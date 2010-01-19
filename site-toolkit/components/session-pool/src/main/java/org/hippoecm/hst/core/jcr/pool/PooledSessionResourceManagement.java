@@ -84,7 +84,7 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
     public void disposeAllResources() {
         Set<Session> sessions = tlPooledSessions.get();
         
-        if (sessions != null) {
+        if (sessions != null && !sessions.isEmpty()) {
             // do not iterate through the Set because this will lead to concurrent modification exceptions
             Session [] sessionArray = sessions.toArray(new Session[sessions.size()]);
             
@@ -114,7 +114,7 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
 
         Set<Session> sessions = tlPooledSessions.get();
         
-        if (sessions != null) {
+        if (sessions != null && !sessions.isEmpty()) {
             // do not iterate through the Set because this will lead to concurrent modification exceptions
             Session [] sessionArray = sessions.toArray(new Session[sessions.size()]);
             
