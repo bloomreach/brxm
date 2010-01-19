@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -83,57 +83,31 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                 // we are done with this facet - value combination
                 return state;
             }
-            int i = -1;
-            for(String facet : availableFacets){ 
-                i++;
-                String configuredNodeName = null;
-                FacetNodeView currentFacetNodeView = null;
-                
-                FacetNodeView[] facetNodeViews = facetNavigationNodeId.facetNodeViews;
-                
-                if(facetNodeViews != null && facetNodeViews[i] != null && facetNodeViews[i].facetNodeName != null && !"".equals(facetNodeViews[i].facetNodeName)) {
-                    configuredNodeName = facetNodeViews[i].facetNodeName;
-                    currentFacetNodeView = facetNodeViews[i];
-                    if(!currentFacetNodeView.visible) {
-                        // the current facet node view is not yet visible (first another facet might have to be chosen before it becomes visible)
-                        // for example, month might only be shown when year is already picked
-                        continue;
-                    }
-                    // check if some facet node views should be switched from invisible to visible. If so, we need to first create a copy of FacetNodeViews[] and use this modified version 
-                    boolean modified = false;
-                    List<FacetNodeView> newFacetNodeViewsList = new ArrayList<FacetNodeView>();
-                    for(FacetNodeView fnv : facetNodeViews) {
-                        if(!fnv.visible && fnv.afterFacet != null && fnv.afterFacet.equals(configuredNodeName)) {
-                            // from now on it is visible. First clone the entry before modifying it of course
-                            FacetNodeView clone = (FacetNodeView)fnv.clone();
-                            clone.visible = true;
-                            newFacetNodeViewsList.add(clone);
-                            modified = true;
-                        } else {
-                            newFacetNodeViewsList.add(fnv);
-                        }
-                    }
-                    if(modified) {
-                        // some facet node view has been switched to visible, hence, we have to change the facetNodeViews reference
-                        facetNodeViews = newFacetNodeViewsList.toArray(new FacetNodeView[newFacetNodeViewsList.size()]);
-                    }
+           
+            FacetNodeViews newFacetNodeViews = facetNavigationNodeId.facetNodeViews;
+            
+            for(FacetNodeView facetNodeView: facetNavigationNodeId.facetNodeViews) {
+                if(!facetNodeView.visible || facetNodeView.disabled) {
+                    // the current facet node view is not yet visible (first another facet might have to be chosen before it becomes visible)
+                    // for example, month might only be shown when year is already picked, or it is disabled at all
+                    continue;
                 }
                 
-                
+                newFacetNodeViews = newFacetNodeViews.getFacetNodeViews(facetNodeView);
                 
                 ParsedFacet parsedFacet;
                 try {
-                    parsedFacet = new ParsedFacet(facet, configuredNodeName, this);
+                    parsedFacet = new ParsedFacet(facetNodeView.facet, facetNodeView.displayName, this);
                 } catch (Exception e) {
                     log.warn("Malformed facet range configuration '{}'. Valid format is "+VALID_RANGE_EXAMPLE,
-                                    facet);
+                            facetNodeView.facet);
                     return state;
                 }
-
+                
                 Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
                 FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
                 for(String value : facetNavigationNodeId.ancestorAndSelfUsedCombinations) {
-                    KeyValue<String,String> facetValueCombi = new FacetKeyValue(facet, value);
+                    KeyValue<String,String> facetValueCombi = new FacetKeyValue(facetNodeView.facet, value);
                     if(usedFacetValueCombis.indexOf(facetValueCombi) > -1) {
                            /*
                             * the exact facet value combination is already populated before in the tree. We populate the key-value
@@ -145,9 +119,8 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                         }
                 }
                 childNodeId.availableFacets = availableFacets;
-                childNodeId.facetNodeViews = facetNodeViews;
-                childNodeId.currentFacetNodeView = currentFacetNodeView;
-                childNodeId.currentFacet = facet;
+                childNodeId.facetNodeViews = newFacetNodeViews;
+                childNodeId.currentFacetNodeView = facetNodeView;
                 childNodeId.ancestorAndSelfUsedCombinations = facetNavigationNodeId.ancestorAndSelfUsedCombinations;
                 childNodeId.docbase = docbase;
                 childNodeId.currentSearch = currentSearch;
@@ -160,8 +133,9 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                 
                 childNodeId.usedFacetValueCombis = new ArrayList<KeyValue<String,String>>(usedFacetValueCombis);
                 state.addChildNodeEntry(childName, childNodeId);
+
             }
-          
+            
             // add child node resultset:
             Name resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
             FacetResultSetProvider.FacetResultSetNodeId childNodeId;

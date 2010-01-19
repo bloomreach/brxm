@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
  */
 package org.hippoecm.repository.jackrabbit.facetnavigation;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
@@ -23,7 +27,11 @@ import org.hippoecm.repository.jackrabbit.facetnavigation.AbstractFacetNavigatio
 
 public class FacetNodeView implements Cloneable {
 
-    String facetNodeName;
+    
+    String facet;
+    String facetNodeNameConfiguration;
+    
+    String displayName;
     
     // the comparator used for sorting the facet values for this facet
     FacetNavigationEntryComparator<FacetNavigationEntry> comparator;
@@ -37,10 +45,96 @@ public class FacetNodeView implements Cloneable {
     // if this facet is only visible after some other facet is chosen, this facet is held by 'afterFacet'
     String afterFacet = null;
     
+    // if this facet hides another facet or itself, it is configured in this attribute
+    Set<String> hideFacet = null;
+    
+    // if this facet is hidden, this boolean is true
+    boolean disabled = false;
+    
     String sortorder;
     String sortby;
     
     
+    
+    public FacetNodeView(String facet) throws IllegalArgumentException {
+        this( facet, null );
+    }
+    
+    public FacetNodeView(String facet, String facetNodeNameConfiguration) throws IllegalArgumentException {
+       this.facet = facet;
+       this.facetNodeNameConfiguration = facetNodeNameConfiguration;
+        
+       if(facetNodeNameConfiguration == null) {
+           this.displayName = facet;
+       } else {
+           if(facetNodeNameConfiguration.indexOf("$") == -1) {
+               this.displayName = facetNodeNameConfiguration;
+               return;
+           }
+           
+           this.displayName = facetNodeNameConfiguration.substring(0, facetNodeNameConfiguration.indexOf("$"));
+           String jsonString = facetNodeNameConfiguration.substring(facetNodeNameConfiguration.indexOf("$")+1);
+           
+           if("".equals(jsonString)) {
+               throw new IllegalArgumentException("Not allowed to end the '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' with a '$'");
+           }
+           
+           try {
+               JSONObject jsonObject = JSONObject.fromObject( jsonString );  
+               Object sortbyObj = jsonObject.get("sortby");
+               if(sortbyObj != null && !(sortbyObj instanceof String)) {
+                   throw new IllegalArgumentException("'sortby' most be of type String if configured: not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'");
+               }
+               sortby = (String)sortbyObj;
+               
+               Object sortorderObj = jsonObject.get("sortorder");
+               if(sortorderObj!= null && !(sortorderObj instanceof String)) {
+                   throw new IllegalArgumentException("'sortorder' most be of type String if configured: not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'");
+               }
+               sortorder = (String)sortorderObj;
+               
+               Object newLimit = jsonObject.get("limit");
+               if(newLimit != null) {
+                   if(!(newLimit instanceof Integer)) {
+                       throw new IllegalArgumentException("'limit' most be of type Integer if configured: not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'");
+                   }
+                   if((Integer)newLimit < 0 ) {
+                       throw new IllegalArgumentException("'limit' can not be a negative number: not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'");
+                   }
+                   this.limit = (Integer)newLimit;
+               }
+               
+               Object afterObj = jsonObject.get("after");
+               if(afterObj != null && afterObj instanceof String) {
+                   this.visible = false;
+                   this.afterFacet = (String)afterObj;
+               }
+               
+               Object hideObj = jsonObject.get("hide");
+               if(hideObj != null) {
+                   this.hideFacet = new HashSet<String>();
+                   if(hideObj instanceof String) {
+                       this.hideFacet.add((String)hideObj);
+                   } else if(hideObj instanceof List) {
+                       for(Object hide : (List)hideObj) {
+                           if(hide instanceof String) {
+                               this.hideFacet.add((String)hide);
+                           } else {
+                               throw new IllegalArgumentException("Not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'. Only String and a List of Strings is supported");
+                           }
+                       }
+                   } else {
+                       throw new IllegalArgumentException("Not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'. Only String and a List of Strings is supported");
+                   }
+               }
+               comparator = AbstractFacetNavigationProvider.getComparator(sortby, sortorder);
+               
+           } catch (JSONException e) {
+               throw new IllegalArgumentException("Not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'", e);
+           }
+       }
+    }
+
     @Override
     protected Object clone() {
         try {
@@ -55,60 +149,4 @@ public class FacetNodeView implements Cloneable {
 
     }
 
-
-    public FacetNodeView(String facetNodeNameConfiguration) throws IllegalArgumentException{
-        if(facetNodeNameConfiguration == null) {
-            throw new IllegalArgumentException("the facetNodeNameConfiguration is not allowed to be null");
-        }
-        
-        if(facetNodeNameConfiguration.indexOf("$") == -1) {
-            this.facetNodeName = facetNodeNameConfiguration;
-            return;
-        }
-        
-        this.facetNodeName = facetNodeNameConfiguration.substring(0, facetNodeNameConfiguration.indexOf("$"));
-        String jsonString = facetNodeNameConfiguration.substring(facetNodeNameConfiguration.indexOf("$")+1);
-        
-        if("".equals(jsonString)) {
-            throw new IllegalArgumentException("Not allowed to end the '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' with a '$'");
-        }
-        
-        try {
-            JSONObject jsonObject = JSONObject.fromObject( jsonString );  
-            Object sortbyObj = jsonObject.get("sortby");
-            if(sortbyObj != null && !(sortbyObj instanceof String)) {
-                throw new IllegalArgumentException("'sortby' most be of type String if configured: not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'");
-            }
-            sortby = (String)sortbyObj;
-            
-            Object sortorderObj = jsonObject.get("sortorder");
-            if(sortorderObj!= null && !(sortorderObj instanceof String)) {
-                throw new IllegalArgumentException("'sortorder' most be of type String if configured: not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'");
-            }
-            sortorder = (String)sortorderObj;
-            
-            Object newLimit = jsonObject.get("limit");
-            if(newLimit != null) {
-                if(!(newLimit instanceof Integer)) {
-                    throw new IllegalArgumentException("'limit' most be of type Integer if configured: not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'");
-                }
-                if((Integer)newLimit < 0 ) {
-                    throw new IllegalArgumentException("'limit' can not be a negative number: not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'");
-                }
-                this.limit = (Integer)newLimit;
-            }
-            
-            Object afterObj = jsonObject.get("after");
-            if(afterObj != null && afterObj instanceof String) {
-                this.visible = false;
-                this.afterFacet = (String)afterObj;
-            }
-            
-            comparator = AbstractFacetNavigationProvider.getComparator(sortby, sortorder);
-            
-        } catch (JSONException e) {
-            throw new IllegalArgumentException("Not a valid json format for '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+"' : '"+jsonString+"'", e);
-        }
-        
-    }
 }

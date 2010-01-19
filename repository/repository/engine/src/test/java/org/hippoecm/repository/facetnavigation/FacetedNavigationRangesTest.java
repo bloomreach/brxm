@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.junit.Test;
 
 
-public class FacetedNavigationRangesTest extends AbstractFacetNavigationTest {
+public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -60,8 +60,6 @@ public class FacetedNavigationRangesTest extends AbstractFacetNavigationTest {
 
         Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
 
-        FacetViewHelper.traverse(node);
-        
         assertNotNull(node.getNode("range"));
         assertNotNull(node.getNode("range/today"));
         assertNotNull(node.getNode("range/today/hippo:resultset"));

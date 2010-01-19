@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             FacetNavigationNodeId facetNavigationNodeId = (FacetNavigationNodeId) nodeId;
             List<KeyValue<String, String>> currentSearch = facetNavigationNodeId.currentSearch;
             List<FacetRange> currentRanges = facetNavigationNodeId.currentRanges;
-            String currentFacet = facetNavigationNodeId.currentFacet;
+            FacetNodeView currentFacetNodeView = facetNavigationNodeId.currentFacetNodeView;
             String[] availableFacets = facetNavigationNodeId.availableFacets;
             String docbase = facetNavigationNodeId.docbase;
             String[] ancestorAndSelfUsedCombinations = facetNavigationNodeId.ancestorAndSelfUsedCombinations;
@@ -78,9 +78,9 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
 
             ParsedFacet parsedFacet;
             try {
-                parsedFacet = new ParsedFacet(currentFacet, null, this);
+                parsedFacet = new ParsedFacet(currentFacetNodeView.facet, null, this);
             } catch (Exception e) {
-                log.warn("Malformed facet range configuration '{}'. Valid format is {}", currentFacet,
+                log.warn("Malformed facet range configuration '{}'. Valid format is {}", currentFacetNodeView.facet,
                         ParsedFacet.VALID_RANGE_EXAMPLE);
                 return state;
             }
@@ -191,7 +191,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
 
                 List<KeyValue<String, String>> usedFacetValueCombis = new ArrayList<KeyValue<String, String>>(
                         facetNavigationNodeId.usedFacetValueCombis);
-                KeyValue<String, String> facetValueCombi = new FacetKeyValue(currentFacet, entry.facetValue);
+                KeyValue<String, String> facetValueCombi = new FacetKeyValue(currentFacetNodeView.facet, entry.facetValue);
 
                 boolean stopSubNavigation = facetNavigationNodeId.stopSubNavigation;
                 if (!usedFacetValueCombis.contains(facetValueCombi)) {
@@ -213,7 +213,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                     childNodeId.currentSearch = newSearch;
                     childNodeId.currentRanges = newRanges;
                     childNodeId.count = entry.count.count;
-                    childNodeId.currentFacet = currentFacet;
+                    childNodeId.currentFacetNodeView = currentFacetNodeView;
 
                     String[] newAncestorAndSelfUsedCombinations = new String[ancestorAndSelfUsedCombinations != null ? ancestorAndSelfUsedCombinations.length + 1
                             : 1];

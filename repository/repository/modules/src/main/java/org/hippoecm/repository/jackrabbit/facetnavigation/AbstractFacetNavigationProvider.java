@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -86,11 +86,11 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         /*
          * Contains the possible translations for the facets --> facet node name
          */
-        FacetNodeView[] facetNodeViews;
+        FacetNodeViews facetNodeViews;
 
-        public FacetNodeView currentFacetNodeView;
+        FacetNodeView currentFacetNodeView;
         
-        String currentFacet;
+        //String currentFacet;
        
         // the count property of this node
         int count;
