@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -86,7 +86,9 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
 
         String[] facets = getProperty(nodeId, facetsName);
         String[] facetNodeNames = getProperty(nodeId, facetNodeNamesName);
-
+        
+       
+        
         String[] sortbys = getProperty(nodeId, facetSortBy);
         String[] sortorders = getProperty(nodeId, facetSortOrder);
         List<OrderBy> orderByList = null;
@@ -114,69 +116,26 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
             }
         }
         
-        FacetNodeView[] facetNodeViews = null;
-        if (facets != null && facets.length > 0) {
-            if(facetNodeNames != null) {
-                if(facets.length != facetNodeNames.length) {
-                    log.warn("When using multivalued property '{}', it must have equal number of values" + "as for property '{}'", FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, FacNavNodeType.HIPPOFACNAV_FACETS);
-                    return state;
+        try {
+            FacetNodeViews facetNodeViews = new FacetNodeViews(facets, facetNodeNames);
+            
+            for(FacetNodeView facetNodeView : facetNodeViews) {
+                FacetNodeViews newFacetNodeViews = facetNodeViews;
+                if(!facetNodeView.visible || facetNodeView.disabled) {
+                    // the current facet node view is not yet visible (first another facet might have to be chosen before it becomes visible)
+                    // for example, month might only be shown when year is already picked, or it is disabled at all
+                    continue;
                 }
-                // parse the facet node names to FacetNodeView objects.
                 
-                facetNodeViews = new FacetNodeView[facetNodeNames.length];
-                int i = 0;
-                for(String facetNodeName : facetNodeNames) {
-                    try {
-                        facetNodeViews[i] = new FacetNodeView(facetNodeName);
-                        i++;
-                    } catch (Exception e) {
-                        log.warn("Malformed + '"+FacNavNodeType.HIPPOFACNAV_FACETNODENAMES+ "'configuration. Valid format is" + VALID_NODENAME_EXAMPLE , 
-                                e);
-                        return state;
-                    }
-                }
-            }
-            int i = -1;
-            for(String facet : facets) {
+                newFacetNodeViews = newFacetNodeViews.getFacetNodeViews(facetNodeView);
+                
+                
                 try {
-                    i++;
-                    String configuredNodeName = null;
-                    FacetNodeView currentFacetNodeView = null;
-                    FacetNodeView[] newFacetNodeViews = facetNodeViews;
-                    if(facetNodeViews != null && facetNodeViews[i] != null  && facetNodeViews[i].facetNodeName != null &&  !"".equals(facetNodeViews[i].facetNodeName)) {
-                        configuredNodeName = facetNodeViews[i].facetNodeName;
-                        currentFacetNodeView = facetNodeViews[i];
-                        
-                        if(!currentFacetNodeView.visible) {
-                            // the current facet node view is not yet visible (first another facet might have to be chosen before it becomes visible)
-                            // for example, month might only be shown when year is already picked
-                            continue;
-                        }
-                        
-                        // check if some facet node views should be switched from invisible to visible. If so, we need to first create a copy of FacetNodeViews[] and use this modified version 
-                        boolean modified = false;
-                        List<FacetNodeView> newFacetNodeViewsList = new ArrayList<FacetNodeView>();
-                        for(FacetNodeView fnv : facetNodeViews) {
-                            if(!fnv.visible && fnv.afterFacet != null && fnv.afterFacet.equals(configuredNodeName)) {
-                                // from now on it is visible. First clone the entry before modifying it of course
-                                FacetNodeView clone = (FacetNodeView)fnv.clone();
-                                clone.visible = true;
-                                newFacetNodeViewsList.add(clone);
-                                modified = true;
-                            } else {
-                                newFacetNodeViewsList.add(fnv);
-                            }
-                        }
-                        if(modified) {
-                            // some facet node view has been switched to visible, hence, we have to change the facetNodeViews reference
-                            newFacetNodeViews = newFacetNodeViewsList.toArray(new FacetNodeView[newFacetNodeViewsList.size()]);
-                        }
-                    }
                     ParsedFacet parsedFacet;
                     try {
-                        parsedFacet = new ParsedFacet(facet, configuredNodeName, this);
+                        parsedFacet = new ParsedFacet(facetNodeView.facet, facetNodeView.displayName , this);
                     } catch (Exception e) {
-                        log.warn("Malformed facet range configuration '"+facet+"'. Valid format is "+VALID_RANGE_EXAMPLE,
+                        log.warn("Malformed facet range configuration '"+facetNodeView.facet+"'. Valid format is "+VALID_RANGE_EXAMPLE,
                                         e);
                         return state;
                     }
@@ -184,9 +143,11 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                     Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
                     FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
                     childNodeId.availableFacets = facets;
+                    
+                    // before setting facetNodeViewsA, check for 'modifiable', and if so, make a copy if needed. 
+                    
                     childNodeId.facetNodeViews = newFacetNodeViews;
-                    childNodeId.currentFacetNodeView = currentFacetNodeView;
-                    childNodeId.currentFacet = facet;
+                    childNodeId.currentFacetNodeView = facetNodeView;
                     childNodeId.docbase = docbase;
                     if(limit > -1) {
                         childNodeId.limit = limit;
@@ -196,13 +157,16 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                     state.addChildNodeEntry(childName, childNodeId);
                     
                 } catch (IllegalNameException e){
-                    log.warn("Skipping illegal name as facet : " + facet + " because : " +  e.getMessage());
+                    log.warn("Skipping illegal name as facet : " + facetNodeView.facet + " because : " +  e.getMessage());
                 } catch (NamespaceException e) {
-                    log.warn("Skipping illegal name as facet : " + facet + " because : " +  e.getMessage());
+                    log.warn("Skipping illegal name as facet : " + facetNodeView.facet + " because : " +  e.getMessage());
                 }
             }
+        } catch (IllegalArgumentException e) {
+            log.warn("Incorrect faceted navigation configuration: '{}'. Return state", e.getMessage());
+            return state;
         }
-
+        
         return state;
     }
 

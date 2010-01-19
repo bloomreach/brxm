@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.facetnavigation;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Calendar;
 
 import javax.jcr.ItemExistsException;
@@ -31,7 +29,7 @@ import javax.jcr.version.VersionException;
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.query.lucene.HippoDateTools;
 
-public abstract class AbstractFacetNavigationTest extends TestCase{
+public abstract class AbstractRangesFacetNavigationTest extends TestCase{
    
     /*
      * as we are having expectations about dates, our expectations might be wrong during the 'switch' of a day. Hence, this method returns
