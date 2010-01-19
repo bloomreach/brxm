@@ -22,6 +22,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.naming.InitialContext;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -38,8 +39,13 @@ public class JcrHippoRepository implements Repository {
     private static final Logger log = LoggerFactory.getLogger(JcrHippoRepository.class);
     
     protected String repositoryURI;
-    protected HippoRepository hippoRepository;
+    
+    protected HippoRepository hippoRepository;       // repository created via HippoRepositoryFactory
+    protected Repository jcrDelegateeRepository;     // repository created from hippo ecm jca support
+    
     protected boolean vmRepositoryUsed;
+    
+    private boolean repositoryInitialized;
     
     public JcrHippoRepository(String repositoryURI) {
         this.repositoryURI = repositoryURI;
@@ -51,6 +57,10 @@ public class JcrHippoRepository implements Repository {
     }
     
     private synchronized void initHippoRepository() throws RepositoryException {
+        if (repositoryInitialized) {
+            return;
+        }
+        
         try {
             if (log.isInfoEnabled()) {
                 log.info("Trying to get hippo repository from {}.", repositoryURI);
@@ -58,6 +68,17 @@ public class JcrHippoRepository implements Repository {
 
             if (repositoryURI == null) {
                 hippoRepository = HippoRepositoryFactory.getHippoRepository();
+            } else if (repositoryURI.startsWith("java:")) {
+                InitialContext ctx = new InitialContext();
+                Object repositoryObject = ctx.lookup(repositoryURI);
+                
+                if (repositoryObject instanceof Repository) {
+                    jcrDelegateeRepository = (Repository) repositoryObject;
+                } else if (repositoryObject instanceof HippoRepository) {
+                    hippoRepository = (HippoRepository) repositoryObject;
+                } else {
+                    throw new RepositoryException("Unknown repository object from " + repositoryURI + ": " + repositoryObject);
+                }
             } else {
                 hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryURI);
             }
@@ -67,17 +88,21 @@ public class JcrHippoRepository implements Repository {
             }
         } catch (Exception e) {
             throw new RepositoryException(e);
+        } finally {
+            repositoryInitialized = (jcrDelegateeRepository != null || hippoRepository != null);
         }
     }
     
     public String getDescriptor(String key) {
-        String descriptor = null;
+        if (jcrDelegateeRepository != null) {
+            return jcrDelegateeRepository.getDescriptor(key);
+        }
         
         if (hippoRepository != null) {
             ClassLoader currentClassloader = switchToRepositoryClassloader();
             
             try {
-                descriptor = hippoRepository.getRepository().getDescriptor(key);
+                return hippoRepository.getRepository().getDescriptor(key);
             } finally {
                 if (currentClassloader != null) {
                     Thread.currentThread().setContextClassLoader(currentClassloader);
@@ -85,17 +110,19 @@ public class JcrHippoRepository implements Repository {
             }
         }
         
-        return descriptor;
+        return null;
     }
 
     public String[] getDescriptorKeys() {
-        String [] descriptorKeys = {};
+        if (jcrDelegateeRepository != null) {
+            return jcrDelegateeRepository.getDescriptorKeys();
+        }
         
         if (hippoRepository != null) {
             ClassLoader currentClassloader = switchToRepositoryClassloader();
             
             try {
-                descriptorKeys = hippoRepository.getRepository().getDescriptorKeys();
+                return hippoRepository.getRepository().getDescriptorKeys();
             } finally {
                 if (currentClassloader != null) {
                     Thread.currentThread().setContextClassLoader(currentClassloader);
@@ -103,12 +130,16 @@ public class JcrHippoRepository implements Repository {
             }
         }
         
-        return descriptorKeys;
+        return new String[0];
     }
 
     public Session login() throws LoginException, RepositoryException {
-        if (hippoRepository == null) {
+        if (!repositoryInitialized) {
             initHippoRepository();
+        }
+        
+        if (jcrDelegateeRepository != null) {
+            return jcrDelegateeRepository.login();
         }
         
         ClassLoader currentClassloader = switchToRepositoryClassloader();
@@ -123,8 +154,12 @@ public class JcrHippoRepository implements Repository {
     }
 
     public Session login(Credentials credentials) throws LoginException, RepositoryException {
-        if (hippoRepository == null) {
+        if (!repositoryInitialized) {
             initHippoRepository();
+        }
+        
+        if (jcrDelegateeRepository != null) {
+            return jcrDelegateeRepository.login(credentials);
         }
         
         ClassLoader currentClassloader = switchToRepositoryClassloader();
@@ -139,11 +174,27 @@ public class JcrHippoRepository implements Repository {
     }
 
     public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
+        if (!repositoryInitialized) {
+            initHippoRepository();
+        }
+        
+        if (jcrDelegateeRepository != null) {
+            return jcrDelegateeRepository.login(workspaceName);
+        }
+        
         return login();
     }
 
     public Session login(Credentials credentials, String workspaceName) throws LoginException, NoSuchWorkspaceException,
             RepositoryException {
+        if (!repositoryInitialized) {
+            initHippoRepository();
+        }
+        
+        if (jcrDelegateeRepository != null) {
+            return jcrDelegateeRepository.login(credentials, workspaceName);
+        }
+        
         return login(credentials);
     }
     
