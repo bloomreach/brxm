@@ -66,8 +66,8 @@
             <sv:value>demosite:brand</sv:value>
         </sv:property>
         <sv:property sv:name="hippofacnav:facetnodenames" sv:type="String">
-            <sv:value>index</sv:value>
-            <sv:value>demosite:brand${after:'index', remove:'index'}</sv:value>
+            <sv:value>index${hide:'index'}</sv:value>
+            <sv:value>brand${after:'index'}</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="faceted navigation">
@@ -105,7 +105,7 @@
                 {name:'2001 - 2003', resolution:'year', begin:-9, end:-6}, 
                 {name:'1998 - 2000',resolution:'year', begin:-12, end:-9}, 
                 {name:'1995 - 1997', resolution:'year', begin:-15, end:-12}, 
-                {name:'untill 1994', resolution:'year', end:-15}
+                {name:'until 1994', resolution:'year', end:-15}
                 ]</sv:value>
             <sv:value>demosite:mileage$[
                 {name:'&lt; 20.000 km', resolution:'long', begin:0, end:20000},
