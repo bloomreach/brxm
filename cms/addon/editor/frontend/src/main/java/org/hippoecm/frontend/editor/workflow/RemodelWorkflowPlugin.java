@@ -79,12 +79,13 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin<Namespace
                     javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
                     Map<String, Serializable> hints = workflow.hints();
                     String prefix = (String) hints.get("prefix");
+                    log.info("remodelling namespace " + prefix);
                     String cnd = new CndSerializer(session, prefix).getOutput();
+                    log.debug("new cnd:\n" + cnd);
                     Map<String,List<Change>> cargo = makeCargo(session, prefix);
                     session.save();
                     session.refresh(false);
 
-                    log.info("remodelling namespace " + prefix);
 
                     // log out; the session model will log in again after the updateModel workflow call
                     // Sessions cache path resolver information, which is incorrect after remapping the prefix.
@@ -93,7 +94,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin<Namespace
 
                     return null;
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    log.error("Failed updateModel workflow", ex);
                     return ex.getClass().getName() + ": " + ex.getMessage();
                 }
             }
@@ -121,6 +122,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin<Namespace
         for (NodeIterator nodeTypeIter = templateNamespace.getNodes(); nodeTypeIter.hasNext();) {
             Node nodeTypeNode = nodeTypeIter.nextNode();
             List<Change> changeList = new LinkedList<Change>();
+            log.info("remodelling rules nodetype " + prefix + ":" + nodeTypeNode.getName());
             changes.put(prefix + ":" + nodeTypeNode.getName(), changeList);
 
             Node draftNodeType = null;
@@ -186,16 +188,19 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin<Namespace
                         if (draftItem.hasProperty(HippoNodeType.HIPPO_MANDATORY) && draftItem.getProperty(HippoNodeType.HIPPO_MANDATORY).getBoolean()) {
                             String newPath = draftItem.getProperty(HippoNodeType.HIPPO_PATH).getString();
                             changeList.add(new Change(ChangeType.ADDITION, draftItem.getProperty(HippoNodeType.HIPPO_PATH).getString(), prototype+"/"+newPath));
+                            log.info("remodelling rule add " + draftItem.getProperty(HippoNodeType.HIPPO_PATH).getString());
                         }
                     } else {
                         String newPath = draftItem.getProperty(HippoNodeType.HIPPO_PATH).getString();
                         String oldPath = currentItem.getProperty(HippoNodeType.HIPPO_PATH).getString();
                         if (!newPath.equals(oldPath)) {
                             changeList.add(new Change(ChangeType.RENAMED, newPath, oldPath));
+                            log.info("remodelling rule renamed " + oldPath +" to " + newPath);
                         }
                         if (draftItem.hasProperty(HippoNodeType.HIPPO_MANDATORY) && draftItem.getProperty(HippoNodeType.HIPPO_MANDATORY).getBoolean() &&
                             !(currentItem.hasProperty(HippoNodeType.HIPPO_MANDATORY) && currentItem.getProperty(HippoNodeType.HIPPO_MANDATORY).getBoolean())) {
                             // field existed, but was not mandatory in current definition
+                            log.info("remodelling rule add " + newPath);
                             changeList.add(new Change(ChangeType.ADDITION, newPath, prototype+"/"+newPath));
                         }
                     }
@@ -204,6 +209,7 @@ public class RemodelWorkflowPlugin extends CompatibilityWorkflowPlugin<Namespace
                     Node draftItem = draftDefinition.get(def.getKey());
                     if (draftItem == null) {
                         // field has been removed in draft definition
+                        log.info("remodelling rule drop " + def.getValue().getProperty(HippoNodeType.HIPPO_PATH).getString());
                         changeList.add(new Change(ChangeType.DROPPED, def.getValue().getProperty(HippoNodeType.HIPPO_PATH).getString(), null));
                     }
                 }
