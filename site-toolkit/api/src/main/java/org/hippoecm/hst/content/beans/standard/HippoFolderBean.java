@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.beans.standard;
 
 import java.util.List;
 
+
 /**
  * This is a base interface for all beans that represent a folder should implement. When developers implement their own bean which
  * does not extend the standard HippoFolder bean, they should implement this interface. 
@@ -43,12 +44,14 @@ public interface HippoFolderBean extends HippoBean{
     int getDocumentSize();
     
     /**
+     * <b>note</b> when only a subset of the documents is needed, and the total number is large, better use {@link #getDocumentIterator(Class)} as this is a lazy proxied iterator
      * @return the list of <code>HippoDocumentBean</code> below this <code>HippoFolderBean</code> and an empty list if no documents present
      */
     List<HippoDocumentBean> getDocuments();
     
     /**
-     * Returns a view of the portion of the list of HippoDocumentBean between the specified <code>from</code>, inclusive, and <code>to<code>, exclusive. (If from and to are equal, the returned list is empty.) 
+     * Returns a view of the portion of the list of HippoDocumentBean between the specified <code>from</code>, inclusive, and <code>to<code>, exclusive. (If from and to are equal, the returned list is empty.)
+     * <b>note</b> when only a subset of the documents is needed, and the total number is large, better use {@link #getDocumentIterator(Class)} as this is a lazy proxied iterator 
      * @param from (inclusive)
      * @param to (exclusive)
      * @return the sublist of <code>HippoDocumentBean</code> below this <code>HippoFolderBean</code> and an empty list when original list is empty or invalid range
@@ -56,7 +59,8 @@ public interface HippoFolderBean extends HippoBean{
     List<HippoDocumentBean> getDocuments(int from, int to);
     
     /**
-     * Returns a view of the portion of the list of HippoDocumentBean between the specified <code>from</code>, inclusive, and <code>to<code>, exclusive. (If from and to are equal, the returned list is empty.) 
+     * Returns a view of the portion of the list of HippoDocumentBean between the specified <code>from</code>, inclusive, and <code>to<code>, exclusive. (If from and to are equal, the returned list is empty.)
+     * <b>note</b> when only a subset of unsorted documents is needed, and the total number is large, better use {@link #getDocumentIterator(Class)} as this is a lazy proxied iterator 
      * @param from (inclusive)
      * @param to (exclusive)
      * @param sorted boolean whether list to get sublist from needs to be sorted
@@ -66,6 +70,7 @@ public interface HippoFolderBean extends HippoBean{
     
     /**
      * 
+     * <b>note</b> when only a subset of unsorted documents is needed, and the total number is large, better use {@link #getDocumentIterator(Class)} as this is a lazy proxied iterator
      * @param sorted
      * @return the (if (sorted) sorted) list of <code>HippoDocumentBean</code> below this <code>HippoFolderBean</code> and an empty list if no documents present
      */
@@ -73,10 +78,21 @@ public interface HippoFolderBean extends HippoBean{
     
     /**
      * Facility method to get all documents directly below this folder that result in a HippoBean of class or subclass clazz. 
-     * @param <T> Any Object that implements a HippoBean
-     * @param beanMappingClass a class implementing <code>{@link HippoBean}<code>. This functions as a filter
-     * @return the list of <code><T></code> where T must implement HippoBean below this <code>HippoFolderBean</code> and an empty list if no documents pass the filter
+     * <b>note</b> when only a subset of the documents is needed, and the total number is large, better use {@link #getDocumentIterator(Class)} as this is a lazy proxied iterator
+     * @param <T> Any Object that implements a HippoDocumentBean
+     * @param beanMappingClass a class implementing <code>{@link HippoDocumentBean}<code>. This functions as a filter
+     * @return the list documents in this folder of type <T>
      */
     <T> List<T> getDocuments(Class<T> beanMappingClass);
+    
+    /**
+     * Lazy loading iterator that fetches Documents only when asked for it. This is much more efficient then all the{@link #getDocuments()}
+     * methods (also with arguments) as they fetch <b>all</b> HippoDocumentBeans directly.
+     * 
+     * @param <T> Any Object that implements a HippoDocumentBean
+     * @param beanMappingClass a class implementing <code>{@link HippoDocumentBean}<code>. This functions as a filter
+     * @return A lazy loading iterator returning documents in this folder of type <T>
+     */
+    <T> HippoDocumentIterator<T> getDocumentIterator(Class<T> beanMappingClass);
     
 }

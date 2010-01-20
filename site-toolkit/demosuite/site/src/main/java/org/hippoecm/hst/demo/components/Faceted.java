@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.demo.components;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
@@ -22,6 +23,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
 import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -43,10 +45,18 @@ public class Faceted extends BaseHstComponent {
         
         if(currentBean instanceof HippoFacetChildNavigationBean) {
             HippoFacetChildNavigationBean facetNav = (HippoFacetChildNavigationBean)currentBean;
-            List<ProductBean> resultset = facetNav.getResultSet().getDocuments(ProductBean.class);
-            if(resultset.size() > 10) {
-                resultset = resultset.subList(0, 10);
+            
+            
+            List<ProductBean> resultset = new ArrayList<ProductBean>();
+         
+            HippoDocumentIterator<ProductBean> it = facetNav.getResultSet().getDocumentIterator(ProductBean.class);
+            int skip = 0;
+            it.skip(skip);
+            while(it.hasNext() && it.getPosition() < 10 + (skip - 1)) {
+                // the it.getPosition gets increased on it.next() call, hence above, skip - 1
+                resultset.add(it.next());
             }
+            
             request.setAttribute("resultset", resultset);
         }
         
