@@ -565,16 +565,17 @@ public class UpdaterEngine {
     }
 
     public static void migrate(Session session, Modules<UpdaterModule> modules) throws UpdaterException, RepositoryException {
-        session = org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(session);
-        ((SessionDecorator)session).postMountEnabled(false);
-        session.refresh(false);
+        Session subSession = session.impersonate(new SimpleCredentials("workflowuser", new char[] {}));
+        SessionDecorator bareSession = (SessionDecorator) org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(subSession);
+        bareSession.postMountEnabled(false);
+        subSession.refresh(false);
         try {
-            UpdaterEngine engine = new UpdaterEngine(session, modules);
+            UpdaterEngine engine = new UpdaterEngine(subSession, modules);
             engine.upgrade();
             engine.close();
-            session.save();
+            subSession.save();
         } finally {
-            ((SessionDecorator)session).postMountEnabled(true);
+            bareSession.postMountEnabled(true);
         }
     }
 

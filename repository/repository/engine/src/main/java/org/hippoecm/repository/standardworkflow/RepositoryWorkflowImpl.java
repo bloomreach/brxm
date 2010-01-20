@@ -131,8 +131,8 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
                             return context.isMultiple(property);
                         }
 
-                        public Workspace getWorkspace() {
-                            return null;
+                        public Workspace getWorkspace() throws RepositoryException {
+                            return context.getWorkspace();
                         }
                     });
                 }
