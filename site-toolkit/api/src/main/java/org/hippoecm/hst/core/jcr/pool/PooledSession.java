@@ -51,4 +51,14 @@ public interface PooledSession extends Session {
      */
     long lastRefreshed();
     
+    /**
+     * Gets the user ID that was used to acquire this session. This method is free to return an
+     * "anonymous user id" or <code>null</code> if the <code>Credentials</code> used to acquire this session happens not
+     * to have provided a real user ID (for example,  if instead of <code>SimpleCredentials</code> some other
+     * implementation of <code>Credentials</code> was used).
+     *
+     * @return the user id from the credentials used to acquire this session.
+     */
+    String getUserID();
+    
 }

@@ -27,7 +27,7 @@ package org.hippoecm.hst.core;
 public interface ResourceLifecycleManagement {
     
     /**
-     * Returns true if resource lifecycle management is turned on.
+     * Returns true if resource lifecycle management is turned on or forced to be turned on.
      * 
      * @return
      */
@@ -39,6 +39,20 @@ public interface ResourceLifecycleManagement {
      * @param active
      */
     void setActive(boolean active);
+    
+    /**
+     * Returns true if resource lifecycle management is forced to be turned on.
+     * 
+     * @return
+     */
+    boolean isAlwaysActive();
+    
+    /**
+     * Forces to turn on or off the resource lifecycle management.
+     * 
+     * @param active
+     */
+    void setAlwaysActive(boolean alwaysActive);
     
     /**
      * Registers a disposable resource.

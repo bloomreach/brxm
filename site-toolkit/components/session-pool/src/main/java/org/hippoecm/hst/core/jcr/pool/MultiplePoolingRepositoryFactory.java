@@ -97,21 +97,26 @@ public class MultiplePoolingRepositoryFactory implements ObjectFactory {
     
     static Logger logger = LoggerFactory.getLogger(MultiplePoolingRepositoryFactory.class);
     
-    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment)
-            throws Exception {
-
-        Reference ref = (Reference) obj;
+    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
+        return getObjectInstance(obj);
+    }
+    
+    public MultipleRepository getObjectInstance(Object obj) throws Exception {
+        Map<String, String []> configMap = null;
         
-        String separatorChars = ",";
-        RefAddr separatorCharsRefAddr = ref.get("separatorChars");
-        if (separatorCharsRefAddr != null) {
-            String value = (String) separatorCharsRefAddr.getContent();
-            if (value != null && !"".equals(value)) {
-                separatorChars = value.trim();
-            }
+        if (obj instanceof Reference) {
+            configMap = getConfigurationMap((Reference) obj);
+        } else if (obj instanceof Map) {
+            configMap = (Map<String, String []>) obj;
+        } else {
+            throw new IllegalArgumentException("Invalid argument: " + obj);
         }
         
-        Map<String, String []> configMap = getConfigurationMap(ref, separatorChars);
+        return getObjectInstanceByConfigMap(configMap);
+    }
+    
+    public MultipleRepository getObjectInstanceByConfigMap(Map<String, String []> configMap) throws Exception {
+
         int repositoryCount = 0;
         
         try {
@@ -216,8 +221,18 @@ public class MultiplePoolingRepositoryFactory implements ObjectFactory {
         return multipleRepository;
     }
     
-    private Map<String, String []> getConfigurationMap(Reference ref, String separatorChars) {
+    private Map<String, String []> getConfigurationMap(Reference ref) {
         Map<String, String []> configMap = new HashMap<String, String[]>();
+        
+        String separatorChars = ",";
+        RefAddr separatorCharsRefAddr = ref.get("separatorChars");
+        if (separatorCharsRefAddr != null) {
+            String value = (String) separatorCharsRefAddr.getContent();
+            if (value != null && !"".equals(value)) {
+                separatorChars = value.trim();
+            }
+        }
+        
         Enumeration addrs = ref.getAll();
         
         while (addrs.hasMoreElements()) {

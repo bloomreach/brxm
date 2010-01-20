@@ -16,7 +16,9 @@
 package org.hippoecm.hst.core.jcr.pool;
 
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -79,19 +81,31 @@ import javax.naming.spi.ObjectFactory;
  * </pre></code>
  */
 public class BasicPoolingRepositoryFactory implements ObjectFactory {
-
-    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment)
-            throws Exception {
+    
+    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
+        return getObjectInstance(obj);
+    }
+    
+    public PoolingRepository getObjectInstance(Object obj) throws Exception {
+        Map<String, String> configMap = null;
         
+        if (obj instanceof Reference) {
+            configMap = getConfigurationMap((Reference) obj);
+        } else if (obj instanceof Map) {
+            configMap = (Map<String, String>) obj;
+        } else {
+            throw new IllegalArgumentException("Invalid argument: " + obj);
+        }
+        
+        return getObjectInstanceByConfigMap(configMap);
+    }
+    
+    public PoolingRepository getObjectInstanceByConfigMap(Map<String, String> configMap) throws Exception {
         BasicPoolingRepository poolingRepository = new BasicPoolingRepository();
         
-        Reference ref = (Reference) obj;
-        Enumeration addrs = ref.getAll();
-        
-        while (addrs.hasMoreElements()) {
-            RefAddr addr = (RefAddr) addrs.nextElement();
-            String type = addr.getType();
-            String value = (String) addr.getContent();
+        for (Map.Entry<String, String> entry : configMap.entrySet()) {
+            String type = entry.getKey();
+            String value = entry.getValue();
             
             if (type.equals("repositoryProviderClassName")) {
                 poolingRepository.setRepositoryProviderClassName(value);
@@ -132,5 +146,22 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
         
         return poolingRepository;
     }
-
+    
+    private Map<String, String> getConfigurationMap(Reference ref) {
+        Map<String, String> configMap = new HashMap<String, String>();
+        
+        if (ref != null) {
+            Enumeration<RefAddr> addrs = ref.getAll();
+            
+            while (addrs.hasMoreElements()) {
+                RefAddr addr = (RefAddr) addrs.nextElement();
+                String type = addr.getType();
+                String value = (String) addr.getContent();
+                configMap.put(type, value);
+            }
+        }
+        
+        return configMap;
+    }
+    
 }

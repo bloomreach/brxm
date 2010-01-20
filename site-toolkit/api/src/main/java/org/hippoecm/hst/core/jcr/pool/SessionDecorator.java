@@ -37,4 +37,14 @@ public interface SessionDecorator
      */
     Session decorate(Session session);
     
+    /**
+     * Decorates the session and returns another decorated session
+     * with the user ID used to acquire the session
+     * 
+     * @param session
+     * @param userID
+     * @return
+     */
+    Session decorate(Session session, String userID);
+    
 }

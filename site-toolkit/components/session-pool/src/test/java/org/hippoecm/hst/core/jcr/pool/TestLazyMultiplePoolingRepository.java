@@ -1,0 +1,226 @@
+/*
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.hst.core.jcr.pool;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+import javax.jcr.Credentials;
+import javax.jcr.Repository;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.hippoecm.hst.core.ResourceLifecycleManagement;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class TestLazyMultiplePoolingRepository {
+    
+    static Logger log = LoggerFactory.getLogger(TestLazyMultiplePoolingRepository.class);
+    
+    private Map<String, String> basicPoolConfigMap = new HashMap<String, String>();
+    private SimpleCredentials defaultCreds = new SimpleCredentials("admin@onehippo.org", "admin".toCharArray());
+    private SimpleCredentials wikiCreds = new SimpleCredentials("admin@wiki.onehippo.org", "admin".toCharArray());
+    private MultipleRepository multipleRepository;
+    
+    @Before
+    public void setUp() {
+        basicPoolConfigMap.put("repositoryAddress", "");
+        basicPoolConfigMap.put("maxActive", "4");
+        basicPoolConfigMap.put("maxIdle", "2");
+        basicPoolConfigMap.put("minIdle", "0");
+        basicPoolConfigMap.put("initialSize", "0");
+        basicPoolConfigMap.put("maxWait", "10000");
+        basicPoolConfigMap.put("testOnBorrow", "true");
+        basicPoolConfigMap.put("testOnReturn", "false");
+        basicPoolConfigMap.put("testWhileIdle", "false");
+        basicPoolConfigMap.put("timeBetweenEvictionRunsMillis", "60000");
+        basicPoolConfigMap.put("numTestsPerEvictionRun", "1");
+        basicPoolConfigMap.put("minEvictableIdleTimeMillis", "60000");
+        basicPoolConfigMap.put("refreshOnPassivate", "true");
+        
+        multipleRepository = new LazyMultipleRepositoryImpl(defaultCreds, basicPoolConfigMap);
+        assertEquals(0, multipleRepository.getRepositoryMap().size());
+    }
+    
+    @Test
+    public void testLazyMultiplePoolingRepository() throws Exception {
+        assertNull(multipleRepository.getRepositoryByCredentials(defaultCreds));
+        Session session = multipleRepository.login(defaultCreds);
+        assertNotNull(session);
+        assertEquals(defaultCreds.getUserID(), session.getUserID());
+        assertEquals(1, multipleRepository.getRepositoryMap().size());
+        Repository defaultRepo = multipleRepository.getRepositoryByCredentials(defaultCreds);
+        assertNotNull(defaultRepo);
+        assertPoolProperties(basicPoolConfigMap, defaultRepo);
+        session.logout();
+        
+        assertNull(multipleRepository.getRepositoryByCredentials(wikiCreds));
+        session = multipleRepository.login(wikiCreds);
+        assertNotNull(session);
+        assertEquals(wikiCreds.getUserID(), session.getUserID());
+        assertEquals(2, multipleRepository.getRepositoryMap().size());
+        Repository wikiRepo = multipleRepository.getRepositoryByCredentials(wikiCreds);
+        assertNotNull(wikiRepo);
+        assertPoolProperties(basicPoolConfigMap, wikiRepo);
+        session.logout();
+    }
+    
+    @Test
+    public void testSessionLifeCycleManagementPerThread() throws Exception {
+        final Repository repository = multipleRepository;
+        
+        ResourceLifecycleManagement [] rlms = multipleRepository.getResourceLifecycleManagements();
+        assertNotNull(rlms);
+        assertEquals(1, rlms.length);
+        
+        Session session = multipleRepository.login(defaultCreds);
+        assertNotNull(session);
+        session.logout();
+        session = multipleRepository.login(wikiCreds);
+        assertNotNull(session);
+        session.logout();
+        
+        rlms = multipleRepository.getResourceLifecycleManagements();
+        assertNotNull(rlms);
+        assertEquals(1, rlms.length);
+        
+        BasicPoolingRepository defaultRepository = (BasicPoolingRepository) multipleRepository.getRepositoryByCredentials(defaultCreds);
+        BasicPoolingRepository wikiRepository = (BasicPoolingRepository) multipleRepository.getRepositoryByCredentials(wikiCreds);
+        
+        int jobCount = 40;
+        int workerCount = 8;
+        
+        LinkedList<Runnable> jobQueue = new LinkedList<Runnable>();
+        
+        for (int i = 0; i < jobCount; i++) {
+            jobQueue.add(new UncautiousJob(repository, (i % 2 == 0 ? defaultCreds : wikiCreds)));
+        }
+        
+        assertTrue("Active session count is not zero.", 0 == defaultRepository.getNumActive());
+        assertTrue("Active session count is not zero.", 0 == wikiRepository.getNumActive());
+
+        Thread [] workers = new Thread[workerCount];
+
+        for (int i = 0; i < workerCount; i++) {
+            workers[i] = new Worker(jobQueue);
+        }
+
+        for (Thread worker : workers) {
+            worker.start();
+        }
+        
+        for (Thread worker : workers) {
+            worker.join();
+        }
+        
+        assertTrue("The job queue is not empty.", jobQueue.isEmpty());
+        assertEquals("Active session count is not zero.", 0, defaultRepository.getNumActive());
+        assertEquals("Active session count is not zero.", 0, wikiRepository.getNumActive());
+    }
+    
+    @Ignore
+    private class Worker extends Thread {
+        
+        private LinkedList<Runnable> jobQueue;
+        
+        public Worker(LinkedList<Runnable> jobQueue) {
+            this.jobQueue = jobQueue;
+        }
+        
+        public void run() {
+            // Container will invoke this (InitializationValve) initial step:
+            ResourceLifecycleManagement [] rlms = multipleRepository.getResourceLifecycleManagements();
+            for (ResourceLifecycleManagement rlm : rlms) {
+                rlm.setActive(true);
+            }
+
+            while (true) {
+                Runnable job = null;
+                
+                synchronized (this.jobQueue) {
+                    try {
+                        job = this.jobQueue.removeFirst();
+                    } catch (NoSuchElementException e) {
+                        // job queue is empty, so stop here.
+                        break;
+                    }
+                }
+                    
+                try {
+                    job.run();
+                } finally {
+                    // Container will invoke this (CleanUpValve) clean up step:
+                    for (ResourceLifecycleManagement rlm : rlms) {
+                        try {
+                            rlm.disposeAllResources();
+                        } catch (Exception e) {
+                            log.error("Failed to disposeAll: " + Thread.currentThread() + ", " + rlm + ", " + rlms, e);
+                        }
+                    }
+                }
+            }
+        }        
+    }
+
+    @Ignore
+    private class UncautiousJob implements Runnable {
+
+        private Repository repository;
+        private Credentials credentials;
+
+        public UncautiousJob(Repository repository, Credentials credentials) {
+            this.repository = repository;
+            this.credentials = credentials;
+        }
+
+        public void run() {
+            try {
+                Session session = this.repository.login(this.credentials);
+                // forgot to invoke logout() to return the session to the pool by invoking the following:
+                //session.logout();
+            } catch (Exception ignore) {
+            }
+        }
+    }
+
+    private void assertPoolProperties(Map<String, String> expectedPropMap, Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        for (Map.Entry<String, String> entry : expectedPropMap.entrySet()) {
+            String propName = entry.getKey();
+            String propValue = entry.getValue();
+            Object beanPropValue = PropertyUtils.getProperty(bean, entry.getKey());
+            assertNotNull("Cannot find a property from the bean: " + bean + ", " + propName, beanPropValue);
+            
+            if (beanPropValue instanceof char []) {
+                assertEquals("The property has a different value: " + propName, propValue, new String((char []) beanPropValue));
+            } else {
+                assertEquals("The property has a different value: " + propName, propValue, beanPropValue.toString());
+            }
+        }
+    }
+}

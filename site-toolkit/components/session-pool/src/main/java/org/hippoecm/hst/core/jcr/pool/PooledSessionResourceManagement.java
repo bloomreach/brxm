@@ -27,10 +27,11 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
     
     private ThreadLocal<Boolean> tlActiveState = new ThreadLocal<Boolean>();
     private ThreadLocal<Set<Session>> tlPooledSessions = new ThreadLocal<Set<Session>>();
+    private boolean alwaysActive;
 
     public boolean isActive() {
         Boolean activeState = tlActiveState.get();
-        return (activeState != null && activeState.booleanValue());
+        return (alwaysActive || (activeState != null && activeState.booleanValue()));
     }
     
     public void setActive(boolean active) {
@@ -40,6 +41,14 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
             activeState = new Boolean(active);
             tlActiveState.set(activeState);
         }
+    }
+    
+    public boolean isAlwaysActive() {
+        return alwaysActive;
+    }
+    
+    public void setAlwaysActive(boolean alwaysActive) {
+        this.alwaysActive = alwaysActive;
     }
 
     public void registerResource(Object session) {

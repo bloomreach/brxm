@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.jcr.pool;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class MultipleRepositoryImpl implements MultipleRepository {
 
     private static ThreadLocal<Repository> tlCurrentRepository = new ThreadLocal<Repository>();
     
-    protected Map<CredentialsWrapper, Repository> repositoryMap = new HashMap<CredentialsWrapper, Repository>();
+    protected Map<CredentialsWrapper, Repository> repositoryMap = Collections.synchronizedMap(new HashMap<CredentialsWrapper, Repository>());
     protected ResourceLifecycleManagement [] resourceLifecycleManagements;
     protected CredentialsWrapper defaultCredentialsWrapper;
     
@@ -46,10 +47,12 @@ public class MultipleRepositoryImpl implements MultipleRepository {
     public MultipleRepositoryImpl(Map<Credentials, Repository> repoMap, Credentials defaultCredentials) {
         this.defaultCredentialsWrapper = new CredentialsWrapper(defaultCredentials);
 
-        for (Map.Entry<Credentials, Repository> entry : repoMap.entrySet()) {
-            Credentials cred = entry.getKey();
-            Repository repo = entry.getValue();
-            addRepository(cred, repo);
+        if (repoMap != null) {
+            for (Map.Entry<Credentials, Repository> entry : repoMap.entrySet()) {
+                Credentials cred = entry.getKey();
+                Repository repo = entry.getValue();
+                addRepository(cred, repo);
+            }
         }
 
         refreshResourceLifecycleManagements();
@@ -60,24 +63,26 @@ public class MultipleRepositoryImpl implements MultipleRepository {
             ((MultipleRepositoryAware) repository).setMultipleRepository(this);
         }
         
-        this.repositoryMap.put(new CredentialsWrapper(credentials), repository);
-
+        repositoryMap.put(new CredentialsWrapper(credentials), repository);
+        
         refreshResourceLifecycleManagements();
     }
     
     public boolean containsRepositoryByCredentials(Credentials credentials) {
-        return this.repositoryMap.containsKey(new CredentialsWrapper(credentials));
+        return repositoryMap.containsKey(new CredentialsWrapper(credentials));
     }
     
     public Repository getRepositoryByCredentials(Credentials credentials) {
-        return this.repositoryMap.get(new CredentialsWrapper(credentials));
+        return repositoryMap.get(new CredentialsWrapper(credentials));
     }
     
     public Map<Credentials, Repository> getRepositoryMap() {
         Map<Credentials, Repository> repoMap = new HashMap<Credentials, Repository>();
         
-        for (Map.Entry<CredentialsWrapper, Repository> entry : this.repositoryMap.entrySet()) {
-            repoMap.put(entry.getKey().getCredentials(), entry.getValue());
+        synchronized (repositoryMap) {
+            for (Map.Entry<CredentialsWrapper, Repository> entry : repositoryMap.entrySet()) {
+                repoMap.put(entry.getKey().getCredentials(), entry.getValue());
+            }
         }
         
         return repoMap;
@@ -114,7 +119,7 @@ public class MultipleRepositoryImpl implements MultipleRepository {
     }
     
     protected Session login(CredentialsWrapper credentialsWrapper) throws LoginException, RepositoryException {
-        Repository repository = this.repositoryMap.get(credentialsWrapper);
+        Repository repository = repositoryMap.get(credentialsWrapper);
         
         if (repository == null) {
             throw new RepositoryException("The repository is not available."); 
@@ -145,25 +150,29 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         tlCurrentRepository.set(repository);
     }
 
-    private void refreshResourceLifecycleManagements() {
+    protected void refreshResourceLifecycleManagements() {
         Set<ResourceLifecycleManagement> resourceLifecycleManagementSet = new HashSet<ResourceLifecycleManagement>();
         
-        for (Repository repo : this.repositoryMap.values()) {
-            if (repo instanceof PoolingRepository) {
-                ResourceLifecycleManagement rlm = ((PoolingRepository) repo).getResourceLifecycleManagement();
-                resourceLifecycleManagementSet.add(rlm);
+        synchronized (repositoryMap) {
+            for (Repository repo : repositoryMap.values()) {
+                if (repo instanceof PoolingRepository) {
+                    ResourceLifecycleManagement rlm = ((PoolingRepository) repo).getResourceLifecycleManagement();
+                    resourceLifecycleManagementSet.add(rlm);
+                }
             }
         }
         
-        this.resourceLifecycleManagements = new ResourceLifecycleManagement[resourceLifecycleManagementSet.size()];
+        ResourceLifecycleManagement [] tempResourceLifecycleManagements = new ResourceLifecycleManagement[resourceLifecycleManagementSet.size()];
         int index = 0;
         
         for (ResourceLifecycleManagement rlm : resourceLifecycleManagementSet) {
-            this.resourceLifecycleManagements[index++] = rlm;
+            tempResourceLifecycleManagements[index++] = rlm;
         }
+        
+        this.resourceLifecycleManagements = tempResourceLifecycleManagements; 
     }
     
-    private boolean equalsCredentials(Credentials credentials1, Credentials credentials2) {
+    protected boolean equalsCredentials(Credentials credentials1, Credentials credentials2) {
         if (credentials1 instanceof SimpleCredentials && credentials2 instanceof SimpleCredentials) {
             return (((SimpleCredentials) credentials1).getUserID().equals(((SimpleCredentials) credentials2).getUserID()));
         } else if (credentials1 != null) {
@@ -173,7 +182,7 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         return false;
     }
 
-    private class CredentialsWrapper implements Serializable {
+    protected class CredentialsWrapper implements Serializable {
         
         private static final long serialVersionUID = 1L;
         
@@ -186,9 +195,9 @@ public class MultipleRepositoryImpl implements MultipleRepository {
             super();
             this.credentials = credentials;
             
-            if (this.credentials instanceof SimpleCredentials) {
+            if (credentials instanceof SimpleCredentials) {
                 SimpleCredentials sc = (SimpleCredentials) this.credentials;
-                this.userID = sc.getUserID();
+                userID = sc.getUserID();
                 this.password = new String(sc.getPassword());
                 this.hash = new StringBuilder(this.userID).append(':').append(this.password).toString().hashCode();
             } else {
@@ -198,6 +207,14 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         
         public Credentials getCredentials() {
             return this.credentials;
+        }
+        
+        public String getUserID() {
+            return userID;
+        }
+        
+        public String getPassword() {
+            return password;
         }
         
         @Override

@@ -32,9 +32,13 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
     }
 
     public final Session decorate(Session session) {
+        return decorate(session, null);
+    }
+    
+    public final Session decorate(Session session, String userID) {
         PooledSession pooledSessionProxy = null;
         ProxyFactory factory = new ProxyFactory();
-        PooledSessionInterceptor interceptor = new PooledSessionInterceptor();
+        PooledSessionInterceptor interceptor = new PooledSessionInterceptor(userID);
         
         ClassLoader sessionClassloader = session.getClass().getClassLoader();
         ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
@@ -68,7 +72,16 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
         private boolean passivated;
         private long lastRefreshed;
         private PooledSession pooledSessionProxy;
-
+        private String userID;
+        
+        public PooledSessionInterceptor() {
+            this(null);
+        }
+        
+        public PooledSessionInterceptor(String userID) {
+            this.userID = userID;
+        }
+        
         public Object intercept(Invocation invocation) throws Throwable {
             Object ret = null;
             
@@ -85,6 +98,12 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 session.logout();
             } else if ("lastRefreshed".equals(methodName)) {
                 ret = new Long(lastRefreshed);
+            } else if ("getUserID".equals(methodName)) {
+                if (userID != null) {
+                    ret = userID;
+                } else {
+                    ret = invocation.proceed();
+                }
             } else if ("refresh".equals(methodName)) {
                 ret = invocation.proceed();
                 lastRefreshed = System.currentTimeMillis();

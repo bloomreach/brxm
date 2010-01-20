@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool.PoolUtils;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
@@ -44,7 +45,8 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     private static Logger log = LoggerFactory.getLogger(BasicPoolingRepository.class);
     
     protected Repository repository;
-    protected Credentials defaultCredentials;
+    protected Credentials defaultCredentials;           // credentials provided by the configuration or the user
+    protected Credentials internalDefaultCredentials;   // credentials used for real JCR API invocations.
     protected boolean isSimpleDefaultCredentials;
     protected SessionDecorator sessionDecorator;
     
@@ -85,8 +87,17 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     }
 
     public void setDefaultCredentials(Credentials defaultCredentials) {
-        this.defaultCredentials = defaultCredentials;
-        this.isSimpleDefaultCredentials = (this.defaultCredentials != null && (this.defaultCredentials instanceof SimpleCredentials));
+        isSimpleDefaultCredentials = (defaultCredentials != null && (defaultCredentials instanceof SimpleCredentials));
+        internalDefaultCredentials = this.defaultCredentials = defaultCredentials;
+        
+        if (isSimpleDefaultCredentials) {
+            String userID = ((SimpleCredentials) defaultCredentials).getUserID();
+            String userIDOnly = StringUtils.substringBefore(userID, "@");
+            
+            if (!userID.equals(userIDOnly)) {
+                internalDefaultCredentials = new SimpleCredentials(userIDOnly, ((SimpleCredentials) defaultCredentials).getPassword());
+            }
+        }
     }
 
     public Credentials getDefaultCredentials() {
@@ -876,10 +887,10 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         }
 
         public Object makeObject() throws Exception {
-            Session session = getRepository().login(defaultCredentials);
+            Session session = getRepository().login(internalDefaultCredentials);
             
             if (session != null && sessionDecorator != null) {
-                session = sessionDecorator.decorate(session);
+                session = sessionDecorator.decorate(session, getDefaultCredentialsUserID());
             }
             
             return session;

@@ -24,6 +24,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.naming.InitialContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class JcrHippoRepository implements Repository {
                 log.info("Trying to get hippo repository from {}.", repositoryURI);
             }
 
-            if (repositoryURI == null) {
+            if (StringUtils.isEmpty(repositoryURI)) {
                 hippoRepository = HippoRepositoryFactory.getHippoRepository();
             } else if (repositoryURI.startsWith("java:")) {
                 InitialContext ctx = new InitialContext();

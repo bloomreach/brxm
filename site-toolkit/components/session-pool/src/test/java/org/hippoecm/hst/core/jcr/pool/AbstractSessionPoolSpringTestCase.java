@@ -23,12 +23,7 @@ import org.springframework.context.support.AbstractRefreshableConfigApplicationC
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * <p>
  * AbstractSessionPoolSpringTestCase
- * </p>
- * <p>
- * 
- * </p>
  * 
  * @version $Id$
  *  
