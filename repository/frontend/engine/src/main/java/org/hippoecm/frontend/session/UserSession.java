@@ -171,6 +171,9 @@ public class UserSession extends WebSession {
      */
     public void releaseJcrSession() {
         getJcrSessionModel().detach();
+        classLoader.detach();
+        workflowManager.detach();
+        facetSearchObserver = null;
     }
 
     /**
