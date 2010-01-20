@@ -801,13 +801,18 @@ public class UpdaterEngine {
                                 if (!path.equals("/")) {
                                     node = node.getNode(path.substring(1));
                                 }
-                                visitor.visit(node);
                             } catch (PathNotFoundException ex) {
                                 // deliberate ignore
+                                node = null;
                             } catch (InvalidItemStateException ex) {
                                 // deliberate ignore
-                           } catch (ItemNotFoundException ex) {
+                                node = null;
+                            } catch (ItemNotFoundException ex) {
                                 // deliberate ignore
+                                node = null;
+                            }
+                            if (node != null) {
+                                visitor.visit(node);
                             }
                         }
                     }

@@ -109,21 +109,25 @@ final public class UpdaterSession implements HippoSession {
             Value targetValue = valueFactory.createValue(targetUUID, PropertyType.REFERENCE);
             for(PropertyIterator iter = source.getReferences(); iter.hasNext(); ) {
                 Property reference = iter.nextProperty();
-                if (reference.getParent().isNodeType("mix:versionable")) {
-                    reference.getParent().checkout();
-                }
-                if (log.isDebugEnabled()) {
-                    log.debug("setting " + reference.getPath() + " from " + sourceUUID + " to " + targetUUID);
-                }
-                if(reference.getDefinition().isMultiple()) {
-                    Value[] values = reference.getValues();
-                    for(int i=0; i<values.length; i++) {
-                        if(values[i].getString().equals(sourceUUID))
-                            values[i] = targetValue;
+                try {
+                    if (reference.getParent().isNodeType("mix:versionable")) {
+                        reference.getParent().checkout();
                     }
-                    reference.setValue(values);
-                } else {
-                    reference.setValue(targetValue);
+                    if (log.isDebugEnabled()) {
+                        log.debug("setting " + reference.getPath() + " from " + sourceUUID + " to " + targetUUID);
+                    }
+                    if(reference.getDefinition().isMultiple()) {
+                        Value[] values = reference.getValues();
+                        for(int i=0; i<values.length; i++) {
+                            if(values[i].getString().equals(sourceUUID))
+                                values[i] = targetValue;
+                        }
+                        reference.setValue(values);
+                    } else {
+                        reference.setValue(targetValue);
+                    }
+                } catch (RepositoryException ex) {
+                    log.warn("failed to relink reference", ex);
                 }
             }
 
@@ -151,27 +155,31 @@ final public class UpdaterSession implements HippoSession {
             List<UpdaterProperty> properties = references.get(sourceUUID);
             if (properties != null) {
                 for (UpdaterProperty property : new ArrayList<UpdaterProperty>(properties)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("setting " + property.getPath() + " from " + sourceUUID + " to " + targetUUID);
-                    }
-                    if (property.isStrongReference()) {
-                        // For committed properties, bring their value in line with the persisted value.
-                        // Uncommitted properties receive the correct value to commit.
-                        if(property.isMultiple()) {
-                            Value[] values = property.getValues();
-                            for(int i=0; i<values.length; i++) {
-                                if(values[i].getString().equals(sourceUUID))
-                                    values[i] = targetValue;
+                    try {
+                        if (log.isDebugEnabled()) {
+                            log.debug("setting " + property.getPath() + " from " + sourceUUID + " to " + targetUUID);
+                        }
+                        if (property.isStrongReference()) {
+                            // For committed properties, bring their value in line with the persisted value.
+                            // Uncommitted properties receive the correct value to commit.
+                            if(property.isMultiple()) {
+                                Value[] values = property.getValues();
+                                for(int i=0; i<values.length; i++) {
+                                    if(values[i].getString().equals(sourceUUID))
+                                        values[i] = targetValue;
+                                }
+                                property.setValue(values);
+                                ((Property) property.origin).setValue(values);
+                            } else {
+                                property.setValue(targetValue);
+                                ((Property) property.origin).setValue(targetValue);
                             }
-                            property.setValue(values);
-                            ((Property) property.origin).setValue(values);
                         } else {
                             property.setValue(targetValue);
                             ((Property) property.origin).setValue(targetValue);
                         }
-                    } else {
-                        property.setValue(targetValue);
-                        ((Property) property.origin).setValue(targetValue);
+                    } catch (RepositoryException ex) {
+                        log.warn("failed to relink reference", ex);
                     }
                 }
                 assert (!references.containsKey(sourceUUID));

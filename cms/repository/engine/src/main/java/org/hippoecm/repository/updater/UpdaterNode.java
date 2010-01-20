@@ -211,7 +211,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         }
 
         if(UpdaterEngine.log.isDebugEnabled()) {
-            UpdaterEngine.log.debug("commit node "+getPath()+" origin "+(origin!=null?origin.getPath():"null")+(nodeTypesChanged?" type changed":"")+(nodeLocationChanged?" location changed":""));
+            UpdaterEngine.log.debug("commit node "+getPath()+" origin "+(origin!=null?origin.getPath():"null")+(origin != null&&((Node)origin).isNodeType("mix:referenceable") ? ",uuid="+((Node)origin).getUUID() : "")+(nodeTypesChanged?" type changed":"")+(nodeLocationChanged?" location changed":""));
         }
 
         if (!hollow && origin != null && origin.isNode()) {
@@ -234,7 +234,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                     origin = ((Node)parent.origin).getNode(nodeName);
                     noSameNameSiblingWorkaround = null;
                 } else {
-                     if(UpdaterEngine.log.isDebugEnabled()) {
+                    if(UpdaterEngine.log.isDebugEnabled()) {
                         UpdaterEngine.log.debug("commit create "+getPath()+" in "+((Node)parent.origin).getPath()+" (primary type "+((Node)parent.origin).getProperty("jcr:primaryType").getString()+") type "+getInternalProperty("jcr:primaryType")[0]);
                     }
                     if(!((Node)parent.origin).isCheckedOut()) {
@@ -268,13 +268,17 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             if(!origin.getParent().isCheckedOut()) {
                 origin.getParent().checkout();
             }
-            origin.getSession().move(origin.getPath(), (parent.origin.getPath().equals("/") ? "/"+name : parent.origin.getPath()+"/"+name));
-            origin = null;
-            for(NodeIterator findMoved = ((Node)parent.origin).getNodes(name); findMoved.hasNext(); ) {
-                origin = findMoved.nextNode();
-            }
-            if(origin == null) {
-                UpdaterEngine.log.error("could not find moved node in "+parent.origin.getPath()+" named "+name);
+            try {
+                origin.getSession().move(origin.getPath(), (parent.origin.getPath().equals("/") ? "/"+name : parent.origin.getPath()+"/"+name));
+                origin = null;
+                for(NodeIterator findMoved = ((Node)parent.origin).getNodes(name); findMoved.hasNext(); ) {
+                    origin = findMoved.nextNode();
+                }
+                if(origin == null) {
+                    UpdaterEngine.log.error("could not find moved node in "+parent.origin.getPath()+" named "+name);
+                }
+            } catch(ItemExistsException ex) {
+                origin = ((Node)parent.origin).getNode(name);
             }
             noSameNameSiblingWorkaround = null;
         } else {
