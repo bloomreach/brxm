@@ -232,6 +232,8 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * and #view methods.
      */
     abstract class Query {
+        public static final char  DOCBASE_FILTER_DELIMETER = '\uFFFE';
+        public static final char  FILTER_DELIMETER = '\uFFFD';
     }
 
     /**

@@ -444,6 +444,38 @@ public class FacetedNavigationSimpleTest extends TestCase {
        
 
     }
+    
+    @Test
+    public void testMultipleScopesFacetNavigation() throws RepositoryException, IOException {
+        commonStart();
+        Node testNode = session.getRootNode().getNode("test");
+        createSimpleStructure1(testNode);
+
+        createFacetNodeSingleValues(testNode);
+        
+        session.save();
+        Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+ 
+        
+        // reset the docbase to multiple docbases (comma seperated list):
+        // we only have docbase of car1 and car2
+        String docbases = new String();
+        
+        docbases = testNode.getNode("documents/cars/car1").getUUID() + "," + testNode.getNode("documents/cars/car2").getUUID();
+        
+        navigation.setProperty(HippoNodeType.HIPPO_DOCBASE, docbases);
+        
+        session.save();
+        
+        navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        
+        // we now only have car 1 and car 2 in our results
+        assertEquals(2L, navigation.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertTrue(navigation.getNode("hippo:brand/hippo:resultset").hasNode("car1"));
+        assertTrue(navigation.getNode("hippo:brand/hippo:resultset").hasNode("car2"));
+        assertFalse(navigation.getNode("hippo:brand/hippo:resultset").hasNode("car3"));
+        assertFalse(navigation.getNode("hippo:brand/hippo:resultset").hasNode("car4"));
+    }
 
     private void commonStart() throws RepositoryException {
         session.getRootNode().addNode("test");
@@ -555,6 +587,7 @@ public class FacetedNavigationSimpleTest extends TestCase {
                 "hippo:product" });
 
     }
+    
 
     private void createFacetNodeMultiValue(Node node) throws RepositoryException {
         node = node.addNode("facetnavigation");
@@ -577,4 +610,5 @@ public class FacetedNavigationSimpleTest extends TestCase {
         node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date" });
     }
 
+    
 }
