@@ -72,6 +72,32 @@ public class ParsedFacet {
             }
         }
     }
+    
+    public ParsedFacet(String namespacedFacetConfig) throws Exception {
+        //in this case, the facetNameConfig is already namespaced
+        displayFacetName = namespacedFacetConfig;
+        boolean mapped = false;
+        // jcrPropertyName is format: prefix:localname
+        this.namespacedProperty = namespacedFacetConfig;
+        if (namespacedFacetConfig.indexOf("$[") > -1) {
+            try {
+                rangeConfig = namespacedFacetConfig.substring(namespacedFacetConfig.indexOf("$[") + 1);
+                JSONArray jsonArray = JSONArray.fromObject(rangeConfig);
+                facetRanges = (List<FacetRange>) JSONArray.toCollection(jsonArray, FacetRange.class);
+                this.namespacedProperty = namespacedFacetConfig.substring(0, namespacedFacetConfig.indexOf("$["));
+                if (!mapped) {
+                    displayFacetName = this.namespacedProperty;
+                }
+            } catch (Exception e) {
+                throw new Exception("Malformed facet range configuration '" + namespacedFacetConfig + "'", e);
+            }
+        }
+        if (facetRanges != null) {
+            for (FacetRange range : facetRanges) {
+                range.setNamespacedProperty(namespacedProperty);
+            }
+        }
+    }
 
     private void validate(List<FacetRange> ranges) throws IllegalArgumentException {
         List<String> usedNames = new ArrayList<String>();
@@ -95,35 +121,7 @@ public class ParsedFacet {
         }
     }
 
-    public ParsedFacet(String facetNameConfig, String facetNodeName) throws Exception {
-        //in this case, the facetNameConfig is already namespaced
-        displayFacetName = facetNameConfig;
-        boolean mapped = false;
-        // jcrPropertyName is format: prefix:localname
-        this.namespacedProperty = facetNameConfig;
-        if (facetNodeName != null && !"".equals(facetNodeName)) {
-            displayFacetName = facetNodeName;
-            mapped = true;
-        }
-        if (facetNameConfig.indexOf("$[") > -1) {
-            try {
-                rangeConfig = facetNameConfig.substring(facetNameConfig.indexOf("$[") + 1);
-                JSONArray jsonArray = JSONArray.fromObject(rangeConfig);
-                facetRanges = (List<FacetRange>) JSONArray.toCollection(jsonArray, FacetRange.class);
-                this.namespacedProperty = facetNameConfig.substring(0, facetNameConfig.indexOf("$["));
-                if (!mapped) {
-                    displayFacetName = this.namespacedProperty;
-                }
-            } catch (Exception e) {
-                throw new Exception("Malformed facet range configuration '" + facetNameConfig + "'", e);
-            }
-        }
-        if (facetRanges != null) {
-            for (FacetRange range : facetRanges) {
-                range.setNamespacedProperty(namespacedProperty);
-            }
-        }
-    }
+    
 
     public String getDisplayFacetName() {
         return displayFacetName;
