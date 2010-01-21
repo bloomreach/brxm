@@ -83,6 +83,9 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
         private static final long serialVersionUID = 1L;
         String docbase;
         String[] availableFacets;
+        
+        String facetedFiltersString; 
+        
         /*
          * Contains the possible translations for the facets --> facet node name
          */

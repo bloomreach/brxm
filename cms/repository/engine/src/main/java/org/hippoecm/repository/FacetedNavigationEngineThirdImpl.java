@@ -79,14 +79,23 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     private final static String SVN_ID = "$Id$";
 
     class QueryImpl extends FacetedNavigationEngine.Query {
-        String xpath;
+        String query;
+        String[] scopes;
 
-        public QueryImpl(String xpath) {
-            this.xpath = xpath;
+        public QueryImpl(String query) {
+            this.query = query;
+            
+            String docbases = query;
+            if(query.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMETER) > -1) {
+                // parse the filters
+                docbases = docbases.substring(0,query.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMETER));
+            }
+            
+            scopes = docbases.split(",");
         }
 
         public String toString() {
-            return xpath;
+            return query;
         }
     }
 
@@ -186,8 +195,15 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
          * initialQuery: get the query for initialQuery. This is the hippo:docbase value. 
          */
         org.apache.lucene.search.Query initialLuceneQuery = null;
-        if (initialQuery != null && !initialQuery.xpath.equals("")) {
-            initialLuceneQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH, initialQuery.xpath));
+        if (initialQuery != null && !(initialQuery.scopes == null) && initialQuery.scopes.length > 0) {
+            if(initialQuery.scopes.length == 1) {
+                initialLuceneQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH, initialQuery.scopes[0]));
+            } else {
+                initialLuceneQuery = new BooleanQuery(false);
+                for(String scope : initialQuery.scopes) {
+                    ((BooleanQuery)initialLuceneQuery).add(new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH, scope)), Occur.SHOULD);
+                }
+            }
         }
 
         /*

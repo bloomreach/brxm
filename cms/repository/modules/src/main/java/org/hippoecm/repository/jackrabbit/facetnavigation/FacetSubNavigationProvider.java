@@ -119,6 +119,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                         }
                 }
                 childNodeId.availableFacets = availableFacets;
+                childNodeId.facetedFiltersString = facetNavigationNodeId.facetedFiltersString;
                 childNodeId.facetNodeViews = newFacetNodeViews;
                 childNodeId.currentFacetNodeView = facetNodeView;
                 childNodeId.ancestorAndSelfUsedCombinations = facetNavigationNodeId.ancestorAndSelfUsedCombinations;

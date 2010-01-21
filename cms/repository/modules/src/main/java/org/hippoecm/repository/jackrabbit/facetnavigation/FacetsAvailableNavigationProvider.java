@@ -72,6 +72,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             FacetNodeView currentFacetNodeView = facetNavigationNodeId.currentFacetNodeView;
             String[] availableFacets = facetNavigationNodeId.availableFacets;
             String docbase = facetNavigationNodeId.docbase;
+            String facetedFiltersString = facetNavigationNodeId.facetedFiltersString;
             String[] ancestorAndSelfUsedCombinations = facetNavigationNodeId.ancestorAndSelfUsedCombinations;
 
             Map<Name, String> inheritedFilter = facetNavigationNodeId.view;
@@ -103,8 +104,15 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                 facetSearchResultMap.put(parsedFacet.getNamespacedProperty(), facetSearchResult);
             }
 
+            StringBuilder initialQueryString = new StringBuilder();
+            if(docbase != null) {
+                initialQueryString.append(docbase);
+            }
+            if(facetedFiltersString != null) {
+                initialQueryString.append(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMETER).append(facetedFiltersString);
+            }
             FacetedNavigationEngine.Query initialQuery;
-            initialQuery = (docbase != null ? facetedEngine.parse(docbase) : null);
+            initialQuery = (docbase != null ? facetedEngine.parse(initialQueryString.toString()) : null);
 
             HitsRequested hitsRequested = new HitsRequested();
             hitsRequested.setResultRequested(false);
@@ -210,6 +218,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                     state.addChildNodeEntry(childName, childNodeId);
                     childNodeId.docbase = docbase;
                     childNodeId.availableFacets = availableFacets;
+                    childNodeId.facetedFiltersString = facetNavigationNodeId.facetedFiltersString;
                     childNodeId.currentSearch = newSearch;
                     childNodeId.currentRanges = newRanges;
                     childNodeId.count = entry.count.count;

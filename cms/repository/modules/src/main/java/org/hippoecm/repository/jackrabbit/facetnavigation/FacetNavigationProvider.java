@@ -29,6 +29,7 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.hippoecm.repository.FacetedFilters;
 import org.hippoecm.repository.OrderBy;
 import org.hippoecm.repository.ParsedFacet;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -51,6 +52,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
     Name facetLimit;
     Name facetSortBy;
     Name facetSortOrder;
+    Name facetFilters;
     
     @Override
     protected void initialize() throws RepositoryException {
@@ -63,6 +65,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         facetLimit = resolveName(FacNavNodeType.HIPPOFACNAV_FACETLIMIT);
         facetSortBy = resolveName(FacNavNodeType.HIPPOFACNAV_FACETSORTBY);
         facetSortOrder = resolveName(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER);
+        
+        facetFilters = resolveName(FacNavNodeType.HIPPOFACNAV_FILTERS);
         
         virtualNodeName = resolveName(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION);
         register(resolveName(FacNavNodeType.NT_FACETNAVIGATION), virtualNodeName);
@@ -87,10 +91,23 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         String[] facets = getProperty(nodeId, facetsName);
         String[] facetNodeNames = getProperty(nodeId, facetNodeNamesName);
         
-       
-        
         String[] sortbys = getProperty(nodeId, facetSortBy);
         String[] sortorders = getProperty(nodeId, facetSortOrder);
+        
+        String[] filters = getProperty(nodeId, facetFilters);
+        
+        String facetedFiltersString = null;
+        if(filters != null) {
+            try { 
+                FacetedFilters facetedFilters = new FacetedFilters(filters, this); 
+                facetedFiltersString = facetedFilters.toString();
+            } catch (IllegalArgumentException e) {
+                log.warn("Invalid filter found. Return state : {}", e.getMessage());
+                return state;
+            }
+        }
+        
+        
         List<OrderBy> orderByList = null;
         if(sortbys != null) {
 
@@ -118,7 +135,6 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         
         try {
             FacetNodeViews facetNodeViews = new FacetNodeViews(facets, facetNodeNames);
-            
             for(FacetNodeView facetNodeView : facetNodeViews) {
                 FacetNodeViews newFacetNodeViews = facetNodeViews;
                 if(!facetNodeView.visible || facetNodeView.disabled) {
@@ -128,7 +144,6 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                 }
                 
                 newFacetNodeViews = newFacetNodeViews.getFacetNodeViews(facetNodeView);
-                
                 
                 try {
                     ParsedFacet parsedFacet;
@@ -144,8 +159,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                     FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), childName);
                     childNodeId.availableFacets = facets;
                     
-                    // before setting facetNodeViewsA, check for 'modifiable', and if so, make a copy if needed. 
-                    
+                    childNodeId.facetedFiltersString  = facetedFiltersString;
                     childNodeId.facetNodeViews = newFacetNodeViews;
                     childNodeId.currentFacetNodeView = facetNodeView;
                     childNodeId.docbase = docbase;
