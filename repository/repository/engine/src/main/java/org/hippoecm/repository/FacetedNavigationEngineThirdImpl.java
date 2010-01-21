@@ -18,17 +18,13 @@ package org.hippoecm.repository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
@@ -49,7 +45,6 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
@@ -67,7 +62,6 @@ import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetRangeQuery;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
 import org.hippoecm.repository.query.lucene.FixedScoreSimilarity;
-import org.hippoecm.repository.query.lucene.HippoDateTools;
 import org.hippoecm.repository.query.lucene.InheritedFilterQuery;
 import org.hippoecm.repository.query.lucene.RangeFields;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
@@ -236,7 +230,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             searcher.setSimilarity(new FixedScoreSimilarity());
             // In principle, below, there is always one facet
             if (resultset != null) {
-                for (String facet : resultset.keySet()) {
+                for (String namespacedFacet : resultset.keySet()) {
                     /*
                      * Nodes not having this facet, still should be counted if they are a hit
                      * in the query without this facet. Therefor, first get the count query without
@@ -250,7 +244,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
                     ParsedFacet parsedFacet = null;
                     try {
-                        parsedFacet = new ParsedFacet(facet, null);
+                        parsedFacet = new ParsedFacet(namespacedFacet);
                     } catch (Exception e) {
                         log.error("Error parsing facet: ", e);
                         return new ResultImpl(0, null);
@@ -279,7 +273,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     // as the indexreader might have deleted items in its deleted bitset
                     Filter filter = new QueryWrapperFilter(searchQuery);
                     matchingDocs = filter.bits(indexReader);
-                    Map<String, Count> facetValueCountMap = resultset.get(facet);
+                    Map<String, Count> facetValueCountMap = resultset.get(namespacedFacet);
                     // this method populates the resultset for the current facet
                     populateFacetValueCountMap(propertyName, parsedFacet, facetValueCountMap, matchingDocs, indexReader);
 
