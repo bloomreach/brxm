@@ -277,8 +277,7 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
 
     public static FacetNavigationEntryComparator<FacetNavigationEntry> getComparator(String sortby, String sortorder) throws IllegalArgumentException{
         if(sortby == null) {
-            // default sorting is done on the count 
-            return DESCENDING_COUNT_COMPARATOR;
+            return null;
         }
         if(sortby.equals("facetvalue")) {
             if(sortorder == null || "ascending".equals(sortorder)) {

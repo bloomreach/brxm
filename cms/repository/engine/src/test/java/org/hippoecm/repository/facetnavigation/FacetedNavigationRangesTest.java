@@ -54,12 +54,12 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
         String[] ranges = new String[] {"hippo:date$[{name:'today', resolution:'day', begin:0, end:1}, {name:'yesterday', resolution:'day', begin:-1, end:0}]"};
         
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS,ranges);
-        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { "range" });
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { "range${hide:'range'}" });
 
         session.save();
 
         Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
-
+        
         assertNotNull(node.getNode("range"));
         assertNotNull(node.getNode("range/today"));
         assertNotNull(node.getNode("range/today/hippo:resultset"));
@@ -68,6 +68,9 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
         assertNotNull(node.getNode("range/yesterday"));
         assertNotNull(node.getNode("range/yesterday/hippo:resultset"));
         assertEquals(1L, node.getNode("range/yesterday").getProperty("hippo:count").getLong());
+        
+        // because we say:  "range${hide:'range'}" range should not be returned
+        assertFalse(node.getNode("range/yesterday").hasNode("range"));
     }
 
 
