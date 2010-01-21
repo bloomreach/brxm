@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.util;
 
+import java.lang.reflect.Method;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
@@ -49,6 +51,42 @@ public class ServletConfigUtils {
         
         if (value == null && servletContext != null) {
             value = servletContext.getInitParameter(paramName);
+        }
+        
+        if (value == null) {
+            value = defaultValue;
+        }
+        
+        return value;
+    }
+    
+    /**
+     * Retrieves the init parameter from the given config objects which must have <CODE>String getInitParameter(String);</CODE> method.
+     * This utility method used Java Reflection API to invoke <CODE>String getInitParameter(String);</CODE> method.
+     * If the init parameter is not found in the first config object, then it will look up the init parameter from the next config object.
+     * If the parameter is not found, then it will return the defaultValue.
+     * @param paramName parameter name
+     * @param defaultValue the default value
+     * @param configs
+     * @return
+     */
+    public static String getInitParameter(String paramName, String defaultValue, Object ... configs) {
+        String value = null;
+        
+        if (configs != null) {
+            for (Object config : configs) {
+                if (config != null) {
+                    try {
+                        Method method = config.getClass().getMethod("getInitParameter", String.class);
+                        value = (String) method.invoke(config, paramName);
+                    } catch (Throwable ignore) {
+                    }
+                }
+                
+                if (value != null) {
+                    break;
+                }
+            }
         }
         
         if (value == null) {
