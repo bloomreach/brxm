@@ -159,13 +159,15 @@ public class FacetedNavigationGuidedBrowsingTest extends AbstractDateFacetNaviga
                 "year${hide:['brand', 'year']}",
                 "month${after:'year', hide:'year'}",
                 "day${after:'month', hide:'month'}",
-                "brand"
+                "brand${hide:'brand'}"
                 });
 
         session.save();
         
+        
         facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
         
+        FacetViewHelper.traverse(facetNavigation);
         
         assertTrue(facetNavigation.hasNode("year"));
         assertFalse(facetNavigation.hasNode("month"));
@@ -176,6 +178,8 @@ public class FacetedNavigationGuidedBrowsingTest extends AbstractDateFacetNaviga
         assertFalse(facetNavigation.getNode("year").getNode("2009").hasNode("year"));
         assertFalse(facetNavigation.getNode("year").getNode("2009").hasNode("brand"));
         assertFalse(facetNavigation.getNode("year").getNode("2009").hasNode("day"));
+        
+        assertFalse(facetNavigation.getNode("brand").getNode("peugeot").hasNode("brand"));
         
     }
     

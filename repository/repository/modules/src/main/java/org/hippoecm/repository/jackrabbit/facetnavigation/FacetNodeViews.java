@@ -113,6 +113,7 @@ public class FacetNodeViews implements Iterable<FacetNodeView>{
                     FacetNodeView clone = (FacetNodeView)fnv.clone();
                     clone.disabled = true;
                     replaceMap.put(fnv, clone);
+                    modified = true;
                 }
             }
             if(!replaceMap.isEmpty()) {
