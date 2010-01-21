@@ -386,6 +386,64 @@ public class FacetedNavigationSimpleTest extends TestCase {
                 .getLong());
 
     }
+    
+    /*
+     * For an empty facet, we expect the following behavior: the count for the facet includes the item where the
+     * facet value is empty, and the resultset does so as well. The empty facet value however does not return as a facet node of course,
+     * hence, all the counts of all the facet values combined can be lower then the count from the facet node itself: for example:
+     * 
+     * hippo:brand (5)
+     *    |- peugeot (2)
+     *    |- volkswagen (1)
+     *    |- mercedes (1)
+     *    `- hippo:resultset (5)
+     *    
+     * would be the result if one car has an empty value for brand (thus, property exists, but is empty)
+     */
+    @Test
+    public void testWithEmptyFacetValue() throws RepositoryException, IOException {
+        commonStart();
+        Node testNode = session.getRootNode().getNode("test");
+        createSimpleStructure1(testNode);
+
+        Node cars = testNode.getNode("documents/cars");
+        
+        // car with emtpy facet value for brand
+        Node car = cars.addNode("car_emptybrand", "hippo:handle");
+        car.addMixin("hippo:hardhandle");
+        car = car.addNode("car_emptybrand", "hippo:testcardocument");
+        car.addMixin("hippo:harddocument");
+        car.setProperty("hippo:brand", "");
+        car.setProperty("hippo:color", "grey");
+        car.setProperty("hippo:product", "car");
+        car.setProperty("hippo:date", globalCal);
+        car.setProperty("hippo:price", 12000.0D);
+        car.setProperty("hippo:travelled", 122000L);
+        
+        createFacetNodeSingleValues(testNode);
+        
+        session.save();
+
+        Node navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        assertEquals(5L, navigation.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(5L, navigation.getNode("hippo:brand").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        
+        long allFacetValueCounts = 0;
+        NodeIterator it = navigation.getNode("hippo:brand").getNodes();
+        while(it.hasNext()) {
+            Node child = it.nextNode();
+            // we only count facetvalues, not the resultset count ofcourse
+            if(child.isNodeType(FacNavNodeType.NT_FACETSUBNAVIGATION)) {
+                allFacetValueCounts += child.getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+            }
+        }
+        
+        // allFacetValueCounts combined is still 1 less then the resultset because we have one car with an empty value for brand
+        assertTrue(allFacetValueCounts + 1 == navigation.getNode("hippo:brand/hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       
+
+    }
 
     private void commonStart() throws RepositoryException {
         session.getRootNode().addNode("test");
