@@ -29,6 +29,7 @@ import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.Pipeline;
 import org.hippoecm.hst.core.container.ServletConfigAware;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.ServletConfigUtils;
 
 /**
  * HST Container Servlet
@@ -65,10 +66,20 @@ public class HstContainerServlet extends HttpServlet {
     
     protected ComponentManager clientComponentManager;
     
-    protected String clientComponentManagerContextAttributeName = HstContainerServlet.class.getName() + ".clientComponentManager";
+    protected String clientComponentManagerContextAttributeName = CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME;
     
     protected String defaultPipeline;
     
+    /**
+     * Returns the client component manager instance if available.
+     * @param servletConfig
+     * @return
+     */
+    public static ComponentManager getClientComponentManager(ServletConfig servletConfig) {
+        String attributeName = ServletConfigUtils.getInitParameter(servletConfig, servletConfig.getServletContext(), 
+                CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM, CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
+        return (ComponentManager) servletConfig.getServletContext().getAttribute(attributeName);
+    }
     
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -199,16 +210,7 @@ public class HstContainerServlet extends HttpServlet {
     }
 
     private String getConfigOrContextInitParameter(String paramName, String defaultValue) {
-        String value = getServletConfig().getInitParameter(paramName);
-        
-        if (value == null) {
-            value = getServletConfig().getServletContext().getInitParameter(paramName);
-        }
-        
-        if (value == null) {
-            value = defaultValue;
-        }
-        
+        String value = ServletConfigUtils.getInitParameter(getServletConfig(), getServletConfig().getServletContext(), paramName, defaultValue);
         return (value != null ? value.trim() : null);
     }
     

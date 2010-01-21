@@ -47,7 +47,8 @@ public interface ComponentManager
     void start();
     
     /**
-     * Returns the registered container component
+     * Returns the registered container component.
+     * Returns null if a component is not found by the specified name.
      * 
      * @param <T> component type
      * @param name the name of the component

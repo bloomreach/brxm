@@ -17,11 +17,13 @@ package org.hippoecm.hst.component.support.spring;
 
 import javax.servlet.ServletConfig;
 
+import org.hippoecm.hst.container.HstContainerServlet;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -30,7 +32,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
@@ -164,46 +165,59 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
                 }
             }
             
-            WebApplicationContext rootWebAppContext = WebApplicationContextUtils.getWebApplicationContext(getServletConfig().getServletContext());
-
-            if (rootWebAppContext == null) {
-                throw new HstComponentException("Cannot find the root web application context.");
-            }
+            boolean beanFoundFromBeanFactory = false;
+            BeanFactory beanFactory = WebApplicationContextUtils.getWebApplicationContext(getServletConfig().getServletContext());
             
-            BeanFactory beanFactory = rootWebAppContext;
-            
-            String contextName = null;
-            
-            try {
-                if (contextNames != null) {
-                    for (int i = 0; i < contextNames.length; i++) {
-                        contextName = contextNames[i];
-                        beanFactory = (BeanFactory) beanFactory.getBean(contextName);
+            if (beanFactory != null) {
+                String contextName = null;
+                
+                try {
+                    if (contextNames != null) {
+                        for (int i = 0; i < contextNames.length; i++) {
+                            contextName = contextNames[i];
+                            beanFactory = (BeanFactory) beanFactory.getBean(contextName);
+                        }
                     }
+                } catch (NoSuchBeanDefinitionException e) {
+                    throw new HstComponentException("There's no beanFactory definition with the specified name: " + contextName, e);
+                } catch (BeansException e) {
+                    throw new HstComponentException("The beanFactory cannot be obtained: " + contextName, e);
+                } catch (ClassCastException e) {
+                    throw new HstComponentException("The bean is not an instance of beanFactory: " + contextName, e);
                 }
-            } catch (NoSuchBeanDefinitionException e) {
-                throw new HstComponentException("There's no beanFactory definition with the specified name: " + contextName, e);
-            } catch (BeansException e) {
-                throw new HstComponentException("The beanFactory cannot be obtained: " + contextName, e);
-            } catch (ClassCastException e) {
-                throw new HstComponentException("The bean is not an instance of beanFactory: " + contextName, e);
+                
+                try {
+                    delegatedBean = (HstComponent) beanFactory.getBean(beanName);
+                    beanFoundFromBeanFactory = (delegatedBean != null);
+                } catch (Exception ignore) {
+                }
             }
             
-            try {
-                delegatedBean = (HstComponent) beanFactory.getBean(beanName);
-            } catch (NoSuchBeanDefinitionException e) {
-                throw new HstComponentException("There's no bean definition with the specified name: " + beanName, e);
-            } catch (BeansException e) {
-                throw new HstComponentException("The bean cannot be obtained: " + beanName, e);
+            ComponentManager componentManager = null;
+            
+            if (delegatedBean == null) {
+                componentManager = HstContainerServlet.getClientComponentManager(getServletConfig());
+                
+                if (componentManager != null) {
+                    delegatedBean = componentManager.getComponent(beanName);
+                }
             }
             
             if (delegatedBean == null) {
-                throw new HstComponentException("Cannot find delegated spring HstComponent bean: " + beanName);
+                if (beanFactory == null && componentManager == null) {
+                    throw new HstComponentException("Cannot find the root web application context or client component manager.");
+                } else if (beanFactory != null && componentManager == null) {
+                    throw new HstComponentException("Cannot find delegated spring HstComponent bean from the web application context: " + beanName);
+                } else if (beanFactory == null && componentManager != null) {
+                    throw new HstComponentException("Cannot find delegated spring HstComponent bean from the client component manager: " + beanName);
+                } else {
+                    throw new HstComponentException("Cannot find delegated spring HstComponent bean from either the web application context or the client component manager: " + beanName);
+                }
             }
 
             delegatedBean.init(getServletConfig(), getComponentConfiguration());
             
-            if (beanFactory instanceof AbstractApplicationContext) {
+            if (beanFoundFromBeanFactory && beanFactory instanceof AbstractApplicationContext) {
                 delegatedBeanApplicationContext = (AbstractApplicationContext) beanFactory;
                 
                 if (!delegatedBeanApplicationContext.getApplicationListeners().contains(this)) {

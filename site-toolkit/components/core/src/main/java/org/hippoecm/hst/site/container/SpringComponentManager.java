@@ -112,7 +112,14 @@ public class SpringComponentManager implements ComponentManager, BeanPostProcess
     }
     
     public <T> T getComponent(String name) {
-        return (T) this.applicationContext.getBean(name);
+        T bean = null;
+        
+        try {
+            bean = (T) this.applicationContext.getBean(name);
+        } catch (Exception ignore) {
+        }
+        
+        return bean;
     }
     
     public ContainerConfiguration getContainerConfiguration() {

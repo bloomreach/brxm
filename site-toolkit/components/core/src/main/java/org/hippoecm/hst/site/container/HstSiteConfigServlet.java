@@ -38,6 +38,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.ServletConfigUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
@@ -495,16 +496,7 @@ public class HstSiteConfigServlet extends HttpServlet {
     }
     
     protected String getConfigOrContextInitParameter(String paramName, String defaultValue) {
-        String value = getServletConfig().getInitParameter(paramName);
-        
-        if (value == null) {
-            value = getServletConfig().getServletContext().getInitParameter(paramName);
-        }
-        
-        if (value == null) {
-            value = defaultValue;
-        }
-        
+        String value = ServletConfigUtils.getInitParameter(getServletConfig(), getServletConfig().getServletContext(), paramName, defaultValue);
         return (value != null ? value.trim() : null);
     }
     

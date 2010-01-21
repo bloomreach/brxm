@@ -179,7 +179,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             window.addComponentExcpetion(new HstComponentException(e));
             
             if (log.isDebugEnabled()) {
-                log.debug("Component exception caught: " + e.toString(), e);
+                log.warn("Component exception caught: " + e.toString(), e);
             } else if (log.isWarnEnabled()) {
                 log.warn("Component exception caught: {}", e.toString());
             }
@@ -343,7 +343,10 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 log.warn("Failed to dispatch to error page: " + e);
             }
             
-            servletResponse.reset();
+            try {
+                servletResponse.reset();
+            } catch (Exception ignore) {
+            }
         }
     }
     

@@ -358,7 +358,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return the client ComponentManager or <code>null</code> if none configured 
      */
     public ComponentManager getDefaultClientComponentManager(){
-        ComponentManager clientComponentManager = (ComponentManager)this.getServletConfig().getServletContext().getAttribute(HstContainerServlet.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
+        ComponentManager clientComponentManager = HstContainerServlet.getClientComponentManager(getServletConfig());
         if(clientComponentManager == null) {
             log.warn("Cannot get a client component manager from servlet context for attr name '{}'", HstContainerServlet.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
         }

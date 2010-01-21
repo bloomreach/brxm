@@ -36,7 +36,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.ServletContextAwareProcessor;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class ClientComponentManager implements ComponentManager, ServletConfigAware, BeanPostProcessor {
     
@@ -120,7 +122,25 @@ public class ClientComponentManager implements ComponentManager, ServletConfigAw
     }
     
     public <T> T getComponent(String name) {
-        return (T) this.applicationContext.getBean(name);
+        T bean = null;
+        
+        try {
+            bean = (T) applicationContext.getBean(name);
+        } catch (Exception ignore) {
+        }
+        
+        if (bean == null && servletConfig != null) {
+            WebApplicationContext rootWebAppContext = WebApplicationContextUtils.getWebApplicationContext(servletConfig.getServletContext());
+            
+            if (rootWebAppContext != null) {
+                try {
+                    bean = (T) rootWebAppContext.getBean(name);
+                } catch (Exception ignore) {
+                }
+            }
+        }
+        
+        return bean;
     }
     
     public String[] getConfigurationResources() {
