@@ -133,13 +133,14 @@ public class UpdaterTest extends TestCase {
         list.add(module);
         Modules modules = new Modules(list);
         UpdaterEngine.migrate(session, modules);
-
+	session.logout();
+	session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
 
         // verify back references
         
         refA = session.getRootNode().getNode("test/refA");
         A = refA.getProperty("referenceA").getNode();
-        assertEquals("test_1_1:target", A.getPrimaryNodeType().getName());
+        assertEquals("test:target", A.getPrimaryNodeType().getName());
 
         String uuid = refA.getNode("linkA").getProperty("hippo:docbase").getString();
         assertEquals(A.getUUID(), uuid);
@@ -149,7 +150,7 @@ public class UpdaterTest extends TestCase {
 
         refB = session.getRootNode().getNode("test/refB");
         B = refB.getProperty("referenceB").getNode();
-        assertEquals("test_1_1:target", B.getPrimaryNodeType().getName());
+        assertEquals("test:target", B.getPrimaryNodeType().getName());
 
         uuid = refB.getNode("linkB").getProperty("hippo:docbase").getString();
         assertEquals(B.getUUID(), uuid);
