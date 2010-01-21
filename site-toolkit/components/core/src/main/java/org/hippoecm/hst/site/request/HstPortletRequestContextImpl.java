@@ -17,6 +17,7 @@ package org.hippoecm.hst.site.request;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
+import javax.portlet.PortletConfig;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,8 @@ import org.hippoecm.hst.core.request.HstPortletRequestContext;
  *
  */
 public class HstPortletRequestContextImpl extends HstRequestContextImpl implements HstPortletRequestContext {
+    
+    private PortletConfig portletConfig;
     private PortletRequest portletRequest;
     private PortletResponse portletResponse;
 
@@ -39,16 +42,25 @@ public class HstPortletRequestContextImpl extends HstRequestContextImpl implemen
     public HstPortletRequestContextImpl(Repository repository, Credentials defaultCredentials) {
         super(repository, defaultCredentials);
     }
-       
+    
     public void initPortletContext(HttpServletRequest request, HttpServletResponse responsse) {
-        portletRequest = (PortletRequest)request.getAttribute("javax.portlet.request");
-        portletResponse = (PortletResponse)request.getAttribute("javax.portlet.response");
+        portletConfig = (PortletConfig) request.getAttribute("javax.portlet.config");
+        portletRequest = (PortletRequest) request.getAttribute("javax.portlet.request");
+        portletResponse = (PortletResponse) request.getAttribute("javax.portlet.response");
     }
-
+    
     public boolean isPortletContext() {
         return true;
     }
-
+    
+    public PortletConfig getPortletConfig() {
+        return portletConfig;
+    }
+    
+    public void setPortletConfig(PortletConfig portletConfig) {
+        this.portletConfig = portletConfig;
+    }
+    
     public PortletRequest getPortletRequest() {
         return portletRequest;
     }

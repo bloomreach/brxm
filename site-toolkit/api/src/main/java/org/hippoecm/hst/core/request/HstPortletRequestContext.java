@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.request;
 
+import javax.portlet.PortletConfig;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,11 @@ public interface HstPortletRequestContext extends HstRequestContext {
     void initPortletContext(HttpServletRequest request, HttpServletResponse response);
     
     /**
+     * Returns the PortletConfig serving the HstRequest.
+     */
+    PortletConfig getPortletConfig();
+    
+    /**
      * Returns the PortletRequest serving the HstRequest.
      */
     PortletRequest getPortletRequest();
@@ -43,4 +49,5 @@ public interface HstPortletRequestContext extends HstRequestContext {
      * Returns the PortletResponse serving the HstResponse.
      */
     PortletResponse getPortletResponse();
+    
 }
