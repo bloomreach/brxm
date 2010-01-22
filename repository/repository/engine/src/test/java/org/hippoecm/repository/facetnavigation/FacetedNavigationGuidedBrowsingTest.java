@@ -167,8 +167,6 @@ public class FacetedNavigationGuidedBrowsingTest extends AbstractDateFacetNaviga
         
         facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
         
-        FacetViewHelper.traverse(facetNavigation);
-        
         assertTrue(facetNavigation.hasNode("year"));
         assertFalse(facetNavigation.hasNode("month"));
         assertTrue(facetNavigation.getNode("year").hasNode("2009"));

@@ -109,19 +109,28 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                 initialQueryString.append(docbase);
             }
             if(facetedFiltersString != null) {
-                initialQueryString.append(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMETER).append(facetedFiltersString);
+                initialQueryString.append(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER).append(facetedFiltersString);
             }
             FacetedNavigationEngine.Query initialQuery;
-            initialQuery = (docbase != null ? facetedEngine.parse(initialQueryString.toString()) : null);
+            try {
+                initialQuery = (docbase != null ? facetedEngine.parse(initialQueryString.toString()) : null);
+            } catch (IllegalArgumentException e) {
+                log.warn("Return state. Error parsing initial query:  '{}'", e.getMessage());
+                return state;
+            }
 
             HitsRequested hitsRequested = new HitsRequested();
             hitsRequested.setResultRequested(false);
             hitsRequested.setFixedDrillPath(false);
 
-            FacetedNavigationEngine.Result facetedResult;
-            facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, null,
+            FacetedNavigationEngine.Result facetedResult = null;
+            try {
+                facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, null,
                     facetSearchResultMap, inheritedFilter, hitsRequested);
-
+            } catch (IllegalArgumentException e) {
+                log.warn("Cannot get the faceted result: '"+e.getMessage()+"'");
+            }
+            
             int count = facetedResult.length();
 
             PropertyState propState = createNew(countName, state.getNodeId());

@@ -232,8 +232,8 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * and #view methods.
      */
     abstract class Query {
-        public static final char  DOCBASE_FILTER_DELIMETER = '\uFFFE';
-        public static final char  FILTER_DELIMETER = '\uFFFD';
+        public static final char  DOCBASE_FILTER_DELIMITER = '\uFFFE';
+        public static final char  FILTER_DELIMITER = '\uFFFD';
     }
 
     /**
@@ -329,12 +329,13 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      */
     public void purge();
 
-    /**
+   /**
      * This method is used to build a Query object from a query encoded in a
      * string.  The language used, either XPATH, SQL or other should match the
      * language expected by the interface implementation.
+     * @throws IllegalArgumentException when the query cannot be parsed
      */
-    public Q parse(String query);
+    public Q parse(String query) throws IllegalArgumentException;
 
     /**
      * The second view method is trimmed down version of the first one and used
@@ -342,14 +343,14 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      *   but used when the actual resultset is required.  In this case.
      */
     public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
-            Q openQuery, Map<Name, String> inheritedFilter, HitsRequested hitsRequested);
+            Q openQuery, Map<Name, String> inheritedFilter, HitsRequested hitsRequested) throws IllegalArgumentException;
 
     /**
      * @see #view(String, org.hippoecm.repository.FacetedNavigationEngine.Query, org.hippoecm.repository.FacetedNavigationEngine.Context, List, List, org.hippoecm.repository.FacetedNavigationEngine.Query, Map, Map, HitsRequested) 
      */
     public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
             Q openQuery, Map<String, Map<String, Count>> resultset, Map<Name, String> inheritedFilter,
-            HitsRequested hitsRequested) throws UnsupportedOperationException;
+            HitsRequested hitsRequested) throws UnsupportedOperationException, IllegalArgumentException;
 
     /**
      * While the other methods in this interface are meant for informing the
@@ -401,6 +402,6 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      */
     public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
             List<FacetRange> rangeQuery, Q openQuery, Map<String, Map<String, Count>> resultset,
-            Map<Name, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException;
+            Map<Name, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException, IllegalArgumentException;
 
 }

@@ -18,17 +18,10 @@ package org.hippoecm.repository.query.lucene;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FacetPropExistsQuery {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    /**
-     * The logger instance for this class
-     */
-    private static final Logger log = LoggerFactory.getLogger(FacetsQuery.class);
 
     /**
      * The lucene query
