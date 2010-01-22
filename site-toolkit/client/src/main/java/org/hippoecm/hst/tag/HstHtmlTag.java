@@ -16,9 +16,6 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,11 +28,12 @@ import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.rewriter.ContentRewriter;
+import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.utils.PageContextPropertyUtils;
-import org.hippoecm.hst.utils.SimpleHmlStringParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +54,7 @@ public class HstHtmlTag extends TagSupport {
     
     protected boolean skipTag;
         
-    protected Map<String, List<String>> parametersMap = new HashMap<String, List<String>>();
+    protected ContentRewriter<String> contentRewriter;
     
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -105,7 +103,11 @@ public class HstHtmlTag extends TagSupport {
         String html = hippoHtml.getContent();
        
         if(hippoHtml.getNode() != null) {
-            html = SimpleHmlStringParser.parse(hippoHtml.getNode(), html, hstRequest, hstResponse);
+            if (contentRewriter == null) {
+                contentRewriter = new SimpleContentRewriter();
+            }
+            
+            html = contentRewriter.rewrite(html, hippoHtml.getNode(), hstRequest, hstResponse);
         } else {
             log.warn("Node should be a HippoNode and response a HstResponse");
         }
@@ -136,10 +138,12 @@ public class HstHtmlTag extends TagSupport {
         }
         
         /*cleanup*/
-        parametersMap.clear();
         var = null;
         scope = null;
         skipTag = false;
+        hippoHtml = null;
+        contentRewriter = null;
+        
         return EVAL_PAGE;
     }
     
@@ -150,7 +154,14 @@ public class HstHtmlTag extends TagSupport {
      */
     @Override
     public void release(){
-        super.release();        
+        super.release();
+        
+        /*cleanup*/
+        var = null;
+        scope = null;
+        skipTag = false;
+        hippoHtml = null;
+        contentRewriter = null;
     }
     
     
@@ -170,8 +181,10 @@ public class HstHtmlTag extends TagSupport {
         return this.hippoHtml;
     }
     
+    public ContentRewriter<String> getContentRewriter() {
+        return contentRewriter;
+    }
     
-  
     /**
      * Sets the var property.
      * @param var The var to set
@@ -196,6 +209,15 @@ public class HstHtmlTag extends TagSupport {
             this.skipTag = true;
         }
     }
+    
+    public void setContentRewriter(ContentRewriter<String> contentRewriter) {
+        this.contentRewriter = contentRewriter;
+    }
+    
+    public void setContentRewriterByBeanPath(String beanPath) {
+        contentRewriter = (ContentRewriter<String>) PageContextPropertyUtils.getProperty(pageContext, beanPath);
+    }
+    
     
     /* -------------------------------------------------------------------*/
         

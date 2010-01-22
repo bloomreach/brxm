@@ -466,6 +466,24 @@
                     JSP developers could ignore this attribute and use 'hippohtml' attribute instead directly with object property value.
             </description>
         </attribute>
+        <attribute>
+            <name>contentRewriter</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.hippoecm.hst.content.rewriter.ContentRewriter</type>
+            <description>A ContentRewriter object.</description>
+        </attribute>
+        <attribute>
+            <name>contentRewriterByBeanPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              A bean name of ContentRewriter object which can be retrieved from pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean name.
+                    JSP developers could ignore this attribute and use 'contentRewriter' attribute instead directly with object property value.
+            </description>
+        </attribute>
         <example><![CDATA[
           <div>
              <hst:html hippohtml="${document.intro}"/>
