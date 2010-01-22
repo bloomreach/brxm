@@ -77,9 +77,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
-    protected final static IValueMap SMALL = new ValueMap("width=380,height=250");
-    protected final static IValueMap MEDIUM = new ValueMap("width=475,height=375");
-    protected final static IValueMap LARGE = new ValueMap("width=855,height=450");
+    protected final static IValueMap SMALL = new ValueMap("width=380,height=250").makeImmutable();
+    protected final static IValueMap MEDIUM = new ValueMap("width=475,height=375").makeImmutable();
+    protected final static IValueMap LARGE = new ValueMap("width=855,height=450").makeImmutable();
 
     static private IMarkupCacheKeyProvider cacheKeyProvider = new DefaultMarkupCacheKeyProvider();
     static private IMarkupResourceStreamProvider streamProvider = new DefaultMarkupResourceStreamProvider();
