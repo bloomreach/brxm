@@ -561,6 +561,13 @@ public class DerivedDataEngine {
                                             System.arraycopy(values, 0, newValues, 0, i);
                                         if(values.length - i > 1)
                                             System.arraycopy(values, i + 1, newValues, i, values.length - i - 1);
+                                        Node ancestor = prop.getParent();
+                                        if (!ancestor.isCheckedOut()) {
+                                            while (!ancestor.isNodeType("mix:versionable")) {
+                                                ancestor = ancestor.getParent();
+                                            }
+                                            ancestor.checkout();
+                                        }
                                         prop.setValue(values);
                                         break;
                                     }
