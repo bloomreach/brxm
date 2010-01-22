@@ -38,6 +38,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
@@ -352,9 +353,6 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
 
     @Override
     public IValueMap getProperties() {
-        IValueMap props = super.getProperties();
-        props.put("width", 520);
-        props.put("height", 400);
-        return props;
+        return new ValueMap("width=520,height=400");
     }
 }
