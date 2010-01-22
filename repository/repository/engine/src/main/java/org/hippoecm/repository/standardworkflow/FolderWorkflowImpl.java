@@ -730,6 +730,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             source = source.getParent();
         }
+        if (!folder.isCheckedOut()) {
+            folder.checkout();
+        }
         renameChildDocument(((HippoSession)folder.getSession()).copy(source, folder.getPath() + "/" + targetName));
         folder.save();
         ((EmbedWorkflow)workflowContext.getWorkflow("embedded", sourceFolder)).copyOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
@@ -749,6 +752,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             throw new WorkflowException("Cannot move document to same folder");
         }
         Node source = userSession.getNodeByUUID(offspring.getIdentity());
+        if (!folder.isCheckedOut()) {
+            folder.checkout();
+        }
         if (source.getAncestor(folder.getDepth()).isSame(folder)) {
             ((EmbedWorkflow)workflowContext.getWorkflow("embedded", new Document(destination.getUUID()))).moveTo(new Document(subject.getUUID()), offspring, targetName, arguments);
         }
@@ -764,6 +770,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node source = userSession.getNodeByUUID(offspring.getIdentity());
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             source = source.getParent();
+        }
+        if (!folder.isCheckedOut()) {
+            folder.checkout();
         }
         folder.getSession().getWorkspace().move(source.getPath(), folder.getPath() + "/" + targetName);
         renameChildDocument(folder, targetName);
