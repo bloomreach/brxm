@@ -97,21 +97,21 @@ public abstract class AbstractDateFacetNavigationTest extends TestCase{
         Node carDocs = documents.addNode("cardocs", "nt:unstructured");
         documents.addMixin("mix:referenceable");
 
-        addCarDoc(carDocs, "cardoc1", start);
-        addCarDoc(carDocs, "cardoc2", onehourearlier);
-        addCarDoc(carDocs, "cardoc3", onedayearlier);
-        addCarDoc(carDocs, "cardoc4", threedayearlier);
-        addCarDoc(carDocs, "cardoc5", monthearlier);
-        addCarDoc(carDocs, "cardoc6", monthandadayearlier);
-        addCarDoc(carDocs, "cardoc7", twomonthsearlier);
-        addCarDoc(carDocs, "cardoc8", yearearlier);
-        addCarDoc(carDocs, "cardoc9", twoyearearlier);
+        addCarDoc(carDocs, "cardoc1", start, "the quick brown fox jumps over the lazy dog");
+        addCarDoc(carDocs, "cardoc2", onehourearlier, "brown fox jumps over the lazy dog");
+        addCarDoc(carDocs, "cardoc3", onedayearlier, "jumps over the lazy dog");
+        addCarDoc(carDocs, "cardoc4", threedayearlier, "lazy dog");
+        addCarDoc(carDocs, "cardoc5", monthearlier, null);
+        addCarDoc(carDocs, "cardoc6", monthandadayearlier, null);
+        addCarDoc(carDocs, "cardoc7", twomonthsearlier, null);
+        addCarDoc(carDocs, "cardoc8", yearearlier, null);
+        addCarDoc(carDocs, "cardoc9", twoyearearlier, null);
 
         test.save();
 
     }
 
-    void addCarDoc(Node carDocs, String name, Calendar cal) throws ItemExistsException,
+    void addCarDoc(Node carDocs, String name, Calendar cal, String contents) throws ItemExistsException,
             PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException,
             ConstraintViolationException, RepositoryException {
         Node carDoc = carDocs.addNode(name, "hippo:handle");
@@ -120,6 +120,10 @@ public abstract class AbstractDateFacetNavigationTest extends TestCase{
         carDoc.addMixin("hippo:harddocument");
         carDoc.setProperty("hippo:date", cal);
         carDoc.setProperty("hippo:brand", "peugeot");
+        if(contents != null) {
+            Node contentNode = carDoc.addNode("contents", "hippo:ntunstructured");
+            contentNode.setProperty("content", contents);
+        }
 
     }
 

@@ -29,7 +29,7 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.hippoecm.repository.FacetedFilters;
+import org.hippoecm.repository.FacetFilters;
 import org.hippoecm.repository.OrderBy;
 import org.hippoecm.repository.ParsedFacet;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -99,13 +99,14 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         String facetedFiltersString = null;
         if(filters != null) {
             try { 
-                FacetedFilters facetedFilters = new FacetedFilters(filters, this); 
+                FacetFilters facetedFilters = new FacetFilters(filters, this); 
                 facetedFiltersString = facetedFilters.toString();
             } catch (IllegalArgumentException e) {
                 log.warn("Invalid filter found. Return state : {}", e.getMessage());
                 return state;
             }
         }
+        
         
         
         List<OrderBy> orderByList = null;

@@ -58,6 +58,7 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
 import org.hippoecm.repository.jackrabbit.KeyValue;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
+import org.hippoecm.repository.query.lucene.FacetFiltersQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetRangeQuery;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
@@ -81,14 +82,17 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     class QueryImpl extends FacetedNavigationEngine.Query {
         String query;
         String[] scopes;
+        FacetFilters facetFilters;
 
-        public QueryImpl(String query) {
+        public QueryImpl(String query) throws IllegalArgumentException{
             this.query = query;
             
             String docbases = query;
-            if(query.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMETER) > -1) {
+            if(query.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER) > -1) {
                 // parse the filters
-                docbases = docbases.substring(0,query.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMETER));
+                docbases = docbases.substring(0,query.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER));
+                String filters = query.substring(query.indexOf(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER) + 1);
+                facetFilters = FacetFilters.fromString(filters);
             }
             
             scopes = docbases.split(",");
@@ -171,7 +175,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
             List<KeyValue<String, String>> facetsQueryList, List<FacetRange> rangeQuery, QueryImpl openQuery,
             Map<String, Map<String, Count>> resultset, Map<Name, String> inheritedFilter, HitsRequested hitsRequested)
-            throws UnsupportedOperationException {
+            throws UnsupportedOperationException, IllegalArgumentException {
         NamespaceMappings nsMappings = getNamespaceMappings();
 
         /*
@@ -205,6 +209,11 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                 }
             }
         }
+        
+        FacetFiltersQuery facetFiltersQuery = null;
+        if (initialQuery != null && initialQuery.facetFilters != null) {
+            facetFiltersQuery = new FacetFiltersQuery(initialQuery.facetFilters, this.getTextAnalyzer()); 
+        }
 
         /*
          * authorizationQuery: get the query for the facets the person is allowed to see (which
@@ -223,6 +232,11 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         if (inheritedFilterQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(inheritedFilterQuery.getQuery(), Occur.MUST);
         }
+        
+        if (facetFiltersQuery != null && facetFiltersQuery.getQuery().clauses().size() > 0) {
+            searchQuery.add(facetFiltersQuery.getQuery(), Occur.MUST);
+        }
+        
         // TODO perhaps create cached user specific filter for authorisation to gain speed
         if (contextImpl.authorizationQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(contextImpl.authorizationQuery.getQuery(), Occur.MUST);
@@ -516,7 +530,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
             List<KeyValue<String, String>> facetsQueryList, QueryImpl openQuery,
             Map<String, Map<String, Count>> resultset, Map<Name, String> inheritedFilter, HitsRequested hitsRequested)
-            throws UnsupportedOperationException {
+            throws UnsupportedOperationException, IllegalArgumentException {
 
         return this.view(queryName, initialQuery, contextImpl, facetsQueryList, null, openQuery, resultset,
                 inheritedFilter, hitsRequested);
@@ -524,12 +538,12 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
             List<KeyValue<String, String>> facetsQuery, QueryImpl openQuery, Map<Name, String> inheritedFilter,
-            HitsRequested hitsRequested) {
+            HitsRequested hitsRequested) throws IllegalArgumentException{
         return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, inheritedFilter,
                 hitsRequested);
     }
 
-    public QueryImpl parse(String query) {
+    public QueryImpl parse(String query) throws IllegalArgumentException {
         return this.new QueryImpl(query);
     }
 

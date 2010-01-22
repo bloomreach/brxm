@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.facetnavigation;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import javax.jcr.Node;
@@ -37,20 +39,47 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        Node testNode = session.getRootNode().getNode("test");
        createDateStructure1(testNode);
 
-       Node navigation = testNode.addNode("facetnavigation");
-       Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+       Node facetNavigation = testNode.addNode("facetnavigation");
+       facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
                .getUUID());
        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
-       facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"hippo:brand=peugeot", "contains(.,'french')" });
+       facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"hippo:brand=peugeot", "contains(.,'jumps')" });
 
        session.save();
-
-       navigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+       facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
        
-       FacetViewHelper.traverse(navigation);
+       // there are three peugeot cars which contain 'jumps' in a child node
+       assertEquals(3L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       //assertEquals(3L, navigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        
+       // change the filter:
+       facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"hippo:brand=peugeot", "contains(.,'quick')" });
+       session.save();
+       facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+       
+       // we only have one peugeot which contains 'quick' in a child node
+       assertEquals(1L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       //assertEquals(1L, navigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       
+       
+      // change the filter:
+       facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"hippo:brand=peugeot", "contains(.,'quick brown')" });
+       session.save();
+       facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+       // we have one car with 'brown' and one car with 'quick brown' : default operator of space is OR
+       assertEquals(2L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       //assertEquals(2L, navigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       
+       
+      // change the filter:
+       facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"hippo:brand=peugeot", "contains(.,'quick AND brown')" });
+       session.save();
+       facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+       // we have one car with 'brown' and one car with 'quick brown' : since operator is AND, we expect 1 car
+       assertEquals(1L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       //assertEquals(1L, navigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        
    }
    
