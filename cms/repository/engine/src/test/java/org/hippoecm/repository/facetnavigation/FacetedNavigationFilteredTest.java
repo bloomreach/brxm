@@ -50,6 +50,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
         
         // there are five peugeot cars (thus hippo:brand=peugeot)
         assertEquals(5L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(5L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         
         
         // now test for another equal: three of the five peugeot cars are red
@@ -59,6 +60,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        
         // there are three  peugeot cars (thus hippo:brand=peugeot AND hippo:color=red)
         assertEquals(3L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(3L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         
         // test for not equal (!=) we have 4 cars that are not a peugeot
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"hippo:brand!=peugeot" });
@@ -66,6 +68,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
         facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
         // there are four cars that are not a peugeot (thus hippo:brand!=peugeot)
         assertEquals(4L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(4L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         
     }
     
@@ -89,6 +92,8 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
         
         // there are four cars that are not a peugeot (thus hippo:brand!=peugeot)
         assertEquals(4L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(4L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        
         
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"hippo:brand != peugeot", "hippo:color != red"});
         session.save();
@@ -96,6 +101,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        
         // there are two  car not a peugeot AND not red (thus hippo:brand != peugeot AND hippo:color != red)
         assertEquals(2L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(2L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
         
         // a different way to do not equal:
         
@@ -105,6 +111,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        
         // there are two  car not a peugeot AND not red (thus hippo:brand != peugeot AND hippo:color != red)
         assertEquals(2L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(2L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
     }
     
    /*
@@ -141,16 +148,15 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        
        // we only have one peugeot which contains 'quick' in a child node
        assertEquals(1L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-       //assertEquals(1L, navigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-       
-       
+       assertEquals(1L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+      
        // change the filter:
        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"hippo:brand=peugeot", "contains(.,quick brown)" });
        session.save();
        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
        // we have one car with 'brown' and one car with 'quick brown' : default operator of space is AND
        assertEquals(1L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-       //assertEquals(2L, navigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(1L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        
        
        // change the filter:
@@ -159,7 +165,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
        // we have one car with 'brown' and one car with 'quick brown' : since operator is OR, we expect 2 cars
        assertEquals(2L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-       //assertEquals(1L, navigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(2L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        
    }
    
@@ -187,6 +193,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        
        // there are tow peugeot cars which do NOT contain 'jumps' in a child node
        assertEquals(2L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(2L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
    }
    
    /*
@@ -244,12 +251,14 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
        // default operator for a space is AND, and there are no cars that are peugeot AND mercedes, hence we expect 0
        assertEquals(0L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(0L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        
        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"contains(hippo:brand,peugeot OR mercedes)" });
        session.save();
        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
        // there are 5 cars where hippo:brand = peugeot and 2 cars have hippo:brand = mercedes, hence we expect 7 cars now
        assertEquals(7L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(7L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        
        
        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"not(contains(hippo:brand,peugeot OR mercedes))" });
@@ -257,6 +266,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
        // there are 5 cars where hippo:brand = peugeot and 2 cars have hippo:brand = mercedes, hence we expect the 2 cars that are of type bmw
        assertEquals(2L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(2L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
    }
    
    /*
@@ -284,7 +294,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        
        // there are two peugeot cars which contain the phrase 'brown fox jumps'
        assertEquals(2L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-       //assertEquals(3L, navigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(2L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        
        // change the filter to a phrase the none of the documents has:
        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"hippo:brand=peugeot", "contains(.,\"brown jumps\")" });
@@ -293,6 +303,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        
        // there are 0 peugeot cars which contain the phrase 'brown jumps' (they contains 'brown fox jumps')
        assertEquals(0L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(0L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        
    }
    
@@ -318,6 +329,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        
        // there are two peugeot cars which contain 'brown' and thus match bro?n
        assertEquals(2L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(2L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        //assertEquals(3L, navigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        
        // change the filter to a phrase the none of the documents has:
@@ -327,6 +339,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        
        // there are 5 peugeot cars which  should match: 4 having lazy, 1 having laziest
        assertEquals(5L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(5L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
    }
    
    /*
@@ -365,7 +378,9 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        facetNavigation2 = session.getRootNode().getNode("test/facetnavigation/hippo:navigation2");
        
        assertEquals(facetNavigation2.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong(), facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(facetNavigation2.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong(), facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        
+     
    }
    
    @Test
