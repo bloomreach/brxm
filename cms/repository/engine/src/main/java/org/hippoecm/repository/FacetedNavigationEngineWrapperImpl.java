@@ -70,7 +70,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
 
     public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
             List<FacetRange> rangeQuery, Q openQuery, Map<String, Map<String, Count>> resultset,
-            Map<Name, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException {
+            Map<String, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException {
         Result result;
         result = upstream.view(queryName, initialQuery, authorization, facetsQuery, rangeQuery, openQuery, resultset,
                 inheritedFilter, hitsRequested);
@@ -78,7 +78,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     }
 
     public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
-            Q openQuery, Map<String, Map<String, Count>> resultset, Map<Name, String> inheritedFilter,
+            Q openQuery, Map<String, Map<String, Count>> resultset, Map<String, String> inheritedFilter,
             HitsRequested hitsRequested) throws UnsupportedOperationException {
         Result result;
         result = upstream.view(queryName, initialQuery, authorization, facetsQuery, openQuery, resultset,
@@ -87,7 +87,7 @@ public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngin
     }
 
     public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
-            Q openQuery, Map<Name, String> inheritedFilter, HitsRequested hitsRequested) {
+            Q openQuery, Map<String, String> inheritedFilter, HitsRequested hitsRequested) {
         Result result;
         result = upstream.view(queryName, initialQuery, authorization, facetsQuery, openQuery, inheritedFilter,
                 hitsRequested);

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -125,8 +126,15 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
 
             FacetedNavigationEngine.Result facetedResult = null;
             try {
+                Map<String, String> filters = null;
+                if(inheritedFilter != null) {
+                    filters = new HashMap<String,String>();
+                    for(Entry<Name, String> entry : inheritedFilter.entrySet()) {
+                        filters.put(entry.getKey().toString(), entry.getValue());
+                    }
+                }
                 facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, null,
-                    facetSearchResultMap, inheritedFilter, hitsRequested);
+                    facetSearchResultMap, filters, hitsRequested);
             } catch (IllegalArgumentException e) {
                 log.warn("Cannot get the faceted result: '"+e.getMessage()+"'");
             }
