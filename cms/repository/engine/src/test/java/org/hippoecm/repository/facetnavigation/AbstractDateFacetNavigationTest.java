@@ -97,21 +97,21 @@ public abstract class AbstractDateFacetNavigationTest extends TestCase{
         Node carDocs = documents.addNode("cardocs", "nt:unstructured");
         documents.addMixin("mix:referenceable");
 
-        addCarDoc(carDocs, "cardoc1", start, "the quick brown fox jumps over the lazy dog");
-        addCarDoc(carDocs, "cardoc2", onehourearlier, "brown fox jumps over the lazy dog");
-        addCarDoc(carDocs, "cardoc3", onedayearlier, "jumps over the lazy dog");
-        addCarDoc(carDocs, "cardoc4", threedayearlier, "lazy dog");
-        addCarDoc(carDocs, "cardoc5", monthearlier, null);
-        addCarDoc(carDocs, "cardoc6", monthandadayearlier, null);
-        addCarDoc(carDocs, "cardoc7", twomonthsearlier, null);
-        addCarDoc(carDocs, "cardoc8", yearearlier, null);
-        addCarDoc(carDocs, "cardoc9", twoyearearlier, null);
+        addCarDoc(carDocs, "cardoc1", start, "the quick brown fox jumps over the lazy dog", "peugeot", "red");
+        addCarDoc(carDocs, "cardoc2", onehourearlier, "brown fox jumps over the lazy dog", "peugeot", "green");
+        addCarDoc(carDocs, "cardoc3", onedayearlier, "jumps over the lazy dog", "peugeot", "yellow");
+        addCarDoc(carDocs, "cardoc4", threedayearlier, "lazy dog", "peugeot", "red");
+        addCarDoc(carDocs, "cardoc5", monthearlier, "just some really other text about the laziest dog ever", "peugeot", "red");
+        addCarDoc(carDocs, "cardoc6", monthandadayearlier, null, "bmw", "green");
+        addCarDoc(carDocs, "cardoc7", twomonthsearlier, null, "mercedes", "red");
+        addCarDoc(carDocs, "cardoc8", yearearlier, null, "mercedes", "green");
+        addCarDoc(carDocs, "cardoc9", twoyearearlier, null, "bmw", "red");
 
         test.save();
 
     }
 
-    void addCarDoc(Node carDocs, String name, Calendar cal, String contents) throws ItemExistsException,
+    void addCarDoc(Node carDocs, String name, Calendar cal, String contents, String brand, String color) throws ItemExistsException,
             PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException,
             ConstraintViolationException, RepositoryException {
         Node carDoc = carDocs.addNode(name, "hippo:handle");
@@ -119,7 +119,8 @@ public abstract class AbstractDateFacetNavigationTest extends TestCase{
         carDoc = carDoc.addNode(name, "hippo:testcardocument");
         carDoc.addMixin("hippo:harddocument");
         carDoc.setProperty("hippo:date", cal);
-        carDoc.setProperty("hippo:brand", "peugeot");
+        carDoc.setProperty("hippo:brand", brand);
+        carDoc.setProperty("hippo:color", color);
         if(contents != null) {
             Node contentNode = carDoc.addNode("contents", "hippo:ntunstructured");
             contentNode.setProperty("content", contents);
