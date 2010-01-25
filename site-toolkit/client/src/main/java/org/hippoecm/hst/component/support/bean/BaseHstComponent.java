@@ -77,6 +77,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HstResponseUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -408,25 +409,19 @@ public class BaseHstComponent extends GenericHstComponent {
      * @param response the HstResponse
      */
     public void sendRedirect(String path, HstRequest request, HstResponse response) {
-        HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
-        HstSiteMap siteMap = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
-        
-        HstLink link = linkCreator.create(path, siteMap.getSite());
-        if(link == null) {
-            throw new HstComponentException("Can not redirect.");
-        }
-        String urlString = null;
-        urlString = link.toUrlForm(request, response, false);
-        
-        if(urlString == null) {
-            throw new HstComponentException("Can not redirect.");
-        }
-        
-        try {
-            response.sendRedirect(urlString);
-        } catch (IOException e) {
-            throw new HstComponentException("Could not redirect. ",e);
-        }
+        HstResponseUtils.sendRedirect(request, response, path);
+    }
+    
+    /**
+     * 
+     * Facility method for sending a redirect to a SiteMapItemId.  
+     * 
+     * @param path the sitemap path you want to redirect to 
+     * @param request the HstRequest
+     * @param response the HstResponse
+     */
+    public void sendRedirect(String path, HstRequest request, HstResponse response, Map<String, String []> queryParams) {
+        HstResponseUtils.sendRedirect(request, response, path, queryParams);
     }
     
     private synchronized void initBeansObjects() throws HstComponentException{
