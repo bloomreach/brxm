@@ -17,16 +17,17 @@ package org.hippoecm.repository.facetnavigation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.junit.Test;
-
 public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTest {
       
     
@@ -385,7 +386,99 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
    
    @Test
    public void testBoostingTextNavigation() throws RepositoryException, IOException {
+       commonStart();
+
+       Node testNode = session.getRootNode().getNode("test");
+       createDateStructure1(testNode);
+
+       Node facetNavigation = testNode.addNode("facetnavigation");
+       facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+       facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
+               .getUUID());
+       facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
+       facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
+      
+       facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"contains(.,peugeot OR mercedes)" });
+       session.save();
        
+       facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+       // there are 5 cars where hippo:brand = peugeot and 2 cars have hippo:brand = mercedes, hence we expect 7 cars now
+       assertEquals(7L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       assertEquals(7L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+       
+       // because we have only 2 mercedes's and 5 peugeot's, by defaults, a mercedes will have a higher lucene score. so we expect first
+       // 2 mercedes's
+       NodeIterator nodes = facetNavigation.getNode("year").getNode("hippo:resultset").getNodes();
+       int i = 1;
+       while(nodes.hasNext()) {
+           Node n = nodes.nextNode();
+           if(i == 1 || i == 2) {
+               assertTrue("mercedes".equals(n.getProperty("hippo:brand").getString()));
+           } else {
+               assertTrue("peugeot".equals(n.getProperty("hippo:brand").getString()));
+           }
+           i++;
+       }
+       
+       // now we boost the peugeot's to be more important:
+       facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"contains(.,peugeot^10 OR mercedes)" });
+       session.save();
+       
+       facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+       
+       // now we expect the peugeot to have a higher score:
+       nodes = facetNavigation.getNode("year").getNode("hippo:resultset").getNodes();
+       i = 1;
+       while(nodes.hasNext()) {
+           Node n = nodes.nextNode();
+           // first 5 are peugeot now
+           if(i == 1 || i == 2 || i == 3 || i == 4 || i == 5) {
+               assertTrue("peugeot".equals(n.getProperty("hippo:brand").getString()));
+           } else {
+               assertTrue("mercedes".equals(n.getProperty("hippo:brand").getString()));
+           }
+           i++;
+       }
+       
+    // and also show it works for searching in a property and not on '.'
+       facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"contains(hippo:brand,peugeot^10 OR mercedes)" });
+       session.save();
+       
+       facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+       
+       // now we expect the peugeot to have a higher score:
+       nodes = facetNavigation.getNode("year").getNode("hippo:resultset").getNodes();
+       i = 1;
+       while(nodes.hasNext()) {
+           Node n = nodes.nextNode();
+           // first 5 are peugeot now
+           if(i == 1 || i == 2 || i == 3 || i == 4 || i == 5) {
+               assertTrue("peugeot".equals(n.getProperty("hippo:brand").getString()));
+           } else {
+               assertTrue("mercedes".equals(n.getProperty("hippo:brand").getString()));
+           }
+           i++;
+       }
+       
+       // and also show it works for searching in a property and not on '.'
+       facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"contains(hippo:brand,peugeot OR mercedes^10)" });
+       session.save();
+       
+       facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+       
+       // now we expect the peugeot to have a higher score:
+       nodes = facetNavigation.getNode("year").getNode("hippo:resultset").getNodes();
+       i = 1;
+       while(nodes.hasNext()) {
+           Node n = nodes.nextNode();
+           // first 5 are peugeot now
+           if(i == 1 || i == 2) {
+               assertTrue("mercedes".equals(n.getProperty("hippo:brand").getString()));
+           } else {
+               assertTrue("peugeot".equals(n.getProperty("hippo:brand").getString()));
+           }
+           i++;
+       }
    }
 
 }

@@ -202,7 +202,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             if(initialQuery.scopes.length == 1) {
                 initialLuceneQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH, initialQuery.scopes[0]));
             } else {
-                initialLuceneQuery = new BooleanQuery(false);
+                initialLuceneQuery = new BooleanQuery(true);
                 for(String scope : initialQuery.scopes) {
                     ((BooleanQuery)initialLuceneQuery).add(new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH, scope)), Occur.SHOULD);
                 }
@@ -219,7 +219,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
          * is again a facetsQuery)
          */
 
-        BooleanQuery searchQuery = new BooleanQuery(true);
+        BooleanQuery searchQuery = new BooleanQuery(false);
         if (facetsQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
         }
