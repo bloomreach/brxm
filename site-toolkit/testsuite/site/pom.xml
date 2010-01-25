@@ -328,7 +328,7 @@
                 <configuration>
                   <quiet>true</quiet>
                   <files>
-                    <file>../../build.properties</file>
+                    <file>${basedir}/build.properties</file>
                   </files>
                 </configuration>
               </execution>
@@ -427,7 +427,7 @@
                 <configuration>
                   <quiet>true</quiet>
                   <files>
-                    <file>../../build.properties</file>
+                    <file>${basedir}/build.properties</file>
                   </files>
                 </configuration>
               </execution>
