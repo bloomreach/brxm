@@ -16,9 +16,11 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -206,7 +208,15 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         long t1 = 0, t2;
         if(log.isDebugEnabled())
             t1 = System.currentTimeMillis();
-        facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, currentRanges, null, null, inheritedFilter,
+        
+        Map<String, String> filters = null;
+        if(inheritedFilter != null) {
+            filters = new HashMap<String,String>();
+            for(Entry<Name, String> entry : inheritedFilter.entrySet()) {
+                filters.put(entry.getKey().toString(), entry.getValue());
+            }
+        }
+        facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, currentRanges, null, null, filters,
                                            hitsRequested);
         if(log.isDebugEnabled()) {
             t2 = System.currentTimeMillis();

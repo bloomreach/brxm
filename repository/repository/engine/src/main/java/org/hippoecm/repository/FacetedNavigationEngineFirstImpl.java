@@ -167,7 +167,7 @@ public class FacetedNavigationEngineFirstImpl
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
             List<KeyValue<String,String>> facetsQuery, List<FacetRange> rangeQuery, QueryImpl openQuery,
             Map<String,Map<String,Count>> resultset,
-            Map<Name,String> inheritedFilter,
+            Map<String,String> inheritedFilter,
             HitsRequested hitsRequested) throws UnsupportedOperationException {
         try {
             if(rangeQuery != null) {
@@ -210,13 +210,13 @@ public class FacetedNavigationEngineFirstImpl
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
                        List<KeyValue<String,String>> facetsQuery, QueryImpl openQuery,
                        Map<String,Map<String,Count>> resultset,
-                       Map<Name,String> inheritedFilter,
+                       Map<String,String> inheritedFilter,
                        HitsRequested hitsRequested) throws UnsupportedOperationException {
         return this.view(queryName, initialQuery, authorization, facetsQuery, null, openQuery, resultset, inheritedFilter, hitsRequested);
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-                       List<KeyValue<String,String>> facetsQuery, QueryImpl openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
+                       List<KeyValue<String,String>> facetsQuery, QueryImpl openQuery, Map<String,String> inheritedFilter, HitsRequested hitsRequested) {
         try {
             Session session = authorization.session;
             LinkedList<NodeId> list = new LinkedList<NodeId>();

@@ -21,6 +21,7 @@ import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
@@ -43,14 +44,14 @@ public class InheritedFilterQuery {
      */
     private BooleanQuery query;
 
-    public InheritedFilterQuery(Map<Name, String> inheritedFilter, NamespaceMappings nsMappings) {
+    public InheritedFilterQuery(Map<String, String> inheritedFilter, NamespaceMappings nsMappings) {
         this.query = new BooleanQuery(true);
 
         if (inheritedFilter != null) {
-            for (Map.Entry<Name, String> entry : inheritedFilter.entrySet()) {
+            for (Map.Entry<String, String> entry : inheritedFilter.entrySet()) {
                 try {
-                    Name nodeName = entry.getKey();
-                    String field = nsMappings.translatePropertyName(nodeName);
+                    Name propName = NameFactoryImpl.getInstance().create(entry.getKey());
+                    String field = nsMappings.translatePropertyName(propName);
                     Term t = new Term(FieldNames.PROPERTIES, FieldNames.createNamedValue(field, entry.getValue()));
                     Query wq = new TermQuery(t);
                     this.query.add(wq, Occur.MUST);

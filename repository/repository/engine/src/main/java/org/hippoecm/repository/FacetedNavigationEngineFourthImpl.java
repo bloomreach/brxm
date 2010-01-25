@@ -167,7 +167,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
             List<KeyValue<String, String>> facetsQueryList, QueryImpl openQuery, Map<String, Map<String, Count>> resultset,
-            Map<Name,String> inheritedFilter, HitsRequested hitsRequested)
+            Map<String,String> inheritedFilter, HitsRequested hitsRequested)
             throws UnsupportedOperationException {
 
         NamespaceMappings nsMappings = getNamespaceMappings();
@@ -320,7 +320,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-            List<KeyValue<String, String>> facetsQuery, QueryImpl openQuery, Map<Name,String> inheritedFilter, HitsRequested hitsRequested) {
+            List<KeyValue<String, String>> facetsQuery, QueryImpl openQuery, Map<String,String> inheritedFilter, HitsRequested hitsRequested) {
         return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, inheritedFilter, hitsRequested);
     }
 
@@ -341,7 +341,7 @@ public class FacetedNavigationEngineFourthImpl extends ServicingSearchIndex
             ContextImpl authorization, List<KeyValue<String, String>> facetsQuery, List<FacetRange> rangeQuery,
             QueryImpl openQuery,
             Map<String, Map<String, org.hippoecm.repository.FacetedNavigationEngine.Count>> resultset,
-            Map<Name, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException {
+            Map<String, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException {
         // TODO Auto-generated method stub
         return null;
     }

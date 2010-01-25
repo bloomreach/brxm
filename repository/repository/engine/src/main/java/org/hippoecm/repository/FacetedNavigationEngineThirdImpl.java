@@ -174,7 +174,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
             List<KeyValue<String, String>> facetsQueryList, List<FacetRange> rangeQuery, QueryImpl openQuery,
-            Map<String, Map<String, Count>> resultset, Map<Name, String> inheritedFilter, HitsRequested hitsRequested)
+            Map<String, Map<String, Count>> resultset, Map<String, String> inheritedFilter, HitsRequested hitsRequested)
             throws UnsupportedOperationException, IllegalArgumentException {
         NamespaceMappings nsMappings = getNamespaceMappings();
 
@@ -528,7 +528,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
             List<KeyValue<String, String>> facetsQueryList, QueryImpl openQuery,
-            Map<String, Map<String, Count>> resultset, Map<Name, String> inheritedFilter, HitsRequested hitsRequested)
+            Map<String, Map<String, Count>> resultset, Map<String, String> inheritedFilter, HitsRequested hitsRequested)
             throws UnsupportedOperationException, IllegalArgumentException {
 
         return this.view(queryName, initialQuery, contextImpl, facetsQueryList, null, openQuery, resultset,
@@ -536,7 +536,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl authorization,
-            List<KeyValue<String, String>> facetsQuery, QueryImpl openQuery, Map<Name, String> inheritedFilter,
+            List<KeyValue<String, String>> facetsQuery, QueryImpl openQuery, Map<String, String> inheritedFilter,
             HitsRequested hitsRequested) throws IllegalArgumentException{
         return view(queryName, initialQuery, authorization, facetsQuery, openQuery, null, inheritedFilter,
                 hitsRequested);
