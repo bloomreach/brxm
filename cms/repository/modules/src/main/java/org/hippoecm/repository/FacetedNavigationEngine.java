@@ -343,13 +343,13 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      *   but used when the actual resultset is required.  In this case.
      */
     public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
-            Q openQuery, Map<Name, String> inheritedFilter, HitsRequested hitsRequested) throws IllegalArgumentException;
+            Q openQuery, Map<String, String> inheritedFilter, HitsRequested hitsRequested) throws IllegalArgumentException;
 
     /**
      * @see #view(String, org.hippoecm.repository.FacetedNavigationEngine.Query, org.hippoecm.repository.FacetedNavigationEngine.Context, List, List, org.hippoecm.repository.FacetedNavigationEngine.Query, Map, Map, HitsRequested) 
      */
     public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
-            Q openQuery, Map<String, Map<String, Count>> resultset, Map<Name, String> inheritedFilter,
+            Q openQuery, Map<String, Map<String, Count>> resultset, Map<String, String> inheritedFilter,
             HitsRequested hitsRequested) throws UnsupportedOperationException, IllegalArgumentException;
 
     /**
@@ -402,6 +402,6 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      */
     public Result view(String queryName, Q initialQuery, C authorization, List<KeyValue<String, String>> facetsQuery,
             List<FacetRange> rangeQuery, Q openQuery, Map<String, Map<String, Count>> resultset,
-            Map<Name, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException, IllegalArgumentException;
+            Map<String, String> inheritedFilter, HitsRequested hitsRequested) throws UnsupportedOperationException, IllegalArgumentException;
 
 }
