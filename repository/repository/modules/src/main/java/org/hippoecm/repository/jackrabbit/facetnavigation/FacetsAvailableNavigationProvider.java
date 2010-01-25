@@ -275,7 +275,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
 
             FacetResultSetProvider.FacetResultSetNodeId childNodeId;
             childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), resultSetChildName, null,
-                    docbase, resultSetSearch, currentRanges, count);
+                    docbase, resultSetSearch, currentRanges, count, facetedFiltersString);
             childNodeId.setLimit(facetNavigationNodeId.limit);
             childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
             state.addChildNodeEntry(resultSetChildName, childNodeId);

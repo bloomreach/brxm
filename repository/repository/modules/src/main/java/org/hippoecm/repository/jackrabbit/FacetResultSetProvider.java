@@ -58,11 +58,13 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     }
 
     public class FacetResultSetNodeId extends HippoNodeId {
+        private static final long serialVersionUID = 1L;
         String queryname;
         String docbase;
         String[] search;
         List<KeyValue<String, String>> preparedSearch;
         List<FacetRange> currentRanges;
+        String facetedFiltersString;
         
         // the list of properties to order the resultset on
         List<OrderBy> orderByList;
@@ -82,13 +84,15 @@ public class FacetResultSetProvider extends HippoVirtualProvider
             this.count = count;
         }
         
-        public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase, List<KeyValue<String, String>> currentSearch, List<FacetRange> currentRanges, int count) {
+        public FacetResultSetNodeId(NodeId parent, Name name, String queryname, String docbase,
+                List<KeyValue<String, String>> currentSearch, List<FacetRange> currentRanges, int count, String facetedFiltersString) {
             super(FacetResultSetProvider.this, parent, name);
             this.queryname = queryname;
             this.docbase = docbase;
             this.preparedSearch = currentSearch;
             this.currentRanges = currentRanges;
             this.count = count;
+            this.facetedFiltersString = facetedFiltersString;
         }
 
         public void setLimit(int limit) {
@@ -134,6 +138,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         FacetResultSetNodeId nodeId = (FacetResultSetNodeId) state.getNodeId();
         String queryname = nodeId.queryname;
         String docbase = nodeId.docbase;
+        String facetedFiltersString = nodeId.facetedFiltersString;
         String[] search = nodeId.search;
         List<FacetRange> currentRanges = nodeId.currentRanges;
         long count = nodeId.count;
@@ -180,24 +185,15 @@ public class FacetResultSetProvider extends HippoVirtualProvider
                 }
             }
         }
-        FacetedNavigationEngine.Query initialQuery;
-        initialQuery = facetedEngine.parse(docbase);
+        StringBuilder initialQueryString = new StringBuilder();
+        if(docbase != null) {
+            initialQueryString.append(docbase);
+        }
+        if(facetedFiltersString != null) {
+            initialQueryString.append(FacetedNavigationEngine.Query.DOCBASE_FILTER_DELIMITER).append(facetedFiltersString);
+        }
+        FacetedNavigationEngine.Query initialQuery = facetedEngine.parse(initialQueryString.toString());
 
-        /* Current implementation, especialy within JackRabbit itself,
-         * has serious performance problems when a large number (>1000)
-         * of child nodes are direct decendents of a single parent.
-         * We have chosen that there is a hard limit on the retrieval of
-         * the result set at this time.
-         * As nearly all user applications have serious problems with
-         * displaying a large number of decendants, this is currently not
-         * seen as a serious drawback to have this hard limit AT THIS TIME.
-         * User applications which provide a display should not do paging
-         * themselves, but use a --to be developed-- interface in the
-         * facet search.  The user applications should also provide an
-         * internal hard limit, in general lower than the limit set below,
-         * in order to provide feedback to the user that the resultset
-         * has been truncated.
-         */
         HitsRequested hitsRequested = new HitsRequested();
         hitsRequested.setResultRequested(true);
         hitsRequested.setLimit(nodeId.limit);

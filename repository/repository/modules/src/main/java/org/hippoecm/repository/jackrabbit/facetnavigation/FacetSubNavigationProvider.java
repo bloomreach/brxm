@@ -141,7 +141,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
             Name resultSetChildName = resolveName(HippoNodeType.HIPPO_RESULTSET);
             FacetResultSetProvider.FacetResultSetNodeId childNodeId;
             childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), resultSetChildName, null,
-                    docbase, currentSearch, currentRanges, facetNavigationNodeId.count);
+                    docbase, currentSearch, currentRanges, facetNavigationNodeId.count, facetNavigationNodeId.facetedFiltersString);
             childNodeId.setLimit(facetNavigationNodeId.limit);
             childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
             
