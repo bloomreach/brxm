@@ -43,8 +43,7 @@ public class InheritedFilterQuery {
      */
     private BooleanQuery query;
 
-    public InheritedFilterQuery(Map<Name, String> inheritedFilter, NamespaceMappings nsMappings,
-                       ServicingIndexingConfiguration indexingConfig) {
+    public InheritedFilterQuery(Map<Name, String> inheritedFilter, NamespaceMappings nsMappings) {
         this.query = new BooleanQuery(true);
 
         if (inheritedFilter != null) {

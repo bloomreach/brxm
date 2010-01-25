@@ -31,8 +31,6 @@ public class FacetFilters {
     // the only operators we currently support
     public static final Operator CONTAINS_OPERATOR = Operator.CONTAINS;
     public static final Operator NOTEQUAL_OPERATOR = Operator.NOTEQUAL;
-    public static final Operator IGNORE_NOTEQUAL_OPERATOR = Operator.IGNORE_NOTEQUAL;
-    public static final Operator IGNORE_EQUAL_OPERATOR = Operator.IGNORE_EQUAL;
     public static final Operator EQUAL_OPERATOR = Operator.EQUAL;
     public static final Operator NOOP_OPERATOR = Operator.NOOP;
 
@@ -40,8 +38,6 @@ public class FacetFilters {
     {
         operatorsByName.put(CONTAINS_OPERATOR.name, CONTAINS_OPERATOR);
         operatorsByName.put(NOTEQUAL_OPERATOR.name, NOTEQUAL_OPERATOR);
-        operatorsByName.put(IGNORE_NOTEQUAL_OPERATOR.name, IGNORE_NOTEQUAL_OPERATOR);
-        operatorsByName.put(IGNORE_EQUAL_OPERATOR.name, IGNORE_EQUAL_OPERATOR);
         operatorsByName.put(EQUAL_OPERATOR.name, EQUAL_OPERATOR);
         operatorsByName.put(NOOP_OPERATOR.name, NOOP_OPERATOR);
     }
@@ -104,31 +100,45 @@ public class FacetFilters {
     
     public static class FacetFilter {
 
+        public static final String IGNORE_NOTEQUAL_OPERATOR = "\\!=";
+        public static final String IGNORE_EQUAL_OPERATOR = "\\!=";
         public static final char IGNORE_NOTEQUAL_OPERATOR_DELIM = '\uFAFF';
         public static final char IGNORE_EQUAL_OPERATOR_DELIM = '\uFBFF';
         
         private static final char INSTANCE_ATTR_DELIM = '\uFCFF';
-        
+
+        public static final String NOT_OPERATOR = "not()";
         
         public Operator operator = null; 
         public String queryString = null;
         public String namespacedProperty = null;
+        public boolean negated = false;
         
         public FacetFilter(String filter, HippoVirtualProvider provider) throws IllegalArgumentException {
+            String origFilter = filter;
             filter = filter.trim();
-            if(filter.indexOf(IGNORE_NOTEQUAL_OPERATOR.operator) > -1) {
-                filter.replaceAll(IGNORE_NOTEQUAL_OPERATOR.operator, String.valueOf(IGNORE_NOTEQUAL_OPERATOR_DELIM));
+            String lcaseFilter = filter.toLowerCase(); 
+            if(lcaseFilter.startsWith(NOT_OPERATOR.substring(0, NOT_OPERATOR.length() -1)) && lcaseFilter.endsWith(NOT_OPERATOR.substring(NOT_OPERATOR.length() -1)) ) {
+                // remove not( AND )
+                filter = filter.substring(NOT_OPERATOR.length() -1);
+                filter = filter.substring(0, filter.length() -1);
+                negated = true;
             }
-            if(filter.indexOf(IGNORE_EQUAL_OPERATOR.operator) > -1) {
-                filter.replaceAll(IGNORE_EQUAL_OPERATOR.operator, String.valueOf(IGNORE_EQUAL_OPERATOR_DELIM));
+            if(filter.indexOf(IGNORE_NOTEQUAL_OPERATOR) > -1) {
+                filter.replaceAll(IGNORE_NOTEQUAL_OPERATOR, String.valueOf(IGNORE_NOTEQUAL_OPERATOR_DELIM));
+            }
+            if(filter.indexOf(IGNORE_EQUAL_OPERATOR) > -1) {
+                filter.replaceAll(IGNORE_EQUAL_OPERATOR , String.valueOf(IGNORE_EQUAL_OPERATOR_DELIM));
             }
             
             for(Operator op: Operator.SUPPORTED_OPERATORS) {
-                if(filter.indexOf(op.operator) > -1) {
-                    if(filter.indexOf(op.operator) != filter.lastIndexOf(op.operator)) {
-                        throw new IllegalArgumentException("Cannot have 2 operators: '"+op.operator+"' occurs more then once in '"+filter+"'");
+                if(lcaseFilter.indexOf(op.operator) > -1) {
+                    if(lcaseFilter.indexOf(op.operator) != lcaseFilter.lastIndexOf(op.operator)) {
+                        throw new IllegalArgumentException("Cannot have 2 operators: '"+op.operator+"' occurs more then once in '"+origFilter+"'");
                     }
                     operator = op;
+                    // found operator, stop
+                    break;
                 }
             }
             
@@ -144,9 +154,9 @@ public class FacetFilters {
                     Name qName = provider.resolveName(jcrPropertyName);
                     namespacedProperty = qName.toString();
                 } catch (IllegalNameException e) {
-                    throw new IllegalArgumentException("Unsupported property '"+namespacedProperty+"' found in '"+filter+"': "+e.getMessage()+"");
+                    throw new IllegalArgumentException("Unsupported property '"+namespacedProperty+"' found in '"+origFilter+"': "+e.getMessage()+"");
                 } catch (NamespaceException e) {
-                    throw new IllegalArgumentException("Unsupported property '"+namespacedProperty+"' found in '"+filter+"': "+e.getMessage()+"");
+                    throw new IllegalArgumentException("Unsupported property '"+namespacedProperty+"' found in '"+origFilter+"': "+e.getMessage()+"");
                 }
             } else if(operator == CONTAINS_OPERATOR) {
                 if(filter.startsWith(CONTAINS_OPERATOR.operator) && filter.endsWith(")")) {
@@ -174,30 +184,32 @@ public class FacetFilters {
                                     Name qName = provider.resolveName(jcrPropertyName);
                                     namespacedProperty = qName.toString();
                                 } catch (IllegalNameException e) {
-                                    throw new IllegalArgumentException("Unsupported property found in contains() for property '"+namespacedProperty+"' in '"+filter+"' : "+e.getMessage()+"");
+                                    throw new IllegalArgumentException("Unsupported property found in contains() for property '"+namespacedProperty+"' in '"+origFilter+"' : "+e.getMessage()+"");
                                 } catch (NamespaceException e) {
-                                    throw new IllegalArgumentException("Unsupported property found in contains() for property '"+namespacedProperty+"' in '"+filter+"' : "+e.getMessage()+"");
+                                    throw new IllegalArgumentException("Unsupported property found in contains() for property '"+namespacedProperty+"' in '"+origFilter+"' : "+e.getMessage()+"");
                                 }
                             }
                         }
-                        
+                        if(queryString.startsWith("*") || queryString.startsWith("?")) {
+                            throw new IllegalArgumentException("Invalid filter is '"+origFilter+"'  . On purpose we do not support prefix wildcard searches as they blow up in inverted indexes such as lucene");
+                        }
                     } else {
-                        throw new IllegalArgumentException("Invalid filter is '"+filter+"'  .When using the 'contains(my:prop,foo bar)' format, in contains only a single comma ',' is allowed");
+                        throw new IllegalArgumentException("Invalid filter is '"+origFilter+"'  .When using the 'contains(my:prop,foo bar)' format, in contains only a single comma ',' is allowed");
                     }
                 } else {
-                    throw new IllegalArgumentException("Invalid filter is '"+filter+"'  .When using 'contains(my:prop,foo bar)', the filter must start with 'contains(' and end with ')'");
+                    throw new IllegalArgumentException("Invalid filter is '"+origFilter+"'  .When using 'contains(my:prop,foo bar)', the filter must start with 'contains(' and end with ')'");
                 }
             }   
             if(operator == null || queryString == null || (operator != NOOP_OPERATOR && namespacedProperty == null) ) {
-                throw new IllegalArgumentException("Could not parse filter '"+filter+"'");
+                throw new IllegalArgumentException("Could not parse filter '"+origFilter+"'");
             }
             
             // restore possibly escaped operators
             if(queryString.indexOf(IGNORE_NOTEQUAL_OPERATOR_DELIM) > -1) {
-                queryString.replaceAll(String.valueOf(IGNORE_NOTEQUAL_OPERATOR_DELIM), "\\!=");
+                queryString.replaceAll(String.valueOf(IGNORE_NOTEQUAL_OPERATOR_DELIM), IGNORE_NOTEQUAL_OPERATOR);
             }
             if(queryString.indexOf(IGNORE_EQUAL_OPERATOR_DELIM) > -1) {
-                queryString.replaceAll(String.valueOf(IGNORE_EQUAL_OPERATOR_DELIM), "\\=");
+                queryString.replaceAll(String.valueOf(IGNORE_EQUAL_OPERATOR_DELIM), IGNORE_EQUAL_OPERATOR);
             }
         }
         
@@ -213,6 +225,7 @@ public class FacetFilters {
             StringBuilder builder = new StringBuilder();
             builder.append(this.operator.name);
             builder.append(INSTANCE_ATTR_DELIM).append(queryString);
+            builder.append(INSTANCE_ATTR_DELIM).append(negated);
             if(namespacedProperty != null) {
                 builder.append(INSTANCE_ATTR_DELIM).append(namespacedProperty);
             }
@@ -221,13 +234,14 @@ public class FacetFilters {
         
         public static FacetFilter fromString(String filter) throws IllegalArgumentException {
             String[] split = filter.split(String.valueOf(INSTANCE_ATTR_DELIM));
-            if(split.length != 2 && split.length != 3) {
+            if(split.length != 3 && split.length != 4) {
                 throw new IllegalArgumentException("Unable to create a FacetFilter from '"+filter+"'");
             }
             FacetFilter ff = new FacetFilter();
             ff.operator = getOperatorByKey(split[0]);
             ff.queryString = split[1];
-            ff.namespacedProperty = (split.length == 3) ? split[2] : null ;
+            ff.negated = Boolean.parseBoolean(split[2]);
+            ff.namespacedProperty = (split.length == 4) ? split[3] : null ;
             
             if(ff.operator == null || ff.queryString == null) {
                 throw new IllegalArgumentException("Unable to create a FacetFilter from '"+filter+"'");
@@ -249,8 +263,7 @@ public class FacetFilters {
         static public final Operator EQUAL = new Operator("EQUAL", "=");
         static public final Operator NOTEQUAL = new Operator("NOTEQUAL", "!=");
         static public final Operator NOOP = new Operator("NOOP", "");
-        static public final Operator IGNORE_EQUAL = new Operator("IGNORE_EQUAL", "\\=");
-        static public final Operator IGNORE_NOTEQUAL = new Operator("IGNORE_NOTEQUAL", "\\!=");
+        
         // the order of operater array is important, as it will be used in this order
         static public final Operator[] SUPPORTED_OPERATORS = {CONTAINS, NOTEQUAL, EQUAL};
         String name; 

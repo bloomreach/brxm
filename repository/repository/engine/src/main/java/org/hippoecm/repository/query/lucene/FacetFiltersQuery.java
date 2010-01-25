@@ -15,12 +15,21 @@
  */
 package org.hippoecm.repository.query.lucene;
 
+import javax.jcr.NamespaceException;
+
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
+import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.core.query.lucene.SynonymProvider;
 import org.apache.jackrabbit.core.query.lucene.fulltext.ParseException;
 import org.apache.jackrabbit.core.query.lucene.fulltext.QueryParser;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.FacetFilters;
 import org.hippoecm.repository.FacetFilters.FacetFilter;
@@ -33,21 +42,53 @@ public class FacetFiltersQuery {
      */
     private BooleanQuery query = new BooleanQuery(false);
     
-    public FacetFiltersQuery(FacetFilters facetFilters, Analyzer analyzer) throws IllegalArgumentException {
+    public FacetFiltersQuery(FacetFilters facetFilters, NamespaceMappings nsMappings, Analyzer analyzer, SynonymProvider synonymProvider) throws IllegalArgumentException {
        try {
             for (FacetFilter filter : facetFilters.getFilters()) {
                 if (filter.operator == FacetFilters.NOOP_OPERATOR) {
-                    QueryParser parser = new QueryParser(FieldNames.FULLTEXT, analyzer);
+                    QueryParser parser = new QueryParser(FieldNames.FULLTEXT, analyzer, synonymProvider);
+                    parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
                     Query freeTextQuery = parser.parse(filter.queryString);
+                    if(filter.negated) {
+                        freeTextQuery = QueryHelper.negateQuery(freeTextQuery);
+                    }
                     query.add(freeTextQuery, Occur.MUST);
                 } else if (filter.operator == FacetFilters.CONTAINS_OPERATOR) {
-                    // TODO 
+                    Name propName = NameFactoryImpl.getInstance().create(filter.namespacedProperty);
+                    StringBuffer tmp = new StringBuffer();
+                    tmp.append(nsMappings.getPrefix(propName.getNamespaceURI()));
+                    tmp.append(":").append(FieldNames.FULLTEXT_PREFIX);
+                    tmp.append(propName.getLocalName());
+                    String fieldname = tmp.toString();
+                    QueryParser parser = new QueryParser(fieldname, analyzer, synonymProvider);
+                    parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
+                    Query textQuery = parser.parse(filter.queryString);
+                    if(filter.negated) {
+                        textQuery = QueryHelper.negateQuery(textQuery);
+                    }
+                    query.add(textQuery, Occur.MUST);
+                    
                 } else if (filter.operator == FacetFilters.EQUAL_OPERATOR
                         || filter.operator == FacetFilters.NOTEQUAL_OPERATOR) {
-                    // TODO 
+                   
+                    Name propName = NameFactoryImpl.getInstance().create(filter.namespacedProperty);
+                    String field = nsMappings.translatePropertyName(propName);
+                    Term t = new Term(FieldNames.PROPERTIES, FieldNames.createNamedValue(field, filter.queryString));
+                    Query wq = new TermQuery(t); 
+                    if(filter.operator == FacetFilters.NOTEQUAL_OPERATOR) {
+                        wq = QueryHelper.negateQuery(wq);
+                    }
+                    if(filter.negated) {
+                        wq = QueryHelper.negateQuery(wq);
+                    }
+                    this.query.add(wq, Occur.MUST);
                 }
             }
         } catch (ParseException e) {
+            throw new IllegalArgumentException("Unable to parse filter into a Lucene query : '"+e.getMessage()+"'");
+        } catch (IllegalNameException e) {
+            throw new IllegalArgumentException("Unable to parse filter into a Lucene query : '"+e.getMessage()+"'");
+        } catch (NamespaceException e) {
             throw new IllegalArgumentException("Unable to parse filter into a Lucene query : '"+e.getMessage()+"'");
         }
        

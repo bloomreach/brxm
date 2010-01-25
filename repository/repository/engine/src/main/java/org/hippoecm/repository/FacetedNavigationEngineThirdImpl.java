@@ -192,8 +192,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
          * inheritedFilter: get the query representation of the interited filters (for example from facetselect)
          */
 
-        InheritedFilterQuery inheritedFilterQuery = new InheritedFilterQuery(inheritedFilter, nsMappings,
-                (ServicingIndexingConfiguration) getIndexingConfig());
+        InheritedFilterQuery inheritedFilterQuery = new InheritedFilterQuery(inheritedFilter, nsMappings);
 
         /*
          * initialQuery: get the query for initialQuery. This is the hippo:docbase value. 
@@ -212,7 +211,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         
         FacetFiltersQuery facetFiltersQuery = null;
         if (initialQuery != null && initialQuery.facetFilters != null) {
-            facetFiltersQuery = new FacetFiltersQuery(initialQuery.facetFilters, this.getTextAnalyzer()); 
+            facetFiltersQuery = new FacetFiltersQuery(initialQuery.facetFilters, nsMappings, this.getTextAnalyzer(), this.getSynonymProvider()); 
         }
 
         /*
