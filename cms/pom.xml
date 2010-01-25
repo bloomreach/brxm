@@ -27,7 +27,7 @@
 
   <url>http://www.onehippo.org/cms7/</url>
   <prerequisites>
-    <maven>2.1.0</maven>
+    <maven>[2.1.0,)</maven>
   </prerequisites>
 
   <organization>
