@@ -40,6 +40,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.jackrabbit.FacetKeyValue;
 import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
+import org.hippoecm.repository.jackrabbit.FacetedNavigationModulesTimer;
 import org.hippoecm.repository.jackrabbit.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.KeyValue;
 import org.slf4j.Logger;
@@ -134,8 +135,17 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                     }
                 }
                 
+                long start = 0;
+                if(FacetedNavigationModulesTimer.log.isDebugEnabled()) {
+                    start   = System.currentTimeMillis();
+                }
+                
                 facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, null,
                     facetSearchResultMap, filters, hitsRequested);
+                
+                if(FacetedNavigationModulesTimer.log.isDebugEnabled()) {
+                    FacetedNavigationModulesTimer.log.debug("Creating facetResult took '{}' ms for '{}' number of unique facet values.", (System.currentTimeMillis() - start),  facetSearchResult.size());
+                }
                 
             } catch (IllegalArgumentException e) {
                 log.warn("Cannot get the faceted result: '"+e.getMessage()+"'");
