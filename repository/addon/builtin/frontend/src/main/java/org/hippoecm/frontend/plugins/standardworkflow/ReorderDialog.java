@@ -353,6 +353,9 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
 
     @Override
     public IValueMap getProperties() {
-        return new ValueMap("width=520,height=400");
+        IValueMap props = new ValueMap(super.getProperties());
+        props.put("width", 520);
+        props.put("height", 400);
+        return props;
     }
 }
