@@ -97,9 +97,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
                 private static final long serialVersionUID = 1L;
 
                 public AbstractDialog<String> createDialog() {
-                    JcrNodeModel jcrNodeModel = (JcrNodeModel) MirrorTemplatePlugin.this.getDefaultModel();
-                    final JcrPropertyValueModel<String> docbaseModel = new JcrPropertyValueModel<String>(
-                            new JcrPropertyModel<String>(jcrNodeModel.getItemModel().getPath() + "/hippo:docbase"));
+                    final JcrPropertyValueModel<String> docbaseModel = getDocBaseModel();
                     return new LinkPickerDialog(context, getPluginConfig(), new IChainingModel<String>() {
                         private static final long serialVersionUID = 1L;
 
@@ -150,5 +148,11 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
             add(new Label("docbase", displayModel));
         }
         setOutputMarkupId(true);
+    }
+    
+    protected JcrPropertyValueModel<String> getDocBaseModel() {
+        JcrNodeModel jcrNodeModel = (JcrNodeModel) MirrorTemplatePlugin.this.getDefaultModel();
+        return new JcrPropertyValueModel<String>(new JcrPropertyModel<String>(jcrNodeModel.getItemModel().getPath()
+                + "/hippo:docbase"));
     }
 }
