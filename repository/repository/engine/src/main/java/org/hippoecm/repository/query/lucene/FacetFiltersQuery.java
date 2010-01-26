@@ -24,6 +24,7 @@ import org.apache.jackrabbit.core.query.lucene.fulltext.ParseException;
 import org.apache.jackrabbit.core.query.lucene.fulltext.QueryParser;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
@@ -70,11 +71,19 @@ public class FacetFiltersQuery {
                     
                 } else if (filter.operator == FacetFilters.EQUAL_OPERATOR
                         || filter.operator == FacetFilters.NOTEQUAL_OPERATOR) {
-                   
+                    
                     Name propName = NameFactoryImpl.getInstance().create(filter.namespacedProperty);
-                    String field = nsMappings.translatePropertyName(propName);
-                    Term t = new Term(FieldNames.PROPERTIES, FieldNames.createNamedValue(field, filter.queryString));
-                    Query wq = new TermQuery(t); 
+                    Query wq = null;
+                    
+                    if(propName.equals(NameConstants.JCR_PRIMARYTYPE) || propName.equals(NameConstants.JCR_MIXINTYPES)) {
+                        String internalFacetName = ServicingNameFormat.getInternalFacetName(propName, nsMappings);
+                        Term t = new Term(internalFacetName , filter.queryString);
+                        wq = new TermQuery(t);
+                    } else {
+                        String field = nsMappings.translatePropertyName(propName);
+                        Term t = new Term(FieldNames.PROPERTIES, FieldNames.createNamedValue(field, filter.queryString));
+                        wq = new TermQuery(t);
+                    }
                     if(filter.operator == FacetFilters.NOTEQUAL_OPERATOR) {
                         wq = QueryHelper.negateQuery(wq);
                     }

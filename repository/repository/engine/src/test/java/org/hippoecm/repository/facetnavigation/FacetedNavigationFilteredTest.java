@@ -115,6 +115,42 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
         assertEquals(2L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
     }
     
+    
+    @Test
+    public void testEqualsPrimTypeFilteredNavigation() throws RepositoryException, IOException {
+        commonStart();
+
+        Node testNode = session.getRootNode().getNode("test");
+        createDateStructure1(testNode);
+
+        Node facetNavigation = testNode.addNode("facetnavigation");
+        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
+                .getUUID());
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month", "jcr:primaryType"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month", "prim"});
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"jcr:primaryType = hippo:testcardocument"});
+
+        
+        session.save();
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+      
+        // all cars are of type hippo:testcardocument, thus we expect to find 9
+        assertEquals(9L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(9L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        
+        // change to non existing document type:
+        
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FILTERS, new String[] {"jcr:primaryType = hippo:nonexisting"});
+
+        session.save();
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+        
+        assertEquals(0L, facetNavigation.getNode("year").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(0L, facetNavigation.getNode("year").getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+    }
+    
+    
    /*
     * This test is to make sure filtering of the faceted navigation works as expected
     */
