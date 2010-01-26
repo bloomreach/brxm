@@ -301,7 +301,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     Filter filter = new QueryWrapperFilter(searchQuery);
                     matchingDocs = filter.bits(indexReader);
                     if(log.isDebugEnabled()) {
-                        log.debug("Took '' ms to create the bitset filter (#hits = '"+matchingDocs.cardinality()+"' ) for the query ''", (System.currentTimeMillis() - start), searchQuery.toString());
+                        log.debug("Took '{}' ms to create the bitset filter (#hits = '"+matchingDocs.cardinality()+"' ) for the query '{}'", (System.currentTimeMillis() - start), searchQuery.toString());
                     }
                     
                     Map<String, Count> facetValueCountMap = resultset.get(namespacedFacet);
@@ -551,7 +551,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         }
         
         if(log.isDebugEnabled()) {
-            log.debug("Populating the FacetValueCountMap took '' ms for  #'' facet values (in case of ranges, this is not the same as all unique facet values, but only the number of ranges) ", (System.currentTimeMillis() - start), facetValueCountMap.size());
+            log.debug("Populating the FacetValueCountMap took '{}' ms for  #'{}' facet values (in case of ranges, this is not the same as all unique facet values, but only the number of ranges) ", (System.currentTimeMillis() - start), facetValueCountMap.size());
         }
     }
 
