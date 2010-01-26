@@ -201,10 +201,10 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         hitsRequested.addOrderBy(nodeId.orderByList);
           
         FacetedNavigationEngine.Result facetedResult;
-        long t1 = 0, t2;
-        if(log.isDebugEnabled())
+        long t1 = 0;
+        if(log.isDebugEnabled()) {
             t1 = System.currentTimeMillis();
-        
+        }
         Map<String, String> filters = null;
         if(inheritedFilter != null) {
             filters = new HashMap<String,String>();
@@ -215,8 +215,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, currentRanges, null, null, filters,
                                            hitsRequested);
         if(log.isDebugEnabled()) {
-            t2 = System.currentTimeMillis();
-            log.debug("facetsearch turnaround="+(t2-t1));
+            FacetedNavigationModulesTimer.log.debug("Creating facetedResultSet took '{}' ms for '{}' number of results.", (System.currentTimeMillis() - t1),  facetedResult.length());
         }
         count = facetedResult.length();
 
