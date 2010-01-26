@@ -94,7 +94,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
             facetSearchResultMap = new HashMap<String, Map<String, FacetedNavigationEngine.Count>>();
 
             Map<String, FacetedNavigationEngine.Count> facetSearchResult;
-            facetSearchResult = new TreeMap<String, FacetedNavigationEngine.Count>();
+            facetSearchResult = new HashMap<String, FacetedNavigationEngine.Count>();
 
             if (parsedFacet.getRangeConfig() != null) {
                 // include the rangeConfig
@@ -133,8 +133,10 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                         filters.put(entry.getKey().toString(), entry.getValue());
                     }
                 }
+                
                 facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, null,
                     facetSearchResultMap, filters, hitsRequested);
+                
             } catch (IllegalArgumentException e) {
                 log.warn("Cannot get the faceted result: '"+e.getMessage()+"'");
             }
