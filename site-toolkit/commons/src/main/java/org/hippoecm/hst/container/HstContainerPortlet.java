@@ -39,6 +39,7 @@ import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.PortletConfigUtils;
 
 public class HstContainerPortlet extends GenericPortlet {
     
@@ -109,65 +110,36 @@ public class HstContainerPortlet extends GenericPortlet {
         super.init(config);
 
         this.portletContext = config.getPortletContext();
+
+        String pathInfoProviderClassName = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_PORTLET_REQUEST_DISPATCHER_PATH_PROVIDER, DefaultPortletRequestDispatcherImpl.class.getName());
         
-        String param = config.getInitParameter(HST_PORTLET_REQUEST_DISPATCHER_PATH_PROVIDER);
-        
-        if (param != null) {
-            try {
-                hstPortletRequestDispatcherPathProvider = (HstPortletRequestDispatcherPathProvider) Thread.currentThread().getContextClassLoader().loadClass(param.trim()).newInstance();
-            } catch (Exception e) {
-                throw new PortletException("Cannot create hstPortletRequestDispatcherPathProvider object from " + param);
-            }
-        } else {
-            hstPortletRequestDispatcherPathProvider = new DefaultPortletRequestDispatcherImpl();
+        try {
+            hstPortletRequestDispatcherPathProvider = (HstPortletRequestDispatcherPathProvider) Thread.currentThread().getContextClassLoader().loadClass(pathInfoProviderClassName.trim()).newInstance();
+        } catch (Exception e) {
+            throw new PortletException("Cannot create hstPortletRequestDispatcherPathProvider object from " + pathInfoProviderClassName);
         }
         
         hstPortletRequestDispatcherPathProvider.init(config);
-
-        param = config.getInitParameter(PARAM_ALLOW_PREFERENCES);
         
-        if (param != null) {
-            this.allowPreferences = Boolean.parseBoolean(param);
-        }
-
-        param = config.getInitParameter(HST_SERVLET_PATH_PARAM);
+        allowPreferences = Boolean.parseBoolean(PortletConfigUtils.getInitParameter(config, config.getPortletContext(), PARAM_ALLOW_PREFERENCES, "false"));
         
-        if (param != null) {
-            this.defaultHstServletPath = param;
-        }
+        defaultHstServletPath = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_SERVLET_PATH_PARAM, defaultHstServletPath);
         
-        param = config.getInitParameter(HST_PATH_INFO_PARAM);
-
-        if (param != null) {
-            this.defaultHstPathInfo = param;
-        }
-
-        param = config.getInitParameter(HST_PATH_INFO_EDIT_MODE_PARAM);
+        defaultHstPathInfo = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_PATH_INFO_PARAM, defaultHstPathInfo);
         
-        if (param != null) {
-            defaultHstPathInfoEditMode = param;
-        }
+        defaultHstPathInfoEditMode = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_PATH_INFO_EDIT_MODE_PARAM, defaultHstPathInfoEditMode);
         
-        param = config.getInitParameter(HST_PORTLET_TITLE_PARAM_NAME);
+        defaultPortletTitle = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_PORTLET_TITLE_PARAM_NAME, defaultPortletTitle);
         
-        if (param != null) {
-            defaultPortletTitle = param;
-        }
-
-        param = config.getInitParameter(HST_HEADER_PAGE_PARAM_NAME);
+        defaultHeaderPage = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_HEADER_PAGE_PARAM_NAME, defaultHeaderPage);
         
-        if (param != null) {
-            defaultHeaderPage = param;
-        }
-        
-        param = config.getInitParameter(HST_HELP_PAGE_PARAM_NAME);
-        
-        if (param != null) {
-            defaultHelpPage = param;
-        }
+        defaultHelpPage = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_HELP_PAGE_PARAM_NAME, defaultHelpPage);
     }
 
     public void destroy() {
+        if (hstPortletRequestDispatcherPathProvider != null) {
+            hstPortletRequestDispatcherPathProvider.destroy();
+        }
     }
 
     @Override
