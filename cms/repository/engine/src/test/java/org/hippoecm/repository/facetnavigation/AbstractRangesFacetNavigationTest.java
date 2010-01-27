@@ -107,21 +107,27 @@ public abstract class AbstractRangesFacetNavigationTest extends TestCase{
         session.save();
     }
 
-    protected void createDateStructure1(Node test) throws RepositoryException {
+    protected void createDateStructure(Node test, boolean populateCars) throws RepositoryException {
         Node documents = test.addNode("documents", "nt:unstructured");
         documents.addMixin("mix:referenceable");
         Node dateDocs = documents.addNode("datedocs", "nt:unstructured");
         documents.addMixin("mix:referenceable");
-        addCar(dateDocs, "start", start, 125000L, 18000.0D, "peugeot");
-        addCar(dateDocs, "onehourbefore", onehourbefore, 112000L, 12125.0D, "peugeot");
-        addCar(dateDocs, "onedaybefore", onedaybefore, 92000L, 9156.0D, "audi");
-        addCar(dateDocs, "threedaybefore", threedaybefore, 63000L, 22345.0D, "mercedes");
-        addCar(dateDocs, "monthbefore", monthbefore, 119000L, 13456.0D, "toyota");
-        addCar(dateDocs, "monthandadaybefore", monthandadaybefore, 134000L, 6787.0D, "audi");
-        addCar(dateDocs, "twomonthsbefore", twomonthsbefore, 232000L, 4125.0D, "alfa romeo");
-        addCar(dateDocs, "yearbefore", yearbefore, 12200L, 52125.0D, "bmw");
-        addCar(dateDocs, "twoyearbefore", twoyearbefore, 152000L, 1225.0D, "bentley");
+        if(populateCars) {
+            addCar(dateDocs, "start", start, 125000L, 18000.0D, "peugeot");
+            addCar(dateDocs, "onehourbefore", onehourbefore, 112000L, 12125.0D, "peugeot");
+            addCar(dateDocs, "onedaybefore", onedaybefore, 92000L, 9156.0D, "audi");
+            addCar(dateDocs, "threedaybefore", threedaybefore, 63000L, 22345.0D, "mercedes");
+            addCar(dateDocs, "monthbefore", monthbefore, 119000L, 13456.0D, "toyota");
+            addCar(dateDocs, "monthandadaybefore", monthandadaybefore, 134000L, 6787.0D, "audi");
+            addCar(dateDocs, "twomonthsbefore", twomonthsbefore, 232000L, 4125.0D, "alfa romeo");
+            addCar(dateDocs, "yearbefore", yearbefore, 12200L, 52125.0D, "bmw");
+            addCar(dateDocs, "twoyearbefore", twoyearbefore, 152000L, 1225.0D, "bentley");
+        }
         test.save();
+    }
+    
+    protected void createDateStructure(Node test) throws RepositoryException {
+        this.createDateStructure(test, true);
     }
 
     protected void addCar(Node dateDocs, String name, Calendar cal, long travelled, double price, String brand)

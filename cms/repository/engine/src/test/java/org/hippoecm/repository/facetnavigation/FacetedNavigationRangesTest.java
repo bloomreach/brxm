@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -46,7 +47,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
         
         commonStart();
         Node testNode = session.getRootNode().getNode("test");
-        createDateStructure1(testNode);
+        createDateStructure(testNode);
 
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -83,7 +84,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
         
         commonStart();
         Node testNode = session.getRootNode().getNode("test");
-        createDateStructure1(testNode);
+        createDateStructure(testNode);
 
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -109,7 +110,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
     public void testDoubleRanges() throws RepositoryException, IOException {
         commonStart();
         Node testNode = session.getRootNode().getNode("test");
-        createDateStructure1(testNode);
+        createDateStructure(testNode);
 
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -165,7 +166,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
     public void testFacetRangeOrdering() throws RepositoryException, IOException {
         commonStart();
         Node testNode = session.getRootNode().getNode("test");
-        createDateStructure1(testNode);
+        createDateStructure(testNode);
 
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -221,7 +222,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
     public void testLongRanges() throws RepositoryException, IOException {
         commonStart();
         Node testNode = session.getRootNode().getNode("test");
-        createDateStructure1(testNode);
+        createDateStructure(testNode);
 
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -266,7 +267,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
     public void testStringRanges() throws RepositoryException, IOException {
         commonStart();
         Node testNode = session.getRootNode().getNode("test");
-        createDateStructure1(testNode);
+        createDateStructure(testNode);
 
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -305,6 +306,49 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
 
     }
 
-    
+    /*
+     * Make sure that timezone work correct with GMT
+     */    
+    @Test
+    public void testTimeZoneDateFacetNavigation() throws RepositoryException, IOException {
+        if(testShouldSkip()) {
+            assertTrue(true);
+            return;
+        }
+        commonStart();
+
+        Node testNode = session.getRootNode().getNode("test");
+        // false thus we do not populate any car
+        createDateStructure(testNode, false);
+        Node carDocs = testNode.getNode("documents").getNode("datedocs");
+        
+        // let's populate one car, just after midnight: this should be indexed the correct day (GMT time might result in that 00:24 is still seen
+        // as the day before because of the time zone)
+        
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 23);
+        
+        // Add a car that has date today, at 00:23. It should be found in the facet range 'today'. Because of GMT dates, this is 
+        // a valuable test. 00:23 might be yesterday wrt GMT time
+        addCar(carDocs, "start", cal, 125000L, 18000.0D, "peugeot");
+        session.save();
+        
+        Node navigation = testNode.addNode("facetnavigation");
+        Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
+                .getUUID());
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] {"hippo:date$[{name:'today', resolution:'day', begin:0, end:1},{name:'yesterday', resolution:'day', begin:-1, end:0}]" });
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"range" });
+
+        session.save();
+        
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+      
+
+        assertEquals(1L, facetNavigation.getNode("range").getNode("today").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        assertEquals(0L, facetNavigation.getNode("range").getNode("yesterday").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+        
+    }
 
 }

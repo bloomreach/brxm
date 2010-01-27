@@ -39,7 +39,7 @@ public class FacetedNavigationSortingTest extends AbstractDateFacetNavigationTes
        commonStart();
 
        Node testNode = session.getRootNode().getNode("test");
-       createDateStructure1(testNode);
+       createDateStructure(testNode);
 
        Node navigation = testNode.addNode("facetnavigation");
        Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);

@@ -32,8 +32,6 @@ public class HippoDateTools {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     
-    private final static TimeZone GMT = TimeZone.getTimeZone("GMT");
-
     private static final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
     private static final SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("yyyyMM");
     private static final SimpleDateFormat WEEK_FORMAT = new SimpleDateFormat("yyyyww");
@@ -42,19 +40,7 @@ public class HippoDateTools {
     private static final SimpleDateFormat MINUTE_FORMAT = new SimpleDateFormat("yyyyMMddHHmm");
     private static final SimpleDateFormat SECOND_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
     private static final SimpleDateFormat MILLISECOND_FORMAT = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-    static {
-        // times need to be normalized so the value doesn't depend on the 
-        // location the index is created/used:
-        YEAR_FORMAT.setTimeZone(GMT);
-        MONTH_FORMAT.setTimeZone(GMT);
-        WEEK_FORMAT.setTimeZone(GMT);
-        DAY_FORMAT.setTimeZone(GMT);
-        HOUR_FORMAT.setTimeZone(GMT);
-        MINUTE_FORMAT.setTimeZone(GMT);
-        SECOND_FORMAT.setTimeZone(GMT);
-        MILLISECOND_FORMAT.setTimeZone(GMT);
-    }
-
+   
     // cannot create, the class has static methods only
     private HippoDateTools() {}
 
@@ -81,11 +67,8 @@ public class HippoDateTools {
      *    depeding on <code>resolution</code>; using UTC as timezone
      */
     public static String timeToString(long time, Resolution resolution) {
-        Calendar cal = Calendar.getInstance(GMT);
+        Calendar cal = Calendar.getInstance();
 
-        //protected in JDK's prior to 1.4
-        //cal.setTimeInMillis(round(time, resolution));
-        
         cal.setTime(new Date(round(time, resolution)));
 
         
@@ -139,7 +122,7 @@ public class HippoDateTools {
      *    set to 0 or 1, expressed as milliseconds since January 1, 1970, 00:00:00 GMT
      */
     public static long round(long time, Resolution resolution) {
-        Calendar cal = Calendar.getInstance(GMT);
+        Calendar cal = Calendar.getInstance();
 
         cal.setTime(new Date(time));
         

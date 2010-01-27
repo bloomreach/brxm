@@ -35,7 +35,7 @@ public class FacetedNavigationDateBrowsingTest extends AbstractDateFacetNavigati
         commonStart();
 
         Node testNode = session.getRootNode().getNode("test");
-        createDateStructure1(testNode);
+        createDateStructure(testNode);
 
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -70,9 +70,5 @@ public class FacetedNavigationDateBrowsingTest extends AbstractDateFacetNavigati
         assertNotNull(node.getNode("day"));
         assertNotNull(node.getNode("day").getNode(String.valueOf(currentDay)));
     }
-
-    
-    
-   
 
 }
