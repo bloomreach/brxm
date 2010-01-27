@@ -44,12 +44,12 @@ public class FacetViewHelper {
         }
         System.out.println(indent + navigation.getName() + countStr);
 
-        //if(!navigation.getName().equals("hippo:resultset")) { 
-        NodeIterator it = navigation.getNodes();
-        indent += "\t";
-        while (it.hasNext()) {
-            traverse(it.nextNode(), indent, depth);
+        if(!navigation.getName().equals("hippo:resultset")) { 
+            NodeIterator it = navigation.getNodes();
+            indent += "\t";
+            while (it.hasNext()) {
+                traverse(it.nextNode(), indent, depth);
+            }
         }
-        //}
     }
 }

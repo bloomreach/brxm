@@ -27,6 +27,7 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.TestCase;
+import org.hippoecm.repository.query.lucene.HippoDateTools;
 import org.junit.After;
 import org.junit.Before;
 
@@ -91,24 +92,26 @@ public abstract class AbstractDateFacetNavigationTest extends TestCase{
         session.save();
     }
     
-    void createDateStructure1(Node test) throws RepositoryException {
+    void createDateStructure(Node test, boolean populateCars) throws RepositoryException {
         Node documents = test.addNode("documents", "nt:unstructured");
         documents.addMixin("mix:referenceable");
         Node carDocs = documents.addNode("cardocs", "nt:unstructured");
         documents.addMixin("mix:referenceable");
-
-        addCarDoc(carDocs, "cardoc1", start, "the quick brown fox jumps over the lazy dog", "peugeot", "red");
-        addCarDoc(carDocs, "cardoc2", onehourearlier, "brown fox jumps over the lazy dog", "peugeot", "green");
-        addCarDoc(carDocs, "cardoc3", onedayearlier, "jumps over the lazy dog", "peugeot", "yellow");
-        addCarDoc(carDocs, "cardoc4", threedayearlier, "lazy dog", "peugeot", "red");
-        addCarDoc(carDocs, "cardoc5", monthearlier, "just some really other text about the laziest dog ever", "peugeot", "red");
-        addCarDoc(carDocs, "cardoc6", monthandadayearlier, null, "bmw", "green");
-        addCarDoc(carDocs, "cardoc7", twomonthsearlier, null, "mercedes", "red");
-        addCarDoc(carDocs, "cardoc8", yearearlier, null, "mercedes", "green");
-        addCarDoc(carDocs, "cardoc9", twoyearearlier, null, "bmw", "red");
-
+        if(populateCars) {
+            addCarDoc(carDocs, "cardoc1", start, "the quick brown fox jumps over the lazy dog", "peugeot", "red");
+            addCarDoc(carDocs, "cardoc2", onehourearlier, "brown fox jumps over the lazy dog", "peugeot", "green");
+            addCarDoc(carDocs, "cardoc3", onedayearlier, "jumps over the lazy dog", "peugeot", "yellow");
+            addCarDoc(carDocs, "cardoc4", threedayearlier, "lazy dog", "peugeot", "red");
+            addCarDoc(carDocs, "cardoc5", monthearlier, "just some really other text about the laziest dog ever", "peugeot", "red");
+            addCarDoc(carDocs, "cardoc6", monthandadayearlier, null, "bmw", "green");
+            addCarDoc(carDocs, "cardoc7", twomonthsearlier, null, "mercedes", "red");
+            addCarDoc(carDocs, "cardoc8", yearearlier, null, "mercedes", "green");
+            addCarDoc(carDocs, "cardoc9", twoyearearlier, null, "bmw", "red");
+        }
         test.save();
-
+    }
+    void createDateStructure(Node test) throws RepositoryException {
+       this.createDateStructure(test,true);
     }
 
     void addCarDoc(Node carDocs, String name, Calendar cal, String contents, String brand, String color) throws ItemExistsException,

@@ -36,7 +36,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
         commonStart();
 
         Node testNode = session.getRootNode().getNode("test");
-        createDateStructure1(testNode);
+        createDateStructure(testNode);
 
         Node facetNavigation = testNode.addNode("facetnavigation");
         facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -78,7 +78,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
         commonStart();
 
         Node testNode = session.getRootNode().getNode("test");
-        createDateStructure1(testNode);
+        createDateStructure(testNode);
 
         Node facetNavigation = testNode.addNode("facetnavigation");
         facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -121,7 +121,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
         commonStart();
 
         Node testNode = session.getRootNode().getNode("test");
-        createDateStructure1(testNode);
+        createDateStructure(testNode);
 
         Node facetNavigation = testNode.addNode("facetnavigation");
         facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -160,7 +160,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        commonStart();
 
        Node testNode = session.getRootNode().getNode("test");
-       createDateStructure1(testNode);
+       createDateStructure(testNode);
 
        Node facetNavigation = testNode.addNode("facetnavigation");
        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -214,7 +214,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        commonStart();
 
        Node testNode = session.getRootNode().getNode("test");
-       createDateStructure1(testNode);
+       createDateStructure(testNode);
 
        Node facetNavigation = testNode.addNode("facetnavigation");
        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -241,7 +241,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        commonStart();
 
        Node testNode = session.getRootNode().getNode("test");
-       createDateStructure1(testNode);
+       createDateStructure(testNode);
 
        Node facetNavigation = testNode.addNode("facetnavigation");
        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -266,7 +266,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        commonStart();
 
        Node testNode = session.getRootNode().getNode("test");
-       createDateStructure1(testNode);
+       createDateStructure(testNode);
 
        Node facetNavigation = testNode.addNode("facetnavigation");
        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -314,7 +314,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        commonStart();
 
        Node testNode = session.getRootNode().getNode("test");
-       createDateStructure1(testNode);
+       createDateStructure(testNode);
 
        Node facetNavigation = testNode.addNode("facetnavigation");
        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -349,7 +349,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        commonStart();
 
        Node testNode = session.getRootNode().getNode("test");
-       createDateStructure1(testNode);
+       createDateStructure(testNode);
 
        Node facetNavigation = testNode.addNode("facetnavigation");
        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
@@ -387,7 +387,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        commonStart();
 
        Node testNode = session.getRootNode().getNode("test");
-       createDateStructure1(testNode);
+       createDateStructure(testNode);
 
        Node facetNav = testNode.addNode("facetnavigation");
        
@@ -425,7 +425,7 @@ public class FacetedNavigationFilteredTest extends AbstractDateFacetNavigationTe
        commonStart();
 
        Node testNode = session.getRootNode().getNode("test");
-       createDateStructure1(testNode);
+       createDateStructure(testNode);
 
        Node facetNavigation = testNode.addNode("facetnavigation");
        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
