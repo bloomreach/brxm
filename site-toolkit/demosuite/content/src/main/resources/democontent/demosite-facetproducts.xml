@@ -39,6 +39,9 @@
         <sv:property sv:name="hippofacnav:facetnodenames" sv:type="String">
             <sv:value>tags${limit:10}</sv:value>
         </sv:property>
+        <sv:property sv:name="hippofacnav:filters" sv:type="String">
+            <sv:value>jcr:primaryType=demosite:product</sv:value>
+        </sv:property>
     </sv:node>
     <sv:node sv:name="index page">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -68,6 +71,9 @@
         <sv:property sv:name="hippofacnav:facetnodenames" sv:type="String">
             <sv:value>index${hide:'index'}</sv:value>
             <sv:value>brand${after:'index'}</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippofacnav:filters" sv:type="String">
+            <sv:value>jcr:primaryType=demosite:product</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="faceted navigation">
@@ -123,6 +129,9 @@
                 {name:'25.000 - 100.000', resolution:'double', begin:25000, end:100000},
                 {name:'more than 100.000', resolution:'double', begin:100000}
                 ]</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippofacnav:filters" sv:type="String">
+            <sv:value>jcr:primaryType=demosite:product</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>
