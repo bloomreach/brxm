@@ -441,8 +441,6 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             try {
                 for (FacetRange facetRange : parsedFacet.getFacetRanges()) {
                     long t1 = 0;
-                    int matchingTermsInRange = 0;
-                    int termsInRange = 0;
                     if(log.isDebugEnabled()) {
                         t1 = System.currentTimeMillis();
                     }
@@ -471,17 +469,11 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                                             // term text is higher than upper limit
                                             break;
                                         }
-                                        termsInRange++;
                                         termDocs.seek(term);
-                                        boolean matchedTerm = false;
                                         while (termDocs.next()) {
                                             if (matchingDocs.get(termDocs.doc())) {
                                                 counter.count++;
-                                                matchedTerm = true;
                                             }
-                                        }
-                                        if(matchedTerm) {
-                                            matchingTermsInRange++;
                                         }
                                     } else {
                                         break;
@@ -498,12 +490,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                         log.warn(e.getMessage());
                     }
                     if(log.isDebugEnabled()) {
-                       
-                        String percentage = String.valueOf(Double.valueOf(matchingTermsInRange)/termsInRange);
-                        if(percentage.length() > 3) {
-                            percentage = percentage.substring(0, 3);
-                        }
-                        log.debug("Populating range '{}' took '{}' ms. Total number of lucene terms matching range is #'"+termsInRange+"'. From these terms, #'"+matchingTermsInRange+"' actually had a match in the matching bitset. That is "+percentage+"% .", facetRange.getName(), (System.currentTimeMillis() - t1));
+                        log.debug("Populating range '{}' took '{}' ms. ", facetRange.getName(), (System.currentTimeMillis() - t1));
                     }
                 }
             } finally {
