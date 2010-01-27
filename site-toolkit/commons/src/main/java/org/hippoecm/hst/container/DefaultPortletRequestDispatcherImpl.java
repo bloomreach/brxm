@@ -44,12 +44,12 @@ import org.hippoecm.hst.util.PortletConfigUtils;
  */
 public class DefaultPortletRequestDispatcherImpl implements HstPortletRequestDispatcherPathProvider {
 
-    private static final String SERVLET_PATH_ATTRIBUTE_NAME = "hstPortletRequestDispatcherPathProvider.servletPath.attributeName";
-    private static final String SERVLET_PATH_PROPERTY_PATH = "hstPortletRequestDispatcherPathProvider.servletPath.propertyPath";
+    private static final String SERVLET_PATH_ATTRIBUTE_NAMES = "hstPortletRequestDispatcherPathProvider.servletPath.attributeNames";
+    private static final String SERVLET_PATH_PROPERTY_PATHS = "hstPortletRequestDispatcherPathProvider.servletPath.propertyPaths";
     private static final String SERVLET_PATH_MAP = "hstPortletRequestDispatcherPathProvider.servletPathMap";
 
-    private static final String PATH_INFO_ATTRIBUTE_NAME = "hstPortletRequestDispatcherPathProvider.pathInfo.attributeName";
-    private static final String PATH_INFO_PROPERTY_PATH = "hstPortletRequestDispatcherPathProvider.pathInfo.propertyPath";
+    private static final String PATH_INFO_ATTRIBUTE_NAMES = "hstPortletRequestDispatcherPathProvider.pathInfo.attributeNames";
+    private static final String PATH_INFO_PROPERTY_PATHS = "hstPortletRequestDispatcherPathProvider.pathInfo.propertyPaths";
     private static final String PATH_INFO_PATTERN_REPLACEMENTS = "hstPortletRequestDispatcherPathProvider.pathInfo.patternReplacements";
     
     private static final String PAIR_SEPARATOR = "hstPortletRequestDispatcherPathProvider.pair.separator";
@@ -58,11 +58,11 @@ public class DefaultPortletRequestDispatcherImpl implements HstPortletRequestDis
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
     private Map<String, PropertyDescriptor> propertyDescriptorCache;
 
-    private String servletPathAttributeName;
-    private String servletPathPropertyPath;
+    private String [] servletPathAttributeNames;
+    private String [] servletPathPropertyPaths;
     
-    private String pathInfoAttributeName;
-    private String pathInfoPropertyPath;
+    private String [] pathInfoAttributeNames;
+    private String [] pathInfoPropertyPaths;
     
     private List<KeyValue<Pattern, String>> patternAndServletPaths;
     private List<KeyValue<Pattern, String>> pathInfoPatternAndReplacements;
@@ -75,13 +75,13 @@ public class DefaultPortletRequestDispatcherImpl implements HstPortletRequestDis
     }
 
     public void init(PortletConfig config) throws PortletException {
-        servletPathAttributeName = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), SERVLET_PATH_ATTRIBUTE_NAME, servletPathAttributeName);
-        servletPathPropertyPath = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), SERVLET_PATH_PROPERTY_PATH, servletPathPropertyPath);
-        pathInfoAttributeName = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), PATH_INFO_ATTRIBUTE_NAME, pathInfoAttributeName);
-        pathInfoPropertyPath = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), PATH_INFO_PROPERTY_PATH, pathInfoPropertyPath);
-        
         pairSeparator = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), PAIR_SEPARATOR, pairSeparator);
         pairKeySeparator = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), PAIR_KEY_SEPARATOR, pairKeySeparator);
+        
+        servletPathAttributeNames = splitAndTrimToArray(PortletConfigUtils.getInitParameter(config, config.getPortletContext(), SERVLET_PATH_ATTRIBUTE_NAMES, null), pairSeparator);
+        servletPathPropertyPaths = splitAndTrimToArray(PortletConfigUtils.getInitParameter(config, config.getPortletContext(), SERVLET_PATH_PROPERTY_PATHS, null), pairSeparator);
+        pathInfoAttributeNames = splitAndTrimToArray(PortletConfigUtils.getInitParameter(config, config.getPortletContext(), PATH_INFO_ATTRIBUTE_NAMES, null), pairSeparator);
+        pathInfoPropertyPaths = splitAndTrimToArray(PortletConfigUtils.getInitParameter(config, config.getPortletContext(), PATH_INFO_PROPERTY_PATHS, null), pairSeparator);
         
         patternAndServletPaths = new ArrayList<KeyValue<Pattern, String>>();
         String servletPathMapParam = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), SERVLET_PATH_MAP, null);
@@ -124,39 +124,44 @@ public class DefaultPortletRequestDispatcherImpl implements HstPortletRequestDis
         String servletPath = null;
         Object bean = null;
         
-        if (servletPathAttributeName != null) {
-            bean = request.getAttribute(servletPathAttributeName);
-            
-            if (bean == null) {
-                PortletSession portletSession = request.getPortletSession();
+        if (servletPathAttributeNames != null && servletPathAttributeNames.length > 0) {
+            for (int i = 0; i < servletPathAttributeNames.length && servletPath == null; i++) {
+                String servletPathAttributeName = servletPathAttributeNames[i];
+                String servletPathPropertyPath = (servletPathPropertyPaths.length > i ? servletPathPropertyPaths[i] : null);
                 
-                if (portletSession != null) {
-                    bean = portletSession.getAttribute(servletPathAttributeName);
-                    
-                    if (bean == null) {
-                        bean = portletSession.getAttribute(servletPathAttributeName, PortletSession.APPLICATION_SCOPE);
-                    }
-                }
-            }
-        }
-        
-        if (bean != null && servletPathPropertyPath != null) {
-            try {
-                Object value = getPropertyByPath(bean, servletPathPropertyPath);
+                bean = request.getAttribute(servletPathAttributeName);
                 
-                if (value != null) {
-                    String valueString = value.toString();
+                if (bean == null) {
+                    PortletSession portletSession = request.getPortletSession();
                     
-                    for (KeyValue<Pattern, String> pair : patternAndServletPaths) {
-                        Matcher matcher = pair.getKey().matcher(valueString);
+                    if (portletSession != null) {
+                        bean = portletSession.getAttribute(servletPathAttributeName);
                         
-                        if (matcher.matches()) {
-                            servletPath = pair.getValue();
+                        if (bean == null) {
+                            bean = portletSession.getAttribute(servletPathAttributeName, PortletSession.APPLICATION_SCOPE);
                         }
                     }
                 }
-            } catch (Exception e) {
-                throw new PortletException(e);
+                
+                if (bean != null) {
+                    try {
+                        Object value = getPropertyByPath(bean, servletPathPropertyPath);
+                        
+                        if (value != null) {
+                            String valueString = value.toString();
+                            
+                            for (KeyValue<Pattern, String> pair : patternAndServletPaths) {
+                                Matcher matcher = pair.getKey().matcher(valueString);
+                                
+                                if (matcher.matches()) {
+                                    servletPath = pair.getValue();
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        throw new PortletException(e);
+                    }
+                }
             }
         }
         
@@ -180,37 +185,42 @@ public class DefaultPortletRequestDispatcherImpl implements HstPortletRequestDis
         String pathInfo = null;
         Object bean = null;
         
-        if (pathInfoAttributeName != null) {
-            bean = request.getAttribute(pathInfoAttributeName);
-            
-            if (bean == null) {
-                PortletSession portletSession = request.getPortletSession();
+        if (pathInfoAttributeNames != null && pathInfoAttributeNames.length > 0) {
+            for (int i = 0; i < pathInfoAttributeNames.length && pathInfo == null; i++) {
+                String pathInfoAttributeName = pathInfoAttributeNames[i];
+                String pathInfoPropertyPath = (pathInfoPropertyPaths.length > i ? pathInfoPropertyPaths[i] : null);
                 
-                if (portletSession != null) {
-                    bean = portletSession.getAttribute(pathInfoAttributeName);
+                bean = request.getAttribute(pathInfoAttributeName);
+                
+                if (bean == null) {
+                    PortletSession portletSession = request.getPortletSession();
                     
-                    if (bean == null) {
-                        bean = portletSession.getAttribute(pathInfoAttributeName, PortletSession.APPLICATION_SCOPE);
+                    if (portletSession != null) {
+                        bean = portletSession.getAttribute(pathInfoAttributeName);
+                        
+                        if (bean == null) {
+                            bean = portletSession.getAttribute(pathInfoAttributeName, PortletSession.APPLICATION_SCOPE);
+                        }
                     }
                 }
-            }
-        }
-        
-        if (bean != null) {
-            try {
-                pathInfo = (String) getPropertyByPath(bean, pathInfoPropertyPath);
-            } catch (Exception e) {
-                throw new PortletException(e);
-            }
-        }
-        
-        if (pathInfo != null && !pathInfoPatternAndReplacements.isEmpty()) {
-            for (KeyValue<Pattern, String> pair : pathInfoPatternAndReplacements) {
-                Matcher matcher = pair.getKey().matcher(pathInfo);
                 
-                if (matcher.find()) {
-                    pathInfo = matcher.replaceAll(pair.getValue());
-                    break;
+                if (bean != null) {
+                    try {
+                        pathInfo = (String) getPropertyByPath(bean, pathInfoPropertyPath);
+                    } catch (Exception e) {
+                        throw new PortletException(e);
+                    }
+                }
+                
+                if (pathInfo != null && !pathInfoPatternAndReplacements.isEmpty()) {
+                    for (KeyValue<Pattern, String> pair : pathInfoPatternAndReplacements) {
+                        Matcher matcher = pair.getKey().matcher(pathInfo);
+                        
+                        if (matcher.find()) {
+                            pathInfo = matcher.replaceAll(pair.getValue());
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -276,6 +286,20 @@ public class DefaultPortletRequestDispatcherImpl implements HstPortletRequestDis
         }
         
         return descriptor;
+    }
+    
+    private static String [] splitAndTrimToArray(String value, String regex) {
+        if (value == null) {
+            return new String[0];
+        }
+        
+        String [] values = value.split(regex);
+        
+        for (int i = 0; i < values.length; i++) {
+            values[i] = values[i].trim();
+        }
+        
+        return values;
     }
     
 }
