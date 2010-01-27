@@ -351,4 +351,30 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
         
     }
 
+    /*
+     * Because week ranges are a bit more complex as they have format overlapping with months indexing, we have a dedicated test for this
+     */
+    @Test
+    public void testWeekDateRanges() throws RepositoryException, IOException {
+        commonStart();
+        Node testNode = session.getRootNode().getNode("test");
+        createDateStructure(testNode);
+
+        Node navigation = testNode.addNode("facetnavigation");
+        Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
+        String[] ranges = new String[] {"hippo:date$month" ,"hippo:date$[{name:'today', resolution:'day', begin:0, end:1}, {name:'this week', resolution:'week', begin:0, end:1}, {name:'this month', resolution:'month', begin:0, end:1}]"};
+        
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS,ranges);
+        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { "month", "range" });
+
+        session.save();
+        Node node = session.getRootNode().getNode("test/facetnavigation/hippo:navigation");
+
+        Long count1 = node.getNode("range").getNode("this week").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+        Long count2 = node.getNode("range").getNode("this week").getNode("range").getNode("this month").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+        // when this week constraint is already chosen, then this month must contain equal number of hits
+        assertEquals(count1, count2);
+    }
+
 }
