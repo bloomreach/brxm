@@ -21,122 +21,88 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TextSearchBuilder implements IClusterable {
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TextSearchBuilder.class);
 
     public static final String TEXT_QUERY_NAME = "text";
-    public static final int LIMIT = 100;
-    
-    private String[] searchPaths;
+
+    private String text;
+    private String[] scope;
 
     private String[] excludedPrimaryTypes = {};
     private boolean wildcardSearch = false;
     private String ignoredChars = "";
     private int limit = -1;
 
-    public TextSearchBuilder(String[] searchPaths) {
-        this.searchPaths = searchPaths;
+    public TextSearchBuilder() {
+        this.scope = new String[] { "/" };
     }
 
+    public void setScope(String[] paths) {
+        this.scope = paths;
+    }
+    
     public void setLimit(int limit) {
         this.limit = limit;
-    }
-
-    public int getLimit() {
-        return limit;
     }
 
     public void setExcludedPrimaryTypes(String[] excludedPrimaryTypes) {
         this.excludedPrimaryTypes = excludedPrimaryTypes;
     }
 
-    public String[] getExcludedPrimaryTypes() {
-        return excludedPrimaryTypes;
-    }
-
     public void setWildcardSearch(boolean wildcardSearch) {
         this.wildcardSearch = wildcardSearch;
-    }
-
-    public boolean isWildcardSearch() {
-        return wildcardSearch;
     }
 
     public void setIgnoredChars(String ignoredChars) {
         this.ignoredChars = ignoredChars;
     }
 
-    public String getIgnoredChars() {
-        return ignoredChars;
+    public void setText(String value) {
+        this.text = value;
     }
 
-    public TextSearchResultModel search(String value) {
-        value = value.trim();
+    public TextSearchResultModel getResultModel() {
+        String value = text.trim();
         if (value.equals("")) {
             return null;
         }
 
-        final StringBuilder querySb = new StringBuilder(getScope());
+        StringBuilder querySb = new StringBuilder(getScope());
         for (StringTokenizer st = new StringTokenizer(value, " "); st.hasMoreTokens();) {
             querySb.append(" and jcr:contains(., '");
             String token = st.nextToken();
             for (int i = 0; i < token.length(); i++) {
                 char c = token.charAt(i);
-                if (getIgnoredChars().indexOf(c) == -1) {
+                if (ignoredChars.indexOf(c) == -1) {
                     if (c == '\'') {
                         querySb.append('\'');
                     }
                     querySb.append(c);
                 }
             }
-            if (isWildcardSearch()) {
+            if (wildcardSearch) {
                 querySb.append('*');
             }
             querySb.append("')");
         }
         querySb.append(']').append("/rep:excerpt(.)");
-        IModel<QueryResult> resultModel = new LoadableDetachableModel<QueryResult>() {
-            private static final long serialVersionUID = 1L;
 
-            @Override
-            protected QueryResult load() {
-                QueryResult result = null;
-                javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-                try {
-                    QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
-                    HippoQuery hippoQuery = (HippoQuery) queryManager.createQuery(querySb.toString(), "xpath");
-                    session.refresh(true);
-                    if (limit > 0 && limit < LIMIT) {
-                        hippoQuery.setLimit(limit);
-                    } else {
-                        hippoQuery.setLimit(LIMIT);
-                    }
-
-                    long start = System.currentTimeMillis();
-                    result = hippoQuery.execute();
-                    long end = System.currentTimeMillis();
-                    log.info("Executing search query: " + TEXT_QUERY_NAME + " took " + (end - start) + "ms");
-                } catch (RepositoryException e) {
-                    log.error("Error executing query[" + TEXT_QUERY_NAME + "]", e);
-                }
-                return result;
-            }
-        };
+        final String query = querySb.toString();
+        IModel<QueryResult> resultModel = new QueryResultModel(query, limit);
         return new TextSearchResultModel(value, new BrowserSearchResult(TEXT_QUERY_NAME, resultModel));
     }
 
@@ -157,28 +123,23 @@ public class TextSearchBuilder implements IClusterable {
             sb.append(") and ");
         }
         sb.append("(");
-
         boolean addOr = false;
-        for (String path : searchPaths) {
+        for (String path : scope) {
             if (!path.startsWith("/")) {
                 throw new IllegalArgumentException("Search path should be absolute: " + path);
             }
             try {
                 Node content = (Node) session.getItem(path);
-                NodeIterator ni = content.getNodes();
-                while (ni.hasNext()) {
-                    Node cn = ni.nextNode();
-                    if (cn.isNodeType("mix:referenceable")) {
-                        String uuid = cn.getUUID();
-                        if (uuid != null) {
-                            if (addOr) {
-                                sb.append(" or ");
-                            } else {
-                                addOr = true;
-                            }
-                            sb.append("hippo:paths = '").append(uuid).append('\'');
-                        }
+                if (content.isNodeType("mix:referenceable")) {
+                    String uuid = content.getUUID();
+                    if (addOr) {
+                        sb.append(" or ");
+                    } else {
+                        addOr = true;
                     }
+                    sb.append("hippo:paths = '").append(uuid).append('\'');
+                } else {
+                    log.info("Skipping non-referenceable node at path" + path);
                 }
             } catch (PathNotFoundException e) {
                 log.warn("Search path not found: " + path);

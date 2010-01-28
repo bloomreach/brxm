@@ -18,10 +18,13 @@ package org.hippoecm.frontend.plugins.search.yui;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
@@ -30,6 +33,7 @@ import net.sf.json.JSONObject;
 import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
@@ -49,6 +53,7 @@ import org.hippoecm.frontend.plugins.yui.autocomplete.AutoCompleteBehavior;
 import org.hippoecm.frontend.plugins.yui.autocomplete.AutoCompleteSettings;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +80,8 @@ public class SearchBehavior extends AutoCompleteBehavior {
     public SearchBehavior(IPluginContext context, IPluginConfig config, IBrowseService<IModel> browse) {
         super(YuiPluginHelper.getManager(context), new AutoCompleteSettings(YuiPluginHelper.getConfig(config)));
         this.browseService = browse;
-        searchBuilder = new TextSearchBuilder(config.getStringArray(SEARCH_PATHS));
+        searchBuilder = new TextSearchBuilder();
+        searchBuilder.setScope(getSearchPaths(config.getStringArray(SEARCH_PATHS)));
         searchBuilder.setExcludedPrimaryTypes(config.getStringArray(EXCLUDE_PRIMARY_TYPES));
         searchBuilder.setIgnoredChars(config.getString(IGNORE_CHARS));
         searchBuilder.setWildcardSearch(config.getBoolean(WILDCARD_SEARCH));
@@ -88,6 +94,29 @@ public class SearchBehavior extends AutoCompleteBehavior {
         settings.setSchemaResultList("response.results");
     }
 
+    private String[] getSearchPaths(String[] basePaths) {
+        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+
+        List<String> paths = new LinkedList<String>();
+        for (String path : basePaths) {
+            try {
+                Node content = (Node) session.getItem(path);
+                NodeIterator ni = content.getNodes();
+                while (ni.hasNext()) {
+                    Node cn = ni.nextNode();
+                    if (cn.isNodeType("mix:referenceable")) {
+                        paths.add(cn.getPath());
+                    }
+                }
+            } catch (PathNotFoundException e) {
+                log.warn("Search path not found: " + path);
+            } catch (RepositoryException e) {
+                log.error("Error determinining search paths", e);
+            }
+        }
+        return paths.toArray(new String[paths.size()]);
+    }
+    
     @Override
     public void addHeaderContribution(IYuiContext context) {
         super.addHeaderContribution(context);
@@ -118,7 +147,8 @@ public class SearchBehavior extends AutoCompleteBehavior {
 
         List<ResultItem> resultList = new ArrayList<ResultItem>(15);
         try {
-            IDataProvider<TextSearchMatch> results = new TextSearchDataProvider(searchBuilder.search(searchParam));
+            searchBuilder.setText(searchParam);
+            IDataProvider<TextSearchMatch> results = new TextSearchDataProvider(searchBuilder.getResultModel());
             Iterator<? extends TextSearchMatch> iter = results.iterator(0, results.size());
             while (iter.hasNext()) {
                 TextSearchMatch match = iter.next();

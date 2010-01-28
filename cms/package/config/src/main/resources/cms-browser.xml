@@ -25,38 +25,11 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>service.browse</sv:value>
-    </sv:property>
-    <sv:property sv:name="browser.viewers" sv:type="String">
-      <sv:value>cms-folder-views</sv:value>
-    </sv:property>
-    <sv:property sv:name="search.views" sv:type="String">
-      <sv:value>cms-search-views</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>service.edit</sv:value>
-    </sv:property>
     <sv:property sv:name="extension.editor" sv:type="String">
       <sv:value>service.browse.editor</sv:value>
     </sv:property>
-    <sv:property sv:name="extension.list" sv:type="String">
-      <sv:value>service.browse.list</sv:value>
-    </sv:property>
     <sv:property sv:name="extension.navigator" sv:type="String">
       <sv:value>service.browse.navigator</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.document" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.folder" sv:type="String">
-      <sv:value>model.browse.folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.folder.root" sv:type="String">
-      <sv:value>/content/documents</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.search" sv:type="String">
-      <sv:value>model.browse.search</sv:value>
     </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>browse-perspective-title</sv:value>
@@ -77,6 +50,9 @@
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.tab</sv:value>
+    </sv:property>
+    <sv:property sv:name="browser.id" sv:type="String">
+      <sv:value>service.browse</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="browserLayout">
@@ -115,14 +91,8 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:property sv:name="extension.browser" sv:type="String">
-      <sv:value>service.browse.tree</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.search" sv:type="String">
-      <sv:value>service.browse.search</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.list" sv:type="String">
-      <sv:value>service.browse.list</sv:value>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.navigator</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.Navigator</sv:value>
@@ -130,13 +100,44 @@
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.navigator</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.browser</sv:value>
-      <sv:value>extension.search</sv:value>
-      <sv:value>extension.list</sv:value>
+    <sv:property sv:name="sections" sv:type="String">
+      <sv:value>section.content</sv:value>
+      <sv:value>section.images</sv:value>
+      <sv:value>section.files</sv:value>
+      <sv:value>section.configuration</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.navigator</sv:value>
+    <sv:property sv:name="section.configuration" sv:type="String">
+      <sv:value>service.browse.tree.configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="section.content" sv:type="String">
+      <sv:value>service.browse.tree.content</sv:value>
+    </sv:property>
+    <sv:property sv:name="section.files" sv:type="String">
+      <sv:value>service.browse.tree.files</sv:value>
+    </sv:property>
+    <sv:property sv:name="section.images" sv:type="String">
+      <sv:value>service.browse.tree.images</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.list" sv:type="String">
+      <sv:value>service.browse.list</sv:value>
+    </sv:property>
+    <sv:property sv:name="model.document" sv:type="String">
+      <sv:value>model.browse.document</sv:value>
+    </sv:property>
+    <sv:property sv:name="model.folder.root" sv:type="String">
+      <sv:value>/content/documents</sv:value>
+    </sv:property>
+    <sv:property sv:name="browser.id" sv:type="String">
+      <sv:value>service.browse</sv:value>
+    </sv:property>
+    <sv:property sv:name="browser.viewers" sv:type="String">
+      <sv:value>cms-folder-views</sv:value>
+    </sv:property>
+    <sv:property sv:name="search.viewers" sv:type="String">
+      <sv:value>cms-search-views</sv:value>
+    </sv:property>
+    <sv:property sv:name="editor.id" sv:type="String">
+      <sv:value>service.edit</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="navigatorLayout">
@@ -175,64 +176,6 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="browserPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.configuration" sv:type="String">
-      <sv:value>service.browse.tree.configuration</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.content" sv:type="String">
-      <sv:value>service.browse.tree.content</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.files" sv:type="String">
-      <sv:value>service.browse.tree.files</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.images" sv:type="String">
-      <sv:value>service.browse.tree.images</sv:value>
-    </sv:property>
-    <sv:property sv:name="headers" sv:type="String">
-      <sv:value>section-documents</sv:value>
-      <sv:value>section-images</sv:value>
-      <sv:value>section-files</sv:value>
-      <sv:value>section-configuration</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.SectionTreePlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="translator.id" sv:type="String">
-      <sv:value>service.translator.config</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.content</sv:value>
-      <sv:value>extension.images</sv:value>
-      <sv:value>extension.files</sv:value>
-      <sv:value>extension.configuration</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.tree</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.folder</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="searchPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.search.BrowserSearchPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.search</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.folder" sv:type="String">
-      <sv:value>model.browse.folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.search" sv:type="String">
-      <sv:value>model.browse.search</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="documentsTreeLoader">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -257,7 +200,7 @@
         <sv:value>service.browse.tree.content</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>model.browse.folder</sv:value>
+        <sv:value>model.browse.collection</sv:value>
       </sv:property>
 
       <!-- Wicket tree helper properties -->
@@ -293,9 +236,6 @@
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.browse.tree.images</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>model.browse.folder</sv:value>
-      </sv:property>
       
       <!-- Wicket tree helper properties -->
       <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
@@ -329,9 +269,6 @@
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.browse.tree.files</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>model.browse.folder</sv:value>
       </sv:property>
       
       <!-- Wicket tree helper properties -->
@@ -367,10 +304,7 @@
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.browse.tree.configuration</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>model.browse.folder</sv:value>
-      </sv:property>
-      
+
       <!-- Wicket tree helper properties -->
       <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
         <sv:value>true</sv:value>

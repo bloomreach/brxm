@@ -18,24 +18,22 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.plugins.standards.list.SingleVariantProvider;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +51,7 @@ public class FacetSearchProvider extends SortableDataProvider<Node> implements I
     static final Logger log = LoggerFactory.getLogger(FacetSearchProvider.class);
 
     private JcrNodeModel model;
-    private transient List<Node> entries = null;
+    private SingleVariantProvider handleProvider;
     private Map<String, Comparator<Node>> comparators;
     private IObservationContext obContext;
     private JcrNodeModel resultSetModel;
@@ -61,67 +59,30 @@ public class FacetSearchProvider extends SortableDataProvider<Node> implements I
     public FacetSearchProvider(JcrNodeModel model, Map<String, Comparator<Node>> comparators) {
         this.model = model;
         this.comparators = comparators;
-    }
+        this.handleProvider = new SingleVariantProvider(new LoadableDetachableModel<Iterator>() {
+            private static final long serialVersionUID = 1L;
 
-    /**
-     * Load a single representative for each set of variants of a document.
-     * Different documents can share a name, so the comparison is based on the
-     * handle that contains the variants.  The first document (lowest sns index
-     * in resultset) is used. 
-     */
-    void load() {
-        if (entries == null) {
-            Map<String, Node> primaryNodes = new HashMap<String, Node>();
-            Node node = model.getNode();
-            // workaround: node may disappear without notification
-            if (node != null) {
-                try {
-                    NodeIterator subNodes = node.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes();
-                    while (subNodes.hasNext()) {
-                        Node subNode = subNodes.nextNode();
-                        if (subNode == null || !(subNode instanceof HippoNode)) {
-                            continue;
-                        }
-                        try {
-                            Node canonicalNode = ((HippoNode) subNode).getCanonicalNode();
-                            if (canonicalNode == null) {
-                                // no physical equivalent exists
-                                continue;
-                            }
-                            if (canonicalNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                                Node parentNode = canonicalNode.getParent();
-                                if (parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                    if (primaryNodes.containsKey(parentNode.getUUID())) {
-                                        Node currentNode = primaryNodes.get(parentNode.getUUID());
-                                        if (subNode.getIndex() < currentNode.getIndex()) {
-                                            primaryNodes.put(parentNode.getUUID(), subNode);
-                                        }
-                                    } else {
-                                        primaryNodes.put(parentNode.getUUID(), subNode);
-                                    }
-                                }
-                            }
-                        } catch (ItemNotFoundException ex) {
-                            // physical item no longer exists
-                            continue;
-                        }
+            @Override
+            protected NodeIterator load() {
+                Node node = FacetSearchProvider.this.model.getNode();
+                // workaround: node may disappear without notification
+                if (node != null) {
+                    try {
+                        return node.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes();
+                    } catch (RepositoryException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
                     }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
                 }
+                return null;
             }
-            entries = new LinkedList<Node>();
-            for (Node subNode : primaryNodes.values()) {
-                entries.add(subNode);
-            }
-        }
+        });
     }
 
     // impl IDataProvider
 
     public Iterator<Node> iterator(int first, int count) {
-        load();
-        List<Node> displayedList = new ArrayList<Node>(entries);
+        List<Node> displayedList = new ArrayList<Node>(handleProvider.getObject());
         SortState sortState = getSortState();
         if (sortState != null && sortState.isSorted()) {
             String sortProperty = sortState.getProperty();
@@ -143,12 +104,11 @@ public class FacetSearchProvider extends SortableDataProvider<Node> implements I
     }
 
     public int size() {
-        load();
-        return entries.size();
+        return handleProvider.getObject().size();
     }
 
     public void detach() {
-        entries = null;
+        handleProvider.detach();
         model.detach();
         if (resultSetModel != null) {
             resultSetModel.detach();

@@ -41,7 +41,14 @@ public class ObservableModel<T extends Serializable> extends Model<T> implements
 
     @Override
     public void setObject(T object) {
+        boolean wasObserving = observing;
+        if (observing) {
+            stopObservation();
+        }
         super.setObject(object);
+        if (wasObserving) {
+            startObservation();
+        }
         notifyObservers(new EventCollection());
     }
 

@@ -69,8 +69,8 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
         helper.addTemplate(template);
     }
 
-    public IBehavior newAccordion() {
-        return new AccordionBehavior(getComponentMarkupId());
+    public IBehavior newSection() {
+        return new AccordionSectionBehavior(getComponentMarkupId());
     }
     
 }

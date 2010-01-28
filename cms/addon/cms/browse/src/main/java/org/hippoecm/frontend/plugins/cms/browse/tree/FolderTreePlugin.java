@@ -31,7 +31,6 @@ import org.hippoecm.addon.workflow.ContextWorkflowPlugin;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
@@ -71,12 +70,8 @@ public class FolderTreePlugin extends RenderPlugin {
         String startingPath = config.getString("path", "/");
         rootModel = new JcrNodeModel(startingPath);
 
-        ModelReference modelService = new ModelReference(context.getReference(this).getServiceId(), rootModel);
-        modelService.init(context);
-
         DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
         this.rootNode = new FolderTreeNode(rootModel, folderTreeConfig);
-
         treeModel = new JcrTreeModel(rootNode);
         context.registerService(treeModel, IObserver.class.getName());
         tree = new CmsJcrTree("tree", treeModel, newTreeNodeTranslator(config)) {
@@ -91,13 +86,6 @@ public class FolderTreePlugin extends RenderPlugin {
                     IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
                     content.setModel(nodeModel);
                     return content;
-                    /* FIMXE: the following section would be a better implementation, but plugins
-                    loaded this way cannot instantiate plugins themselves.
-                    MarkupContainer content = (MarkupContainer) FolderTreePlugin.this.newPlugin(id, "module.workflow");
-                    JcrNodeModel nodeModel = ((IJcrTreeNode) node).getNodeModel();
-                    content.setModel(nodeModel);
-                    return content;
-                     */
                 }
                 return new EmptyPanel(id);
             }
@@ -187,8 +175,6 @@ public class FolderTreePlugin extends RenderPlugin {
         });
 
         tree.setRootLess(config.getBoolean("rootless"));
-
-        addExtensionPoint("extension.addfolder");
 
         onModelChanged();
 

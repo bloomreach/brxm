@@ -38,7 +38,7 @@ public class ListRenderService extends AbstractRenderService<Void> {
         private static final long serialVersionUID = 1L;
 
 
-        ExtensionPoint(String extension) {
+        protected ExtensionPoint(String extension) {
             super(extension);
         }
 

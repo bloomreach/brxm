@@ -13,22 +13,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.browse;
+package org.hippoecm.frontend.plugins.cms.browse.model;
 
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 
-public class BrowserSearchResultModel extends Model<BrowserSearchResult> implements IObservable {
+public class BrowserSectionsModel extends AbstractReadOnlyModel<BrowserSections> implements IObservable,
+        IChangeListener {
     private static final long serialVersionUID = 1L;
 
     private IObservationContext obContext;
-    private IChangeListener listener;
+    private BrowserSections browser;
 
-    public BrowserSearchResultModel(BrowserSearchResult bsr) {
-        super(bsr);
+    public BrowserSectionsModel(BrowserSections browser) {
+        this.browser = browser;
+    }
+
+    @Override
+    public BrowserSections getObject() {
+        return browser;
     }
 
     public void setObservationContext(IObservationContext<? extends IObservable> context) {
@@ -36,19 +42,15 @@ public class BrowserSearchResultModel extends Model<BrowserSearchResult> impleme
     }
 
     public void startObservation() {
-        getObject().addChangeListener(listener = new IChangeListener() {
-            private static final long serialVersionUID = 1L;
-
-            public void onChange() {
-                obContext.notifyObservers(new EventCollection());
-            }
-
-        });
+        browser.addListener(this);
     }
 
     public void stopObservation() {
-        getObject().removeChangeListener(listener);
-        listener = null;
+        browser.removeListener(this);
+    }
+
+    public void onChange() {
+        obContext.notifyObservers(new EventCollection());
     }
 
 }

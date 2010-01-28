@@ -15,29 +15,21 @@
  */
 package org.hippoecm.frontend.plugins.standards.browse;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.IChangeListener;
 
 public final class BrowserSearchResult implements IDetachable {
     private static final long serialVersionUID = 1L;
 
-    public interface IChangeListener extends Serializable {
-
-        void onChange();
-    }
-
     private List<IChangeListener> listeners = new ArrayList<IChangeListener>();
 
     private String queryName;
-    private IModel<Node> selected;
     private IModel<QueryResult> nodes;
 
     public BrowserSearchResult(String name, IModel<QueryResult> nodes) {
@@ -49,17 +41,6 @@ public final class BrowserSearchResult implements IDetachable {
         return queryName;
     }
 
-    public Node getSelectedNode() {
-        return selected == null ? null : selected.getObject();
-    }
-
-    public void setSelectedNode(Node node) {
-        this.selected = new JcrNodeModel(node);
-        for (IChangeListener listener : new ArrayList<IChangeListener>(listeners)) {
-            listener.onChange();
-        }
-    }
-    
     public QueryResult getQueryResult() {
         return nodes.getObject();
     }
@@ -73,9 +54,6 @@ public final class BrowserSearchResult implements IDetachable {
     }
     
     public void detach() {
-        if (selected != null) {
-            selected.detach();
-        }
         nodes.detach();
     }
 

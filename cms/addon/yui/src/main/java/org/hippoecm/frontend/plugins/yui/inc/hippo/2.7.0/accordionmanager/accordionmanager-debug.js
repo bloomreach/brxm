@@ -149,10 +149,19 @@ if (!YAHOO.hippo.AccordionManager) {
                 
                 //if we find an element with className this.cfg.unitClassname + '-add'
                 //we have an active bottom element.
-                var addLink = this.findElement(id, this.cfg.unitClassname + '-add', 'span');
+                /* var addLink = this.findElement(id, this.cfg.unitClassname + '-add', 'span');
                 if(addLink != null && Dom.getStyle(addLink, 'display') != 'none') {
                     height -= 26;
                     Dom.setStyle(this.findElement(id, this.cfg.unitClassname + '-bottom'), 'display', 'block');
+                } */
+                var bottom = this.findElement(id, this.cfg.unitClassname + '-bottom');
+                if (bottom != null && Dom.getStyle(bottom, 'display') != 'none') {
+                    height -= Dom.getRegion(bottom).height;
+                }
+
+                var top = this.findElement(id, this.cfg.unitClassname + '-top');
+                if (top != null && Dom.getStyle(top, 'display') != 'none') {
+                    height -= Dom.getRegion(top).height;
                 }
 
                 if(height > 0) {

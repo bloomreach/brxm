@@ -112,7 +112,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
     private final IPluginContext context;
     private final IPluginConfig config;
     private final IModelReference modelReference;
-    protected LinkedHashMap<String, ExtensionPoint> children;
+    protected final LinkedHashMap<String, ExtensionPoint> children;
     private IRenderService parent;
 
     public AbstractRenderService(IPluginContext context, IPluginConfig properties) {
