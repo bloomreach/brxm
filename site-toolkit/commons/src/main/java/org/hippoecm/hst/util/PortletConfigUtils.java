@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.util;
 
-import java.lang.reflect.Method;
-
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
 
@@ -61,39 +59,32 @@ public class PortletConfigUtils {
     }
     
     /**
-     * Retrieves the init parameter from the given config objects which must have <CODE>String getInitParameter(String);</CODE> method.
-     * This utility method used Java Reflection API to invoke <CODE>String getInitParameter(String);</CODE> method.
-     * If the init parameter is not found in the first config object, then it will look up the init parameter from the next config object.
-     * If the parameter is not found, then it will return the defaultValue.
-     * @param paramName parameter name
-     * @param defaultValue the default value
+     * @see {@link ServletConfigUtils#getInitParameter(String, String, Object...)}
+     * @param paramName
+     * @param defaultValue
      * @param configs
      * @return
      */
     public static String getInitParameter(String paramName, String defaultValue, Object ... configs) {
-        String value = null;
-        
-        if (configs != null) {
-            for (Object config : configs) {
-                if (config != null) {
-                    try {
-                        Method method = config.getClass().getMethod("getInitParameter", String.class);
-                        value = (String) method.invoke(config, paramName);
-                    } catch (Throwable ignore) {
-                    }
-                }
-                
-                if (value != null) {
-                    break;
-                }
-            }
-        }
-        
-        if (value == null) {
-            value = defaultValue;
-        }
-        
-        return value;
+        return ServletConfigUtils.getInitParameter(paramName, defaultValue, configs);
+    }
+    
+    /**
+     * @see {@link ServletConfigUtils#isEmpty(String)}
+     * @param s
+     * @return
+     */
+    public static boolean isEmpty(String s) {
+        return ServletConfigUtils.isEmpty(s);
+    }
+    
+    /**
+     * @see {@link ServletConfigUtils#isBlank(String)}
+     * @param s
+     * @return
+     */
+    public static boolean isBlank(String s) {
+        return ServletConfigUtils.isBlank(s);
     }
     
 }

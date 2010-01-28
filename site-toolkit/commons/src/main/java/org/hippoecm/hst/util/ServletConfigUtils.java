@@ -96,4 +96,20 @@ public class ServletConfigUtils {
         return value;
     }
     
+    /**
+     * Utility method to check if the given string is null or empty string
+     * @param s
+     */
+    public static boolean isEmpty(String s) {
+        return (s == null || "".equals(s));
+    }
+    
+    /**
+     * Utility method to check if the given string is null or empty string or string having white spaces only.
+     * @param s
+     */
+    public static boolean isBlank(String s) {
+        return (s == null || "".equals(s.trim()));
+    }
+    
 }
