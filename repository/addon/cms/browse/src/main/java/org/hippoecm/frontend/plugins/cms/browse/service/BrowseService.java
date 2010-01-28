@@ -75,7 +75,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             if (model == null) {
                 throw new IllegalArgumentException("invalid model null");
             }
-            selectDocument(model, false);
+            browse(model);
         }
     }
 
@@ -138,10 +138,6 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
      * When a Version is supplied from the version storage, the physical node is used.
      */
     public void browse(IModel<Node> model) {
-        selectDocument(model, true);
-    }
-    
-    private void selectDocument(IModel<Node> model, boolean isUpdate) {
         IModel<Node> document = getPhysicalNode(model);
         if (document.getObject() == null) {
             return;

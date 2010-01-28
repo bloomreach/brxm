@@ -41,7 +41,6 @@ import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.DocumentCollectionType;
 import org.hippoecm.frontend.plugins.cms.browse.section.BrowsingSectionPlugin;
 import org.hippoecm.frontend.plugins.cms.browse.section.SearchingSectionPlugin;
-import org.hippoecm.frontend.plugins.cms.browse.service.BrowseService;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResultModel;
 import org.junit.Before;
@@ -301,22 +300,16 @@ public class BrowseServiceTest extends PluginTest {
         assertEquals(searchResultModel, service.getCollectionModel().getObject().getSearchResult());
     }
 
-    /*
     @Test
     public void folderDoesNotFollowDocumentWhenSearching() throws Exception {
-        Node handle = root.getNode("test/content/folder").addNode("second", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
-        Node doc = handle.addNode("second", "hippo:document");
-        doc.addMixin("hippo:harddocument");
+        Node folder = root.getNode("test/content/folder").addNode("otherFolder", "hippostd:folder");
+        folder.addMixin("hippo:harddocument");
         session.save();
 
         BrowseService service = startServiceWithSearchSection();
-
-        IModel<BrowserSearchResult> searchResultModel = service.getCollectionModel().getObject().getSearchResult();
-        getDocumentService().setModel(new JcrNodeModel("/test/content/folder/second"));
-        assertEquals(new JcrNodeModel("/test/content"), service.getCollectionModel().getObject().getFolder());
+        getDocumentService().setModel(new JcrNodeModel("/test/content/folder/otherFolder"));
+        assertEquals(new JcrNodeModel("/test/content/folder"), service.getCollectionModel().getObject().getFolder());
     }
-    */
 
     @Test
     public void sectionFollowsFolder() throws Exception {
