@@ -66,6 +66,11 @@ public class HstContainerPortlet extends GenericPortlet {
     public static final String HST_PATH_INFO_PARAM = "hstPathInfo";
     
     /**
+     * Name of portlet preference for the default path info of HST URL
+     */
+    public static final String DEFAULT_HST_PATH_INFO_PARAM = "defaultHstPathInfo";
+    
+    /**
      * Name of portlet preference for the path info for edit mode of HST URL
      */
     public static final String HST_PATH_INFO_EDIT_MODE_PARAM = "hstPathInfoEditMode";
@@ -94,6 +99,7 @@ public class HstContainerPortlet extends GenericPortlet {
     
     protected String defaultHstServletPath = "/preview";
     protected String defaultHstPathInfo;
+    protected String defaultFallbackHstPathInfo;
     protected String defaultHstPathInfoEditMode;
     protected String defaultPortletTitle;
     protected String defaultHeaderPage;
@@ -126,6 +132,8 @@ public class HstContainerPortlet extends GenericPortlet {
         defaultHstServletPath = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_SERVLET_PATH_PARAM, defaultHstServletPath);
         
         defaultHstPathInfo = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_PATH_INFO_PARAM, defaultHstPathInfo);
+        
+        defaultFallbackHstPathInfo = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), DEFAULT_HST_PATH_INFO_PARAM, defaultFallbackHstPathInfo);
         
         defaultHstPathInfoEditMode = PortletConfigUtils.getInitParameter(config, config.getPortletContext(), HST_PATH_INFO_EDIT_MODE_PARAM, defaultHstPathInfoEditMode);
         
@@ -258,12 +266,22 @@ public class HstContainerPortlet extends GenericPortlet {
                     if (prefValue == null && this.defaultHstPathInfoEditMode == null) {
                         prefValue = prefs.getValue(HST_PATH_INFO_PARAM, null);
                     }
+                    
+                    if (prefValue != null) {
+                        hstPathInfo = prefValue;
+                    }
                 } else {
                     prefValue = prefs.getValue(HST_PATH_INFO_PARAM, null);
-                }
-                
-                if (prefValue != null) {
-                    hstPathInfo = prefValue;
+                    
+                    if (prefValue != null) {
+                        hstPathInfo = prefValue;
+                    }
+                    
+                    prefValue = prefs.getValue(DEFAULT_HST_PATH_INFO_PARAM, null);
+                    
+                    if (prefValue != null) {
+                        defaultFallbackHstPathInfo = prefValue;
+                    }
                 }
             }
         }
@@ -276,6 +294,10 @@ public class HstContainerPortlet extends GenericPortlet {
         
         if (containerHstPathInfo != null) {
             hstPathInfo = containerHstPathInfo;
+        }
+        
+        if (hstPathInfo == null) {
+            hstPathInfo = defaultFallbackHstPathInfo;
         }
         
         boolean readDispPathParam = (containerHstPathInfo == null);
