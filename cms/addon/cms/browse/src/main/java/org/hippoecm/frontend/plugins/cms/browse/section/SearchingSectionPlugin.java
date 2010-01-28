@@ -36,6 +36,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
+import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.DocumentCollectionType;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
@@ -195,6 +196,10 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     }
 
     public void select(IModel<Node> folder) {
+        if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
+            return;
+        }
+
         while (!BrowserHelper.isFolder(folder)) {
             folder = BrowserHelper.getParent(folder);
         }
