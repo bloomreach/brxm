@@ -15,15 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.RowIterator;
 
@@ -48,12 +50,65 @@ public class SearchDocumentsProvider extends SortableDataProvider<Node> {
 
     private IModel<BrowserSearchResult> bsrModel;
     private Map<String, Comparator<Node>> comparators;
-
-    private transient List<Node> entries = null;
+    private transient List<Node> entries;
 
     public SearchDocumentsProvider(IModel<BrowserSearchResult> model, Map<String, Comparator<Node>> comparators) {
         this.bsrModel = model;
         this.comparators = comparators;
+    }
+
+    private void load() {
+        if (entries == null) {
+            Map<String, Node> handles = new HashMap<String, Node>();
+            entries = new LinkedList<Node>();
+            BrowserSearchResult result = bsrModel.getObject();
+            if (result != null && result.getQueryResult() != null) {
+                javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                try {
+                    RowIterator rows = result.getQueryResult().getRows();
+                    while (rows.hasNext()) {
+                        String path = rows.nextRow().getValue("jcr:path").getString();
+                        try {
+                            Node node = (Node) session.getItem(path);
+                            if (node.getDepth() > 0) {
+                                Node parent = node.getParent();
+                                if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                    if (parent.isNodeType("mix:referenceable")) {
+                                        handles.put(parent.getUUID(), parent);
+                                    } else {
+                                        log.info("Skipping unreferenceable handle " + parent.getPath());
+                                    }
+                                } else {
+                                    entries.add(node);
+                                }
+                            }
+                        } catch (PathNotFoundException ex) {
+                            log.info("Could not resolve node from search " + path);
+                            continue;
+                        }
+                    }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
+                }
+            }
+            for (Node handle : handles.values()) {
+                entries.add(handle);
+            }
+            SortState sortState = getSortState();
+            if (sortState != null && sortState.isSorted()) {
+                String sortProperty = sortState.getProperty();
+                if (sortProperty != null) {
+                    Comparator<Node> comparator = comparators.get(sortProperty);
+                    if (comparator != null) {
+                        Collections.sort(entries, comparator);
+                        if (sortState.isDescending()) {
+                            Collections.reverse(entries);
+                        }
+                        Collections.sort(entries, new FoldersFirstComparator());
+                    }
+                }
+            }
+        }
     }
 
     public Iterator<Node> iterator(int first, int count) {
@@ -72,44 +127,6 @@ public class SearchDocumentsProvider extends SortableDataProvider<Node> {
 
     public void detach() {
         entries = null;
-    }
-
-    private void load() {
-        if (entries != null) {
-            return;
-        }
-
-        entries = new ArrayList<Node>();
-        BrowserSearchResult result = bsrModel.getObject();
-        if (result != null) {
-            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-            try {
-                RowIterator rows = result.getQueryResult().getRows();
-                while (rows.hasNext()) {
-                    String path = rows.nextRow().getValue("jcr:path").getString();
-                    entries.add((Node) session.getItem(path));
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-
-            SortState sortState = getSortState();
-            if (sortState != null && sortState.isSorted()) {
-                String sortProperty = sortState.getProperty();
-                if (sortProperty != null) {
-                    Comparator<Node> comparator = comparators.get(sortProperty);
-                    if (comparator != null) {
-                        Collections.sort(entries, comparator);
-                        if (sortState.isDescending()) {
-                            Collections.reverse(entries);
-                        }
-                        Collections.sort(entries, new FoldersFirstComparator());
-                    }
-                }
-            }
-        } else {
-            log.info("No search result available");
-        }
     }
 
     private static class FoldersFirstComparator extends NodeComparator {

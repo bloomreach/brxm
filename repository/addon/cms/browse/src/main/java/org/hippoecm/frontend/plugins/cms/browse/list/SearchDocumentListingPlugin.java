@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -24,7 +25,10 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.list.comparators.StateComparator;
@@ -44,10 +48,16 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttribute
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SearchDocumentListingPlugin extends RenderPlugin<BrowserSearchResult> implements
         TableSelectionListener<Node> {
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(SearchDocumentListingPlugin.class);
+    
+    private final IModelReference<Node> documentReference;
 
     private ListPagingDefinition pagingDefinition;
     private ListDataTable<Node> dataTable;
@@ -61,10 +71,56 @@ public class SearchDocumentListingPlugin extends RenderPlugin<BrowserSearchResul
         add(dataTable);
         dataTable.init(context);
 
-        BrowserSearchResult bsr = getModelObject();
-        if (bsr.getSelectedNode() != null) {
-            dataTable.setDefaultModel(new JcrNodeModel(bsr.getSelectedNode()));
+        if (config.getString("model.document") != null) {
+            documentReference = context.getService(config.getString("model.document"), IModelReference.class);
+            if (documentReference != null) {
+                context.registerService(new IObserver<IModelReference<Node>>() {
+                    private static final long serialVersionUID = 1L;
+
+                    public IModelReference<Node> getObservable() {
+                        return documentReference;
+                    }
+
+                    public void onEvent(Iterator<? extends IEvent<IModelReference<Node>>> event) {
+                        updateSelection(documentReference.getModel());
+                    }
+
+                }, IObserver.class.getName());
+                updateSelection(documentReference.getModel());
+            }
+        } else {
+            documentReference = null;
+            log.warn("No document model service configured (model.document)");
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void selectionChanged(IModel model) {
+        IPluginConfig config = getPluginConfig();
+        if (config.getString("model.document") != null) {
+            IModelReference<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
+                    IModelReference.class);
+            if (documentService != null) {
+                documentService.setModel(model);
+                if (model != dataTable.getDefaultModel() && (model == null || !model.equals(dataTable.getDefaultModel()))) {
+                    log.info("Did not receive model change notification for model.document ({})", config
+                            .getString("model.document"));
+                    updateSelection(model);
+                }
+            } else {
+                updateSelection(model);
+            }
+        } else {
+            updateSelection(model);
+        }
+    }
+
+    public void updateSelection(IModel<Node> model) {
+        dataTable.setDefaultModel(model);
+        onSelectionChanged(model);
+    }
+
+    protected void onSelectionChanged(IModel<Node> model) {
     }
 
     @Override
@@ -74,17 +130,22 @@ public class SearchDocumentListingPlugin extends RenderPlugin<BrowserSearchResul
         dataTable = getListDataTable("table", getTableDefinition(), newDataProvider(), this, pagingDefinition);
         replace(dataTable);
         dataTable.init(getPluginContext());
-        BrowserSearchResult bsr = getModelObject();
-        if (bsr.getSelectedNode() != null) {
-            dataTable.setDefaultModel(new JcrNodeModel(bsr.getSelectedNode()));
+
+        IPluginConfig config = getPluginConfig();
+        if (config.getString("model.document") != null) {
+            IModelReference<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
+                    IModelReference.class);
+            if (documentService != null) {
+                dataTable.setDefaultModel(documentService.getModel());
+            }
         }
         redraw();
     }
 
-    public void selectionChanged(IModel<Node> model) {
-        BrowserSearchResult bsr = getModelObject();
-        bsr.setSelectedNode(model.getObject());
-        dataTable.setDefaultModel(model);
+    @Override
+    public void render(PluginRequestTarget target) {
+        super.render(target);
+        dataTable.render(target);
     }
 
     protected TableDefinition<Node> getTableDefinition() {
@@ -118,7 +179,7 @@ public class SearchDocumentListingPlugin extends RenderPlugin<BrowserSearchResul
             ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener,
             ListPagingDefinition pagingDefinition) {
         ListDataTable<Node> table = new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener,
-                false, pagingDefinition);
+                true, pagingDefinition);
         table.add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())));
         return table;
     }

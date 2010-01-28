@@ -15,10 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.browse.AbstractBrowseView;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,41 +29,12 @@ public class BrowserPerspective extends Perspective {
 
     private static final long serialVersionUID = 1L;
 
-    private AbstractBrowseView browserView;
-
     public BrowserPerspective(IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        
-        String path = config.getString("model.folder.root", "/");
-        browserView = new AbstractBrowseView(context, config, new JcrNodeModel(path)) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String getExtensionPoint() {
-                return config.getString("extension.list");
-            }
-            
-            @Override
-            protected void onBrowse() {
-                focus(null);
-            }
-        };
 
         // register as the IRenderService for the browser service
         String browserId = config.getString("browser.id");
         context.registerService(this, browserId);
-    }
-    
-    @Override
-    protected void onStart() {
-        super.onStart();
-        browserView.start();
-    }
-    
-    @Override
-    protected void onDetach() {
-        browserView.detach();
-        super.onDetach();
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,18 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse;
+package org.hippoecm.frontend.model;
 
-import org.apache.wicket.markup.html.panel.Panel;
+import java.io.Serializable;
 
-public class ToggleVersionPanel extends Panel {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+public interface IChangeListener extends Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    public ToggleVersionPanel(String id) {
-        super(id);
-    }
+    void onChange();
 
 }

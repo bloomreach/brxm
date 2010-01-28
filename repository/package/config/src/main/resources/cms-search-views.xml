@@ -27,6 +27,7 @@
       <sv:value>list.view.size</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:references" sv:type="String">
+      <sv:value>model.document</sv:value>
       <sv:value>model.search</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:services" sv:type="String">
@@ -56,6 +57,9 @@
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.search}</sv:value>
+      </sv:property>
+      <sv:property sv:name="model.document" sv:type="String">
+        <sv:value>${model.document}</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

@@ -17,28 +17,32 @@ package org.hippoecm.frontend.plugins.yui.accordion;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.markup.html.IHeaderResponse;
 
-public class AccordionBehavior extends AbstractBehavior {
+public class AccordionSectionBehavior extends AbstractBehavior {
     private static final long serialVersionUID = 1L;
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     Component c;
     String parentId;
-    
-    public AccordionBehavior(String parentId) {
+
+    public AccordionSectionBehavior(String parentId) {
         this.parentId = parentId;
     }
-    
+
     @Override
     public void bind(Component component) {
         c = component;
     }
-    
-    public void renderHead(org.apache.wicket.markup.html.IHeaderResponse response) {
-        if(c.isVisible())
-            response.renderOnLoadJavascript("YAHOO.hippo.AccordionManager.render('" + parentId + "', '" + c.getMarkupId() + "')");
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        if (c.isVisible()) {
+            response.renderOnLoadJavascript("YAHOO.hippo.AccordionManager.render('" + parentId + "', '"
+                    + c.getMarkupId() + "')");
+        }
     };
 
 }

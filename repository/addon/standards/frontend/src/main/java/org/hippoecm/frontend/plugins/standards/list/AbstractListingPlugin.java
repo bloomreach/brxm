@@ -158,7 +158,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin<Node> implement
         }
     }
 
-    private void updateSelection(IModel<Node> model) {
+    public void updateSelection(IModel<Node> model) {
         dataTable.setDefaultModel(model);
         onSelectionChanged(model);
     }
