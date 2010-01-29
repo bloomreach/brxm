@@ -16,6 +16,8 @@
 
 package org.hippoecm.frontend.plugins.xinha.dialog;
 
+import java.util.Iterator;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -24,8 +26,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -52,7 +56,8 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
     protected final IPluginContext context;
     protected final IPluginConfig config;
-    private ModelReference<Node> modelService;
+    private IModelReference<Node> modelReference;
+    private IObserver modelRefObserver;
     private IClusterControl control;
     protected IRenderService dialogRenderer;
 
@@ -90,11 +95,29 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
         }
         lastModelVisited = model;
 
-        modelService = new ModelReference<Node>(modelServiceId, model) {
-            private static final long serialVersionUID = 1L;
+        control.start();
 
-            @Override
-            public void setModel(IModel<Node> newModel) {
+        modelReference = context
+                .getService(control.getClusterConfig().getString("wicket.model"), IModelReference.class);
+        if (lastModelVisited != null) {
+            modelReference.setModel(lastModelVisited);
+        } else {
+            IModel<Node> newModel = modelReference.getModel();
+            if (newModel != null) {
+                DocumentLink link = (DocumentLink) getModelObject();
+                link.setNodeModel((JcrNodeModel) newModel);
+                checkState();
+            }
+        }
+
+        context.registerService(modelRefObserver = new IObserver() {
+
+            public IObservable getObservable() {
+                return modelReference;
+            }
+
+            public void onEvent(Iterator events) {
+                IModel<Node> newModel = modelReference.getModel();
                 if (newModel != null) {
                     DocumentLink link = (DocumentLink) getModelObject();
                     JcrNodeModel currentModel = link.getNodeModel();
@@ -104,12 +127,9 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
                     }
                 }
                 lastModelVisited = newModel;
-                super.setModel(newModel);
             }
-        };
-        modelService.init(context);
 
-        control.start();
+        }, IObserver.class.getName());
 
         dialogRenderer = context.getService(decorated.getString("wicket.id"), IRenderService.class);
         dialogRenderer.bind((IRenderService) getComponent().findParent(XinhaPlugin.class), contentId);
@@ -134,8 +154,10 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
         savePreferences();
         dialogRenderer.unbind();
         dialogRenderer = null;
+        context.unregisterService(modelRefObserver, IObserver.class.getName());
+        modelReference = null;
+        modelRefObserver = null;
         control.stop();
-        modelService.destroy();
     }
 
     private void savePreferences() {
