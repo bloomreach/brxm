@@ -344,15 +344,17 @@ public class BrowseServiceTest extends PluginTest {
     }
     */
 
-    /*
     @Test
     public void switchToBrowseWhenSelectingFolder() throws Exception {
+        Node hcilde = root.getNode("test/content/folder").addNode("kind", "hippostd:folder");
+        hcilde.addMixin("hippo:harddocument");
+        session.save();
+
         BrowseService service = startServiceWithSearchSection();
 
         IModel<BrowserSearchResult> searchResultModel = service.getCollectionModel().getObject().getSearchResult();
-        getDocumentService().setModel(new JcrNodeModel("/test/content/folder"));
+        getDocumentService().setModel(new JcrNodeModel("/test/content/folder/kind"));
         assertEquals(DocumentCollectionType.FOLDER, service.getCollectionModel().getObject().getType());
     }
-    */
 
 }

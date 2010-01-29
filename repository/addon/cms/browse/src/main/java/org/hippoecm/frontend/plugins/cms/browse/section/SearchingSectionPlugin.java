@@ -78,7 +78,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             } else if (model.getObject() == null) {
                 throw new IllegalArgumentException("invalid folder node null");
             }
-            selectFolder(model);
+            onFolderChange(model);
         }
 
     }
@@ -115,7 +115,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                     }
 
                     public void onEvent(Iterator events) {
-                        setSearch(model);
+                        onSearchModelChange(model);
                     }
 
                 };
@@ -128,7 +128,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             if (model == null) {
                 throw new IllegalArgumentException("invalid folder model null");
             }
-            setSearch(model);
+            onSearchModelChange(model);
         }
 
     }
@@ -182,7 +182,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                updateSearch();
+                updateSearch(true);
             }
         });
         tx.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
@@ -223,9 +223,9 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             @Override
             protected String load() {
                 if (browseLink.isEnabled()) {
-                    return "browse-16.png";
-                } else {
                     return "browse-disabled-16.png";
+                } else {
+                    return "browse-16.png";
                 }
             }
         }) {
@@ -244,7 +244,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                updateSearch();
+                updateSearch(true);
             }
 
             @Override
@@ -267,9 +267,9 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             @Override
             protected String load() {
                 if (searchLink.isEnabled()) {
-                    return "search-16.png";
-                } else {
                     return "search-disabled-16.png";
+                } else {
+                    return "search-16.png";
                 }
             }
         }) {
@@ -332,21 +332,23 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     void redrawSearch() {
         redrawSearch = true;
     }
-    
-    private void updateSearch() {
+
+    private void updateSearch(boolean forceQuery) {
         IModel<Node> model = folderService.getModel();
         String scope = "/";
         if (model instanceof JcrNodeModel) {
             scope = ((JcrNodeModel) model).getItemModel().getPath();
         }
-        if (Strings.isEmpty(query)) {
-            searchModelService.setModel(new Model(null));
-        } else {
-            TextSearchBuilder sb = new TextSearchBuilder();
-            sb.setScope(new String[] { scope });
-            sb.setWildcardSearch(true);
-            sb.setText(query);
-            searchModelService.setModel(sb.getResultModel());
+        if (forceQuery || collection.getType() == DocumentCollectionType.SEARCHRESULT) {
+            if (Strings.isEmpty(query)) {
+                searchModelService.setModel(new Model(null));
+            } else {
+                TextSearchBuilder sb = new TextSearchBuilder();
+                sb.setScope(new String[] { scope });
+                sb.setWildcardSearch(true);
+                sb.setText(query);
+                searchModelService.setModel(sb.getResultModel());
+            }
         }
     }
 
@@ -373,15 +375,15 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         }
         super.render(target);
     }
-    
-    public void selectFolder(IModel<Node> model) {
+
+    public void onFolderChange(IModel<Node> model) {
         folderService.updateModel(model);
         collection.setFolder(model);
 
-        updateSearch();
+        searchModelService.updateModel(new Model(null));
     }
 
-    public void setSearch(IModel<BrowserSearchResult> model) {
+    public void onSearchModelChange(IModel<BrowserSearchResult> model) {
         searchModelService.updateModel(model);
         collection.setSearchResult(searchModelService.getModel());
     }
@@ -398,6 +400,11 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         folderService.updateModel(folder);
         collection.setFolder(folder);
+
+        if (BrowserHelper.isFolder(document)) {
+            searchModelService.updateModel(new Model(null));
+            collection.setSearchResult(new Model(null));
+        }
     }
 
     public DocumentCollection getCollection() {
