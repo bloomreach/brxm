@@ -22,13 +22,19 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -40,6 +46,7 @@ import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.Documen
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
@@ -128,18 +135,29 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private SearchModelService searchModelService;
     private DocumentCollection collection;
 
+    private IModel<Node> scopeModel;
     private String query;
 
     public SearchingSectionPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         this.rootPath = config.getString("model.folder.root", "/");
+        scopeModel = new JcrNodeModel(rootPath);
 
         collection = new DocumentCollection();
 
         folderService = new FolderModelService(config, new JcrNodeModel(rootPath));
         searchModelService = new SearchModelService(config);
         collection.setFolder(folderService.getModel());
+
+        collection.addListener(new IChangeListener() {
+            private static final long serialVersionUID = 1L;
+
+            public void onChange() {
+                redraw();
+            }
+
+        });
 
         TextField tx = new TextField("searchBox", new PropertyModel(this, "query"));
         tx.add(new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -150,25 +168,165 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 updateSearch();
             }
         });
+        tx.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public String getObject() {
+                return (collection.getType() == DocumentCollectionType.SEARCHRESULT ? "grayedin" : "grayedout");
+            }
+        }));
         add(tx);
+
+        final AjaxLink browseLink = new AjaxLink("browse") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                collection.setSearchResult(new Model(null));
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return collection.getType() == DocumentCollectionType.SEARCHRESULT;
+            }
+
+        };
+        browseLink.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public String getObject() {
+                return (browseLink.isEnabled() ? "grayedin" : "grayedout");
+            }
+        }));
+        browseLink.add(new Image("browse-img", new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String load() {
+                if (browseLink.isEnabled()) {
+                    return "browse-16.png";
+                } else {
+                    return "browse-disabled-16.png";
+                }
+            }
+        }) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onDetach() {
+                setDefaultModel(getDefaultModel());
+                super.onDetach();
+            }
+        });
+        add(browseLink);
+
+        final AjaxLink searchLink = new AjaxLink("search") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                updateSearch();
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return collection.getType() == DocumentCollectionType.FOLDER;
+            }
+
+        };
+        searchLink.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public String getObject() {
+                return (searchLink.isEnabled() ? "grayedin" : "grayedout");
+            }
+        }));
+        searchLink.add(new Image("search-img", new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String load() {
+                if (searchLink.isEnabled()) {
+                    return "search-16.png";
+                } else {
+                    return "search-disabled-16.png";
+                }
+            }
+        }) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onDetach() {
+                setDefaultModel(getDefaultModel());
+                super.onDetach();
+            }
+        });
+        add(searchLink);
+
+        AjaxLink scopeLink = new AjaxLink("scope") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                folderService.setModel(scopeModel);
+            }
+
+            @Override
+            public boolean isEnabled() {
+                JcrNodeModel rootModel = new JcrNodeModel(rootPath);
+                return !rootModel.equals(scopeModel) && !scopeModel.equals(folderService.getModel());
+            }
+
+        };
+        add(scopeLink);
+        scopeLink.add(new Label("scope-label", new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String load() {
+                return new NodeTranslator(scopeModel).getNodeName().getObject();
+            }
+
+        }));
+
+        add(new AjaxLink("all") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                scopeModel = folderService.getModel();
+                folderService.setModel(new JcrNodeModel(rootPath));
+            }
+
+            @Override
+            public boolean isEnabled() {
+                JcrNodeModel rootModel = new JcrNodeModel(rootPath);
+                return !rootModel.equals(folderService.getModel());
+            }
+
+        });
     }
 
     private void updateSearch() {
-            IModel<Node> model = folderService.getModel();
-            String scope = "/";
-            if (model instanceof JcrNodeModel) {
-                scope = ((JcrNodeModel) model).getItemModel().getPath();
-            }
-            if (Strings.isEmpty(query)) {
-                searchModelService.setModel(new Model(null));
-            } else {
-                TextSearchBuilder sb = new TextSearchBuilder();
-                sb.setScope(new String[] { scope });
-                sb.setText(query);
-                searchModelService.setModel(sb.getResultModel());
-            }
+        IModel<Node> model = folderService.getModel();
+        String scope = "/";
+        if (model instanceof JcrNodeModel) {
+            scope = ((JcrNodeModel) model).getItemModel().getPath();
+        }
+        if (Strings.isEmpty(query)) {
+            searchModelService.setModel(new Model(null));
+        } else {
+            TextSearchBuilder sb = new TextSearchBuilder();
+            sb.setScope(new String[] { scope });
+            sb.setWildcardSearch(true);
+            sb.setText(query);
+            searchModelService.setModel(sb.getResultModel());
+        }
     }
-    
+
     @Override
     public void onStart() {
         folderService.init(getPluginContext());
@@ -195,11 +353,12 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         collection.setSearchResult(searchModelService.getModel());
     }
 
-    public void select(IModel<Node> folder) {
-        if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
+    public void select(IModel<Node> document) {
+        if (collection.getType() == DocumentCollectionType.SEARCHRESULT && !BrowserHelper.isFolder(document)) {
             return;
         }
 
+        IModel<Node> folder = document;
         while (!BrowserHelper.isFolder(folder)) {
             folder = BrowserHelper.getParent(folder);
         }

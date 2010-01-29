@@ -44,6 +44,7 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.util.MaxLengthStringFormatter;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -62,11 +63,11 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
     private final AjaxButton up;
 
     private MaxLengthStringFormatter format;
-    final IModelReference<Node> folderReference;
+    private IModelReference<Node> folderReference;
 
     private List<NodeItem> nodeitems;
 
-    public BreadcrumbPlugin(IPluginContext context, IPluginConfig config) {
+    public BreadcrumbPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         if (config.getString("model.folder") == null) {
@@ -83,25 +84,42 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
             roots.add("/");
         }
 
-        folderReference = context.getService(config.getString("model.folder"), IModelReference.class);
-        if (folderReference != null) {
-            context.registerService(new IObserver<IModelReference<Node>>() {
-                private static final long serialVersionUID = 1L;
+        context.registerTracker(new ServiceTracker<IModelReference>(IModelReference.class) {
+            private static final long serialVersionUID = 1L;
 
-                public IModelReference<Node> getObservable() {
-                    return folderReference;
+            IObserver folderServiceObserver = null;
+
+            @Override
+            protected void onServiceAdded(IModelReference service, String name) {
+                if (folderServiceObserver == null) {
+                    folderReference = service;
+                    context.registerService(folderServiceObserver = new IObserver<IModelReference<Node>>() {
+                        private static final long serialVersionUID = 1L;
+
+                        public IModelReference<Node> getObservable() {
+                            return folderReference;
+                        }
+
+                        public void onEvent(Iterator<? extends IEvent<IModelReference<Node>>> event) {
+                            update((JcrNodeModel) folderReference.getModel());
+                        }
+
+                    }, IObserver.class.getName());
+                    update((JcrNodeModel) service.getModel());
                 }
+            }
 
-                public void onEvent(Iterator<? extends IEvent<IModelReference<Node>>> event) {
-                    update((JcrNodeModel) folderReference.getModel());
+            @Override
+            protected void onRemoveService(IModelReference service, String name) {
+                if (service == folderReference) {
+                    context.unregisterService(folderServiceObserver, IObserver.class.getName());
+                    folderServiceObserver = null;
                 }
+            }
 
-            }, IObserver.class.getName());
-        }
+        }, config.getString("model.folder"));
 
-        JcrNodeModel nodeModel = (JcrNodeModel) folderReference.getModel();
-
-        add(getListView(nodeModel));
+        add(getListView(null));
 
         up = new AjaxButton("up") {
             private static final long serialVersionUID = 1L;
@@ -116,9 +134,7 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
             }
         };
         up.setModel(new StringResourceModel("dialog-breadcrumb-up", this, null));
-        if (nodeModel == null || roots.contains(nodeModel.getItemModel().getPath())) {
-            up.setEnabled(false);
-        }
+        up.setEnabled(false);
         add(up);
 
         format = new MaxLengthStringFormatter(config.getInt("crumb.max.length", 10), config.getString("crumb.splitter",

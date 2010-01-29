@@ -233,52 +233,6 @@ padding-right: 9px;
 .hippo-logout li a { color: white; background-image: url("images/close.png"); background-repeat: no-repeat; background-position: right 1px; padding-right: 18px;}
 .hippo-logout li a:hover { color: white; background-position: right -15px; background-repeat: no-repeat; padding-right: 18px;}
 
-/* Header Search */
-/* ================================================*/
-.hippo-search  {width: 450px; position: absolute;/*has to reach outside yui setup*/ left: 240px; top:0px;}
-/* styles for entire widget */
-.hippo-search .yui-ac {position:relative; text-align:left;}
-/* styles for input field */
-.hippo-search .yui-ac-input {position:absolute;width:165px; padding: 4px; padding-top: 5px;padding-left: 10px; padding-right: 35px;  background: url("images/searchBack.png") no-repeat; border: 0px}
-/* styles for results container */
-.hippo-search .yui-ac-container {position:absolute;top:1.6em;width:100%;}
-/* styles for header/body/footer wrapper within container */
-.hippo-search .yui-ac-content {position:absolute;width:100%;border:1px solid #808080;background:#fff;overflow:hidden;z-index:19050;}
-/* styles for container shadow */
-.hippo-search .yui-ac-shadow {
-    position:absolute;margin:.3em;width:100%;background:#000;-moz-opacity: 0.10;opacity:.10;filter:alpha(opacity=10);z-index:19049;
-}
-/* styles for container iframe */
-.hippo-search .yui-ac iframe {
-    opacity:0;filter: alpha(opacity=0);
-    padding-right:.3em; padding-bottom:.3em; /* Bug 2026798: extend iframe to shim the shadow */
-}
-/* styles for results list */
-.hippo-search .yui-ac-content ul{
-    margin:0;padding:0;width:100%;
-}
-/* styles for result item */
-.hippo-search .yui-ac-content li {
-    margin:0;padding:2px 5px;cursor:default;white-space:nowrap;list-style:none;
-    background: url("images/icons/document-16.png") no-repeat 5px 5px; padding: 5px; padding-left: 25px; border-bottom: 1px solid #f4f4f4;
-    zoom:1; /* For IE to trigger mouse events on LI */
-}
-/* Styles for excerpt, will change */
-.hippo-search .yui-ac-content li span div span {color: #afafaf}
-/* styles for prehighlighted result item */
-.hippo-search .yui-ac-content li.yui-ac-prehighlight {
-    background-color: #fedc89;
-}
-/* styles for highlighted result item */
-.hippo-search .yui-ac-content li.yui-ac-highlight {
-    background-color:#fff6e0;
-}
-/* styles for highlighted excerpt, will change */
-.hippo-search .yui-ac-content li.yui-ac-highlight span div span {
-}
-
-.hippo-search .yui-ac-ft {text-align: right; padding-right:4px; font-weight: bold;}
-
 .hippo-browser-search  {margin: 3px;}
 
 /* Default Table lists */
@@ -1253,12 +1207,12 @@ table.hippo-currentactivity > tbody, table.hippo-todo > tbody {
 
 .hippo-accordion-unit-top {
   background-color: #ebebeb;
-  cursor: pointer;
-  height: 26px;
+  height: 36px;
   margin: 0;
   padding:0;
   border:0;
   white-space: nowrap;
+  text-align: center;
 }
 
 .hippo-accordion-unit-bottom {

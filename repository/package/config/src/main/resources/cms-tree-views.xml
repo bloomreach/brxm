@@ -29,6 +29,7 @@
     </sv:property>
     <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
+      <sv:value>model.folder</sv:value>
     </sv:property>
     
     <!-- Wicket tree helper properties -->
@@ -247,6 +248,7 @@
     </sv:property>
     <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
+      <sv:value>model.folder</sv:value>
     </sv:property>
 
     <!-- Wicket tree helper properties -->
@@ -461,6 +463,7 @@
     </sv:property>
     <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
+      <sv:value>model.folder</sv:value>
     </sv:property>
 
     <!-- Wicket tree helper properties -->
@@ -668,6 +671,7 @@
     </sv:property>
     <sv:property sv:name="frontend:services" sv:type="String">
       <sv:value>wicket.id</sv:value>
+      <sv:value>model.folder</sv:value>
     </sv:property>
     
     <!-- Wicket tree helper properties -->

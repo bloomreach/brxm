@@ -105,10 +105,10 @@ public class ListDataTable<T> extends DataTable<T> {
     public MarkupContainer setDefaultModel(IModel<?> model) {
         if(observers != null) {
             IModel<?> currentModel = getDefaultModel();
-            if (currentModel != null && model != null && !model.equals(currentModel)) {
+            if (currentModel == null || (model != null && !model.equals(currentModel))) {
                 for (Item it : observers.keySet()) {
                     IModel checkModel = it.getModel();
-                    if (currentModel.equals(checkModel) || model.equals(checkModel)) {
+                    if (checkModel.equals(currentModel) || model.equals(checkModel)) {
                         dirty.add(it);
                     }
                 }

@@ -86,7 +86,7 @@ public class DocumentCollection implements IDetachable {
     }
 
     public boolean isOrdered() {
-        return false;
+        return true;
     }
 
     public void addListener(IChangeListener listener) {
