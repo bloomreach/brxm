@@ -14,23 +14,19 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
-    <wicket:head>
-        <title>Hippo CMS 7</title>
-      <link rel="shortcut icon" href="skin/images/hippo-cms.ico" type="image/x-icon" />
-    </wicket:head>
     <wicket:panel>
-      <div class="hippo-root-cms" id="doc3">
-        <div id="hd">
-            <div class="headerplugin" wicket:id="extension.header">[header here]</div>          
-        </div>
-        <div id="bd">
-          <div id="yui-main">
-            <div class="yui-b">
-              <div class="centerplugin" wicket:id="extension.center">[center here]</div>
+        <div class="hippo-browser-documents-small smooth_load_workaround" yui:id="navigator-wrapper">
+            <div yui:id="navigator-top"></div>
+            <div class="hippo-browser-documents-small-folders" yui:id="navigator-left">
+                <div yui:id="navigator-left-body">
+                    <div wicket:id="sections">sections here</div>
+                </div>
             </div>
-          </div>
+            <div class="hippo-browser-documents-small-files" yui:id="navigator-center">
+                <div yui:id="navigator-center-body">
+                    <div wicket:id="documents"><div wicket:id="extension.list">documents here</div></div>
+                </div>
+            </div>
         </div>
-      </div>  
-      <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
     </wicket:panel>
 </html>

@@ -210,6 +210,7 @@ public class BrowseServiceTest extends PluginTest {
         IModelReference<Node> docService = getDocumentService();
         docService.setModel(new JcrNodeModel((Node) null));
         assertEquals(new JcrNodeModel("/test/content"), service.getCollectionModel().getObject().getFolder());
+        assertEquals(null, docService.getModel().getObject());
     }
 
     @Test
@@ -302,12 +303,12 @@ public class BrowseServiceTest extends PluginTest {
 
     @Test
     public void folderDoesNotFollowDocumentWhenSearching() throws Exception {
-        Node folder = root.getNode("test/content/folder").addNode("otherFolder", "hippostd:folder");
-        folder.addMixin("hippo:harddocument");
+        Node otherDoc = root.getNode("test/content").addNode("doc", "hippo:document");
+        otherDoc.addMixin("hippo:harddocument");
         session.save();
 
         BrowseService service = startServiceWithSearchSection();
-        getDocumentService().setModel(new JcrNodeModel("/test/content/folder/otherFolder"));
+        getDocumentService().setModel(new JcrNodeModel(otherDoc));
         assertEquals(new JcrNodeModel("/test/content/folder"), service.getCollectionModel().getObject().getFolder());
     }
 
@@ -331,5 +332,27 @@ public class BrowseServiceTest extends PluginTest {
         getDocumentService().setModel(new JcrNodeModel("/test/other"));
         assertEquals("section.more", service.getSections().getActiveSection());
     }
+
+    /*
+    @Test
+    public void searchIsResetOnSectionSwitch() throws Exception {
+        BrowseService service = startServiceWithSearchSection();
+
+        IModel<BrowserSearchResult> searchResultModel = service.getCollectionModel().getObject().getSearchResult();
+        getDocumentService().setModel(new JcrNodeModel("/test/content/document"));
+        assertEquals(searchResultModel, service.getCollectionModel().getObject().getSearchResult());
+    }
+    */
+
+    /*
+    @Test
+    public void switchToBrowseWhenSelectingFolder() throws Exception {
+        BrowseService service = startServiceWithSearchSection();
+
+        IModel<BrowserSearchResult> searchResultModel = service.getCollectionModel().getObject().getSearchResult();
+        getDocumentService().setModel(new JcrNodeModel("/test/content/folder"));
+        assertEquals(DocumentCollectionType.FOLDER, service.getCollectionModel().getObject().getType());
+    }
+    */
 
 }

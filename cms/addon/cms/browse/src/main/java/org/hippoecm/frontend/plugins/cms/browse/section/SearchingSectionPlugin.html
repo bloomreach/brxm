@@ -15,10 +15,16 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
   <wicket:panel>
-    <div class="hippo-accordion-unit-top">
+    <div class="hippo-accordion-unit-top hippo-browser-search">
       <div>
         <input type="text" wicket:id="searchBox" />
-        <div id="searchBoxContainer"/>
+        <span>
+          <a wicket:id="browse"><img wicket:id="browse-img" /></a> / <a wicket:id="search"><img wicket:id="search-img" /></a>
+        </span>
+        <div style="clear: both;">
+          <a wicket:id="scope"><span wicket:id="scope-label">scope</span></a>
+          <a wicket:id="all"><wicket:message key="all-label">All</wicket:message></a>
+        </div>
       </div>
     </div>
     <div wicket:id="extension.tree">tree here</div>

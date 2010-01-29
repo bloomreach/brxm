@@ -75,7 +75,11 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             if (model == null) {
                 throw new IllegalArgumentException("invalid model null");
             }
-            browse(model);
+            if (model.getObject() == null) {
+                updateModel(model);
+            } else {
+                browse(model);
+            }
         }
     }
 
