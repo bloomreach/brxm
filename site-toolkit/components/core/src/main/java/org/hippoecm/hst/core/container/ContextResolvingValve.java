@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import java.io.IOException;
 
 import org.hippoecm.hst.configuration.HstSite;
+import org.hippoecm.hst.configuration.HstSitesManager;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -64,7 +65,14 @@ public class ContextResolvingValve extends AbstractValve
         }
         else {
             
-            HstSite hstSite = getSitesManager(context.getServletRequest().getServletPath()).getSites().getSite(siteName);
+            HstSitesManager mngr = getSitesManager(context.getServletRequest().getServletPath());
+            
+            if(mngr == null) {
+                throw new ContainerException("No site manager found for " + context.getServletRequest().getServletPath() + ". Make sure you sitesManagers in your Spring " +
+                		"configuration contains an entry for '"+context.getServletRequest().getServletPath()+"'");
+            }
+            
+            HstSite hstSite = mngr.getSites().getSite(siteName);
             
             if (hstSite == null) {
                 throw new ContainerException("No site found for " + siteName);
