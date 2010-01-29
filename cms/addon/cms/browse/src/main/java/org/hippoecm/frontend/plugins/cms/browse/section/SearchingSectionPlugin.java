@@ -20,9 +20,11 @@ import java.util.Iterator;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
@@ -33,6 +35,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -137,6 +140,9 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
     private IModel<Node> scopeModel;
     private String query;
+    private transient boolean redrawSearch = false;
+
+    private MarkupContainer container;
 
     public SearchingSectionPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -154,10 +160,21 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             private static final long serialVersionUID = 1L;
 
             public void onChange() {
-                redraw();
+                redrawSearch();
             }
 
         });
+
+        container = new WebMarkupContainer("container") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onBeforeRender() {
+                redrawSearch = false;
+                super.onBeforeRender();
+            }
+        };
+        container.setOutputMarkupId(true);
 
         TextField tx = new TextField("searchBox", new PropertyModel(this, "query"));
         tx.add(new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -176,7 +193,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 return (collection.getType() == DocumentCollectionType.SEARCHRESULT ? "grayedin" : "grayedout");
             }
         }));
-        add(tx);
+        container.add(tx);
 
         final AjaxLink browseLink = new AjaxLink("browse") {
             private static final long serialVersionUID = 1L;
@@ -220,7 +237,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 super.onDetach();
             }
         });
-        add(browseLink);
+        container.add(browseLink);
 
         final AjaxLink searchLink = new AjaxLink("search") {
             private static final long serialVersionUID = 1L;
@@ -264,7 +281,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 super.onDetach();
             }
         });
-        add(searchLink);
+        container.add(searchLink);
 
         AjaxLink scopeLink = new AjaxLink("scope") {
             private static final long serialVersionUID = 1L;
@@ -281,7 +298,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
 
         };
-        add(scopeLink);
+        container.add(scopeLink);
         scopeLink.add(new Label("scope-label", new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
@@ -292,7 +309,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         }));
 
-        add(new AjaxLink("all") {
+        container.add(new AjaxLink("all") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -308,8 +325,14 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
 
         });
+
+        add(container);
     }
 
+    void redrawSearch() {
+        redrawSearch = true;
+    }
+    
     private void updateSearch() {
         IModel<Node> model = folderService.getModel();
         String scope = "/";
@@ -341,6 +364,16 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         folderService.destroy();
     }
 
+    @Override
+    public void render(PluginRequestTarget target) {
+        if (target != null) {
+            if (redrawSearch) {
+                target.addComponent(container);
+            }
+        }
+        super.render(target);
+    }
+    
     public void selectFolder(IModel<Node> model) {
         folderService.updateModel(model);
         collection.setFolder(model);
