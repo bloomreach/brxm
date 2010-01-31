@@ -42,16 +42,17 @@ if (!YAHOO.hippo.TableHelper) {
                 this.id = id;
                 
                 var table = Dom.get(id);
-                YAHOO.hippo.LayoutManager.registerResizeListener(table, this, this.resize, false);
-                YAHOO.hippo.HippoAjax.registerDestroyFunction(table, this.destroy, this);
+                var me = this;
+                YAHOO.hippo.LayoutManager.registerResizeListener(table, this, function(sizes) {
+                    me.resize(sizes);
+                }, false);
+                YAHOO.hippo.HippoAjax.registerDestroyFunction(table, function() {
+                    YAHOO.hippo.LayoutManager.unregisterResizeListener(table, me);
+                }, this);
         	},
         	
         	resize: function(sizes) {
         	    this.update(sizes);
-        	},
-        	
-        	destroy: function(){
-                var x = YAHOO.hippo.LayoutManager.unregisterResizeListener(Dom.get(this.id), this);
         	},
         	
             render : function() {
@@ -68,7 +69,6 @@ if (!YAHOO.hippo.TableHelper) {
             },
             
             update: function(sizes) {
-                
 	        	var table = Dom.get(this.id);
 	        	var rows = table.rows;
 	        	
