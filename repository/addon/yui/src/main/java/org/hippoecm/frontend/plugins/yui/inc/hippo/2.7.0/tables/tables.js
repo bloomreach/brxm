@@ -40,7 +40,7 @@ if (!YAHOO.hippo.TableHelper) {
         	
         	init: function(id) {
                 this.id = id;
-                
+
                 var table = Dom.get(id);
                 var me = this;
                 YAHOO.hippo.LayoutManager.registerResizeListener(table, this, function(sizes) {
@@ -61,10 +61,17 @@ if (!YAHOO.hippo.TableHelper) {
                 if(unit != null) {
                     this.update(unit.getSizes());
                 } else {
-                    var parent = Dom.getAncestorByTagName(table, 'div');
-                    var reg = Dom.getRegion(parent);
-                    var margin = this.helper.getMargin(parent);
-                    this.update({wrap: {w: reg.width, h: reg.height}});
+                    //We're not inside a layout unit to provide us with dimension details, thus the 
+                    //resize event will never be called. For providing an initial size, the first ancestor
+                    //with a classname is used.
+                    var parent = Dom.getAncestorBy(table, function(node) {
+                       return Lang.isValue(node.className) && Lang.trim(node.className).length > 0; 
+                    });
+                    if(parent != null) {
+                        var reg = Dom.getRegion(parent);
+                        var margin = this.helper.getMargin(parent);
+                        this.update({wrap: {w: reg.width, h: reg.height}});
+                    }
                 }
             },
             
