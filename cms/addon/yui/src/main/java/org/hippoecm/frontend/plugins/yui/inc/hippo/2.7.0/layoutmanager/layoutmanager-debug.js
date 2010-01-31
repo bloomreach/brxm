@@ -240,7 +240,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                             var prevTime = new Date().getTime() - info.relStart.getTime();
                             YAHOO.log('Callback' + myId + ' re-called after ' + prevTime + 'ms, timeouts=' + info.numberOfTimeouts, 'info', 'LayoutManager');
                         }
-                        var me = this;
                         var execute = function() {
                             var abs = new Date().getTime() - info.absStart.getTime();
                             YAHOO.log('Execute' + myId + ' called after ' + abs + 'ms, timeouts=' + info.numberOfTimeouts + ', timeout=' + useTimeout, 'info', 'LayoutManager');
@@ -263,7 +262,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                             timeoutLength = 10;
                             this.throttler.throttle(eventName + oid, timeoutLength, execute);
                         } else {
-                            execute();
+                            execute.apply(me);
                         }
                     };
                     YAHOO.log('Register' + myId + ' on unit ' + target.get('id') + ', timeout=' + useTimeout, 'info', 'LayoutManager');

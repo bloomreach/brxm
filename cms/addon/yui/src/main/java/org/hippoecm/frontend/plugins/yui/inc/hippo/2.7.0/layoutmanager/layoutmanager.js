@@ -225,15 +225,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
                 var useTimeout = !Lang.isUndefined(timeoutLength) && Lang.isNumber(timeoutLength) && timeoutLength > 0;
                 var eventName = evt + 'CustomEvent';
-                
-                //var info = { numberOfTimeouts:0, absStart: null, relStart: null };
                 var me = this;
-                
+
                 if(Lang.isUndefined(target[eventName + 'Subscribers'])) {
                     target[eventName + 'Subscribers'] = new YAHOO.hippo.HashMap();
 
                     var callback = function() {
-                        var me = this;
                         var execute = function() {
                             var values = target[eventName + 'Subscribers'].valueSet();
                             for(var i=0; i<values.length; i++) {
@@ -245,7 +242,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                             timeoutLength = 10;
                             this.throttler.throttle(eventName + oid, timeoutLength, execute);
                         } else {
-                            execute();
+                            execute.apply(me);
                         }
                     };
                     target.subscribe(evt, callback, null, this);
