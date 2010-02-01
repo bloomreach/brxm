@@ -121,7 +121,7 @@
         <artifactId>maven-jetty-plugin</artifactId>
         <version>${jetty.version}</version>
         <configuration>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <scanIntervalSeconds>0</scanIntervalSeconds>
           <connectors>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
               <port>8081</port>
@@ -130,6 +130,7 @@
           <jettyEnvXml>jetty-config/jetty-env.xml</jettyEnvXml>
           <webAppConfig>
             <contextPath>/</contextPath>
+            <extraClasspath>target/classes/;../engine/target/classes/;../connector/target/classes/;../modules/target/classes/</extraClasspath>
             <serverClasses>
               <!-- Copied from WebAppContext with SLF4J removed -->
               <filter>-org.mortbay.jetty.plus.jaas.</filter>
