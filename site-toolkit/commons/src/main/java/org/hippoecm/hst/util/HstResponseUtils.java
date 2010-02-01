@@ -47,7 +47,7 @@ public class HstResponseUtils {
      * @param path the sitemap path you want to redirect to 
      */
     public static void sendRedirect(HstRequest request, HstResponse response, String path) {
-        sendRedirect(request, response, path, null);
+        sendRedirect(request, response, path, null, null);
     }
     
     /**
@@ -59,25 +59,37 @@ public class HstResponseUtils {
      * @param queryParams query parameters to append to the redirection url
      */
     public static void sendRedirect(HstRequest request, HstResponse response, String path, Map<String, String []> queryParams) {
+        sendRedirect(request, response, path, queryParams, null);
+    }
+    
+    /**
+     * Facility method for sending a redirect to a SiteMapItemId.  
+     * 
+     * @param request the HstRequest
+     * @param response the HstResponse
+     * @param path the sitemap path you want to redirect to 
+     * @param queryParams query parameters to append to the redirection url
+     * @param characterEncoding character encoding for query parameters
+     */
+    public static void sendRedirect(HstRequest request, HstResponse response, String path, Map<String, String []> queryParams, String characterEncoding) {
         HstRequestContext requestContext = request.getRequestContext();
         HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
         HstSiteMap siteMap = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
         
         HstLink link = linkCreator.create(path, siteMap.getSite());
-        if(link == null) {
+        
+        if (link == null) {
             throw new HstComponentException("Can not redirect.");
         }
-        String urlString = null;
-        urlString = link.toUrlForm(request, response, false);
         
-        if(urlString == null) {
+        String urlString = link.toUrlForm(request, response, false);
+        
+        if (urlString == null) {
             throw new HstComponentException("Can not redirect.");
         }
         
         if (queryParams != null && !queryParams.isEmpty()) {
             try {
-                String characterEncoding = response.getCharacterEncoding();
-                
                 if (characterEncoding == null) {
                     characterEncoding = "ISO-8859-1";
                 }

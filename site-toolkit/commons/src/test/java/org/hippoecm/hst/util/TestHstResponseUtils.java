@@ -44,6 +44,7 @@ public class TestHstResponseUtils {
     
     private String path = "/seeyouagain";
     private String expectedUrlWithoutQueryParams = "/site/preview" + path + ".html";
+    private String characterEncoding = "UTF-8";
     
     @Before
     public void setUp() {
@@ -103,7 +104,7 @@ public class TestHstResponseUtils {
         String expectedUrl = expectedUrlWithoutQueryParams + "?";
         for (Map.Entry<String, String []> entry : queryParams.entrySet()) {
             for (String value : entry.getValue()) {
-                expectedUrl += entry.getKey() + "=" + URLEncoder.encode(value, "ISO-8859-1") + "&";
+                expectedUrl += entry.getKey() + "=" + URLEncoder.encode(value, characterEncoding) + "&";
             }
         }
         expectedUrl = expectedUrl.substring(0, expectedUrl.length() - 1); // remove ending '&';
@@ -128,7 +129,7 @@ public class TestHstResponseUtils {
         replay(link);
         replay(response);
         
-        HstResponseUtils.sendRedirect(request, response, path, queryParams);
+        HstResponseUtils.sendRedirect(request, response, path, queryParams, characterEncoding);
     }
     
 }

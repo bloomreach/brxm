@@ -424,6 +424,19 @@ public class BaseHstComponent extends GenericHstComponent {
         HstResponseUtils.sendRedirect(request, response, path, queryParams);
     }
     
+    /**
+     * 
+     * Facility method for sending a redirect to a SiteMapItemId.  
+     * 
+     * @param path the sitemap path you want to redirect to 
+     * @param request the HstRequest
+     * @param response the HstResponse
+     * @param characterEncoding character encoding for query parameters
+     */
+    public void sendRedirect(String path, HstRequest request, HstResponse response, Map<String, String []> queryParams, String characterEncoding) {
+        HstResponseUtils.sendRedirect(request, response, path, queryParams, characterEncoding);
+    }
+    
     private synchronized void initBeansObjects() throws HstComponentException{
         if (!this.beansInitialized) {
             this.objectConverter = getObjectConverter();
