@@ -15,14 +15,12 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <table class="hippo-defaultcontent">
-    <tr>
-      <td wicket:id="extension.main" style="width: 80%;">[ main ]</td>
-      <td class="hippo-editor-metadata">
+    <div class="column-wrapper">
+      <div class="col80" wicket:id="extension.main">[left]</div>
+      <div class="col20">
         <div wicket:id="extension.select">[ mixin selector ]</div>
         <div wicket:id="extension.mixins">[ mixin editors ]</div>
-      </td>
-    </tr>
-    </table>
+      </div>
+    </div>
   </wicket:panel>
 </html>

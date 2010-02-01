@@ -15,11 +15,9 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <table class="hippo-defaultcontent">
-    <tr>
-      <td wicket:id="extension.main" style="width: 80%;">[ main ]</td>
-      <td class="hippo-editor-metadata" wicket:id="extension.right">[ right ]</td>
-    </tr>
-    </table>
+    <div class="column-wrapper">
+      <div class="col70" wicket:id="extension.main">[left]</div>
+      <div class="col30" wicket:id="extension.right">[right]</div>
+    </div>
   </wicket:panel>
 </html>

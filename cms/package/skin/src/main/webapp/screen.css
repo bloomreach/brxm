@@ -739,6 +739,8 @@ font-weight: bold;
 .hippo-preview-document .hippo-editor-field-textarea{min-height: 150px}
 .hippo-editor .hippo-preview-document .hippo-editor-field .hippo-editor-field-subfield{background-image: none}
 
+.hippo-preview-document .hippo-editor-field {overflow: auto;}
+
 /* Editor Plugin */
 /* ================================================ */
 /* default background when nothing is selected */
@@ -747,7 +749,15 @@ font-weight: bold;
 .hippo-editor-top{background: transparent url("images/editor-back.png") repeat-x}
 .hippo-editor-top .hippo-toolbar{padding-left: 4px}
 
-.hippo-editor-template-editor{padding-top: 4px; background: white url("images/hippo-shade.png"); padding-left: 4px;}
+.hippo-editor-template-editor{padding-top: 4px; background: transparent url("images/hippo-shade.png"); padding-left: 4px;}
+
+.column-wrapper {width: 100%; overflow: auto;}
+
+.column-wrapper .col70 {width: 70%; float:left;}
+.column-wrapper .col30 {width: 30%; float:right;}
+
+.column-wrapper .col80 {width: 80%; float:left;}
+.column-wrapper .col20 {width: 20%; float:right;}
 
 .hippo-editor-template-editor .even .hippo-editor-field{background: #f0f6ff}
 .hippo-editor-template-editor .even .invalid .hippo-editor-field{background: #f00000}
@@ -863,15 +873,15 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor-template-field-edit .hippo-editor-field-subfield{background: white; border: 1px solid #B2B2B2;} 
 
 /* subfields */
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls{background-color: #def; height: 0px; overflow-y: shown; float: right; width: 75px; display:block;}
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls{background-color: #def; height: 0px; overflow-y: shown; float: right; display:block; width: 75px;}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls .up-16{width: 18px; height: 16px; padding: 10px;}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls .down-16{width: 18px; height: 16px; padding: 10px;}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls .delete-16{margin-left: 15px; width: 18px; height: 16px; padding: 10px;}
 .hippo-editor .hippo-editor-field .add-16{display: block; padding: 10px; background-color: white; border: 1px solid white; background-position: right center; margin-top: 8px;}
 .hippo-editor .hippo-editor-field .add-16:hover{border: 1px solid #EDF5FF; background-color: white}
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield {margin-bottom: 4px;}
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield {margin-bottom: 4px; background: white; border: 1px solid #B2B2B2;}
 .hippo-editor .hippo-editor-field-subfield.invalid .hippo-editor-field-subfield-item {border-color: #f00000;}
-.hippo-editor .hippo-editor-field-subfield-item{margin-right: 85px; background: white; border: 1px solid #B2B2B2; }
+.hippo-editor .hippo-editor-field-value{margin-right: 85px; }
 .hippo-editor .hippo-preview-document .hippo-editor-field-subfield-item{margin: 0; border: 0px; }
 
 /* sub sub fields */
@@ -885,7 +895,7 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor .hippo-editor-threepane tr td{vertical-align: top}
 
 /* meta data */
-.hippo-editor .hippo-editor-metadata{width: 300px; background: #f2f2f2; padding: 4px; padding-top: 0px;}
+.hippo-editor .hippo-editor-metadata{background: #f2f2f2; padding: 4px; padding-top: 0px; min-width: 200px;}
 
 /* Default Template Style */
 /* ================================================ */
