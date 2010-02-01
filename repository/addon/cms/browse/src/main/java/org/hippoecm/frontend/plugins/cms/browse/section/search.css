@@ -9,3 +9,12 @@
 	margin: 4px 20px 4px 10px;
 	float: left;
 }
+
+.hippo-window-form .hippo-search-section input {
+	background-color: white;
+	border: 0px;
+	padding: 0px;
+	margin: 4px 10px;
+	line-height: normal;
+	width: 144px;
+}

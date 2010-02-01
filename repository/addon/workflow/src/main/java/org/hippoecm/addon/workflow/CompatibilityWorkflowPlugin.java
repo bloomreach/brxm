@@ -17,8 +17,6 @@ package org.hippoecm.addon.workflow;
 
 import java.util.Iterator;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
@@ -34,7 +32,6 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
@@ -48,6 +45,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.yui.datetime.AjaxDateTimeField;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITranslateService;
+import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
@@ -324,7 +322,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 add(new Label("question", question));
                 add(new TextFieldWidget("name", nameModel));
 
-                IPluginContext context = CompatibilityWorkflowPlugin.this.getPluginContext();
+                final IPluginContext context = CompatibilityWorkflowPlugin.this.getPluginContext();
                 IPluginConfig config = CompatibilityWorkflowPlugin.this.getPluginConfig();
                 IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                         IPluginConfigService.class);
@@ -335,22 +333,45 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 control.start();
 
                 String modelServiceId = decorated.getString("wicket.model.folder");
-                final IModelReference modelRef = context.getService(modelServiceId, IModelReference.class);
-                context.registerService(new IObserver<IModelReference>() {
-                    private static final long serialVersionUID = 1L;
+                context.registerTracker(new ServiceTracker<IModelReference>(IModelReference.class) {
+                    
+                    IModelReference modelRef;
+                    IObserver modelObserver;
 
-                    public IModelReference getObservable() {
-                        return modelRef;
-                    }
-
-                    public void onEvent(Iterator<? extends IEvent<IModelReference>> events) {
-                        IModel model = modelRef.getModel();
-                        if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
-                            destination.setChainedModel(model);
+                    @Override
+                    protected void onServiceAdded(IModelReference service, String name) {
+                        super.onServiceAdded(service, name);
+                        if (modelRef == null) {
+                            modelRef = service;
+                            context.registerService(modelObserver = new IObserver<IModelReference>() {
+                                private static final long serialVersionUID = 1L;
+            
+                                public IModelReference getObservable() {
+                                    return modelRef;
+                                }
+            
+                                public void onEvent(Iterator<? extends IEvent<IModelReference>> events) {
+                                    IModel model = modelRef.getModel();
+                                    if (model != null && model instanceof JcrNodeModel && ((JcrNodeModel) model).getNode() != null) {
+                                        destination.setChainedModel(model);
+                                    }
+                                    DestinationDialog.this.setOkEnabled(true);
+                                }
+                            }, IObserver.class.getName());
                         }
-                        DestinationDialog.this.setOkEnabled(true);
                     }
-                }, IObserver.class.getName());
+
+                    @Override
+                    protected void onRemoveService(IModelReference service, String name) {
+                        if (service == modelRef) {
+                            context.unregisterService(modelObserver, IObserver.class.getName());
+                            modelObserver = null;
+                            modelRef = null;
+                        }
+                        super.onRemoveService(service, name);
+                    }
+
+                }, modelServiceId);
 
                 dialogRenderer = context.getService(decorated.getString("wicket.id"), IRenderService.class);
                 dialogRenderer.bind(null, "picker");
