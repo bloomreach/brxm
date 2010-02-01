@@ -1,0 +1,11 @@
+.hippo-search-section {
+	width: 100%;
+	background: url("search-back.png") no-repeat;
+}
+
+.hippo-search-section input {
+	border: 0px;
+	vertical-align: top;
+	margin: 4px 20px 4px 10px;
+	float: left;
+}

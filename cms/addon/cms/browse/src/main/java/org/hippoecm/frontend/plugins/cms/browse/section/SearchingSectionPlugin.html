@@ -17,10 +17,13 @@
   <wicket:panel>
     <div class="hippo-accordion-unit-top hippo-browser-search">
       <div wicket:id="container">
-        <input type="text" wicket:id="searchBox" />
-        <span>
+        <div class="hippo-search-section">
+          <input type="text" wicket:id="searchBox" />
+          <a wicket:id="toggle"><img wicket:id="search-icon" /></a>
+        </div>
+        <!-- span>
           <a wicket:id="browse"><img wicket:id="browse-img" /></a> <a wicket:id="search"><img wicket:id="search-img" /></a>
-        </span>
+        </span  -->
         <div style="clear: both;">
           <a wicket:id="scope"><span wicket:id="scope-label">scope</span></a>
           <a wicket:id="all"><wicket:message key="all-label">All</wicket:message></a>

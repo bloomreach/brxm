@@ -24,6 +24,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
@@ -165,6 +166,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         });
 
+        add(CSSPackageResource.getHeaderContribution(SearchingSectionPlugin.class, "search.css"));
+
         container = new WebMarkupContainer("container") {
             private static final long serialVersionUID = 1L;
 
@@ -195,37 +198,28 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         }));
         container.add(tx);
 
-        final AjaxLink browseLink = new AjaxLink("browse") {
+        final AjaxLink browseLink = new AjaxLink("toggle") {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                collection.setSearchResult(new Model(null));
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return collection.getType() == DocumentCollectionType.SEARCHRESULT;
+                if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
+                    collection.setSearchResult(new Model(null));
+                } else {
+                    updateSearch(true);
+                }
             }
 
         };
-        browseLink.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public String getObject() {
-                return (browseLink.isEnabled() ? "grayedin" : "grayedout");
-            }
-        }));
-        browseLink.add(new Image("browse-img", new LoadableDetachableModel<String>() {
+        browseLink.add(new Image("search-icon", new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected String load() {
-                if (browseLink.isEnabled()) {
-                    return "browse-disabled-16.png";
+                if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
+                    return "cancel.png";
                 } else {
-                    return "browse-16.png";
+                    return "magnify.png";
                 }
             }
         }) {
@@ -238,50 +232,6 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
         });
         container.add(browseLink);
-
-        final AjaxLink searchLink = new AjaxLink("search") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                updateSearch(true);
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return collection.getType() == DocumentCollectionType.FOLDER;
-            }
-
-        };
-        searchLink.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public String getObject() {
-                return (searchLink.isEnabled() ? "grayedin" : "grayedout");
-            }
-        }));
-        searchLink.add(new Image("search-img", new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String load() {
-                if (searchLink.isEnabled()) {
-                    return "search-disabled-16.png";
-                } else {
-                    return "search-16.png";
-                }
-            }
-        }) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onDetach() {
-                setDefaultModel(getDefaultModel());
-                super.onDetach();
-            }
-        });
-        container.add(searchLink);
 
         AjaxLink scopeLink = new AjaxLink("scope") {
             private static final long serialVersionUID = 1L;
