@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.ServiceException;
+import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -52,24 +53,43 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
 
     // map physical handle -> virtual parent
     private Map<JcrNodeModel, JcrNodeModel> lastReferences;
-    private final IModelReference<Node> modelReference;
+    private IModelReference<Node> modelReference;
     private transient boolean active = false;
 
     @SuppressWarnings("unchecked")
-    BrowserObserver(EditorManagerPlugin plugin, IPluginContext context, IPluginConfig config) {
+    BrowserObserver(EditorManagerPlugin plugin, final IPluginContext context, IPluginConfig config) {
         this.editorMgr = plugin;
 
         lastReferences = new HashMap<JcrNodeModel, JcrNodeModel>();
 
-        // monitor document in browser
-        modelReference = context.getService(config.getString(RenderService.MODEL_ID), IModelReference.class);
-        if (modelReference == null) {
-            throw new IllegalStateException("No model service found");
-        }
-        context.registerService(this, IObserver.class.getName());
+        context.registerTracker(new ServiceTracker<IModelReference>(IModelReference.class) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onServiceAdded(IModelReference service, String name) {
+                super.onServiceAdded(service, name);
+                if (modelReference == null) {
+                    modelReference = service;
+                    context.registerService(BrowserObserver.this, IObserver.class.getName());
+                }
+            }
+
+            @Override
+            protected void onRemoveService(IModelReference service, String name) {
+                if (service == modelReference) {
+                    context.unregisterService(BrowserObserver.this, IObserver.class.getName());
+                    modelReference = null;
+                }
+                super.onRemoveService(service, name);
+            }
+
+        }, config.getString(RenderService.MODEL_ID));
     }
 
     IModel<Node> getModel() {
+        if (modelReference == null) {
+            return null;
+        }
         try {
             return getEditorModel(modelReference.getModel());
         } catch (RepositoryException e) {
@@ -77,8 +97,11 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
             return null;
         }
     }
-    
+
     void setModel(JcrNodeModel nodeModel) {
+        if (modelReference == null) {
+            return;
+        }
         if (!active) {
             active = true;
             try {
