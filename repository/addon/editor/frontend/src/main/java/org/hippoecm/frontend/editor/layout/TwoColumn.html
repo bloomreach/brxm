@@ -15,11 +15,9 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <table style="width: 100%;">
-      <tr>
-        <td wicket:id="extension.left" style="vertical-align: top; width: 60%;">[ left ]</td>
-        <td wicket:id="extension.right" style="vertical-align: top; width: 40%;">[ right ]</td>
-      </tr>
-    </table>
+    <div class="column-wrapper">
+      <div class="col70" wicket:id="extension.left">[left]</div>
+      <div class="col30" wicket:id="extension.right">[right]</div>
+    </div>
   </wicket:panel>
 </html>
