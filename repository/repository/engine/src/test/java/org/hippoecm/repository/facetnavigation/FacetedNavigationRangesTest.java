@@ -373,8 +373,9 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
 
         Long count1 = node.getNode("range").getNode("this week").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
         Long count2 = node.getNode("range").getNode("this week").getNode("range").getNode("this month").getProperty(HippoNodeType.HIPPO_COUNT).getLong();
-        // when this week constraint is already chosen, then this month must contain equal number of hits
-        assertEquals(count1, count2);
+        // when this week constraint is already chosen, then this month can contain at most as many items (in the beginning of a month, the current 
+        // week can contain more items then the month)
+        assertTrue(count1 >= count2);
     }
 
 }
