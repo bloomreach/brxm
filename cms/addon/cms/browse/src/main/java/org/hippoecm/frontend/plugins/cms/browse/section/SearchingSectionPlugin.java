@@ -188,14 +188,6 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 updateSearch(true);
             }
         });
-        tx.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public String getObject() {
-                return (collection.getType() == DocumentCollectionType.SEARCHRESULT ? "grayedin" : "grayedout");
-            }
-        }));
         container.add(tx);
 
         final AjaxLink browseLink = new AjaxLink("toggle") {
