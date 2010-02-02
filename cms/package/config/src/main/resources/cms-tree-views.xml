@@ -42,9 +42,6 @@
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>${cluster.id}.model.folder</sv:value>
     </sv:property>
-    <sv:property sv:name="model.search" sv:type="String">
-      <sv:value>${cluster.id}.model.search</sv:value>
-    </sv:property>
     
     <sv:node sv:name="sectionPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -74,9 +71,6 @@
       </sv:property>
       <sv:property sv:name="model.folder" sv:type="String">
         <sv:value>${model.folder}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.search" sv:type="String">
-        <sv:value>${model.search}</sv:value>
       </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>/content/documents</sv:value>
@@ -261,9 +255,6 @@
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>${cluster.id}.model.folder</sv:value>
     </sv:property>
-    <sv:property sv:name="model.search" sv:type="String">
-      <sv:value>${cluster.id}.model.search</sv:value>
-    </sv:property>
     
     <sv:node sv:name="sectionPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -293,9 +284,6 @@
       </sv:property>
       <sv:property sv:name="model.folder" sv:type="String">
         <sv:value>${model.folder}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.search" sv:type="String">
-        <sv:value>${model.search}</sv:value>
       </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>/content/gallery</sv:value>
@@ -476,9 +464,6 @@
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>${cluster.id}.model.folder</sv:value>
     </sv:property>
-    <sv:property sv:name="model.search" sv:type="String">
-      <sv:value>${cluster.id}.model.search</sv:value>
-    </sv:property>
     
     <sv:node sv:name="sectionPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -508,9 +493,6 @@
       </sv:property>
       <sv:property sv:name="model.folder" sv:type="String">
         <sv:value>${model.folder}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.search" sv:type="String">
-        <sv:value>${model.search}</sv:value>
       </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>/content/assets</sv:value>
