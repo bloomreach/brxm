@@ -431,6 +431,7 @@ table.hippo-window-form{width: 100%;}
 .hippo-window-form td input{background: white; border: 1px solid #afafaf; padding: 3px; line-height: 18px;}
 .hippo-window-form td{padding: 5px;}
 .hippo-window-form .hippo-form-select{width: 300px;}
+.hippo-window-form td.hippo-window-navigator{padding: 0px;}
 
 .hippo-window .notification {display: block; margin: 11px; padding: 12px; text-align: center; background: #ffccaa; border: 1px solid #ff9900;}
 
@@ -488,7 +489,7 @@ background-image:url(images/box-blue2.png);}
 .hippo-list-paging td span em, .hippo-list-paging td a em{font-style: normal}
 */
 
-.hippo-picker-navigation{background: url("images/silver4.png") repeat-x; height: 20px; width: 635px; border-bottom: 1px solid #afafaf; margin-left: 194px; padding-top: 2px; padding-bottom: 2px; padding-left: 2px;}
+.hippo-picker-navigation{background: url("images/silver4.png") repeat-x; height: 20px; width: 645px; border-bottom: 1px solid #afafaf; margin-left: 194px; padding-top: 2px; padding-bottom: 2px; padding-left: 2px;}
 .hippo-picker-list-details tr.hippo-list-paging td div {margin-bottom: 2px; margin-top: 10px; width: 100%;}
 .hippo-picker-navigation-buttons{background: url("images/hippo-picker-navigation-back.png") repeat-x;}
 .hippo-window-form td div.hippo-picker-navigation-buttons input, .hippo-picker-navigation-buttons input{float: left; padding: 0px; height: 22px; width: 24px; font-size: 11px; background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat; background-position: 0px -20px; border: none; margin: 0px; text-indent: -9999px;}
@@ -1217,7 +1218,7 @@ table.hippo-currentactivity > tbody, table.hippo-todo > tbody {
 
 .hippo-accordion-unit-top {
   background-color: #ebebeb;
-  height: 36px;
+  height: 44px;
   margin: 0;
   padding:0;
   border:0;

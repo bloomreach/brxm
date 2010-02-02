@@ -1,13 +1,51 @@
 .hippo-search-section {
 	width: 100%;
-	background: url("search-back.png") no-repeat;
+	background: url("search-back.png") no-repeat #dfdfdf;
 }
 
 .hippo-search-section input {
-	border: 0px;
-	vertical-align: top;
-	margin: 4px 20px 4px 10px;
 	float: left;
+	height: 13px;
+	border: 0px;
+	margin: 6px 20px 4px 10px;
+	vertical-align: top;
+}
+
+.hippo-search-section a {
+    float: right;
+    height: 0px;
+}
+
+.hippo-search-scope-container {
+	width: 100%;
+	padding: 0 20px;
+}
+
+div.hippo-search-inactive-scope {
+    height: 16px;
+    padding: 0 0 0 8px;
+    float: left;
+    margin: 2px;
+}
+
+div.hippo-search-active-scope {
+	background: url("active-back.png") no-repeat;
+	height: 16px;
+	padding: 0 0 0 8px;
+	float: left;
+	margin: 2px;
+}
+
+.hippo-search-scope {
+	padding: 5px 6px;
+	font-size: 10px;
+}
+
+div.hippo-search-active-scope span.hippo-search-scope-right {
+	background: url("active-right.png") no-repeat;
+	width: 8px;
+	height: 16px;
+	float: right;
 }
 
 .hippo-window-form .hippo-search-section input {

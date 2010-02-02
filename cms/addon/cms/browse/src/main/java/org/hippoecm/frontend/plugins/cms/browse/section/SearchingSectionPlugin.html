@@ -18,18 +18,23 @@
     <div class="hippo-accordion-unit-top hippo-browser-search">
       <div wicket:id="container">
         <div class="hippo-search-section">
-          <input type="text" wicket:id="searchBox" />
           <a wicket:id="toggle"><img wicket:id="search-icon" /></a>
+          <input type="text" wicket:id="searchBox" />
+          <div style="clear: both;" />
         </div>
-        <!-- span>
-          <a wicket:id="browse"><img wicket:id="browse-img" /></a> <a wicket:id="search"><img wicket:id="search-img" /></a>
-        </span  -->
-        <div style="clear: both;">
-          <a wicket:id="scope"><span wicket:id="scope-label">scope</span></a>
-          <a wicket:id="all"><wicket:message key="all-label">All</wicket:message></a>
+        <div class="hippo-search-scope-container">
+          <div wicket:id="scope-container">
+            <span class="hippo-search-scope-right" />
+            <a class="hippo-search-scope" wicket:id="scope"><span wicket:id="scope-label">scope</span></a>
+          </div>
+          <div wicket:id="all-container">
+            <span class="hippo-search-scope-right" />
+            <a class="hippo-search-scope" wicket:id="all"><wicket:message key="all-label">all</wicket:message></a>
+          </div>
         </div>
       </div>
     </div>
+    <div style="clear: both;" />
     <div wicket:id="extension.tree">tree here</div>
     <div wicket:id="extension.addfolder" class="hippo-accordion-unit-bottom"></div>
   </wicket:panel>
