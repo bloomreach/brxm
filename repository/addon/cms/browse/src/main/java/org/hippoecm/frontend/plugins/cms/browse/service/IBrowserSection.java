@@ -22,12 +22,27 @@ import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 
+/**
+ * Extension service to the navigator / browser.  Plugins that wish to contribute
+ * to the navigator should register a service that implements this interface at
+ * their "wicket.id" service name.
+ */
 public interface IBrowserSection extends IRenderService, ITitleDecorator {
 
+    /**
+     * Does the section contain the specified Node.
+     */
     boolean contains(IModel<Node> node);
 
+    /**
+     * Select the Node in the section.
+     */
     void select(IModel<Node> node);
 
+    /**
+     * The collection of documents in the current selection.  This collection will
+     * be shown in the document listing.
+     */
     DocumentCollection getCollection();
 
 }

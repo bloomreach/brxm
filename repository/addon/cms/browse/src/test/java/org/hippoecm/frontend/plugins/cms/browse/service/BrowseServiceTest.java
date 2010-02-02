@@ -80,41 +80,36 @@ public class BrowseServiceTest extends PluginTest {
                 }
 
                 public NodeIterator getNodes() throws RepositoryException {
+                    final Iterator<Node> upstream = nodes.iterator();
                     return new NodeIterator() {
 
                         public Node nextNode() {
-                            // TODO Auto-generated method stub
-                            return null;
+                            return upstream.next();
                         }
 
                         public long getPosition() {
-                            // TODO Auto-generated method stub
-                            return 0;
+                            return -1;
                         }
 
                         public long getSize() {
-                            // TODO Auto-generated method stub
-                            return 0;
+                            return nodes.size();
                         }
 
                         public void skip(long skipNum) {
-                            // TODO Auto-generated method stub
-                            
+                            while (skipNum-- > 0)
+                                upstream.next();
                         }
 
                         public boolean hasNext() {
-                            // TODO Auto-generated method stub
-                            return false;
+                            return upstream.hasNext();
                         }
 
                         public Object next() {
-                            // TODO Auto-generated method stub
-                            return null;
+                            return upstream.next();
                         }
 
                         public void remove() {
-                            // TODO Auto-generated method stub
-                            
+                            upstream.remove();
                         }};
                 }
 
@@ -257,24 +252,9 @@ public class BrowseServiceTest extends PluginTest {
 
     @Test
     public void enterSearchUpdatesDoclisting() throws Exception {
-        BrowseService service = startServiceWithSearchSection();
+        BrowseService service = startServiceWithSearchSection(null);
 
         assertEquals(DocumentCollectionType.SEARCHRESULT, service.getCollectionModel().getObject().getType());
-    }
-
-    private BrowseService startServiceWithSearchSection() throws Exception {
-        IPluginConfig serviceConfig = new JcrPluginConfig(new JcrNodeModel("/test/config"));
-        serviceConfig.put("sections", "section.search");
-
-        BrowseService service = new BrowseService(context, serviceConfig, new JcrNodeModel("/test/content/document"));
-
-        start(new JcrPluginConfig(new JcrNodeModel("/test/searchplugin")));
-
-        List<Node> nodes = new LinkedList<Node>();
-        nodes.add(root.getNode("test/content/document/document"));
-        service.getCollectionModel().getObject().setSearchResult(new BrowserSearchResultModel(new BrowserSearchResult("test", new TestResultProvider(nodes))));
-
-        return service;
     }
 
     @Test
@@ -290,7 +270,7 @@ public class BrowseServiceTest extends PluginTest {
 
     @Test
     public void searchDoesNotFollowDocument() throws Exception {
-        BrowseService service = startServiceWithSearchSection();
+        BrowseService service = startServiceWithSearchSection(null);
 
         IModel<BrowserSearchResult> searchResultModel = service.getCollectionModel().getObject().getSearchResult();
         getDocumentService().setModel(new JcrNodeModel("/test/content/document"));
@@ -303,7 +283,7 @@ public class BrowseServiceTest extends PluginTest {
         otherDoc.addMixin("hippo:harddocument");
         session.save();
 
-        BrowseService service = startServiceWithSearchSection();
+        BrowseService service = startServiceWithSearchSection(null);
         getDocumentService().setModel(new JcrNodeModel(otherDoc));
         assertEquals(new JcrNodeModel("/test/content/folder"), service.getCollectionModel().getObject().getFolder());
     }
@@ -342,15 +322,66 @@ public class BrowseServiceTest extends PluginTest {
 
     @Test
     public void switchToBrowseWhenSelectingFolder() throws Exception {
-        Node hcilde = root.getNode("test/content/folder").addNode("kind", "hippostd:folder");
-        hcilde.addMixin("hippo:harddocument");
+        Node child = root.getNode("test/content/folder").addNode("kind", "hippostd:folder");
+        child.addMixin("hippo:harddocument");
         session.save();
 
-        BrowseService service = startServiceWithSearchSection();
+        BrowseService service = startServiceWithSearchSection(null);
 
-        IModel<BrowserSearchResult> searchResultModel = service.getCollectionModel().getObject().getSearchResult();
-        getDocumentService().setModel(new JcrNodeModel("/test/content/folder/kind"));
+        getDocumentService().setModel(new JcrNodeModel(child));
         assertEquals(DocumentCollectionType.FOLDER, service.getCollectionModel().getObject().getType());
+    }
+
+    @Test
+    public void switchToBrowseWhenDocumentIsNotInSearchResults() throws Exception {
+        Node otherHandle = root.getNode("test/content/folder").addNode("doc", "hippo:handle");
+        otherHandle.addMixin("hippo:hardhandle");
+        Node otherDoc = otherHandle.addNode("doc", "hippo:document");
+        otherDoc.addMixin("hippo:harddocument");
+        session.save();
+
+        BrowseService service = startServiceWithSearchSection(null);
+
+        getDocumentService().setModel(new JcrNodeModel(otherDoc));
+        assertEquals(DocumentCollectionType.FOLDER, service.getCollectionModel().getObject().getType());
+    }
+
+    @Test
+    public void keepSearchingWhenDocumentIsInSearchResults() throws Exception {
+        Node otherHandle = root.getNode("test/content/folder").addNode("doc", "hippo:handle");
+        otherHandle.addMixin("hippo:hardhandle");
+        Node otherDoc = otherHandle.addNode("doc", "hippo:document");
+        otherDoc.addMixin("hippo:harddocument");
+        session.save();
+
+        List<Node> nodes = new LinkedList<Node>();
+        nodes.add(root.getNode("test/content/document/document"));
+        nodes.add(otherDoc);
+        BrowseService service = startServiceWithSearchSection(nodes);
+
+        getDocumentService().setModel(new JcrNodeModel(otherHandle));
+        assertEquals(DocumentCollectionType.SEARCHRESULT, service.getCollectionModel().getObject().getType());
+    }
+
+    /**
+     * starts a search section.  The search has a single result, /test/content/document/document.
+     */
+    private BrowseService startServiceWithSearchSection(List<Node> nodes) throws Exception {
+        IPluginConfig serviceConfig = new JcrPluginConfig(new JcrNodeModel("/test/config"));
+        serviceConfig.put("sections", "section.search");
+
+        BrowseService service = new BrowseService(context, serviceConfig, new JcrNodeModel("/test/content/document"));
+
+        start(new JcrPluginConfig(new JcrNodeModel("/test/searchplugin")));
+
+        if (nodes == null) {
+            nodes = new LinkedList<Node>();
+            nodes.add(root.getNode("test/content/document/document"));
+        }
+        service.getCollectionModel().getObject().setSearchResult(
+                new BrowserSearchResultModel(new BrowserSearchResult("test", new TestResultProvider(nodes))));
+
+        return service;
     }
 
 }

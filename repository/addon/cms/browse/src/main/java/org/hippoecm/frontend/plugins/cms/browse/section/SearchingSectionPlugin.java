@@ -15,10 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.section;
 
-import java.util.Iterator;
-
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,7 +29,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -41,8 +40,6 @@ import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
-import org.hippoecm.frontend.model.event.IObservable;
-import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
@@ -50,8 +47,10 @@ import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.Documen
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +67,10 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         }
 
         public void updateModel(IModel<Node> model) {
+            if (collection.getType() == DocumentCollectionType.SEARCHRESULT
+                    || (getModel() != null && getModel().equals(scopeModel))) {
+                scopeModel = model;
+            }
             super.setModel(model);
         }
 
@@ -172,7 +175,16 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         });
         container.add(browseLink);
 
-        AjaxLink scopeLink = new AjaxLink("scope") {
+        WebMarkupContainer scopeContainer = new WebMarkupContainer("scope-container") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isVisible() {
+                return collection.getType() == DocumentCollectionType.SEARCHRESULT;
+            }
+
+        };
+        final AjaxLink scopeLink = new AjaxLink("scope") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -182,12 +194,26 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
             @Override
             public boolean isEnabled() {
-                JcrNodeModel rootModel = new JcrNodeModel(rootPath);
-                return !rootModel.equals(scopeModel) && !scopeModel.equals(folderService.getModel());
+                if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
+                    JcrNodeModel rootModel = new JcrNodeModel(rootPath);
+                    return !rootModel.equals(scopeModel) && !scopeModel.equals(folderService.getModel());
+                }
+                return false;
             }
 
         };
-        container.add(scopeLink);
+        scopeContainer.add(new CssClassAppender(new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String load() {
+                if (scopeLink.isEnabled()) {
+                    return "hippo-search-inactive-scope";
+                } else {
+                    return "hippo-search-active-scope";
+                }
+            }
+        }));
         scopeLink.add(new Label("scope-label", new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
 
@@ -197,23 +223,50 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
 
         }));
+        scopeContainer.add(scopeLink);
+        container.add(scopeContainer);
 
-        container.add(new AjaxLink("all") {
+        WebMarkupContainer allContainer = new WebMarkupContainer("all-container") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isVisible() {
+                return collection.getType() == DocumentCollectionType.SEARCHRESULT;
+            }
+        };
+        final AjaxLink allLink = new AjaxLink("all") {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                scopeModel = folderService.getModel();
+                IModel<Node> backup = folderService.getModel();
                 folderService.setModel(new JcrNodeModel(rootPath));
+                scopeModel = backup;
             }
 
             @Override
             public boolean isEnabled() {
-                JcrNodeModel rootModel = new JcrNodeModel(rootPath);
-                return !rootModel.equals(folderService.getModel());
+                if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
+                    JcrNodeModel rootModel = new JcrNodeModel(rootPath);
+                    return !rootModel.equals(folderService.getModel());
+                }
+                return false;
             }
+        };
+        allContainer.add(new CssClassAppender(new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
 
-        });
+            @Override
+            protected String load() {
+                if (allLink.isEnabled()) {
+                    return "hippo-search-inactive-scope";
+                } else {
+                    return "hippo-search-active-scope";
+                }
+            }
+        }));
+        allContainer.add(allLink);
+        container.add(allContainer);
 
         add(container);
     }
@@ -273,8 +326,39 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     }
 
     public void select(IModel<Node> document) {
-        if (collection.getType() == DocumentCollectionType.SEARCHRESULT && !BrowserHelper.isFolder(document)) {
+        if (document == null) {
             return;
+        }
+
+        boolean toBrowseMode = false;
+        if (collection.getType() == DocumentCollectionType.SEARCHRESULT && !BrowserHelper.isFolder(document)) {
+            toBrowseMode = true;
+            Node docNode = document.getObject();
+            if (docNode != null) {
+                BrowserSearchResult bsr = collection.getSearchResult().getObject();
+                QueryResult result = bsr.getQueryResult();
+                try {
+                    NodeIterator nodes = result.getNodes();
+                    while (nodes.hasNext()) {
+                        Node node = nodes.nextNode();
+                        if (node != null && node.getDepth() > 0) {
+                            Node parent = node.getParent();
+                            if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                if (parent.isSame(docNode)) {
+                                    return;
+                                }
+                            } else {
+                                if (node.isSame(docNode)) {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                } catch (RepositoryException ex) {
+                    log.error("Error processing query results", ex);
+                    return;
+                }
+            }
         }
 
         IModel<Node> folder = document;
@@ -285,7 +369,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         folderService.updateModel(folder);
         collection.setFolder(folder);
 
-        if (BrowserHelper.isFolder(document)) {
+        if (toBrowseMode || BrowserHelper.isFolder(document)) {
             collection.setSearchResult(new Model(null));
         }
     }
