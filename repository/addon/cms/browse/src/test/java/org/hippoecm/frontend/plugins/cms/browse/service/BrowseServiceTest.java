@@ -140,8 +140,6 @@ public class BrowseServiceTest extends PluginTest {
 
     static final String BROWSE_SECTION = "section.browse";
     static final String SEARCH_SECTION = "section.search";
-    
-    static final String SEARCH_MODEL_SERVICE = "service.search";
 
     String[] content = new String[] {
             "/test", "nt:unstructured",
@@ -165,7 +163,6 @@ public class BrowseServiceTest extends PluginTest {
                 "plugin.class", SearchingSectionPlugin.class.getName(),
                 "wicket.id", SEARCH_SECTION,
                 "model.folder", "section.search.folder",
-                "model.search", SEARCH_MODEL_SERVICE,
                 "model.folder.root", "/test/content/folder",
     };
 
@@ -273,10 +270,9 @@ public class BrowseServiceTest extends PluginTest {
 
         start(new JcrPluginConfig(new JcrNodeModel("/test/searchplugin")));
 
-        IModelReference<BrowserSearchResult> bsrmr = context.getService(SEARCH_MODEL_SERVICE, IModelReference.class);
         List<Node> nodes = new LinkedList<Node>();
         nodes.add(root.getNode("test/content/document/document"));
-        bsrmr.setModel(new BrowserSearchResultModel(new BrowserSearchResult("test", new TestResultProvider(nodes))));
+        service.getCollectionModel().getObject().setSearchResult(new BrowserSearchResultModel(new BrowserSearchResult("test", new TestResultProvider(nodes))));
 
         return service;
     }
