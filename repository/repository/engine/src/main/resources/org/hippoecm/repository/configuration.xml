@@ -281,6 +281,7 @@
       </sv:property>
       <sv:property sv:name="hipposys:privileges" sv:type="String">
         <sv:value>jcr:all</sv:value>
+        <sv:value>hippo:admin</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:roles" sv:type="String">
         <sv:value>editor</sv:value>
