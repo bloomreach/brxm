@@ -81,7 +81,8 @@ public class ActionValve extends AbstractValve {
                     getComponentExceptions(new HstComponentWindow [] { window }, true);
                 if (componentExceptions != null && !componentExceptions.isEmpty()) {
                     Object handled = handleComponentExceptions(componentExceptions, context.getRequestContainerConfig(), window, request, response);
-                    if (handled == PageErrorHandler.HANDLED_TO_STOP) {
+                    String location = responseState.getRedirectLocation();
+                    if (handled == PageErrorHandler.HANDLED_TO_STOP && location == null) {
                         context.invokeNext();
                         return;
                     }
