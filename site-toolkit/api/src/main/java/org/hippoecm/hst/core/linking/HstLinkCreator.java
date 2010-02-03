@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.linking;
 
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.Session;
 
@@ -179,4 +181,9 @@ public interface HstLinkCreator {
      * does not include the <code>/</code> itself. If no binaries prefix is configured, <code>""</code> will be returned
      */ 
     String getBinariesPrefix();
+    
+    /**
+     * @return the list of location resolvers, primarily used for resolving custom binary locations 
+     */
+    List<LocationResolver> getLocationResolvers();
 }

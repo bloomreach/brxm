@@ -15,33 +15,121 @@
      limitations under the License.
  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
- xmlns:lang="http://www.springframework.org/schema/lang"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xmlns:util="http://www.springframework.org/schema/util"
- xmlns:aop="http://www.springframework.org/schema/aop"
- xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                           http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
-                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
- >
+  xmlns:lang="http://www.springframework.org/schema/lang"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+ http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
+ http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+ http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
- <bean id="org.hippoecm.hst.core.linking.HstLinkCreator"
-  class="org.hippoecm.hst.core.linking.DefaultHstLinkCreator">
-  <property name="pageNotFoundPath" value="${linkrewriting.failed.path}"/>
-  <property name="binariesPrefix" value="${binaries.prefix.path}"/>
-  <property name="binaryLocations">
-   <list>
-    <value>/content/gallery/</value>
-    <value>/content/assets/</value>
-   </list>
-  </property>
-  <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
- </bean>
+  <bean id="org.hippoecm.hst.core.linking.HstLinkCreator"
+    class="org.hippoecm.hst.core.linking.DefaultHstLinkCreator">
+    <property name="pageNotFoundPath" value="${linkrewriting.failed.path}"/>
+    <property name="binariesPrefix" value="${binaries.prefix.path}"/>
+    <property name="binaryLocations">
+      <list>
+        <value>/content/gallery/</value>
+        <value>/content/assets/</value>
+      </list>
+    </property>
 
- <bean id="org.hippoecm.hst.core.linking.HstLinkProcessor"
-      class="org.hippoecm.hst.core.linking.HstLinkProcessorChain">
-      
+    <property name="linkProcessor" ref="org.hippoecm.hst.core.linking.HstLinkProcessor"/>
+    <property name="locationResolvers" ref="org.hippoecm.hst.core.linking.locationResolvers"/>
   </bean>
-  
- </beans>
 
+  <bean id="org.hippoecm.hst.core.linking.HstLinkProcessor" class="org.hippoecm.hst.core.linking.HstLinkProcessorChain"> </bean>
+
+  <bean id="org.hippoecm.hst.core.linking.locationResolvers"
+    class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <bean class="org.hippoecm.hst.core.linking.CompositeList">
+        <constructor-arg>
+          <list>
+          
+            <ref bean="customResourceResolvers"/>
+            
+            <bean class="org.springframework.beans.factory.config.ListFactoryBean">
+              <property name="sourceList">
+                <list>
+                    <bean class="org.hippoecm.hst.core.linking.resolvers.HippoResourceLocationResolver">
+                      <property name="binariesPrefix" value="${binaries.prefix.path}"/>
+                      <property name="binaryLocations">
+                        <list>
+                          <value>/content/gallery/</value>
+                          <value>/content/assets/</value>
+                        </list>
+                      </property>
+                      <property name="resourceContainers" ref="org.hippoecm.hst.core.linking.ResourceContainer.list"/>
+                    </bean>
+                </list>
+              </property>
+            </bean>
+          </list>
+        </constructor-arg>
+      </bean>
+    </property>
+  </bean>
+
+  <bean id="org.hippoecm.hst.core.linking.ResourceContainer.list" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <bean class="org.hippoecm.hst.core.linking.CompositeList">
+        <constructor-arg>
+          <list>
+            <ref bean="customResourceContainers"/>
+            
+            <bean class="org.springframework.beans.factory.config.ListFactoryBean">
+              <property name="sourceList">
+                <list>
+                   <bean class="org.hippoecm.hst.core.linking.containers.HippoGalleryImageSet">
+                      <property name="primaryItem" value="hippogallery:picture"/>
+                      <property name="mappings">
+                        <bean class="org.springframework.beans.factory.config.MapFactoryBean">
+                          <property name="sourceMap">
+                            <map key-type="java.lang.String" value-type="java.lang.String">
+                              <entry key="hippogallery:thumbnail" value="thumbnail"/>
+                            </map>
+                          </property>
+                        </bean>
+                      </property>
+                    </bean>
+                    <bean class="org.hippoecm.hst.core.linking.containers.HippoGalleryAssetSet">
+                      <property name="primaryItem" value="hippogallery:asset"/>
+                      <property name="mappings">
+                        <bean class="org.springframework.beans.factory.config.MapFactoryBean">
+                          <property name="sourceMap">
+                            <map key-type="java.lang.String" value-type="java.lang.String">
+                            </map>
+                          </property>
+                        </bean>
+                      </property>
+                    </bean>
+                    <bean class="org.hippoecm.hst.core.linking.containers.DefaultResourceContainer"/>
+                </list>
+              </property>
+            </bean>
+          </list>
+        </constructor-arg>
+      </bean>
+    </property>
+  </bean>
+
+
+  <!-- overridable -->
+  <bean id="customResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+
+
+  <!-- overridable -->
+  <bean id="customResourceContainers" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+</beans>

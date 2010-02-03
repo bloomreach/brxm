@@ -61,13 +61,11 @@ public class BinariesServletTest {
                 "            ";
         String expectedFilenameProperty = "myschema:filename";
         String expectedBasePath = "/path/to/binaries";
-        String expectedPrimaryItem = "nodeName";
-
+      
         expect(servletConfig.getInitParameter("contentDispositionContentTypes")).andReturn(mimeTypesString);
         expect(servletConfig.getInitParameter("contentDispositionFilenameProperty")).andReturn(expectedFilenameProperty);
         expect(servletConfig.getInitParameter("baseBinariesContentPath")).andReturn(expectedBasePath);
-        expect(servletConfig.getInitParameter("primaryitem")).andReturn(expectedPrimaryItem);
-
+    
         replay(servletConfig);
         binariesServlet.init(servletConfig);
         verify(servletConfig);
@@ -80,7 +78,6 @@ public class BinariesServletTest {
         assertTrue(actualMimeTypes.contains("application/excel"));
 
         assertEquals(expectedBasePath, binariesServlet.baseBinariesContentPath);
-        assertEquals(expectedPrimaryItem, binariesServlet.primaryItem);
     }
 
     /**
@@ -95,8 +92,7 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("contentDispositionContentTypes")).andReturn(null);
         expect(servletConfig.getInitParameter("contentDispositionFilenameProperty")).andReturn(null);
         expect(servletConfig.getInitParameter("baseBinariesContentPath")).andReturn(null);
-        expect(servletConfig.getInitParameter("primaryitem")).andReturn(null);
-
+       
         replay(servletConfig);
         binariesServlet.init(servletConfig);
         verify(servletConfig);
@@ -106,7 +102,6 @@ public class BinariesServletTest {
         assertEquals(0, actualMimeTypes.size());
 
         assertEquals("", binariesServlet.baseBinariesContentPath);
-        assertNull(binariesServlet.primaryItem);
     }
 
     /**

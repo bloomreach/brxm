@@ -50,7 +50,9 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     private String pageNotFoundPath = DEFAULT_PAGE_NOT_FOUND_PATH;
     private Map<HstSiteMapItem, LocationMapTree> loadedSubLocationMapTree = Collections.synchronizedMap(new HashMap<HstSiteMapItem, LocationMapTree>());
     private HstLinkProcessor linkProcessor;
-   
+    
+    private List<LocationResolver> locationResolvers;
+    
     public void setBinariesPrefix(String binariesPrefix){
         this.binariesPrefix = PathUtils.normalizePath(binariesPrefix);
     }
@@ -61,6 +63,14 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     
     public void setlinkProcessor(HstLinkProcessor linkProcessor) {
         this.linkProcessor = linkProcessor;
+    }
+    
+    public void setLocationResolvers(List<LocationResolver> locationResolvers){
+        this.locationResolvers = locationResolvers;
+    }
+    
+    public List<LocationResolver> getLocationResolvers(){
+        return this.locationResolvers;
     }
     
     public void setPageNotFoundPath(String pageNotFoundPath){
@@ -249,7 +259,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         boolean representsDocument;
         boolean fallback;
         
-        
         HstLinkResolver(Node node, ResolvedSiteMapItem resolvedSiteMapItem){
             this.node = node;
             this.resolvedSiteMapItem = resolvedSiteMapItem;
@@ -272,20 +281,22 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     /*
                      * A hippo resource is not needed to be translated through the HstSiteMap but we create a binary link directly
                      */
-                    pathInfo = null;
-                    if(canonicalNode != null && isBinaryLocation(canonicalNode.getPath())) {
-                        pathInfo = DefaultHstLinkCreator.this.getBinariesPrefix()+canonicalNode.getPath();
-                    } else {
-                        /* This is a Hippo Resource *in* a document outside /content/assets or /content/images. This means, that
-                         * you have a context aware resource: The live view is only allowed to view it when it is published for example. Therefor
-                         * we do not fallback to the canonical node, but return the link in context.
-                         *
-                         */ 
-                        pathInfo = DefaultHstLinkCreator.this.getBinariesPrefix()+node.getPath();
+                    System.out.println(node.getPath());
+                    for(LocationResolver resolver : DefaultHstLinkCreator.this.locationResolvers) {
+                        if(node.isNodeType(resolver.getNodeType())) {
+                            resolver.setLocationMapTree(hstSite.getLocationMapTree());
+                            HstLink link = resolver.resolve(node, getHstSite());
+                            if(link != null) {
+                               return link; 
+                            } else {
+                                log.debug("Location resolved for nodetype '{}' is not able to create link for node '{}'. Try next location resolver", resolver.getNodeType(), node.getPath());
+                            }
+                        }
                     }
-                    // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
-                    containerResource = true;
-                    return new HstLinkImpl(pathInfo, getHstSite(), containerResource);
+                   
+                    log.warn("There is no resolver that can handle a resource of type '{}'. Return do not found link", node.getPrimaryNodeType().getName());
+                    
+                    return pageNotFoundLink(hstSite);
                 } else {
                     if(canonicalNode != null) {
                         node = canonicalNode;
