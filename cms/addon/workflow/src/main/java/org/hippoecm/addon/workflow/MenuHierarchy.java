@@ -79,25 +79,25 @@ class MenuHierarchy {
             }
         }
         if(submenus.containsKey("editing")) {
-            MenuHierarchy submenu = submenus.get("editing");
+            MenuHierarchy submenu = submenus.remove("editing");
             for(ActionDescription action : submenu.items) {
                 put(action);
             }
         }
         if(submenus.containsKey("threepane")) {
-            MenuHierarchy submenu = submenus.get("editing");
+            MenuHierarchy submenu = submenus.remove("editing");
             for(ActionDescription action : submenu.items) {
                 put(action);
             }
         }
         if(submenus.containsKey("versioning")) {
-            MenuHierarchy submenu = submenus.get("versioning");
+            MenuHierarchy submenu = submenus.remove("versioning");
             for(ActionDescription action : submenu.items) {
                 put(action);
             }
         }
         if(submenus.containsKey("default")) {
-            MenuHierarchy submenu = submenus.get("default");
+            MenuHierarchy submenu = submenus.remove("default");
             /* [AC] skipping spacer - not used anywhere yet and it causes esthetics problems with the workflow toolbar
             put(new ActionDescription("spacer") {
                 @Override
@@ -115,9 +115,20 @@ class MenuHierarchy {
             }
         }
         if(submenus.containsKey("custom")) {
-            MenuHierarchy submenu = submenus.get("custom");
+            MenuHierarchy submenu = submenus.remove("custom");
             for(ActionDescription action : submenu.items) {
                 put(action);
+            }
+        }
+        for (Map.Entry<String, MenuHierarchy> entry : submenus.entrySet()) {
+            MenuHierarchy submenu = new MenuHierarchy();
+            for (ActionDescription action : entry.getValue().items) {
+                if (action.isVisible()) {
+                    submenu.put(action);
+                }
+            }
+            if (submenu.items.size() > 0) {
+                this.submenus.put(entry.getKey(), submenu);
             }
         }
     }
