@@ -1,11 +1,19 @@
 package org.hippoecm.hst.core.container;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstSitesManager;
+import org.hippoecm.hst.configuration.components.DelegatingHstComponentInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentInfo;
+import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.hosting.VirtualHostsManager;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -14,11 +22,18 @@ import org.hippoecm.hst.core.request.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
+import org.hippoecm.hst.util.DefaultKeyValue;
+import org.hippoecm.hst.util.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractValve implements Valve
-{
+/**
+ * AbstractValve
+ * 
+ * @version $Id$
+ */
+public abstract class AbstractValve implements Valve {
+    
     protected final static Logger log = LoggerFactory.getLogger(AbstractValve.class);
     
     protected ContainerConfiguration containerConfiguration;
@@ -33,6 +48,7 @@ public abstract class AbstractValve implements Valve
     protected HstLinkCreator linkCreator;
     protected HstSiteMenusManager siteMenusManager;
     protected HstQueryManagerFactory hstQueryManagerFactory;
+    protected PageErrorHandler defaultPageErrorHandler;
     
     protected String traceToolComponentName = "hstTraceToolComponent";
     protected String traceToolComponentClassName = "org.hippoecm.hst.component.support.tool.HstTraceToolComponent";
@@ -105,7 +121,6 @@ public abstract class AbstractValve implements Valve
         return this.urlFactory;
     }
     
-    
     public void setUrlFactory(HstURLFactory urlFactory) {
         this.urlFactory = urlFactory;
     }
@@ -132,6 +147,14 @@ public abstract class AbstractValve implements Valve
     
     public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory){
         this.hstQueryManagerFactory = hstQueryManagerFactory;
+    }
+    
+    public PageErrorHandler getDefaultPageErrorHandler() {
+        return defaultPageErrorHandler;
+    }
+    
+    public void setDefaultPageErrorHandler(PageErrorHandler defaultPageErrorHandler) {
+        this.defaultPageErrorHandler = defaultPageErrorHandler;
     }
     
     public abstract void invoke(ValveContext context) throws ContainerException;
@@ -227,5 +250,83 @@ public abstract class AbstractValve implements Valve
         
         return componentWindow;
     }
-
+    
+    protected HstComponentWindow findErrorCodeSendingWindow(HstComponentWindow [] sortedComponentWindows) {
+        for (HstComponentWindow window : sortedComponentWindows) {
+            if (((HstComponentWindowImpl) window).getResponseState().getErrorCode() > 0) {
+                return window;
+            }
+        }
+        
+        return null;
+    }
+    
+    protected Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> getComponentExceptions(HstComponentWindow [] sortedComponentWindows, boolean clearExceptions) {
+        List<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptions = null;
+        
+        for (HstComponentWindow window : sortedComponentWindows) {
+            if (window.hasComponentExceptions()) {
+                if (componentExceptions == null) {
+                    componentExceptions = new ArrayList<KeyValue<HstComponentInfo, Collection<HstComponentException>>>();
+                }
+                
+                HstComponentInfo componentInfo = new DelegatingHstComponentInfo(window.getComponentInfo());
+                KeyValue<HstComponentInfo, Collection<HstComponentException>> pair = 
+                    new DefaultKeyValue<HstComponentInfo, Collection<HstComponentException>>(componentInfo, new ArrayList<HstComponentException>(window.getComponentExceptions()));
+                componentExceptions.add(pair);
+                
+                if (clearExceptions) {
+                    window.clearComponentExceptions();
+                }
+            }
+        }
+        
+        return componentExceptions;
+    }
+    
+    protected Object handleComponentExceptions(Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptions, HstContainerConfig requestContainerConfig, HstComponentWindow window, HstRequest hstRequest, HstResponse hstResponse) {
+        PageErrorHandler pageErrorHandler = (PageErrorHandler) hstRequest.getAttribute(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
+        
+        if (pageErrorHandler == null) {
+            String pageErrorHandlerClassName = (String) window.getParameter(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
+            
+            while (pageErrorHandlerClassName == null && window.getParentWindow() != null) {
+                window = window.getParentWindow();
+                pageErrorHandlerClassName = (String) window.getParameter(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
+            }
+            
+            if (pageErrorHandlerClassName != null) {
+                try {
+                    pageErrorHandler = getComponentFactory().getObjectInstance(requestContainerConfig, pageErrorHandlerClassName);
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to get object of " + pageErrorHandlerClassName, e);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Failed to get object of {}. {}", pageErrorHandlerClassName, e.toString());
+                    }
+                }
+            }
+        }
+        
+        if (pageErrorHandler == null) {
+            pageErrorHandler = defaultPageErrorHandler;
+        }
+        
+        if (pageErrorHandler == null) {
+            return PageErrorHandler.NOT_HANDLED_TO_CONTINUE;
+        }
+        
+        try {
+            return pageErrorHandler.handleComponentExceptions(componentExceptions, hstRequest, hstResponse);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Exception during custom error handling.", e);
+            } else if (log.isWarnEnabled()) {
+                log.warn("Exception during custom error handling. {}", e.toString());
+            }
+            
+            return PageErrorHandler.HANDLED_BUT_CONTINUE;
+        }
+    }
+    
 }

@@ -27,6 +27,11 @@ import org.hippoecm.hst.core.container.AbstractValve;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ValveContext;
 
+/**
+ * ServletDelegatingValve
+ * 
+ * @version $Id$
+ */
 public class ServletDelegatingValve extends AbstractValve
 {
     

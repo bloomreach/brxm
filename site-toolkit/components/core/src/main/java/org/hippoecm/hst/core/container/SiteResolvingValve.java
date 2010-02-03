@@ -21,6 +21,11 @@ import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.hippoecm.hst.util.HstRequestUtils;
 
+/**
+ * SiteResolvingValve
+ * 
+ * @version $Id$
+ */
 public class SiteResolvingValve extends AbstractValve {
     
     @Override

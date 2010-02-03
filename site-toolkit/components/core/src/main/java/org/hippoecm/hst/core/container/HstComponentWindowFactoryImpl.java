@@ -19,10 +19,15 @@ import java.util.Map;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
-import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
+/**
+ * HstComponentWindowFactoryImpl
+ * 
+ * @version $Id$
+ */
 public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory {
     
     protected String referenceNameSeparator = "_";
@@ -41,7 +46,6 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
     
     public HstComponentWindow create(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory, HstComponentWindow parentWindow) throws HstComponentException {
         
-        String name = compConfig.getName();
         String referenceName = compConfig.getReferenceName();
         StringBuilder referenceNamespaceBuilder = new StringBuilder();
 
@@ -60,18 +64,6 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
 
         String referenceNamespace = referenceNamespaceBuilder.toString();
         
-        String renderPath = compConfig.getRenderPath();
-        
-        if (renderPath != null && !renderPath.startsWith("/")) {
-            renderPath = new StringBuilder(renderPath.length() + 1).append('/').append(renderPath).toString();
-        }
-        
-        String serveResourcePath = compConfig.getServeResourcePath();
-        
-        if (serveResourcePath != null && !serveResourcePath.startsWith("/")) {
-            serveResourcePath = new StringBuilder(serveResourcePath.length() + 1).append('/').append(serveResourcePath).toString();
-        }
-        
         HstComponent component = null;
         HstComponentException componentFactoryException = null;
         
@@ -87,13 +79,10 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         
         HstComponentWindowImpl window = 
             new HstComponentWindowImpl(
-                name,
-                referenceName, 
-                referenceNamespace, 
+                compConfig,
                 component, 
-                renderPath, 
-                serveResourcePath,
-                parentWindow);
+                parentWindow, 
+                referenceNamespace);
         
         if (componentFactoryException != null) {
             window.addComponentExcpetion(componentFactoryException);

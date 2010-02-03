@@ -20,6 +20,11 @@ import java.util.Map;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
 
+/**
+ * HstContainerURLProviderImpl
+ * 
+ * @version $Id$
+ */
 public class HstContainerURLProviderImpl extends AbstractHstContainerURLProvider {
     
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {

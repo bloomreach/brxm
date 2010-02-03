@@ -21,6 +21,11 @@ import java.io.StringWriter;
 import org.hippoecm.hst.util.DOMElementWriter;
 import org.w3c.dom.Element;
 
+/**
+ * DOMUtils
+ * 
+ * @version $Id$
+ */
 public class DOMUtils {
 
     public static final int DEFAULT_ELEMENT_STRINGIFYING_BUFFER_SIZE = 80;

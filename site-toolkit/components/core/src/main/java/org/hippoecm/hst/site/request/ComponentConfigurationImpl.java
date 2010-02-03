@@ -26,6 +26,11 @@ import org.hippoecm.hst.core.util.PropertyParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * ComponentConfigurationImpl
+ * 
+ * @version $Id$
+ */
 public class ComponentConfigurationImpl implements ComponentConfiguration{
 
     private final static Logger log = LoggerFactory.getLogger(ComponentConfigurationImpl.class);

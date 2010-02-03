@@ -24,6 +24,11 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
+/**
+ * HstRequestContextComponentImpl
+ * 
+ * @version $Id$
+ */
 public class HstRequestContextComponentImpl implements HstRequestContextComponent {
 
     protected Repository repository;

@@ -19,6 +19,11 @@ import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 
+/**
+ * ComponentManagerFacade
+ * 
+ * @version $Id$
+ */
 public class ComponentManagerFacade implements ComponentManagerAware, ComponentManager {
     
     protected ComponentManager componentManager;

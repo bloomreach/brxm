@@ -35,6 +35,11 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
+/**
+ * HstRequestImpl
+ * 
+ * @version $Id$
+ */
 public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequest {
     
     public static final String CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY = HstRequest.class.getName() + ".containerAttributeNamePrefixes"; 

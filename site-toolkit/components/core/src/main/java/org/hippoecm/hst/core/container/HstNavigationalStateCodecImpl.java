@@ -19,6 +19,11 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.codec.binary.Base64;
 
+/**
+ * HstNavigationalStateCodecImpl
+ * 
+ * @version $Id$
+ */
 public class HstNavigationalStateCodecImpl implements HstNavigationalStateCodec {
 
     public String encodeParameters(String value, String characterEncoding) throws UnsupportedEncodingException {

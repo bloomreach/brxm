@@ -19,6 +19,11 @@ import javax.servlet.ServletRequest;
 
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
+/**
+ * HstURLValve
+ * 
+ * @version $Id$
+ */
 public class HstURLValve extends AbstractValve {
     
     @Override

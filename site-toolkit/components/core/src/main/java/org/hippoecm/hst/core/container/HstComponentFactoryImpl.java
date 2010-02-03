@@ -21,6 +21,11 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 
+/**
+ * HstComponentFactoryImpl
+ * 
+ * @version $Id$
+ */
 public class HstComponentFactoryImpl implements HstComponentFactory {
     
     protected HstComponentRegistry componentRegistry;
@@ -74,5 +79,34 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
         return component;
         
     }
+    
+    @SuppressWarnings("unchecked")
+    public <T> T getObjectInstance(HstContainerConfig requestContainerConfig, String className) throws HstComponentException {
+        T object = null;
+        
+        ClassLoader containerClassloader = requestContainerConfig.getContextClassLoader();
+        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
 
+        try {
+            if (containerClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(containerClassloader);
+            }
+            
+            Class<T> clazz = (Class<T>) containerClassloader.loadClass(className);
+            object = (T) clazz.newInstance();
+        } catch (ClassNotFoundException e) {
+            throw new HstComponentException("Cannot find the class of " + className);
+        } catch (InstantiationException e) {
+            throw new HstComponentException("Cannot instantiate the class of " + className);
+        } catch (IllegalAccessException e) {
+            throw new HstComponentException("Illegal access to the class of " + className);
+        } finally {
+            if (containerClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(currentClassloader);
+            }                
+        }
+        
+        return object;
+    }
+    
 }

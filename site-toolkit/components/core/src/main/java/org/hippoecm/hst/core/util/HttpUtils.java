@@ -23,6 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * HttpUtils
+ * 
+ * @version $Id$
+ */
 public class HttpUtils {
 
     private HttpUtils() {

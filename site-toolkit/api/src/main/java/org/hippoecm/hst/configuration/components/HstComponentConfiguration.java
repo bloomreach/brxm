@@ -80,27 +80,7 @@ import org.hippoecm.hst.core.component.HstComponent;
  * should be therefor unmodifiable.  
  * 
  */
-public interface HstComponentConfiguration {
-    
-    /**
-     * Returns the id for this <code>HstComponentConfiguration</code>. The id must be unique within the container 
-     * {@link HstComponentsConfiguration}, or <code>null</code> if it is not needed to be directly accessed by the
-     * <code>HstComponentsConfiguration</code> through {@link HstComponentsConfiguration#getComponentConfiguration(String)}. 
-     * Every <code>HstComponentConfiguration</code> that can be referred to from within a {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem}
-     * must have an id.
-     * 
-     * @return the id of this HstComponentConfiguration or <code>null</code> if no id set
-     */
-    String getId();
-
-    /**
-     * Return the name of this <code>HstComponentConfiguration</code>. It <strong>must</strong> be unique amongst sibling <code>HstComponentConfiguration</code>'s.
-     * The value returned by this method, is the value that must be used in rendering code (jsp/velocity/freemarker) to include the output
-     * of a child <code>HstComponent</code> instance.
-     * 
-     * @return the logical name this HstComponentConfiguration, unique amongst its siblings
-     */
-    String getName();
+public interface HstComponentConfiguration extends HstComponentInfo {
     
     /**
      * Returns the parent <code>HstComponentConfiguration</code> for this this component or null if a root component.
@@ -114,11 +94,6 @@ public interface HstComponentConfiguration {
      * @return the referenceName this HstComponentConfiguration, unique amongst its siblings
      */
     String getReferenceName();
-
-    /**
-     * @return the fully-qualified class name of the class implementing the {@link org.hippoecm.hst.core.component.HstComponent} interface
-     */
-    String getComponentClassName();
 
     /**
      * @return the location of the view renderer

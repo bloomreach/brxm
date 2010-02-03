@@ -26,6 +26,11 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
+/**
+ * HstURLImpl
+ * 
+ * @version $Id$
+ */
 public class HstURLImpl implements HstURL {
     
     protected String type = RENDER_TYPE;

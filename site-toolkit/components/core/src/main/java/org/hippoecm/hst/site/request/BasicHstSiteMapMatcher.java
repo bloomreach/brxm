@@ -36,6 +36,11 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * BasicHstSiteMapMatcher
+ * 
+ * @version $Id$
+ */
 public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     
     private final static Logger log = LoggerFactory.getLogger(BasicHstSiteMapMatcher.class);

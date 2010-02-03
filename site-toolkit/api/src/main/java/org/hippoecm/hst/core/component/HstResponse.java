@@ -199,7 +199,21 @@ public interface HstResponse extends HttpServletResponse {
      * @return
      */
     List<String> getChildContentNames();
-
+    
+    /**
+     * Sends a temporary redirect response to the client using the specified redirect location URL.
+     * <P>
+     * Only in {@link HstComponent#doAction(HstRequest, HstResponse)},
+     * the invocation on this method will be effective.
+     * If the invocation on this method is not done in action phase,
+     * the invocation will be just ignored with no operation.
+     * </P>
+     * 
+     * @see {@link javax.servlet.http,HttpServletResponse#sendRedirect(String)}
+     * @param location the redirect location URL
+     */
+    void sendRedirect(String location) throws IOException;
+    
     /**
      * Sends an error response to the client using the specified status.
      * <P>

@@ -21,6 +21,11 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
+/**
+ * SiteMenusResolvingValve
+ * 
+ * @version $Id$
+ */
 public class SiteMenusResolvingValve extends AbstractValve {
 
     @Override

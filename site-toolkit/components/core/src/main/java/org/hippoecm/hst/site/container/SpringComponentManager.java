@@ -34,6 +34,11 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+/**
+ * SpringComponentManager
+ * 
+ * @version $Id$
+ */
 public class SpringComponentManager implements ComponentManager, BeanPostProcessor {
     
     Logger logger = LoggerFactory.getLogger(SpringComponentManager.class);

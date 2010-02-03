@@ -19,6 +19,12 @@ import org.hippoecm.hst.core.hosting.Mapping;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+/**
+ * MatchedMappingImpl
+ * 
+ * @version $Id$
+ */
 public class MatchedMappingImpl implements MatchedMapping{
 
 

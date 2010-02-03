@@ -28,6 +28,11 @@ import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstPortletRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
+/**
+ * HstEmbeddedPortletContainerURLProviderImpl
+ * 
+ * @version $Id$
+ */
 public class HstEmbeddedPortletContainerURLProviderImpl extends HstContainerURLProviderPortletImpl {
     
     @Override

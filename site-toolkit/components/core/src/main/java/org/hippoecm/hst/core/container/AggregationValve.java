@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +27,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
@@ -34,7 +36,13 @@ import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.KeyValue;
 
+/**
+ * AggregationValve
+ * 
+ * @version $Id$
+ */
 public class AggregationValve extends AbstractValve {
     
     @Override
@@ -89,40 +97,44 @@ public class AggregationValve extends AbstractValve {
                     }
                 }
                 
-                HstComponentWindow [] sortedComponentWindows = sortedComponentWindowList.toArray(new HstComponentWindow[0]);
+                HstComponentWindow [] sortedComponentWindows = sortedComponentWindowList.toArray(new HstComponentWindow[sortedComponentWindowList.size()]);
                 
                 HstContainerConfig requestContainerConfig = context.getRequestContainerConfig();
                 // process doBeforeRender() of each component as sorted order, parent first.
                 processWindowsBeforeRender(requestContainerConfig, rootWindow, sortedComponentWindows, requestMap, responseMap);
                 
-                // check if any invocation on sendError() exists...
-                int errorCode = 0;
-                String errorMessage = null;
-                String errorWindowName = null;
+                // check if it's requested to forward.
+                String forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
                 
-                for (HstComponentWindow window : sortedComponentWindows) {
-                    HstResponseState responseStateForWindow = ((HstComponentWindowImpl) window).getResponseState();
-                    if (responseStateForWindow.getErrorCode() > 0) {
-                        errorCode = responseStateForWindow.getErrorCode();
-                        errorMessage = responseStateForWindow.getErrorMessage();
-                        errorWindowName = window.getName(); 
-                        break;
+                // page error handling...
+                Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptions = getComponentExceptions(sortedComponentWindows, true);
+                if (componentExceptions != null && !componentExceptions.isEmpty()) {
+                    Object handled = handleComponentExceptions(componentExceptions, requestContainerConfig, rootWindow, requestMap.get(rootWindow), responseMap.get(rootWindow));
+                    forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
+                    if (handled == PageErrorHandler.HANDLED_TO_STOP && forwardPathInfo == null) {
+                        context.invokeNext();
+                        return;
                     }
                 }
                 
-                String forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
+                // check if any invocation on sendError() exists...
+                HstComponentWindow errorCodeSendingWindow = findErrorCodeSendingWindow(sortedComponentWindows);
                 
-                if (errorCode > 0) {
+                if (errorCodeSendingWindow != null) {
                     
                     try {
-                        if (log.isDebugEnabled()) {
-                            log.debug("The component window has error status code: {} - {}", errorCode, errorWindowName);
-                        }
-                        servletResponse.sendError(errorCode, errorMessage);
+                        int errorCode = errorCodeSendingWindow.getResponseState().getErrorCode();
+                        String errorMessage = errorCodeSendingWindow.getResponseState().getErrorMessage();
+                        String componentClassName = errorCodeSendingWindow.getComponentInfo().getComponentClassName();
                         
-                        if (log.isWarnEnabled()) {
-                            // log warnings of each component execution as reversed sort order, child first.
-                            logWarningsForEachComponentWindow(sortedComponentWindows);
+                        if (log.isDebugEnabled()) {
+                            log.debug("The component window has error status code, {} from {}.", errorCode, componentClassName);
+                        }
+                        
+                        if (errorMessage != null) {
+                            servletResponse.sendError(errorCode, errorMessage);
+                        } else {
+                            servletResponse.sendError(errorCode);
                         }
                     } catch (IOException e) {
                         if (log.isDebugEnabled()) {
@@ -137,13 +149,17 @@ public class AggregationValve extends AbstractValve {
                     servletRequest.setAttribute(ContainerConstants.HST_FORWARD_PATH_INFO, forwardPathInfo);
                     
                 } else {
-
+                    
                     // process doRender() of each component as reversed sort order, child first.
                     processWindowsRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap, isDevelopmentMode, traceToolWindow);
-    
-                    if (log.isWarnEnabled()) {
-                        // log warnings of each component execution as reversed sort order, child first.
-                        logWarningsForEachComponentWindow(sortedComponentWindows);
+                    
+                    // page error handling...
+                    componentExceptions = getComponentExceptions(sortedComponentWindows, true);
+                    if (componentExceptions != null && !componentExceptions.isEmpty()) {
+                        Object handled = handleComponentExceptions(componentExceptions, requestContainerConfig, rootWindow, requestMap.get(rootWindow), responseMap.get(rootWindow));
+                        if (handled == PageErrorHandler.HANDLED_TO_STOP) {
+                            // just ignore because we don't support forward or redirect during rendering...
+                        }
                     }
                     
                     try {
@@ -288,25 +304,6 @@ public class AggregationValve extends AbstractValve {
                 HstRequest request = requestMap.get(window);
                 HstResponse response = responseMap.get(window);
                 getComponentInvoker().invokeRender(requestContainerConfig, request, response);
-            }
-        }
-    }
-
-    protected void logWarningsForEachComponentWindow(HstComponentWindow [] sortedComponentWindows) {
-
-        for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
-            HstComponentWindow window = sortedComponentWindows[i];
-            
-            if (window.hasComponentExceptions()) {
-                for (HstComponentException hce : window.getComponentExceptions()) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Component exception found.", hce);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Component exception found. {}", hce.toString());
-                    }
-                }
-
-                window.clearComponentExceptions();
             }
         }
     }

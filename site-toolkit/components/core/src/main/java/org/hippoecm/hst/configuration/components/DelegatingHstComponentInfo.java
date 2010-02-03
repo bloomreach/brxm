@@ -13,26 +13,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.proxy;
-
-import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.proxy.Invoker;
+package org.hippoecm.hst.configuration.components;
 
 /**
- * DynaBeanProxyUtils
+ * DelegatingHstComponentInfo
  * 
  * @version $Id$
  */
-public class DynaBeanProxyUtils
-{
-    private DynaBeanProxyUtils()
-    {
+public class DelegatingHstComponentInfo implements HstComponentInfo {
+    
+    private HstComponentInfo delegatee;
+    
+    public DelegatingHstComponentInfo(HstComponentInfo delegatee) {
+        this.delegatee = delegatee;
     }
     
-    public static Object createDynaBeanProxy(final DynaBean dynaBean, Class ... proxyInterfaces) {
-        ProxyFactory factory = new ProxyFactory();
-        Invoker invoker = new DynaBeanMethodInvoker(dynaBean);
-        return factory.createInvokerProxy(invoker, proxyInterfaces);
+    public String getComponentClassName() {
+        return delegatee.getComponentClassName();
+    }
+
+    public String getId() {
+        return delegatee.getId();
+    }
+
+    public String getName() {
+        return delegatee.getName();
     }
     
 }

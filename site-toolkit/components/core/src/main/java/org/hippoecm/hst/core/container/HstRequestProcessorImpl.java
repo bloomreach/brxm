@@ -18,6 +18,11 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * HstRequestProcessorImpl
+ * 
+ * @version $Id$
+ */
 public class HstRequestProcessorImpl implements HstRequestProcessor {
     
     protected Pipelines pipelines;

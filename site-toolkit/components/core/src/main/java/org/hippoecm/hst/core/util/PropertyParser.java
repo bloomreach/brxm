@@ -24,6 +24,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
+/**
+ * PropertyParser
+ * 
+ * @version $Id$
+ */
 public class PropertyParser extends PropertyPlaceholderConfigurer {
     
     private final static Logger log = LoggerFactory.getLogger(PropertyParser.class);

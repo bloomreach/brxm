@@ -28,6 +28,11 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * ResolvedSiteMapItemImpl
+ * 
+ * @version $Id$
+ */
 public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem{
 
     private final static Logger log = LoggerFactory.getLogger(ResolvedSiteMapItemImpl.class);

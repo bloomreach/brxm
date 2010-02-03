@@ -42,6 +42,11 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
+/**
+ * HstRequestContextImpl
+ * 
+ * @version $Id$
+ */
 public class HstRequestContextImpl implements HstRequestContext {
 
     protected Repository repository;

@@ -15,9 +15,11 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstResponseState;
@@ -97,6 +99,20 @@ public interface HstComponentWindow {
     String getServeResourcePath();
     
     /**
+     * @see {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getParameter(String)}
+     * @param name the name of the parameter
+     * @return the configured parameter value for this <code>name</code> and <code>null</code> if not existing
+     */
+    String getParameter(String name);
+    
+    /**
+     * @see {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getLocalParameter(String)}
+     * @param name the name of the parameter
+     * @return the configured parameter value for this <code>name</code> and <code>null</code> if not existing
+     */
+    String getLocalParameter(String paramName);
+    
+    /**
      * The parent component window containing this component window.
      * 
      * @return the component window containing this component window
@@ -137,5 +153,38 @@ public interface HstComponentWindow {
      * Returns the response state of this component window
      */
     HstResponseState getResponseState();
+    
+    /**
+     * 
+     * @return
+     */
+    HstComponentInfo getComponentInfo();
+    
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    Object getAttribute(String name);
+    
+    /**
+     * 
+     * @param name
+     * @param value
+     */
+    void setAttribute(String name, Object value);
+    
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    Object removeAttribute(String name);
+    
+    /**
+     * 
+     * @return
+     */
+    Enumeration<String> getAttributeNames();
     
 }

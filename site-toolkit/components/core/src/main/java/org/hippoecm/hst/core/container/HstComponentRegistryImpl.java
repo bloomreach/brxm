@@ -23,6 +23,11 @@ import org.hippoecm.hst.core.component.HstComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * HstComponentRegistryImpl
+ * 
+ * @version $Id$
+ */
 public class HstComponentRegistryImpl implements HstComponentRegistry {
     
     static Logger log = LoggerFactory.getLogger(HstComponentRegistryImpl.class);

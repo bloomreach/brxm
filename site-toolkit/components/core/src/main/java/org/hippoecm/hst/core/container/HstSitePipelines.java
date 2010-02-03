@@ -17,6 +17,11 @@ package org.hippoecm.hst.core.container;
 
 import java.util.Map;
 
+/**
+ * HstSitePipelines
+ * 
+ * @version $Id$
+ */
 public class HstSitePipelines implements Pipelines
 {
     

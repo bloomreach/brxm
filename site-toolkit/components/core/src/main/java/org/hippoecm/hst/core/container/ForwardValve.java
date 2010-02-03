@@ -20,6 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.site.HstServices;
 
+/**
+ * ForwardValve
+ * 
+ * @version $Id$
+ */
 public class ForwardValve extends AbstractValve {
 
     @Override

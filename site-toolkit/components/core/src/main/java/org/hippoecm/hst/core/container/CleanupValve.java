@@ -23,6 +23,11 @@ import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
+/**
+ * CleanupValve
+ * 
+ * @version $Id$
+ */
 public class CleanupValve extends AbstractValve
 {
     protected List<ResourceLifecycleManagement> resourceLifecycleManagements;

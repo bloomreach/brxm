@@ -27,7 +27,7 @@ import org.hippoecm.hst.core.component.HstComponentException;
 public interface HstComponentFactory {
     
     /**
-     * Returns the HstComponent instance.
+     * Returns the HstComponent instance from the HstComponent context.
      * 
      * @param requestContainerConfig the HstContainer configuration
      * @param compConfig the HstComponent configuration
@@ -35,5 +35,16 @@ public interface HstComponentFactory {
      * @throws HstComponentException
      */
     HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig) throws HstComponentException;
+    
+    /**
+     * Returns arbitrary object instance from the HstComponent context.
+     * 
+     * @param <T>
+     * @param requestContainerConfig
+     * @param className
+     * @return
+     * @throws HstComponentException
+     */
+    <T> T getObjectInstance(HstContainerConfig requestContainerConfig, String className) throws HstComponentException;
     
 }

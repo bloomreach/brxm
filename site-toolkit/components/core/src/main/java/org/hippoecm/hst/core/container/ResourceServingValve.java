@@ -15,18 +15,27 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.Collection;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResourceResponseImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.KeyValue;
 
+/**
+ * ResourceServingValve
+ * 
+ * @version $Id$
+ */
 public class ResourceServingValve extends AbstractValve {
     
     @Override
@@ -53,18 +62,29 @@ public class ResourceServingValve extends AbstractValve {
                 HstResponse response = new HstResourceResponseImpl((HttpServletResponse) servletResponse, window);
                 
                 HstComponentInvoker invoker = getComponentInvoker();
+                
                 invoker.invokeBeforeServeResource(context.getRequestContainerConfig(), request, response);
-                invoker.invokeServeResource(context.getRequestContainerConfig(), request, response);
-
-                if (window.hasComponentExceptions() && log.isWarnEnabled()) {
-                    for (HstComponentException hce : window.getComponentExceptions()) {
-                        if (log.isDebugEnabled()) {
-                            log.warn("Component exceptions found: {}", hce.toString(), hce);
-                        } else if (log.isWarnEnabled()) {
-                            log.warn("Component exceptions found: {}", hce.toString());
-                        }
+                
+                // page error handling...
+                Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptions = getComponentExceptions(new HstComponentWindow [] { window }, true);
+                if (componentExceptions != null && !componentExceptions.isEmpty()) {
+                    Object handled = handleComponentExceptions(componentExceptions, context.getRequestContainerConfig(), window, request, response);
+                    if (handled == PageErrorHandler.HANDLED_TO_STOP) {
+                        context.invokeNext();
+                        return;
                     }
-                    window.clearComponentExceptions();
+                }
+                
+                invoker.invokeServeResource(context.getRequestContainerConfig(), request, response);
+                
+                // page error handling...
+                componentExceptions = getComponentExceptions(new HstComponentWindow [] { window }, true);
+                if (componentExceptions != null && !componentExceptions.isEmpty()) {
+                    Object handled = handleComponentExceptions(componentExceptions, context.getRequestContainerConfig(), window, request, response);
+                    if (handled == PageErrorHandler.HANDLED_TO_STOP) {
+                        context.invokeNext();
+                        return;
+                    }
                 }
             }
         }

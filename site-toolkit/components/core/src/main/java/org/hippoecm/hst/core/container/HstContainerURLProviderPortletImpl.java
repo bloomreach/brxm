@@ -28,6 +28,11 @@ import org.hippoecm.hst.container.HstContainerPortlet;
 import org.hippoecm.hst.core.request.HstPortletRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
+/**
+ * HstContainerURLProviderPortletImpl
+ * 
+ * @version $Id$
+ */
 public class HstContainerURLProviderPortletImpl extends AbstractHstContainerURLProvider {
     
     protected boolean portletResourceURLEnabled;

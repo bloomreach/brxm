@@ -24,6 +24,11 @@ import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
+/**
+ * ContextResolvingValve
+ * 
+ * @version $Id$
+ */
 public class ContextResolvingValve extends AbstractValve
 {
     

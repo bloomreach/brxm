@@ -24,6 +24,11 @@ import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.MatchedMapping;
 import org.hippoecm.hst.site.request.HstRequestContextImpl;
 
+/**
+ * InitializationValve
+ * 
+ * @version $Id$
+ */
 public class InitializationValve extends AbstractValve
 {
     protected List<ResourceLifecycleManagement> resourceLifecycleManagements;

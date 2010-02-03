@@ -18,6 +18,11 @@ package org.hippoecm.hst.core.container;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * HstContainerURLImpl
+ * 
+ * @version $Id$
+ */
 public class HstContainerURLImpl implements HstContainerURL, Cloneable {
 
     protected String characterEncoding;

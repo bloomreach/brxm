@@ -95,4 +95,9 @@ public interface ContainerConstants {
      */
     String HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE = HEAD_ELEMENT_CONTRIBUTION_HINT_ATTRIBUTE_PREFIX + "category";
     
+    /**
+     * The parameter name for custom error handler class name in the root component configuration
+     */
+    String CUSTOM_ERROR_HANDLER_PARAM_NAME = "org.hippoecm.hst.core.container.custom.errorhandler";  
+    
 }

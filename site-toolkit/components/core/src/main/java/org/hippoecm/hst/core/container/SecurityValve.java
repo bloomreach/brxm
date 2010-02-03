@@ -25,6 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
+/**
+ * SecurityValve
+ * 
+ * @version $Id$
+ */
 public class SecurityValve extends AbstractValve {
     
     @Override

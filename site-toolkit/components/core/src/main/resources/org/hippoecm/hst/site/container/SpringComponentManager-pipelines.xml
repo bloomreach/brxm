@@ -24,8 +24,6 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
-  <!-- Valves -->
-  
   <bean id="resourceLifecycleManagementList" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
@@ -34,7 +32,12 @@
       </bean>
     </property>
   </bean>
-
+  
+  <bean id="org.hippoecm.hst.core.container.PageErrorHandler" class="org.hippoecm.hst.core.container.DefaultPageErrorHandler">
+  </bean>
+  
+  <!-- Valves -->
+  
   <bean id="abstractValve" abstract="true"
         init-method="initialize" destroy-method="destroy">
     <property name="containerConfiguration" ref="containerConfiguration" />
@@ -54,6 +57,7 @@
     <property name="linkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator" />
     <property name="siteMenusManager" ref="org.hippoecm.hst.core.sitemenu.HstSiteMenusManager" />
     <property name="hstQueryManagerFactory" ref="org.hippoecm.hst.core.search.HstQueryManagerFactory" />
+    <property name="defaultPageErrorHandler" ref="org.hippoecm.hst.core.container.PageErrorHandler" />
     <property name="traceToolComponentClassName" value="${trace.tool.component.class}" />
   </bean>
 

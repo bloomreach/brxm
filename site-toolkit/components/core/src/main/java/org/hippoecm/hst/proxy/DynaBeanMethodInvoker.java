@@ -22,6 +22,11 @@ import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.proxy.Invoker;
 
+/**
+ * DynaBeanMethodInvoker
+ * 
+ * @version $Id$
+ */
 public class DynaBeanMethodInvoker implements Invoker, Serializable {
     
     private static final long serialVersionUID = 1L;

@@ -23,6 +23,11 @@ import org.hippoecm.hst.core.container.HstEmbeddedPortletContainerURLProviderImp
 import org.hippoecm.hst.core.container.HstNavigationalStateCodec;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
+/**
+ * HstURLFactoryImpl
+ * 
+ * @version $Id$
+ */
 public class HstURLFactoryImpl implements HstURLFactory {
     
     protected boolean referenceNamespaceIgnored;

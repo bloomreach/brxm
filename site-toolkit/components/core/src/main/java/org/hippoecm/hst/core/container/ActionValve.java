@@ -17,12 +17,14 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
@@ -30,9 +32,14 @@ import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.KeyValue;
 
-public class ActionValve extends AbstractValve
-{
+/**
+ * ActionValve
+ * 
+ * @version $Id$
+ */
+public class ActionValve extends AbstractValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException
@@ -41,7 +48,9 @@ public class ActionValve extends AbstractValve
         HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         String actionWindowReferenceNamespace = requestContext.getBaseURL().getActionWindowReferenceNamespace();
+        
         if (actionWindowReferenceNamespace != null) {
+            
             HstContainerURL baseURL = requestContext.getBaseURL();
             HstComponentWindow window = null;
             window = findComponentWindow(context.getRootComponentWindow(), actionWindowReferenceNamespace);
@@ -50,8 +59,7 @@ public class ActionValve extends AbstractValve
             HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider(requestContext);
             
             if (window == null) {
-                if (log.isWarnEnabled()) 
-                {
+                if (log.isWarnEnabled()) {
                     log.warn("Cannot find the action window: {}", actionWindowReferenceNamespace);
                 }
             } else {
@@ -68,36 +76,47 @@ public class ActionValve extends AbstractValve
 
                 getComponentInvoker().invokeAction(context.getRequestContainerConfig(), request, response);
                 
+                // page error handling...
+                Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptions = 
+                    getComponentExceptions(new HstComponentWindow [] { window }, true);
+                if (componentExceptions != null && !componentExceptions.isEmpty()) {
+                    Object handled = handleComponentExceptions(componentExceptions, context.getRequestContainerConfig(), window, request, response);
+                    if (handled == PageErrorHandler.HANDLED_TO_STOP) {
+                        context.invokeNext();
+                        return;
+                    }
+                }
+                
                 Map<String, String []> renderParameters = response.getRenderParameters();
                 response.setRenderParameters(null);
                 
                 if (renderParameters == null) {
                     renderParameters = Collections.emptyMap();
                 }
+                
                 String referenceNamespace = window.getReferenceNamespace();
+                
                 if (getUrlFactory().isReferenceNamespaceIgnored()) {
                     referenceNamespace = "";
                 }
+                
                 urlProvider.mergeParameters(baseURL, referenceNamespace, renderParameters);
                 
-                if (window.hasComponentExceptions() && log.isWarnEnabled()) {
-                    for (HstComponentException hce : window.getComponentExceptions()) {
-                        if (log.isDebugEnabled()) {
-                            log.warn("Component exception found: {}", hce.toString(), hce);
-                        } else if (log.isWarnEnabled()) {
-                            log.warn("Component exception found: {}", hce.toString());
-                        }
-                    }
-                    
-                    window.clearComponentExceptions();
-                }
                 if (responseState.getErrorCode() > 0) {
-                    
                     try {
+                        int errorCode = responseState.getErrorCode();
+                        String errorMessage = responseState.getErrorMessage();
+                        String componentClassName = window.getComponentInfo().getComponentClassName();
+
                         if (log.isDebugEnabled()) {
-                            log.debug("The action window has error status code: {} - {}", Integer.valueOf(responseState.getErrorCode()), window.getName());
+                            log.debug("The action window has error status code: {} - {}", errorCode, componentClassName);
                         }
-                        servletResponse.sendError(responseState.getErrorCode(), responseState.getErrorMessage());
+                        
+                        if (errorMessage != null) {
+                            servletResponse.sendError(errorCode, errorMessage);
+                        } else {
+                            servletResponse.sendError(errorCode);
+                        }
                     } catch (IOException e) {
                         if (log.isDebugEnabled()) {
                             log.warn("Exception invocation on sendError().", e);
@@ -105,9 +124,7 @@ public class ActionValve extends AbstractValve
                             log.warn("Exception invocation on sendError().");
                         }
                     }
-                    
                 } else {
-                
                     if (responseState.getRedirectLocation() == null) {
                         try {
                             // Clear action state first

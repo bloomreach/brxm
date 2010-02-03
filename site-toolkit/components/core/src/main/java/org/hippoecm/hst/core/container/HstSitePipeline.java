@@ -18,7 +18,11 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+/**
+ * HstSitePipeline
+ * 
+ * @version $Id$
+ */
 public class HstSitePipeline implements Pipeline
 {
 
