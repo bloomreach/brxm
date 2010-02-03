@@ -170,14 +170,14 @@ public class DummyCarDocsCreator {
         addCars(availableCars, "Lincoln", 5, 40000, 200000, 1, 200000, new String[] {"US", "Ford Motor Company", "luxury", "expensive"});
         addCars(availableCars, "Lotus", 5, 40000, 200000, 1, 200000, new String[] {"English", "luxury", "sportswagon"});
         addCars(availableCars, "Maserati", 3, 40000, 200000, 1, 200000, new String[] {"Italian", "sportswagon", "Alfa Romeo", "FIAT Group", "motorcycles"});
-        addCars(availableCars, "Mazda", 8, 3000, 300000, 1, 200000, new String[] {"Japanese", "motorcycles", "large company"});
+        addCars(availableCars, "Mazda", 8, 3000, 30000, 1, 200000, new String[] {"Japanese", "motorcycles", "large company"});
         addCars(availableCars, "Mercedes-Benz", 6, 3000, 40000, 1, 200000, new String[] {"German", "Daimler AG", "Team McLaren", "large company", "luxury"});
         addCars(availableCars, "Mercury", 3, 3000, 40000, 1, 200000, new String[] {"US", "SUV", "army", "Ford Motor Company"});
         addCars(availableCars, "Mini", 6, 3000, 40000, 1, 200000, new String[] {"English", "BMW", "very small"});
         addCars(availableCars, "Mitsubishi", 6, 3000, 20000, 1, 200000, new String[] {"Japenese", "Mitsubishi Group", "large company"});
         addCars(availableCars, "Nissan", 7, 3000, 30000, 1, 200000, new String[] {"Japanese", "large company", "Nissan Skyline", "big Asian four"});
         addCars(availableCars, "Opel", 8, 3000, 40000, 1, 200000, new String[] {"German", "General Motors", "big three US", "Vauxhall", "motorcycles"});
-        addCars(availableCars, "Peugeot", 9, 3000, 120000, 1, 200000, new String[] {"French", "motorcycles", "large company", "bicycle"});
+        addCars(availableCars, "Peugeot", 9, 3000, 30000, 1, 200000, new String[] {"French", "motorcycles", "large company", "bicycle"});
         addCars(availableCars, "Pontiac", 5, 70000, 200000, 1, 200000, new String[] {"US", "General Motors", "large company", "sportswagon"});
         addCars(availableCars, "Porsche", 4, 60000, 300000, 1, 200000, new String[] {"German", "sportswagon", "bicycle", "fast"});
         addCars(availableCars, "Renault", 9, 3000, 20000, 1, 200000, new String[] {"French", "cheap", "Voiturette", "large company"});
