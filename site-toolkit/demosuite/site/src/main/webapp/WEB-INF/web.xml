@@ -109,7 +109,7 @@
         -->
 		<load-on-startup>2</load-on-startup>
 	</servlet>
-    
+
     <servlet>
         <servlet-name>HstJaxrsContainerServlet</servlet-name>
         <servlet-class>org.hippoecm.hst.container.HstContainerServlet</servlet-class>
@@ -123,16 +123,6 @@
     <servlet>
         <servlet-name>BinariesServlet</servlet-name>
         <servlet-class>org.hippoecm.hst.servlet.BinariesServlet</servlet-class>
-    	<!-- 
-    		If you are not using hippogallery:exampleImageSet you might want to define your
-    		own primaryitem location. If you leave away the primaryitem altogether, then, when the binary location
-    		is not pointing at an actual jcr resource, we'll try to serve the jcr primaryitem in case this points
-    		to a resource. For assets, we'll serve the primay item as there won't be a hippogallery:picture for an asset
-    	 -->
-    	<init-param>
-    		<param-name>primaryitem</param-name>
-    		<param-value>hippogallery:picture</param-value>
-    	</init-param>
     </servlet>
   
     <servlet>
@@ -157,6 +147,8 @@
     <servlet>
         <servlet-name>freemarker</servlet-name>
         <servlet-class>freemarker.ext.servlet.FreemarkerServlet</servlet-class>
+        <!--<servlet-class>org.hippoecm.hst.servlet.HstFreemarkerServlet</servlet-class>-->
+        
         <!-- FreemarkerServlet settings: -->
         <init-param>
           <param-name>TemplatePath</param-name>
@@ -186,7 +178,7 @@
         <load-on-startup>200</load-on-startup>
     </servlet>
     
-    <servlet-mapping>
+	<servlet-mapping>
         <servlet-name>HstJaxrsContainerServlet</servlet-name>
         <url-pattern>/live/services/*</url-pattern>
     </servlet-mapping>
@@ -196,11 +188,11 @@
         <url-pattern>/preview/services/*</url-pattern>
     </servlet-mapping>
     
-	<servlet-mapping>
-	    <servlet-name>HstContainerServlet</servlet-name>
-	    <url-pattern>/preview/*</url-pattern>
-	</servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>HstContainerServlet</servlet-name>
+        <url-pattern>/preview/*</url-pattern>
+    </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>HstContainerServlet</servlet-name>
         <url-pattern>/live/*</url-pattern>
