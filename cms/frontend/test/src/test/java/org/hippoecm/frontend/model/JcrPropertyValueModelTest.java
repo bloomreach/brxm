@@ -115,6 +115,17 @@ public class JcrPropertyValueModelTest extends PluginTest {
     }
 
     @Test
+    public void testSetNullEmptiesMandatoryProperty() throws Exception {
+        Node test = this.root.addNode("test", "frontendtest:model");
+        test.setProperty("frontendtest:mandatory", "y");
+        JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:mandatory");
+        JcrPropertyValueModel valueModel = new JcrPropertyValueModel(propModel);
+        valueModel.setObject(null);
+        assertTrue(test.hasProperty("frontendtest:mandatory"));
+        assertEquals("", test.getProperty("frontendtest:mandatory").getString());
+    }
+
+    @Test
     public void testSetNullResetsMultiValuedProperty() throws Exception {
         Node test = this.root.addNode("test", "frontendtest:model");
         test.setProperty("frontendtest:strings", new Value[] {session.getValueFactory().createValue("y") });
