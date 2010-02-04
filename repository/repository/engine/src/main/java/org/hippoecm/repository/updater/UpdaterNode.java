@@ -245,6 +245,21 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                         try {
                             origin = ((Node)parent.origin).addNode(nodeName, primaryType[0]);
                             noSameNameSiblingWorkaround = null;
+                            // remove any autocreated non-protected nodes and properties
+                            for (NodeIterator autoCreatedIter = ((Node)origin).getNodes(); autoCreatedIter.hasNext();) {
+                                Node autoCreated = autoCreatedIter.nextNode();
+                                ItemDefinition definition = autoCreated.getDefinition();
+                                if (definition.isAutoCreated() && !definition.isProtected()) {
+                                    autoCreated.remove();
+                                }
+                            }
+                            for (PropertyIterator autoCreatedIter = ((Node)origin).getProperties(); autoCreatedIter.hasNext();) {
+                                Property autoCreated = autoCreatedIter.nextProperty();
+                                ItemDefinition definition = autoCreated.getDefinition();
+                                if (definition.isAutoCreated() && !definition.isProtected()) {
+                                    autoCreated.remove();
+                                }
+                            }
                         } catch(ItemExistsException ex) {
                             if(UpdaterEngine.log.isDebugEnabled()) {
                                 UpdaterEngine.log.debug("commit work around no-same-name-sibling "+parent.origin.getPath()+"/"+noSameNameSiblingWorkaround);
