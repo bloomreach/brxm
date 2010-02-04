@@ -150,6 +150,10 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
 
     private void deleteUser(IModel model) {
         User user = (User) model.getObject();
+        if (user == null) {
+            log.info("No user model found when trying to delete user. Probably the Ok button was double clicked.";
+            return;
+        }
         String username = user.getUsername();
         try {
             user.delete();
