@@ -261,7 +261,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form form) {
-                        ButtonWrapper.this.onSubmit();
+                        if (!closing) {
+                            ButtonWrapper.this.onSubmit();
+                        }
                     }
                 };
                 button.setModel(label);
@@ -272,7 +274,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
                     @Override
                     public void onSubmit() {
-                        ButtonWrapper.this.onSubmit();
+                        if (!closing) {
+                            ButtonWrapper.this.onSubmit();
+                        }
                     }
                 };
                 button.setModel(label);
@@ -351,6 +355,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     private Panel container;
     private WicketAjaxIndicatorAppender indicator;
 
+    private transient boolean closing = false;
     protected boolean cancelled = false;
 
     public AbstractDialog() {
@@ -431,7 +436,10 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     protected final void closeDialog() {
-        dialogService.close();
+        if (!closing) {
+            closing = true;
+            dialogService.close();
+        }
     }
 
     // button manipulation routines
@@ -523,7 +531,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     @Override
     protected final void onSubmit() {
-        Page page = (Page) findParent(Page.class);
+        Page page = findParent(Page.class);
         if (page != null) {
             IFormSubmittingComponent submitButton = findSubmittingButton();
             if (submitButton == null) {
