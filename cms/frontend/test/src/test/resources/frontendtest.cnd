@@ -35,6 +35,7 @@
 - frontendtest:longs (long) multiple
 - frontendtest:string (string)
 - frontendtest:strings (string) multiple
+- frontendtest:mandatory (string) = 'test' mandatory
 
 [frontendtest:ordered] orderable
 - frontendtest:property (string) multiple
