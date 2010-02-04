@@ -15,6 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.yui;
 
+import java.net.URL;
+
+import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
+import net.sourceforge.htmlunit.corejs.javascript.Function;
+import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
+import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
+
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.ContextParamWebApplicationFactory;
 import org.apache.wicket.protocol.http.WicketFilter;
@@ -25,15 +32,27 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.FilterHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.gargoylesoftware.htmlunit.AjaxController;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequestSettings;
+import com.gargoylesoftware.htmlunit.WebWindow;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
 abstract public class YuiTest {
 
+    static final Logger log = LoggerFactory.getLogger(YuiTest.class);
+    
     public static final String LISTEN_HOST = "localhost";
     public static final int LISTEN_PORT = 8888;
 
     static final String WICKET_WEBAPP_CLASS_NAME = YuiWicketApplication.class.getName();
 
     Server server;
+    protected HtmlPage page;
 
     public void setUp(Class<? extends WebPage> clazz) throws Exception {
         server = new Server();
@@ -48,6 +67,34 @@ abstract public class YuiTest {
         filterHolder.setInitParameter("test-page-class", clazz.getName());
         root.addFilter(filterHolder, "/*", 1);
         server.start();
+
+        WebClient client = new WebClient();
+        client.setAjaxController(new AjaxController() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean processSynchron(HtmlPage page, WebRequestSettings settings, boolean async) {
+                return true;
+            }
+        });
+
+        client.initializeEmptyWindow(client.getCurrentWindow());
+        Window window = (Window) client.getCurrentWindow().getScriptObject();
+        final Function jsLogger = new BaseFunction() {
+            private static final long serialVersionUID = -2445994102698852899L;
+            @Override
+            public Object call(net.sourceforge.htmlunit.corejs.javascript.Context cx, Scriptable scope,
+                    Scriptable thisObj, Object[] args) {
+                if (args.length > 0 && args[0] instanceof String) {
+                    System.out.println((String) args[0]);
+                }
+                return null;
+            }
+        };
+        ScriptableObject.putProperty(window, "log", jsLogger);
+        WebWindow testWindow = client.openWindow(new URL("http://localhost:" + LISTEN_PORT), LISTEN_HOST);
+
+        page = (HtmlPage) testWindow.getEnclosedPage();
     }
 
     @After

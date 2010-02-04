@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.yui;
 
+import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
@@ -27,6 +28,7 @@ public class YuiPage extends WebPage {
     
     public YuiPage() {
         add(yuiManager = new WebAppBehavior(new WebAppSettings(new JavaPluginConfig())));
+        add(HeaderContributor.forJavaScript(YuiPage.class, "console.js"));
     }
     
     protected IYuiManager getYuiManager() {

@@ -135,6 +135,7 @@
         <directory>${basedir}/src/test/java</directory>
         <includes>
           <include>**/*.html</include>
+          <include>**/*.js</include>
         </includes>
       </testResource>
     </testResources>
