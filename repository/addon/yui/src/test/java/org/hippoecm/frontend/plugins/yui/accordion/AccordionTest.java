@@ -21,15 +21,11 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.yui.YuiTest;
 import org.hippoecm.frontend.plugins.yui.YuiPage;
+import org.hippoecm.frontend.plugins.yui.YuiTest;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.AjaxController;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequestSettings;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class AccordionTest extends YuiTest {
 
@@ -65,17 +61,6 @@ public class AccordionTest extends YuiTest {
     public void testAccordion() throws Exception {
         setUp(Page.class);
 
-        WebClient client = new WebClient();
-        client.setAjaxController(new AjaxController() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean processSynchron(HtmlPage page, WebRequestSettings settings, boolean async) {
-                return true;
-            }
-        });
-
-        HtmlPage page = client.getPage("http://localhost:" + LISTEN_PORT);
         List<HtmlElement> elements = page.getElementById("first2").getElementsByAttribute("div", "class",
                 "hippo-accordion-unit-center");
         String style = elements.get(0).getAttribute("style");
