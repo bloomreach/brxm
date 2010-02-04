@@ -323,6 +323,7 @@ public class UpdaterEngine {
             module.register(registration);
             modules.add(registration);
         }
+        session.refresh(false);
         updaterSession = new UpdaterSession(session);
     }
 
@@ -408,7 +409,7 @@ public class UpdaterEngine {
                         if (index != -1) {
                             modified = true;
                             iter.remove();
-                            modules.insertElementAt(module, index-1);
+                            modules.insertElementAt(module, index);
                             break;
                         }
                     }
@@ -568,6 +569,7 @@ public class UpdaterEngine {
         Session subSession = session.impersonate(new SimpleCredentials("workflowuser", new char[] {}));
         SessionDecorator bareSession = (SessionDecorator) org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(subSession);
         bareSession.postMountEnabled(false);
+        bareSession.postDerivedData(false);
         subSession.refresh(false);
         try {
             UpdaterEngine engine = new UpdaterEngine(subSession, modules);
@@ -576,7 +578,9 @@ public class UpdaterEngine {
             subSession.save();
         } finally {
             bareSession.postMountEnabled(true);
+            bareSession.postDerivedData(true);
         }
+        subSession.logout();
     }
 
     private void upgrade() throws RepositoryException {

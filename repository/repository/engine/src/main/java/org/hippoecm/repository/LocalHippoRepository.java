@@ -131,7 +131,11 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     private final boolean dump = false;
 
     /** Whether to perform an automatic upgrade from previous releases */
-    private boolean upgradeEnabled = true;
+    private UpgradeFlag upgradeFlag = UpgradeFlag.TRUE;
+
+    private static enum UpgradeFlag {
+        TRUE, FALSE, ABORT
+    }
 
     /** When during startup a situation is detected that a restart is required, this flag signals this, but only one restart should be appropriate */
     boolean needsRestart = false;
@@ -296,9 +300,22 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         String result = System.getProperty(SYSTEM_UPGRADE_PROPERTY);
         if (result != null) {
-            upgradeEnabled = Boolean.parseBoolean(result);
+            if (result.equalsIgnoreCase("abort")) {
+                upgradeFlag = UpgradeFlag.ABORT;
+            } else {
+                upgradeFlag = (Boolean.parseBoolean(result) ? UpgradeFlag.TRUE : UpgradeFlag.FALSE);
+            }
         }
-        log.info("Automatic upgrade enabled: " + (upgradeEnabled ? "yes" : "no"));
+        switch(upgradeFlag) {
+        case FALSE:
+            log.info("Automatic upgrade enabled: false");
+            break;
+        case TRUE:
+            log.info("Automatic upgrade enabled: true");
+            break;
+        case ABORT:
+            log.info("Automatic upgrade enabled: abort on upgrade required");
+        }
 
         hippoRepositoryFactory = new DecoratorFactoryImpl();
         repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
@@ -321,13 +338,21 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 hasHippoNamespace = false;
             }
 
-            if (upgradeEnabled && hasHippoNamespace) {
-                ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(false);
-                Session migrateSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {})));
-                needsRestart = UpdaterEngine.migrate(migrateSession);
-                migrateSession.logout();
-                if (needsRestart) {
-                    return;
+            if (hasHippoNamespace) {
+                switch(upgradeFlag) {
+                case TRUE:
+                    ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(false);
+                    Session migrateSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {})));
+                    needsRestart = UpdaterEngine.migrate(migrateSession);
+                    migrateSession.logout();
+                    if (needsRestart) {
+                        return;
+                    }
+                    break;
+                case FALSE:
+                    break;
+                case ABORT:
+                    throw new RepositoryException("ABORT");
                 }
             }
 

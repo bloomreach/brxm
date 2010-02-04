@@ -274,8 +274,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 store(nodeState);
                 return nodeState;
             }
-        } else {
-            if(state instanceof NodeState) {
+        } else if(state instanceof NodeState && isEnabled()) {
                 NodeState nodeState = (NodeState) state;
                 Name nodeTypeName = nodeState.getNodeTypeName();
                 if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
@@ -293,7 +292,6 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                         log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                         throw new ItemStateException("Failed to populate node state", ex);
                     }
-                }
             }
         }
         return state;
@@ -374,6 +372,24 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         state.setNodeTypeName(dereference.getNodeTypeName());
         state.setDefinitionId(dereference.getDefinitionId());
         return state;
+    }
+
+    boolean isPureVirtual(ItemId id) {
+        if (id.denotesNode()) {
+            if (id instanceof HippoNodeId) {
+                return true;
+            }
+        } else {
+            try {
+                PropertyState propState = (PropertyState)getItemState(id);
+                return (propState.getParentId() instanceof HippoNodeId);
+            } catch (NoSuchItemStateException ex) {
+                return true;
+            } catch (ItemStateException ex) {
+                return true;
+            }
+        }
+        return false;
     }
 
     int isVirtual(ItemState state) {
@@ -529,7 +545,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             return new FilteredStateIterator(upstream.deletedStates());
         }
         @Override public Iterator modifiedRefs() {
-            return upstream.modifiedRefs();
+            return new FilteredReferencesIterator(upstream.modifiedRefs());
         }
         @Override public void merge(ChangeLog other) {
             upstream.merge(other);
@@ -594,6 +610,54 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 rtValue = current;
                 current = null;
                 if(rtValue == null)
+                    throw new NoSuchElementException();
+                return rtValue;
+            }
+            public void remove() throws UnsupportedOperationException, IllegalStateException {
+                actualIterator.remove();
+            }
+        }
+
+        class FilteredReferencesIterator implements Iterator {
+            Iterator actualIterator;
+            NodeReferences current;
+            FilteredReferencesIterator(Iterator actualIterator) {
+                this.actualIterator = actualIterator;
+                current = null;
+            }
+            public boolean hasNext() {
+                while (current == null) {
+                    if (!actualIterator.hasNext())
+                        return false;
+                    current = (NodeReferences)actualIterator.next();
+                    if (needsSkip(current)) {
+                        current = null;
+                    }
+                }
+                return (current != null);
+            }
+            public boolean needsSkip(NodeReferences current) {
+                return isPureVirtual(current.getTargetId());
+            }
+            public Object next() throws NoSuchElementException {
+                NodeReferences rtValue = null;
+                while (current == null) {
+                    if (!actualIterator.hasNext()) {
+                        throw new NoSuchElementException();
+                    }
+                    current = (NodeReferences)actualIterator.next();
+                    if (needsSkip(current)) {
+                        current = null;
+                    }
+                }
+                rtValue = new NodeReferences(current.getId());
+                for (PropertyId propId : (List<PropertyId>)current.getReferences()) {
+                    if (!isPureVirtual(propId)) {
+                        rtValue.addReference(propId);
+                    }
+                }
+                current = null;
+                if (rtValue == null)
                     throw new NoSuchElementException();
                 return rtValue;
             }
