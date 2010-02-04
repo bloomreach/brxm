@@ -20,10 +20,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Workspace;
 
 import org.apache.wicket.Component;
@@ -39,7 +41,10 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -79,6 +84,30 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
         IServiceReference serviceReference = context.getReference(this);
         plugins = new PluginController(context, config, serviceReference.getServiceId());
         observers = new LinkedList<IObserver<JcrNodeModel>>();
+    }
+
+    @Override
+    public String getString(Map<String, String> criteria) {
+        String key = criteria.get(HippoNodeType.HIPPO_KEY);
+        if (key != null) {
+            for (String category : categories) {
+                if (key.equals(category)) {
+                    String path = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.WORKFLOWS_PATH + "/" + category;
+                    try {
+                        Session session = ((UserSession) getSession()).getJcrSession();
+                        if (session.itemExists(path)) {
+                            javax.jcr.Item item = session.getItem(path);
+                            if (item instanceof HippoNode) {
+                                return ((HippoNode) item).getLocalName();
+                            }
+                        }
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage());
+                    }
+                }
+            }
+        }
+        return super.getString(criteria);
     }
 
     @Override

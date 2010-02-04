@@ -133,7 +133,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 Node workflowNode = null;
                 for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                     workflowNode = iter.nextNode();
-                    if (workflowNode==null) {
+                    if (workflowNode==null || !workflowNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
                         continue;
                     }
                     if (log.isDebugEnabled()) {
