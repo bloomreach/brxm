@@ -525,7 +525,6 @@ public class UpdaterEngine {
             boolean updates;
             do {
                 Session subSession = session.impersonate(new SimpleCredentials("system", new char[] {}));
-                ((org.hippoecm.repository.impl.SessionDecorator)subSession).postDerivedData(false);
                 UpdaterEngine engine = new UpdaterEngine(subSession);
                 updates = engine.prepare();
                 if (updates) {
@@ -569,7 +568,6 @@ public class UpdaterEngine {
         Session subSession = session.impersonate(new SimpleCredentials("workflowuser", new char[] {}));
         SessionDecorator bareSession = (SessionDecorator) org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(subSession);
         bareSession.postMountEnabled(false);
-        bareSession.postDerivedData(false);
         subSession.refresh(false);
         try {
             UpdaterEngine engine = new UpdaterEngine(subSession, modules);
@@ -578,7 +576,6 @@ public class UpdaterEngine {
             subSession.save();
         } finally {
             bareSession.postMountEnabled(true);
-            bareSession.postDerivedData(true);
         }
         subSession.logout();
     }
