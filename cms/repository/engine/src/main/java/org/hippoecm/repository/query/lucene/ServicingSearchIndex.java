@@ -148,13 +148,6 @@ public class ServicingSearchIndex extends SearchIndex {
     }
 
     @Override
-    protected Document createDocument(NodeState node, NamespaceMappings nsMappings,
-            IndexFormatVersion indexFormatVersion) throws RepositoryException {
-
-        return createDocument(node, nsMappings, indexFormatVersion, false);
-    }
-
-    @Override
     public void updateNodes(NodeIdIterator remove, NodeStateIterator add) throws RepositoryException, IOException {
         NodeStateIteratorImpl addedIt = new NodeStateIteratorImpl(add);
         NodeIdIteratorImpl removedIt = new NodeIdIteratorImpl(remove);
@@ -193,6 +186,15 @@ public class ServicingSearchIndex extends SearchIndex {
         }
     }
 
+
+    @Override
+    protected Document createDocument(NodeState node, NamespaceMappings nsMappings,
+            IndexFormatVersion indexFormatVersion) throws RepositoryException {
+
+        return createDocument(node, nsMappings, indexFormatVersion, false);
+    }
+
+    
     protected Document createDocument(NodeState node, NamespaceMappings nsMappings,
             IndexFormatVersion indexFormatVersion, boolean aggregateDescendants) throws RepositoryException {
 

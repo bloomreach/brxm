@@ -57,6 +57,11 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      * QName Hippo Path qualified name
      */
     private Name hippoPath;
+    
+    /**
+     * QName Hippo Text qualified name
+     */
+    private Name hippoText;
 
     /**
      * QName Hippo Handle qualified name
@@ -158,6 +163,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
             }
         }
         hippoPath = resolver.getQName(HippoNodeType.HIPPO_PATHS);
+        hippoText = resolver.getQName(HippoNodeType.HIPPO_TEXT);
         hippoHandle = resolver.getQName(HippoNodeType.NT_HANDLE);
         hippoRequest = resolver.getQName(HippoNodeType.NT_REQUEST);
         
@@ -239,6 +245,10 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     
     public Name getHippoPathPropertyName() {
         return this.hippoPath;
+    }
+    
+    public Name getHippoTextPropertyName() {
+        return this.hippoText;
     }
 
     public String getHippoNamespaceURI() {
