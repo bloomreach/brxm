@@ -128,8 +128,7 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             log.error(ex.getMessage());
             throw new RuntimeException("Failed to initialize", ex);
         } catch (BuilderException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException("Failed to initialize", e);
+            log.info(e.getMessage());
         }
     }
 
@@ -142,6 +141,10 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
+
+        if (builder == null) {
+            return;
+        }
 
         final IPluginContext context = getPluginContext();
         final IPluginConfig config = getPluginConfig();
