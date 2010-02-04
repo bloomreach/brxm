@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.standards.search;
 import java.util.StringTokenizer;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
@@ -44,8 +43,9 @@ public class TextSearchBuilder implements IClusterable {
 
     private String[] excludedPrimaryTypes = {};
     private boolean wildcardSearch = false;
-    private String ignoredChars = "";
+    private String ignoredChars = "*?";
     private int limit = -1;
+    private int minimalLength = 3;
 
     public TextSearchBuilder() {
         this.scope = new String[] { "/" };
@@ -81,10 +81,15 @@ public class TextSearchBuilder implements IClusterable {
             return null;
         }
 
+        boolean valid = false;
         StringBuilder querySb = new StringBuilder(getScope());
         for (StringTokenizer st = new StringTokenizer(value, " "); st.hasMoreTokens();) {
             querySb.append(" and jcr:contains(., '");
             String token = st.nextToken();
+            if (token.length() < getMinimalLength()) {
+                continue;
+            }
+            valid = true;
             for (int i = 0; i < token.length(); i++) {
                 char c = token.charAt(i);
                 if (ignoredChars.indexOf(c) == -1) {
@@ -101,6 +106,10 @@ public class TextSearchBuilder implements IClusterable {
         }
         querySb.append(']').append("/rep:excerpt(.)");
 
+        if (!valid) {
+            return null;
+        }
+        
         final String query = querySb.toString();
         IModel<QueryResult> resultModel = new QueryResultModel(query, limit);
         return new TextSearchResultModel(value, new BrowserSearchResult(TEXT_QUERY_NAME, resultModel));
@@ -150,6 +159,14 @@ public class TextSearchBuilder implements IClusterable {
         }
         sb.append(')');
         return sb.toString();
+    }
+
+    public void setMinimalLength(int minimalLength) {
+        this.minimalLength = minimalLength;
+    }
+
+    public int getMinimalLength() {
+        return minimalLength;
     }
 
 }
