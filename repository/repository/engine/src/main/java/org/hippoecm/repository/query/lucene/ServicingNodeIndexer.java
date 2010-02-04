@@ -223,37 +223,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
             indexFacet(doc, fieldName, value.toString());
             break;
         case PropertyType.DATE:
-
-            Map<String, String> resolutions = new HashMap<String, String>();
-            resolutions.put("year", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
-                    HippoDateTools.Resolution.YEAR));
-            resolutions.put("month", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
-                    HippoDateTools.Resolution.MONTH));
-            resolutions.put("week", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
-                    HippoDateTools.Resolution.WEEK));
-            resolutions.put("day", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
-                    HippoDateTools.Resolution.DAY));
-            resolutions.put("hour", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
-                    HippoDateTools.Resolution.HOUR));
-            resolutions.put("minute", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
-                    HippoDateTools.Resolution.MINUTE));
-            resolutions.put("second", HippoDateTools.timeToString(value.getDate().getTimeInMillis(),
-                    HippoDateTools.Resolution.SECOND));
-
-            Map<String, Integer> byDateNumbers = new HashMap<String, Integer>();
-            byDateNumbers.put("year", value.getDate().get(Calendar.YEAR));
-            byDateNumbers.put("month", value.getDate().get(Calendar.MONTH));
-            byDateNumbers.put("week", value.getDate().get(Calendar.WEEK_OF_YEAR));
-            byDateNumbers.put("dayofyear", value.getDate().get(Calendar.DAY_OF_YEAR));
-            byDateNumbers.put("dayofweek", value.getDate().get(Calendar.DAY_OF_WEEK));
-            byDateNumbers.put("day", value.getDate().get(Calendar.DAY_OF_MONTH));
-            byDateNumbers.put("hour", value.getDate().get(Calendar.HOUR_OF_DAY));
-            byDateNumbers.put("minute", value.getDate().get(Calendar.MINUTE));
-            byDateNumbers.put("second", value.getDate().get(Calendar.SECOND));
-
-            String dateToString = String.valueOf(value.getDate().getTimeInMillis());
-
-            indexDateFacet(doc, fieldName, dateToString, resolutions, byDateNumbers);
+            indexDateFacet(doc, fieldName, value.getDate());
             break;
         case PropertyType.DOUBLE:
             indexDoubleFacet(doc, fieldName, value.getDouble());
@@ -313,12 +283,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
                         excludeFieldNamesFromNodeScope.add(resolver.getJCRName(n));
                     } catch (NamespaceException e) {
                         excCount++;
-                        log
-                                .debug(
-                                        "Cannot (yet) add name "
-                                                + n
-                                                + " to the exlude set from nodescope. Most likely the namespace still has to be registered.",
-                                        e.getMessage());
+                        log.debug("Cannot (yet) add name " + n + " to the exlude set from nodescope. Most likely the namespace still has to be registered.",
+                                   e.getMessage());
                     }
                 }
                 if (excCount == 0) {
@@ -336,12 +302,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
                         excludePropertiesSingleIndexTerm.add(resolver.getJCRName(n));
                     } catch (NamespaceException e) {
                         excCount++;
-                        log
-                                .debug(
-                                        "Cannot (yet) add name "
-                                                + n
-                                                + " to the exlude set for properties not to index a single term from. Most likely the namespace still has to be registered.",
-                                        e.getMessage());
+                        log.debug("Cannot (yet) add name "  + n  + " to the exlude set for properties not to index a single term from. Most likely the namespace still has to be registered.",
+                                   e.getMessage());
                     }
                 }
                 if (excCount == 0) {
@@ -371,12 +333,40 @@ public class ServicingNodeIndexer extends NodeIndexer {
         indexFacet(doc, fieldName, value, Field.TermVector.NO);
     }
 
-    private void indexDateFacet(Document doc, String fieldName, String value, Map<String, String> resolutions,
-            Map<String, Integer> byDateNumbers) {
+    private void indexDateFacet(Document doc, String fieldName, Calendar calendar) {
         doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NO_NORMS,
                 Field.TermVector.NO));
+        
+        Map<String, String> resolutions = new HashMap<String, String>();
+        resolutions.put("year", HippoDateTools.timeToString(calendar.getTimeInMillis(),
+                HippoDateTools.Resolution.YEAR));
+        resolutions.put("month", HippoDateTools.timeToString(calendar.getTimeInMillis(),
+                HippoDateTools.Resolution.MONTH));
+        resolutions.put("week", HippoDateTools.timeToString(calendar.getTimeInMillis(),
+                HippoDateTools.Resolution.WEEK));
+        resolutions.put("day", HippoDateTools.timeToString(calendar.getTimeInMillis(),
+                HippoDateTools.Resolution.DAY));
+        resolutions.put("hour", HippoDateTools.timeToString(calendar.getTimeInMillis(),
+                HippoDateTools.Resolution.HOUR));
+        resolutions.put("minute", HippoDateTools.timeToString(calendar.getTimeInMillis(),
+                HippoDateTools.Resolution.MINUTE));
+        resolutions.put("second", HippoDateTools.timeToString(calendar.getTimeInMillis(),
+                HippoDateTools.Resolution.SECOND));
+
+        Map<String, Integer> byDateNumbers = new HashMap<String, Integer>();
+        byDateNumbers.put("year", calendar.get(Calendar.YEAR));
+        byDateNumbers.put("month", calendar.get(Calendar.MONTH));
+        byDateNumbers.put("week", calendar.get(Calendar.WEEK_OF_YEAR));
+        byDateNumbers.put("dayofyear", calendar.get(Calendar.DAY_OF_YEAR));
+        byDateNumbers.put("dayofweek", calendar.get(Calendar.DAY_OF_WEEK));
+        byDateNumbers.put("day", calendar.get(Calendar.DAY_OF_MONTH));
+        byDateNumbers.put("hour", calendar.get(Calendar.HOUR_OF_DAY));
+        byDateNumbers.put("minute", calendar.get(Calendar.MINUTE));
+        byDateNumbers.put("second", calendar.get(Calendar.SECOND));
         String internalFacetName = ServicingNameFormat.getInternalFacetName(fieldName);
-        doc.add(new Field(internalFacetName, value, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
+        
+        String dateToString = String.valueOf(calendar.getTimeInMillis());
+        doc.add(new Field(internalFacetName, dateToString, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
 
         for (Entry<String, String> keyValue : resolutions.entrySet()) {
             String compoundFieldName = fieldName + ServicingFieldNames.DATE_RESOLUTION_DELIMITER + keyValue.getKey();
