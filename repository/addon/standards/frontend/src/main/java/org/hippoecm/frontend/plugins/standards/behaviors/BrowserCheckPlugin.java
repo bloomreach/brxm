@@ -23,16 +23,19 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBehaviorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BrowserCheckPlugin extends AbstractBehavior implements IPlugin, IBehaviorService {
     private static final long serialVersionUID = 1L;
+
+    static Logger log = LoggerFactory.getLogger(BrowserCheckPlugin.class);
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -211,12 +214,16 @@ public class BrowserCheckPlugin extends AbstractBehavior implements IPlugin, IBe
         }
 
         private void parseMajorMinor(String parse) {
-            StringTokenizer st = new StringTokenizer(parse.trim(), ".");
-            if (st.hasMoreTokens()) {
-                major = Integer.parseInt(st.nextToken());
+            try {
+                StringTokenizer st = new StringTokenizer(parse.trim(), ". ");
                 if (st.hasMoreTokens()) {
-                    minor = Integer.parseInt(st.nextToken());
+                    major = Integer.parseInt(st.nextToken());
+                    if (st.hasMoreTokens()) {
+                        minor = Integer.parseInt(st.nextToken());
+                    }
                 }
+            } catch (NumberFormatException ex) {
+                log.info("Could not parse " + parse + ": " + ex.getMessage());
             }
         }
 
