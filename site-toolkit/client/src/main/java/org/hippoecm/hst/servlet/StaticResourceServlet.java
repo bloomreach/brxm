@@ -20,30 +20,177 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.InputStream;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.ServletConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Serves static resource files from the web application context.
+ *
+ * <P>
+ * This servlet has the ability to configure allowed resource path prefix/postfix and forbidden resource path prefix/postfix.
+ * This needs some configuration, which is described below.
+ * </P>
+ * 
+ * <H2>Allowed/Forbidden Resource Path Prefix/Postfix Configuration</H2>
+ * <pre>
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;forbiddenStaticResourcePathPrefixes&lt;/param-name&gt;
+ *     &lt;param-value&gt;
+ *         /WEB-INF/, /META-INF/
+ *     &lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;forbiddenStaticResourcePathPostfixes&lt;/param-name&gt;
+ *     &lt;param-value&gt;
+ *         .jsp, .ftl, .vm
+ *     &lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;allowedStaticResourcePathPrefixes&lt;/param-name&gt;
+ *     &lt;param-value&gt;
+ *         /images/, /javascript/, /css/
+ *     &lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;allowedStaticResourcePathPostfixes&lt;/param-name&gt;
+ *     &lt;param-value&gt;
+ *          .gif, .jpg, .jpeg, .png, .ico, .js, .css
+ *     &lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * </pre>
+ * 
+ * <P>
+ * This servlet checks <CODE>forbiddenStaticResourcePathPrefixes</CODE> first.
+ * If the requested static resource path starts with any prefix of the parameter values, 
+ * then it returns the response with HTTP 403 status code.
+ * </P>
+ * <P>
+ * If it continues, this servlet checks <CODE>forbiddenStaticResourcePathPostfixes</CODE>.
+ * If the requested static resource path ends with any postfix of the parameter valuess,
+ * then it returns the response with HTTP 403 status code.
+ * </P>
+ * <P>
+ * If the requested static resource path is not forbidden, it allows downloading on the requested
+ * static resource path, only when the path starts with any prefix in the <CODE>allowedStaticResourcePathPrefixes</CODE>
+ * parameter values or the path ends with any postfix in the <CODE>allowedStaticResourcePathPostfixes</CODE>.
+ * </P>
+ * <P>
+ * <EM>By default, this servlet can be regarded as configured like the following if you don't set any init parameters.</EM>
+ * <pre>
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;forbiddenStaticResourcePathPrefixes&lt;/param-name&gt;
+ *     &lt;param-value&gt;
+ *         /WEB-INF/, /META-INF/
+ *     &lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;forbiddenStaticResourcePathPostfixes&lt;/param-name&gt;
+ *     &lt;param-value&gt;
+ *         .jsp, .ftl, .vm
+ *     &lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;allowedStaticResourcePathPrefixes&lt;/param-name&gt;
+ *     &lt;param-value&gt;&lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;allowedStaticResourcePathPostfixes&lt;/param-name&gt;
+ *     &lt;param-value&gt;
+ *          .gif, .jpg, .jpeg, .png, .ico, .js, .css
+ *     &lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * </pre>
+ * </P>
+ *
+ * @version $Id$
+ */
 public class StaticResourceServlet extends HttpServlet {
     
+    public static final String ALLOWED_STATIC_RESOURCE_PATH_PREFIXES_PARAM = "allowedStaticResourcePathPrefixes";
+    
+    public static final String ALLOWED_STATIC_RESOURCE_PATH_POSTFIXES_PARAM = "allowedStaticResourcePathPostfixes";
+    
+    public static final String FORBIDDEN_STATIC_RESOURCE_PATH_PREFIXES_PARAM = "forbiddenStaticResourcePathPrefixes";
+    
+    public static final String FORBIDDEN_STATIC_RESOURCE_PATH_POSTFIXES_PARAM = "forbiddenStaticResourcePathPostfixes";
+    
     private static final long serialVersionUID = 1L;
-
+    
     static Logger log = LoggerFactory.getLogger(StaticResourceServlet.class);
-
+    
     private static final int BUF_SIZE = 4096;
+    
+    private String [] allowedStaticResourcePathPrefixes = new String [0];
+    
+    private String [] allowedStaticResourcePathPostfixes = new String [] { ".gif", ".jpg", ".jpeg", ".png", ".ico", ".js", ".css" };
+    
+    private String [] forbiddenStaticResourcePathPrefixes = new String [] { "/WEB-INF/", "/META-INF/" };
+    
+    private String [] forbiddenStaticResourcePathPostfixes = new String [] { ".jsp", ".vm", ".ftl" };
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        
+        String param =  ServletConfigUtils.getInitParameter(config, config.getServletContext(), ALLOWED_STATIC_RESOURCE_PATH_PREFIXES_PARAM, null);
+        
+        if (!StringUtils.isBlank(param)) {
+            allowedStaticResourcePathPrefixes = StringUtils.split(param, ", \t\r\n");
+        }
+        
+        param =  ServletConfigUtils.getInitParameter(config, config.getServletContext(), ALLOWED_STATIC_RESOURCE_PATH_POSTFIXES_PARAM, null);
+        
+        if (!StringUtils.isBlank(param)) {
+            allowedStaticResourcePathPostfixes = StringUtils.split(param, ", \t\r\n");
+        }
+        
+        param =  ServletConfigUtils.getInitParameter(config, config.getServletContext(), FORBIDDEN_STATIC_RESOURCE_PATH_PREFIXES_PARAM, null);
+        
+        if (!StringUtils.isBlank(param)) {
+            forbiddenStaticResourcePathPrefixes = StringUtils.split(param, ", \t\r\n");
+        }
+        
+        param =  ServletConfigUtils.getInitParameter(config, config.getServletContext(), FORBIDDEN_STATIC_RESOURCE_PATH_POSTFIXES_PARAM, null);
+        
+        if (!StringUtils.isBlank(param)) {
+            forbiddenStaticResourcePathPostfixes = StringUtils.split(param, ", \t\r\n");
+        }
+    }
     
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         String path = getResourcePath(request);
         
-        ServletContext context = getServletConfig().getServletContext();
+        if (StringUtils.isBlank(path)) {
+            if (log.isWarnEnabled()) {
+                log.warn("Blank resource path: " + path + ". Response status: 404");
+            }
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        
+        if (!isDownloadableStaticResource(path)) {
+            if (log.isWarnEnabled()) {
+                log.warn("Forbidden resource path: " + path + ". Response status: 403");
+            }
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
         
         InputStream is = null;
         BufferedInputStream bis = null;
@@ -51,17 +198,10 @@ public class StaticResourceServlet extends HttpServlet {
         BufferedOutputStream bos = null;
         
         try {
-            if (path == null) {
-                if (log.isWarnEnabled()) {
-                    log.warn("path is null, response status = 404)");
-                }
-                
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
             
             long lastModified = 0L;
             
+            ServletContext context = getServletConfig().getServletContext();
             File file = new File(context.getRealPath(path));
             
             if (file.isFile()) {
@@ -131,4 +271,27 @@ public class StaticResourceServlet extends HttpServlet {
         return path;
     }
     
+    private boolean isDownloadableStaticResource(String path) {
+        for (String prefix : forbiddenStaticResourcePathPrefixes) {
+            if (StringUtils.startsWith(path, prefix)) {
+                return false;
+            }
+        }
+        for (String postfix : forbiddenStaticResourcePathPostfixes) {
+            if (StringUtils.endsWith(path, postfix)) {
+                return false;
+            }
+        }
+        for (String prefix : allowedStaticResourcePathPrefixes) {
+            if (StringUtils.startsWith(path, prefix)) {
+                return true;
+            }
+        }
+        for (String postfix : allowedStaticResourcePathPostfixes) {
+            if (StringUtils.endsWith(path, postfix)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
