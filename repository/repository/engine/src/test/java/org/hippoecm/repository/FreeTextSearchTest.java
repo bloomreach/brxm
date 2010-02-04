@@ -93,27 +93,11 @@ public class FreeTextSearchTest extends TestCase {
         writer.close();
         resource.setProperty("jcr:data", new ByteArrayInputStream(data.toByteArray()));
         resource.setProperty("jcr:lastModified", Calendar.getInstance());
-        
-        if(false) {
-            // TODO in the repository engine, pdf extractor does not seem to work hence cannot test
-            addFile(compound , "jsr170-1.0.pdf", "hippo:testpdfresource");
-        }
-        
+    
         testPath.save();
     }
     
-    private void addFile(Node parent, String fileName, String nodeName) throws Exception {
-        Node resource = parent.addNode(nodeName , "hippo:resource");
-        InputStream in = this.getClass().getResourceAsStream(fileName);
-        try {
-            resource.setProperty("jcr:data", in);
-            resource.setProperty("jcr:mimeType", "application/pdf ");
-            resource.setProperty("jcr:lastModified", Calendar.getInstance());
-        } finally {
-            in.close();
-        }
-    }
-    
+ 
     @Test
     public void testSimpleFreeTextSearch() throws Exception {
         

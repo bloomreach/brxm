@@ -36,6 +36,7 @@
 - hippo:travelled (long)
 - hippo:price (double)
 
+
 [hippo:testtagdocument] > hippo:document
 - * (String) multiple
 
@@ -69,10 +70,12 @@
 
 [hippo:testhtmltwo] > hippo:testhtml
 
+[hippo:testtextresource] > hippo:resource
+- hippo:text (binary) 
+
 [hippo:testcompoundstructure] > nt:base
 + * (hippo:testhtml) = hippo:testhtml multiple
-+ hippo:testresource (hippo:resource)
-+ hippo:testpdfresource (hippo:resource) 
++ hippo:testresource (hippo:testtextresource)
 - *
 
 [hippo:testsearchdocument] > hippo:document

@@ -15,10 +15,15 @@
  */
 package org.hippoecm.repository.query.lucene;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -39,12 +44,15 @@ import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
+import org.apache.jackrabbit.core.value.BLOBFileValue;
 import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.extractor.PlainTextExtractor;
 import org.apache.jackrabbit.extractor.TextExtractor;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +87,13 @@ public class ServicingNodeIndexer extends NodeIndexer {
      * The indexing configuration or <code>null</code> if none is available.
      */
     protected ServicingIndexingConfiguration servicingIndexingConfig;
+    
+    /**
+     * List where the binaries are stored before being actually indexed: when there is a hippo:text binary in the documentBinaries, we 
+     * then skip the other binaries indexing: the hippo:text is there as the extracted version of the real binary 
+     * 
+     */
+    private List<BinaryValue> documentBinaries = null;
 
     private QueryHandlerContext queryHandlerContext;
 
@@ -93,10 +108,91 @@ public class ServicingNodeIndexer extends NodeIndexer {
         this.servicingIndexingConfig = config;
     }
 
+    
+    @Override
+    protected void addBinaryValue(Document doc, String fieldName, Object internalValue) {
+        if(documentBinaries == null) {
+            documentBinaries = new ArrayList<BinaryValue>();
+        }
+        documentBinaries.add(new BinaryValue(fieldName, internalValue));
+    }
+
+    private class BinaryValue {
+        private Object internalValue;
+        private String fieldName;
+        public BinaryValue(String fieldName, Object internalValue) {
+            this.internalValue = internalValue;
+            this.fieldName = fieldName;
+        }
+    }
+    
     @Override
     protected Document createDoc() throws RepositoryException {
         // index the jackrabbit way
         Document doc = super.createDoc();
+        
+        /*
+         * check the documentBinaries list: if it is not null, we still need to index the binaries, as we temporarily store them.
+         * If the documentBinaries list size is bigger than 1, we need to inspect whether there is a hippo:text binary: in that case,
+         * we index only the hippo:text binary, as this is the 'extracted' version of the real binary
+         */  
+        
+        if(this.documentBinaries != null && !documentBinaries.isEmpty()) {
+            try {
+                String hippoTextName = resolver.getJCRName(servicingIndexingConfig.getHippoTextPropertyName());
+                if (documentBinaries.size() > 1) {
+                    boolean hippoTextFieldPresent = false;
+                    // inspect whether there is a hippo:text version
+                    for (BinaryValue binVal : documentBinaries) {
+                        if (hippoTextName.equals(binVal.fieldName)) {
+                            hippoTextFieldPresent = true;
+                        }
+                    }
+                    if (hippoTextFieldPresent) {
+                        log.debug("The '{}' property is present and thus will be used to index this binary.",
+                                HippoNodeType.HIPPO_TEXT);
+                        for (BinaryValue binval : documentBinaries) {
+                            if (hippoTextName.equals(binval.fieldName)) {
+                                InputStream stream = ((BLOBFileValue) binval.internalValue).getStream();
+                                try {
+                                    TextExtractor extr = new PlainTextExtractor();
+                                    Reader reader = extr.extractText(stream, null, "UTF-8");
+                                    doc.add(createFulltextField(reader));
+                                } catch (IOException e) {
+                                    log.warn("Exception during indexing hippo:text binary property", e);
+                                }
+                            }
+                        }
+                    } else {
+                        for (BinaryValue val : documentBinaries) {
+                            super.addBinaryValue(doc, val.fieldName, val.internalValue);
+                        }
+                    }
+
+                } else {
+                    BinaryValue binVal = documentBinaries.get(0);
+                    if (hippoTextName.equals(binVal.fieldName)) {
+                        log.debug("The '{}' property is present and thus will be used to index this binary.",
+                                HippoNodeType.HIPPO_TEXT);
+                        InputStream stream = ((BLOBFileValue) binVal.internalValue).getStream();
+                        try {
+                            TextExtractor extr = new PlainTextExtractor();
+                            Reader reader = extr.extractText(stream, null, "UTF-8");
+                            doc.add(createFulltextField(reader));
+                        } catch (IOException e) {
+                            log.warn("Exception during indexing hippo:text binary property", e);
+                        }
+                    } else {
+                        // fallback to original Jackrabbit binary indexing
+                        super.addBinaryValue(doc, binVal.fieldName, binVal.internalValue);
+                    }
+                }
+            } catch (NamespaceException e) {
+                // will never happen
+                log.error("Error trying to create lucene internal field for " + HippoNodeType.HIPPO_TEXT + "", e);
+            }
+        }
+        
         
         // plus index our facet specifics & hippo extra's 
         boolean indexFacets = false;

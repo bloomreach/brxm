@@ -514,6 +514,10 @@ public interface HippoNodeType {
     /**
      * 
      */
+    final public static String HIPPO_TEXT = "hippo:text";
+    /**
+     * 
+     */
     final public static String HIPPO_PERMISSIONCACHESIZE = "hipposys:permissioncachesize";
     /**
      * 
