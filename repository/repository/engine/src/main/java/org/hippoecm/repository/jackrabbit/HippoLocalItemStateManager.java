@@ -274,7 +274,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 store(nodeState);
                 return nodeState;
             }
-        } else if(state instanceof NodeState && isEnabled()) {
+        } else if(state instanceof NodeState) {
                 NodeState nodeState = (NodeState) state;
                 Name nodeTypeName = nodeState.getNodeTypeName();
                 if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {

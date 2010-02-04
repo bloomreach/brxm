@@ -56,15 +56,11 @@ public class FacetedNavigationHippoCountTest extends TestCase
     }
 
     @Test
-    public void testHippoCount() {
-        try {
-            build(session, contents1);
-            session.save();
-            build(session, contents2);
-            session.save();
-            assertTrue(traverse(session, "/test/docsearch/byType/hippo:resultset").hasProperty("hippo:count"));
-        } catch(RepositoryException ex) {
-            ex.printStackTrace();
-        }
+    public void testHippoCount() throws Exception {
+        build(session, contents1);
+        session.save();
+        build(session, contents2);
+        session.save();
+        assertTrue(traverse(session, "/test/docsearch/byType/hippo:resultset").hasProperty("hippo:count"));
     }
 }
