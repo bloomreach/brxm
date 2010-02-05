@@ -179,37 +179,6 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                     HippoStdNodeType.HIPPOSTD_STATESUMMARY, HippoStdNodeType.NEW,
     };
 
-    protected static String[] instantiate(String[] content, Map<String, String> parameters) {
-        String[] result = new String[content.length];
-        for (int i = 0; i < content.length; i++) {
-            String value = content[i];
-            while (value.contains("${")) {
-                String parameter = value.substring(value.indexOf('{') + 1, value.indexOf('}'));
-                if (parameters.containsKey(parameter)) {
-                    value = value.substring(0, value.indexOf('$')) + parameters.get(parameter)
-                            + value.substring(value.indexOf('}') + 1);
-                } else {
-                    throw new IllegalArgumentException("parameters does not contain variable " + parameter);
-                }
-            }
-            result[i] = value;
-        }
-        return result;
-    }
-
-    protected static String[] mount(String path, String[] content) {
-        String[] result = new String[content.length];
-        for (int i = 0; i < content.length; i++) {
-            String value = content[i];
-            if (value.startsWith("/")) {
-                result[i] = path + value;
-            } else {
-                result[i] = value;
-            }
-        }
-        return result;
-    }
-
     ModelReference modelReference;
     IPluginConfig config;
 

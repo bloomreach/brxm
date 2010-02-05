@@ -16,6 +16,7 @@
 package org.hippoecm.frontend;
 
 import java.io.PrintStream;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -41,12 +42,70 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 public abstract class PluginTest extends TestCase {
+
+    protected final class PluginTestApplication extends Main {
+
+        public PluginTestApplication() {
+        }
+        
+        @Override
+        public HippoRepository getRepository() throws RepositoryException {
+            return server;
+        }
+
+        @Override
+        public UserSession newSession(org.apache.wicket.Request request, org.apache.wicket.Response response) {
+            UserSession userSession = super.newSession(request, response);
+            userSession.login(CREDENTIALS, new LoadableDetachableModel<Session>() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected Session load() {
+                    return session;
+                }
+                
+            });
+            return userSession;
+        }
+    }
+
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
     protected static ValueMap CREDENTIALS = new ValueMap("username=" + SYSTEMUSER_ID + ",password=" + SYSTEMUSER_PASSWORD.toString());
 
-    String[] config = new String[] {
+    protected static String[] instantiate(String[] content, Map<String, String> parameters) {
+        String[] result = new String[content.length];
+        for (int i = 0; i < content.length; i++) {
+            String value = content[i];
+            while (value.contains("${")) {
+                String parameter = value.substring(value.indexOf('{') + 1, value.indexOf('}'));
+                if (parameters.containsKey(parameter)) {
+                    value = value.substring(0, value.indexOf('$')) + parameters.get(parameter)
+                            + value.substring(value.indexOf('}') + 1);
+                } else {
+                    throw new IllegalArgumentException("parameters does not contain variable " + parameter);
+                }
+            }
+            result[i] = value;
+        }
+        return result;
+    }
+
+    protected static String[] mount(String path, String[] content) {
+        String[] result = new String[content.length];
+        for (int i = 0; i < content.length; i++) {
+            String value = content[i];
+            if (value.startsWith("/")) {
+                result[i] = path + value;
+            } else {
+                result[i] = value;
+            }
+        }
+        return result;
+    }
+
+    private String[] config = new String[] {
             "/config", "nt:unstructured",
             "/config/test-app", "frontend:application",
             "/config/test-app/default", "frontend:plugincluster",
@@ -73,38 +132,17 @@ public abstract class PluginTest extends TestCase {
     @Override
     public void setUp(boolean clear) throws Exception {
         super.setUp(clear);
+        
         while (session.getRootNode().hasNode("config")) {
             session.getRootNode().getNode("config").remove();
             session.save();
             session.refresh(false);
         }
         root = session.getRootNode();
-        build(session, config);
+        build(session, getConfig());
         session.save();
 
-        JcrApplicationFactory jcrAppFactory = new JcrApplicationFactory(new JcrNodeModel("/config"));
-        tester = new HippoTester(new Main() {
-
-            @Override
-            public HippoRepository getRepository() throws RepositoryException {
-                return server;
-            };
-            
-            @Override
-            public UserSession newSession(org.apache.wicket.Request request, org.apache.wicket.Response response) {
-                UserSession userSession = super.newSession(request, response);
-                userSession.login(CREDENTIALS, new LoadableDetachableModel<Session>() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected Session load() {
-                        return session;
-                    }
-                    
-                });
-                return userSession;
-            };
-        }, jcrAppFactory);
+        tester = new HippoTester(new PluginTestApplication(), new JcrApplicationFactory(new JcrNodeModel("/config")));
 
         home = tester.startPluginPage();
         JavaPluginConfig config = new JavaPluginConfig("dummy");
@@ -156,5 +194,13 @@ public abstract class PluginTest extends TestCase {
      */
     protected IPluginContext start(IPluginConfig config) {
         return home.getPluginManager().start(config);
+    }
+
+    public void setConfig(String[] config) {
+        this.config = config;
+    }
+
+    public String[] getConfig() {
+        return config;
     }
 }

@@ -29,6 +29,10 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Configuration service for plugin clusters.  Cluster folders are located beneath
+ * the application, with a fallback to the first defined application.
+ */
 public class JcrConfigServiceFactory implements IPluginConfigService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -47,8 +51,19 @@ public class JcrConfigServiceFactory implements IPluginConfigService {
     public IClusterConfig getCluster(String key) {
         IClusterConfig cluster = null;
         try {
+            Node clusterNode = null;
             if (model.getNode().hasNode(key)) {
-                Node clusterNode = model.getNode().getNode(key);
+                clusterNode = model.getNode().getNode(key);
+            } else {
+                Node appFolder = model.getNode().getParent();
+                Node first = appFolder.getNodes().nextNode();
+                if (!model.getNode().isSame(first)) {
+                    if (first.hasNode(key)) {
+                        clusterNode = first.getNode(key);
+                    }
+                }
+            }
+            if (clusterNode != null) {
                 JcrNodeModel clusterNodeModel = new JcrNodeModel(clusterNode);
                 cluster = new JcrClusterConfig(clusterNodeModel);
             }
@@ -61,12 +76,29 @@ public class JcrConfigServiceFactory implements IPluginConfigService {
     public List<String> listClusters(String folder) {
         List<String> results = new LinkedList<String>();
         try {
-            Node node = model.getNode().getNode(folder);
-            NodeIterator iter = node.getNodes();
-            while (iter.hasNext()) {
-                Node child = iter.nextNode();
-                if (child.isNodeType(FrontendNodeType.NT_PLUGINCLUSTER)) {
-                    results.add(child.getName());
+            if (model.getNode().hasNode(folder)) {
+                Node node = model.getNode().getNode(folder);
+                NodeIterator iter = node.getNodes();
+                while (iter.hasNext()) {
+                    Node child = iter.nextNode();
+                    if (child.isNodeType(FrontendNodeType.NT_PLUGINCLUSTER)) {
+                        results.add(child.getName());
+                    }
+                }
+            }
+            Node appFolder = model.getNode().getParent();
+            Node first = appFolder.getNodes().nextNode();
+            if (!model.getNode().isSame(first)) {
+                if (first.hasNode(folder)) {
+                    NodeIterator iter = first.getNode(folder).getNodes();
+                    while (iter.hasNext()) {
+                        Node child = iter.nextNode();
+                        if (child.isNodeType(FrontendNodeType.NT_PLUGINCLUSTER)) {
+                            if (!results.contains(child.getName())) {
+                                results.add(child.getName());
+                            }
+                        }
+                    }
                 }
             }
         } catch (RepositoryException ex) {
