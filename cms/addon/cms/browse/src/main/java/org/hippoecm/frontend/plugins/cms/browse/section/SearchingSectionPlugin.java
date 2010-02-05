@@ -45,6 +45,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.DocumentCollectionType;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
+import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection.Match;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
@@ -378,13 +379,24 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         return collection;
     }
 
-    public boolean contains(IModel<Node> nodeModel) {
+    public Match contains(IModel<Node> nodeModel) {
         try {
-            return nodeModel.getObject().getPath().startsWith(rootPath);
+            String path = nodeModel.getObject().getPath();
+            if(path != null && path.startsWith(rootPath)) {
+                Node node = nodeModel.getObject();
+                int distance = 0;
+                while (node.getDepth() > 0 && node.getPath().startsWith(rootPath)) {
+                    distance++;
+                    node = node.getParent();
+                }
+                Match match = new Match();
+                match.setDistance(distance);
+                return match;
+            }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-        return false;
+        return null;
     }
 
     public IModel<String> getTitle() {

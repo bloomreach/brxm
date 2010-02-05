@@ -29,10 +29,24 @@ import org.hippoecm.frontend.service.ITitleDecorator;
  */
 public interface IBrowserSection extends IRenderService, ITitleDecorator {
 
+    class Match {
+        private int distance;
+
+        public void setDistance(int distance) {
+            this.distance = distance;
+        }
+
+        public int getDistance() {
+            return distance;
+        }
+    }
+    
     /**
      * Does the section contain the specified Node.
+     * Returns null when the section does not contain the node; otherwise, the distance
+     * should be equivalent to the number of steps to the root node in the section.
      */
-    boolean contains(IModel<Node> node);
+    Match contains(IModel<Node> node);
 
     /**
      * Select the Node in the section.
