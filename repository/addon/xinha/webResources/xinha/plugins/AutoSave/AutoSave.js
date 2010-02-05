@@ -74,7 +74,7 @@ AutoSave.prototype.checkChanges = function() {
     }
     var editorId = this.getId(); 
     this.timeoutID = window.setTimeout(function() {
-        YAHOO.hippo.EditorManager.saveEditor(editorId);   
+        YAHOO.hippo.EditorManager.saveByTextareaId(editorId);   
     }, this.lConfig.timeoutLength);
 }
 

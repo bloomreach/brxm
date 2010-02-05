@@ -32,7 +32,7 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
     ( function() {
-        var Dom = YAHOO.util.Dom;
+        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
 
         YAHOO.hippo.Dom = function() {
         };
@@ -94,6 +94,72 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
             }
             return false;
         };
+        
+        YAHOO.hippo.Dom.getMargin = function(element) {
+            var margins = {w:0, h:0};
+            margins.w += this.getBorderWidth(element);
+            margins.w += this.getMarginWidth(element);
+            margins.w += this.getPaddingWidth(element);
+
+            margins.h += this.getBorderHeight(element);
+            margins.h += this.getMarginHeight(element);
+            margins.h += this.getPaddingHeight(element);
+            return margins;
+        };
+            
+        YAHOO.hippo.Dom.getWidth = function(el) {
+            return this.asInt(el, 'width');
+        };
+            
+        YAHOO.hippo.Dom.getHeight = function(el) {
+            return this.asInt(el, 'height');
+        };
+
+        YAHOO.hippo.Dom.getBorderWidth= function(el) {
+            var x = this.asInt(el, 'border-left-width');
+            x += this.asInt(el, 'border-right-width');
+            return x;
+        };
+
+        YAHOO.hippo.Dom.getBorderHeight= function(el) {
+            var y = this.asInt(el, 'border-top-width');
+            y += this.asInt(el, 'border-bottom-width');
+            return y;
+        };
+
+        YAHOO.hippo.Dom.getMarginWidth= function(el) {
+            var x = this.asInt(el, 'margin-left');
+            x += this.asInt(el, 'margin-right');
+            return x;
+        };
+        YAHOO.hippo.Dom.getMarginHeight= function(el) {
+            var y = this.asInt(el, 'margin-top');
+            y += this.asInt(el, 'margin-bottom');
+            return y;
+        };
+
+        YAHOO.hippo.Dom.getPaddingWidth= function(el) {
+            var x = this.asInt(el, 'padding-left');
+            x += this.asInt(el, 'padding-right');
+            return x;
+        };
+
+        YAHOO.hippo.Dom.getPaddingHeight= function(el) {
+            var y = this.asInt(el, 'padding-top');
+            y += this.asInt(el, 'padding-bottom');
+            return y;
+        };
+
+        YAHOO.hippo.Dom.asInt = function(el, style) {
+            var x = Dom.getStyle(el, style);
+            if(Lang.isString(x) && x.length>2) {
+                x = x.substr(0, x.indexOf('px'));
+                //FF3 on Ubuntu thinks the border is something like 0.81236666 so we round it
+                return Math.round(x);
+            }
+            return 0;
+        };
+        
 
     })();
 
