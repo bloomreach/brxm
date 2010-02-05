@@ -35,6 +35,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -197,6 +198,35 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if(!subject.getPath().substring(1).equals(""))
             target = target.getNode(subject.getPath().substring(1));
         Map<String, String[]> renames = new TreeMap<String, String[]>();
+        if (foldertype.hasProperty("hippostd:modify")) {
+            Value[] values = foldertype.getProperty("hippostd:modify").getValues();
+            String currentTime = null;
+            for (int i = 0; i + 1 < values.length; i += 2) {
+                String newValue = values[i + 1].getString();
+                if (newValue.equals("$name")) {
+                    newValue = name;
+                } else if (newValue.equals("$holder")) {
+                    newValue = workflowContext.getUserIdentity();
+                } else if (newValue.equals("$now")) {
+                    if (currentTime == null) {
+                        currentTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new java.util.Date());
+                        currentTime = currentTime.substring(0, currentTime.length()-2)+":"+currentTime.substring(currentTime.length()-2);
+                    }
+                    newValue = currentTime;
+                } else if (newValue.startsWith("$")) {
+                    newValue = arguments.get(newValue.substring(1));
+                }
+                if (renames.containsKey(values[i].getString())) {
+                    String[] oldValues = renames.get(values[i].getString());
+                    String[] newValues = new String[oldValues.length + 1];
+                    System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+                    newValues[oldValues.length] = newValue;
+                    renames.put(values[i].getString(), newValues);
+                } else {
+                    renames.put(values[i].getString(), new String[] {newValue});
+                }
+            }
+        }
         for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
             Node prototypeNode = iter.nextNode();
             if (prototypeNode.getName().equals("hipposysedit:prototype")) {
@@ -215,32 +245,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     break;
                 }
             } else if (prototypeNode.getName().equals(template)) {
-                if(foldertype.hasProperty("hippostd:modify")) {
-                    Value[] values = foldertype.getProperty("hippostd:modify").getValues();
-                    String currentTime = null;
-                    for(int i=0; i+1<values.length; i+=2) {
-                        String newValue = values[i+1].getString();
-                        if(newValue.equals("$name")) {
-                            newValue = name;
-                        } else if(newValue.equals("$now")) {
-                            if(currentTime == null) {
-                                currentTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new java.util.Date());
-                            }
-                            newValue = currentTime;
-                        } else if(newValue.startsWith("$")) {
-                            newValue = arguments.get(newValue.substring(1));
-                        }
-                        if(renames.containsKey(values[i].getString())) {
-                            String[] oldValues = renames.get(values[i].getString());
-                            String[] newValues = new String[oldValues.length + 1];
-                            System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
-                            newValues[oldValues.length] = newValue;
-                            renames.put(values[i].getString(), newValues);
-                        } else {
-                            renames.put(values[i].getString(), new String[] { newValue });
-                        }
-                    }
-                }
                 result = copy(prototypeNode, target, renames, ".");
                 break;
             }
@@ -486,7 +490,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (renames.containsKey(path+"/jcr:primaryType")) {
             renamed = renames.get(path+"/jcr:primaryType");
             if (renamed.length > 0) {
-                primaryType = expand(renamed, source)[0].getString();
+                primaryType = expand(renamed, source, PropertyType.NAME)[0].getString();
                 if (primaryType.equals("")) {
                     primaryType = null;
                 }
@@ -509,7 +513,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
 
         if (renames.containsKey(path+"/jcr:mixinTypes")) {
-            values = expand(renames.get(path+"/jcr:mixinTypes"), source);
+            values = expand(renames.get(path+"/jcr:mixinTypes"), source, PropertyType.NAME);
             for (int i = 0; i < values.length; i++) {
                 if (!target.isNodeType(values[i].getString())) {
                     target.addMixin(values[i].getString());
@@ -563,7 +567,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 }
                 if (!isProtected) {
                     if(renames.containsKey(path+"/"+prop.getName())) {
-                        target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source));
+                        target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source, prop.getDefinition().getRequiredType()));
                     } else {
                         target.setProperty(prop.getName(), prop.getValues());
                     }
@@ -585,7 +589,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 }
                 if (!isProtected) {
                     if(renames.containsKey(path+"/"+prop.getName())) {
-                        target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source)[0]);
+                        target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source, prop.getDefinition().getRequiredType())[0]);
                     } else {
                         target.setProperty(prop.getName(), prop.getValue());
                     }
@@ -596,7 +600,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         return target;
     }
 
-    static private Value[] expand(String[] values, Node source) throws RepositoryException {
+    static private Value[] expand(String[] values, Node source, int propertyType) throws RepositoryException {
         Vector<Value> newValues = new Vector<Value>();
         for(int i=0; i<values.length; i++) {
             String value = values[i];
@@ -611,7 +615,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     newValues.add(p.getValue());
                 }
             } else {
-                newValues.add(source.getSession().getValueFactory().createValue(value));
+                switch(propertyType) {
+                    case PropertyType.DATE:
+                        newValues.add(source.getSession().getValueFactory().createValue(value, propertyType));
+                        break;
+                    default:
+                        newValues.add(source.getSession().getValueFactory().createValue(value));
+                }
             }
         }
         return newValues.toArray(new Value[newValues.size()]);

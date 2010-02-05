@@ -91,8 +91,8 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                         if (getModel() instanceof WorkflowDescriptorModel) {
                             WorkflowDescriptorModel model = (WorkflowDescriptorModel)getModel();
                             Node node = (model != null ? model.getNode() : null);
-                            if (node != null && node.hasProperty("reason")) {
-                                reason = new Model(node.getProperty("reason").getString());
+                            if (node != null && node.hasProperty("hippostdpubwf:reason")) {
+                                reason = new Model(node.getProperty("hippostdpubwf:reason").getString());
                             }
                         }
                     } catch(RepositoryException ex) {
@@ -131,11 +131,11 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
         if (model != null) {
             try {
                 Node node = model.getNode();
-                state = node.getProperty("type").getString();
+                state = node.getProperty("hippostdpubwf:type").getString();
                 if (node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
                     schedule = node.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
-                } else if (node.hasProperty("reqdate")) {
-                    schedule = new Date(node.getProperty("reqdate").getLong());
+                } else if (node.hasProperty("hippostdpubwf:reqdate")) {
+                    schedule = new Date(node.getProperty("hippostdpubwf:reqdate").getLong());
                 }
                 Map<String, Serializable> hints = ((WorkflowDescriptor)model.getObject()).hints();
                 if (hints.containsKey("cancelRequest") && !((Boolean)hints.get("cancelRequest")).booleanValue()) {

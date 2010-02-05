@@ -82,7 +82,7 @@ public class TodoPlugin extends RenderPlugin {
                     while (next == null && iter.hasNext()) {
                         next = iter.next();
                         try {
-                            if (!next.hasProperty("type")) {
+                            if (!next.hasProperty("hippostdpubwf:type")) {
                                 next = null;
                             }
                         } catch (RepositoryException ex) {
@@ -95,7 +95,7 @@ public class TodoPlugin extends RenderPlugin {
                     while (next == null && iter.hasNext()) {
                         next = iter.next();
                         try {
-                            if (!next.hasProperty("type")) {
+                            if (!next.hasProperty("hippostdpubwf:type")) {
                                 next = null;
                             }
                         } catch (RepositoryException ex) {
@@ -152,7 +152,7 @@ public class TodoPlugin extends RenderPlugin {
 
         public String getType() {
             try {
-                return getNode().getProperty("type").getString();
+                return getNode().getProperty("hippostdpubwf:type").getString();
             } catch (RepositoryException e) {
             }
             return null;
@@ -160,7 +160,7 @@ public class TodoPlugin extends RenderPlugin {
 
         public String getLocalType() {
             try {
-                return new StringResourceModel(getNode().getProperty("type").getString(), container, null).getString();
+                return new StringResourceModel(getNode().getProperty("hippostdpubwf:type").getString(), container, null).getString();
             } catch (RepositoryException e) {
             }
             return null;
@@ -168,7 +168,7 @@ public class TodoPlugin extends RenderPlugin {
 
         public String getUsername() {
             try {
-                return getNode().getProperty("username").getString();
+                return getNode().getProperty("hippostdpubwf:username").getString();
             } catch (RepositoryException e) {
             }
             return null;

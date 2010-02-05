@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.util.Date;
+
 import org.hippoecm.repository.api.Document;
 
 public class PublishableDocument extends Document {
@@ -28,6 +30,11 @@ public class PublishableDocument extends Document {
 
     String state;
     String username;
+    Date publicationDate;
+    String lastModifiedBy;
+    Date lastModificationDate;
+    Date creationDate;
+    String createdBy;
 
     public PublishableDocument() {
         this.state = UNPUBLISHED;
@@ -35,11 +42,26 @@ public class PublishableDocument extends Document {
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+        PublishableDocument clonedDocument = (PublishableDocument) super.clone();
+        clonedDocument.creationDate = creationDate;
+        clonedDocument.createdBy = createdBy;
+        clonedDocument.lastModificationDate = lastModificationDate;
+        clonedDocument.lastModifiedBy = lastModifiedBy;
+        clonedDocument.publicationDate = null;
+        return clonedDocument;
     }
 
     void setState(String state) {
         this.state = state;
+    }
+
+    void setPublicationDate(Date date) {
+        publicationDate = date;
+    }
+
+    void setModified(String username) {
+        lastModifiedBy = username;
+        lastModificationDate = new Date();
     }
 
     void setOwner(String username) {

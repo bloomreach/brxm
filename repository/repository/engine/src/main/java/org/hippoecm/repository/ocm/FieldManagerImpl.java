@@ -15,12 +15,13 @@
  */
 package org.hippoecm.repository.ocm;
 
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
+import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -956,6 +957,10 @@ class FieldManagerImpl extends AbstractFieldManager {
     }
 
     public void storeObjectField(int fieldNumber, Object value) {
+        if(value instanceof Date) {
+            storeLongField(fieldNumber, ((Date)value).getTime());
+            return;
+        }
         AbstractClassMetaData cmd = sm.getClassMetaData();
         while (fieldNumber < cmd.getNoOfInheritedManagedFields()) {
             cmd = cmd.getSuperAbstractClassMetaData();
@@ -968,12 +973,14 @@ class FieldManagerImpl extends AbstractFieldManager {
             return;
         if (value == null) {
             try {
-                Node removal = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, field);
+                Item removal = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getItem(node, field);
                 if(removal != null) {
                     if(!removal.getParent().isCheckedOut()) {
                         checkoutNode(removal.getParent());
                     }
-                    DerivedDataEngine.removal(removal);
+                    if(removal instanceof Node) {
+                        DerivedDataEngine.removal((Node)removal);
+                    }
                     removal.remove();
                 }
             } catch (InvalidItemStateException ex) {
@@ -1091,13 +1098,17 @@ class FieldManagerImpl extends AbstractFieldManager {
             JCROID oid = (JCROID) sm.getExternalObjectId(null);
             try {
                 Node node = oid.getNode(session);
-                Node child = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, field);
+                Item child = ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getItem(node, field);
                 if (child != null) {
                     Class clazz = cmd.getField(fieldNumber).getType();
-                    Object id = new JCROID(child.getUUID(), clazz.getName());
-                    StateManager pcSM = StateManagerFactory.newStateManagerForHollow(sm.getObjectManager(), clazz, id);
-                    //pcSM.replaceFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(sm, session, child));
-                    value = pcSM.getObject();
+                    if(Date.class.isAssignableFrom(clazz)) {
+                        value = new Date(((Property)child).getLong());
+                    } else {
+                        Object id = new JCROID(((Node)child).getUUID(), clazz.getName());
+                        StateManager pcSM = StateManagerFactory.newStateManagerForHollow(sm.getObjectManager(), clazz, id);
+                        //pcSM.replaceFields(pcSM.getClassMetaData().getAllFieldNumbers(), new FieldManagerImpl(sm, session, child));
+                        value = pcSM.getObject();
+                    }
                 }
             } catch (ValueFormatException ex) {
                 if(log.isDebugEnabled()) {

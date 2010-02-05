@@ -347,6 +347,18 @@
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>703a49b9-ebbd-4398-a5ed-c10722ede795</sv:value>
       </sv:property>
+          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+              <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+              <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+              <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+              <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+          </sv:property>
       <sv:property sv:name="defaultcontent:introduction" sv:type="String">
         <sv:value>introduction</sv:value>
       </sv:property>

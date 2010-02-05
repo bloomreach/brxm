@@ -30,7 +30,7 @@
       <sv:value>Editing publishable documents</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippostd:publishable</sv:value>
+      <sv:value>hippostdpubwf:document</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:privileges" sv:type="String">
       <sv:value>hippo:author</sv:value>
@@ -50,7 +50,7 @@
           <sv:value>PublishableDocument</sv:value>
         </sv:property>
         <sv:property sv:name="hipposys:nodetype" sv:type="String">
-          <sv:value>hippostd:publishable</sv:value>
+          <sv:value>hippostdpubwf:document</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="org.hippoecm.repository.reviewedactions.PublicationRequest">
@@ -64,7 +64,7 @@
           <sv:value>PublicationRequest</sv:value>
         </sv:property>
         <sv:property sv:name="hipposys:nodetype" sv:type="String">
-          <sv:value>hipposys:request</sv:value>
+          <sv:value>hippostdpubwf:request</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>

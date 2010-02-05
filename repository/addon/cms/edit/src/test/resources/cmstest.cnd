@@ -20,8 +20,9 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<hippostdpubwf='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 <frontend='http://www.onehippo.org/jcr/frontend/nt/2.0'>
 <cmstest='http://www.hippoecm.org/cms/test/nt/1.0'>
 
-[cmstest:document] > hippo:document, hippostd:publishable, hippostd:publishableSummary
+[cmstest:document] > hippo:document, hippostdpubwf:publishable, hippostd:publishableSummary
 - cmstest:title (string)

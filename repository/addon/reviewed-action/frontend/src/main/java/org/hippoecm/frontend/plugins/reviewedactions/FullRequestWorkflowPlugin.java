@@ -124,13 +124,13 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     rejectAction.setVisible(((Boolean)info.get("rejectRequest")).booleanValue());
                 }
 
-                if (documentNode.hasProperty("type")) {
-                    state = documentNode.getProperty("type").getString();
+                if (documentNode.hasProperty("hippostdpubwf:type")) {
+                    state = documentNode.getProperty("hippostdpubwf:type").getString();
                 }
                 if (documentNode.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
                     schedule = documentNode.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
-                } else if (documentNode.hasProperty("reqdate")) {
-                    schedule = new Date(documentNode.getProperty("reqdate").getLong());
+                } else if (documentNode.hasProperty("hippostdpubwf:reqdate")) {
+                    schedule = new Date(documentNode.getProperty("hippostdpubwf:reqdate").getLong());
                 }
             }
          } catch (WorkflowException ex) {

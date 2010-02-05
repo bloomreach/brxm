@@ -145,6 +145,9 @@
         <sv:property sv:name="extension.main" sv:type="String">
           <sv:value>${cluster.id}.main</sv:value>
         </sv:property>
+        <sv:property sv:name="extension.properties" sv:type="String">
+          <sv:value>${cluster.id}.properties</sv:value>
+        </sv:property>
         <sv:property sv:name="extension.mixins" sv:type="String">
           <sv:value>${cluster.id}.mixins</sv:value>
         </sv:property>
@@ -156,6 +159,7 @@
         </sv:property>
         <sv:property sv:name="wicket.extensions" sv:type="String">
           <sv:value>extension.main</sv:value>
+          <sv:value>extension.properties</sv:value>
           <sv:value>extension.select</sv:value>
           <sv:value>extension.mixins</sv:value>
         </sv:property>
@@ -278,6 +282,26 @@
           </sv:property>
         </sv:node>
       </sv:node>
+      <sv:node sv:name="properties">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="engine" sv:type="String">
+          <sv:value>${engine}</sv:value>
+        </sv:property>
+        <sv:property sv:name="mode" sv:type="String">
+          <sv:value>${mode}</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.hippoecm.frontend.plugins.reviewedactions.PropertiesPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${cluster.id}.properties</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>${wicket.model}</sv:value>
+        </sv:property>
+      </sv:node>
       <sv:node sv:name="mixinPicker">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
@@ -348,6 +372,18 @@
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>1aa56ada-a72a-4865-adfb-9d1f18211856</sv:value>
       </sv:property>
+    <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+    </sv:property>
       <sv:property sv:name="defaultcontent:introduction" sv:type="String">
         <sv:value>introduction</sv:value>
       </sv:property>

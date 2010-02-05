@@ -148,6 +148,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         if (draftDocument != null) {
             unpublishedDocument = null;
             draftDocument.setState(PublishableDocument.UNPUBLISHED);
+            draftDocument.setModified(getWorkflowContext().getUserIdentity());
             return draftDocument;
         } else {
             throw new WorkflowException("no draft version of publication");

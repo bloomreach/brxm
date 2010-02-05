@@ -79,19 +79,27 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         node.setProperty(HippoNodeType.HIPPO_DISCRIMINATOR, new Value[] { session.getValueFactory().createValue("hippostd:state") });
         node = node.addNode("versiondocument", "hippo:document");
         node.addMixin("hippo:harddocument");
-        node.addMixin("hippostd:publishable");
+        node.addMixin("hippostdpubwf:document");
         node.addMixin("hippostd:languageable");
         node.setProperty("hippostd:state", "unpublished");
         node.setProperty("hippostd:holder", "admin");
         node.setProperty("hippostd:language", "aa");
+        node.setProperty("hippostdpubwf:createdBy", "admin");
+        node.setProperty("hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00");
+        node.setProperty("hippostdpubwf:lastModifiedBy", "admin");
+        node.setProperty("hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00");
 
         node = root.addNode("baredocument", "hippo:document");
         node.addMixin("hippo:harddocument");
-        node.addMixin("hippostd:publishable");
+        node.addMixin("hippostdpubwf:document");
         node.addMixin("hippostd:languageable");
         node.setProperty("hippostd:state", "unpublished");
         node.setProperty("hippostd:holder", "admin");
         node.setProperty("hippostd:language", "aa");
+        node.setProperty("hippostdpubwf:createdBy", "admin");
+        node.setProperty("hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00");
+        node.setProperty("hippostdpubwf:lastModifiedBy", "admin");
+        node.setProperty("hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00");
 
         session.save();
     }

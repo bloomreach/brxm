@@ -27,9 +27,9 @@
       <field name="draftDocument" column="../{.}[hippostd:state='draft']"/>
       <field name="unpublishedDocument" column="../{.}[hippostd:state='unpublished']"/>
       <field name="publishedDocument" column="../{.}[hippostd:state='published']"/>
-      <field name="current" column="../hippo:request[type='publish']"/>
-      <field name="current2" column="../hippo:request[type='depublish']"/>
-      <field name="current3" column="../hippo:request[type='delete']"/>
+      <field name="current" column="../hippo:request[hippostdpubwf:type='publish']"/>
+      <field name="current2" column="../hippo:request[hippostdpubwf:type='depublish']"/>
+      <field name="current3" column="../hippo:request[hippostdpubwf:type='delete']"/>
     </class>
     <class name="FullRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
@@ -40,12 +40,12 @@
     <class name="BasicRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
       <field name="request" column="."/>
-      <field name="document" column="{document}"/>
+      <field name="document" column="{hippostdpubwf:document}"/>
     </class>
     <class name="ScheduledRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
       <field name="request" column="."/>
-      <field name="document" column="{document}"/>
+      <field name="document" column="{hippostdpubwf:document}"/>
     </class>
     <class name="UnlockWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
@@ -55,14 +55,19 @@
       <inheritance strategy="new-table"/>
       <field name="state" column="hippostd:state"/>
       <field name="username" column="hippostd:holder"/>
+      <field name="lastModificationDate" column="hippostdpubwf:lastModificationDate"/>
+      <field name="lastModifiedBy" column="hippostdpubwf:lastModifiedBy"/>
+      <field name="publicationDate" column="hippostdpubwf:publicationDate"/>
+      <field name="createdBy" column="hippostdpubwf:createdBy"/>
+      <field name="creationDate" column="hippostdpubwf:creationDate"/>
     </class>
     <class name="PublicationRequest" detachable="true" table="documents">
       <datastore-identity strategy="native"/>
-      <field name="type" column="type"/>
-      <field name="reason" column="reason"/>
-      <field name="reqdate" column="reqdate"/>
-      <field name="username" column="username"/>
-      <field name="reference" column="document"/>
+      <field name="type" column="hippostdpubwf:type"/>
+      <field name="reason" column="hippostdpubwf:reason"/>
+      <field name="reqdate" column="hippostdpubwf:reqdate"/>
+      <field name="username" column="hippostdpubwf:username"/>
+      <field name="reference" column="hippostdpubwf:document"/>
     </class>
   </package>
 </jdo>
