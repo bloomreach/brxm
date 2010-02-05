@@ -409,7 +409,7 @@ public class UpdaterEngine {
                         if (index != -1) {
                             modified = true;
                             iter.remove();
-                            modules.insertElementAt(module, index);
+                            modules.insertElementAt(module, index-1);
                             break;
                         }
                     }
@@ -525,6 +525,8 @@ public class UpdaterEngine {
             boolean updates;
             do {
                 Session subSession = session.impersonate(new SimpleCredentials("system", new char[] {}));
+                // in case of migrating the hippo namespace the following line may be relevant
+                // ((org.hippoecm.repository.impl.SessionDecorator)subSession).postDerivedData(false);
                 UpdaterEngine engine = new UpdaterEngine(subSession);
                 updates = engine.prepare();
                 if (updates) {
