@@ -38,7 +38,7 @@
     <sv:property sv:name="hippostd:modify" sv:type="String">
       <sv:value>./_name</sv:value>
       <sv:value>$name</sv:value>
-      <sv:value>./hippostdwf:createdBy</sv:value>
+      <sv:value>./hippostdpubwf:createdBy</sv:value>
       <sv:value>$holder</sv:value>
       <sv:value>./hippostdpubwf:creationDate</sv:value>
       <sv:value>$now</sv:value>
