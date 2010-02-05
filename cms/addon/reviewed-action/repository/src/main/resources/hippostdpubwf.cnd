@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2010 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,16 @@
 <hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
 <hippostdpubwf='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 
-[hippo:ntunstructured] > nt:unstructured
+[hippostdpubwf:document] > hippostd:publishable mixin
+- hippostdpubwf:creationDate (Date) mandatory
+- hippostdpubwf:createdBy (String) mandatory
+- hippostdpubwf:lastModificationDate (Date) mandatory
+- hippostdpubwf:lastModifiedBy (String) mandatory
+- hippostdpubwf:publicationDate (Date)
 
-[hippo:testpublishabledocument] > hippo:document, hippostdpubwf:document
-+ * = hippo:ntunstructured multiple
-- *
+[hippostdpubwf:request] > hippo:request
+- hippostdpubwf:type (String) mandatory < 'rejected', 'publish', 'depublish', 'scheduledpublish', 'scheduleddepublish', 'delete'
+- hippostdpubwf:reason (String)
+- hippostdpubwf:reqdate (Date)
+- hippostdpubwf:username (String)
+- hippostdpubwf:document (Reference)

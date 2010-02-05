@@ -177,6 +177,11 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                     "jcr:mixinTypes", "hippo:harddocument",
                     HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED,
                     HippoStdNodeType.HIPPOSTD_STATESUMMARY, HippoStdNodeType.NEW,
+                    "hippostdpubwf:createdBy", "admin",
+                    "hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00",
+                    "hippostdpubwf:lastModifiedBy", "admin",
+                    "hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00"
+            
     };
 
     ModelReference modelReference;

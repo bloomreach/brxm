@@ -108,8 +108,8 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 }
                 if(node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
                     schedule = node.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
-                } else if (node.hasProperty("reqdate")) {
-                    schedule = new Date(node.getProperty("reqdate").getLong());
+                } else if (node.hasProperty("hippostdpubwf:reqdate")) {
+                    schedule = new Date(node.getProperty("hippostdpubwf:reqdate").getLong());
                 }
                 Map<String, Serializable> hints = ((WorkflowDescriptor)model.getObject()).hints();
                 if (hints.containsKey("cancelRequest") && !((Boolean)hints.get("cancelRequest")).booleanValue()) {

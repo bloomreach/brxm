@@ -168,6 +168,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     public void doPublish() throws WorkflowException, MappingException {
         publishedDocument = null;
         unpublishedDocument.setState(PublishableDocument.PUBLISHED);
+        unpublishedDocument.setPublicationDate(new Date());
         try {
             VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
             versionWorkflow.version();

@@ -55,7 +55,7 @@
       <sv:value>Unlock documents</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippostd:publishable</sv:value>
+      <sv:value>hippostdpubwf:document</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:privileges" sv:type="String">
       <sv:value>hippo:admin</sv:value>
@@ -75,7 +75,7 @@
           <sv:value>PublishableDocument</sv:value>
         </sv:property>
         <sv:property sv:name="hipposys:nodetype" sv:type="String">
-          <sv:value>hippostd:publishable</sv:value>
+          <sv:value>hippostdpubwf:document</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>

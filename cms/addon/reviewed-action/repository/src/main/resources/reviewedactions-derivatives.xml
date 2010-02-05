@@ -62,7 +62,7 @@
         <sv:value>hipposys:resolvepropertyreference</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:relPath" sv:type="String">
-        <sv:value>../request[@type='publish']/type</sv:value>
+        <sv:value>../request[@hippostdpubwf:type='publish']/type</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

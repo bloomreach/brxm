@@ -35,6 +35,18 @@
     <sv:property sv:name="jcr:statement" sv:type="String">
       <sv:value>//element(*,hipposysedit:namespacefolder)/element(*,mix:referenceable)/element(*,hipposysedit:templatetype)/hipposysedit:prototypes/element(hipposysedit:prototype,hippo:document)</sv:value>
     </sv:property>
+    <sv:property sv:name="hippostd:modify" sv:type="String">
+      <sv:value>./_name</sv:value>
+      <sv:value>$name</sv:value>
+      <sv:value>./hippostdwf:createdBy</sv:value>
+      <sv:value>$holder</sv:value>
+      <sv:value>./hippostdpubwf:creationDate</sv:value>
+      <sv:value>$now</sv:value>
+      <sv:value>./hippostdpubwf:lastModifiedBy</sv:value>
+      <sv:value>$holder</sv:value>
+      <sv:value>./hippostdpubwf:lastModificationDate</sv:value>
+      <sv:value>$now</sv:value>
+    </sv:property>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:translation</sv:value>

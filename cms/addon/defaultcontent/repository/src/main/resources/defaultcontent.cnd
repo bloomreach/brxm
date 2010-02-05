@@ -20,9 +20,10 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<hippostdpubwf='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 <defaultcontent='http://www.hippoecm.org/defaultcontent/nt/1.6'>
 
-[defaultcontent:basedocument] > hippo:document, hippostd:publishable, hippostd:publishableSummary
+[defaultcontent:basedocument] > hippo:document, hippostdpubwf:document, hippostd:publishableSummary
 
 [defaultcontent:address]
 - defaultcontent:street (string)

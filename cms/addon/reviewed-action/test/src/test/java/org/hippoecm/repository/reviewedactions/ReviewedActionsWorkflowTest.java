@@ -51,6 +51,10 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
         node.setProperty("content", LOREM);
         node.setProperty("hippostd:holder", "admin");
         node.setProperty("hippostd:state", "draft");
+        node.setProperty("hippostdpubwf:createdBy", "admin");
+        node.setProperty("hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00");
+        node.setProperty("hippostdpubwf:lastModifiedBy", "admin");
+        node.setProperty("hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00");
 
         session.save();
     }
@@ -119,12 +123,12 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             workflow.rejectRequest("comma should be a point");
             session.save();
             session.refresh(true);
-            assertTrue(getNode("test/myarticle/hippo:request").getProperty("reason").getString().equals("comma should be a point"));
+            assertTrue(getNode("test/myarticle/hippo:request").getProperty("hippostdpubwf:reason").getString().equals("comma should be a point"));
         }
 
         // steps taken by an author
         {
-            node = getNode("test/myarticle/hippo:request[@type='rejected']");
+            node = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='rejected']");
             BasicRequestWorkflow workflow = (BasicRequestWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.cancelRequest();
@@ -158,7 +162,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
 
         // These steps would be taken by editor:
         {
-            node = getNode("test/myarticle/hippo:request[@type='publish']");
+            node = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='publish']");
             FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
             workflow.acceptRequest();
             session.save();
@@ -208,7 +212,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
 
         // Test regarding Issue HREPTWO-688
         {
-            Node node2 = getNode("test/myarticle/hippo:request[@type='delete']");
+            Node node2 = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='delete']");
             FullRequestWorkflow requestWorkflow = (FullRequestWorkflow) getWorkflow(node2, "default");
             requestWorkflow.cancelRequest();
             session.save();
