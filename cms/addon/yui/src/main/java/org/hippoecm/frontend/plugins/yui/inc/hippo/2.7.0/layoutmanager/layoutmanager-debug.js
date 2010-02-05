@@ -120,13 +120,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     o.render();
                 })
                 this._w.clear();
-
-                if (YAHOO.env.ua.ie >= 6 && YAHOO.env.ua.ie < 8) {
-                    var re = Dom.getElementsByClassName('yui-resize-handle', 'div');
-                    for(var i=0; i<re.length; i++) {
-                        Dom.setStyle(re[i], 'width', '10px');
-                    }
-                }
             },
             
             addRoot : function(id, clazz, config) {
