@@ -21,3 +21,5 @@ table.toolbarRow {
 
 .hippo-preview-document .hippo-editor-field {overflow: hidden;}
 .column-wrapper {width: 99%; overflow: hidden;}
+
+.yui-resize .yui-resize-handle-r { width: 10px; }
