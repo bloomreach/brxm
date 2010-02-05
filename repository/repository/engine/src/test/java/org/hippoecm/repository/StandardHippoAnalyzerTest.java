@@ -25,7 +25,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StandardECMAnalyzerTest extends TestCase {
+public class StandardHippoAnalyzerTest extends TestCase {
     
     public final static String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
     public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";

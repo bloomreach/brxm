@@ -29,7 +29,7 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  * The standard multi language ECM analyzer, taking care of removing diacritics and stopwords for most common languages
  *
  */
-public class StandardECMAnalyzer extends Analyzer{
+public class StandardHippoAnalyzer extends Analyzer{
 
     @Override
     public TokenStream tokenStream(String fieldName, Reader reader) {
