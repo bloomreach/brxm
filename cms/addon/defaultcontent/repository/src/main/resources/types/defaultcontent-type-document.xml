@@ -70,7 +70,7 @@
       </sv:property>
       <sv:property sv:name="hipposysedit:supertype" sv:type="String">
         <sv:value>hippo:document</sv:value>
-        <sv:value>hippostd:publishable</sv:value>
+        <sv:value>hippostdpubwf:document</sv:value>
         <sv:value>hippostd:publishableSummary</sv:value>
       </sv:property>
     </sv:node>
