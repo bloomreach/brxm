@@ -42,6 +42,22 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
         }
         
         YAHOO.hippo.HippoAjax = new YAHOO.hippo.HippoAjaxImpl();
+        
+        var tmpFunc = Wicket.Ajax.Call.prototype.processComponent;
+        Wicket.Ajax.Call.prototype.processComponent = function(steps, node) {
+            var compId = node.getAttribute("id");
+            var el = YAHOO.util.Dom.get(compId);
+
+            var els = YAHOO.util.Dom.getElementsBy(function(node) {
+                return !YAHOO.lang.isUndefined(node.HippoDestroyID);
+            }, null, el);
+            
+            for(var i=0; i<els.length; i++) {
+                YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
+            }
+            YAHOO.util.Event.purgeElement(el, false);
+            tmpFunc(steps, node);
+        }
 
     })();
 
@@ -51,82 +67,3 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
 }
 
 var HippoAjax = YAHOO.hippo.HippoAjax;
-
-//Fix for IE's, comment first line in eval text
-
-// Process a script element (both inline and external)
-Wicket.Head.Contributor.prototype.processScript = function(steps, node) {
-    steps.push(function(notify) {       
-        // if element in same id is already in document, 
-        // or element with same src attribute is in document, skip it
-        if (Wicket.DOM.containsElement(node) ||
-            Wicket.Head.containsElement(node, "src")) {
-            notify(); 
-            return;
-        }
-        
-        // determine whether it is external javascript (has src attribute set)
-        var src = node.getAttribute("src");
-        
-        if (src != null && src != "") {
-            // load the external javascript using Wicket.Ajax.Request
-            
-            // callback when script is loaded
-            var onLoad = function(content) {                    
-                Wicket.Head.addJavascript(content, null, src);
-                Wicket.Ajax.invokePostCallHandlers();
-
-                // continue to next step
-                notify();
-            }
-            // we need to schedule the request as timeout
-            // calling xml http request from another request call stack doesn't work
-            window.setTimeout(function() {
-                var req = new Wicket.Ajax.Request(src, onLoad, false, false);
-                req.debugContent = false;
-                if (Wicket.Browser.isKHTML())
-                    // konqueror can't process the ajax response asynchronously, therefore the 
-                    // javascript loading must be also synchronous
-                    req.async = false;
-                // get the javascript
-                req.get();                  
-            },1);
-        } else {
-            // serialize the element content to string
-            var text = Wicket.DOM.serializeNodeChildren(node);
-            
-            var id = node.getAttribute("id");
-            
-            if (typeof(id) == "string" && id.length > 0) {                  
-                // add javascript to document head
-                Wicket.Head.addJavascript(text, id);
-            } else {
-                try {
-                    eval('//' + text);
-                } catch (e) {
-                    Wicket.Log.error(e);
-                }
-            }
-            
-            // continue to next step
-            notify();
-        }
-    });                 
-}
-
-var tmpFunc = Wicket.Ajax.Call.prototype.processComponent;
-Wicket.Ajax.Call.prototype.processComponent = function(steps, node) {
-    var compId = node.getAttribute("id");
-    var el = YAHOO.util.Dom.get(compId);
-
-    var els = YAHOO.util.Dom.getElementsBy(function(node) {
-        return !YAHOO.lang.isUndefined(node.HippoDestroyID);
-    }, null, el);
-    
-    for(var i=0; i<els.length; i++) {
-        YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
-    }
-    YAHOO.util.Event.purgeElement(el, true)
-
-    tmpFunc(steps, node);
-}
