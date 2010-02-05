@@ -86,12 +86,20 @@ public class StandardHippoAnalyzerTest extends TestCase {
     
     @Test
     public void testDiacritics() throws Exception {
-        String sentence = "Hygiëne is for françois in his privéleven as important as Fußball";
+       /*
+        * ë = \u00EB
+        * ç = \u00E7
+        * é = \u00E9
+        * ß = \u00DF
+        */
+        
+        
+        String sentence = "Hygi\u00EBne is for fran\u00E7ois in his priv\u00E9leven as important as Fu\u00DFball";
         createCompoundStructure(sentence);
         
      // search with diacritics Hygiëne
         {
-            String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'hygiëne')]";
+            String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'hygi\u00EBne')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
             assertTrue(nodes.getSize() == 1L); 
@@ -115,7 +123,7 @@ public class StandardHippoAnalyzerTest extends TestCase {
         
      // search with diacritics françois
         {
-            String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'françois')]";
+            String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'fran\u00E7ois')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
             assertTrue(nodes.getSize() == 1L); 
@@ -139,7 +147,7 @@ public class StandardHippoAnalyzerTest extends TestCase {
         
      // search with diacritics privéleven
         {
-            String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'privéleven')]";
+            String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'priv\u00E9leven')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
             assertTrue(nodes.getSize() == 1L); 
@@ -163,7 +171,7 @@ public class StandardHippoAnalyzerTest extends TestCase {
         
      // search with diacritics Fußball
         {
-            String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'Fußball')]";
+            String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'Fu\u00DFball')]";
             QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator nodes = queryResult.getNodes();
             assertTrue(nodes.getSize() == 1L); 
