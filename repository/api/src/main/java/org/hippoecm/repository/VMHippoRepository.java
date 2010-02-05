@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import java.rmi.NotBoundException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -23,7 +22,11 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
-class VMHippoRepository {
+/**
+ * DO NOT USE THIS CLASS!
+ * This class is NOT part of the API.
+ */
+public class VMHippoRepository {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -37,7 +40,8 @@ class VMHippoRepository {
         repositories = Collections.synchronizedMap(map);
     }
 
-    public static HippoRepository create(String location) throws NotBoundException, RepositoryException {
+    /** DO NOT USE THIS METHOD!  This class and all its methods are NOT part of the API. */
+    public static HippoRepository create(String location) throws RepositoryException {
         HippoRepository hippoRepository = null;
         if (location != null && location.startsWith("vm://")) {
             location = location.substring("vm://".length());
@@ -57,6 +61,7 @@ class VMHippoRepository {
         }
     }
 
+    /** DO NOT USE THIS METHOD!  This class and all its methods are NOT part of the API. */
     public static void register(String location, HippoRepository repository) {
         repositories.put(location, repository);
     }

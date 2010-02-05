@@ -36,18 +36,18 @@ import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class BootstrapRepository extends HippoRepositoryImpl {
+class BootstrapHippoRepository extends HippoRepositoryImpl {
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final Logger log = LoggerFactory.getLogger(BootstrapRepository.class);
+    protected final Logger log = LoggerFactory.getLogger(BootstrapHippoRepository.class);
 
     private JackrabbitRepository backingRepository = null;
 
     private String location;
 
-    public BootstrapRepository(String location) throws RepositoryException {
+    public BootstrapHippoRepository(String location) throws RepositoryException {
         super();
         this.location = location;
 
@@ -91,7 +91,7 @@ class BootstrapRepository extends HippoRepositoryImpl {
     public static HippoRepository create(String location) throws RepositoryException {
         if(location.startsWith("bootstrap:"))
             location = location.substring("bootstrap:".length());
-        BootstrapRepository repository = new BootstrapRepository(location);
+        BootstrapHippoRepository repository = new BootstrapHippoRepository(location);
         Session session = repository.login();
         HippoRepository pivotRepository = LocalHippoRepository.create(session.getRootNode().getProperty("repository").getString());
         session.logout();
