@@ -20,6 +20,9 @@
     <excludefromnodescope>
         <nodetype>hippo:paths</nodetype>
         <nodetype>hippo:docbase</nodetype>
+        <nodetype>hippostd:state</nodetype>
+        <nodetype>hippostd:stateSummary</nodetype>
+        <nodetype>hippostd:holder</nodetype>
     </excludefromnodescope>
     
 </configuration>
