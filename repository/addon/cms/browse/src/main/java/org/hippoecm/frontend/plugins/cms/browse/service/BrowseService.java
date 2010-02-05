@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollectionModel;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.DocumentCollectionType;
+import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection.Match;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -146,13 +147,20 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         if (document.getObject() == null) {
             return;
         }
+        Match closestMatch = null;
+        String closestName = null;
         for (String name : sections.getSections()) {
             IBrowserSection section = sections.getSection(name);
-            if (section.contains(document)) {
-                section.select(document);
-                sections.setActiveSection(name);
-                break;
+            Match match = section.contains(document);
+            if (match != null && (closestMatch == null || match.getDistance() < closestMatch.getDistance())) {
+                closestMatch = match;
+                closestName = name;
             }
+        }
+        if (closestName != null) {
+            IBrowserSection section = sections.getSection(closestName);
+            section.select(document);
+            sections.setActiveSection(closestName);
         }
         if (collectionModel.getObject() != null && collectionModel.getObject().getType() == DocumentCollectionType.FOLDER) {
             if (collectionModel.getObject().getFolder().equals(document)) {

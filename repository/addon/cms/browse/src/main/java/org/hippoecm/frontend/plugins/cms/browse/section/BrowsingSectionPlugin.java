@@ -112,13 +112,24 @@ public class BrowsingSectionPlugin extends RenderPlugin<DocumentCollection> impl
         return null;
     }
 
-    public boolean contains(IModel<Node> nodeModel) {
+    public Match contains(IModel<Node> nodeModel) {
         try {
-            return nodeModel.getObject().getPath().startsWith(rootPath);
+            String path = nodeModel.getObject().getPath();
+            if(path != null && path.startsWith(rootPath)) {
+                Node node = nodeModel.getObject();
+                int distance = 0;
+                while (node.getDepth() > 0 && node.getPath().startsWith(rootPath)) {
+                    distance++;
+                    node = node.getParent();
+                }
+                Match match = new Match();
+                match.setDistance(distance);
+                return match;
+            }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-        return false;
+        return null;
     }
 
     public IModel<String> getTitle() {
