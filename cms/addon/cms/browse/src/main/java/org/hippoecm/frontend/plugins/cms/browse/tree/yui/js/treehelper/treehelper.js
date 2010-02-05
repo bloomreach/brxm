@@ -39,6 +39,9 @@ if (!YAHOO.hippo.TreeHelper) {
             init : function(id, cfg){
                 YAHOO.log('Register[' + id + '] cfg=' + Lang.dump(cfg), 'info', 'TreeHelper');
                 var el = Dom.get(id);
+                if(el == null) {
+                    return;
+                }
                 el['treeHelper'] = {
                         cfg: cfg,
                         layoutUnit: null
@@ -47,6 +50,9 @@ if (!YAHOO.hippo.TreeHelper) {
             
             register : function(id) {
                 var el = Dom.get(id);
+                if(el == null) {
+                    return;
+                }
                 if(el.treeHelper.cfg.bindToLayoutUnit && Lang.isUndefined(el.treeHelper.onRender)) {
                     var me = this;
                     YAHOO.hippo.LayoutManager.registerResizeListener(el, me, function() {
@@ -59,6 +65,9 @@ if (!YAHOO.hippo.TreeHelper) {
             
             updateMouseListeners : function(id) {
                 var el = Dom.get(id);
+                if(el == null) {
+                    return;
+                }
                 if(el.treeHelper.cfg.registerContextMenu) {
                     var items = Dom.getElementsByClassName('a_', 'div', id);
                     for(var i=0; i<items.length; i++) {
@@ -80,6 +89,9 @@ if (!YAHOO.hippo.TreeHelper) {
                 this.register(id);
                 var width = 0;
                 var el = Dom.get(id);
+                if(el == null) {
+                    return;
+                }
                 
                 if(el.treeHelper.cfg.treeAutowidth) {
                     var computedWidth = 0;
