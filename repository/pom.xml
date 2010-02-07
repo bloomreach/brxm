@@ -17,7 +17,7 @@
 
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm</artifactId>
-  <version>2.12.01-SNAPSHOT</version>
+  <version>2.12.01</version>
 
   <name>Hippo ECM</name>
   <description>The core of Hippo ECM, i.e. repository 2, plus an advanced webbased userinterface for content management: CMS, 
@@ -92,9 +92,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html 
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_01</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_01</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_01</url>
   </scm>
 
   <!-- Where to publish the project data, especially the documentation site -->
