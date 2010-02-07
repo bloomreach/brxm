@@ -26,28 +26,6 @@ import javax.naming.NamingException;
 
 import javax.jcr.RepositoryException;
 
-/**
- * The HippoRepositoryFactory class is a factory class for obtaining a reference to a Hippo Repository connection.
- * Typical usage is:
- * <pre>
- * HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
- * </pre>
- * Which should return the default repository, configured from an external source using the default transport mechanism.
- * 
- * If you need to contact a specific instance of a repository, you can use:
- * <pre>
- * HippoRepository repository = HippoRepository.getHippoRepository(url);
- * </pre>
- * Where the url parameter is a string containing the location or address of the repository.  This url can take different
- * forms to indicate the location (filesystem or hostname) and the transportation mechanism to use.  Typically you
- * would use <code>rmi://hostname/hipporepository</code> to contact the indicated hostname using RMI transport mechanism
- * where a named service hipporepository is the Hippo repository.  A more efficient version of the RMI transport mechanism can
- * be used by appending <code>/spi</code> to this RMI based protocol address.  To start a new local repository, you can
- * use the location string <code>file:/absolute/filesystem/path</code>.
- *
- * The returned Repository is a JCR-based repository, but is not a direct instance of the class javax.jcr.Repository to
- * allow some additional operations.
- */
 public class HippoRepositoryFactory {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -125,30 +103,10 @@ public class HippoRepositoryFactory {
         if (location.startsWith("rmi://")) {
             try {
                 defaultLocation = location;
-                try {
-                    if(!location.endsWith("/spi")) {
-                        return (HippoRepository) Class.forName("org.hippoecm.repository.RemoteHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
-                    } else {
-                        return (HippoRepository) Class.forName("org.hippoecm.repository.SPIHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
-                    }
-                } catch(ClassNotFoundException ex) {
-                    throw new RepositoryException(ex);
-                } catch(NoSuchMethodException ex) {
-                    throw new RepositoryException(ex);
-                } catch(IllegalAccessException ex) {
-                    throw new RepositoryException(ex);
-                } catch(InvocationTargetException ex) {
-                    if(ex.getCause() instanceof RemoteException) {
-                        throw (RemoteException) ex.getCause();
-                    } else if(ex.getCause() instanceof NotBoundException) {
-                        throw (NotBoundException) ex.getCause();
-                    } else if(ex.getCause() instanceof MalformedURLException) {
-                        throw (MalformedURLException) ex.getCause();
-                    } else if(ex.getCause() instanceof RepositoryException) {
-                        throw (RepositoryException) ex.getCause();
-                    } else {
-                        throw new RepositoryException("unchecked exception: "+ex.getCause().getMessage(), ex);
-                    }
+                if(!location.endsWith("/spi")) {
+                    return RemoteHippoRepository.create(location);
+                } else {
+                    return SPIHippoRepository.create(location);
                 }
             } catch (RemoteException ex) {
                 throw new RepositoryException("Unable to connect to repository", ex);
@@ -193,24 +151,8 @@ public class HippoRepositoryFactory {
         }
 
         if(location.startsWith("vm:")) {
-            try {
-                defaultLocation = location;
-                return (HippoRepository) Class.forName("org.hippoecm.repository.VMHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
-            } catch(ClassNotFoundException ex) {
-                throw new RepositoryException(ex);
-            } catch(NoSuchMethodException ex) {
-                throw new RepositoryException(ex);
-            } catch(IllegalAccessException ex) {
-                throw new RepositoryException(ex);
-            } catch(InvocationTargetException ex) {
-                if (ex.getCause() instanceof RepositoryException) {
-                    throw (RepositoryException) ex.getCause();
-                } else if (ex.getCause() instanceof IllegalArgumentException) {
-                    throw new RepositoryException("Invalid data: " + ex.getCause());
-                } else {
-                    throw new RepositoryException("unchecked exception: " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                }
-            }
+            defaultLocation = location;
+            return VMHippoRepository.create(location);
         }
 
          if(location.startsWith("proxy:")) {
