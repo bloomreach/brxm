@@ -30,6 +30,8 @@ import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.query.lucene.HippoDateTools;
 
 public abstract class AbstractRangesFacetNavigationTest extends TestCase{
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
    
     /*
      * as we are having expectations about dates, our expectations might be wrong during the 'switch' of a day. Hence, this method returns

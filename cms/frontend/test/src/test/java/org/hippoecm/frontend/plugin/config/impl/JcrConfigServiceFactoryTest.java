@@ -32,6 +32,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class JcrConfigServiceFactoryTest extends PluginTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private String[] config = new String[] {
         "/config", "nt:unstructured",

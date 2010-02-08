@@ -27,6 +27,8 @@ import org.junit.Test;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 
 public class AccordionTest extends YuiTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public static class Page extends YuiPage {
 

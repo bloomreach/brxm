@@ -22,6 +22,9 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 
 public class BrowserSearchResultModel extends Model<BrowserSearchResult> implements IObservable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private IObservationContext obContext;

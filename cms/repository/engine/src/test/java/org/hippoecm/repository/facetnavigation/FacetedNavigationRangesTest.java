@@ -118,7 +118,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
                 .getUUID());
         
         String[] facetRanges = {"hippo:price$[" +
-        		"{name:'less 10.000', resolution:'double', end:10000}," +
+                "{name:'less 10.000', resolution:'double', end:10000}," +
                 "{name:'10.000 - 20.000', resolution:'double', begin:10000, end:20000}," +
                 "{name:'more 20.000', resolution:'double', begin:20000}, " +
                 "{name:'all prices', resolution:'double'}" +

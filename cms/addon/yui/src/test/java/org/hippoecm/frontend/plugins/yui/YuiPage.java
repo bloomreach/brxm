@@ -23,6 +23,8 @@ import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 
 public class YuiPage extends WebPage {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private WebAppBehavior yuiManager;
     
