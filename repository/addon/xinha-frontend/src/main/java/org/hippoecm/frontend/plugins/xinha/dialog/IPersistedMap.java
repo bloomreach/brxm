@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 
-public interface IPersistedMap extends Map, IClusterable {
+public interface IPersistedMap extends Map<String, String>, IClusterable {
     final static String SVN_ID = "$Id$";
     
     boolean isValid();

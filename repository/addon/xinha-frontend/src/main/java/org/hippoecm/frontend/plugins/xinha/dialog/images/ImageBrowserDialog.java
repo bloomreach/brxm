@@ -24,18 +24,16 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
-import org.hippoecm.frontend.plugins.xinha.dialog.AbstractPersistedMap;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageBrowserDialog extends AbstractBrowserDialog {
+public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -46,7 +44,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
     public final static List<String> ALIGN_OPTIONS = Arrays.asList(new String[] { "top", "middle", "bottom", "left",
             "right" });
 
-    public ImageBrowserDialog(IPluginContext context, IPluginConfig config, final IModel<AbstractPersistedMap> model) {
+    public ImageBrowserDialog(IPluginContext context, IPluginConfig config, final IModel<XinhaImage> model) {
         super(context, config, model);
 
         add(new TextFieldWidget("alt", new StringPropertyModel(model, XinhaImage.ALT)) {
@@ -58,19 +56,19 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
             }
         });
 
-        DropDownChoice align = new DropDownChoice("align", new PropertyModel(model, XinhaImage.ALIGN), ALIGN_OPTIONS,
-                new IChoiceRenderer() {
-                    private static final long serialVersionUID = 1L;
+        DropDownChoice<String> align = new DropDownChoice<String>("align", new StringPropertyModel(model,
+                XinhaImage.ALIGN), ALIGN_OPTIONS, new IChoiceRenderer<String>() {
+            private static final long serialVersionUID = 1L;
 
-                    public Object getDisplayValue(Object object) {
-                        return new StringResourceModel((String) object, ImageBrowserDialog.this, null).getString();
-                    }
+            public Object getDisplayValue(String object) {
+                return new StringResourceModel(object, ImageBrowserDialog.this, null).getString();
+            }
 
-                    public String getIdValue(Object object, int index) {
-                        return (String) object;
-                    }
+            public String getIdValue(String object, int index) {
+                return object;
+            }
 
-                });
+        });
         align.add(new AjaxFormComponentUpdatingBehavior("onChange") {
             private static final long serialVersionUID = 1L;
 
@@ -89,9 +87,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog {
 
     @Override
     protected void onOk() {
-        XinhaImage xi = (XinhaImage) getModelObject();
-        if (xi.isValid()) {
-            xi.save();
+        if (getModelObject().isValid()) {
+            getModelObject().save();
         } else {
             error("Please select an image");
         }

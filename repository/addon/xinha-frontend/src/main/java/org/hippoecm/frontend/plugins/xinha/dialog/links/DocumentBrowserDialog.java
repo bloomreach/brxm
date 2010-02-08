@@ -22,15 +22,13 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
-import org.hippoecm.frontend.plugins.xinha.dialog.AbstractPersistedMap;
-import org.hippoecm.frontend.plugins.xinha.services.links.InternalXinhaLink;
-import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
+import org.hippoecm.frontend.plugins.xinha.dialog.DocumentLink;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentBrowserDialog extends AbstractBrowserDialog {
+public class DocumentBrowserDialog<T extends DocumentLink> extends AbstractBrowserDialog<T> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -38,10 +36,10 @@ public class DocumentBrowserDialog extends AbstractBrowserDialog {
 
     static final Logger log = LoggerFactory.getLogger(DocumentBrowserDialog.class);
 
-    public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, IModel<AbstractPersistedMap> model) {
+    public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, IModel<T> model) {
         super(context, config, model);
 
-        add(new TextFieldWidget("title", new StringPropertyModel(model, XinhaLink.TITLE)) {
+        add(new TextFieldWidget("title", new StringPropertyModel(model, DocumentLink.TITLE)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -64,9 +62,8 @@ public class DocumentBrowserDialog extends AbstractBrowserDialog {
 
     @Override
     protected void onOk() {
-        InternalXinhaLink link = (InternalXinhaLink) getModelObject();
-        if (link.isValid()) {
-            link.save();
+        if (getModelObject().isValid()) {
+            getModelObject().save();
         } else {
             error("Please select a document");
         }

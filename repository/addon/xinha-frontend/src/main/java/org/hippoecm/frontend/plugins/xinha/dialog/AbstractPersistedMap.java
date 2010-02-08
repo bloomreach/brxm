@@ -18,9 +18,8 @@ package org.hippoecm.frontend.plugins.xinha.dialog;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
-public abstract class AbstractPersistedMap extends HashMap implements IPersistedMap {
+public abstract class AbstractPersistedMap extends HashMap<String, String> implements IPersistedMap {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -51,7 +50,7 @@ public abstract class AbstractPersistedMap extends HashMap implements IPersisted
         StringBuilder sb = new StringBuilder();
         sb.append('{');
         boolean first = true;
-        for (Entry e : (Set<Entry>) entrySet()) {
+        for (Entry<String, String> e : (Set<Entry<String, String>>) entrySet()) {
             if (first) {
                 first = false;
             } else {
