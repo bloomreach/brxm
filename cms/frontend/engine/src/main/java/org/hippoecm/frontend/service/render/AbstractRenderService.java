@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,11 +26,16 @@ import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Response;
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.response.StringResponse;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -468,7 +473,27 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         redraw = false;
         super.onBeforeRender();
     }
-    
+
+    @Override
+    protected void onComponentTagBody(MarkupStream markupStream, final ComponentTag openTag) {
+        MarkupStream originalMarkupStream = getMarkupStream();
+        int beginOfBodyIndex = originalMarkupStream.getCurrentIndex();
+        Response response = new StringResponse();
+        RequestCycle requestCycle = getRequestCycle();
+        Response webResponse = requestCycle.setResponse(response);
+        try {
+            super.onComponentTagBody(markupStream, openTag);
+            webResponse.write(response.toString());
+        } catch (WicketRuntimeException ex) {
+            log.error("runtime plugin failure", ex);
+            // this is a plugin, don't let the entire UI fail because of it failing
+            markupStream.setCurrentIndex(beginOfBodyIndex);
+            markupStream.skipToMatchingCloseTag(openTag);
+        } finally {
+            requestCycle.setResponse(webResponse);
+        }
+    }
+
     /**
      * Base class for extension points.  Registers as a {@link ServiceTracker} for a
      * {@link IRenderService} extension.
