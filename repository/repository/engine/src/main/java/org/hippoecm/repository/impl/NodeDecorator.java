@@ -272,7 +272,7 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     /**
      * @inheritDoc
      */
-    public String getLocalName() throws RepositoryException {
+    public String getLocalizedName() throws RepositoryException {
         Node node = this;
         if (!node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
             if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {

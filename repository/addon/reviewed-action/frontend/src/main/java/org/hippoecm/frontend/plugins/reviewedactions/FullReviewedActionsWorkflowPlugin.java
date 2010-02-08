@@ -281,7 +281,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             protected Dialog createRequestDialog() {
                 try {
                     uriName =  ((WorkflowDescriptorModel)getDefaultModel()).getNode().getName();
-                    targetName = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                    targetName = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
                 } catch(RepositoryException ex) {
                     uriName = targetName = "";
                 }
@@ -319,7 +319,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
                 } catch(RepositoryException ex) {
                     name = "";
                 }
@@ -353,7 +353,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
                 } catch(RepositoryException ex) {
                     name = "";
                 }

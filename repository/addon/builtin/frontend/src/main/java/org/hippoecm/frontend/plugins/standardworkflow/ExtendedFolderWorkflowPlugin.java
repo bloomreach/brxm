@@ -103,7 +103,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
                 } catch(RepositoryException ex) {
                     name = "";
                 }
@@ -176,7 +176,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
                 } catch(RepositoryException ex) {
                     name = "";
                 }

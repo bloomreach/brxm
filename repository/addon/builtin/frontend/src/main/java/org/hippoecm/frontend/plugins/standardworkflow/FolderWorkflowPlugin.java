@@ -104,7 +104,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             protected Dialog createRequestDialog() {
                 try {
                     uriName =  ((WorkflowDescriptorModel)getDefaultModel()).getNode().getName();
-                    targetName = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalName();
+                    targetName = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
                 } catch(RepositoryException ex) {
                     uriName = targetName = "";
                 }

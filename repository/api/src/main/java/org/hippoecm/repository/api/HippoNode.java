@@ -63,7 +63,7 @@ public interface HippoNode extends Node {
      * @return the localized node name
      * @throws RepositoryException
      */
-    public String getLocalName() throws RepositoryException;
+    public String getLocalizedName() throws RepositoryException;
 
     /**
      * Get the most accurate and complete version available of the information
