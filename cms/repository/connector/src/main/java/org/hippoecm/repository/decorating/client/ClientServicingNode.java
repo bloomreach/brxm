@@ -53,9 +53,9 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
         }
     }
 
-    public String getLocalName() throws RepositoryException {
+    public String getLocalizedName() throws RepositoryException {
         try {
-            return remote.getLocalName(Locale.getDefault());
+            return remote.getLocalizedName(Locale.getDefault());
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }

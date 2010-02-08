@@ -98,7 +98,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
                         if (session.itemExists(path)) {
                             javax.jcr.Item item = session.getItem(path);
                             if (item instanceof HippoNode) {
-                                return ((HippoNode) item).getLocalName();
+                                return ((HippoNode) item).getLocalizedName();
                             }
                         }
                     } catch (RepositoryException ex) {

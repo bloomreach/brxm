@@ -42,7 +42,7 @@ public class VersionHistoryDecorator extends org.hippoecm.repository.decorating.
         }
     }
 
-    public String getLocalName() throws RepositoryException {
-        return ((HippoNode)versionHistory).getLocalName();
+    public String getLocalizedName() throws RepositoryException {
+        return ((HippoNode)versionHistory).getLocalizedName();
     }
 }

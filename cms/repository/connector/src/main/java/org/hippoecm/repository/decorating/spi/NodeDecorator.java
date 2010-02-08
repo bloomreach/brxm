@@ -60,17 +60,17 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         }
     }
 
-    public String getLocalName() throws RepositoryException {
-        return getLocalName(session, remoteSession, this);
+    public String getLocalizedName() throws RepositoryException {
+        return getLocalizedName(session, remoteSession, this);
     }
 
-    static String getLocalName(Session session, HippoSession remoteSession, final Node node) throws RepositoryException {
+    static String getLocalizedName(Session session, HippoSession remoteSession, final Node node) throws RepositoryException {
         String path = node.getPath();
         if (path == null) {
             return null;
         }
         if ("/".equals(path)) {
-            return ((HippoNode)session.getRootNode()).getLocalName();
+            return ((HippoNode)session.getRootNode()).getLocalizedName();
         }
         try {
             Node remote = remoteSession.getRootNode().getNode(node.getPath().substring(1));
@@ -78,7 +78,7 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
             if (remote == null) {
                 return null;
             }
-            return ((HippoNode)session.getRootNode().getNode(remote.getPath().substring(1))).getLocalName();
+            return ((HippoNode)session.getRootNode().getNode(remote.getPath().substring(1))).getLocalizedName();
         } catch (PathNotFoundException ex) {
             // Node is new or has been moved
             return node.getName();

@@ -29,5 +29,5 @@ public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
 
     public RemoteNode getCanonicalNode() throws RepositoryException, RemoteException;
 
-    public String getLocalName(Locale locale) throws RepositoryException, RemoteException;
+    public String getLocalizedName(Locale locale) throws RepositoryException, RemoteException;
 }

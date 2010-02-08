@@ -38,7 +38,7 @@ public class VersionDecorator extends org.hippoecm.repository.decorating.Version
         return NodeDecorator.getCanonicalNode(session, remoteSession, node);
     }
 
-    public String getLocalName() throws RepositoryException {
-        return NodeDecorator.getLocalName(session, remoteSession, node);
+    public String getLocalizedName() throws RepositoryException {
+        return NodeDecorator.getLocalizedName(session, remoteSession, node);
     }
 }

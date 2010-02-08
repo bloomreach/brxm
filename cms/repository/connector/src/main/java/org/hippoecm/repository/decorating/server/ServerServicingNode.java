@@ -46,9 +46,9 @@ public class ServerServicingNode extends ServerNode implements RemoteServicingNo
         }
     }
 
-    public String getLocalName(Locale locale) throws RepositoryException, RemoteException {
+    public String getLocalizedName(Locale locale) throws RepositoryException, RemoteException {
         try {
-            return node.getLocalName();
+            return node.getLocalizedName();
         } catch(RepositoryException ex) {
             throw getRepositoryException(ex);
         }
