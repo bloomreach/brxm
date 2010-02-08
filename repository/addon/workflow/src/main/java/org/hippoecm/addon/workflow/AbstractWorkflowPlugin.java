@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
@@ -43,7 +44,6 @@ import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -90,15 +90,22 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
     public String getString(Map<String, String> criteria) {
         String key = criteria.get(HippoNodeType.HIPPO_KEY);
         if (key != null) {
+            String language = getLocale().getLanguage();
             for (String category : categories) {
                 if (key.equals(category)) {
                     String path = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.WORKFLOWS_PATH + "/" + category;
                     try {
                         Session session = ((UserSession) getSession()).getJcrSession();
                         if (session.itemExists(path)) {
-                            javax.jcr.Item item = session.getItem(path);
-                            if (item instanceof HippoNode) {
-                                return ((HippoNode) item).getLocalizedName();
+                            Node node = (Node) session.getItem(path);
+                            if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
+                                NodeIterator translations = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
+                                while (translations.hasNext()) {
+                                    Node translation = translations.nextNode();
+                                    if (translation.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString().equals(language)) {
+                                        return translation.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
+                                    }
+                                }
                             }
                         }
                     } catch (RepositoryException ex) {
