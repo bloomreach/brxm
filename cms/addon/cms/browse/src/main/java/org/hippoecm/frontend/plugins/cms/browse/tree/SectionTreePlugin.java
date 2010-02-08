@@ -104,10 +104,12 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         super(context, config);
 
         AccordionConfiguration accordionConfig = new AccordionConfiguration();
-        try {
-            PluginConfigMapper.populate(accordionConfig, config.getPluginConfig("yui.config.accordion"));
-        } catch (MappingException e) {
-            log.warn(e.getMessage());
+        if (config.containsKey("yui.config.accordion")) {
+            try {
+                PluginConfigMapper.populate(accordionConfig, config.getPluginConfig("yui.config.accordion"));
+            } catch (MappingException e) {
+                log.warn(e.getMessage());
+            }
         }
         add(accordionManager = new AccordionManagerBehavior(YuiPluginHelper.getManager(context), accordionConfig));
 
