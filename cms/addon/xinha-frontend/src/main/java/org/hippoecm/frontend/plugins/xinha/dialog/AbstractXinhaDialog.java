@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.xinha.dialog;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -26,7 +25,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 
-public abstract class AbstractXinhaDialog extends AbstractDialog<AbstractPersistedMap> {
+public abstract class AbstractXinhaDialog<T extends IPersistedMap> extends AbstractDialog<T> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -34,16 +33,16 @@ public abstract class AbstractXinhaDialog extends AbstractDialog<AbstractPersist
 
     private boolean hasExistingLink;
 
-    public AbstractXinhaDialog(IModel<AbstractPersistedMap> model) {
+    public AbstractXinhaDialog(IModel<T> model) {
         super(model);
 
-        hasExistingLink = model.getObject().isExisting();
+        hasExistingLink = getModelObject().isExisting();
 
-        final Button remove = new AjaxButton("button") {
+        addButton(new AjaxButton("button", new ResourceModel("remove", "Remove")) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 onRemoveLink();
                 if (!hasError()) {
                     closeDialog();
@@ -54,10 +53,7 @@ public abstract class AbstractXinhaDialog extends AbstractDialog<AbstractPersist
             public boolean isVisible() {
                 return hasRemoveButton();
             }
-        };
-        remove.setModel(new ResourceModel("remove", "Remove"));
-        addButton(remove);
-
+        });
     }
 
     public IModel<String> getTitle() {
@@ -65,8 +61,7 @@ public abstract class AbstractXinhaDialog extends AbstractDialog<AbstractPersist
     }
 
     protected void checkState() {
-        IPersistedMap link = (IPersistedMap) getModelObject();
-        enableOk(link.isValid() && link.hasChanged());
+        enableOk(getModelObject().isValid() && getModelObject().hasChanged());
     }
 
     protected boolean hasRemoveButton() {
@@ -83,8 +78,7 @@ public abstract class AbstractXinhaDialog extends AbstractDialog<AbstractPersist
     }
 
     protected String getCloseScript() {
-        String returnValue = ((IPersistedMap) getModelObject()).toJsString();
-        return "if(openModalDialog != null){ openModalDialog.close(" + returnValue + "); }";
+        return "if(openModalDialog != null){ openModalDialog.close(" + getModelObject().toJsString() + "); }";
     }
 
     @Override
@@ -111,8 +105,7 @@ public abstract class AbstractXinhaDialog extends AbstractDialog<AbstractPersist
     }
 
     protected void onRemoveLink() {
-        IPersistedMap link = (IPersistedMap) getModelObject();
-        link.delete();
+        getModelObject().delete();
     }
     
     protected static class StringPropertyModel extends PropertyModel<String> {

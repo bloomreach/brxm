@@ -23,21 +23,21 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.AbstractPersistedMap;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractXinhaDialog;
+import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
-public class ExternalLinkDialog extends AbstractXinhaDialog {
+public class ExternalLinkDialog extends AbstractXinhaDialog<ExternalXinhaLink> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public ExternalLinkDialog(IPluginContext context, IPluginConfig config, IModel<AbstractPersistedMap> model) {
+    public ExternalLinkDialog(IPluginContext context, IPluginConfig config, IModel<ExternalXinhaLink> model) {
         super(model);
-
+        
         add(setFocus(new TextFieldWidget("href", new StringPropertyModel(model, XinhaLink.HREF)) {
             private static final long serialVersionUID = 1L;
 

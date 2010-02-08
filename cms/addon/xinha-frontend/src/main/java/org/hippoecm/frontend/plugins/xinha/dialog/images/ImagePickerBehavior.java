@@ -16,10 +16,12 @@
 package org.hippoecm.frontend.plugins.xinha.dialog.images;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
+import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
 
 public class ImagePickerBehavior extends XinhaDialogBehavior {
@@ -28,19 +30,17 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
 
     private static final long serialVersionUID = 1L;
 
-    private final IPluginConfig config;
     private XinhaImageService imageService;
 
     public ImagePickerBehavior(IPluginContext context, IPluginConfig config, XinhaImageService service) {
-        super(context);
-        this.config = config;
+        super(context, config);
         imageService = service;
     }
 
     @Override
     protected void respond(AjaxRequestTarget target) {
-        getDialogService().show(
-                new ImageBrowserDialog(context, config, new Model(imageService.createXinhaImage(getParameters()))));
+        IModel<XinhaImage> model = new Model<XinhaImage>(imageService.createXinhaImage(getParameters()));
+        getDialogService().show(new ImageBrowserDialog(getPluginContext(), getPluginConfig(), model));
     }
 
 }

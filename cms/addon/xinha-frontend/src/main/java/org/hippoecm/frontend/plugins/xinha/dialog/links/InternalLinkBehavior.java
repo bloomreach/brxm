@@ -16,34 +16,34 @@
 package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.AbstractPersistedMap;
+import org.hippoecm.frontend.plugins.xinha.dialog.AbstractXinhaDialog;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
+import org.hippoecm.frontend.plugins.xinha.services.links.InternalXinhaLink;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 
 public class InternalLinkBehavior extends XinhaDialogBehavior {
+    private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final long serialVersionUID = 1L;
-
-    private IPluginConfig config;
     private XinhaLinkService linkService;
 
     public InternalLinkBehavior(IPluginContext context, IPluginConfig config, XinhaLinkService service) {
-        super(context);
-        this.config = config;
+        super(context, config);
         this.linkService = service;
     }
 
     @Override
     protected void respond(AjaxRequestTarget target) {
-        getDialogService().show(
-                new DocumentBrowserDialog(context, config, new Model<AbstractPersistedMap>(linkService
-                        .create(getParameters()))));
+        IModel<InternalXinhaLink> model = new Model<InternalXinhaLink>(linkService.create(getParameters()));
+        AbstractXinhaDialog<InternalXinhaLink> dialog = new DocumentBrowserDialog<InternalXinhaLink>(
+                getPluginContext(), getPluginConfig(), model);
+        getDialogService().show(dialog);
     }
 
 }

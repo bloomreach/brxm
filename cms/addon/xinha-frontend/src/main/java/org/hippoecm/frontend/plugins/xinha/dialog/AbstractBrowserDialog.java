@@ -42,7 +42,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
+public abstract class AbstractBrowserDialog<T extends DocumentLink> extends AbstractXinhaDialog<T> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -63,7 +63,7 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
     private IModel<Node> lastModelVisited;
 
-    public AbstractBrowserDialog(IPluginContext context, IPluginConfig config, IModel<AbstractPersistedMap> model) {
+    public AbstractBrowserDialog(IPluginContext context, IPluginConfig config, IModel<T> model) {
         super(model);
 
         this.context = context;
@@ -84,7 +84,7 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
 
         //save modelServiceId and dialogServiceId in cluster config
         String modelServiceId = decorated.getString("wicket.model");
-        IModel<Node> model = ((DocumentLink) getModelObject()).getNodeModel();
+        IModel<Node> model = getModelObject().getNodeModel();
 
         if (model == null) {
             IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
@@ -104,8 +104,7 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
         } else {
             IModel<Node> newModel = modelReference.getModel();
             if (newModel != null) {
-                DocumentLink link = (DocumentLink) getModelObject();
-                link.setNodeModel((JcrNodeModel) newModel);
+                getModelObject().setNodeModel((JcrNodeModel) newModel);
                 checkState();
             }
         }
@@ -119,10 +118,9 @@ public abstract class AbstractBrowserDialog extends AbstractXinhaDialog {
             public void onEvent(Iterator events) {
                 IModel<Node> newModel = modelReference.getModel();
                 if (newModel != null) {
-                    DocumentLink link = (DocumentLink) getModelObject();
-                    JcrNodeModel currentModel = link.getNodeModel();
+                    JcrNodeModel currentModel = getModelObject().getNodeModel();
                     if (!newModel.equals(currentModel)) {
-                        link.setNodeModel((JcrNodeModel) newModel);
+                        getModelObject().setNodeModel((JcrNodeModel) newModel);
                         checkState();
                     }
                 }

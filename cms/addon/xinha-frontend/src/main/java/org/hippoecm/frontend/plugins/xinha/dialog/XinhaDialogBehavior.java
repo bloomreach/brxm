@@ -23,6 +23,7 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin;
 
 public abstract class XinhaDialogBehavior extends AbstractDefaultAjaxBehavior {
@@ -31,10 +32,12 @@ public abstract class XinhaDialogBehavior extends AbstractDefaultAjaxBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final IPluginContext context;
+    private final IPluginContext context;
+    private final IPluginConfig config;
 
-    public XinhaDialogBehavior(IPluginContext context) {
+    public XinhaDialogBehavior(IPluginContext context, IPluginConfig config) {
         this.context = context;
+        this.config = config;
     }
 
     protected IDialogService getDialogService() {
@@ -51,6 +54,14 @@ public abstract class XinhaDialogBehavior extends AbstractDefaultAjaxBehavior {
             }
         }
         return p;
+    }
+
+    protected IPluginContext getPluginContext() {
+        return context;
+    }
+
+    protected IPluginConfig getPluginConfig() {
+        return config;
     }
 
 }
