@@ -208,7 +208,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
         for (Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext();) {
             ChildNodeEntry entry = (ChildNodeEntry)iter.next();
-            if (!isHandle || match(viewId.view, entry.getId())) {
+            if (!isHandle || viewId.view == null || match(viewId.view, entry.getId())) {
                 /*
                  * below we check on the entry's nodestate wether the node type is hippo:request,
                  * because we do not show these nodes in the facetselects in mode single.
