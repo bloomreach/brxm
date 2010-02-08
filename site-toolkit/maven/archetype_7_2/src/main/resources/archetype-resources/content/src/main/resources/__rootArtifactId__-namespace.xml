@@ -193,6 +193,18 @@
         <sv:property sv:name="hippostd:stateSummary" sv:type="String">
           <sv:value>new</sv:value>
         </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+          <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+          <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
+        </sv:property>
         <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:summary" sv:type="String">
           <sv:value/>
         </sv:property>
