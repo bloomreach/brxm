@@ -92,17 +92,18 @@ public class CheckPlugin extends RenderPlugin {
     private void check(Session session) throws RepositoryException {
         check(session.getRootNode());
 
-        Query query = session.getWorkspace().getQueryManager().createQuery("//*", Query.XPATH);
+        Query query = session.getWorkspace().getQueryManager().createQuery("//element(*,nt:base)", Query.XPATH);
         QueryResult result = query.execute();
         for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
             Node node = iter.nextNode();
             if (node != null) {
-                node.getPath();
+                System.out.println("query: " + node.getPath());
             }
         }
     }
 
     private void check(Node node) throws RepositoryException {
+        System.out.println("traverse: " + node.getPath());
         if (node instanceof HippoNode) {
             Node canonical = ((HippoNode)node).getCanonicalNode();
             if (canonical == null || !canonical.isSame(node))
