@@ -19,11 +19,12 @@
 <hst='http://www.hippoecm.org/hst/nt/1.4'>
 <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <'hippogallerypicker'='http://www.hippoecm.org/hippogallerypicker/nt/2.0'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 
 [testproject:sitemenuitem] > hst:sitemenuitem
 - testproject:title 
 
-[testproject:basedocument] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+[testproject:basedocument] > hippostdpubwf:document, hippostd:publishableSummary, hippo:document
 
 [testproject:textpage] > testproject:basedocument
 + testproject:body (hippostd:html)
