@@ -2,8 +2,9 @@
 <'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
 <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <'hippogallerypicker'='http://www.hippoecm.org/hippogallerypicker/nt/2.0'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 
-[demosite:basedocument] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+[demosite:basedocument] > hippostdpubwf:document, hippostd:publishableSummary, hippo:document
 
 [demosite:commentlink] > hippo:facetselect
 
