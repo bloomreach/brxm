@@ -25,13 +25,19 @@ import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
 import org.hippoecm.frontend.plugins.cms.browse.service.BrowseService;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.accordion.AccordionConfiguration;
 import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionSettings;
+import org.hippoecm.frontend.plugins.yui.mapping.MappingException;
+import org.hippoecm.frontend.plugins.yui.mapping.PluginConfigMapper;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Navigator extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(Navigator.class);
+    
     private BrowseService browseService;
     private DocumentCollectionView docView;
     private BrowserSectionAccordion accordion;
@@ -60,9 +66,14 @@ public class Navigator extends RenderPlugin {
         add(docView);
 
         final BrowserSections sections = browseService.getSections();
-        AccordionSettings settings = new AccordionSettings(config.getPluginConfig(AccordionSettings.CONFIG_KEY));
+        AccordionConfiguration accordionConfig = new AccordionConfiguration();
+        try {
+            PluginConfigMapper.populate(accordionConfig, config.getPluginConfig("yui.config.accordion"));
+        } catch (MappingException e) {
+            log.warn(e.getMessage());
+        }
         accordion = new BrowserSectionAccordion("sections", sections,
-                new AccordionManagerBehavior(YuiPluginHelper.getManager(context), settings), this) {
+                new AccordionManagerBehavior(YuiPluginHelper.getManager(context), accordionConfig), this) {
             private static final long serialVersionUID = 1L;
 
             @Override

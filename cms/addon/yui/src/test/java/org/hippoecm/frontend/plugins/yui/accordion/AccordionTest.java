@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.yui.YuiPage;
 import org.hippoecm.frontend.plugins.yui.YuiTest;
 import org.junit.Test;
@@ -37,10 +36,11 @@ public class AccordionTest extends YuiTest {
             WebMarkupContainer container = new WebMarkupContainer("container");
             container.setOutputMarkupId(true);
 
-            JavaPluginConfig config = new JavaPluginConfig();
-            config.put("register.resize.listener", false);
-            config.put("register.render.listener", false);
-            AccordionManagerBehavior amb = new AccordionManagerBehavior(getYuiManager(), new AccordionSettings(config));
+            AccordionConfiguration config = new AccordionConfiguration();
+            config.setRegisterRenderListener(false);
+            config.setRegisterResizeListener(false);
+            AccordionManagerBehavior amb = new AccordionManagerBehavior(getYuiManager(), config);
+
             container.add(amb);
 
             WebMarkupContainer first = new WebMarkupContainer("first");
