@@ -25,6 +25,9 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoQuery;
 
 public class QueryResultModel extends LoadableDetachableModel<QueryResult> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public static final int LIMIT = 100;

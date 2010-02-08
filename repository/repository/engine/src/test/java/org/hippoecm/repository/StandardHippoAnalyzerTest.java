@@ -26,6 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class StandardHippoAnalyzerTest extends TestCase {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
     
     public final static String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
     public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";

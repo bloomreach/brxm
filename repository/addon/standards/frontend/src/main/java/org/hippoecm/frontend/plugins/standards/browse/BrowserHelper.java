@@ -24,6 +24,8 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public final class BrowserHelper {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private BrowserHelper() {}
     

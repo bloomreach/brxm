@@ -133,8 +133,8 @@ public class UpdaterTest extends TestCase {
         list.add(module);
         Modules modules = new Modules(list);
         UpdaterEngine.migrate(session, modules);
-	session.logout();
-	session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        session.logout();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
 
         // verify back references
         

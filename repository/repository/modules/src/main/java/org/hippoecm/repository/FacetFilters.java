@@ -27,6 +27,8 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.hippoecm.repository.jackrabbit.HippoVirtualProvider;
 
 public class FacetFilters {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     // the only operators we currently support
     public static final Operator CONTAINS_OPERATOR = Operator.CONTAINS;

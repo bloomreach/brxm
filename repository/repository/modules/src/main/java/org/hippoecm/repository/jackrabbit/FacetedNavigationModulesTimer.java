@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public interface FacetedNavigationModulesTimer {
+   final static String SVN_ID = "$Id$";
     
     static final Logger log = LoggerFactory.getLogger(FacetedNavigationModulesTimer.class);
     

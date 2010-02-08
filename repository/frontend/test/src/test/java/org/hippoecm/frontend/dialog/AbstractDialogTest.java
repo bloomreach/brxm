@@ -28,6 +28,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class AbstractDialogTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public static class Dialog extends AbstractDialog {
 

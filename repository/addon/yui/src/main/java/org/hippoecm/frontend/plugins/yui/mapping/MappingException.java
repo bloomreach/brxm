@@ -19,6 +19,9 @@ package org.hippoecm.frontend.plugins.yui.mapping;
  * Exception that is thrown when (un)marshalling a bean fails.
  */
 public class MappingException extends Exception {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public MappingException() {

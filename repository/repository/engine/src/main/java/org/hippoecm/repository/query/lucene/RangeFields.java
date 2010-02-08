@@ -24,6 +24,8 @@ import org.apache.jackrabbit.core.query.lucene.LongField;
 import org.hippoecm.repository.FacetRange;
 
 public class RangeFields {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public String begin = null;
     public String end = null;

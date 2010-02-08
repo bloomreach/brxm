@@ -29,6 +29,8 @@ import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.junit.Test;
 
 public class FacetedNavigationDateBrowsingTest extends AbstractDateFacetNavigationTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
     
     @Test
     public void testDatesFacetNavigation() throws RepositoryException, IOException {

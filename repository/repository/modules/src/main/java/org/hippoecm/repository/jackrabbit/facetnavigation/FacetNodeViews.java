@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
  * that actually need to be changed. This to avoid using a lot of memory
  */
 public class FacetNodeViews implements Iterable<FacetNodeView>{
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
     
     private final Logger log = LoggerFactory.getLogger(FacetNodeViews.class);
     
