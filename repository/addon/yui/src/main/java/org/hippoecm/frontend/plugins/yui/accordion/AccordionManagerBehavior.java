@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.yui.accordion;
 
-import java.util.Map;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.util.template.PackagedTextTemplate;
@@ -36,31 +34,20 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
     private static final PackagedTextTemplate INIT = new PackagedTextTemplate(AccordionManagerBehavior.class, "init.js");
     
     private DynamicTextTemplate template;
-    String id;
-    
-    public AccordionManagerBehavior(IYuiManager manager, AccordionSettings accordionSettings) {
+    private String id;
+
+    public AccordionManagerBehavior(IYuiManager manager, AccordionConfiguration accordionSettings) {
         super(manager);
         
-        this.template = new DynamicTextTemplate(INIT, accordionSettings) {
-            private static final long serialVersionUID = 1L;
-            
-            @Override
-            protected Map<String, Object> getVariables() {
-                Map<String, Object> vars = super.getVariables();
-                vars.put("id", getComponentMarkupId());
-                return vars;
-            }
-        };
-    }
-    
-    protected String getComponentMarkupId() {
-        return id;
+        this.template = new DynamicTextTemplate(INIT);
+        template.setConfiguration(accordionSettings);
     }
 
     @Override
     public void bind(Component component) {
         super.bind(component);
-        id = component.getMarkupId();
+        template.setId(component.getMarkupId());
+        this.id = component.getMarkupId();
     }
     
     @Override
@@ -70,7 +57,7 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
     }
 
     public IBehavior newSection() {
-        return new AccordionSectionBehavior(getComponentMarkupId());
+        return new AccordionSectionBehavior(id);
     }
     
 }

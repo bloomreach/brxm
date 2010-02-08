@@ -37,8 +37,10 @@ import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.accordion.AccordionConfiguration;
 import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionSettings;
+import org.hippoecm.frontend.plugins.yui.mapping.MappingException;
+import org.hippoecm.frontend.plugins.yui.mapping.PluginConfigMapper;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.service.render.ListRenderService;
@@ -101,8 +103,13 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     public SectionTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        AccordionSettings settings = new AccordionSettings(config.getPluginConfig(AccordionSettings.CONFIG_KEY));
-        add(accordionManager = new AccordionManagerBehavior(YuiPluginHelper.getManager(context), settings));
+        AccordionConfiguration accordionConfig = new AccordionConfiguration();
+        try {
+            PluginConfigMapper.populate(accordionConfig, config.getPluginConfig("yui.config.accordion"));
+        } catch (MappingException e) {
+            log.warn(e.getMessage());
+        }
+        add(accordionManager = new AccordionManagerBehavior(YuiPluginHelper.getManager(context), accordionConfig));
 
         final List<String> headers = Arrays.asList(config.getStringArray("headers"));
         String[] behaviours = config.getStringArray("behaviours");

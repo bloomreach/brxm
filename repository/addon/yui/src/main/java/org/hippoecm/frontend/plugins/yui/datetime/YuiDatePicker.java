@@ -75,7 +75,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
             
             @Override
             public Object getObject() {
-                return "YAHOO.hippo.DateTime.render('" + component.getMarkupId() + "', " + template.getSettings().toScript() + ");";
+                return "YAHOO.hippo.DateTime.render('" + component.getMarkupId() + "', " + template.getConfigurationAsJSON() + ");";
             }
         });
     }
