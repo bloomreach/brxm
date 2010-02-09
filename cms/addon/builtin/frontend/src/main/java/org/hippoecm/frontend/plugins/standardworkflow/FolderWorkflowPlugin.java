@@ -29,6 +29,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.basic.Label;
@@ -410,9 +411,18 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
             if (prototypes.size() > 1) {
                 final List<String> prototypesList = new LinkedList<String>(prototypes);
-                DropDownChoice folderChoice;
-                add(folderChoice = new DropDownChoice("prototype", prototypeModel, prototypesList,
-                        new TypeChoiceRenderer(this)));
+                final DropDownChoice folderChoice;
+                add(folderChoice = new DropDownChoice("prototype", prototypeModel, prototypesList, new TypeChoiceRenderer(this)) {
+                    protected boolean wantOnSelectionChangedNotifications() {
+                        return false;
+                    }
+                });
+                folderChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                    @Override
+                    protected void onUpdate(AjaxRequestTarget target) {
+                        target.addComponent(folderChoice);
+                    }
+                });
                 folderChoice.setNullValid(false);
                 folderChoice.setRequired(true);
                 folderChoice.setLabel(new StringResourceModel("document-type", FolderWorkflowPlugin.this, null));
