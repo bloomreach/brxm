@@ -17,16 +17,18 @@
 package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractXinhaDialog;
 import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
-import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
-import org.hippoecm.frontend.widgets.BooleanFieldWidget;
+import org.hippoecm.frontend.widgets.LabelledBooleanFieldWidget;
+import org.hippoecm.frontend.widgets.RequiredTextFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class ExternalLinkDialog extends AbstractXinhaDialog<ExternalXinhaLink> {
@@ -35,42 +37,42 @@ public class ExternalLinkDialog extends AbstractXinhaDialog<ExternalXinhaLink> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private static final String SIZE = "49";
+
     public ExternalLinkDialog(IPluginContext context, IPluginConfig config, IModel<ExternalXinhaLink> model) {
         super(model);
         
-        add(setFocus(new TextFieldWidget("href", new StringPropertyModel(model, XinhaLink.HREF)) {
-            private static final long serialVersionUID = 1L;
+        add(new DropDownChoice<String>("protocols",
+                new PropertyModel<String>(model, "protocol"), ExternalXinhaLink.PROTOCOLS));
 
+        TextFieldWidget widget;
+        add(widget = new RequiredTextFieldWidget("href", new StringPropertyModel(model, "address")){
+            private static final long serialVersionUID = 1L;
+            
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                update(target);
-            }
-        }));
-
-        add(new TextFieldWidget("title", new StringPropertyModel(model, XinhaLink.TITLE)) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                update(target);
+                target.addComponent(ExternalLinkDialog.this);
             }
         });
-
-        add(new BooleanFieldWidget("popup", new PropertyModel<Boolean>(model, "target")) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                update(target);
-            }
-        });
+        widget.setSize(SIZE);
+        setFocus(widget);
+        
+        add(widget = new TextFieldWidget("title", new StringPropertyModel(model, ExternalXinhaLink.TITLE)));
+        widget.setSize(SIZE);
+        
+        add(new LabelledBooleanFieldWidget("popup", new PropertyModel<Boolean>(model, "target"),
+                new StringResourceModel("labels.popup", this, null)));
+        
     }
-
+    
+    @Override
+    protected void onOk() {
+        ExternalXinhaLink link = getModelObject();
+        link.setHref(link.getProtocol() + link.getAddress());
+    }
+    
     @Override
     public IValueMap getProperties() {
         return new ValueMap("width=400,height=190");
-    }
-
-    private void update(AjaxRequestTarget target) {
     }
 }

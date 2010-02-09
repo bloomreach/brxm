@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.wicket.protocol.http.WicketURLDecoder;
+import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 
 public class XinhaHtmlProcessor {
     @SuppressWarnings("unused")
@@ -130,11 +131,11 @@ public class XinhaHtmlProcessor {
                 if (link.charAt(link.length() - 1) == '"') {
                     link = link.substring(0, link.length() - 1);
                 }
-                if (!link.startsWith("http:") && !link.startsWith("https:")) {
+                if (isExternalLink(link)) {
+                    s.appendReplacement(newAnchor, href.replace("\\", "\\\\").replace("$", "\\$"));
+                } else {
                     s.appendReplacement(newAnchor, ("href=\"" + decorator.decorate(link) + "\"").replace("\\", "\\\\")
                             .replace("$", "\\$"));
-                } else {
-                    s.appendReplacement(newAnchor, href.replace("\\", "\\\\").replace("$", "\\$"));
                 }
             }
             s.appendTail(newAnchor);
@@ -143,6 +144,15 @@ public class XinhaHtmlProcessor {
         m.appendTail(processed);
 
         return processed.toString();
+    }
+
+    private static boolean isExternalLink(String link) {
+        for (String protocol : ExternalXinhaLink.PROTOCOLS) {
+            if (link.startsWith(protocol)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static interface ILinkDecorator {

@@ -16,7 +16,11 @@
 
 package org.hippoecm.frontend.plugins.xinha.services.links;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.wicket.util.string.Strings;
 
 public class ExternalXinhaLink extends XinhaLink {
     private static final long serialVersionUID = 1L;
@@ -24,26 +28,60 @@ public class ExternalXinhaLink extends XinhaLink {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public static final String HREF = "f_href";
+    public static final List<String> PROTOCOLS = Arrays.asList("http://", "https://", "mailto:", "ftp://");
+
+    String protocol;
+    String address;
 
     public ExternalXinhaLink(Map<String, String> values) {
         super(values);
+
+        setAddress(getHref());
+        if(Strings.isEmpty(protocol)) {
+            setProtocol(PROTOCOLS.get(0));
+        }
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+        for (String proto : PROTOCOLS) {
+            if (address.startsWith(proto)) {
+                setProtocol(proto);
+                this.address = address.substring(proto.length());
+                break;
+            }
+        }
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     @Override
     public boolean isValid() {
-        if (getHref() == null || "".equals(getHref())) {
-            return false;
+        if (isExisting()) {
+            //check protocols
+            String href = getProtocol() + getAddress();
+            for (String protocol : PROTOCOLS) {
+                if (href.startsWith(protocol)) {
+                    return true;
+                }
+            }
         }
-        return true;
+        return false;
     }
 
     @Override
     public boolean isExisting() {
-        if (getHref() != null && !getHref().equals("")) {
-            return true;
-        }
-        return false;
+        return !Strings.isEmpty(getAddress());
     }
 
     public void delete() {
@@ -51,6 +89,7 @@ public class ExternalXinhaLink extends XinhaLink {
     }
 
     public void save() {
+        //never called
     }
 
 }
