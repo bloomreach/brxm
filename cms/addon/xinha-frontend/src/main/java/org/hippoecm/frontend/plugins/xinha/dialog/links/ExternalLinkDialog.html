@@ -17,8 +17,16 @@
   <wicket:extend>
     <table class="hippo-window-form">
       <tr>
+        <td width="20">
+          <label><wicket:message key="labels.protocol" /></label>
+        </td>
         <td>
-          <label>Url: </label>
+          <select wicket:id="protocols" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label><wicket:message key="labels.url" /></label>
         </td>
         <td>
           <div wicket:id="href">[Url box]</div>
@@ -26,7 +34,7 @@
       </tr>
       <tr>
         <td>
-          <label>Title: </label>
+          <label><wicket:message key="labels.title" /></label>
         </td>
         <td>
           <div wicket:id="title">[Title text box]</div>
@@ -34,11 +42,10 @@
       </tr>
       <tr>
         <td>
-          <label>Open in new window: </label>
+          &#160;
         </td>
         <td>
           <div wicket:id="popup">[Open in new window checkbox]</div>
-          <br/><br/>
         </td>
       </tr>
     </table>

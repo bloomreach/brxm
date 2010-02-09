@@ -41,7 +41,7 @@ public abstract class XinhaLink extends AbstractPersistedMap {
     }
 
     public String getHref() {
-        return (String) get(HREF);
+        return get(HREF);
     }
 
     public void setHref(String href) {
@@ -49,7 +49,7 @@ public abstract class XinhaLink extends AbstractPersistedMap {
     }
 
     public boolean getTarget() {
-        String value = (String) get(TARGET);
+        String value = get(TARGET);
         if (value != null && value.equals(NEW_WINDOW)) {
             return true;
         }

@@ -61,16 +61,11 @@ public abstract class AbstractXinhaDialog<T extends IPersistedMap> extends Abstr
     }
 
     protected void checkState() {
-        enableOk(getModelObject().isValid() && getModelObject().hasChanged());
+        setOkEnabled(getModelObject().isValid() && getModelObject().hasChanged());
     }
 
     protected boolean hasRemoveButton() {
         return hasExistingLink;
-    }
-
-    //FIXME: remove and use set*Enabled
-    protected void enableOk(boolean state) {
-        setOkEnabled(state);
     }
 
     protected String getCancelScript() {
