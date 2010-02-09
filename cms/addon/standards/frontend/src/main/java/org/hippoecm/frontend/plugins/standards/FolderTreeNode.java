@@ -27,6 +27,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +97,9 @@ public class FolderTreeNode extends JcrTreeNode {
         NodeIterator subNodes = config.filter(node, node.getNodes());
         while (subNodes.hasNext()) {
             Node subNode = subNodes.nextNode();
+            if (subNode.isNodeType(HippoNodeType.NT_TRANSLATION)) {
+                continue;
+            }
             result.add(subNode);
         }
         return result;
