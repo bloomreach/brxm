@@ -68,7 +68,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
                             Item primItem = imageSet.getPrimaryItem();
                             if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                                 observable.setTarget(new JcrNodeModel((Node) primItem));
-                                if (((Node) primItem).hasProperty("jcr:mimeType")) {
+                                if (!((Node) primItem).hasProperty("jcr:mimeType")) {
                                     Gallery.log.warn("Unset mime type of document");
                                     return null;
                                 }
