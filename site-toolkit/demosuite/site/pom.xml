@@ -339,7 +339,6 @@
                       <version>${jta.version}</version>
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
-                    <!-- TODO: uncomment after HREPTWO-2866 patch applied.
                     <artifactItem>
                       <groupId>javax.jcr</groupId>
                       <artifactId>jcr</artifactId>
@@ -382,7 +381,6 @@
                       <version>${project.version}</version>
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
-                    -->
                   </artifactItems>
                 </configuration>
               </execution>
@@ -402,7 +400,6 @@
                       <overWrite>true</overWrite>
                       <outputDirectory>${tomcat.hst.cms.webapp}</outputDirectory>
                       <!-- Excludes shared libs -->
-                      <!-- TODO: uncomment after HREPTWO-2866 patch applied.
                       <excludes>
                         WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
                         WEB-INF/lib/jcr-${javax.jcr.version}.jar,
@@ -413,7 +410,6 @@
                         WEB-INF/lib/hst-api-${project.version}.jar,
                         WEB-INF/lib/hst-commons-${project.version}.jar
                       </excludes>
-                      -->
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.onehippo.ecm.hst.demosuite</groupId>
@@ -423,7 +419,6 @@
                       <overWrite>true</overWrite>
                       <outputDirectory>${tomcat.server.home}/webapps/${project.build.finalName}</outputDirectory>
                       <!-- Excludes shared libs -->
-                      <!-- TODO: uncomment after HREPTWO-2866 patch applied.
                       <excludes>
                         WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
                         WEB-INF/lib/jcr-${javax.jcr.version}.jar,
@@ -434,10 +429,35 @@
                         WEB-INF/lib/hst-api-${project.version}.jar,
                         WEB-INF/lib/hst-commons-${project.version}.jar
                       </excludes>
-                      -->
                     </artifactItem>
                   </artifactItems>
                 </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>update hst-config</id>
+                <phase>install</phase>
+                <configuration>
+                  <tasks>
+                    <replace file="${tomcat.server.home}/webapps/${project.build.finalName}/WEB-INF/hst-config.properties">
+                      <replacefilter token="#hstconfigreader.repository.address = vm://" value="hstconfigreader.repository.address = vm://" />
+                      <replacefilter token="#default.repository.address = vm://" value="default.repository.address = vm://" />
+                      <replacefilter token="#writable.repository.address = vm://" value="writable.repository.address = vm://" />
+                      <replacefilter token="hstconfigreader.repository.address = rmi://" value="#hstconfigreader.repository.address = rmi://" />
+                      <replacefilter token="default.repository.address = rmi://" value="#default.repository.address = rmi://" />
+                      <replacefilter token="writable.repository.address = rmi://" value="#writable.repository.address = rmi://" />
+                    </replace>
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
