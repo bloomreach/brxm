@@ -431,6 +431,7 @@ table.hippo-window-form{width: 100%;}
 .hippo-window-form td input{background: white; border: 1px solid #afafaf; padding: 3px; line-height: 18px;}
 .hippo-window-form td{padding: 5px;}
 .hippo-window-form .hippo-form-select{width: 300px;}
+.hippo-window-form .hippo-form-input{width: 300px;}
 .hippo-window-form td.hippo-window-navigator{padding: 0px;}
 
 .hippo-window .notification {display: block; margin: 11px; padding: 12px; text-align: center; background: #ffccaa; border: 1px solid #ff9900;}
