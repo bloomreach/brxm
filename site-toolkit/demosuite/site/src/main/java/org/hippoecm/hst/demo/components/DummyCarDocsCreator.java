@@ -100,8 +100,13 @@ public class DummyCarDocsCreator {
             long mileage = r.nextInt((int)(randomCar.upperMileage-randomCar.lowerMileage)) + randomCar.lowerMileage;
             doc.setProperty("demosite:mileage", mileage);
             
-            doc.setProperty("hippostd:stateSummary", "new");
-            doc.setProperty("hippostd:state", "unpublished");
+            doc.setProperty("hippostd:stateSummary", "live");
+            doc.setProperty("hippostd:state", "published");
+            doc.setProperty("hippostdpubwf:lastModifiedBy", writableSession.getUserID());
+            doc.setProperty("hippostdpubwf:createdBy", writableSession.getUserID());
+            doc.setProperty("hippostdpubwf:lastModificationDate",  Calendar.getInstance());
+            doc.setProperty("hippostdpubwf:creationDate", Calendar.getInstance() );
+            doc.setProperty("hippostdpubwf:publicationDate", Calendar.getInstance() );
             
             // add tags:
             
