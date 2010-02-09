@@ -79,6 +79,7 @@
     <commons-configuration.version>1.6</commons-configuration.version>
     <commons-proxy.version>1.0</commons-proxy.version>
     <commons-digester.version>1.8.1</commons-digester.version>
+    <ehcache.version>1.2.3</ehcache.version>
 
     <spring.version>2.5.6</spring.version>
     <aspectj.version>1.6.2</aspectj.version>
@@ -440,6 +441,18 @@
         <groupId>commons-digester</groupId>
         <artifactId>commons-digester</artifactId>
         <version>${commons-digester.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      
+      <dependency>
+        <groupId>ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>${ehcache.version}</version>
         <exclusions>
           <exclusion>
             <groupId>commons-logging</groupId>
