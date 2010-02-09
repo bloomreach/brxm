@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,8 +26,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.configuration.components.HstComponentInfo;
-import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -36,7 +33,6 @@ import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.util.KeyValue;
 
 /**
  * AggregationValve
@@ -107,11 +103,11 @@ public class AggregationValve extends AbstractValve {
                 String forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
                 
                 // page error handling...
-                Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptions = getComponentExceptions(sortedComponentWindows, true);
-                if (componentExceptions != null && !componentExceptions.isEmpty()) {
-                    Object handled = handleComponentExceptions(componentExceptions, requestContainerConfig, rootWindow, requestMap.get(rootWindow), responseMap.get(rootWindow));
+                PageErrors pageErrors = getPageErrors(sortedComponentWindows, true);
+                if (pageErrors != null) {
+                    PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, requestContainerConfig, rootWindow, requestMap.get(rootWindow), responseMap.get(rootWindow));
                     forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
-                    if (handled == PageErrorHandler.HANDLED_TO_STOP && forwardPathInfo == null) {
+                    if (handled == PageErrorHandler.Status.HANDLED_TO_STOP && forwardPathInfo == null) {
                         context.invokeNext();
                         return;
                     }
@@ -154,10 +150,10 @@ public class AggregationValve extends AbstractValve {
                     processWindowsRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap, isDevelopmentMode, traceToolWindow);
                     
                     // page error handling...
-                    componentExceptions = getComponentExceptions(sortedComponentWindows, true);
-                    if (componentExceptions != null && !componentExceptions.isEmpty()) {
-                        Object handled = handleComponentExceptions(componentExceptions, requestContainerConfig, rootWindow, requestMap.get(rootWindow), responseMap.get(rootWindow));
-                        if (handled == PageErrorHandler.HANDLED_TO_STOP) {
+                    pageErrors = getPageErrors(sortedComponentWindows, true);
+                    if (pageErrors != null) {
+                        PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, requestContainerConfig, rootWindow, requestMap.get(rootWindow), responseMap.get(rootWindow));
+                        if (handled == PageErrorHandler.Status.HANDLED_TO_STOP) {
                             // just ignore because we don't support forward or redirect during rendering...
                         }
                     }

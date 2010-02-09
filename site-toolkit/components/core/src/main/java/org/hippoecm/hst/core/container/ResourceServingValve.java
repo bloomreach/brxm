@@ -15,21 +15,16 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.util.Collection;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.configuration.components.HstComponentInfo;
-import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResourceResponseImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.util.KeyValue;
 
 /**
  * ResourceServingValve
@@ -66,10 +61,10 @@ public class ResourceServingValve extends AbstractValve {
                 invoker.invokeBeforeServeResource(context.getRequestContainerConfig(), request, response);
                 
                 // page error handling...
-                Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptions = getComponentExceptions(new HstComponentWindow [] { window }, true);
-                if (componentExceptions != null && !componentExceptions.isEmpty()) {
-                    Object handled = handleComponentExceptions(componentExceptions, context.getRequestContainerConfig(), window, request, response);
-                    if (handled == PageErrorHandler.HANDLED_TO_STOP) {
+                PageErrors pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
+                if (pageErrors != null) {
+                    PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
+                    if (handled == PageErrorHandler.Status.HANDLED_TO_STOP) {
                         context.invokeNext();
                         return;
                     }
@@ -78,10 +73,10 @@ public class ResourceServingValve extends AbstractValve {
                 invoker.invokeServeResource(context.getRequestContainerConfig(), request, response);
                 
                 // page error handling...
-                componentExceptions = getComponentExceptions(new HstComponentWindow [] { window }, true);
-                if (componentExceptions != null && !componentExceptions.isEmpty()) {
-                    Object handled = handleComponentExceptions(componentExceptions, context.getRequestContainerConfig(), window, request, response);
-                    if (handled == PageErrorHandler.HANDLED_TO_STOP) {
+                pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
+                if (pageErrors != null) {
+                    PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
+                    if (handled == PageErrorHandler.Status.HANDLED_TO_STOP) {
                         context.invokeNext();
                         return;
                     }

@@ -16,16 +16,15 @@
 package org.hippoecm.hst.demo.util;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.PageErrorHandler;
+import org.hippoecm.hst.core.container.PageErrors;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.util.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +35,13 @@ import org.slf4j.LoggerFactory;
  */
 public class SimplePageErrorHandler implements PageErrorHandler {
 
-    public static final String COMPONENT_EXCEPTIONS = SimplePageErrorHandler.class.getName() + ".componentExceptions";
+    public static final String PAGE_ERRORS = SimplePageErrorHandler.class.getName() + ".pageErrors";
     public static final String ERROR_PAGE = SimplePageErrorHandler.class.getName() + ".errorPage";
     
     protected final static Logger log = LoggerFactory.getLogger(SimplePageErrorHandler.class);
     
-    public Object handleComponentExceptions(Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptionPairs, HstRequest hstRequest, HstResponse hstResponse) {
-        logWarningsForEachComponentExceptions(componentExceptionPairs);
+    public Status handleComponentExceptions(PageErrors pageErrors, HstRequest hstRequest, HstResponse hstResponse) {
+        logWarningsForEachComponentExceptions(pageErrors);
         
         HstRequestContext requestContext = hstRequest.getRequestContext();
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
@@ -50,9 +49,9 @@ public class SimplePageErrorHandler implements PageErrorHandler {
         
         if (forwardErrorPage != null) {
             try {
-                requestContext.setAttribute(COMPONENT_EXCEPTIONS, componentExceptionPairs);
+                requestContext.setAttribute(PAGE_ERRORS, pageErrors);
                 hstResponse.forward(forwardErrorPage);
-                return HANDLED_TO_STOP;
+                return Status.HANDLED_TO_STOP;
             } catch (IOException e) {
                 if (log.isDebugEnabled()) {
                     log.warn("Failed to forward page: " + forwardErrorPage, e);
@@ -62,14 +61,12 @@ public class SimplePageErrorHandler implements PageErrorHandler {
             }
         }
         
-        return HANDLED_BUT_CONTINUE;
+        return Status.HANDLED_BUT_CONTINUE;
     }
     
-    protected void logWarningsForEachComponentExceptions(Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptionPairs) {
-        for (KeyValue<HstComponentInfo, Collection<HstComponentException>> pair : componentExceptionPairs) {
-            HstComponentInfo componentInfo = pair.getKey();
-            
-            for (HstComponentException componentException : pair.getValue()) {
+    protected void logWarningsForEachComponentExceptions(PageErrors pageErrors) {
+        for (HstComponentInfo componentInfo : pageErrors.getComponentInfos()) {
+            for (HstComponentException componentException : pageErrors.getComponentExceptions(componentInfo)) {
                 if (log.isDebugEnabled()) {
                     log.warn("Component exception found on " + componentInfo.getComponentClassName(), componentException);
                 } else if (log.isWarnEnabled()) {
@@ -78,5 +75,5 @@ public class SimplePageErrorHandler implements PageErrorHandler {
             }
         }
     }
-
+    
 }

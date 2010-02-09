@@ -17,22 +17,18 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.configuration.components.HstComponentInfo;
-import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.util.KeyValue;
 
 /**
  * ActionValve
@@ -77,12 +73,11 @@ public class ActionValve extends AbstractValve {
                 getComponentInvoker().invokeAction(context.getRequestContainerConfig(), request, response);
                 
                 // page error handling...
-                Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptions = 
-                    getComponentExceptions(new HstComponentWindow [] { window }, true);
-                if (componentExceptions != null && !componentExceptions.isEmpty()) {
-                    Object handled = handleComponentExceptions(componentExceptions, context.getRequestContainerConfig(), window, request, response);
+                PageErrors pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
+                if (pageErrors != null) {
+                    PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
                     String location = responseState.getRedirectLocation();
-                    if (handled == PageErrorHandler.HANDLED_TO_STOP && location == null) {
+                    if (handled == PageErrorHandler.Status.HANDLED_TO_STOP && location == null) {
                         context.invokeNext();
                         return;
                     }

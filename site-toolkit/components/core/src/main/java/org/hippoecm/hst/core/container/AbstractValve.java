@@ -261,7 +261,7 @@ public abstract class AbstractValve implements Valve {
         return null;
     }
     
-    protected Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> getComponentExceptions(HstComponentWindow [] sortedComponentWindows, boolean clearExceptions) {
+    protected PageErrors getPageErrors(HstComponentWindow [] sortedComponentWindows, boolean clearExceptions) {
         List<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptions = null;
         
         for (HstComponentWindow window : sortedComponentWindows) {
@@ -281,10 +281,14 @@ public abstract class AbstractValve implements Valve {
             }
         }
         
-        return componentExceptions;
+        if (componentExceptions != null && !componentExceptions.isEmpty()) {
+            return new DefaultPageErrors(componentExceptions);
+        } else {
+            return null;
+        }
     }
     
-    protected Object handleComponentExceptions(Collection<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptions, HstContainerConfig requestContainerConfig, HstComponentWindow window, HstRequest hstRequest, HstResponse hstResponse) {
+    protected PageErrorHandler.Status handleComponentExceptions(PageErrors pageErrors, HstContainerConfig requestContainerConfig, HstComponentWindow window, HstRequest hstRequest, HstResponse hstResponse) {
         PageErrorHandler pageErrorHandler = (PageErrorHandler) hstRequest.getAttribute(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
         
         if (pageErrorHandler == null) {
@@ -313,11 +317,11 @@ public abstract class AbstractValve implements Valve {
         }
         
         if (pageErrorHandler == null) {
-            return PageErrorHandler.NOT_HANDLED_TO_CONTINUE;
+            return PageErrorHandler.Status.NOT_HANDLED;
         }
         
         try {
-            return pageErrorHandler.handleComponentExceptions(componentExceptions, hstRequest, hstResponse);
+            return pageErrorHandler.handleComponentExceptions(pageErrors, hstRequest, hstResponse);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Exception during custom error handling.", e);
@@ -325,7 +329,7 @@ public abstract class AbstractValve implements Valve {
                 log.warn("Exception during custom error handling. {}", e.toString());
             }
             
-            return PageErrorHandler.HANDLED_BUT_CONTINUE;
+            return PageErrorHandler.Status.HANDLED_BUT_CONTINUE;
         }
     }
     
