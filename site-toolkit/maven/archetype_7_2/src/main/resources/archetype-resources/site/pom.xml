@@ -280,7 +280,7 @@
                 <configuration>
                   <quiet>true</quiet>
                   <files>
-                    <file>build.properties</file>
+                    <file>${dollar}{basedir}/build.properties</file>
                   </files>
                 </configuration>
               </execution>
@@ -298,9 +298,53 @@
                 </goals>
                 <configuration>
                   <artifactItems>
+                    <!-- Copy shared libs -->
                     <artifactItem>
                       <groupId>org.apache.geronimo.specs</groupId>
                       <artifactId>geronimo-jta_1.1_spec</artifactId>
+                      <version>${dollar}{jta.version}</version>
+                      <outputDirectory>${dollar}{tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>javax.jcr</groupId>
+                      <artifactId>jcr</artifactId>
+                      <version>${dollar}{javax.jcr.version}</version>
+                      <outputDirectory>${dollar}{tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.hippoecm</groupId>
+                      <artifactId>hippo-ecm-api</artifactId>
+                      <version>${dollar}{hippoecm.version}</version>
+                      <outputDirectory>${dollar}{tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.hippoecm</groupId>
+                      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+                      <version>${dollar}{hippoecm.version}</version>
+                      <outputDirectory>${dollar}{tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.hippoecm</groupId>
+                      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+                      <version>${dollar}{hippoecm.version}</version>
+                      <outputDirectory>${dollar}{tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>javax.jdo</groupId>
+                      <artifactId>jdo2-api</artifactId>
+                      <version>${dollar}{jdo.version}</version>
+                      <outputDirectory>${dollar}{tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst</groupId>
+                      <artifactId>hst-api</artifactId>
+                      <version>${dollar}{hst.version}</version>
+                      <outputDirectory>${dollar}{tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst</groupId>
+                      <artifactId>hst-commons</artifactId>
+                      <version>${dollar}{hst.version}</version>
                       <outputDirectory>${dollar}{tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                   </artifactItems>
@@ -321,6 +365,17 @@
                       <type>war</type>
                       <overWrite>true</overWrite>
                       <outputDirectory>${dollar}{tomcat.hst.cms.webapp}</outputDirectory>
+                      <!-- Excludes shared libs -->
+                      <excludes>
+                        WEB-INF/lib/geronimo-jta_1.1_spec-${dollar}{jta.version}.jar,
+                        WEB-INF/lib/jcr-${dollar}{javax.jcr.version}.jar,
+                        WEB-INF/lib/hippo-ecm-api-${dollar}{hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${dollar}{hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${dollar}{hippoecm.version}.jar,
+                        WEB-INF/lib/jdo2-api-${dollar}{jdo.version}.jar,
+                        WEB-INF/lib/hst-api-${dollar}{hst.version}.jar,
+                        WEB-INF/lib/hst-commons-${dollar}{hst.version}.jar
+                      </excludes>
                     </artifactItem>
                     <artifactItem>
                       <groupId>${groupId}</groupId>
@@ -329,9 +384,46 @@
                       <type>war</type>
                       <overWrite>true</overWrite>
                       <outputDirectory>${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}</outputDirectory>
+                      <!-- Excludes shared libs -->
+                      <excludes>
+                        WEB-INF/lib/geronimo-jta_1.1_spec-${dollar}{jta.version}.jar,
+                        WEB-INF/lib/jcr-${dollar}{javax.jcr.version}.jar,
+                        WEB-INF/lib/hippo-ecm-api-${dollar}{hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${dollar}{hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${dollar}{hippoecm.version}.jar,
+                        WEB-INF/lib/jdo2-api-${dollar}{jdo.version}.jar,
+                        WEB-INF/lib/hst-api-${dollar}{hst.version}.jar,
+                        WEB-INF/lib/hst-commons-${dollar}{hst.version}.jar
+                      </excludes>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>update hst-config</id>
+                <phase>install</phase>
+                <configuration>
+                  <tasks>
+                    <replace file="${dollar}{tomcat.server.home}/webapps/${dollar}{project.build.finalName}/WEB-INF/hst-config.properties">
+                      <replacefilter token="#hstconfigreader.repository.address = vm://" value="hstconfigreader.repository.address = vm://" />
+                      <replacefilter token="#default.repository.address = vm://" value="default.repository.address = vm://" />
+                      <replacefilter token="#writable.repository.address = vm://" value="writable.repository.address = vm://" />
+                      <replacefilter token="hstconfigreader.repository.address = rmi://" value="#hstconfigreader.repository.address = rmi://" />
+                      <replacefilter token="default.repository.address = rmi://" value="#default.repository.address = rmi://" />
+                      <replacefilter token="writable.repository.address = rmi://" value="#writable.repository.address = rmi://" />
+                    </replace>
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
