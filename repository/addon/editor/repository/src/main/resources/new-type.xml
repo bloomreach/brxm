@@ -115,6 +115,21 @@
           <sv:property sv:name="hippostd:stateSummary" sv:type="String">
             <sv:value>new</sv:value>
           </sv:property>
+          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+            <sv:value></sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+            <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+            <sv:value></sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+            <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+            <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+          </sv:property>
         </sv:node>
       </sv:node>
     </sv:node>
