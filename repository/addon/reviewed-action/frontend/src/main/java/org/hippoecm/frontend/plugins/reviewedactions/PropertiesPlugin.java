@@ -67,7 +67,7 @@ public class PropertiesPlugin extends RenderPlugin {
                     if (node.isNodeType("hippostdpubwf:document")) {
                         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
                         if (node.hasProperty("hippostdpubwf:publicationDate")) {
-                            publicationDate = formatter.format(node.getProperty("hippostdpubwf:publicationDate").getDate());
+                            publicationDate = formatter.format(node.getProperty("hippostdpubwf:publicationDate").getDate().getTime());
                         } else {
                             publicationDate = null;
                         }
