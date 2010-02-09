@@ -37,6 +37,7 @@ import org.hippoecm.frontend.plugins.console.menu.namespace.NamespaceDialog;
 import org.hippoecm.frontend.plugins.console.menu.node.NodeDialog;
 import org.hippoecm.frontend.plugins.console.menu.permissions.PermissionsDialog;
 import org.hippoecm.frontend.plugins.console.menu.property.PropertyDialog;
+import org.hippoecm.frontend.plugins.console.menu.refs.ReferencesDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
@@ -197,6 +198,15 @@ public class MenuPlugin extends RenderPlugin<Node> {
             }
         };
         add(new DialogLink("permissions-dialog", new Model("View Permissions"), dialogFactory, dialogService));
+
+        dialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public AbstractDialog<Node> createDialog() {
+                return new ReferencesDialog(MenuPlugin.this);
+            }
+        };
+        add(new DialogLink("references-dialog", new Model("View References"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
