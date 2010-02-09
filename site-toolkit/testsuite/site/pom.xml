@@ -503,6 +503,24 @@
           <version>${project.version}</version>
           <type>pom</type>
         </dependency>
+        <dependency>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-api</artifactId>
+          <version>${hippoecm.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+          <version>${hippoecm.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+          <version>${hippoecm.version}</version>
+          <scope>provided</scope>
+        </dependency>
       </dependencies>
       <build>
         <plugins>
@@ -545,14 +563,41 @@
                 </goals>
                 <configuration>
                   <artifactItems>
+                    <!-- Copy shared libs -->
                     <artifactItem>
                       <groupId>org.apache.geronimo.specs</groupId>
                       <artifactId>geronimo-jta_1.1_spec</artifactId>
+                      <version>${jta.version}</version>
                       <outputDirectory>${jetspeed.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
                       <groupId>javax.jcr</groupId>
                       <artifactId>jcr</artifactId>
+                      <version>${javax.jcr.version}</version>
+                      <outputDirectory>${jetspeed.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.hippoecm</groupId>
+                      <artifactId>hippo-ecm-api</artifactId>
+                      <version>${hippoecm.version}</version>
+                      <outputDirectory>${jetspeed.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.hippoecm</groupId>
+                      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+                      <version>${hippoecm.version}</version>
+                      <outputDirectory>${jetspeed.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.hippoecm</groupId>
+                      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+                      <version>${hippoecm.version}</version>
+                      <outputDirectory>${jetspeed.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>javax.jdo</groupId>
+                      <artifactId>jdo2-api</artifactId>
+                      <version>${jdo.version}</version>
                       <outputDirectory>${jetspeed.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                     <artifactItem>
@@ -586,6 +631,17 @@
                       <overWrite>true</overWrite>
                       <outputDirectory>${jetspeed.portal.webapp}</outputDirectory>
                       <includes>WEB-INF/lib/*.jar</includes>
+                      <!-- Excludes shared libs -->
+                      <excludes>
+                        WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
+                        WEB-INF/lib/jcr-${javax.jcr.version}.jar,
+                        WEB-INF/lib/hippo-ecm-api-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/jdo2-api-${jdo.version}.jar,
+                        WEB-INF/lib/hst-api-${project.version}.jar,
+                        WEB-INF/lib/hst-commons-${project.version}.jar
+                      </excludes>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
@@ -605,6 +661,17 @@
                       <type>war</type>
                       <overWrite>true</overWrite>
                       <outputDirectory>${jetspeed.hst.cms.webapp}</outputDirectory>
+                      <!-- Excludes shared libs -->
+                      <excludes>
+                        WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
+                        WEB-INF/lib/jcr-${javax.jcr.version}.jar,
+                        WEB-INF/lib/hippo-ecm-api-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/jdo2-api-${jdo.version}.jar,
+                        WEB-INF/lib/hst-api-${project.version}.jar,
+                        WEB-INF/lib/hst-commons-${project.version}.jar
+                      </excludes>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
@@ -624,6 +691,17 @@
                       <type>war</type>
                       <outputDirectory>${jetspeed.portal.webapp}/WEB-INF/deploy</outputDirectory>
                       <destFileName>${project.build.finalName}.war</destFileName>
+                      <!-- Excludes shared libs -->
+                      <excludes>
+                        WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
+                        WEB-INF/lib/jcr-${javax.jcr.version}.jar,
+                        WEB-INF/lib/hippo-ecm-api-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/jdo2-api-${jdo.version}.jar,
+                        WEB-INF/lib/hst-api-${project.version}.jar,
+                        WEB-INF/lib/hst-commons-${project.version}.jar
+                      </excludes>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
@@ -660,6 +738,14 @@
                 <phase>install</phase>
                 <configuration>
                   <tasks>
+                    <replace file="${jetspeed.portal.webapp}/WEB-INF/hst-config.properties">
+                      <replacefilter token="#hstconfigreader.repository.address = vm://" value="hstconfigreader.repository.address = vm://" />
+                      <replacefilter token="#default.repository.address = vm://" value="default.repository.address = vm://" />
+                      <replacefilter token="#writable.repository.address = vm://" value="writable.repository.address = vm://" />
+                      <replacefilter token="hstconfigreader.repository.address = rmi://" value="#hstconfigreader.repository.address = rmi://" />
+                      <replacefilter token="default.repository.address = rmi://" value="#default.repository.address = rmi://" />
+                      <replacefilter token="writable.repository.address = rmi://" value="#writable.repository.address = rmi://" />
+                    </replace>
                     <echo><![CDATA[
 ========================================================================
 [Notice]
