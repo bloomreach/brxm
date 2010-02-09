@@ -34,7 +34,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
+import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.FeedbackMessagesModel;
 import org.apache.wicket.markup.DefaultMarkupCacheKeyProvider;
@@ -140,12 +140,12 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             private static final long serialVersionUID = 1L;
 
             private WebMarkupContainer details;
-            private AjaxLink link;
+            private AjaxLink<String> link;
 
-            protected ExceptionLabel(String id, IModel model, Exception ex, boolean escape) {
+            protected ExceptionLabel(String id, IModel<String> model, Exception ex, boolean escape) {
                 super(id);
                 setOutputMarkupId(true);
-                add(link = new AjaxLink("message") {
+                add(link = new AjaxLink<String>("message") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -187,12 +187,12 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 details.put("type", ex.getClass().getName());
                 details.put("message", ex.getMessage());
                 ExceptionLabel label = new ExceptionLabel(id, new StringResourceModel("exception,${type},${message}",
-                        AbstractDialog.this, new Model((Serializable) details), ex.getLocalizedMessage()), ex,
+                        AbstractDialog.this, new Model<Serializable>((Serializable) details), ex.getLocalizedMessage()), ex,
                         ExceptionFeedbackPanel.this.getEscapeModelStrings());
                 return label;
             } else {
                 Label label = new Label(id);
-                label.setDefaultModel(new Model(serializable == null ? "" : serializable.toString()));
+                label.setDefaultModel(new Model<String>(serializable == null ? "" : serializable.toString()));
                 label.setEscapeModelStrings(ExceptionFeedbackPanel.this.getEscapeModelStrings());
                 return label;
             }
@@ -228,7 +228,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         private Button button;
 
         private boolean ajax;
-        private IModel label;
+        private IModel<String> label;
         private boolean visible;
         private boolean enabled;
 
@@ -243,11 +243,11 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             }
         }
 
-        public ButtonWrapper(IModel label) {
+        public ButtonWrapper(IModel<String> label) {
             this(label, true);
         }
 
-        public ButtonWrapper(IModel label, boolean ajax) {
+        public ButtonWrapper(IModel<String> label, boolean ajax) {
             this.ajax = ajax;
             this.label = label;
             this.visible = true;
@@ -260,7 +260,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form form) {
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         if (!closing) {
                             ButtonWrapper.this.onSubmit();
                         }
@@ -309,7 +309,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             ajax = c;
         }
 
-        public void setLabel(IModel label) {
+        public void setLabel(IModel<String> label) {
             this.label = label;
             if (button != null) {
                 button.setModel(label);
@@ -353,7 +353,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     private IDialogService dialogService;
     private Panel container;
-    private WicketAjaxIndicatorAppender indicator;
+    private AjaxIndicatorAppender indicator;
 
     private transient boolean closing = false;
     protected boolean cancelled = false;
@@ -362,7 +362,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         this(null);
     }
 
-    public AbstractDialog(IModel model) {
+    public AbstractDialog(IModel<T> model) {
         super("form", model);
 
         setOutputMarkupId(true);
@@ -375,12 +375,12 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         add(feedback);
 
         buttons = new LinkedList<ButtonWrapper>();
-        ListView buttonsView = new ListView("buttons", new Model(buttons)) {
+        ListView<ButtonWrapper> buttonsView = new ListView<ButtonWrapper>("buttons", buttons) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem item) {
-                item.add(((ButtonWrapper) item.getModelObject()).getButton());
+            protected void populateItem(ListItem<ButtonWrapper> item) {
+                item.add(item.getModelObject().getButton());
             }
         };
         buttonsView.setReuseItems(true);
@@ -417,7 +417,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         };
         buttons.add(cancel);
 
-        add(indicator = new WicketAjaxIndicatorAppender() {
+        add(indicator = new AjaxIndicatorAppender() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -457,10 +457,10 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     protected void setOkLabel(String label) {
-        setOkLabel(new Model(label));
+        setOkLabel(new Model<String>(label));
     }
 
-    protected void setOkLabel(IModel label) {
+    protected void setOkLabel(IModel<String> label) {
         ok.setLabel(label);
     }
 
@@ -477,10 +477,10 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     protected void setCancelLabel(String label) {
-        setCancelLabel(new Model(label));
+        setCancelLabel(new Model<String>(label));
     }
 
-    protected void setCancelLabel(IModel label) {
+    protected void setCancelLabel(IModel<String> label) {
         cancel.setLabel(label);
     }
 
@@ -596,7 +596,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         return focusComponent = c;
     }
 
-    public AjaxUpdatingWidget setFocus(AjaxUpdatingWidget widget) {
+    public AjaxUpdatingWidget<?> setFocus(AjaxUpdatingWidget<?> widget) {
         setFocus(widget.getFocusComponent());
         return widget;
     }
