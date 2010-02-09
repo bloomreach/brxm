@@ -22,24 +22,35 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class BrowserHelper {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static final Logger log = LoggerFactory.getLogger(BrowserHelper.class);
+    
     private BrowserHelper() {}
     
     public static boolean isFolder(IModel<Node> nodeModel) {
         if (nodeModel.getObject() != null) {
             try {
                 Node node = nodeModel.getObject();
+                if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    if (!node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                        return false;
+                    }
+                    String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                    node = node.getSession().getNodeByUUID(uuid);
+                }
                 if (node.isNodeType(HippoStdNodeType.NT_FOLDER) || node.isNodeType(HippoStdNodeType.NT_DIRECTORY)
                         || node.isNodeType(HippoNodeType.NT_NAMESPACE)
                         || node.isNodeType(HippoNodeType.NT_FACETBASESEARCH) || node.isNodeType("rep:root")) {
                     return true;
                 }
             } catch (RepositoryException ex) {
-                BrowseService.log.error(ex.getMessage());
+                log.error(ex.getMessage());
             }
             return false;
         }
@@ -52,7 +63,7 @@ public final class BrowserHelper {
                 Node node = nodeModel.getObject();
                 return node.isNodeType(HippoNodeType.NT_HANDLE) || node.isNodeType(HippoNodeType.NT_FACETRESULT);
             } catch (RepositoryException ex) {
-                BrowseService.log.error(ex.getMessage());
+                log.error(ex.getMessage());
             }
         }
         return false;
@@ -70,7 +81,7 @@ public final class BrowserHelper {
                 return new JcrNodeModel(parent.getParent());
             }
         } catch (RepositoryException ex) {
-            BrowseService.log.error(ex.getMessage());
+            log.error(ex.getMessage());
         }
         return parentModel;
     }
