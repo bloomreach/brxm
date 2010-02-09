@@ -55,7 +55,7 @@
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
-        <sv:value>unpublished</sv:value>
+        <sv:value>published</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:stateSummary" sv:type="String">
         <sv:value>new</sv:value>
@@ -115,7 +115,7 @@
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
-        <sv:value>unpublished</sv:value>
+        <sv:value>published</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:stateSummary" sv:type="String">
         <sv:value>new</sv:value>
