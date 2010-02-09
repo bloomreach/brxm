@@ -40,6 +40,12 @@ import net.sf.ehcache.Element;
  * throughput must be extremely large. A cached valid page won't hit the hst2 application at all, and will be served from cache. Easily thousands to tens of
  * of thousands page request per second can be handled by this filter. 
  * 
+ * in the web.xml you can use this filter with 
+ * 
+ * <dispatchet>FORWARD</dispatcher> 
+ * 
+ * as the request will be forwarded from the HstVirtualHostsFilter
+ * 
  * TODO 
  * <UL>
  *    <LI> Configure the cache characteristics in the repository / web.xml / hst config properties </LI>
