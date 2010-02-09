@@ -85,8 +85,12 @@ public class DocumentsProvider extends SortableDataProvider<Node> {
                 NodeIterator subNodes = filter.filter(node, node.getNodes());
                 while (subNodes.hasNext()) {
                     Node subNode = subNodes.nextNode();
-                    //Skip deleted documents
+                    // Skip deleted documents
                     if (subNode.isNodeType(HippoNodeType.NT_HANDLE) && !subNode.hasNode(subNode.getName())) {
+                        continue;
+                    }
+                    // skip translations
+                    if (subNode.isNodeType(HippoNodeType.NT_TRANSLATION)) {
                         continue;
                     }
                     entries.add(subNode);
