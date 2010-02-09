@@ -193,6 +193,7 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
         if (parentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
             if (lastReferences.containsKey(nodeModel)) {
                 JcrNodeModel targetParent = lastReferences.get(nodeModel);
+                boolean isResultSet = targetParent.getNode().isNodeType(HippoNodeType.NT_FACETRESULT);
                 // Locate document in target.  The first node (lowest sns index in target)
                 // whose canonical equivalent is under the handle will be used.
                 int index = 0;
@@ -209,10 +210,17 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
                             if (canonical == null) {
                                 continue;
                             }
-                            if (canonical.getParent().isSame(parentNode)) {
-                                if (index == 0 || node.getIndex() < index) {
-                                    index = node.getIndex();
+                            if (isResultSet) {
+                                if (canonical.getParent().isSame(parentNode)) {
+                                    if (index == 0 || node.getIndex() < index) {
+                                        index = node.getIndex();
+                                        target = node;
+                                    }
+                                }
+                            } else {
+                                if (canonical.isSame(parentNode)) {
                                     target = node;
+                                    break;
                                 }
                             }
                         } catch (ItemNotFoundException ex) {

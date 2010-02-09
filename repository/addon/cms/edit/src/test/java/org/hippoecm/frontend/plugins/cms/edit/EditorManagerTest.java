@@ -141,6 +141,8 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                     "hippo:docbase", "/test/content",
                     "hippo:queryname", "state",
                     "hippo:facets", HippoStdNodeType.HIPPOSTD_STATE,
+                "/test/mirror", "hippo:mirror",
+                    "hippo:docbase", "/test/content",
                 "/test/plugin", "frontend:pluginconfig",
                     "plugin.class", EditorManagerPlugin.class.getName(),
                     "wicket.model", "model",
@@ -371,7 +373,7 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
     }
 
     @Test
-    public void browseToVirtualNode() throws Exception {
+    public void browseToResultset() throws Exception {
         createDocument("doc1");
         createDocument("doc2");
         session.save();
@@ -390,6 +392,28 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         List<IRenderService> previews = getPreviews();
         previews.get(0).focus(null);
         assertEquals(new JcrNodeModel("/test/facetsearch/unpublished/hippo:resultset/doc1"), modelReference.getModel());
+    }
+
+    @Test
+    public void browseToMirror() throws Exception {
+        createDocument("doc1");
+        createDocument("doc2");
+        session.save();
+
+        IPluginContext pluginContext = start(config);
+
+        // open editor for virtual node
+        modelReference.setModel(new JcrNodeModel("/test/mirror/doc1"));
+        assertEquals(1, getPreviews().size());
+
+        // open editor for physical node
+        modelReference.setModel(new JcrNodeModel("/test/content/doc2/doc2"));
+        assertEquals(2, getPreviews().size());
+
+        // switch back to first editor
+        List<IRenderService> previews = getPreviews();
+        previews.get(0).focus(null);
+        assertEquals(new JcrNodeModel("/test/mirror/doc1"), modelReference.getModel());
     }
 
     @Test
