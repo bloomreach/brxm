@@ -346,9 +346,53 @@
                 </goals>
                 <configuration>
                   <artifactItems>
+                    <!-- Copy shared libs -->
                     <artifactItem>
                       <groupId>org.apache.geronimo.specs</groupId>
                       <artifactId>geronimo-jta_1.1_spec</artifactId>
+                      <version>${jta.version}</version>
+                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>javax.jcr</groupId>
+                      <artifactId>jcr</artifactId>
+                      <version>${javax.jcr.version}</version>
+                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.hippoecm</groupId>
+                      <artifactId>hippo-ecm-api</artifactId>
+                      <version>${hippoecm.version}</version>
+                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.hippoecm</groupId>
+                      <artifactId>hippo-ecm-addon-builtin-common</artifactId>
+                      <version>${hippoecm.version}</version>
+                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.hippoecm</groupId>
+                      <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+                      <version>${hippoecm.version}</version>
+                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>javax.jdo</groupId>
+                      <artifactId>jdo2-api</artifactId>
+                      <version>${jdo.version}</version>
+                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst</groupId>
+                      <artifactId>hst-api</artifactId>
+                      <version>${project.version}</version>
+                      <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.onehippo.ecm.hst</groupId>
+                      <artifactId>hst-commons</artifactId>
+                      <version>${project.version}</version>
                       <outputDirectory>${tomcat.hst.shared.lib}</outputDirectory>
                     </artifactItem>
                   </artifactItems>
@@ -369,6 +413,17 @@
                       <type>war</type>
                       <overWrite>true</overWrite>
                       <outputDirectory>${tomcat.hst.cms.webapp}</outputDirectory>
+                      <!-- Excludes shared libs -->
+                      <excludes>
+                        WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
+                        WEB-INF/lib/jcr-${javax.jcr.version}.jar,
+                        WEB-INF/lib/hippo-ecm-api-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/jdo2-api-${jdo.version}.jar,
+                        WEB-INF/lib/hst-api-${project.version}.jar,
+                        WEB-INF/lib/hst-commons-${project.version}.jar
+                      </excludes>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.onehippo.ecm.hst.testsuite</groupId>
@@ -377,9 +432,46 @@
                       <type>war</type>
                       <overWrite>true</overWrite>
                       <outputDirectory>${tomcat.server.home}/webapps/${project.build.finalName}</outputDirectory>
+                      <!-- Excludes shared libs -->
+                      <excludes>
+                        WEB-INF/lib/geronimo-jta_1.1_spec-${jta.version}.jar,
+                        WEB-INF/lib/jcr-${javax.jcr.version}.jar,
+                        WEB-INF/lib/hippo-ecm-api-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-builtin-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/hippo-ecm-addon-reviewed-action-common-${hippoecm.version}.jar,
+                        WEB-INF/lib/jdo2-api-${jdo.version}.jar,
+                        WEB-INF/lib/hst-api-${project.version}.jar,
+                        WEB-INF/lib/hst-commons-${project.version}.jar
+                      </excludes>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>update hst-config</id>
+                <phase>install</phase>
+                <configuration>
+                  <tasks>
+                    <replace file="${tomcat.server.home}/webapps/${project.build.finalName}/WEB-INF/hst-config.properties">
+                      <replacefilter token="#hstconfigreader.repository.address = vm://" value="hstconfigreader.repository.address = vm://" />
+                      <replacefilter token="#default.repository.address = vm://" value="default.repository.address = vm://" />
+                      <replacefilter token="#writable.repository.address = vm://" value="writable.repository.address = vm://" />
+                      <replacefilter token="hstconfigreader.repository.address = rmi://" value="#hstconfigreader.repository.address = rmi://" />
+                      <replacefilter token="default.repository.address = rmi://" value="#default.repository.address = rmi://" />
+                      <replacefilter token="writable.repository.address = rmi://" value="#writable.repository.address = rmi://" />
+                    </replace>
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
