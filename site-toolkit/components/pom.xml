@@ -29,8 +29,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>session-pool</module>
-        <module>core</module>
+      <module>session-pool</module>
+      <module>core</module>
+      <module>caching</module>
     </modules>
     
 </project>
