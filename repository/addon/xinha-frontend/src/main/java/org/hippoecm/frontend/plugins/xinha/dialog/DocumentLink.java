@@ -18,6 +18,9 @@ package org.hippoecm.frontend.plugins.xinha.dialog;
 
 import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
 import org.slf4j.Logger;
@@ -45,6 +48,18 @@ public abstract class DocumentLink extends XinhaLink {
     @Override
     public boolean isValid() {
         if (selectedModel == null) {
+            return false;
+        }
+        Node node = selectedModel.getObject();
+        if (node == null) {
+            return false;
+        }
+        try {
+            if (!node.isNodeType("mix:referenceable")) {
+                return false;
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
             return false;
         }
         return true;
