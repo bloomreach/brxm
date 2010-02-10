@@ -62,7 +62,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         }
         if (PublishableDocument.DRAFT.equals(state)) {
             locked = true;
-            editable = draftDocument.username.equals(super.getWorkflowContext().getUserIdentity());
+            editable = draftDocument.username == null || draftDocument.username.equals(super.getWorkflowContext().getUserIdentity());
             depublishable = false;
             publishable = false;
             status = true;

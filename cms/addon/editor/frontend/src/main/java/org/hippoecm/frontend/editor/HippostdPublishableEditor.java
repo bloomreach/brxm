@@ -67,8 +67,8 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
 
     private IModel<Node> editorModel;
 
-    HippostdPublishableEditor(IEditorContext manager, IPluginContext context, IPluginConfig config,
-            IModel<Node> model) throws EditorException {
+    HippostdPublishableEditor(IEditorContext manager, IPluginContext context, IPluginConfig config, IModel<Node> model)
+            throws EditorException {
         super(manager, context, config, model, getMode(model));
     }
 
@@ -106,7 +106,7 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
                             ((EditableWorkflow) workflow).commitEditableInstance();
                             break;
                         }
-    
+
                         super.setMode(mode);
 
                     } finally {
@@ -227,7 +227,8 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
                         if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)
                                 && child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString().equals(
                                         HippoStdNodeType.DRAFT)
-                                && child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
+                                && (!child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER) || child.getProperty(
+                                        HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user))) {
                             return new JcrNodeModel(child);
                         }
                     }
