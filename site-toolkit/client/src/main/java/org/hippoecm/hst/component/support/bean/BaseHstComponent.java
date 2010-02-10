@@ -29,6 +29,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.digester.Digester;
 import org.hippoecm.hst.configuration.HstSite;
@@ -63,6 +64,7 @@ import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSearch;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetsAvailableNavigation;
 import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -401,8 +403,15 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     /**
-     * 
+     * <p>
      * Facility method for sending a redirect to a SiteMapItemId.  
+     * </p>
+     * <p>
+     * <b>note</b> A sendRedirect is only honored in action phase, thus from {@link HstComponent#doAction(HstRequest, HstResponse)}. 
+     * {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} or {@link HstComponent#doBeforeServeResource(HstRequest, HstResponse)} a 
+     * sendRedirect is ignored, even when called directly on the {@link HstResponse#sendRedirect(String)}. You can use an internal forward instead
+     * by {@link HstResponse#forward(String)}
+     * </p>
      * 
      * @param path the sitemap path you want to redirect to 
      * @param request the HstRequest
@@ -413,8 +422,15 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     /**
-     * 
+     * <p>
      * Facility method for sending a redirect to a SiteMapItemId.  
+     * </p>
+     * <p>
+     * <b>note</b> A sendRedirect is only honored in action phase, thus from {@link HstComponent#doAction(HstRequest, HstResponse)}. 
+     * {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} or {@link HstComponent#doBeforeServeResource(HstRequest, HstResponse)} a 
+     * sendRedirect is ignored, even when called directly on the {@link HstResponse#sendRedirect(String)}. You can use an internal forward instead
+     * by {@link HstResponse#forward(String)}
+     * </p>
      * 
      * @param path the sitemap path you want to redirect to 
      * @param request the HstRequest
@@ -425,8 +441,15 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     /**
-     * 
+     * <p>
      * Facility method for sending a redirect to a SiteMapItemId.  
+     * </p>
+     * <p>
+     * <b>note</b> A sendRedirect is only honored in action phase, thus from {@link HstComponent#doAction(HstRequest, HstResponse)}. 
+     * {@link HstComponent#doBeforeRender(HstRequest, HstResponse)} or {@link HstComponent#doBeforeServeResource(HstRequest, HstResponse)} a 
+     * sendRedirect is ignored, even when called directly on the {@link HstResponse#sendRedirect(String)}. You can use an internal forward instead
+     * by {@link HstResponse#forward(String)}
+     * </p>
      * 
      * @param path the sitemap path you want to redirect to 
      * @param request the HstRequest
