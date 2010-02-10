@@ -15,8 +15,8 @@
   limitations under the License.
 -->
 <!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/j2ee/dtd/web-jsptaglibrary_1_2.dtd">
-<taglib xmlns="http://java.sun.com/xml/ns/javaee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
 
     <tlib-version>1.0</tlib-version>
@@ -231,7 +231,7 @@
             <name>external</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.boolean</type>
+            <type>java.lang.Boolean</type>
             <description>If value is 'true' the created link will be external, thus containing
                 'http://' or 'https://' etc</description>
         </attribute>
@@ -239,7 +239,7 @@
             <name>canonical</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
-            <type>java.lang.boolean</type>
+            <type>java.lang.Boolean</type>
             <description>If the link that is created should be the canonical link, use this attr with value true</description>
         </attribute>
         <example><![CDATA[
