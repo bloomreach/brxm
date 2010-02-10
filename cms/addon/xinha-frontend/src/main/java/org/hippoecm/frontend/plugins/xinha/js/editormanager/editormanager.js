@@ -81,7 +81,6 @@ if (!YAHOO.hippo.EditorManager) {
                     me.saveEditors(); 
                 });
                 
-                
             },
             
             /**
@@ -356,7 +355,11 @@ if (!YAHOO.hippo.EditorManager) {
                 }
                 
                 this.activeEditors.put(editor.name, editor);
-                editor.xinha.focusEditor();
+                if(editor.config.focus) {
+                    editor.xinha.activateEditor();
+                    editor.xinha.focusEditor();
+                }
+
             },
             
             renderPreviews : function(editors) {
