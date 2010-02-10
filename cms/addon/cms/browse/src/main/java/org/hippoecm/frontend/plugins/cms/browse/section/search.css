@@ -3,19 +3,22 @@
 	background: url("search-back.png") no-repeat #dfdfdf;
 }
 
-.hippo-search-section input {
+td.hippo-search-section-input {
+	width: 100%;
+}
+
+.hippo-search-section-input input {
 	float: left;
 	height: 13px;
 	border: 0px;
 	margin: 6px 20px 4px 10px;
 	vertical-align: top;
+	width: 100%;
 }
 
-.hippo-search-section a {
-    float: right;
-    height: 0px;
+.hippo-search-section-toggle {
+    width: 21px;
 }
-
 .hippo-search-scope-container {
 	width: 100%;
 	padding: 0 20px;

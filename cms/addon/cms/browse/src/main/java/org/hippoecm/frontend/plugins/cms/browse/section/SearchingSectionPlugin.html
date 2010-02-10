@@ -17,11 +17,16 @@
   <wicket:panel>
     <div class="hippo-accordion-unit-top hippo-browser-search">
       <div wicket:id="container">
-        <div class="hippo-search-section">
-          <a wicket:id="toggle"><img wicket:id="search-icon" /></a>
-          <input type="text" wicket:id="searchBox" />
-          <div style="clear: both;" />
-        </div>
+        <table class="hippo-search-section">
+          <tr>
+            <td class="hippo-search-section-input">
+              <input type="text" wicket:id="searchBox" />
+            </td>
+            <td class="hippo-search-section-toggle">
+              <a wicket:id="toggle"><img wicket:id="search-icon" /></a>
+            </td>
+          </tr>
+        </table>
         <div class="hippo-search-scope-container">
           <div wicket:id="scope-container">
             <span class="hippo-search-scope-right" />
