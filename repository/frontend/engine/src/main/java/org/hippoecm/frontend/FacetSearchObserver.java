@@ -49,11 +49,21 @@ public class FacetSearchObserver {
     private WeakReference<Session> sessionRef;
     private Map<String, FacetSearchListener> listeners;
     private Set<UpstreamEntry> upstream;
+    private boolean broadcast = false;
 
     public FacetSearchObserver(Session session) {
         this.sessionRef = new WeakReference<Session>(session);
         this.upstream = new HashSet<UpstreamEntry>();
         this.listeners = new HashMap<String, FacetSearchListener>();
+    }
+
+    /**
+     * Broadcast facet search update events to listeners that observe ancestors
+     * or descendants of a facetsearch node.  To be invoked when the session has
+     * been refreshed.
+     */
+    public void broadcastEvents() {
+        broadcast = true;
     }
 
     void start() {
@@ -95,7 +105,17 @@ public class FacetSearchObserver {
         }
     }
 
-    public void subscribe(EventListener listener, String basePath) {
+    void refresh() {
+        if (broadcast) {
+            broadcast = false;
+            for (Map.Entry<String, FacetSearchListener> entry : listeners.entrySet()) {
+                FacetSearchListener listener = entry.getValue();
+                listener.broadcast();
+            }
+        }
+    }
+
+    void subscribe(EventListener listener, String basePath) {
         synchronized (upstream) {
             if (upstream.size() == 0) {
                 start();
@@ -107,7 +127,7 @@ public class FacetSearchObserver {
         }
     }
 
-    public void unsubscribe(EventListener listener) {
+    void unsubscribe(EventListener listener) {
         synchronized (upstream) {
             Iterator<UpstreamEntry> iter = upstream.iterator();
             while (iter.hasNext()) {
@@ -125,8 +145,8 @@ public class FacetSearchObserver {
     private FacetSearchListener addFacetSearchListener(ObservationManager mgr, String docbase, Node node)
             throws RepositoryException {
         FacetSearchListener listener = new FacetSearchListener(node.getPath());
-        mgr.addEventListener(listener, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED, docbase, true, null,
-                null, false);
+        mgr.addEventListener(listener, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED, docbase, true,
+                null, null, false);
         return listener;
     }
 
@@ -139,28 +159,81 @@ public class FacetSearchObserver {
 
         // path to the facetsearch node
         private String fsNodePath;
+        private boolean refresh = false;
 
         FacetSearchListener(String path) {
             this.fsNodePath = path;
         }
 
+        void broadcast() {
+            if (refresh) {
+                refresh = false;
+                List<Event> base = new ArrayList<Event>(1);
+                base.add(new Event() {
+
+                    public String getPath() throws RepositoryException {
+                        return fsNodePath;
+                    }
+
+                    public int getType() {
+                        return 0;
+                    }
+
+                    public String getUserID() {
+                        return "FacetSearchObserver";
+                    }
+
+                });
+                List<UpstreamEntry> listeners;
+                synchronized (upstream) {
+                    listeners = new ArrayList<UpstreamEntry>(upstream);
+                }
+                for (UpstreamEntry listener : listeners) {
+                    // notify listener if it registered at an ancestor or child
+                    if (fsNodePath.startsWith(listener.basePath) || listener.basePath.startsWith(fsNodePath)) {
+                        final Iterator<Event> baseIter = base.iterator();
+                        if (log.isDebugEnabled()) {
+                            log.error("Notifying listener at " + listener.basePath + " of change at " + fsNodePath);
+                        }
+                        listener.listener.onEvent(new EventIterator() {
+
+                            public Event nextEvent() {
+                                return baseIter.next();
+                            }
+
+                            public long getPosition() {
+                                return 0;
+                            }
+
+                            public long getSize() {
+                                return -1;
+                            }
+
+                            public void skip(long skipNum) {
+                            }
+
+                            public boolean hasNext() {
+                                return baseIter.hasNext();
+                            }
+
+                            public Object next() {
+                                return nextEvent();
+                            }
+
+                            public void remove() {
+                                throw new UnsupportedOperationException("EventIterator is immutable");
+                            }
+
+                        });
+                    }
+                }
+            }
+        }
+
         public void onEvent(EventIterator events) {
-            List<Event> base = new ArrayList<Event>(1);
-            base.add(new Event() {
-
-                public String getPath() throws RepositoryException {
-                    return fsNodePath;
-                }
-
-                public int getType() {
-                    return 0;
-                }
-
-                public String getUserID() {
-                    return "FacetSearchObserver";
-                }
-
-            });
+            if (refresh) {
+                return;
+            }
             List<UpstreamEntry> listeners;
             synchronized (upstream) {
                 listeners = new ArrayList<UpstreamEntry>(upstream);
@@ -168,37 +241,8 @@ public class FacetSearchObserver {
             for (UpstreamEntry listener : listeners) {
                 // notify listener if it registered at an ancestor or child
                 if (fsNodePath.startsWith(listener.basePath) || listener.basePath.startsWith(fsNodePath)) {
-                    final Iterator<Event> baseIter = base.iterator();
-                    listener.listener.onEvent(new EventIterator() {
-
-                        public Event nextEvent() {
-                            return baseIter.next();
-                        }
-
-                        public long getPosition() {
-                            return 0;
-                        }
-
-                        public long getSize() {
-                            return -1;
-                        }
-
-                        public void skip(long skipNum) {
-                        }
-
-                        public boolean hasNext() {
-                            return baseIter.hasNext();
-                        }
-
-                        public Object next() {
-                            return nextEvent();
-                        }
-
-                        public void remove() {
-                            throw new UnsupportedOperationException("EventIterator is immutable");
-                        }
-
-                    });
+                    refresh = true;
+                    break;
                 }
             }
         }

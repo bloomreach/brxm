@@ -155,8 +155,10 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
 
             // workflow may have closed existing session
-            session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            UserSession us = (UserSession) org.apache.wicket.Session.get();
+            session = us.getJcrSession();
             session.refresh(false);
+            us.getFacetSearchObserver().broadcastEvents();
         }
 
         protected String execute(T workflow) throws Exception {

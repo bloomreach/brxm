@@ -988,6 +988,12 @@ public class JcrObservationManager implements ObservationManager {
                 }
             }
 
+            // notify facet search listeners.
+            // FIXME due to HREPTWO-2655, will not be able to receive events on newly
+            // created facet search nodes.
+            FacetSearchObserver fso = session.getFacetSearchObserver();
+            fso.refresh();
+
             // create set of paths that need to be refreshed
             Set<String> paths = new TreeSet<String>();
             for (JcrListener listener : set) {
