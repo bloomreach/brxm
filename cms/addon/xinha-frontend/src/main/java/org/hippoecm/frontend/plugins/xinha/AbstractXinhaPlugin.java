@@ -111,7 +111,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private XinhaTextArea editor;
     private Configuration configuration;
 
-    private IBehavior onclickBehavior;
+    private PreviewLinksBehavior previewLinksBehavior;
+    private IBehavior startEditorBehavior;
+    
     private InternalLinkBehavior linkPickerBehavior;
     private ExternalLinkBehavior externalLinkBehavior;
     private ImagePickerBehavior imagePickerBehavior;
@@ -138,11 +140,13 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             if (configuration.getEditorStarted()) {
                 fragment = createEditor("fragment");
                 remove(PREVIEW_CSS);
-                remove(onclickBehavior);
-                onclickBehavior = null;
+                remove(startEditorBehavior);
+                remove(previewLinksBehavior);
+                startEditorBehavior = null;
+                previewLinksBehavior = null;
             } else {
                 fragment = createPreview("fragment");
-                add(onclickBehavior = new AjaxEventBehavior("onclick") {
+                add(startEditorBehavior = new AjaxEventBehavior("onclick") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -199,11 +203,11 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         };
 
-        fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config
+        editor.add(imagePickerBehavior = new ImagePickerBehavior(context, config
                 .getPluginConfig("Xinha.plugins.InsertImage"), imageService));
-        fragment.add(linkPickerBehavior = new InternalLinkBehavior(context, config
+        editor.add(linkPickerBehavior = new InternalLinkBehavior(context, config
                 .getPluginConfig("Xinha.plugins.CreateLink"), linkService));
-        fragment.add(externalLinkBehavior = new ExternalLinkBehavior(context, config));
+        editor.add(externalLinkBehavior = new ExternalLinkBehavior(context, config));
 
         add(new XinhaDropBehavior(context, config) {
             private static final long serialVersionUID = 1L;
@@ -241,9 +245,10 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
     private Fragment createPreview(String fragmentId) {
         Fragment fragment = new Fragment(fragmentId, "view", this);
-
-        final InternalLinkBrowserBehavior il = new InternalLinkBrowserBehavior();
-        fragment.add(il);
+        
+        if(previewLinksBehavior == null) {
+            add(previewLinksBehavior = new PreviewLinksBehavior());
+        }
         fragment.add(new WebMarkupContainer("value", getValueModel()) {
             private static final long serialVersionUID = 1L;
 
@@ -257,7 +262,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                             + "/");
 
                     String processed = XinhaHtmlProcessor.prefixImageLinks(text, prefix);
-                    processed = XinhaHtmlProcessor.decorateInternalLinks(processed, il);
+                    processed = XinhaHtmlProcessor.decorateInternalLinks(processed, previewLinksBehavior);
                     replaceComponentTagBody(markupStream, openTag, processed);
                 } else {
                     renderComponentTagBody(markupStream, openTag);
@@ -404,7 +409,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
     }
 
-    class InternalLinkBrowserBehavior extends AbstractDefaultAjaxBehavior implements ILinkDecorator {
+    class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkDecorator {
         private static final long serialVersionUID = 1L;
 
         @Override
