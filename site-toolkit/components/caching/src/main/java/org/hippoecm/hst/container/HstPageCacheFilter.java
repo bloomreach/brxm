@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.container;
 
-import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -102,7 +102,7 @@ public class HstPageCacheFilter implements Filter {
             chain.doFilter(request, responseWrapper);
          } finally {
             if(responseWrapper != null && pageKey != null) {
-                Element output = new Element(pageKey, responseWrapper.outputRecorder.toString().toCharArray());
+                Element output = new Element(pageKey, responseWrapper.charWriter.toCharArray());
                 memCache.put(output);   
             }
         }
@@ -131,7 +131,7 @@ public class HstPageCacheFilter implements Filter {
     
     class HstResponseWrapper extends HttpServletResponseWrapper {
 
-        protected ByteArrayOutputStream outputRecorder = new ByteArrayOutputStream();
+        protected CharArrayWriter charWriter = new CharArrayWriter();
         
         public HstResponseWrapper(HttpServletResponse response) {
             super(response);
@@ -139,24 +139,24 @@ public class HstPageCacheFilter implements Filter {
         
         public PrintWriter getWriter() throws IOException {
             PrintWriter printWriter = getResponse().getWriter();
-            return new RecordingPrintWriter(printWriter, outputRecorder);
+            return new RecordingPrintWriter(printWriter, charWriter);
         }
         
     }
     
     class RecordingPrintWriter extends PrintWriter {
 
-        protected ByteArrayOutputStream outputRecorder;
+        private CharArrayWriter charWriter;
 
-        public RecordingPrintWriter(PrintWriter printWriter, ByteArrayOutputStream outputRecorder) {
+        public RecordingPrintWriter(PrintWriter printWriter, CharArrayWriter charWriter) {
             super(printWriter);
-            this.outputRecorder = outputRecorder;
+            this.charWriter = charWriter;
         }
 
         @Override
         public void write(char[] buf, int off, int len) {
             super.write(buf, off, len);
-            PrintWriter recorderWriter = new PrintWriter(outputRecorder);
+            PrintWriter recorderWriter = new PrintWriter(charWriter);
             recorderWriter.write(buf, off, len);
             recorderWriter.flush();
         }
@@ -164,17 +164,16 @@ public class HstPageCacheFilter implements Filter {
         @Override
         public void write(int c) {
             super.write(c);
-            outputRecorder.write(c);
+            charWriter.write(c);
 
         }
 
         @Override
         public void write(String s, int off, int len) {
             super.write(s, off, len);
-            PrintWriter recorderWriter = new PrintWriter(outputRecorder);
+            PrintWriter recorderWriter = new PrintWriter(charWriter);
             recorderWriter.write(s, off, len);
             recorderWriter.flush();
-
         }
 
     }
