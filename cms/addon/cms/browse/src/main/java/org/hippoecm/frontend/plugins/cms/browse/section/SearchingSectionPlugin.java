@@ -83,7 +83,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             if (model == null) {
                 throw new IllegalArgumentException("invalid folder model null");
             } else if (model.getObject() == null) {
-                throw new IllegalArgumentException("invalid folder node null");
+                log.warn("Node no longer exists");
+                return;
             }
             onFolderChange(model);
         }
