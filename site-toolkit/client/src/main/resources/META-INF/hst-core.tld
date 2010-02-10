@@ -387,7 +387,14 @@
             <description>A HippoFacetSubNavigation object.</description>
         </attribute>
         <attribute>
-            <name>removeByBeanPath</name>
+            <name>removeList</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.util.List</type>
+            <description>The List of HippoFacetSubNavigation's to be removed.</description>
+        </attribute>
+        <attribute>
+            <name>removeListByBeanPath</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>

@@ -397,6 +397,24 @@
                     JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
             </description>
         </attribute>
+        <attribute>
+            <name>removeList</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.util.List</type>
+            <description>The List of HippoFacetSubNavigation's to be removed.</description>
+        </attribute>
+        <attribute>
+            <name>removeListByBeanPath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>
+              A bean path of a HippoFacetSubNavigation object which can be retrieved via pageContext.
+              NOTE: This is mainly for allowing script templates (such as Freemarker) to set object property by bean path.
+                    JSP developers could ignore this attribute and use 'hippobean' attribute instead directly with object property value.
+            </description>
+        </attribute>
     </tag>
 
     <tag>

@@ -15,10 +15,50 @@
  */
 package org.hippoecm.hst.content.beans.standard.facetnavigation;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 @Node(jcrType="hippofacnav:facetsavailablenavigation")
 public class HippoFacetsAvailableNavigation extends AbstractHippoFacetChildNavigation {
 
-
+    /**
+     * the list of <code>HippoFacetsAvailableNavigation</code>'s ancestors + this HippoFacetsAvailableNavigation. Also see {@link #getAncestors()}
+     * @return the list of <code>HippoFacetsAvailableNavigation</code>'s ancestors + this HippoFacetsAvailableNavigation
+     */
+    public List<HippoFacetsAvailableNavigation> getAncestorsAndSelf() {
+        List<HippoFacetsAvailableNavigation> ancestorListAndSelf = getAncestors();
+        ancestorListAndSelf.add(this);
+        return ancestorListAndSelf;
+    }
+    /**
+     * Returns the list of <code>HippoFacetsAvailableNavigation</code>'s ancestors, where the closest ancestors are last in the list
+     * @return the list of <code>HippoFacetsAvailableNavigation</code>'s ancestors or an empty list if no ancestors of this type.  
+     */
+    public List<HippoFacetsAvailableNavigation> getAncestors() {
+        HippoFacetsAvailableNavigation grandFatherBean = getGrandFatherBean(this);
+        List<HippoFacetsAvailableNavigation> ancestorList = new ArrayList<HippoFacetsAvailableNavigation>();
+        if(grandFatherBean != null) {
+            ancestorList.add(grandFatherBean);
+            while( (grandFatherBean = getGrandFatherBean(grandFatherBean)) != null ){
+                ancestorList.add(grandFatherBean);
+            }
+        }
+        Collections.reverse(ancestorList);
+        return ancestorList;
+    }
+    
+    private HippoFacetsAvailableNavigation getGrandFatherBean(HippoFacetsAvailableNavigation current){
+        HippoBean parentBean = current.getParentBean();
+        if(parentBean != null) {
+            HippoBean grandFatherBean = parentBean.getParentBean();
+            if(grandFatherBean != null && grandFatherBean instanceof HippoFacetsAvailableNavigation) {
+                return (HippoFacetsAvailableNavigation)grandFatherBean;
+            }
+        }
+        return null;
+    }
 }

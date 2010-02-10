@@ -35,6 +35,9 @@ public class FacetedRight extends AbstractSearchComponent {
         
         if(currentBean instanceof HippoFacetNavigation || currentBean instanceof HippoFacetChildNavigationBean) {
             request.setAttribute("facetnav", currentBean);
+            if(currentBean instanceof HippoFacetChildNavigationBean) {
+                request.setAttribute("childNav", "true");
+            }
         }
         
     }

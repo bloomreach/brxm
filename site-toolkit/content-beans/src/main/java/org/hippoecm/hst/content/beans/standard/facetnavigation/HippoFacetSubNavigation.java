@@ -52,6 +52,16 @@ public class HippoFacetSubNavigation extends AbstractHippoFacetChildNavigation {
         return null;
     }
     
+    
+    /**
+     * the list of <code>HippoFacetSubNavigation</code>'s ancestors + this HippoFacetSubNavigation. Also see {@link #getAncestors()}
+     * @return the list of <code>HippoFacetSubNavigation</code>'s ancestors + this HippoFacetSubNavigation
+     */
+    public List<HippoFacetSubNavigation> getAncestorsAndSelf() {
+        List<HippoFacetSubNavigation> ancestorListAndSelf = getAncestors();
+        ancestorListAndSelf.add(this);
+        return ancestorListAndSelf;
+    }
     /**
      * Returns the list of <code>HippoFacetSubNavigation</code>'s ancestors, where the closest ancestors are last in the list
      * @return the list of <code>HippoFacetSubNavigation</code>'s ancestors or an empty list if no ancestors of this type.  

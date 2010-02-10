@@ -16,6 +16,7 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
 
     protected HippoFacetSubNavigation current;
     protected HippoFacetSubNavigation remove;
-    protected boolean skipTag; 
+    protected List<HippoFacetSubNavigation> removeList;
    
     protected String var;
     
@@ -78,11 +79,9 @@ public class HstFacetNavigationLinkTag extends TagSupport {
      */
     @Override
     public int doEndTag() throws JspException{
-        if(skipTag) {
-            return EVAL_PAGE;
-        }
-        if(this.current == null || this.remove == null) {
-            log.warn("Cannot remove a facet-value combi because 'current' of 'remove' is null");
+       
+        if(this.current == null || (this.remove == null && (this.removeList == null || this.removeList.isEmpty()))) {
+            log.warn("Cannot remove a facet-value combi because 'current' or 'remove(List)' is null or empty");
             return EVAL_PAGE;
         }
         
@@ -105,16 +104,27 @@ public class HstFacetNavigationLinkTag extends TagSupport {
             return EVAL_PAGE;
         }
         
-        // now strip of the facet-value combi that needs to be stripped of
+        // now strip of the facet-value combi(s) that needs to be stripped of
         String path = link.getPath();
-        String removeFV = "/"+remove.getFacetValueCombi().getKey()+"/"+remove.getFacetValueCombi().getValue();
-        if(path.contains(removeFV)) {
-            link.setPath(path.replace(removeFV, ""));
-            log.debug("Removed facetvalue combi. Link from '{}' --> '{}'", path, link.getPath());
-        } else {
-            log.warn("Cannot remove '{}' from the current faceted navigation url '{}'.", removeFV, path);
+        
+        List<HippoFacetSubNavigation> combinedRemovedList = new ArrayList<HippoFacetSubNavigation>();
+        if(this.removeList != null) {
+            combinedRemovedList.addAll(this.removeList);
+        }
+        if(this.remove != null) {
+            combinedRemovedList.add(this.remove);
         }
         
+        for(HippoFacetSubNavigation toRemove : combinedRemovedList) {
+            String removeFacetValue = "/"+toRemove.getFacetValueCombi().getKey()+"/"+toRemove.getFacetValueCombi().getValue();
+            if(path.contains(removeFacetValue)) {
+                path = path.replace(removeFacetValue, "");
+                log.debug("Removed facetvalue combi. Link from '{}' --> '{}'", path, link.getPath());
+            } else {
+                log.warn("Cannot remove '{}' from the current faceted navigation url '{}'.", removeFacetValue, path);
+            }
+        }
+        link.setPath(path);
         String urlString = link.toUrlForm(hstRequest, hstResponse, false);
         
         if (var == null) {
@@ -136,7 +146,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
         var = null;
         current = null;
         remove = null;
-       
+        removeList = null;
         return EVAL_PAGE;
     }
     
@@ -169,8 +179,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
     public void setCurrentByBeanPath(String beanPath) {
         this.current = (HippoFacetSubNavigation) PageContextPropertyUtils.getProperty(pageContext, beanPath);
         if(this.current == null) {
-            log.debug("No bean for '{}'. The tag will be skipped.", beanPath);
-            skipTag = true;
+            log.debug("No bean for '{}'. ", beanPath);
         }
     }
     
@@ -184,8 +193,21 @@ public class HstFacetNavigationLinkTag extends TagSupport {
     public void setRemoveByBeanPath(String beanPath) {
         this.remove = (HippoFacetSubNavigation) PageContextPropertyUtils.getProperty(pageContext, beanPath);
         if(this.remove == null) {
+            log.debug("No bean for '{}'.", beanPath);
+        }
+    }
+    
+    public List<HippoFacetSubNavigation> getRemoveList(){
+        return this.removeList;
+    }
+    
+    public void setRemoveList(List<HippoFacetSubNavigation> removeList) {
+        this.removeList = removeList;
+    }
+    public void setRemoveListByBeanPath(String beanPath) {
+        this.removeList = (List<HippoFacetSubNavigation>) PageContextPropertyUtils.getProperty(pageContext, beanPath);
+        if(this.removeList == null) {
             log.debug("No bean for '{}'. The tag will be skipped.", beanPath);
-            skipTag = true;
         }
     }
     

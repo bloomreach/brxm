@@ -21,6 +21,11 @@
 
 <div class="yui-b">
   <h2>Faceted Navigation</h2>
+        <c:if test="${childNav}">
+            <hst:facetnavigationlink var="removeAll" current="${facetnav}" removeList="${facetnav.ancestorsAndSelf}"/>
+            Clear all [<a href="${removeAll}" style="color:red">X</a>]
+            <br/><br/>
+        </c:if> 
         <c:forEach var="facet" items="${facetnav.folders}">
            <ul>               
             <li class="title">
@@ -34,7 +39,7 @@
 	                    <c:if test="${facetvalue.count > 0}">
 	                        <hst:facetnavigationlink var="remove" current="${facetnav}" remove="${facetvalue}"/>
 	                        [<a href="${remove}" style="color:red">X</a>]
-	                     </c:if>
+	                    </c:if>
 	                 </c:when>
 	                 <c:otherwise>
 	              	   <hst:link var="link" hippobean="${facetvalue}"/>
