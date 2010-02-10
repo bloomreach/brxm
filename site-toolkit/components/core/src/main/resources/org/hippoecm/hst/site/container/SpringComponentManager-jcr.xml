@@ -59,8 +59,8 @@
             <property name="defaultCredentialsUserID" value="${default.repository.user.name}"/>
             <property name="defaultCredentialsPassword" value="${default.repository.password}"/>
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
-            <property name="maxActive" value="25"/>
-            <property name="maxIdle" value="10"/>
+            <property name="maxActive" value="${default.repository.maxActive}"/>
+            <property name="maxIdle" value="${default.repository.maxIdle}"/>
             <property name="minIdle" value="0"/>
             <property name="initialSize" value="0"/>
             <property name="maxWait" value="10000"/>
@@ -82,8 +82,8 @@
             <property name="defaultCredentialsUserID" value="${writable.repository.user.name}"/>
             <property name="defaultCredentialsPassword" value="${writable.repository.password}"/>
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
-            <property name="maxActive" value="25"/>
-            <property name="maxIdle" value="10"/>
+            <property name="maxActive" value="${writable.repository.maxActive}"/>
+            <property name="maxIdle" value="${writable.repository.maxIdle}"/>
             <property name="minIdle" value="0"/>
             <property name="initialSize" value="0"/>
             <property name="maxWait" value="10000"/>
@@ -105,8 +105,8 @@
             <property name="defaultCredentialsUserID" value="${hstconfigreader.repository.user.name}"/>
             <property name="defaultCredentialsPassword" value="${hstconfigreader.repository.password}"/>
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
-            <property name="maxActive" value="25"/>
-            <property name="maxIdle" value="10"/>
+            <property name="maxActive" value="1"/>
+            <property name="maxIdle" value="1"/>
             <property name="minIdle" value="0"/>
             <property name="initialSize" value="0"/>
             <property name="maxWait" value="10000"/>
