@@ -32,6 +32,7 @@ import javax.jcr.InvalidItemStateException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 
 import org.apache.wicket.Session;
@@ -39,6 +40,7 @@ import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -459,10 +461,20 @@ public class ObservationTest extends PluginTest {
     }
 
     @Test
+    public void testFacetSearchEventInSession() throws Exception {
+        testFacetSearchEvent(true);
+    }
+
+    @Test
+    // This test fails because facet searches are only refreshed when all transient changes are disposed of.
+    public void testFacetSearchEventOutOfSession() throws Exception {
+        testFacetSearchEvent(false);
+    }
+
     /**
      * test whether events are received on facet search nodes
      */
-    public void testFacetSearchEvent() throws Exception {
+    private void testFacetSearchEvent(boolean sameSession) throws Exception {
         Node root = session.getRootNode();
         Node test = root.addNode("test", "nt:unstructured");
 
@@ -500,17 +512,31 @@ public class ObservationTest extends PluginTest {
         }, Event.NODE_ADDED | Event.NODE_REMOVED, "/test/sink", true, null, null);
         listener.start();
 
-        Node xyz = source.addNode("xyz", "frontendtest:document");
+        javax.jcr.Session editSession;
+        if (sameSession) {
+            editSession = session;
+        } else {
+            editSession = session.impersonate(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
+        }
+        Node xyz = editSession.getNodeByUUID(source.getUUID()).addNode("xyz", "frontendtest:document");
         xyz.addMixin("hippo:harddocument");
         xyz.setProperty("facet", "xyz");
-        session.save();
+        editSession.save();
+        if (!sameSession) {
+            editSession.logout();
+        }
+
+        // emulate separate workflow operation
+        session.refresh(false);
+        ((UserSession) org.apache.wicket.Session.get()).getFacetSearchObserver().broadcastEvents();
+
+        home.processEvents();
 
         // basic facetsearch assertion
         Node result = sink.getNode("search/xyz/hippo:resultset/xyz");
         assertTrue(((HippoNode) result).getCanonicalNode().isSame(xyz));
 
         // event should have been received
-        home.processEvents();
         assertEquals(1, events.size());
 
         session.save();
