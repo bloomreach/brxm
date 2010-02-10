@@ -113,7 +113,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
     private PreviewLinksBehavior previewLinksBehavior;
     private IBehavior startEditorBehavior;
-    
+
     private InternalLinkBehavior linkPickerBehavior;
     private ExternalLinkBehavior externalLinkBehavior;
     private ImagePickerBehavior imagePickerBehavior;
@@ -125,6 +125,10 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         super(context, config);
 
         mode = config.getString("mode", "view");
+
+        if (mode.equals("edit")) {
+            add(new EditorManagerBehavior(YuiPluginHelper.getManager(context)));
+        }
         configuration = new Configuration(config);
 
         load();
@@ -135,8 +139,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         Fragment fragment = null;
         if (mode.equals("edit")) {
-            add(new EditorManagerBehavior(YuiPluginHelper.getManager(getPluginContext())));
-
             if (configuration.getEditorStarted()) {
                 fragment = createEditor("fragment");
                 remove(PREVIEW_CSS);
@@ -152,6 +154,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                     @Override
                     protected void onEvent(AjaxRequestTarget target) {
                         configuration.setEditorStarted(true);
+                        configuration.setFocusAfterLoad(true);
                         load();
                         target.addComponent(AbstractXinhaPlugin.this);
                     }
@@ -245,8 +248,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
     private Fragment createPreview(String fragmentId) {
         Fragment fragment = new Fragment(fragmentId, "view", this);
-        
-        if(previewLinksBehavior == null) {
+
+        if (previewLinksBehavior == null) {
             add(previewLinksBehavior = new PreviewLinksBehavior());
         }
         fragment.add(new WebMarkupContainer("value", getValueModel()) {
@@ -360,7 +363,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         public void detach() {
             valueModel.detach();
         }
-
     }
 
     private class XinhaTextArea extends TextArea {
@@ -490,6 +492,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             });
             context.addOnWinLoad("YAHOO.hippo.EditorManager.renderAll();");
         }
+
     }
 
     class Configuration extends BaseConfiguration {
@@ -509,7 +512,12 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         private final List<String> formatBlock;
 
         private String textareaName;
-        private boolean editorStarted;;
+
+        //flag if editor should be focused after load
+        private boolean focusAfterLoad;
+
+        //flag if the editor has started
+        private boolean editorStarted;
 
         public Configuration(IPluginConfig config) {
             addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
@@ -556,6 +564,24 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
             }
 
+        }
+
+        /**
+         * Only after clicking the preview area, should this editor be auto-focused. All other cases, like switching editor-tabs
+         * should be handled by state on the client instead of on the server. Because of this true is only returned once.
+         * 
+         * @return If the RTE should be auto-focused when created.
+         */
+        public boolean getFocusAfterLoad() {
+            if (focusAfterLoad) {
+                focusAfterLoad = false;
+                return true;
+            }
+            return false;
+        }
+
+        public void setFocusAfterLoad(boolean set) {
+            focusAfterLoad = set;
         }
 
         public boolean getEditorStarted() {
@@ -729,6 +755,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         sb.append("textarea: ").append(serialize2JS(configuration.getTextareaName()));
         sb.append(", ");
         sb.append("started: ").append(configuration.getEditorStarted());
+        sb.append(", ");
+        sb.append("focus: ").append(configuration.getFocusAfterLoad());
         sb.append(", ");
         sb.append("properties: ").append(asKeyValueArray(configuration.getProperties()));
         sb.append(", ");
