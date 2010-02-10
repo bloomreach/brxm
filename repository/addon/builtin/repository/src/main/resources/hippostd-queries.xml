@@ -46,6 +46,8 @@
       <sv:value>$holder</sv:value>
       <sv:value>./hippostdpubwf:lastModificationDate</sv:value>
       <sv:value>$now</sv:value>
+      <sv:value>./hippostd:holder</sv:value>
+      <sv:value>$holder</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -138,7 +140,7 @@
             <sv:value>en</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>unpublished</sv:value>
+            <sv:value>draft</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:stateSummary" sv:type="String">
             <sv:value>new</sv:value>

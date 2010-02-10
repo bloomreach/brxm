@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standards.list.datatable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -152,7 +153,23 @@ public class ListDataTable<T> extends DataTable<T> {
 
     public void render(PluginRequestTarget target) {
         if (target != null) {
+            int count = getRowsPerPage();
+            int offset = getCurrentPage() * getRowsPerPage();
+            if (offset + count > provider.size()) {
+                count = provider.size() - offset;
+            }
+
+            Set<IModel<T>> visibleModels = new HashSet<IModel<T>>();
+            Iterator<? extends T> iter = provider.iterator(offset, count);
+            while (iter.hasNext()) {
+                IModel<T> model = provider.model(iter.next());
+                visibleModels.add(model);
+            }
             for (Item item : dirty) {
+                if (!visibleModels.contains(item.getModel())) {
+                    target.addComponent(this);
+                    break;
+                }
                 target.addComponent(item);
             }
         }
