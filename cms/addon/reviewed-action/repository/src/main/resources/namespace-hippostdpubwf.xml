@@ -175,6 +175,9 @@
         <sv:property sv:name="hipposysedit:mixin" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
+        <sv:property sv:name="hipposysedit:supertypes" sv:type="String">
+          <sv:value>hippostd:publishable</sv:value>
+        </sv:property>
         <sv:node sv:name="PublicationStatus">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
@@ -210,6 +213,9 @@
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>String</sv:value>
           </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
         </sv:node>
         <sv:node sv:name="CreationDate">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -220,6 +226,9 @@
           </sv:property>
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>Date</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="LastModifiedBy">
@@ -232,6 +241,9 @@
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>String</sv:value>
           </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
+          </sv:property>
         </sv:node>
         <sv:node sv:name="LastModificationDate">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -242,6 +254,9 @@
           </sv:property>
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>Date</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="PublicationDate">
