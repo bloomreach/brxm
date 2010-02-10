@@ -55,6 +55,7 @@ import net.sf.ehcache.Element;
  *    <LI> Allow for exclusions (for example everything below /bar)</LI>
  *    <LI> Do not cache actions (can be set on the HstResponse to not cache)</LI>
  *    <LI> Send a 304 for not changed pages, and handle a ctrl-refresh</LI>
+ *    <LI> Make concurrent calls for the exact same page wait until the first request returns, and serve the other requests from cache</LI>
  *    <LI> Investigate a clustered cache where all HST instances share their cache</LI>
  * </UL>
  */
