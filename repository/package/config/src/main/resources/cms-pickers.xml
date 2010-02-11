@@ -56,6 +56,9 @@
       <sv:property sv:name="model.document" sv:type="String">
         <sv:value>${wicket.model}</sv:value>
       </sv:property>
+      <sv:property sv:name="model.folder" sv:type="String">
+        <sv:value>${cluster.id}.model.folder</sv:value>
+      </sv:property>
       <sv:property sv:name="model.default.path" sv:type="String">
         <sv:value>/content/gallery</sv:value>
       </sv:property>
@@ -112,9 +115,6 @@
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.dialog.breadcrumb</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${cluster.id}.model.folder</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="imagesTreeLoader">
@@ -197,6 +197,9 @@
       <sv:property sv:name="model.document" sv:type="String">
         <sv:value>${wicket.model}</sv:value>
       </sv:property>
+      <sv:property sv:name="model.folder" sv:type="String">
+        <sv:value>${cluster.id}.model.folder</sv:value>
+      </sv:property>
       <sv:property sv:name="model.default.path" sv:type="String">
         <sv:value>/content</sv:value>
       </sv:property>
@@ -255,9 +258,6 @@
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.dialog.breadcrumb</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>${cluster.id}.model.folder</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="documentsTreeLoader">
@@ -409,6 +409,9 @@
       <sv:property sv:name="model.document" sv:type="String">
         <sv:value>${wicket.model}</sv:value>
       </sv:property>
+      <sv:property sv:name="model.folder" sv:type="String">
+        <sv:value>${cluster.id}.model.folder</sv:value>
+      </sv:property>
       <sv:property sv:name="model.default.path" sv:type="String">
         <sv:value>/content</sv:value>
       </sv:property>
@@ -467,9 +470,6 @@
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.dialog.breadcrumb</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>wicket.model.folder</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="documentsTreeLoader">
