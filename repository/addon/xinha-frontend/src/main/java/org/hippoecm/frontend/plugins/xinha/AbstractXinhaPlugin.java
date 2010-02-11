@@ -408,8 +408,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkDecorator {
         private static final long serialVersionUID = 1L;
 
-        private static final String JS_CANCEL_BUBBLE = "var e = event? event : window.event; if (e.stopPropagation) { e.stopPropagation(); } else {e.cancelBubble = true;}";
+        private static final String JS_STOP_EVENT = "Wicket.stopEvent(event);";
 
+        
         @Override
         protected void respond(AjaxRequestTarget target) {
             Request request = RequestCycle.get().getRequest();
@@ -439,11 +440,11 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         public String internalLink(String link) {
             String url = getCallbackUrl(false) + "&link=" + WicketURLEncoder.QUERY_INSTANCE.encode(link);
-            return "href=\"#\" onclick=\"" + generateCallbackScript("wicketAjaxGet('" + url + "'") + JS_CANCEL_BUBBLE + "\"";
+            return "href=\"#\" onclick=\"" + JS_STOP_EVENT + generateCallbackScript("wicketAjaxGet('" + url + "'") + "\"";
         }
 
         public String externalLink(String link) {
-            return "href=\"" + link + "\" onclick=\"" + JS_CANCEL_BUBBLE + "\"";
+            return "href=\"" + link + "\" onclick=\"" + JS_STOP_EVENT + "\"";
         }
     }
 
