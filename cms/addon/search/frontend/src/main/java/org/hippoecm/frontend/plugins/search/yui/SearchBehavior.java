@@ -87,9 +87,6 @@ public class SearchBehavior extends AutoCompleteBehavior {
         searchBuilder.setWildcardSearch(config.getBoolean(WILDCARD_SEARCH));
         searchBuilder.setLimit(15);
 
-        // DO NOT RETRIEVE THIS KIND OF DATA FROM THE CONFIGURATION:
-        // IT DESCRIBES THE DATA FORMAT THAT WE WILL BE SENDING TO THE CLIENT
-        // FUCKING PSEUDO-GENERIC CODE
         settings.setSchemaFields("label", "path", "state", "excerpt");
         settings.setSchemaResultList("response.results");
     }
