@@ -97,7 +97,7 @@ public class XinhaHtmlProcessor {
         Matcher m = LINK_AND_IMAGES_PATTERN.matcher(text);
         while (m.find()) {
             String link = m.group(5);
-            if (link.startsWith("http:") || link.startsWith("https:")) {
+            if (isExternalLink(link)) {
                 continue;
             }
             String linkName;
@@ -112,7 +112,7 @@ public class XinhaHtmlProcessor {
         return links;
     }
 
-    public static String decorateInternalLinks(String text, ILinkDecorator decorator) {
+    public static String decorateLinks(String text, ILinkDecorator decorator) {
 
         StringBuffer processed = new StringBuffer();
         Matcher m = LINK_PATTERN.matcher(text);
@@ -131,12 +131,9 @@ public class XinhaHtmlProcessor {
                 if (link.charAt(link.length() - 1) == '"') {
                     link = link.substring(0, link.length() - 1);
                 }
-                if (isExternalLink(link)) {
-                    s.appendReplacement(newAnchor, href.replace("\\", "\\\\").replace("$", "\\$"));
-                } else {
-                    s.appendReplacement(newAnchor, ("href=\"" + decorator.decorate(link) + "\"").replace("\\", "\\\\")
-                            .replace("$", "\\$"));
-                }
+                
+                link = isExternalLink(link) ? decorator.externalLink(link) : decorator.internalLink(link); 
+                s.appendReplacement(newAnchor, link.replace("\\", "\\\\").replace("$", "\\$"));
             }
             s.appendTail(newAnchor);
             m.appendReplacement(processed, newAnchor.toString().replace("\\", "\\\\").replace("$", "\\$"));
@@ -156,7 +153,8 @@ public class XinhaHtmlProcessor {
     }
 
     public static interface ILinkDecorator {
-        String decorate(String input);
+        String internalLink(String link);
+        String externalLink(String link);
     }
 
 }

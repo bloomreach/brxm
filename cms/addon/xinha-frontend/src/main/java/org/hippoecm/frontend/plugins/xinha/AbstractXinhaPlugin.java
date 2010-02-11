@@ -18,12 +18,10 @@ package org.hippoecm.frontend.plugins.xinha;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -51,7 +49,6 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WicketURLEncoder;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.Home;
@@ -65,6 +62,7 @@ import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.InternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.dragdrop.XinhaDropBehavior;
+import org.hippoecm.frontend.plugins.xinha.json.JsonParser;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
@@ -88,13 +86,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
     static final Logger log = LoggerFactory.getLogger(AbstractXinhaPlugin.class);
 
-    //JSON parse helpers
-    private static final String SINGLE_QUOTE = "'";
-    private static final Pattern NUMBER_PATTERN = Pattern.compile("\\d*");
-
-    private static final String BINARIES_PREFIX = "binaries";
-    public static final String XINHA_SAVED_FLAG = "XINHA_SAVED_FLAG";
     public static final String XINHA_PARAM_PREFIX = "xinha-param-prefix-";
+    private static final String BINARIES_PREFIX = "binaries";
 
     private static final String[] defaultFormatBlock = { "h1", "h2", "h3", "h4", "h5", "h6", "p", "address", "pre" };
 
@@ -104,88 +97,111 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private static final PackagedTextTemplate XINHA_INIT_GLOBALS = new PackagedTextTemplate(AbstractXinhaPlugin.class,
             "xinha_init.js");
 
-    private static final AttributeAppender PREVIEW_CSS = new AttributeAppender("class", true, new Model<String>(
-            "rte-preview-area"), " ");
-
     private final String mode;
     private XinhaTextArea editor;
     private Configuration configuration;
 
+    //preview behaviors
     private PreviewLinksBehavior previewLinksBehavior;
     private IBehavior startEditorBehavior;
+    private IBehavior previewStyle;
 
+    //editor behaviors
     private InternalLinkBehavior linkPickerBehavior;
     private ExternalLinkBehavior externalLinkBehavior;
     private ImagePickerBehavior imagePickerBehavior;
+
     private XinhaImageService imageService;
     private XinhaLinkService linkService;
+
     private JcrNodeModel nodeModel;
 
     public AbstractXinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        mode = config.getString("mode", "view");
+        configuration = new Configuration(config);
+        context.registerService(configuration, Configuration.class.getName());
 
+        String binariesPath = BINARIES_PREFIX + getNodePath();
+        configuration.addProperty("prefix", XinhaUtil.encodeResourceURL(XinhaUtil.encode(binariesPath) + "/"));
+        configuration.addProperty("isPortletContext", Boolean.toString(XinhaUtil.isPortletContext()));
+        configuration.setName(getMarkupId());
+
+        mode = config.getString("mode", "view");
         if (mode.equals("edit")) {
             add(new EditorManagerBehavior(YuiPluginHelper.getManager(context)));
         }
-        configuration = new Configuration(config);
-
         load();
-    }
-
-    private void load() {
-        configuration.setName(getMarkupId());
-
-        Fragment fragment = null;
-        if (mode.equals("edit")) {
-            if (configuration.getEditorStarted()) {
-                fragment = createEditor("fragment");
-                remove(PREVIEW_CSS);
-                remove(startEditorBehavior);
-                remove(previewLinksBehavior);
-                startEditorBehavior = null;
-                previewLinksBehavior = null;
-            } else {
-                fragment = createPreview("fragment");
-                add(startEditorBehavior = new AjaxEventBehavior("onclick") {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected void onEvent(AjaxRequestTarget target) {
-                        configuration.setEditorStarted(true);
-                        configuration.setFocusAfterLoad(true);
-                        load();
-                        target.addComponent(AbstractXinhaPlugin.this);
-                    }
-                });
-                add(PREVIEW_CSS);
-            }
-        } else {
-            fragment = createPreview("fragment");
-        }
-        addOrReplace(fragment);
-    }
-
-    private Fragment createEditor(String fragmentId) {
-        IPluginContext context = getPluginContext();
-        IPluginConfig config = getPluginConfig();
-
-        Fragment fragment = new Fragment(fragmentId, "edit", this);
-        fragment.add(editor = new XinhaTextArea("value", new XinhaModel(getValueModel())));
-
-        configuration.setTextareaName(editor.getMarkupId());
-        context.registerService(configuration, Configuration.class.getName());
 
         // dialog functionality for plugins
         add(JavascriptPackageResource.getHeaderContribution(XINHA_MODAL_JS));
+    }
 
-        String nodePath = getValueModel().getJcrPropertymodel().getItemModel().getParentModel().getPath();
-        configuration.addProperty("prefix", XinhaUtil.encodeResourceURL(XinhaUtil.encode(BINARIES_PREFIX + nodePath
-                + "/")));
-        configuration.addProperty("isPortletContext", Boolean.toString(XinhaUtil.isPortletContext()));
+    private void load() {
+        addOrReplace("edit".equals(mode) ? configuration.getEditorStarted() ? createEditor("fragment")
+                : createEditablePreview("fragment") : createPreview("fragment"));
+    }
 
-        JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
+    private Fragment createPreview(String fragmentId) {
+        if (previewLinksBehavior == null) {
+            add(previewLinksBehavior = new PreviewLinksBehavior());
+        }
+
+        Fragment fragment = new Fragment(fragmentId, "view", this);
+        fragment.add(new WebMarkupContainer("value", getValueModel()) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
+                String text = (String) getDefaultModelObject();
+                if (text != null) {
+                    String processed = XinhaHtmlProcessor.prefixImageLinks(text, configuration.getProperty("prefix"));
+                    processed = XinhaHtmlProcessor.decorateLinks(processed, previewLinksBehavior);
+                    replaceComponentTagBody(markupStream, openTag, processed);
+                } else {
+                    renderComponentTagBody(markupStream, openTag);
+                }
+            }
+        });
+        return fragment;
+    }
+
+    private Fragment createEditablePreview(String fragmentId) {
+        add(startEditorBehavior = new AjaxEventBehavior("onclick") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                configuration.setEditorStarted(true);
+                configuration.setFocusAfterLoad(true);
+                target.addComponent(AbstractXinhaPlugin.this);
+                load();
+            }
+        });
+        add(previewStyle = new AttributeAppender("class", true, new Model<String>("rte-preview-area"), " "));
+        return createPreview(fragmentId);
+    }
+
+    private Fragment createEditor(String fragmentId) {
+        //remove preview behaviors
+        if (previewStyle != null) {
+            remove(previewStyle);
+            previewStyle = null;
+        }
+        if (startEditorBehavior != null) {
+            remove(startEditorBehavior);
+            startEditorBehavior = null;
+        }
+        if (previewLinksBehavior != null) {
+            remove(previewLinksBehavior);
+            previewLinksBehavior = null;
+        }
+
+        Fragment fragment = new Fragment(fragmentId, "edit", this);
+        fragment.add(editor = new XinhaTextArea("value", new XinhaModel(getValueModel())));
+        configuration.setTextareaName(editor.getMarkupId());
+
+        JcrNodeModel nodeModel = new JcrNodeModel(getValueModel().getJcrPropertymodel().getItemModel().getParentModel());
         imageService = new XinhaImageService(nodeModel) {
             private static final long serialVersionUID = 1L;
 
@@ -205,6 +221,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             }
 
         };
+
+        IPluginContext context = getPluginContext();
+        IPluginConfig config = getPluginConfig();
 
         editor.add(imagePickerBehavior = new ImagePickerBehavior(context, config
                 .getPluginConfig("Xinha.plugins.InsertImage"), imageService));
@@ -246,33 +265,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         return fragment;
     }
 
-    private Fragment createPreview(String fragmentId) {
-        Fragment fragment = new Fragment(fragmentId, "view", this);
-
-        if (previewLinksBehavior == null) {
-            add(previewLinksBehavior = new PreviewLinksBehavior());
-        }
-        fragment.add(new WebMarkupContainer("value", getValueModel()) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
-                String text = (String) getDefaultModelObject();
-                if (text != null) {
-                    JcrPropertyValueModel propertyValueModel = getValueModel();
-                    String prefix = XinhaUtil.encodeResourceURL(XinhaUtil.encode(BINARIES_PREFIX
-                            + propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath())
-                            + "/");
-
-                    String processed = XinhaHtmlProcessor.prefixImageLinks(text, prefix);
-                    processed = XinhaHtmlProcessor.decorateInternalLinks(processed, previewLinksBehavior);
-                    replaceComponentTagBody(markupStream, openTag, processed);
-                } else {
-                    renderComponentTagBody(markupStream, openTag);
-                }
-            }
-        });
-        return fragment;
+    private String getNodePath() {
+        return getValueModel().getJcrPropertymodel().getItemModel().getParentModel().getPath();
     }
 
     protected abstract JcrPropertyValueModel getValueModel();
@@ -414,6 +408,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkDecorator {
         private static final long serialVersionUID = 1L;
 
+        private static final String JS_CANCEL_BUBBLE = "var e = event? event : window.event; if (e.stopPropagation) { e.stopPropagation(); } else {e.cancelBubble = true;}";
+
         @Override
         protected void respond(AjaxRequestTarget target) {
             Request request = RequestCycle.get().getRequest();
@@ -441,11 +437,13 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             }
         }
 
-        public String decorate(String input) {
-            input = WicketURLEncoder.QUERY_INSTANCE.encode(input);
-            return "javascript: "
-                    + generateCallbackScript("wicketAjaxGet('" + getCallbackUrl(false) + "&link=" + input + "'")
-                            .toString();
+        public String internalLink(String link) {
+            String url = getCallbackUrl(false) + "&link=" + WicketURLEncoder.QUERY_INSTANCE.encode(link);
+            return "href=\"#\" onclick=\"" + generateCallbackScript("wicketAjaxGet('" + url + "'") + JS_CANCEL_BUBBLE + "\"";
+        }
+
+        public String externalLink(String link) {
+            return "href=\"" + link + "\" onclick=\"" + JS_CANCEL_BUBBLE + "\"";
         }
     }
 
@@ -492,7 +490,52 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             });
             context.addOnWinLoad("YAHOO.hippo.EditorManager.renderAll();");
         }
+    }
 
+    /**
+     * Construct a Javascript object literal that represents the configuration of the Xinha editor.
+     * An example of the returned object is
+     * { 
+     *   name: 'XinhaPlugin1',
+     *   textarea: 'xinha1',
+     *   started: false, 
+     *   focus: true,
+     *   properties: [{key: 'callbackUrl', value: '...'}]},
+     *   plugins: ['AutoSave', 'table'],
+     *   pluginProperties: [{ name: 'AutoSave', values [{key: 'timeout', value: 200}]}],
+     *   toolbars: ['createlink', 'bold'],
+     *   styleSheets: ['../../skin/skin.css'],
+     *   formatBlock: {'h1': 'Heading 1', 'pre': 'Formatted'}
+     * }
+     * @param configuration
+     * @return
+     */
+    protected String parseConfiguration(Configuration configuration) {
+        StringBuilder sb = new StringBuilder(120);
+        sb.append("{ ");
+        sb.append("name: ").append(JsonParser.serialize2JS(configuration.getName()));
+        sb.append(", ");
+        sb.append("textarea: ").append(JsonParser.serialize2JS(configuration.getTextareaName()));
+        sb.append(", ");
+        sb.append("started: ").append(configuration.getEditorStarted());
+        sb.append(", ");
+        sb.append("focus: ").append(configuration.getFocusAfterLoad());
+        sb.append(", ");
+        sb.append("properties: ").append(JsonParser.asKeyValueArray(configuration.getProperties()));
+        sb.append(", ");
+        sb.append("plugins: ").append(JsonParser.asArray(configuration.getPluginConfigurations()));
+        sb.append(", ");
+        sb.append("pluginProperties: ").append(
+                JsonParser.parsePluginConfiguration(configuration.getPluginConfigurations()));
+        sb.append(", ");
+        sb.append("toolbars: ").append(JsonParser.asArray(configuration.getToolbarItems()));
+        sb.append(", ");
+        sb.append("styleSheets: ").append(JsonParser.asArray(configuration.getStyleSheets()));
+        sb.append(", ");
+        sb.append("formatBlock: ").append(
+                JsonParser.asDictionary(configuration.getFormatBlock(), true, true, "xinha.formatblock.", this));
+        sb.append(" }");
+        return sb.toString();
     }
 
     class Configuration extends BaseConfiguration {
@@ -520,7 +563,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         private boolean editorStarted;
 
         public Configuration(IPluginConfig config) {
-            addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
             addProperty("xinhaParamToken", XINHA_PARAM_PREFIX);
 
             toolbarItems = new ArrayList<String>();
@@ -635,7 +677,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         }
     }
 
-    class PluginConfiguration extends BaseConfiguration {
+    public class PluginConfiguration extends BaseConfiguration {
 
         private static final long serialVersionUID = 1L;
 
@@ -673,7 +715,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         }
     }
 
-    class BaseConfiguration implements IClusterable {
+    public class BaseConfiguration implements IClusterable {
         private static final long serialVersionUID = 1L;
 
         //id
@@ -729,192 +771,5 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         public int hashCode() {
             return AbstractXinhaPlugin.this.hashCode();
         }
-    }
-
-    /**
-     * Construct a Javascript object literal that represents the configuration of the Xinha editor.
-     * An example of the returned object is
-     * { 
-     *   name: 'XinhaPlugin1',
-     *   textarea: 'xinha1',
-     *   started: false, 
-     *   properties: [{key: 'callbackUrl', value: '...'}]},
-     *   plugins: ['AutoSave', 'table'],
-     *   pluginProperties: [{ name: 'AutoSave', values [{key: 'timeout', value: 200}]}],
-     *   toolbars: ['createlink', 'bold'],
-     *   styleSheets: ['../../skin/skin.css']
-     * }
-     * @param configuration
-     * @return
-     */
-    protected String parseConfiguration(Configuration configuration) {
-        StringBuilder sb = new StringBuilder(120);
-        sb.append("{ ");
-        sb.append("name: ").append(serialize2JS(configuration.getName()));
-        sb.append(", ");
-        sb.append("textarea: ").append(serialize2JS(configuration.getTextareaName()));
-        sb.append(", ");
-        sb.append("started: ").append(configuration.getEditorStarted());
-        sb.append(", ");
-        sb.append("focus: ").append(configuration.getFocusAfterLoad());
-        sb.append(", ");
-        sb.append("properties: ").append(asKeyValueArray(configuration.getProperties()));
-        sb.append(", ");
-        sb.append("plugins: ").append(asArray(configuration.getPluginConfigurations()));
-        sb.append(", ");
-        sb.append("pluginProperties: ").append(parsePluginConfiguration(configuration.getPluginConfigurations()));
-        sb.append(", ");
-        sb.append("toolbars: ").append(asArray(configuration.getToolbarItems()));
-        sb.append(", ");
-        sb.append("styleSheets: ").append(asArray(configuration.getStyleSheets()));
-        sb.append(", ");
-        sb.append("formatBlock: ").append(
-                asDictionary(configuration.getFormatBlock(), true, true, "xinha.formatblock."));
-        sb.append(" }");
-
-        //        String plugins = asArray(configuration.getPluginConfigurations());
-        //        String properties = asKeyValueArray(configuration.getProperties());
-        //        String pluginProperties = parsePluginConfiguration(configuration.getPluginConfigurations());
-        //        String toolbars = asArray(configuration.getToolbarItems());
-        //        String styleSheets = asArray(configuration.getStyleSheets());
-        //        String formatBlock = asDictionary(configuration.getFormatBlock(), true, true, "xinha.formatblock.");
-        //        String returnValue = "{ " + "name: '" + configuration.getName() + "', properties: " + properties + ", " + "plugins: "
-        //        + plugins + ", pluginProperties: " + pluginProperties + ", " + "toolbars: " + toolbars
-        //        + ", styleSheets: " + styleSheets + ", " + "formatBlock: " + formatBlock + " }";
-
-        return sb.toString();
-    }
-
-    private String parsePluginConfiguration(Set<PluginConfiguration> pluginConfigurations) {
-        StringBuilder sb = new StringBuilder(120);
-        for (PluginConfiguration pc : pluginConfigurations) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append("{ ");
-            sb.append("name: ").append(serialize2JS(pc.getName())).append(", ");
-            sb.append("values: ").append(asKeyValueArray(pc.getProperties()));
-            sb.append(" }");
-        }
-        sb.insert(0, '[').append(']');
-        return sb.toString();
-    }
-
-    /**
-     * Transforms the List<String> into a Javascript object literal. The values of the input list will be
-     * used as keys and their translated values will be used as values. If reversed is set the values will be
-     * used as keys and vice-versa (this to support Xinha's formatblock)
-     * If addLabel is set, a value identified by translationPrefix + 'identifier' will be inserted as the first element
-     * in the object literal. This value will have an empty key so Xinha will know it's the label.
-     * If translationPrefix is not null it will be concatenated with the key to retrieve a translation value.   
-     * 
-     * Example: {'h1': 'Heading 1', 'pre': 'Formatted'}
-     * Reversed example: {'Heading 1' : 'h1', 'Formatted' : 'pre'}
-     * Example with label: {'': 'Label value', 'pre': 'Formatted', 'h1': 'Heading 1'}
-     * 
-     * @param keys  List of keys to be translated
-     * @param reversed Set this to use the keys as values and values as keys 
-     * @return javascript object literal with translated keys
-     */
-    private String asDictionary(List<String> keys, boolean addLabel, boolean reversed, String translationPrefix) {
-        if (translationPrefix == null) {
-            translationPrefix = "";
-        }
-
-        String ret = "";
-        if (addLabel) {
-            String value = "'"
-                    + new StringResourceModel(translationPrefix + "identifier", AbstractXinhaPlugin.this, null)
-                            .getString() + "'";
-            if (reversed) {
-                ret += value + " : ''";
-            } else {
-                ret += "'' : " + value;
-            }
-        }
-        for (String key : keys) {
-            if (ret.length() > 0) {
-                ret += ", ";
-            }
-            String value = "'"
-                    + new StringResourceModel(translationPrefix + key, AbstractXinhaPlugin.this, null).getString()
-                    + "'";
-            key = "'" + key + "'";
-            if (reversed) {
-                ret += value + " : " + key;
-            } else {
-                ret += key + " : " + value;
-            }
-        }
-        return "{" + ret + "}";
-    }
-
-    /**
-     * Transforms the Map<String, String> into a Javascript array with object literals that contain a key/value pair
-     * 
-     * Example: [{key: 'id', value: 'myId'}, {key: 'index', value: 1}]  
-     */
-    private String asKeyValueArray(Map<String, String> properties) {
-        String ret = "";
-        for (String key : properties.keySet()) {
-            if (ret.length() > 0) {
-                ret += ", ";
-            }
-            ret += "{ key : '" + key + "', value : " + serialize2JS(properties.get(key)) + "}";
-        }
-        return "[" + ret + "]";
-    }
-
-    /**
-     * Transforms the List<String> into a Javascript array
-     * 
-     * Example: ['foo', 'bar', true, 1]
-     */
-    private String asArray(List<String> list) {
-        String val = "  [\n";
-        for (Iterator<String> iter = list.iterator(); iter.hasNext();) {
-            val += "    ";
-            val += serialize2JS(iter.next());
-            if (iter.hasNext())
-                val += ",";
-            val += "\n";
-        }
-        val += "  ]";
-        return val;
-    }
-
-    /**
-     * Transforms the Set of BaseConfigurations into a Javascript array containing the configuration names
-     * 
-     * Example: ['config1', 'config2']
-     */
-    private String asArray(Set<? extends BaseConfiguration> configs) {
-        String val = "  [\n";
-        for (Iterator<? extends BaseConfiguration> iter = configs.iterator(); iter.hasNext();) {
-            val += "    ";
-            val += serialize2JS(iter.next().getName());
-            if (iter.hasNext())
-                val += ",";
-            val += "\n";
-        }
-        val += "  ]";
-        return val;
-    }
-
-    /**
-     * Serializes a String value into a Javascript value. True/false will be serialized as Javascript booleans,
-     * numbers will be serialized as Javascript numbers and String will be escaped by two single quotes. 
-     */
-    private String serialize2JS(String value) {
-        if (value == null)
-            return "null";
-        else if (value.equalsIgnoreCase("true"))
-            return "true";
-        else if (value.equalsIgnoreCase("false"))
-            return "false";
-        else if (NUMBER_PATTERN.matcher(value).matches())
-            return value;
-
-        return SINGLE_QUOTE + value.replaceAll(SINGLE_QUOTE, "\\\\" + SINGLE_QUOTE) + SINGLE_QUOTE;
     }
 }
