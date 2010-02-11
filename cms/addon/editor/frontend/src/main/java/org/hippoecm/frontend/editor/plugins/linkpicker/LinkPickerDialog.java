@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.plugins.linkpicker;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -26,8 +27,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -53,7 +56,7 @@ public class LinkPickerDialog extends AbstractDialog<String> {
     protected final IPluginContext context;
     protected final IPluginConfig config;
     protected IRenderService dialogRenderer;
-    private ModelReference<Node> modelService;
+    private IObserver modelObserver;
     private IClusterControl control;
     private IModel<Node> selectedNode;
 
@@ -139,26 +142,29 @@ public class LinkPickerDialog extends AbstractDialog<String> {
         IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("cluster.options"));
         control = context.newCluster(template, parameters);
 
+        control.start();
+
         IClusterConfig clusterConfig = control.getClusterConfig();
         //save modelServiceId and dialogServiceId in cluster config
         String modelServiceId = clusterConfig.getString("wicket.model");
-        modelService = new ModelReference<Node>(modelServiceId, selectedNode) {
+        final IModelReference modelRef = context.getService(modelServiceId, IModelReference.class);
+        context.registerService(modelObserver = new IObserver() {
             private static final long serialVersionUID = 1L;
 
-            @Override
-            public void setModel(IModel<Node> model) {
-                if (isValidSelection(model)) {
-                    selectedNode = model;
+            public IObservable getObservable() {
+                return modelRef;
+            }
+
+            public void onEvent(Iterator events) {
+                if (isValidSelection(modelRef.getModel())) {
+                    selectedNode = modelRef.getModel();
                     setOkEnabled(true);
                 } else {
                     setOkEnabled(false);
                 }
-                super.setModel(model);
             }
-        };
-        modelService.init(context);
-
-        control.start();
+            
+        }, IObserver.class.getName());
 
         dialogRenderer = context.getService(clusterConfig.getString("wicket.id"), IRenderService.class);
         dialogRenderer.bind(null, contentId);
@@ -169,8 +175,8 @@ public class LinkPickerDialog extends AbstractDialog<String> {
     public final void onClose() {
         dialogRenderer.unbind();
         dialogRenderer = null;
+        context.unregisterService(modelObserver, IObserver.class.getName());
         control.stop();
-        modelService.destroy();
     }
 
     @Override
