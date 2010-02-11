@@ -27,7 +27,6 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.Workspace;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -37,7 +36,6 @@ import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.standardworkflow.Change;
 import org.hippoecm.repository.util.VersionNumber;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,12 +68,12 @@ public class TemplateConverter implements UpdaterModule {
         try {
             final String oldUri = context.getWorkspace().getNamespaceRegistry().getURI(prefix);
             if (prefix != null) {
+                final String parentPath = "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix;
                 context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor(HippoNodeType.NT_TEMPLATETYPE) {
                         @Override
                             protected void leaving(Node node, int level) throws RepositoryException {
-                            Workspace ws = context.getWorkspace();
                             NamespaceRegistry nsReg = context.getWorkspace().getNamespaceRegistry();
-                            if (node.getParent().getName().equals(prefix)) {
+                            if (node.getParent().getPath().equals(parentPath)) {
                                 Node draft = null, current = null;
                                 String newUri = nsReg.getURI(prefix);
                                 if (log.isDebugEnabled()) {
