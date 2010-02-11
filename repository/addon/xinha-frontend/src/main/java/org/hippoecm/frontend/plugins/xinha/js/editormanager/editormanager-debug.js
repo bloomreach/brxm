@@ -139,33 +139,10 @@ if (!YAHOO.hippo.EditorManager) {
              * Register a XinhaTextEditor. This method is called on dom.load.
              */
             register : function(cfg) {
-                if(!this.initMap.containsKey(cfg.name)) { 
-                    this.initMap.put(cfg.name, {
-                        createStarted : false,
-                        pluginsLoaded : false,
-                        xinhaAvailable : false,
-                        name : cfg.name,
-                        config : cfg,
-                        xinha : null,
-                        lastData: null,
-                        container: null,
-                        sizeState: {w: 0, h: 0},
-                        
-                        getContainer : function() {
-                            if(this.container == null) {
-                                var el = Dom.get(this.name);
-                                while (el != null && el != document.body) {
-                                    if (Dom.hasClass(el, 'hippo-editor-field-subfield')) {
-                                        return el;
-                                    }
-                                    el = el.parentNode;
-                                }
-                            }
-                            return this.container;
-                        }
-                    });
+                if(!this.initMap.containsKey(cfg.name)) {
+                    this.initMap.put(cfg.name, new YAHOO.hippo.Editor(cfg));
                 } else {
-                    this.initMap.get(cfg.name).config = cfg;
+                    this.initMap.get(cfg.name).reset(config);
                 }
                 
                 if(!this.resizeRegistered) {
@@ -600,6 +577,46 @@ if (!YAHOO.hippo.EditorManager) {
                 YAHOO.log(message, "info", "EditorManager");           
             }
         };
+        
+        YAHOO.hippo.Editor = function(config) {
+            this.name = config.name;
+            this.config = config;
+        };
+
+        YAHOO.hippo.Editor.prototype = {
+            createStarted : false,
+            pluginsLoaded : false,
+            xinhaAvailable : false,
+            name : null,
+            config : null,
+            xinha : null,
+            lastData: null,
+            container: null,
+            sizeState: {w: 0, h: 0},
+                    
+            getContainer : function() {
+                if(this.container == null) {
+                    var el = Dom.get(this.name);
+                    while (el != null && el != document.body) {
+                        if (Dom.hasClass(el, 'hippo-editor-field-subfield')) {
+                            this.container = el;
+                        }
+                        el = el.parentNode;
+                    }
+                }
+                return this.container;
+            },
+            
+            /**
+             * Lifecycle might be reset when we start caching Xinha's on the client.
+             */
+            reset : function(config) {
+                this.config = config;
+                this.container = null;
+            }
+        }
+        
+        
         
     })();
 
