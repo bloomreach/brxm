@@ -45,7 +45,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection.DocumentCollectionType;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
-import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection.Match;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;

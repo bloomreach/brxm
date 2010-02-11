@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.browse.service;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
@@ -28,6 +29,8 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
@@ -84,7 +87,32 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         }
     }
 
+    private class FolderModelService extends ModelReference<Node> {
+        private static final long serialVersionUID = 1L;
+
+        FolderModelService(IPluginConfig config) {
+            super(config.getString("model.folder"), new JcrNodeModel((Node) null));
+        }
+
+        public void updateModel(IModel<Node> model) {
+            super.setModel(model);
+        }
+
+        @Override
+        public void setModel(IModel<Node> model) {
+            if (model == null) {
+                throw new IllegalArgumentException("invalid model null");
+            }
+            if (model.getObject() == null) {
+                updateModel(model);
+            } else {
+                browse(model);
+            }
+        }
+    }
+
     private DocumentModelService documentService;
+    private FolderModelService folderService;
     private DocumentCollectionModel collectionModel;
     private BrowserSections sections;
 
@@ -93,6 +121,24 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         documentService.init(context);
 
         this.collectionModel = new DocumentCollectionModel(null);
+        if (config.containsKey("model.folder")) {
+            folderService = new FolderModelService(config);
+            folderService.init(context);
+            context.registerService(new IObserver() {
+
+                public IObservable getObservable() {
+                    return collectionModel;
+                }
+
+                public void onEvent(Iterator events) {
+                    if (collectionModel != null && collectionModel.getObject() != null) {
+                        folderService.updateModel(collectionModel.getObject().getFolder());
+                    }
+                }
+
+            }, IObserver.class.getName());
+        }
+
         this.sections = new BrowserSections();
         sections.addListener(new IChangeListener() {
             private static final long serialVersionUID = 1L;
@@ -162,7 +208,8 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             section.select(document);
             sections.setActiveSection(closestName);
         }
-        if (collectionModel.getObject() != null && collectionModel.getObject().getType() == DocumentCollectionType.FOLDER) {
+        if (collectionModel.getObject() != null
+                && collectionModel.getObject().getType() == DocumentCollectionType.FOLDER) {
             if (collectionModel.getObject().getFolder().equals(document)) {
                 documentService.updateModel(new JcrNodeModel((Node) null));
             } else {

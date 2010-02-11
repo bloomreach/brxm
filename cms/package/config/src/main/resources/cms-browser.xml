@@ -127,6 +127,9 @@
     <sv:property sv:name="model.document" sv:type="String">
       <sv:value>model.browse.document</sv:value>
     </sv:property>
+    <sv:property sv:name="model.folder" sv:type="String">
+      <sv:value>model.browse.folder</sv:value>
+    </sv:property>
     <sv:property sv:name="model.default.path" sv:type="String">
       <sv:value>/content/documents</sv:value>
     </sv:property>

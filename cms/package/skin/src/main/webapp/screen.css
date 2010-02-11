@@ -490,7 +490,7 @@ background-image:url(images/box-blue2.png);}
 .hippo-list-paging td span em, .hippo-list-paging td a em{font-style: normal}
 */
 
-.hippo-picker-navigation{background: url("images/silver4.png") repeat-x; height: 20px; width: 645px; border-bottom: 1px solid #afafaf; margin-left: 194px; padding-top: 2px; padding-bottom: 2px; padding-left: 2px;}
+.hippo-picker-navigation{background: url("images/silver4.png") repeat-x; height: 20px; width: 635px; border-bottom: 1px solid #afafaf; margin-left: 194px; padding-top: 2px; padding-bottom: 2px; padding-left: 2px;}
 .hippo-picker-list-details tr.hippo-list-paging td div {margin-bottom: 2px; margin-top: 10px; width: 100%;}
 .hippo-picker-navigation-buttons{background: url("images/hippo-picker-navigation-back.png") repeat-x;}
 .hippo-window-form td div.hippo-picker-navigation-buttons input, .hippo-picker-navigation-buttons input{float: left; padding: 0px; height: 22px; width: 24px; font-size: 11px; background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat; background-position: 0px -20px; border: none; margin: 0px; text-indent: -9999px;}
