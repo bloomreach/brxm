@@ -23,6 +23,41 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
         YAHOO.hippo.HippoAjaxImpl.prototype = {
             prefix : 'hippo-destroyable-',
             callbacks : new YAHOO.hippo.HashMap(),
+            _scrollbarWidth : null,
+
+            getScrollbarWidth : function() {
+                if(this._scrollbarWidth == null) {
+                    var inner = document.createElement('p');
+                    inner.style.width = "100%";
+                    inner.style.height = "200px";
+
+                    var outer = document.createElement('div');
+                    outer.style.position = "absolute";
+                    outer.style.top = "0px";
+                    outer.style.left = "0px";
+                    outer.style.visibility = "hidden";
+                    outer.style.width = "200px";
+                    outer.style.height = "150px";
+                    outer.style.overflow = "hidden";
+                    outer.appendChild (inner);
+
+                    document.body.appendChild (outer);
+                    var w1 = inner.offsetWidth;
+                    outer.style.overflow = 'scroll';
+                    var w2 = inner.offsetWidth;
+                    if (w1 == w2) w2 = outer.clientWidth;
+
+                    document.body.removeChild (outer);
+
+                    this._scrollbarWidth = w1 - w2;
+                }
+                return this._scrollbarWidth;
+            },
+            
+            getScrollbarHeight : function() {
+                //I'm lazy so return scrollbarWidth for now
+                return this.getScrollbarWidth();
+            },
             
             registerDestroyFunction : function(el, func, context, args) {
                 var id = this.prefix + Dom.generateId();
