@@ -105,8 +105,8 @@
             <property name="defaultCredentialsUserID" value="${hstconfigreader.repository.user.name}"/>
             <property name="defaultCredentialsPassword" value="${hstconfigreader.repository.password}"/>
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
-            <property name="maxActive" value="1"/>
-            <property name="maxIdle" value="1"/>
+            <property name="maxActive" value="${hstconfigreader.repository.maxActive}"/>
+            <property name="maxIdle" value="${hstconfigreader.repository.maxIdle}"/>
             <property name="minIdle" value="0"/>
             <property name="initialSize" value="0"/>
             <property name="maxWait" value="10000"/>
