@@ -46,6 +46,9 @@ import org.slf4j.LoggerFactory;
  * Model of a multiple property with a Collection as object. Can be used for 
  * Wicket components that edit multiple property values directy, i.e. without a 
  * surrounding repeater, for instance a multiselect list.  
+ * <p>
+ * The contents of the list must be saved explicitly; i.e. modifying a returned list
+ * is not sufficient, the client must also invoke {@link #setObject(List)}.
  */
 public class JcrMultiPropertyValueModel<T extends Serializable> implements IModel<List<T>> {
     @SuppressWarnings("unused")
@@ -93,7 +96,7 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
 
     public void setObject(final List<T> objects) {
         if (!loaded) {
-            throw new RuntimeException("model is not attached; cannot store list");
+            getObject();
         }
 
         if (objects == null) {
