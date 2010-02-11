@@ -730,6 +730,9 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         if (parent == null)
             return 1;
         String name = parent.reverse.get(this);
+        if (!parent.children.containsKey(name)) {
+            throw new ItemNotFoundException();
+        }
         Iterator<UpdaterItem> iter = parent.children.get(name).iterator();
         for (int index = 0; iter.hasNext(); index++) {
             if (iter.next() == this) {
