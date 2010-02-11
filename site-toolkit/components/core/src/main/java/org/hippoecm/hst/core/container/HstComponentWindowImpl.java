@@ -189,8 +189,8 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         HstComponentWindow old = (HstComponentWindow) this.childWindowMap.put(child.getName(), child);
         
         if (old != null) {
-            log.warn("Ambiguous components configuration because component sibblings found with same name. " +
-            		"The first one is replaced. Fix your configuration as this leads to unexpected behavior. Double name: '{}'", child.getName() );
+            log.error("Ambiguous components configuration because component sibblings found with same name: '{}'. " +
+            		"The first one is replaced. This should not be possible. You can report the HST2 team so they can fix this.", child.getName() );
         }
         
         if (this.childWindowMapByReferenceName == null) {
