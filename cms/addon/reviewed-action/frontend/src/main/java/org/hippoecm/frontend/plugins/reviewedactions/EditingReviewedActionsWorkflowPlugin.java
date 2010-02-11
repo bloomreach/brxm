@@ -167,7 +167,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                                     IDialogService.class);
                             dialogService.show(new OnCloseDialog(actions, new JcrNodeModel(node), editor, isValid()));
                         } else {
-                            actions.revert();
+                            actions.save();
                             return new Object();
                         }
                     } catch (Exception ex) {
