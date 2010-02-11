@@ -119,20 +119,21 @@
     Hippo.ContextMenu.isShowing = false;
     
     Hippo.ContextMenu.showContextLink = function(id) {
-        var YUID = YAHOO.util.Dom;
+        var YUID = YAHOO.util.Dom, YUIL = YAHOO.lang;
         if(this.isShowing) {
             return;
         }
         
         var _ar = YUID.getElementsByClassName('hippo-tree-dropdown-icon-container', 'span', id);
-        if(typeof(_ar.length) != 'undefined' && _ar.length > 0) {
+        if(YUIL.isArray(_ar) && _ar.length > 0) {
             var el = _ar[0];
             YUID.addClass(el, 'container-selected');
+
+            if(!YUID._canPosition(el)) {
+                return;
+            }
             var pos = this.getContextPosition(id);
             YUID.setXY(el, pos);
-            
-            var layout = YUID.getAncestorByClassName(el, 'hippo-accordion-unit-center');
-            var layoutDim = YUID.getRegion(layout);
             this.currentContentLink = el;
         }
         this.isShowing = true;
