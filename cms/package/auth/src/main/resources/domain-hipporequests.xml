@@ -39,7 +39,7 @@
         <sv:value>Name</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hippostdpubwf:request</sv:value>
+        <sv:value>hippo:request</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
