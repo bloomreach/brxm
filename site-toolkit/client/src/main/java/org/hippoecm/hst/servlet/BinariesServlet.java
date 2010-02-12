@@ -114,7 +114,7 @@ public class BinariesServlet extends HttpServlet {
 
     private Repository repository;
     
-    private Credentials defaultCredentials;
+    private Credentials binariesCredentials;
     
     protected String baseBinariesContentPath = DEFAULT_BASE_BINARIES_CONTENT_PATH;
 
@@ -482,14 +482,14 @@ public class BinariesServlet extends HttpServlet {
         } else {
             if (this.repository == null) {
                 if (HstServices.isAvailable()) {
-                    this.defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".default");
+                    this.binariesCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".binaries");
                     this.repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
                 }
             }
 
             if (this.repository != null) {
-                if (this.defaultCredentials != null) {
-                    session = this.repository.login(this.defaultCredentials);
+                if (this.binariesCredentials != null) {
+                    session = this.repository.login(this.binariesCredentials);
                 } else {
                     session = this.repository.login();
                 }

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2008 Hippo
-
+  
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
+  
   http://www.apache.org/licenses/LICENSE-2.0
-
+  
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS"
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,32 +20,37 @@
   xmlns:util="http://www.springframework.org/schema/util"
   xmlns:aop="http://www.springframework.org/schema/aop"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                           http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
-                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-
+  http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
+  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+  http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+  
   <bean id="javax.jcr.Credentials.default" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="${default.repository.user.name}"/>
     <constructor-arg value="${default.repository.password}"/>
   </bean>
-
+  
   <bean id="javax.jcr.Credentials.writable" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="${writable.repository.user.name}"/>
     <constructor-arg value="${writable.repository.password}"/>
   </bean>
-
+  
   <bean id="javax.jcr.Credentials.hstconfigreader" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="${hstconfigreader.repository.user.name}"/>
     <constructor-arg value="${hstconfigreader.repository.password}"/>
   </bean>
-
+  
+  <bean id="javax.jcr.Credentials.binaries" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="${binaries.repository.user.name}"/>
+    <constructor-arg value="${binaries.repository.password}"/>
+  </bean>
+  
   <!--
-  <bean id="javax.jcr.Credentials.event.based" class="javax.jcr.SimpleCredentials">
+    <bean id="javax.jcr.Credentials.event.based" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="${event.based.repository.user.name}" />
     <constructor-arg value="${event.based.repository.password}" />
-  </bean>
+    </bean>
   -->
-
+  
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl">
     <!-- Delegating session pool repositories -->
     <constructor-arg>
@@ -119,10 +124,33 @@
             <property name="refreshOnPassivate" value="false"/>
           </bean>
         </entry>
+        <entry key-ref="javax.jcr.Credentials.binaries">
+          <bean class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
+            init-method="initialize" destroy-method="close">
+            <!-- delegated JCR repository -->
+            <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
+            <property name="repositoryAddress" value="${binaries.repository.address}"/>
+            <property name="defaultCredentialsUserID" value="${binaries.repository.user.name}"/>
+            <property name="defaultCredentialsPassword" value="${binaries.repository.password}"/>
+            <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
+            <property name="maxActive" value="${binaries.repository.maxActive}"/>
+            <property name="maxIdle" value="${binaries.repository.maxIdle}"/>
+            <property name="minIdle" value="0"/>
+            <property name="initialSize" value="0"/>
+            <property name="maxWait" value="10000"/>
+            <property name="testOnBorrow" value="true"/>
+            <property name="testOnReturn" value="false"/>
+            <property name="testWhileIdle" value="false"/>
+            <property name="timeBetweenEvictionRunsMillis" value="3600000"/>
+            <property name="numTestsPerEvictionRun" value="1"/>
+            <property name="minEvictableIdleTimeMillis" value="3600000"/>
+            <property name="refreshOnPassivate" value="false"/>
+          </bean>
+        </entry>
       </map>
     </constructor-arg>
     <!-- The default credentials for login() without credentials parameter. -->
     <constructor-arg ref="javax.jcr.Credentials.default"/>
   </bean>
-
+  
 </beans>
