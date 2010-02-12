@@ -53,7 +53,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     
     protected String repositoryProviderClassName = "org.hippoecm.hst.core.jcr.pool.JcrHippoRepositoryProvider";
     protected JcrRepositoryProvider jcrRepositoryProvider;
-    protected String validRepositoryAddressPattern = "^[^\\$]+$";
+    protected String validRepositoryAddressPattern = "^[^\\$]*$";
     protected String repositoryAddress;
     protected String defaultCredentialsUserID;
     protected char [] defaultCredentailsPassword;
