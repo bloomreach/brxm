@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.container;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Container Configuration
@@ -144,5 +145,13 @@ public interface ContainerConfiguration {
      * @return
      */
     boolean isDevelopmentMode();
+    
+    /**
+     * Convert a ContainerConfiguration class into a Properties class. List properties
+     * are joined into a string using the delimiter of the configuration.
+     * 
+     * @return Properties created from the Configuration
+     */
+    Properties toProperties();
     
 }

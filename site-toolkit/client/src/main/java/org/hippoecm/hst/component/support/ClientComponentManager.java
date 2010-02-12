@@ -44,6 +44,10 @@ public class ClientComponentManager implements ComponentManager, ServletConfigAw
     
     Logger logger = LoggerFactory.getLogger(ClientComponentManager.class);
     
+    public static final String IGNORE_UNRESOLVABLE_PLACE_HOLDERS = ClientComponentManager.class.getName() + ".ignoreUnresolvablePlaceholders";
+    
+    public static final String SYSTEM_PROPERTIES_MODE = ClientComponentManager.class.getName() + ".systemPropertiesMode";
+    
     protected AbstractRefreshableConfigApplicationContext applicationContext;
     protected String [] configurationResources;
     protected Configuration configuration;
@@ -96,11 +100,18 @@ public class ClientComponentManager implements ComponentManager, ServletConfigAw
         } else {
             this.applicationContext.setConfigLocations(checkedConfigurationResources.toArray(new String [0]));
             
-            if (this.configuration != null) {
-                Properties initProps = ConfigurationConverter.getProperties(this.configuration);
+            if (configuration != null) {
+                Properties initProps = ConfigurationConverter.getProperties(configuration);
                 PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
-                ppc.setIgnoreUnresolvablePlaceholders(true);
-                ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK);
+                ppc.setIgnoreUnresolvablePlaceholders(configuration.getBoolean(IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
+                ppc.setSystemPropertiesMode(configuration.getInt(SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
+                ppc.setProperties(initProps);
+                this.applicationContext.addBeanFactoryPostProcessor(ppc);
+            } else if (getContainerConfiguration() != null) {
+                Properties initProps = getContainerConfiguration().toProperties();
+                PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
+                ppc.setIgnoreUnresolvablePlaceholders(getContainerConfiguration().getBoolean(IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
+                ppc.setSystemPropertiesMode(getContainerConfiguration().getInt(SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
                 ppc.setProperties(initProps);
                 this.applicationContext.addBeanFactoryPostProcessor(ppc);
             }

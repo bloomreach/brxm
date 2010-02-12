@@ -17,8 +17,10 @@ package org.hippoecm.hst.core.container;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationConverter;
 
 /**
  * Container Configuration
@@ -103,5 +105,9 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
     public void setProperty(String key, Object value) {
         configuration.setProperty(key, value);
     }
-
+    
+    public Properties toProperties() {
+        return ConfigurationConverter.getProperties(configuration);
+    }
+    
 }
