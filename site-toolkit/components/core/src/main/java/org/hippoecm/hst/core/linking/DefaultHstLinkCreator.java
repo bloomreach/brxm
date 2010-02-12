@@ -281,7 +281,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     /*
                      * A hippo resource is not needed to be translated through the HstSiteMap but we create a binary link directly
                      */
-                    System.out.println(node.getPath());
+                    log.debug("node path in HstLink#resolve(): {}", node.getPath());
                     for(LocationResolver resolver : DefaultHstLinkCreator.this.locationResolvers) {
                         if(node.isNodeType(resolver.getNodeType())) {
                             resolver.setLocationMapTree(hstSite.getLocationMapTree());
