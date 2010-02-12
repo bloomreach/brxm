@@ -221,48 +221,60 @@ public class BinariesServlet extends HttpServlet {
                 return;
             }
 
-            Property data = resourceNode.getProperty("jcr:data");
-            InputStream istream = data.getStream();
-
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setContentType(mimeType);
-
-            // Add the Content-Disposition header for configured content types
-            addContentDispositionHeader(request, response, mimeType, resourceNode);
-
-            // TODO add a configurable factor + default minimum for expires. Ideally, this value is
-            // stored in the repository
-            if (resourceNode.hasProperty("jcr:lastModified")) {
-                long lastModified = 0;
-                
-                try {
-                    lastModified = resourceNode.getProperty("jcr:lastModified").getDate().getTimeInMillis();
-                } catch (ValueFormatException e) {
-                    if (log.isWarnEnabled()) {
-                        log.warn("jcr:lastModified not of type Date");
+            InputStream istream = null;
+            OutputStream ostream = null;
+            try {
+                Property data = resourceNode.getProperty("jcr:data");
+                istream = data.getStream();
+    
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.setContentType(mimeType);
+    
+                // Add the Content-Disposition header for configured content types
+                addContentDispositionHeader(request, response, mimeType, resourceNode);
+    
+                // TODO add a configurable factor + default minimum for expires. Ideally, this value is
+                // stored in the repository
+                if (resourceNode.hasProperty("jcr:lastModified")) {
+                    long lastModified = 0;
+                    
+                    try {
+                        lastModified = resourceNode.getProperty("jcr:lastModified").getDate().getTimeInMillis();
+                    } catch (ValueFormatException e) {
+                        if (log.isWarnEnabled()) {
+                            log.warn("jcr:lastModified not of type Date");
+                        }
                     }
+                    
+                    long expires = 0;
+                    
+                    if(lastModified > 0) {
+                        expires = (System.currentTimeMillis() - lastModified);
+                    }
+                    
+                    response.setDateHeader("Expires", expires + System.currentTimeMillis());
+                    response.setDateHeader("Last-Modified", lastModified); 
+                    response.setHeader("Cache-Control", "max-age="+(expires/1000));
+                } else {
+                    response.setDateHeader("Expires", 0);
+                    response.setHeader("Cache-Control", "max-age=0");
                 }
                 
-                long expires = 0;
                 
-                if(lastModified > 0) {
-                    expires = (System.currentTimeMillis() - lastModified);
+                ostream = response.getOutputStream();
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = istream.read(buffer)) >= 0) {
+                    ostream.write(buffer, 0, len);
                 }
-                
-                response.setDateHeader("Expires", expires + System.currentTimeMillis());
-                response.setDateHeader("Last-Modified", lastModified); 
-                response.setHeader("Cache-Control", "max-age="+(expires/1000));
-            } else {
-                response.setDateHeader("Expires", 0);
-                response.setHeader("Cache-Control", "max-age=0");
-            }
-            
-            
-            OutputStream ostream = response.getOutputStream();
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = istream.read(buffer)) >= 0) {
-                ostream.write(buffer, 0, len);
+                ostream.flush();
+            } finally {
+                if(istream != null) {
+                    istream.close();
+                }
+                if(ostream != null) {
+                    ostream.close();
+                }
             }
         } catch (PathNotFoundException ex) {
             if (log.isWarnEnabled()) {
