@@ -43,6 +43,10 @@ public class SpringComponentManager implements ComponentManager, BeanPostProcess
     
     Logger logger = LoggerFactory.getLogger(SpringComponentManager.class);
     
+    public static final String IGNORE_UNRESOLVABLE_PLACE_HOLDERS = SpringComponentManager.class.getName() + ".ignoreUnresolvablePlaceholders";
+    
+    public static final String SYSTEM_PROPERTIES_MODE = SpringComponentManager.class.getName() + ".systemPropertiesMode";
+    
     protected AbstractRefreshableConfigApplicationContext applicationContext;
     protected Configuration configuration;
     protected ContainerConfiguration containerConfiguration;
@@ -91,11 +95,11 @@ public class SpringComponentManager implements ComponentManager, BeanPostProcess
         } else {
             this.applicationContext.setConfigLocations(checkedConfigurationResources.toArray(new String [0]));
             
-            if (this.configuration != null) {
-                Properties initProps = ConfigurationConverter.getProperties(this.configuration);
+            if (configuration != null) {
+                Properties initProps = ConfigurationConverter.getProperties(configuration);
                 PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
-                ppc.setIgnoreUnresolvablePlaceholders(true);
-                ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK);
+                ppc.setIgnoreUnresolvablePlaceholders(configuration.getBoolean(IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
+                ppc.setSystemPropertiesMode(configuration.getInt(SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
                 ppc.setProperties(initProps);
                 this.applicationContext.addBeanFactoryPostProcessor(ppc);
             }
