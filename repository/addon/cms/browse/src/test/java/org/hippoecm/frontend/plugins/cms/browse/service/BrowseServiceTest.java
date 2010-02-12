@@ -132,6 +132,7 @@ public class BrowseServiceTest extends PluginTest {
 
     static final String BROWSE_SERVICE = "service.browser";
     static final String DOCUMENT_SERVICE = "service.document";
+    static final String FOLDER_SERVICE = "service.folder";
 
     static final String BROWSE_SECTION = "section.browse";
     static final String SEARCH_SECTION = "section.search";
@@ -149,6 +150,7 @@ public class BrowseServiceTest extends PluginTest {
                 "section.browse", BROWSE_SECTION,
                 "section.search", SEARCH_SECTION,
                 "model.document", DOCUMENT_SERVICE,
+                "model.folder", FOLDER_SERVICE,
             "/test/browseplugin", "frontend:plugin",
                 "plugin.class", BrowsingSectionPlugin.class.getName(),
                 "wicket.id", BROWSE_SECTION,
