@@ -89,7 +89,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     }
     
     public void setRepositoryAddress(String repositoryAddress) {
-        if (validRepositoryAddressPattern != null) {
+        if (repositoryAddress != null && validRepositoryAddressPattern != null) {
             if (!Pattern.matches(validRepositoryAddressPattern, repositoryAddress)) {
                 throw new IllegalArgumentException("Illegal repository address: " + repositoryAddress);
             }
