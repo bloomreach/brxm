@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Workspace;
 
 import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
@@ -227,9 +228,8 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 }
                 folderNode = canonical;
             }
-
-            WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-            Workflow wf = wfm.getWorkflow(folderNodeWorkflowCategory, folderNode);
+            
+            Workflow wf = getWorkflow(session, folderNodeWorkflowCategory, folderNode);
 
             if (wf instanceof FolderWorkflow) {
                 FolderWorkflow fwf = (FolderWorkflow) wf;
@@ -335,8 +335,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                     contentNode = canonical;
                 }
                 
-                WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                Workflow wf = wfm.getWorkflow(documentNodeWorkflowCategory, contentNode);
+                Workflow wf = getWorkflow(session, documentNodeWorkflowCategory, contentNode);
                 
                 //String handleUuid = contentNode.getParent().getUUID();
                 
@@ -355,7 +354,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                         if (changed) {
                             contentNode.save();
                             // we need to recreate the EditableWorkflow because the node has changed
-                            ewf = (EditableWorkflow)wfm.getWorkflow(documentNodeWorkflowCategory, contentNode);
+                            ewf = (EditableWorkflow) getWorkflow(session, documentNodeWorkflowCategory, contentNode);
                             document = ewf.commitEditableInstance();
                         } else {
                             document = ewf.disposeEditableInstance();
@@ -367,7 +366,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 
                 if (workflowCallbackHandler != null) {
                     // recreate the wf 
-                    wf = wfm.getWorkflow(documentNodeWorkflowCategory, document);
+                    wf = getWorkflow(session, documentNodeWorkflowCategory, document);
                     if (wf != null) {
                         workflowCallbackHandler.processWorkflow(wf);
                     } else {
@@ -428,9 +427,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                     // TODO : check for childs all being checked out??
                 }
                     
-                
-                WorkflowManager wfm = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                Workflow wf = wfm.getWorkflow(folderNodeWorkflowCategory, folderNode);
+                Workflow wf = getWorkflow(session, folderNodeWorkflowCategory, folderNode);
                 
                 if (wf instanceof FolderWorkflow) {
                     FolderWorkflow fwf = (FolderWorkflow) wf;
@@ -562,6 +559,46 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     
     public void setWorkflowCallbackHandler(WorkflowCallbackHandler<? extends Workflow> workflowCallbackHandler) {
         this.workflowCallbackHandler = workflowCallbackHandler;
+    }
+    
+    private Workflow getWorkflow(Session session, String category, Node node) throws RepositoryException {
+        Workspace workspace = session.getWorkspace();
+        
+        ClassLoader workspaceClassloader = workspace.getClass().getClassLoader();
+        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+        
+        try {
+            if (workspaceClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(workspaceClassloader);
+            }
+            
+            WorkflowManager wfm = ((HippoWorkspace) workspace).getWorkflowManager();
+            return wfm.getWorkflow(category, node);
+        } finally {
+            if (workspaceClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(currentClassloader);
+            }
+        }
+    }
+    
+    private Workflow getWorkflow(Session session, String category, Document document) throws RepositoryException {
+        Workspace workspace = session.getWorkspace();
+        
+        ClassLoader workspaceClassloader = workspace.getClass().getClassLoader();
+        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+        
+        try {
+            if (workspaceClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(workspaceClassloader);
+            }
+            
+            WorkflowManager wfm = ((HippoWorkspace) workspace).getWorkflowManager();
+            return wfm.getWorkflow(category, document);
+        } finally {
+            if (workspaceClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(currentClassloader);
+            }
+        }
     }
     
 }
