@@ -19,7 +19,6 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.Property;

@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.behaviors;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.IBehavior;
 
 /**
  * Marker interface for IContextMenuManager {@link Component}s.  All {@link IContextMenu}s

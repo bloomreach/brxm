@@ -22,6 +22,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
+import org.hippoecm.frontend.service.IRenderService;
 
 /**
  * The plugin configuration.  It is a map with some helper methods 
