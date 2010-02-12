@@ -34,12 +34,18 @@
     <constructor-arg value="admin" />
   </bean>
   
+  <bean id="javax.jcr.Credentials.hstconfigreader" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="${hstconfigreader.repository.user.name}"/>
+    <constructor-arg value="${hstconfigreader.repository.password}"/>
+  </bean>
+  
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl">
     <!-- Delegating session pool repositories -->
     <constructor-arg>
       <map>
         <entry key-ref="javax.jcr.Credentials.default" value-ref="javax.jcr.Repository.default" />
         <entry key-ref="javax.jcr.Credentials.writable" value-ref="javax.jcr.Repository.writable" />
+        <entry key-ref="javax.jcr.Credentials.hstconfigreader" value-ref="javax.jcr.Repository.hstconfigreader" />
       </map>
     </constructor-arg>
     <!-- The default credentials for login() without credentials parameter. -->
@@ -53,8 +59,8 @@
     <property name="defaultCredentialsUserID" value="admin" />
     <property name="defaultCredentialsPassword" value="admin" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
-    <property name="maxActive" value="25" />
-    <property name="maxIdle" value="5" />
+    <property name="maxActive" value="${default.repository.maxActive}" />
+    <property name="maxIdle" value="${default.repository.maxIdle}" />
     <property name="minIdle" value="0" />
     <property name="initialSize" value="0" />
     <property name="maxWait" value="10000" />
@@ -73,8 +79,8 @@
     <property name="defaultCredentialsUserID" value="admin" />
     <property name="defaultCredentialsPassword" value="admin" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
-    <property name="maxActive" value="25" />
-    <property name="maxIdle" value="5" />
+    <property name="maxActive" value="${writable.repository.maxActive}" />
+    <property name="maxIdle" value="${writable.repository.maxIdle}" />
     <property name="minIdle" value="0" />
     <property name="initialSize" value="0" />
     <property name="maxWait" value="10000" />
@@ -85,5 +91,25 @@
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
   </bean>
-    
+  
+  <bean id="javax.jcr.Repository.hstconfigreader" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+        init-method="initialize" destroy-method="close">
+    <!-- delegated JCR repository -->
+    <property name="repositoryAddress"><null/></property>
+    <property name="defaultCredentialsUserID" value="${hstconfigreader.repository.user.name}" />
+    <property name="defaultCredentialsPassword" value="${hstconfigreader.repository.password}" />
+    <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
+    <property name="maxActive" value="${hstconfigreader.repository.maxActive}" />
+    <property name="maxIdle" value="${hstconfigreader.repository.maxIdle}" />
+    <property name="minIdle" value="0" />
+    <property name="initialSize" value="0" />
+    <property name="maxWait" value="10000" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testOnReturn" value="false" />
+    <property name="testWhileIdle" value="false" />
+    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+    <property name="numTestsPerEvictionRun" value="1" />
+    <property name="minEvictableIdleTimeMillis" value="60000" />
+  </bean>
+  
 </beans>
