@@ -103,7 +103,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
             //                }
             //            });
 
-            add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())));
+            add(new TableHelperBehavior());
         }
     }
 

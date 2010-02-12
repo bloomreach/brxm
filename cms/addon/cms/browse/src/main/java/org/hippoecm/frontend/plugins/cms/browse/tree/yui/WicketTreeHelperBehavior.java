@@ -19,7 +19,6 @@ package org.hippoecm.frontend.plugins.cms.browse.tree.yui;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
@@ -29,8 +28,7 @@ public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
   
     WicketTreeHelperSettings settings;
     
-    public WicketTreeHelperBehavior(IYuiManager manager, WicketTreeHelperSettings settings) {
-        super(manager);
+    public WicketTreeHelperBehavior(WicketTreeHelperSettings settings) {
         this.settings = settings;
     }
     

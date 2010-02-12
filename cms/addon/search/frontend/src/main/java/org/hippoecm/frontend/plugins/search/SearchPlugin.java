@@ -39,7 +39,7 @@ public class SearchPlugin extends RenderPlugin implements IBrowseService<IModel>
         super(context, config);
 
         TextField tx = new TextField("searchBox");
-        tx.add(new SearchBehavior(context, config, this));
+        tx.add(new SearchBehavior(config, this));
         add(tx);
     }
 

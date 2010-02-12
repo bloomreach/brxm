@@ -62,6 +62,11 @@
       <artifactId>hippo-ecm-tools-projectexport</artifactId>
       <version>2.12.02-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-yui</artifactId>
+      <version>2.12.02-SNAPSHOT</version>
+    </dependency>
 
     <dependency>
       <groupId>xerces</groupId>

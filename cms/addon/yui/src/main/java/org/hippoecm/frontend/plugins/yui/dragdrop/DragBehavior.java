@@ -23,7 +23,6 @@ import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class DragBehavior extends AbstractDragDropBehavior {
     @SuppressWarnings("unused")
@@ -33,8 +32,8 @@ public abstract class DragBehavior extends AbstractDragDropBehavior {
 
     protected DragSettings dragSettings;
 
-    public DragBehavior(IYuiManager service, DragSettings settings) {
-        super(service, settings);
+    public DragBehavior(DragSettings settings) {
+        super(settings);
         dragSettings = settings;
     }
 

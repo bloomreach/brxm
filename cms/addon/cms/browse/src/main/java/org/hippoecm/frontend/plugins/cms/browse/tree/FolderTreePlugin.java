@@ -163,8 +163,7 @@ public class FolderTreePlugin extends RenderPlugin {
         };
         add(tree);
 
-        tree.add(treeHelperBehavior = new WicketTreeHelperBehavior(YuiPluginHelper.getManager(context),
-                new WicketTreeHelperSettings(config)) {
+        tree.add(treeHelperBehavior = new WicketTreeHelperBehavior(new WicketTreeHelperSettings(config)) {
             private static final long serialVersionUID = 1L;
 
             @Override

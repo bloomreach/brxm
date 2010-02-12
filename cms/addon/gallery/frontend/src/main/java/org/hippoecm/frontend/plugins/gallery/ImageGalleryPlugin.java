@@ -29,7 +29,6 @@ import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
-import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.tables.TableHelperBehavior;
 
 public class ImageGalleryPlugin extends AbstractListingPlugin {
@@ -62,7 +61,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
             ISortableDataProvider dataProvider, TableSelectionListener selectionListener, boolean triState,
             ListPagingDefinition pagingDefinition) {
         ListDataTable ldt = super.getListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
-        ldt.add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())));
+        ldt.add(new TableHelperBehavior());
         return ldt;
     }
 

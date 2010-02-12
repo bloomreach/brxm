@@ -22,7 +22,6 @@ import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class AccordionManagerBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
@@ -36,9 +35,7 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
     private DynamicTextTemplate template;
     private String id;
 
-    public AccordionManagerBehavior(IYuiManager manager, AccordionConfiguration accordionSettings) {
-        super(manager);
-        
+    public AccordionManagerBehavior(AccordionConfiguration accordionSettings) {
         this.template = new DynamicTextTemplate(INIT);
         template.setConfiguration(accordionSettings);
     }

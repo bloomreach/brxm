@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class DropBehavior extends AbstractDragDropBehavior {
     @SuppressWarnings("unused")
@@ -27,8 +26,8 @@ public abstract class DropBehavior extends AbstractDragDropBehavior {
 
     private static final long serialVersionUID = 1L;
 
-    public DropBehavior(IYuiManager service, DragDropSettings settings) {
-        super(service, settings);
+    public DropBehavior(DragDropSettings settings) {
+        super(settings);
     }
 
     @Override

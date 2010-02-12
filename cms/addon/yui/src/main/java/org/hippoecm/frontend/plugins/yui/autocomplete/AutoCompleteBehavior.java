@@ -23,7 +23,6 @@ import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
     @SuppressWarnings("unused")
@@ -38,8 +37,8 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
     protected final AutoCompleteSettings settings;
     private HippoTextTemplate template;
 
-    public AutoCompleteBehavior(IYuiManager service, AutoCompleteSettings settings) {
-        super(service, settings);
+    public AutoCompleteBehavior(AutoCompleteSettings settings) {
+        super(settings);
         this.settings = settings;
         this.template = new HippoTextTemplate(INIT_AUTOCOMPLETE, getClientClassname()) {
             private static final long serialVersionUID = 1L;

@@ -23,12 +23,9 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.collections.MiniMap;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
-import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class YuiFeedbackPanel extends Panel {
     @SuppressWarnings("unused")
@@ -38,12 +35,12 @@ public class YuiFeedbackPanel extends Panel {
 
     private FeedbackPanel feedback;
 
-    public YuiFeedbackPanel(String id, IFeedbackMessageFilter filter, IPluginContext context) {
+    public YuiFeedbackPanel(String id, IFeedbackMessageFilter filter) {
         super(id);
 
         add(feedback = new FeedbackPanel("feedback", filter));
         feedback.setOutputMarkupId(true);
-        feedback.add(new NotifyUserBehavior(YuiPluginHelper.getManager(context)));
+        feedback.add(new NotifyUserBehavior());
         setOutputMarkupId(true);
     }
 
@@ -66,10 +63,6 @@ public class YuiFeedbackPanel extends Panel {
     class NotifyUserBehavior extends AbstractYuiBehavior {
         private static final long serialVersionUID = 1L;
 
-        public NotifyUserBehavior(IYuiManager manager) {
-            super(manager);
-        }
-
         @Override
         public void addHeaderContribution(IYuiContext helper) {
             helper.addModule(HippoNamespace.NS, "feedbackmanager");
@@ -80,8 +73,8 @@ public class YuiFeedbackPanel extends Panel {
         }
 
         @Override
-        public void renderHead(IHeaderResponse response) {
-            super.renderHead(response);
+        public void onRenderHead(IHeaderResponse response) {
+            super.onRenderHead(response);
 
             if (feedback.anyMessage()) {
                 response.renderJavascript("var module = YAHOO.hippo.FeedbackManager.get(\"" + getMarkupId() + "\"); "

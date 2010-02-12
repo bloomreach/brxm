@@ -183,7 +183,7 @@ public class SearchDocumentListingPlugin extends RenderPlugin<BrowserSearchResul
             ListPagingDefinition pagingDefinition) {
         ListDataTable<Node> table = new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener,
                 true, pagingDefinition);
-        table.add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())));
+        table.add(new TableHelperBehavior());
         return table;
     }
 

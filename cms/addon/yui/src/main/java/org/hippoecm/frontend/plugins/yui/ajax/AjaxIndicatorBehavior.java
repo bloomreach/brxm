@@ -25,7 +25,6 @@ import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class AjaxIndicatorBehavior extends AbstractYuiBehavior {
     @SuppressWarnings("unused")
@@ -38,9 +37,7 @@ public class AjaxIndicatorBehavior extends AbstractYuiBehavior {
 
     final private WicketAjaxIndicatorAppender ajaxIndicator;
 
-    public AjaxIndicatorBehavior(IYuiManager service) {
-        super(service);
-
+    public AjaxIndicatorBehavior() {
         ajaxIndicator = new WicketAjaxIndicatorAppender() {
             private static final long serialVersionUID = 1L;
 

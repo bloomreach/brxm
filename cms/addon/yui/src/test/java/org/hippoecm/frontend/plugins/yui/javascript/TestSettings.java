@@ -33,7 +33,6 @@ import org.hippoecm.frontend.plugins.yui.layout.UnitBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.junit.Test;
@@ -106,14 +105,13 @@ public class TestSettings extends TestCase {
         private WireframeSettings wfSettings;
 
         public TestPage() {
-            IYuiManager yuiMgr = new WebAppBehavior(new WebAppSettings(new JavaPluginConfig()));
-            add((IBehavior) yuiMgr);
+            add(new WebAppBehavior(new WebAppSettings()));
 
             IPluginConfig config = new JavaPluginConfig();
             config.put("wrappers", new String[] { "center" });
             config.put("center", "center-wrapper");
             wfSettings = new WireframeSettings(config);
-            add(new WireframeBehavior(yuiMgr, wfSettings));
+            add(new WireframeBehavior(wfSettings));
 
             Label panel;
             add(panel = new TestLabel("label", "label1", new Model("test")));

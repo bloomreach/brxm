@@ -50,10 +50,6 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>service.model</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.behavior" sv:type="String">
-        <sv:value>service.behavior.yui</sv:value>
-        <sv:value>service.layout.main</sv:value>
-      </sv:property>
     </sv:node>
     
     <!-- start top configuration -->
@@ -221,78 +217,7 @@
       </sv:property>
     </sv:node>
     <!-- End center configuration -->
-    
-    <!-- Start YUI configurations -->
-    <sv:node sv:name="yuiWebappBehavior">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.yui.webapp.WebAppPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="behavior.id" sv:type="String">
-        <sv:value>service.behavior.yui</sv:value>
-      </sv:property>
-      <sv:node sv:name="yui.config">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="load.css.fonts" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="load.css.grids" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="load.css.reset" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="load.wicket.ajax" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
       
-    <sv:node sv:name="pageLayoutBehavior">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.yui.layout.PageLayoutPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="behavior.id" sv:type="String">
-        <sv:value>service.layout.main</sv:value>
-      </sv:property>
-      <sv:node sv:name="yui.config">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="body.gutter" sv:type="String">
-          <sv:value>0px 10px 5px 0px</sv:value>
-        </sv:property>
-        <sv:property sv:name="body.scroll" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="header.gutter" sv:type="String">
-          <sv:value>0px 10px 0px 10px</sv:value>
-        </sv:property>
-        <sv:property sv:name="header.height" sv:type="String">
-          <sv:value>71</sv:value>
-        </sv:property>
-        <sv:property sv:name="left.gutter" sv:type="String">
-          <sv:value>0px 0px 5px 10px</sv:value>
-        </sv:property>
-        <sv:property sv:name="left.width" sv:type="String">
-          <sv:value>460</sv:value>
-        </sv:property>
-        <sv:property sv:name="left.resize" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="root.id" sv:type="String">
-          <sv:value>doc3</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-    
     <sv:node sv:name="leftLayout">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>

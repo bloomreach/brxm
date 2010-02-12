@@ -35,10 +35,8 @@ import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 import org.joda.time.DateTime;
 
 public class YuiDatePicker extends AbstractYuiBehavior {
@@ -52,9 +50,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
     private Component component;
     private DynamicTextTemplate template;
     
-    public YuiDatePicker(IYuiManager manager, YuiDatePickerSettings settings) {
-        super(manager);
-        
+    public YuiDatePicker(YuiDatePickerSettings settings) {
         this.template = new DynamicTextTemplate(INIT, settings) {
             private static final long serialVersionUID = 1L;
             

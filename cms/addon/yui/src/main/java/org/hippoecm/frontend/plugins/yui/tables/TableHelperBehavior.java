@@ -21,7 +21,6 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class TableHelperBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
@@ -31,10 +30,6 @@ public class TableHelperBehavior extends AbstractYuiBehavior {
     
     Component comp;
 
-    public TableHelperBehavior(IYuiManager manager) {
-        super(manager);
-    }
-    
     @Override
     public void bind(Component component) {
         super.bind(component);

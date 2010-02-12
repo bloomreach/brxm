@@ -29,7 +29,6 @@ import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
-import org.hippoecm.frontend.plugins.yui.mapping.MappingException;
 
 public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
     @SuppressWarnings("unused")

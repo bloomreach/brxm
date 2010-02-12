@@ -27,7 +27,6 @@ import org.apache.wicket.util.convert.IConverter;
 import org.apache.wicket.util.convert.converters.DateConverter;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.joda.time.DateTime;
 
 public class DateTimeField extends org.apache.wicket.extensions.yui.calendar.DateTimeField {
@@ -46,7 +45,7 @@ public class DateTimeField extends org.apache.wicket.extensions.yui.calendar.Dat
         }
         YuiDatePickerSettings settings = new YuiDatePickerSettings(config);
         settings.setDatePattern(getDatePattern());
-        dateField.add(new YuiDatePicker(YuiPluginHelper.getManager(context), settings));
+        dateField.add(new YuiDatePicker(settings));
     }
     
     private String getDatePattern() {

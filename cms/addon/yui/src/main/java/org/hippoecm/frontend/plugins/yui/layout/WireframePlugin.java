@@ -41,7 +41,7 @@ public class WireframePlugin extends WireframeBehavior implements IPlugin, IBeha
     private IPluginConfig config;
 
     public WireframePlugin(IPluginContext context, IPluginConfig config) {
-        super(YuiPluginHelper.getManager(context), new WireframeSettings(YuiPluginHelper.getConfig(config)));
+        super(new WireframeSettings(YuiPluginHelper.getConfig(config)));
 
         this.config = config;
         context.registerService(this, config.getString(ID));

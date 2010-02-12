@@ -271,7 +271,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                 public boolean accept(FeedbackMessage message) {
                     return FeedbackLogger.class.isInstance(message.getReporter());
                 }
-            }, getPluginContext()));
+            }));
             add(feedbackFragment);
         }
 

@@ -24,12 +24,11 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
 import org.hippoecm.frontend.plugins.cms.browse.service.BrowseService;
-import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.accordion.AccordionConfiguration;
 import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
-import org.hippoecm.frontend.plugins.yui.mapping.MappingException;
-import org.hippoecm.frontend.plugins.yui.mapping.PluginConfigMapper;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.util.MappingException;
+import org.hippoecm.frontend.util.PluginConfigMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +39,7 @@ public class Navigator extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(Navigator.class);
-    
+
     private BrowseService browseService;
     private DocumentCollectionView docView;
     private BrowserSectionAccordion accordion;
@@ -48,7 +47,8 @@ public class Navigator extends RenderPlugin {
     public Navigator(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        browseService = new BrowseService(context, config, new JcrNodeModel(config.getString("model.default.path", "/"))) {
+        browseService = new BrowseService(context, config,
+                new JcrNodeModel(config.getString("model.default.path", "/"))) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -77,8 +77,8 @@ public class Navigator extends RenderPlugin {
                 log.warn(e.getMessage());
             }
         }
-        accordion = new BrowserSectionAccordion("sections", sections,
-                new AccordionManagerBehavior(YuiPluginHelper.getManager(context), accordionConfig), this) {
+        accordion = new BrowserSectionAccordion("sections", sections, new AccordionManagerBehavior(accordionConfig),
+                this) {
             private static final long serialVersionUID = 1L;
 
             @Override

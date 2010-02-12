@@ -42,7 +42,8 @@ import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.yui.layout.PageLayoutPlugin;
+import org.hippoecm.frontend.plugins.yui.layout.PageLayoutBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.PageLayoutSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
@@ -317,10 +318,10 @@ public class TemplateBuilderTest extends PluginTest {
     // regression test for HREPTWO-3155
     public void testRemoveLast() throws Exception {
         // YUCK!
-        WebAppBehavior yuiWebApp = new WebAppBehavior(new WebAppSettings(new JavaPluginConfig()));
+        WebAppBehavior yuiWebApp = new WebAppBehavior(new WebAppSettings());
         home.add(yuiWebApp);
         context.registerService(yuiWebApp, "service.behavior.yui");
-        home.add(new PageLayoutPlugin(context, new JavaPluginConfig()));
+        home.add(new PageLayoutBehavior(new PageLayoutSettings(new JavaPluginConfig())));
 
         Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces/test/edited");
         JcrNodeModel nodeModel = new JcrNodeModel(templateTypeNode);
@@ -354,10 +355,10 @@ public class TemplateBuilderTest extends PluginTest {
     // regression test for HREPTWO-3155
     public void testMoveRemove() throws Exception {
         // YUCK!
-        WebAppBehavior yuiWebApp = new WebAppBehavior(new WebAppSettings(new JavaPluginConfig()));
+        WebAppBehavior yuiWebApp = new WebAppBehavior(new WebAppSettings());
         home.add(yuiWebApp);
         context.registerService(yuiWebApp, "service.behavior.yui");
-        home.add(new PageLayoutPlugin(context, new JavaPluginConfig()));
+        home.add(new PageLayoutBehavior(new PageLayoutSettings(new JavaPluginConfig())));
 
         Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces/test/edited");
         JcrNodeModel nodeModel = new JcrNodeModel(templateTypeNode);

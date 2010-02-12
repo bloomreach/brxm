@@ -41,7 +41,7 @@ public class AccordionTest extends YuiTest {
             AccordionConfiguration config = new AccordionConfiguration();
             config.setRegisterRenderListener(false);
             config.setRegisterResizeListener(false);
-            AccordionManagerBehavior amb = new AccordionManagerBehavior(getYuiManager(), config);
+            AccordionManagerBehavior amb = new AccordionManagerBehavior(config);
 
             container.add(amb);
 

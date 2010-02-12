@@ -58,8 +58,7 @@ public class ImageContainer extends Panel {
                 }
             }
         };
-        img.add(new ImageNodeDragBehavior(YuiPluginHelper.getManager(pluginContext), new DragSettings(YuiPluginHelper
-                .getConfig(pluginConfig)), model));
+        img.add(new ImageNodeDragBehavior(new DragSettings(YuiPluginHelper.getConfig(pluginConfig)), model));
         add(img);
     }
 

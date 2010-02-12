@@ -30,7 +30,6 @@ import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 import org.hippoecm.frontend.plugins.yui.javascript.IYuiListener;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class WireframeBehavior extends AbstractYuiBehavior implements IWireframeService {
 
@@ -45,8 +44,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
     private Component component;
     private HippoTextTemplate template;
 
-    public WireframeBehavior(IYuiManager manager, final WireframeSettings settings) {
-        super(manager);
+    public WireframeBehavior(final WireframeSettings settings) {
         this.settings = settings;
         this.settings.addListener(new IYuiListener() {
             private static final long serialVersionUID = 1L;
@@ -104,7 +102,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
     }
 
     @Override
-    public void renderHead(IHeaderResponse response) {
+    public void onRenderHead(IHeaderResponse response) {
         settings.setMarkupId(component.getMarkupId(true));
 
         if (settings.isLinkedWithParent()) {
@@ -143,7 +141,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
             }
         });
 
-        super.renderHead(response);
+        super.onRenderHead(response);
     }
 
 }

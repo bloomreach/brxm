@@ -22,7 +22,6 @@ import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
     @SuppressWarnings("unused")
@@ -32,8 +31,8 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
 
     protected final DragDropSettings settings;
 
-    public AbstractDragDropBehavior(IYuiManager service, DragDropSettings settings) {
-        super(service, settings);
+    public AbstractDragDropBehavior(DragDropSettings settings) {
+        super(settings);
         this.settings = settings;
     }
 

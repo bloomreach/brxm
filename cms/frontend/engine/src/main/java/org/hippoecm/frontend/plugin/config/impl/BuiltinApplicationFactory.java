@@ -73,7 +73,17 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
         config.put("extension.top", "service.top");
         config.put("extension.left", "service.left");
         config.put("extension.center", "service.center");
-        config.put("wicket.behavior", new String[] { "service.behavior.yui", "service.layout.main" });
+//        config.put("wicket.behavior", new String[] { "service.behavior.yui", "service.layout.main" });
+        JavaPluginConfig yuiConfig = new JavaPluginConfig("yui.config");
+        yuiConfig.put("body.gutter", "0px 10px 5px 0px");
+        yuiConfig.put("body.scroll", true);
+        yuiConfig.put("header.gutter", "0px 10px 0px 10px");
+        yuiConfig.put("header.height", "71");
+        yuiConfig.put("left.gutter", "0px 0px 5px 10px");
+        yuiConfig.put("left.width", "460");
+        yuiConfig.put("left.resize", true);
+        yuiConfig.put("root.id", "doc3");
+        config.put("yui.config", yuiConfig);
         plugins.addPlugin(config);
 
         config = new JavaPluginConfig("top");
@@ -141,6 +151,7 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
         config.put("wicket.dialog", "service.logout.dialog");
         plugins.addPlugin(config);
 
+/*
         config = new JavaPluginConfig("webappBehavior");
         config.put("plugin.class", "org.hippoecm.frontend.plugins.yui.webapp.WebAppPlugin");
         config.put("behavior.id", "service.behavior.yui");
@@ -166,6 +177,7 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
         yuiConfig.put("root.id", "doc3");
         config.put("yui.config", yuiConfig);
         plugins.addPlugin(config);
+*/
 
         config = new JavaPluginConfig("browserBehavior");
         config.put("plugin.class", "org.hippoecm.frontend.plugins.yui.layout.WireframePlugin");

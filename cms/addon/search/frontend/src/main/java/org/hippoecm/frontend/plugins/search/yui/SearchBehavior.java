@@ -77,8 +77,8 @@ public class SearchBehavior extends AutoCompleteBehavior {
     private final IBrowseService<IModel> browseService;
     private final TextSearchBuilder searchBuilder;
 
-    public SearchBehavior(IPluginContext context, IPluginConfig config, IBrowseService<IModel> browse) {
-        super(YuiPluginHelper.getManager(context), new AutoCompleteSettings(YuiPluginHelper.getConfig(config)));
+    public SearchBehavior(IPluginConfig config, IBrowseService<IModel> browse) {
+        super(new AutoCompleteSettings(YuiPluginHelper.getConfig(config)));
         this.browseService = browse;
         searchBuilder = new TextSearchBuilder();
         searchBuilder.setScope(getSearchPaths(config.getStringArray(SEARCH_PATHS)));

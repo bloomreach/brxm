@@ -105,7 +105,7 @@ public class EditPerspective extends Perspective {
         wfSettings = new WireframeSettings(YuiPluginHelper.getConfig(config));
         UnitSettings topSettings = wfSettings.getUnitSettingsByPosition("top");
         topHeight = topSettings.getHeight();
-        add(new WireframeBehavior(YuiPluginHelper.getManager(context), wfSettings));
+        add(new WireframeBehavior(wfSettings));
     }
 
     @Override

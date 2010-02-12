@@ -28,9 +28,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.tree.TreeBehavior.DefaultTreeItem;
 
 public class YuiJcrTree extends Panel {
@@ -39,12 +37,12 @@ public class YuiJcrTree extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public YuiJcrTree(String id, IPluginContext context, IPluginConfig config, final IModel model) {
+    public YuiJcrTree(String id, IPluginConfig config, final IModel model) {
         super(id);
 
         TreeSettings settings = new TreeSettings(config);
 
-        add(new TreeBehavior(YuiPluginHelper.getManager(context), settings) {
+        add(new TreeBehavior(settings) {
             private static final long serialVersionUID = 1L;
 
             @Override

@@ -13,20 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.yui;
+package org.hippoecm.frontend.client;
 
-import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
-import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
-import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 
-public class YuiPage extends WebPage {
+abstract public class TestPage extends WebPage  {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    public YuiPage() {
-        add(new WebAppBehavior(new WebAppSettings()));
-        add(HeaderContributor.forJavaScript(YuiPage.class, "console.js"));
-    }
 
 }

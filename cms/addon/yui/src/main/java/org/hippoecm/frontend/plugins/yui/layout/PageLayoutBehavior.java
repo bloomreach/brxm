@@ -24,7 +24,6 @@ import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class PageLayoutBehavior extends AbstractYuiAjaxBehavior implements IWireframeService {
     @SuppressWarnings("unused")
@@ -38,8 +37,8 @@ public class PageLayoutBehavior extends AbstractYuiAjaxBehavior implements IWire
     private PageLayoutSettings settings;
     private HippoTextTemplate template;
 
-    public PageLayoutBehavior(IYuiManager manager, final PageLayoutSettings settings) {
-        super(manager, settings);
+    public PageLayoutBehavior(final PageLayoutSettings settings) {
+        super(settings);
         this.settings = settings;
         template = new HippoTextTemplate(INIT_PAGE, "YAHOO.hippo.GridsRootWireframe") {
             private static final long serialVersionUID = 1L;
