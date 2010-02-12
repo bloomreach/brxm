@@ -46,8 +46,8 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
     protected final TreeSettings settings;
     private HippoTextTemplate template;
 
-    public TreeBehavior(IYuiManager service, TreeSettings settings) {
-        super(service, settings);
+    public TreeBehavior(TreeSettings settings) {
+        super(settings);
         this.settings = settings;
         this.template = new HippoTextTemplate(INIT_TREE, getClientClassname()) {
             private static final long serialVersionUID = 1L;

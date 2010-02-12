@@ -17,8 +17,6 @@ package org.hippoecm.frontend.plugins.yui.webapp;
 
 import java.io.Serializable;
 
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-
 public class WebAppSettings implements Serializable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -31,22 +29,7 @@ public class WebAppSettings implements Serializable {
     private boolean loadGrids = false;
     private boolean loadBase = false;
 
-    public WebAppSettings(IPluginConfig config) {
-        if (config.containsKey("load.wicket.ajax")) {
-            loadWicketAjax = config.getBoolean("load.wicket.ajax");
-        }
-        if (config.containsKey("load.css.reset")) {
-            loadReset = config.getBoolean("load.css.reset");
-        }
-        if (config.containsKey("load.css.fonts")) {
-            loadFonts = config.getBoolean("load.css.fonts");
-        }
-        if (config.containsKey("load.css.grids")) {
-            loadGrids = config.getBoolean("load.css.grids");
-        }
-        if (config.containsKey("load.css.base")) {
-            loadBase = config.getBoolean("load.css.base");
-        }
+    public WebAppSettings() {
     }
 
     public boolean isLoadResetFontsGrids() {
@@ -61,19 +44,19 @@ public class WebAppSettings implements Serializable {
         this.loadWicketAjax = loadWicketAjax;
     }
 
-    public boolean isLoadBase() {
+    public boolean isLoadCssBase() {
         return loadBase;
     }
 
-    public void setLoadBase(boolean loadBase) {
+    public void setLoadCssBase(boolean loadBase) {
         this.loadBase = loadBase;
     }
 
-    public boolean isLoadReset() {
+    public boolean isLoadCssReset() {
         return loadReset;
     }
 
-    public void setLoadReset(boolean loadReset) {
+    public void setLoadCssReset(boolean loadReset) {
         this.loadReset = loadReset;
     }
 
@@ -81,15 +64,15 @@ public class WebAppSettings implements Serializable {
         return loadFonts;
     }
 
-    public void setLoadFonts(boolean loadFonts) {
+    public void setLoadCssFonts(boolean loadFonts) {
         this.loadFonts = loadFonts;
     }
 
-    public boolean isLoadGrids() {
+    public boolean isLoadCssGrids() {
         return loadGrids;
     }
 
-    public void setLoadGrids(boolean loadGrids) {
+    public void setLoadCssGrids(boolean loadGrids) {
         this.loadGrids = loadGrids;
     }
 

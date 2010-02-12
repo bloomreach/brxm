@@ -129,7 +129,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         mode = config.getString("mode", "view");
         if (mode.equals("edit")) {
-            add(new EditorManagerBehavior(YuiPluginHelper.getManager(context)));
+            add(new EditorManagerBehavior());
         }
         load();
 
@@ -454,9 +454,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         DynamicTextTemplate globals;
         DynamicTextTemplate register;
 
-        public EditorManagerBehavior(IYuiManager manager) {
-            super(manager);
-
+        public EditorManagerBehavior() {
             globals = new DynamicTextTemplate(XINHA_INIT_GLOBALS) {
                 private static final long serialVersionUID = 1L;
 

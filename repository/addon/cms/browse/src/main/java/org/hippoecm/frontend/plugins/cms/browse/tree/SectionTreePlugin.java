@@ -36,15 +36,14 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.accordion.AccordionConfiguration;
 import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
-import org.hippoecm.frontend.plugins.yui.mapping.MappingException;
-import org.hippoecm.frontend.plugins.yui.mapping.PluginConfigMapper;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.service.render.ListRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.util.MappingException;
+import org.hippoecm.frontend.util.PluginConfigMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +110,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 log.warn(e.getMessage());
             }
         }
-        add(accordionManager = new AccordionManagerBehavior(YuiPluginHelper.getManager(context), accordionConfig));
+        add(accordionManager = new AccordionManagerBehavior(accordionConfig));
 
         final List<String> headers = Arrays.asList(config.getStringArray("headers"));
         String[] behaviours = config.getStringArray("behaviours");

@@ -33,18 +33,6 @@ public class YuiPluginHelper {
     private static final String CONFIG_ID = "yui.config";
 
     /**
-     * Retrieve a {@link IYuiManager} instance from the context or null if none found.
-     * 
-     * @param context 
-     *            The {@link IPluginContext} that will be used for lookup.
-     *             
-     * @return An {@link IYuiManager} instance or null of not found 
-     */
-    public static IYuiManager getManager(IPluginContext context) {
-        return context.getService(SERVICE_ID, IYuiManager.class);
-    }
-
-    /**
      * Check if the provided {@link IPluginConfig} has a child {@link IPluginConfig} with 
      * name "yui.config". If so, return it, else return null.
      *  

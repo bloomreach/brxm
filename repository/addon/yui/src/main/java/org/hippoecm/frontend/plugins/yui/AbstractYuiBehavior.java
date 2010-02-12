@@ -16,7 +16,9 @@
 package org.hippoecm.frontend.plugins.yui;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
@@ -27,19 +29,13 @@ public class AbstractYuiBehavior extends AbstractBehavior {
 
     private static final long serialVersionUID = 1L;
 
+    private Component component;
     private IYuiContext _helper;
-
-    public AbstractYuiBehavior(IYuiManager manager) {
-        if (manager == null) {
-            throw new IllegalStateException("No root yui behavior found, unable to register module dependencies.");
-        }
-        _helper = manager.newContext();
-    }
 
     @Override
     public void bind(Component component) {
         super.bind(component);
-        addHeaderContribution(_helper);
+        this.component = component;
     }
 
     /**
@@ -54,8 +50,25 @@ public class AbstractYuiBehavior extends AbstractBehavior {
      * TODO: webapp ajax is configurable, maybe check here and still load it.
      */
     @Override
-    public void renderHead(IHeaderResponse response) {
+    public final void renderHead(IHeaderResponse response) {
+        if (_helper == null) {
+            Page page = component.getPage();
+            for (IBehavior behavior : page.getBehaviors()) {
+                if (behavior instanceof IYuiManager) {
+                    _helper = ((IYuiManager) behavior).newContext();
+                    addHeaderContribution(_helper);
+                    break;
+                }
+            }
+            if (_helper == null) {
+                throw new IllegalStateException("Page has no yui manager behavior, unable to register module dependencies.");
+            }
+        }
+        onRenderHead(response);
         _helper.renderHead(response);
     }
 
+    protected void onRenderHead(IHeaderResponse response) {
+    }
+    
 }

@@ -43,7 +43,7 @@ public abstract class XinhaDropBehavior extends DropBehavior {
     static final Logger log = LoggerFactory.getLogger(XinhaDropBehavior.class);
 
     public XinhaDropBehavior(IPluginContext context, IPluginConfig config) {
-        super(YuiPluginHelper.getManager(context), new DragDropSettings(YuiPluginHelper.getConfig(config)));
+        super(new DragDropSettings(YuiPluginHelper.getConfig(config)));
     }
 
     enum Type {

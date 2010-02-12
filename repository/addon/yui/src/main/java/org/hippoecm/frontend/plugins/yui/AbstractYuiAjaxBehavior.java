@@ -17,7 +17,9 @@ package org.hippoecm.frontend.plugins.yui;
 
 import java.util.Map;
 
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
@@ -32,15 +34,7 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
     private IYuiContext context;
     private AjaxSettings settings;
 
-    public AbstractYuiAjaxBehavior(IYuiManager manager) {
-        this(manager, null);
-    }
-
-    public AbstractYuiAjaxBehavior(IYuiManager manager, AjaxSettings settings) {
-        if (manager == null) {
-            throw new IllegalStateException("No root yui behavior found, unable to register module dependencies.");
-        }
-        context = manager.newContext();
+    public AbstractYuiAjaxBehavior(AjaxSettings settings) {
         this.settings = settings;
     }
 
@@ -74,7 +68,6 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
     @Override
     protected void onBind() {
         super.onBind();
-        addHeaderContribution(context);
     }
 
     /**
@@ -91,8 +84,25 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
      */
     @Override
     public void renderHead(IHeaderResponse response) {
-        updateAjaxSettings();
+        if (context == null) {
+            Page page = getComponent().getPage();
+            for (IBehavior behavior : page.getBehaviors()) {
+                if (behavior instanceof IYuiManager) {
+                    context = ((IYuiManager) behavior).newContext();
+                    addHeaderContribution(context);
+                    break;
+                }
+            }
+            if (context == null) {
+                throw new IllegalStateException("Page has no yui manager behavior, unable to register module dependencies.");
+            }
+        }
+        onRenderHead(response);
         context.renderHead(response);
+    }
+
+    protected void onRenderHead(IHeaderResponse response) {
+        updateAjaxSettings();
     }
 
 }

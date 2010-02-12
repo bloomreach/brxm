@@ -15,8 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.PageLayoutBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.PageLayoutSettings;
+import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
+import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.Pinger;
 
@@ -26,9 +32,30 @@ public class RootPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
+    private boolean rendered = false;
+
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         add(new Pinger("pinger"));
+
+        PageLayoutSettings plSettings = new PageLayoutSettings(config.getPluginConfig("yui.config"));
+        add(new PageLayoutBehavior(plSettings));
+
+        add(new AjaxIndicatorBehavior());
     }
+
+    @Override
+    public void render(PluginRequestTarget target) {
+        if (!rendered) {
+            WebAppSettings settings = new WebAppSettings();
+            settings.setLoadCssFonts(true);
+            settings.setLoadCssGrids(true);
+            settings.setLoadCssReset(true);
+            getPage().add(new WebAppBehavior(settings));
+            rendered = true;
+        }
+        super.render(target);
+    }
+
 }

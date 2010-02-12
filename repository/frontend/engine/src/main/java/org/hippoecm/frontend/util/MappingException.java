@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.yui.mapping;
+package org.hippoecm.frontend.util;
 
 /**
  * Exception that is thrown when (un)marshalling a bean fails.

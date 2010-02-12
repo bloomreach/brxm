@@ -50,17 +50,17 @@ public class WebAppBehavior extends AbstractBehavior implements IYuiManager {
         if (settings.isLoadResetFontsGrids()) {
             helper.addCssReference(RESET_FONTS_GRIDS_CSS);
         } else {
-            if (settings.isLoadReset()) {
+            if (settings.isLoadCssReset()) {
                 helper.addCssReference(RESET_CSS);
             }
             if (settings.isLoadFonts()) {
                 helper.addCssReference(FONTS_CSS);
             }
-            if (settings.isLoadGrids()) {
+            if (settings.isLoadCssGrids()) {
                 helper.addCssReference(GRIDS_CSS);
             }
         }
-        if (settings.isLoadBase()) {
+        if (settings.isLoadCssBase()) {
             helper.addCssReference(BASE_CSS);
         }
     }

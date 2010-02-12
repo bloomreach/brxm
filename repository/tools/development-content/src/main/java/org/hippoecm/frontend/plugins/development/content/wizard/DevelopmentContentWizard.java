@@ -107,7 +107,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
             this.model = model;
 
-            add(new YuiJcrTree("mytree", context, config, model) {
+            add(new YuiJcrTree("mytree", config, model) {
                 private static final long serialVersionUID = 1L;
 
                 @Override

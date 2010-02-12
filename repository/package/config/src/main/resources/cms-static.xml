@@ -407,8 +407,6 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.root.RootPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
-      <sv:value>service.behavior.yui</sv:value>
-      <sv:value>service.behavior.root</sv:value>
       <sv:value>service.behavior.stylesheets</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
@@ -420,45 +418,6 @@
     </sv:property>
     <sv:property sv:name="wicket.skin" sv:type="String">
       <sv:value>skin/screen.css</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="yuiWebappBehavior">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.id" sv:type="String">
-      <sv:value>service.behavior.yui</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.webapp.WebAppPlugin</sv:value>
-    </sv:property>
-    <sv:node sv:name="yui.config">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="load.css.fonts" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="load.css.grids" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="load.css.reset" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="load.wicket.ajax" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="pageLayoutBehavior">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.id" sv:type="String">
-      <sv:value>service.behavior.root</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.PageLayoutPlugin</sv:value>
     </sv:property>
     <sv:node sv:name="yui.config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -478,7 +437,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  
+
   <!-- Attach browser specific stylesheets-->
   <sv:node sv:name="browserSpecificStylesheetsBehavior">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -506,17 +465,6 @@
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="ajaxIndicator">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.id" sv:type="String">
-      <sv:value>service.behavior.root</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorPlugin</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="headerPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

@@ -17,7 +17,6 @@
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class ImageNodeDragBehavior extends NodeDragBehavior {
     @SuppressWarnings("unused")
@@ -25,8 +24,8 @@ public class ImageNodeDragBehavior extends NodeDragBehavior {
 
     private static final long serialVersionUID = 1L;
 
-    public ImageNodeDragBehavior(IYuiManager service, DragSettings settings, JcrNodeModel nodeModel) {
-        super(service, settings, nodeModel);
+    public ImageNodeDragBehavior(DragSettings settings, JcrNodeModel nodeModel) {
+        super(settings, nodeModel);
     }
 
     @Override

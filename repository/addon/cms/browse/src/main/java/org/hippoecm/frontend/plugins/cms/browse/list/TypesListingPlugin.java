@@ -132,7 +132,7 @@ public class TypesListingPlugin extends AbstractListingPlugin {
                 TableSelectionListener<Node> selectionListener, boolean triState, IPagingDefinition pagingDefinition) {
             super(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
             
-            add(new TableHelperBehavior(YuiPluginHelper.getManager(getPluginContext())));
+            add(new TableHelperBehavior());
         }
 
         void redraw(Item<Node> item) {

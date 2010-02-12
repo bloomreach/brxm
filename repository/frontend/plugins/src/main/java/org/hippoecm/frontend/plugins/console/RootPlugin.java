@@ -15,20 +15,31 @@
  */
 package org.hippoecm.frontend.plugins.console;
 
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.layout.PageLayoutBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.PageLayoutSettings;
+import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
+import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.widgets.Pinger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RootPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
+    
     private static final long serialVersionUID = 1L;
 
+    private boolean rendered = false;
+    
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
@@ -41,5 +52,20 @@ public class RootPlugin extends RenderPlugin {
             // unregister: don't repaint root plugin when model changes.
             context.unregisterService(this, modelId);
         }
+
+        PageLayoutSettings plSettings = new PageLayoutSettings(config.getPluginConfig("yui.config"));
+        add(new PageLayoutBehavior(plSettings));
     }
+
+    @Override
+    public void render(PluginRequestTarget target) {
+        if (!rendered) {
+            WebAppSettings settings = new WebAppSettings();
+            getPage().add(new WebAppBehavior(settings));
+            rendered = true;
+        }
+        super.render(target);
+    }
+
 }
+
