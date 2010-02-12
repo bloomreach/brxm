@@ -175,11 +175,13 @@ public class Main extends WebApplication {
                 IStringResourceProvider provider;
                 if (component instanceof IStringResourceProvider) {
                     provider = (IStringResourceProvider) component;
+                } else if (component != null) {
+                    provider = component.findParent(IStringResourceProvider.class);
                 } else {
-                    provider = (IStringResourceProvider) component.findParent(IStringResourceProvider.class);
+                    return null;
                 }
                 if (provider != null) {
-                    Map<String, String> keys = new MiniMap(5);
+                    Map<String, String> keys = new MiniMap<String, String>(5);
                     keys.put(HippoNodeType.HIPPO_KEY, key);
 
                     Locale locale = component.getLocale();
