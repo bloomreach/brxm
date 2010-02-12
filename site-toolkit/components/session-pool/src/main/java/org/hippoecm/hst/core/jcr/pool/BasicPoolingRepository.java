@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.jcr.pool;
 
 import java.util.NoSuchElementException;
+import java.util.regex.Pattern;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -52,6 +53,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     
     protected String repositoryProviderClassName = "org.hippoecm.hst.core.jcr.pool.JcrHippoRepositoryProvider";
     protected JcrRepositoryProvider jcrRepositoryProvider;
+    protected String validRepositoryAddressPattern = "^[^\\$]+$";
     protected String repositoryAddress;
     protected String defaultCredentialsUserID;
     protected char [] defaultCredentailsPassword;
@@ -78,7 +80,21 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         return this.repository;
     }
     
+    public void setValidRepositoryAddressPattern(String validRepositoryAddressPattern) {
+        this.validRepositoryAddressPattern = validRepositoryAddressPattern;
+    }
+    
+    public String getValidRepositoryAddressPattern() {
+        return validRepositoryAddressPattern;
+    }
+    
     public void setRepositoryAddress(String repositoryAddress) {
+        if (validRepositoryAddressPattern != null) {
+            if (!Pattern.matches(validRepositoryAddressPattern, repositoryAddress)) {
+                throw new IllegalArgumentException("Illegal repository address: " + repositoryAddress);
+            }
+        }
+        
         this.repositoryAddress = repositoryAddress;
     }
     
