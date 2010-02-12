@@ -21,9 +21,7 @@ import java.util.TreeSet;
 
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.event.EventCollection;
-import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
-import org.hippoecm.frontend.model.ocm.StoreException;
 
 public class JavaFieldDescriptor implements IFieldDescriptor, IDetachable {
     @SuppressWarnings("unused")

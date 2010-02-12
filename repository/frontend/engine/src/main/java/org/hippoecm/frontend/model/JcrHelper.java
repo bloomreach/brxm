@@ -16,12 +16,9 @@
 package org.hippoecm.frontend.model;
 
 import java.util.Calendar;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
@@ -31,7 +28,6 @@ import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
 
 /**
  * Helper class for common jcr operations

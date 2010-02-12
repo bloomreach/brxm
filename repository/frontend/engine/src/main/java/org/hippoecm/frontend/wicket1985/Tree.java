@@ -16,7 +16,6 @@
  */
 package org.hippoecm.frontend.wicket1985;
 
-import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 

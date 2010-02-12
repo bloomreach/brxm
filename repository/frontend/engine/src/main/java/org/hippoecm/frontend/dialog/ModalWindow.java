@@ -37,7 +37,6 @@ import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.settings.IPageSettings;
 import org.apache.wicket.util.lang.EnumeratedType;

@@ -18,8 +18,6 @@ package org.hippoecm.frontend.model;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import javax.jcr.Item;
-
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.validation.ModelPathElement;
