@@ -255,8 +255,7 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
     public String getKey(String key) {
         Iterator<String> iter = keySet().iterator();
         while (iter.hasNext()) {
-            String keyValue = iter.next();
-            String keyString = (String) keyValue;
+            String keyString = iter.next();
             if (key.equalsIgnoreCase(keyString)) {
                 return keyString;
             }

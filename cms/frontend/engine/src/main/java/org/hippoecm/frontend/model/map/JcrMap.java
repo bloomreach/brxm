@@ -135,8 +135,7 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
     @SuppressWarnings("unchecked")
     @Override
     public Object put(String key, Object value) {
-        String strKey = (String) key;
-        Object current = get(strKey);
+        Object current = get(key);
         try {
             Node node = getNode();
             if (value instanceof List) {
@@ -172,13 +171,17 @@ public class JcrMap extends AbstractMap<String, Object> implements IHippoMap, ID
                 map.putAll((Map) value);
             } else {
                 if (value instanceof Boolean) {
-                    node.setProperty(strKey, (Boolean) value);
+                    node.setProperty(key, (Boolean) value);
                 } else if (value instanceof String) {
-                    node.setProperty(strKey, (String) value);
+                    node.setProperty(key, (String) value);
                 } else if (value instanceof String[]) {
-                    node.setProperty(strKey, (String[]) value);
+                    node.setProperty(key, (String[]) value);
                 } else if (value instanceof Double) {
-                    node.setProperty(strKey, (Double) value);
+                    node.setProperty(key, (Double) value);
+                } else if (value == null) {
+                    if (node.hasProperty(key)) {
+                        node.getProperty(key).remove();
+                    }
                 } else {
                     log.warn("Unknown type of value for key " + key);
                 }
