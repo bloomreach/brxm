@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-repository</artifactId>
-    <version>2.12.02</version>
+    <version>2.12.03-SNAPSHOT</version>
   </parent>
 
   <name>Repository engine</name>
@@ -28,9 +28,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_02/repository/engine</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_02/repository/engine</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_02/repository/engine</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/engine</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/engine</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/repository/engine</url>
   </scm>
 
   <dependencies>
@@ -69,22 +69,22 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.12.02</version>
+      <version>2.12.03-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
-      <version>2.12.02</version>
+      <version>2.12.03-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-modules</artifactId>
-      <version>2.12.02</version>
+      <version>2.12.03-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-utilities</artifactId>
-      <version>2.12.02</version>
+      <version>2.12.03-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.lucene</groupId>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.12.02</version>
+      <version>2.12.03-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -112,7 +112,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-tools-testutils</artifactId>
-      <version>2.12.02</version>
+      <version>2.12.03-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
