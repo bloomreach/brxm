@@ -28,14 +28,14 @@ import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 
-public class Upgrader21000 implements UpdaterModule {
+public class Upgrader12a implements UpdaterModule {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     
     public void register(final UpdaterContext context) {
-        context.registerName("upgrade-v21000");
+        context.registerName("upgrade-v12a");
         context.registerStartTag("v20902");
-        context.registerEndTag("v21000");
+        context.registerEndTag("v12a");
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("rep:root") {
             @Override
             protected void leaving(final Node node, int level) throws RepositoryException {
@@ -97,6 +97,16 @@ public class Upgrader21000 implements UpdaterModule {
                     if(field.hasProperty("hipposysedit_1_1:mandatory")) {
                         field.getProperty("hipposysedit_1_1:mandatory").remove();
                     }
+                }
+            }
+        });
+        context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostdpubwf", "-",
+                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippostdpubwf.cnd"))));
+        context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippostd:publishable") {
+            @Override
+            public void leaving(final Node node, int level) throws RepositoryException {
+                if(node.isNodeType("hippo:harddocument") && !node.isNodeType("hippostdpubwf:document")) {
+                    node.addMixin("hippostdpubwf:document");
                 }
             }
         });
