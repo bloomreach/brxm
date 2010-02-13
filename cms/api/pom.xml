@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm</artifactId>
-    <version>2.12.02</version>
+    <version>2.12.03-SNAPSHOT</version>
   </parent>
 
   <name>API</name>
@@ -27,9 +27,9 @@
   <artifactId>hippo-ecm-api</artifactId>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_02/api</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_02/api</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_02/api</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/api</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/api</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/api</url>
   </scm>
 
   <dependencies>
