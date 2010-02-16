@@ -84,7 +84,7 @@ public class StringCodecFactory {
                         case 0xA5: sb.append("yen");       break;
                         case 0xA6: sb.append("|");         break;
                         case 0xA7: sb.append("");          break;
-                        case 0xA8: sb.append("\"");        break;
+                        case 0xA8:                         break;
                         case 0xA9: sb.append("(c)");       break;
                         case 0xAA: sb.append("");          break;
                         case 0xAB: sb.append("(");         break;
@@ -93,7 +93,7 @@ public class StringCodecFactory {
                         case 0xAE: sb.append("(r)");       break;
                         case 0xAF: sb.append("-");         break;
                         case 0xB0: sb.append("o");         break;
-                        case 0xB1: sb.append("plusminus"); break;
+                        case 0xB1: sb.append("-");         break;
                         case 0xB2: sb.append("^2");        break;
                         case 0xB3: sb.append("^3");        break;
                         case 0xB4: sb.append("");          break;
@@ -155,15 +155,22 @@ public class StringCodecFactory {
                         case 0x20:
                             appendSpace = true;
                             break;
+                        case 0x22:
+                            break; // "
                         case 0x24:
                             break; // $
                         case 0x26:
                             break; // &
+                        case 0x27:
+                            break; // '
+                        case 0x2A:
+                            appendSpace = true;
+                            break;
                         case 0x2B:
                             if (lastNoSpace)
                                 sb.append(" ");
-                            sb.append("plus");
-                            appendSpace = lastNoSpace = true;
+                            sb.append("-");
+                            lastNoSpace = true;
                             break; // +
                         case 0x2C:
                             break; // ,
@@ -190,6 +197,12 @@ public class StringCodecFactory {
                         case 0x40:
                             sb.append("-at-");
                             break; // @
+                        case 0x5B:
+                            sb.append("(");
+                            break;
+                        case 0x5D:
+                            sb.append(")");
+                            break;
                         default:
                             sb.append(chars[i]);
                     }
@@ -218,7 +231,6 @@ public class StringCodecFactory {
                         case 0xc2a7:
                             break;
                         case 0xc2a8:
-                            sb.append("\"");
                             break;
                         case 0xc2a9:
                             sb.append("(c)");
