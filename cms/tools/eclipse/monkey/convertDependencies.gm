@@ -16,54 +16,80 @@ import org.eclipse.core.internal.resources.Workspace;
 
 out.clear();
 
+def resultMap = new HashMap();
 def projectList = workspace.root.projects;
 def projectMap = new HashMap();
 projectList.each() {
     projectMap.put(it.name, it);
 }
 
-def connected = false;
 projectList.each() {
     if (it.isOpen() && it.isNatureEnabled('org.eclipse.jdt.core.javanature')) {
         def projectName = it.name;
         def javaProject = it.getNature('org.eclipse.jdt.core.javanature');
         def projectClasspath = javaProject.rawClasspath;
+
         projectClasspath.each() {
             if (it.getEntryKind() == IClasspathEntry.CPE_VARIABLE) {
-               def entry = it.getPath(); 
-               def name = entry.segments[entry.segmentCount()-3];
-               if (projectMap.get(name) != null) {
-                   def classpath = new LinkedHashSet(Arrays.asList(javaProject.rawClasspath));
-                   def toBeRemoved = it; 
-                   def toBeAdded = new ClasspathEntry(
-			         IPackageFragmentRoot.K_SOURCE,      // indicates this classpath entry contains source files.
-			         IClasspathEntry.CPE_PROJECT,        // indicates a required project.
-			         projectMap.get(name).getFullPath(), // target project
-			         ClasspathEntry.INCLUDE_ALL,         // inclusion patterns
-			         ClasspathEntry.EXCLUDE_NONE,        // exclusion patterns
-			         null,                               // source attachment
-			         null,                               // source attachment root
-			         null,                               // specific output folder
-			         false,                              // isExported
-			         null,                               // accessRules
-			         true,                               // combineAccessRules
-			         (IClasspathAttribute[])[]           // extraAttributes
-			       );        
-                   println "$projectName: $toBeRemoved.path -> $toBeAdded.path";
-                   classpath.remove(toBeRemoved);
-                   classpath.add(toBeAdded);
-                   def newClasspath = (IClasspathEntry[])classpath.toArray();
-                   def op = new SetClasspathOperation(javaProject, newClasspath, javaProject.getOutputLocation(), true);
-                   op.runOperation(monitor);
-                   connected = true;
-               }
+                def entry = it.getPath(); 
+                def name = entry.segments[entry.segmentCount()-3];
+                if (projectMap.get(name) != null) {
+                    def classpath = new LinkedHashSet(Arrays.asList(javaProject.rawClasspath));
+                    def toBeRemoved = it; 
+                    def toBeAdded = new ClasspathEntry(
+			          IPackageFragmentRoot.K_SOURCE,      // indicates this classpath entry contains source files.
+			          IClasspathEntry.CPE_PROJECT,        // indicates a required project.
+			          projectMap.get(name).getFullPath(), // target project
+			          ClasspathEntry.INCLUDE_ALL,         // inclusion patterns
+			          ClasspathEntry.EXCLUDE_NONE,        // exclusion patterns
+			          null,                               // source attachment
+			          null,                               // source attachment root
+			          null,                               // specific output folder
+			          false,                              // isExported
+			          null,                               // accessRules
+			          true,                               // combineAccessRules
+			          (IClasspathAttribute[])[]           // extraAttributes
+			        );
+			       
+			        if(!resultMap.containsKey(projectName)) {
+			            resultMap.put(projectName, new LinkedList());  
+			        }
+			        resultMap.get(projectName).add("Binary dependency [${toBeRemoved.getPath()}] has been replaced by project: [${toBeAdded.getPath().makeRelative()}]");
+                    
+                    classpath.remove(toBeRemoved);
+                    classpath.add(toBeAdded);
+                    def newClasspath = (IClasspathEntry[])classpath.toArray();
+                    def op = new SetClasspathOperation(javaProject, newClasspath, javaProject.getOutputLocation(), true);
+                    op.runOperation(monitor);
+                }
             }
         };
     }
 }
 
-if (connected) {
-    println "Converted binary M2_REPO dependencies to Java project dependencies";
+if (resultMap.size() > 0) {
+    def totalProjects = resultMap.size();
+    def totalBinaries = 0;
+    def values = resultMap.values();
+    values.each() {
+        totalBinaries += it.size();
+    }
+    
+    println "Converted $totalBinaries binary dependencies to Eclipse project dependencies for $totalProjects project(s):";
+    println "";
+    
+    def keyIt = resultMap.keySet().iterator();
+    while(keyIt.hasNext()) {
+        def key = keyIt.next();
+        println " - $key";
+        def l = resultMap.get(key);
+        for(s in l) {
+            println "  - $s";
+        }
+        println "";
+    }
+        
+    
 } else {
     println "No projects found that can be connected";
     println "";
