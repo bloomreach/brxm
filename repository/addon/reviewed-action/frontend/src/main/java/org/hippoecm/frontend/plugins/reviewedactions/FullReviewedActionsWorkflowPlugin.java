@@ -293,15 +293,15 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 if (targetName == null || targetName.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
-                Node node = ((WorkflowDescriptorModel)getDefaultModel()).getNode();
+                HippoNode node = (HippoNode) ((WorkflowDescriptorModel)getDefaultModel()).getNode();
                 String nodeName = getNodeNameCodec().encode(uriName);
                 String localName = getLocalizeCodec().encode(targetName);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                if(!nodeName.equals(localName)) {
+                ((FullReviewedActionsWorkflow)wf).rename(nodeName);
+                if(!node.getLocalizedName().equals(localName)) {
                     defaultWorkflow.localizeName(localName);
                 }
-                ((FullReviewedActionsWorkflow)wf).rename(nodeName);
                 return null;
             }
         });

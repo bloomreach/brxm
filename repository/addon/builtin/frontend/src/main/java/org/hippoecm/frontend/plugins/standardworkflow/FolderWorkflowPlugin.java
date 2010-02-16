@@ -117,16 +117,16 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 // FIXME: this assumes that folders are always embedded in other folders
                 // and there is some logic here to look up the parent.  The real solution is
                 // in the visual component to merge two workflows.
-                Node node = model.getNode();
+                HippoNode node = (HippoNode) model.getNode();
                 String nodeName = getNodeNameCodec().encode(uriName);
                 String localName = getLocalizeCodec().encode(targetName);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                if(!nodeName.equals(localName)) {
-                    defaultWorkflow.localizeName(localName);
-                }
                 FolderWorkflow folderWorkflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
                 folderWorkflow.rename(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""), nodeName);
+                if(!node.getLocalizedName().equals(localName)) {
+                    defaultWorkflow.localizeName(localName);
+                }
             }
         });
 
