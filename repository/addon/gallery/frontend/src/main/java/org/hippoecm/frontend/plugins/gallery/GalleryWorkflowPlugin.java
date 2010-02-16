@@ -20,10 +20,7 @@ import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.jcr.Item;
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
@@ -47,10 +44,12 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
+import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,10 +138,20 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                                 .getDefaultModel();
                         GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(GalleryWorkflowPlugin.this
                                 .getPluginConfig().getString("workflow.categories"), workflowDescriptorModel.getNode());
-                        Document document = workflow.createGalleryItem(NodeNameCodec.encode(filename, true), type);
-                        Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
+                        String nodeName = getNodeNameCodec().encode(filename);
+                        String localName = getLocalizeCodec().encode(filename);
+                        Document document = workflow.createGalleryItem(nodeName, type);
+                        HippoNode node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
+                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
+                        if(!node.getLocalizedName().equals(localName)) {
+                            defaultWorkflow.localizeName(localName);
+                        }
                         ImageUtils.galleryProcessor(getPluginConfig()).makeImage(node, istream, mimetype, filename);
                         node.getSession().save();
+                    } catch (WorkflowException ex) {
+                        GalleryWorkflowPlugin.log.error(ex.getMessage());
+                        error(new StringResourceModel("workflow-error-label", GalleryWorkflowPlugin.this, null)
+                                .getString());
                     } catch (MappingException ex) {
                         GalleryWorkflowPlugin.log.error(ex.getMessage());
                         error(new StringResourceModel("workflow-error-label", GalleryWorkflowPlugin.this, null)

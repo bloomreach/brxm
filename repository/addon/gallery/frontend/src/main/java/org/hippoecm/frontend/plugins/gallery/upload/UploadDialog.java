@@ -30,6 +30,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
@@ -66,6 +68,18 @@ public class UploadDialog extends AbstractDialog {
     String getWorkflowCategory() {
         String workflowCats = pluginConfig.getString("workflow.categories");
         return workflowCats;
+    }
+
+    StringCodec getLocalizeCodec() {
+        StringCodecFactory stringCodecFactory = new StringCodecFactory();
+        String encoder = pluginConfig.getString("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
+        return stringCodecFactory.getStringCodec(encoder);
+    }
+
+    StringCodec getNodeNameCodec() {
+        StringCodecFactory stringCodecFactory = new StringCodecFactory();
+        String encoder = pluginConfig.getString("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
+        return stringCodecFactory.getStringCodec(encoder);
     }
 
     IWizardModel getWizardModel() {

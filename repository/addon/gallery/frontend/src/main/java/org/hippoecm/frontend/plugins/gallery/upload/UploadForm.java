@@ -20,15 +20,11 @@ import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
-import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -40,14 +36,15 @@ import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
 import org.hippoecm.frontend.plugins.gallery.GalleryProcessor;
-import org.hippoecm.frontend.plugins.gallery.ImageInfo;
 import org.hippoecm.frontend.plugins.gallery.ImageUtils;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
+import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 
 class UploadForm extends Form {
     @SuppressWarnings("unused")
@@ -132,12 +129,21 @@ class UploadForm extends Form {
                     Node galleryNode = uploadDialog.getGalleryNode();
                     GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog
                             .getWorkflowCategory(), galleryNode);
-                    Document document = workflow.createGalleryItem(NodeNameCodec.encode(filename, true), type);
-                    Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
+                    String nodeName = uploadDialog.getNodeNameCodec().encode(filename);
+                    String localName = uploadDialog.getLocalizeCodec().encode(filename);
+                    Document document = workflow.createGalleryItem(nodeName, type);
+                    HippoNode node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
+                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
+                    if(!node.getLocalizedName().equals(localName)) {
+                        defaultWorkflow.localizeName(localName);
+                    }
                     GalleryProcessor processor = ImageUtils.galleryProcessor(uploadDialog.pluginConfig);
                     processor.makeImage(node, istream, mimetype, filename);
                     node.getSession().save();
                     uploadDialog.getWizardModel().next();
+                } catch (WorkflowException ex) {
+                    Gallery.log.error(ex.getMessage());
+                    error(new StringResourceModel("workflow-error-label", this, null).getString());
                 } catch (MappingException ex) {
                     Gallery.log.error(ex.getMessage());
                     error(new StringResourceModel("workflow-error-label", this, null).getString());
