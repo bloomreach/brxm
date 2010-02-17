@@ -734,13 +734,14 @@ public class UpdaterEngine {
     }
 
     private void preprocess() throws RepositoryException {
+        Workspace workspace = session.getWorkspace();
+        List<NamespaceVisitorImpl> nsVisitors = new LinkedList<NamespaceVisitorImpl>();
         for (ModuleRegistration module : modules) {
             log.info("upgrade preprocess cycle for module " + module.name);
             for (ItemVisitor visitor : module.visitors) {
                 if (visitor instanceof NamespaceVisitorImpl) {
                     NamespaceVisitorImpl remap = (NamespaceVisitorImpl)visitor;
                     log.info("upgrade handling namespace " + remap.namespace);
-                    Workspace workspace = session.getWorkspace();
                     NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
                     String[] prefixes = nsreg.getPrefixes();
                     boolean prefixExists = false;
@@ -756,18 +757,21 @@ public class UpdaterEngine {
                         log.info("upgrade registering new prefix " + remap.newPrefix + " to " + remap.newURI);
                         nsreg.registerNamespace(remap.newPrefix, remap.newURI);
                     }
-                    List ntdList = remap.cndReader.getNodeTypeDefs();
-                    NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl)workspace.getNodeTypeManager();
-                    NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
-                    for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
-                        try {
-                            NodeTypeDef ntd = (NodeTypeDef)iter.next();
-                            log.info("upgrade registering new nodetype " + ntd.getName());
-                            /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
-                        } catch (InvalidNodeTypeDefException ex) {
-                            // deliberate ignore
-                        }
-                    }
+                    nsVisitors.add(remap);
+                }
+            }
+        }
+        for (NamespaceVisitorImpl remap : nsVisitors) {
+            List ntdList = remap.cndReader.getNodeTypeDefs();
+            NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl)workspace.getNodeTypeManager();
+            NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
+            for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
+                try {
+                    NodeTypeDef ntd = (NodeTypeDef)iter.next();
+                    log.info("upgrade registering new nodetype " + ntd.getName());
+                    /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
+                } catch (InvalidNodeTypeDefException ex) {
+                    // deliberate ignore
                 }
             }
         }
