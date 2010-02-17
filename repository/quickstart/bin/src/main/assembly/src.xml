@@ -2,13 +2,7 @@
   <formats>
     <format>zip</format>
     <format>tar.gz</format>
-        <!-- format>jar</format -->
   </formats>
-  <archive>
-    <manifest>
-      <mainClass>org.hippoecm.Main</mainClass>
-    </manifest>
-  </archive>
     <!-- fileSets>
         <fileSet>
             <directory>src/main/assembly</directory>
