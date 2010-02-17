@@ -25,7 +25,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.util.TraversingItemVisitor;
 
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.ext.UpdaterContext;
@@ -123,6 +122,14 @@ public class Upgrader12a implements UpdaterModule {
                 node.getNode("cms-editor").remove();
                 node.getNode("cms-pickers").remove();
                 node.getNode("cms-tree-views").remove();
+
+                for (String initName : new String[] { "templateeditor-hippo", "hippostd-types",
+                        "hippogallery-editor", "templateeditor-faceteddate", "hippostd-html-template",
+                        "templateeditor-hipposysedit" }) {
+                    for (NodeIterator nodes = node.getNodes(initName); nodes.hasNext(); ) {
+                        nodes.nextNode().remove();
+                    }
+                }
             }
         });
 
@@ -347,6 +354,17 @@ public class Upgrader12a implements UpdaterModule {
                         node.setProperty("hippostdpubwf_1_0:publicationDate", calender);
                     }
                 }
+            }
+        });
+
+        context.registerVisitor(new UpdaterItemVisitor.PathVisitor("/hippo:namespaces") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                node.getNode("hippo").remove();
+                node.getNode("hippostd").remove();
+                node.getNode("hippogallery").remove();
+                node.getNode("hipposysedit").remove();
+                node.getProperty("system/Reference/hipposysedit_1_1:nodetype/hipposysedit_1_1:nodetype/hipposysedit_1_1:type").remove();
             }
         });
     }
