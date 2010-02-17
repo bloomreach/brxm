@@ -18,9 +18,12 @@ package org.hippoecm.frontend.plugins.standards.list;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -28,15 +31,20 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.EventCollection;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NodeComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentsProvider extends SortableDataProvider<Node> {
+public class DocumentsProvider extends SortableDataProvider<Node> implements IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -47,12 +55,16 @@ public class DocumentsProvider extends SortableDataProvider<Node> {
     private DocumentListFilter filter;
     private Map<String, Comparator<Node>> comparators;
 
+    private boolean observing = false;
+    private IObservationContext obContext;
+    private Map<IModel<Node>, IObserver> observers;
     private transient List<Node> entries = null;
 
     public DocumentsProvider(IModel<Node> model, DocumentListFilter filter, Map<String, Comparator<Node>> comparators) {
         this.folder = model;
         this.filter = filter;
         this.comparators = comparators;
+        this.observers = new HashMap<IModel<Node>, IObserver>();
     }
 
     public Iterator<Node> iterator(int first, int count) {
@@ -70,6 +82,9 @@ public class DocumentsProvider extends SortableDataProvider<Node> {
     }
 
     public void detach() {
+        for (Map.Entry<IModel<Node>, IObserver> entry : observers.entrySet()) {
+            entry.getKey().detach();
+        }
         entries = null;
     }
 
@@ -78,16 +93,36 @@ public class DocumentsProvider extends SortableDataProvider<Node> {
             return;
         }
 
+        Set<JcrNodeModel> observed = new HashSet<JcrNodeModel>();
         entries = new ArrayList<Node>();
         Node node = folder.getObject();
         if (node != null) {
             try {
+                String user = node.getSession().getUserID();
                 NodeIterator subNodes = filter.filter(node, node.getNodes());
                 while (subNodes.hasNext()) {
                     Node subNode = subNodes.nextNode();
-                    // Skip deleted documents
-                    if (subNode.isNodeType(HippoNodeType.NT_HANDLE) && !subNode.hasNode(subNode.getName())) {
-                        continue;
+                    // Skip deleted or draft-only documents
+                    if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        if (!subNode.hasNode(subNode.getName())) {
+                            observed.add(new JcrNodeModel(subNode));
+                            continue;
+                        }
+                        // assure that when only a draft exists, the user is the holder
+                        if (user != null) {
+                            NodeIterator iter = subNode.getNodes(subNode.getName());
+                            Node document = iter.nextNode();
+                            if (!iter.hasNext() && document.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
+                                String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                                if ("draft".equals(state)
+                                        && document.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
+                                        && !user.equals(document.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
+                                                .getString())) {
+                                    observed.add(new JcrNodeModel(document));
+                                    continue;
+                                }
+                            }
+                        }
                     }
                     // skip translations
                     if (subNode.isNodeType(HippoNodeType.NT_TRANSLATION)) {
@@ -100,6 +135,35 @@ public class DocumentsProvider extends SortableDataProvider<Node> {
             }
         } else {
             log.info("Jcr node in JcrNodeModel is null, returning empty list");
+        }
+
+        for (Iterator<Map.Entry<IModel<Node>, IObserver>> iter = observers.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry<IModel<Node>, IObserver> entry = iter.next();
+            if (!observed.contains(entry.getKey())) {
+                iter.remove();
+            }
+        }
+        for (final JcrNodeModel model : observed) {
+            if (!observers.containsKey(model)) {
+                IObserver observer = new IObserver() {
+                    private static final long serialVersionUID = 1L;
+
+                    public IObservable getObservable() {
+                        return model;
+                    }
+
+                    public void onEvent(Iterator events) {
+                        if (obContext != null) {
+                            obContext.notifyObservers(new EventCollection(events));
+                        }
+                    }
+
+                };
+                if (observing) {
+                    obContext.registerObserver(observer);
+                }
+                observers.put(model, observer);
+            }
         }
 
         SortState sortState = getSortState();
@@ -163,4 +227,23 @@ public class DocumentsProvider extends SortableDataProvider<Node> {
             return type;
         }
     }
+
+    public void setObservationContext(IObservationContext<? extends IObservable> context) {
+        this.obContext = context;
+    }
+
+    public void startObservation() {
+        observing = true;
+        for (Map.Entry<IModel<Node>, IObserver> entry : observers.entrySet()) {
+            obContext.registerObserver(entry.getValue());
+        }
+    }
+
+    public void stopObservation() {
+        for (Map.Entry<IModel<Node>, IObserver> entry : observers.entrySet()) {
+            obContext.unregisterObserver(entry.getValue());
+        }
+        observing = false;
+    }
+
 }
