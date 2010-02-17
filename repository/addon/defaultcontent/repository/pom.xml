@@ -103,7 +103,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.defaultcontent.upgrade.DefaultcontentUpgrader12</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.defaultcontent.upgrade.DefaultcontentUpgrader12a</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>
