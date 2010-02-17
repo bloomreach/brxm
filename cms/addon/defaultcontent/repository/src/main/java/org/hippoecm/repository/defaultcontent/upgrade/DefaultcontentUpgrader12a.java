@@ -1,4 +1,3 @@
-package org.hippoecm.repository.defaultcontent.upgrade;
 /*
  *  Copyright 2009 Hippo.
  * 
@@ -14,6 +13,7 @@ package org.hippoecm.repository.defaultcontent.upgrade;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.hippoecm.repository.defaultcontent.upgrade;
 
 
 import java.io.InputStreamReader;
