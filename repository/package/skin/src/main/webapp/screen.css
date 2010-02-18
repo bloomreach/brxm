@@ -1352,6 +1352,22 @@ body.hippo-root div.yui-log-container {
 .hippo-window-form td input.grayedout { background-color: #F4F4F4; }
 .hippo-window-form td input.grayedin { }
 
-div.rte-preview-area { cursor: pointer; padding: 5px;}
+div.rte-preview-area { cursor: pointer; padding: 5px; background-color: transparent;}
+
+div.rte-preview-area:hover { background-color: #FFF6E0; color: #333;}
+div.rte-preview-area:hover a{ color: #333;}
+
 div.rte-preview-style { overflow: auto; min-height: 175px; }
 div.rte-preview-style table{ visibility: hidden; }
+
+/* Tooltip styling without skin-sam*/
+.hippo-root .yui-tt .bd { position: relative; top: 0; left: 0; z-index: 1; color: #000; border-color: #D4C237 #A6982B #A6982B #A6982B; border-width: 1px; border-style: solid; background-color: #FFEE69; font-size: 13px; padding-left: 4px; padding-right: 4px; padding-top: 3px; padding-bottom: 3px; }
+.hippo-root .yui-tt {border-width: 0px; }
+.hippo-root .yui-tt.show-scrollbars .bd{overflow:auto;}
+.hippo-root .yui-tt-shadow-visible {overflow:auto;}
+.hippo-root .yui-tt-shadow { margin-top: 2px; top: 2px; right: -1px; left: -1px; bottom: -1px; background-color: #000; display: block; z-index: 0; }
+.hippo-root .yui-tt-shadow-visible {
+    opacity: .12;
+    filter: alpha(opacity=12);  /* For IE */
+}
+
