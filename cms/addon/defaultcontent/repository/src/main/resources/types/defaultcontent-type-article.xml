@@ -145,9 +145,11 @@
         <sv:property sv:name="extension.main" sv:type="String">
           <sv:value>${cluster.id}.main</sv:value>
         </sv:property>
+        <!--
         <sv:property sv:name="extension.properties" sv:type="String">
           <sv:value>${cluster.id}.properties</sv:value>
         </sv:property>
+        -->
         <sv:property sv:name="extension.mixins" sv:type="String">
           <sv:value>${cluster.id}.mixins</sv:value>
         </sv:property>
@@ -159,7 +161,9 @@
         </sv:property>
         <sv:property sv:name="wicket.extensions" sv:type="String">
           <sv:value>extension.main</sv:value>
+          <!--
           <sv:value>extension.properties</sv:value>
+          -->
           <sv:value>extension.select</sv:value>
           <sv:value>extension.mixins</sv:value>
         </sv:property>
@@ -282,6 +286,7 @@
           </sv:property>
         </sv:node>
       </sv:node>
+      <!--
       <sv:node sv:name="properties">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
@@ -302,6 +307,7 @@
           <sv:value>${wicket.model}</sv:value>
         </sv:property>
       </sv:node>
+      -->
       <sv:node sv:name="mixinPicker">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>

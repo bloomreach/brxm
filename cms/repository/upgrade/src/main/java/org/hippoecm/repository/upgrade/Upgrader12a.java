@@ -340,18 +340,19 @@ public class Upgrader12a implements UpdaterModule {
             }
         });
 
-        final Calendar calender = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(0);
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippostd:publishable") {
             @Override
             public void leaving(final Node node, int level) throws RepositoryException {
                 if(node.isNodeType("hippo:harddocument") && !node.isNodeType("hippostdpubwf_1_0:document")) {
                     node.addMixin("hippostdpubwf_1_0:document");
                     node.setProperty("hippostdpubwf_1_0:createdBy", "");
-                    node.setProperty("hippostdpubwf_1_0:creationDate", calender);
+                    node.setProperty("hippostdpubwf_1_0:creationDate", calendar);
                     node.setProperty("hippostdpubwf_1_0:lastModifiedBy", "");
-                    node.setProperty("hippostdpubwf_1_0:lastModificationDate", calender);
+                    node.setProperty("hippostdpubwf_1_0:lastModificationDate", calendar);
                     if ("published".equals(node.getProperty("hippostd:state"))) {
-                        node.setProperty("hippostdpubwf_1_0:publicationDate", calender);
+                        node.setProperty("hippostdpubwf_1_0:publicationDate", calendar);
                     }
                 }
             }
