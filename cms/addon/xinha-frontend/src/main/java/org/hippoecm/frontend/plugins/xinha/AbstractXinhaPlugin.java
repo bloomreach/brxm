@@ -125,6 +125,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         String binariesPath = BINARIES_PREFIX + getNodePath();
         configuration.addProperty("prefix", XinhaUtil.encodeResourceURL(XinhaUtil.encode(binariesPath) + "/"));
         configuration.addProperty("isPortletContext", Boolean.toString(XinhaUtil.isPortletContext()));
+        configuration.addProperty("previewTooltipText", getString("preview.tooltip", null, "Click to edit"));
         configuration.setName(getMarkupId());
 
         mode = config.getString("mode", "view");
@@ -410,7 +411,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         private static final String JS_STOP_EVENT = "Wicket.stopEvent(event);";
 
-        
         @Override
         protected void respond(AjaxRequestTarget target) {
             Request request = RequestCycle.get().getRequest();
@@ -440,7 +440,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         public String internalLink(String link) {
             String url = getCallbackUrl(false) + "&link=" + WicketURLEncoder.QUERY_INSTANCE.encode(link);
-            return "href=\"#\" onclick=\"" + JS_STOP_EVENT + generateCallbackScript("wicketAjaxGet('" + url + "'") + "\"";
+            return "href=\"#\" onclick=\"" + JS_STOP_EVENT + generateCallbackScript("wicketAjaxGet('" + url + "'")
+                    + "\"";
         }
 
         public String externalLink(String link) {

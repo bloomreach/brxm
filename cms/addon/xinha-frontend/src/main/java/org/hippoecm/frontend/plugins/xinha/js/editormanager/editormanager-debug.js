@@ -47,13 +47,13 @@ if (!YAHOO.hippo.EditorManager) {
 
         YAHOO.hippo.EditorManagerImpl.prototype = {
 
-            defaultTimeout  : 2000,
-            editors         : new YAHOO.hippo.HashMap(),
-            activeEditors   : new YAHOO.hippo.HashMap(),
-            initMap         : new YAHOO.hippo.HashMap(),
-            initialized     : false,
-            resizeRegistered: false,
-            sizeState       : null,
+            defaultTimeout      : 2000,
+            editors             : new YAHOO.hippo.HashMap(),
+            activeEditors       : new YAHOO.hippo.HashMap(),
+            initMap             : new YAHOO.hippo.HashMap(),
+            initialized         : false,
+            resizeRegistered    : false,
+            sizeState           : null,
 
             /**
              * Setup Xinha global variables and start loading XinhaLoader.js
@@ -127,9 +127,10 @@ if (!YAHOO.hippo.EditorManager) {
                     this.editors.put(editor.name, editor);
                     
                     if(editor.config.started) {
-                        //start Xinha editor
+                        editor.hideTooltip();
                         this.createAndRender(editor.name);
-                        
+                    } else {
+                        editor.createTooltip("Click to edit");
                     }
                 }
                 this.initMap.clear();
@@ -139,11 +140,14 @@ if (!YAHOO.hippo.EditorManager) {
              * Register a XinhaTextEditor. This method is called on dom.load.
              */
             register : function(cfg) {
-                if(!this.initMap.containsKey(cfg.name)) {
-                    this.initMap.put(cfg.name, new YAHOO.hippo.Editor(cfg));
+                var editor = null;
+                if(this.editors.containsKey(cfg.name)) {
+                    editor = this.editors.remove(cfg.name);
+                    editor.reset(cfg);
                 } else {
-                    this.initMap.get(cfg.name).reset(config);
+                    editor = new YAHOO.hippo.Editor(cfg);
                 }
+                this.initMap.put(cfg.name, editor);
                 
                 if(!this.resizeRegistered) {
                     var me = this;
@@ -172,6 +176,11 @@ if (!YAHOO.hippo.EditorManager) {
                     YAHOO.hippo.HippoAjax.registerDestroyFunction(form, function() {
                         YAHOO.hippo.LayoutManager.unregisterResizeListener(form, me);
                         me.resizeRegistered = false;
+                        //a new form is loaded so clear editors map
+                        me.editors.forEach(me, function(k, v){
+                            v.destroy();
+                        });
+                        me.editors.clear();
                     }, this);
                     this.resizeRegistered = true;
                 }
@@ -303,6 +312,7 @@ if (!YAHOO.hippo.EditorManager) {
             editorLoaded : function(name) {
                 var w,h;
                 var editor = this.editors.get(name);
+                editor.afterEditorLoad();
                 if(this.hasPreviewStyles(name)) {
                     this.removePreviewStyles(editor.name);
                     
@@ -354,42 +364,9 @@ if (!YAHOO.hippo.EditorManager) {
                     var clickable = Dom.get(editor.name);
                     var clickableMargin = YAHOO.hippo.Dom.getMargin(clickable);
                     var clickableHeight = containerHeight - clickableMargin.h;
-                    Dom.setStyle(clickable, 'height', clickableHeight + 'px')
+                    Dom.setStyle(clickable, 'height', clickableHeight + 'px');
                 }
             },
-            
-//            /**
-//             * Render a preview state of the RTE using same dimensions as edit-mode
-//             */
-//            renderPreview : function(name) {
-//                var editor = this.editors.get(name);
-//                var config = editor.config;
-//                var container = editor.container;
-//                
-//                var dim = this.getDimensions(container, config);
-//                var marg = YAHOO.hippo.Dom.getMargin(container);
-//                var h = dim.h - marg.h;
-//                
-//                Dom.setStyle(container, 'height', h + 'px');
-//                Dom.addClass(container, 'rte-preview-style')
-//                
-//                dim = this.getDimensions(container, config);
-//                var w = dim.w - marg.w;
-//
-//                //console.log('Calc width for preview: ' + w);
-//                
-//                Dom.setStyle(container, 'width', w + 'px');
-//                //Dom.setStyle(parent, 'height', h + 'px');
-//                
-//                //Dom.setStyle(el, 'width', (w - marg.w) + 'px');
-//                //Dom.setStyle(el, 'height', (h - marg.h) + 'px');
-//                
-//                var clickable = Dom.get(name);
-//                var marg2 = YAHOO.hippo.Dom.getMargin(clickable);
-//                h = h-marg2.h;
-//                Dom.setStyle(clickable, 'height', h + 'px')
-//
-//            },
             
             getDimensions : function(el, cfg) {
                 var minWidth = 0, minHeight = 0;
@@ -593,6 +570,36 @@ if (!YAHOO.hippo.EditorManager) {
             lastData: null,
             container: null,
             sizeState: {w: 0, h: 0},
+            tooltip : null,
+            
+            createTooltip : function(defaultText) {
+                var context = this.getContainer();
+                var cc = Dom.getElementsByClassName ('rte-preview-area', 'div', context);
+                if(Lang.isArray(cc) && cc.length > 0) {
+                    context = cc[0];
+                }
+                
+                this.tooltip = new YAHOO.widget.Tooltip('tt' + this.name, { 
+                    context: context,
+                    hidedelay: 10,
+                    showdelay: 500,
+                    text: this.getProperty("previewTooltipText", defaultText)
+                });
+            },
+            
+            hideTooltip : function() {
+                if(this.tooltip != null) {
+                    if(!Lang.isNull(this.tooltip.showProcId)) {
+                        clearTimeout(this.tooltip.showProcId);
+                        this.tooltip.showProcId = null;
+                    }
+                    if(!Lang.isNull(this.tooltip.hideProcId)) {
+                        clearTimeout(this.tooltip.hideProcId);
+                        this.tooltip.hideProcId = null;
+                    }
+                    this.tooltip.hide();
+                }
+            },
                     
             getContainer : function() {
                 if(this.container == null) {
@@ -607,17 +614,36 @@ if (!YAHOO.hippo.EditorManager) {
                 return this.container;
             },
             
-            /**
-             * Lifecycle might be reset when we start caching Xinha's on the client.
-             */
+            getProperty : function(key, defaultValue) {
+                for(var i=0; i<this.config.properties.length; ++i) {
+                    if(this.config.properties[i].key === key) {
+                        return this.config.properties[i].value;
+                    }
+                }
+                return Lang.isUndefined(defaultValue) ? null : defaultValue; 
+            },
+            
+            afterEditorLoad : function() {
+                this.destroyTooltip();
+            },
+
             reset : function(config) {
                 this.config = config;
                 this.container = null;
+            },
+            
+            destroy : function() {
+                this.destroyTooltip();
+            },
+            
+            destroyTooltip : function() {
+                this.hideTooltip();
+                if(this.tooltip != null) {
+                    this.tooltip.destroy();
+                    this.tooltip = null;
+                }
             }
         }
-        
-        
-        
     })();
 
     YAHOO.hippo.EditorManager = new YAHOO.hippo.EditorManagerImpl();
