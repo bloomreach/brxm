@@ -18,13 +18,11 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -65,15 +63,26 @@ public class PropertiesPlugin extends RenderPlugin {
             try {
                 if (node != null) {
                     if (node.isNodeType("hippostdpubwf:document")) {
+                        Calendar calendar;
                         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+                        publicationDate = null;
                         if (node.hasProperty("hippostdpubwf:publicationDate")) {
-                            publicationDate = formatter.format(node.getProperty("hippostdpubwf:publicationDate").getDate().getTime());
-                        } else {
-                            publicationDate = null;
+                            calendar = node.getProperty("hippostdpubwf:publicationDate").getDate();
+                            if (calendar.getTimeInMillis() != 0) {
+                                publicationDate = formatter.format(calendar.getTime());
+                            }
                         }
-                        lastModificationDate = formatter.format(node.getProperty("hippostdpubwf:lastModificationDate").getDate().getTime());
+                        lastModificationDate = null;
+                        calendar = node.getProperty("hippostdpubwf:lastModificationDate").getDate();
+                        if (calendar.getTimeInMillis() != 0) {
+                            lastModificationDate = formatter.format(calendar.getTime());
+                        }
                         lastModifiedBy = node.getProperty("hippostdpubwf:lastModifiedBy").getString();
-                        creationDate = formatter.format(node.getProperty("hippostdpubwf:creationDate").getDate().getTime());
+                        creationDate = null;
+                        calendar = node.getProperty("hippostdpubwf:creationDate").getDate();
+                        if (calendar.getTimeInMillis() != 0) {
+                            creationDate = formatter.format(calendar.getTime());
+                        }
                         createdBy = node.getProperty("hippostdpubwf:createdBy").getString();
                     }
                 }
