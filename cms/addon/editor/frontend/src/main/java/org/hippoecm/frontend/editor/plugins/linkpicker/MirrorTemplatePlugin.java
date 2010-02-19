@@ -37,6 +37,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,32 +56,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     public MirrorTemplatePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        final IModel<String> displayModel = new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String load() {
-                Node node = MirrorTemplatePlugin.this.getModelObject();
-                try {
-                    if (node != null && node.hasProperty("hippo:docbase")) {
-                        String docbaseUUID = node.getProperty("hippo:docbase").getString();
-                        if (docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.startsWith("cafebabe-")) {
-                            return EMPTY_LINK_TEXT;
-                        }
-                        return node.getSession().getNodeByUUID(docbaseUUID).getPath();
-                    }
-                } catch (ValueFormatException e) {
-                    log.warn("Invalid value format for docbase " + e.getMessage());
-                    log.debug("Invalid value format for docbase ", e);
-                } catch (PathNotFoundException e) {
-                    log.warn("Docbase not found " + e.getMessage());
-                    log.debug("Docbase not found ", e);
-                } catch (RepositoryException e) {
-                    log.error("Invalid docbase" + e.getMessage(), e);
-                }
-                return EMPTY_LINK_TEXT;
-            }
-        };
+        final IModel<String> displayModel = getDisplayModel();
 
         mode = config.getString("mode", "view");
         if ("edit".equals(mode)) {
@@ -92,7 +68,6 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
             if (nodetypes.size() == 0) {
                 log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
             }
-            //add(new TextFieldWidget("docbase", docbaseModel));
             IDialogFactory dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
 
@@ -105,8 +80,8 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
                             return docbaseModel.getObject();
                         }
 
-                        public void setObject(String object) {
-                            docbaseModel.setObject(object);
+                        public void setObject(String uuid) {
+                            docbaseModel.setObject(uuid);
                             redraw();
                         }
 
@@ -129,9 +104,9 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
                 @Override
                 public void onClear() {
-                    Node node = ((JcrNodeModel) MirrorTemplatePlugin.this.getDefaultModel()).getNode();
+                    Node node = MirrorTemplatePlugin.this.getModelObject();
                     try {
-                        node.setProperty("hippo:docbase", node.getSession().getRootNode().getUUID());
+                        node.setProperty(HippoNodeType.HIPPO_DOCBASE, node.getSession().getRootNode().getUUID());
                     } catch (RepositoryException e) {
                         log.error("Unable to reset docbase to rootnode uuid", e);
                     }
@@ -141,7 +116,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
                 @Override
                 public boolean isClearVisible() {
                     // Checking for string literals ain't pretty. It's probably better to create a better display model.
-                    return !EMPTY_LINK_TEXT.equals((String) displayModel.getObject());
+                    return !getEmptyLinkText().equals(displayModel.getObject());
                 }
             });
         } else {
@@ -150,9 +125,41 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         setOutputMarkupId(true);
     }
     
+    protected IModel<String> getDisplayModel() {
+        return new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String load() {
+                Node node = MirrorTemplatePlugin.this.getModelObject();
+                try {
+                    if (node != null && node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                        String docbaseUUID = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                        if (docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.startsWith("cafebabe-")) {
+                            return getEmptyLinkText();
+                        }
+                        return node.getSession().getNodeByUUID(docbaseUUID).getPath();
+                    }
+                } catch (ValueFormatException e) {
+                    log.warn("Invalid value format for docbase " + e.getMessage());
+                    log.debug("Invalid value format for docbase ", e);
+                } catch (PathNotFoundException e) {
+                    log.warn("Docbase not found " + e.getMessage());
+                    log.debug("Docbase not found ", e);
+                } catch (RepositoryException e) {
+                    log.error("Invalid docbase" + e.getMessage(), e);
+                }
+                return getEmptyLinkText();
+            }
+        };
+    }
+
+    protected String getEmptyLinkText() {
+        return EMPTY_LINK_TEXT;
+    }
+
     protected JcrPropertyValueModel<String> getDocBaseModel() {
-        JcrNodeModel jcrNodeModel = (JcrNodeModel) MirrorTemplatePlugin.this.getDefaultModel();
-        return new JcrPropertyValueModel<String>(new JcrPropertyModel<String>(jcrNodeModel.getItemModel().getPath()
-                + "/hippo:docbase"));
+        String path = ((JcrNodeModel) getModel()).getItemModel().getPath();
+        return new JcrPropertyValueModel<String>(new JcrPropertyModel<String>(path));
     }
 }
