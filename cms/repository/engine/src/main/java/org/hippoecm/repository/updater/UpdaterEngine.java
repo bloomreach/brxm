@@ -676,8 +676,10 @@ public class UpdaterEngine {
                     }
                     log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
                 } catch (PathNotFoundException ex) {
+                    log.debug("could no longer convert "+path+" "+ex.getMessage(), ex);
                     // deliberate ignore
                 } catch (InvalidItemStateException ex) {
+                    log.debug("could no longer convert "+path+" "+ex.getMessage(), ex);
                     // deliberate ignore
                 }
             }
