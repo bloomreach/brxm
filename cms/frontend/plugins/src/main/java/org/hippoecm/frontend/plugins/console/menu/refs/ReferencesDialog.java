@@ -69,7 +69,7 @@ public class ReferencesDialog extends AbstractDialog<Node> {
 
             @Override
             protected void populateItem(final Item<Property> item) {
-                item.add(new Label("property", new PropertyModel(item.getModel(), "name")));
+                item.add(new Label("property", new PropertyModel(item.getModel(), "path")));
                 AjaxLink link = new AjaxLink("reference") {
                     private static final long serialVersionUID = 1L;
 
@@ -97,7 +97,7 @@ public class ReferencesDialog extends AbstractDialog<Node> {
 
     @Override
     public IValueMap getProperties() {
-        return SMALL;
+        return LARGE;
     }
     
     @Override

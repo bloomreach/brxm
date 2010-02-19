@@ -386,8 +386,9 @@ abstract class SessionImplHelper {
                         // build effective node type of mixins & primary type
                         NodeTypeRegistry ntReg = ntMgr.getNodeTypeRegistry();
                         try {
-                            if (!ntReg.getEffectiveNodeType(state.getNodeTypeName(),mixins).includesNodeType(ntName))
+                            if (!ntReg.getEffectiveNodeType(state.getNodeTypeName(),mixins).includesNodeType(ntName)) {
                                 continue;
+                            }
                         } catch (NodeTypeConflictException ntce) {
                             String msg = "internal error: failed to build effective node type";
                             log.debug(msg);

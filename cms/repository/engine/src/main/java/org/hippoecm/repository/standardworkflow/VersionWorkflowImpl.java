@@ -155,7 +155,10 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
 
         for (PropertyIterator iter = source.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
-            if (prop.getName().startsWith("jcr:")) {
+            if (prop.getName().startsWith("jcr:") ||
+                prop.getName().equals(HippoNodeType.HIPPO_RELATED) ||
+                prop.getName().equals(HippoNodeType.HIPPO_COMPUTE) ||
+                prop.getName().equals(HippoNodeType.HIPPO_PATHS)) {
                 continue;
             }
             if (target.hasProperty(prop.getName())) {
@@ -232,6 +235,9 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             // backwards compatibility
             immune.add("hippostd:state");
         }
+        immune.add(HippoNodeType.HIPPO_RELATED);
+        immune.add(HippoNodeType.HIPPO_COMPUTE);
+        immune.add(HippoNodeType.HIPPO_PATHS);
         for (NodeIterator childIter = node.getNodes(); childIter.hasNext();) {
             Node child = childIter.nextNode();
             if (child != null) {
