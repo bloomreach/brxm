@@ -418,9 +418,9 @@
         <version>2.0-beta-8</version>
           <configuration>
           <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <scmCommentPrefix>HREPTWO-3756:</scmCommentPrefix>
-          <tag>Tag-HREPTWO-v2_12_02</tag>
+          <autoVersionSubmodules>true</toVersionSubmodules>
+          <scmCommentPrefix>HREPTWO-3837:</scmCommentPrefix>
+          <tag>Tag-HREPTWO-v2_12_03</tag>
           <!-- preparationGoals>clean</preparationGoals -->
         </configuration>
       </plugin>
