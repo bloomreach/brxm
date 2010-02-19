@@ -23,6 +23,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -160,6 +161,10 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
 
         final JcrPropertyValueModel model = getController().findItemRenderer(renderer).getModel();
 
+        WebMarkupContainer controls = new WebMarkupContainer("controls");
+        controls.setVisible(canRemoveItem() || canReorderItems());
+        item.add(controls);
+
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
 
@@ -171,7 +176,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
         if (!canRemoveItem()) {
             remove.setVisible(false);
         }
-        item.add(remove);
+        controls.add(remove);
 
         MarkupContainer upLink = new AjaxLink("up") {
             private static final long serialVersionUID = 1L;
@@ -186,7 +191,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
             upLink.setVisible(false);
         }
         upLink.setEnabled(!isFirst);
-        item.add(upLink);
+        controls.add(upLink);
 
         MarkupContainer downLink = new AjaxLink("down") {
             private static final long serialVersionUID = 1L;
@@ -203,7 +208,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
             downLink.setVisible(false);
         }
         downLink.setEnabled(!isLast);
-        item.add(downLink);
+        controls.add(downLink);
     }
 
     // privates
