@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-tools</artifactId>
-    <version>2.12.03-SNAPSHOT</version>
+    <version>2.12.03</version>
   </parent>
 
   <groupId>org.hippoecm</groupId>
@@ -28,52 +28,52 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/projectexport</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/projectexport</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/tools/projectexport</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_03/tools/projectexport</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_03/tools/projectexport</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_03/tools/projectexport</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-gallery-repository</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-editor-repository</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-config</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-tools-testutils</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -90,22 +90,22 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-utilities</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>

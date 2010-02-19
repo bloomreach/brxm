@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-frontend</artifactId>
-    <version>2.12.03-SNAPSHOT</version>
+    <version>2.12.03</version>
   </parent>
 
   <name>Frontend plugins</name>
@@ -28,9 +28,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/frontend/plugins</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/frontend/plugins</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/frontend/plugins</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_03/frontend/plugins</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_03/frontend/plugins</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_03/frontend/plugins</url>
   </scm>
 
   <dependencies>
@@ -50,22 +50,22 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-tools-projectexport</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-yui</artifactId>
-      <version>2.12.03-SNAPSHOT</version>
+      <version>2.12.03</version>
     </dependency>
 
     <dependency>
