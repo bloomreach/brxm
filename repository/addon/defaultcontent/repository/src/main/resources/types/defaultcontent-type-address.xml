@@ -135,9 +135,6 @@
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
         </sv:property>
-        <sv:property sv:name="wicket.css" sv:type="String">
-          <sv:value>hippo-template-default-title</sv:value>
-        </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>${cluster.id}.field</sv:value>
         </sv:property>
