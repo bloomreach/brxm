@@ -686,16 +686,16 @@ font-weight: bold;
 
 /* Show add-root button in tree*/
 .hippo-accordion-unit-add { 
-	display: block; 
-	background-image: url("images/list-add-16.png"); 
-	background-repeat: no-repeat; 
-	background-position: 0px 6px; 
-	text-align: left; 
-	padding-left: 21px; 
-	padding-top: 6px; 
-	margin-left: 5px;
-	height: 20px;
-	color: #333; 
+  display: block; 
+  background-image: url("images/list-add-16.png"); 
+  background-repeat: no-repeat; 
+  background-position: 0px 6px; 
+  text-align: left; 
+  padding-left: 21px; 
+  padding-top: 6px; 
+  margin-left: 5px;
+  height: 20px;
+  color: #333; 
 }
 
 /* But hide it in pickers */
@@ -714,7 +714,7 @@ font-weight: bold;
 }
 
 .container-selected {
-	display: block;
+  display: block;
   background-color:#F4F4F4;
   width:20px;
   height:20px;
@@ -785,7 +785,7 @@ font-weight: bold;
 .hippo-editor-field input,
 .hippo-editor-field-input{
 font-size: 12px; line-height: 18px; background: transparent; border: none; color: #333333; margin: 2px; font-family: arial,sans-serif,helvetica;}
-.hippo-editor-field input, .hippo-editor-field-input{width: 100%}
+.hippo-editor-field input, .hippo-editor-field-input{width: 100%;}
 
 .hippo-editor-field input[type="checkbox"]{width: auto;}
 .hippo-editor-field input[type="submit"]{width: auto; background: none;}
@@ -875,15 +875,24 @@ div.wicket-modal div.wicket-tree {border: 0px;}
 .hippo-editor-template-field-edit .hippo-editor-field-subfield{background: white; border: 1px solid #B2B2B2;} 
 
 /* subfields */
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls{background-color: #def; height: 0px; overflow-y: shown; float: right; display:block; width: 75px;}
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls .up-16{width: 18px; height: 16px; padding: 10px;}
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls .down-16{width: 18px; height: 16px; padding: 10px;}
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls .delete-16{margin-left: 15px; width: 18px; height: 16px; padding: 10px;}
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls{background-color: transparent; width: 75px; height: 20px; position:absolute; right:0; top:0; padding-top: 2px; }
+
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls .up-16{width: 18px; height: 16px; padding:0; display:block; float: left; }
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls .down-16{width: 18px; height: 16px; padding:0; display:block; float: left; margin-left:4px; }
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield-controls .delete-16{ width: 18px; height: 16px;padding:0; display:block; float: right; margin-right: 4px;}
+
+
 .hippo-editor .hippo-editor-field .add-16{display: block; padding: 10px; background-color: white; border: 1px solid white; background-position: right center; margin-top: 8px;}
 .hippo-editor .hippo-editor-field .add-16:hover{border: 1px solid #EDF5FF; background-color: white}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield {margin-bottom: 4px; background: white; border: 1px solid #B2B2B2;}
+
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield {position: relative;}
+
 .hippo-editor .hippo-editor-field-subfield.invalid .hippo-editor-field-subfield-item {border-color: #f00000;}
-.hippo-editor .hippo-editor-field-value{margin-right: 85px; }
+
+.hippo-editor .hippo-editor-field-value .hippo-editor-field-value-container{ padding: 2px; margin: 0; }
+.hippo-editor .hippo-editor-field-value .hippo-editor-field-value-container input{ margin: 0; }
+
 .hippo-editor .hippo-preview-document .hippo-editor-field-subfield-item{margin: 0; border: 0px; }
 
 /* sub sub fields */

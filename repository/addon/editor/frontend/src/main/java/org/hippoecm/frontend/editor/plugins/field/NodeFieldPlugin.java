@@ -25,6 +25,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -133,6 +134,10 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         final JcrNodeModel model = getController().findItemRenderer(renderer).getModel();
         final int index = item.getIndex();
 
+        WebMarkupContainer controls = new WebMarkupContainer("controls");
+        controls.setVisible(canRemoveItem() || canReorderItems());
+        item.add(controls);
+
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
 
@@ -144,7 +149,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         if (!canRemoveItem()) {
             remove.setVisible(false);
         }
-        item.add(remove);
+        controls.add(remove);
 
         MarkupContainer upLink = new AjaxLink("up") {
             private static final long serialVersionUID = 1L;
@@ -160,7 +165,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         if (index == 0) {
             upLink.setEnabled(false);
         }
-        item.add(upLink);
+        controls.add(upLink);
 
         MarkupContainer downLink = new AjaxLink("down") {
             private static final long serialVersionUID = 1L;
@@ -182,7 +187,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         }
         boolean isLast = (index == provider.size() - 1);
         downLink.setEnabled(!isLast);
-        item.add(downLink);
+        controls.add(downLink);
     }
 
     protected Component createAddLink() {
