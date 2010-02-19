@@ -74,7 +74,7 @@ public class SchedulerModule implements DaemonModule
 
     public void shutdown() {
         if(scheduler != null) {
-            scheduler.shutdown();
+            scheduler.shutdown(true);
         }
         session.logout();
     }
