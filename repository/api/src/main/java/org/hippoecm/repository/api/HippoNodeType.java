@@ -554,6 +554,10 @@ public interface HippoNodeType {
     /**
      * 
      */
+    final public static String HIPPO_COMPUTE = "hippo:compute";
+    /**
+     * 
+     */
     final public static String HIPPO_RESULTSET = "hippo:resultset";
     /**
      * 
