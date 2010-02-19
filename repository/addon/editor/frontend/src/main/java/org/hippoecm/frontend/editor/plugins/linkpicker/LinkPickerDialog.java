@@ -67,8 +67,7 @@ public class LinkPickerDialog extends AbstractDialog<String> {
         this.config = config;
         this.nodetypes = nodetypes;
 
-        selectedNode = getInitialNode();
-        setOkEnabled(selectedNode != null);
+        setSelectedModel(getInitialNode());
 
         setOutputMarkupId(true);
 
@@ -148,6 +147,7 @@ public class LinkPickerDialog extends AbstractDialog<String> {
         //save modelServiceId and dialogServiceId in cluster config
         String modelServiceId = clusterConfig.getString("wicket.model");
         final IModelReference modelRef = context.getService(modelServiceId, IModelReference.class);
+        modelRef.setModel(getInitialNode());
         context.registerService(modelObserver = new IObserver() {
             private static final long serialVersionUID = 1L;
 
@@ -156,12 +156,7 @@ public class LinkPickerDialog extends AbstractDialog<String> {
             }
 
             public void onEvent(Iterator events) {
-                if (isValidSelection(modelRef.getModel())) {
-                    selectedNode = modelRef.getModel();
-                    setOkEnabled(true);
-                } else {
-                    setOkEnabled(false);
-                }
+                setSelectedModel(modelRef.getModel());
             }
             
         }, IObserver.class.getName());
@@ -187,6 +182,15 @@ public class LinkPickerDialog extends AbstractDialog<String> {
         super.render(target);
     }
 
+    private void setSelectedModel(IModel<Node> model) {
+        if (isValidSelection(model)) {
+            selectedNode = model;
+            setOkEnabled(true);
+        } else {
+            setOkEnabled(false);
+        }
+    }
+    
     @Override
     public void onOk() {
         if (selectedNode == null) {
