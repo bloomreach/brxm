@@ -1211,7 +1211,8 @@ table.hippo-list-details > tbody {
   overflow-y: auto;
 }
 
-.navigator-center-body table.hippo-list-documents, .navigator-center-body table.hippo-gallery-images, .navigator-center-body table.hippo-gallery-assets {
+.navigator-center-body table.hippo-list-documents, .navigator-center-body table.hippo-gallery-images, .navigator-center-body table.hippo-gallery-assets,
+.hippo-dialog-picker table.hippo-list-documents, .hippo-dialog-picker table.hippo-gallery-images, .hippo-dialog-picker table.hippo-gallery-assets {
   border-collapse: inherit;
 }
 
