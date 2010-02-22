@@ -124,7 +124,7 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         }
         setOutputMarkupId(true);
     }
-    
+
     protected IModel<String> getDisplayModel() {
         return new LoadableDetachableModel<String>() {
             private static final long serialVersionUID = 1L;
@@ -159,7 +159,8 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     protected JcrPropertyValueModel<String> getDocBaseModel() {
-        String path = ((JcrNodeModel) getModel()).getItemModel().getPath();
-        return new JcrPropertyValueModel<String>(new JcrPropertyModel<String>(path));
+        return new JcrPropertyValueModel<String>(new JcrPropertyModel<String>(((JcrNodeModel) getModel())
+                .getItemModel().getPath()
+                + "/hippo:docbase"));
     }
 }
