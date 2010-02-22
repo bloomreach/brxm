@@ -213,14 +213,6 @@
           <classifier>tests</classifier>
           <scope>test</scope>
         </dependency>
-        <dependency>
-          <groupId>org.hippoecm</groupId>
-          <artifactId>hippo-ecm-addon-builtin-test</artifactId>
-          <version>${project.version}</version>
-          <type>jar</type>
-          <classifier>tests</classifier>
-          <scope>test</scope>
-        </dependency>
       </dependencies>
     </profile>
     <profile>
@@ -236,15 +228,6 @@
           <dependency>
             <groupId>org.hippoecm</groupId>
             <artifactId>hippo-ecm-repository-engine</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-            <optional>true</optional>
-          </dependency>
-          <dependency>
-            <groupId>org.hippoecm</groupId>
-            <artifactId>hippo-ecm-addon-builtin-test</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <classifier>tests</classifier>

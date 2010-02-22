@@ -75,6 +75,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <version>${org.slf4j.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -89,8 +90,121 @@
       <version>2.12.04-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-engine</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-connector</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-modules</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-xinha-frontend</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-engine</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-plugins</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-package-auth</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-package-config</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-ldap-repository</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-gotolink</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-faceteddate-repository</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-editor-repository</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-gallery-repository</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-defaultcontent-repository</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
 
-    <!-- Testing needs a JTA implementation -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl104-over-slf4j</artifactId>
+      <version>1.4.3</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-api</artifactId>
@@ -114,29 +228,13 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jta_1.1_spec</artifactId>
-      <scope>provided</scope>
+      <scope>test</scope>
     </dependency>
-    
   </dependencies>
 
   <build>
-    <defaultGoal>test</defaultGoal>
+    <defaultGoal>package</defaultGoal>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
-          <systemProperties>
-            <property>
-              <name>history.points</name>
-              <value>${history.points}</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -155,6 +253,58 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>2.4</version>
+        <configuration>
+          <skip>true</skip>
+          <forkMode>always</forkMode>
+          <workingDirectory>${project.build.directory}</workingDirectory>
+          <systemProperties>
+            <property>
+              <name>history.points</name>
+              <value>${history.points}</value>
+            </property>
+          </systemProperties>
+        </configuration>
+        <executions>
+          <execution>
+            <id>unit-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <skip>false</skip>
+              <excludes>
+                <exclude>**/*IntegrationTest.java</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <inherited>false</inherited>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>.</directory>
+              <includes>
+                <include>**/*~</include>
+                <include>**/derby.log</include>
+                <include>**/tmlog*</include>
+                <include>**/tm.*</include>
+                <include>**/.lock</include>
+                <include>**/atomikos</include>
+                <include>**/jpox.log</include>
+                <include>storage</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin> 
     </plugins>
   </build>
 
@@ -197,6 +347,61 @@
           </dependency>
         </dependencies>
       </dependencyManagement>
+    </profile>
+    <profile>
+      <id>integration-tests</id>
+      <activation>
+        <property>
+          <name>integrationTests</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.hippoecm</groupId>
+          <artifactId>hippo-ecm-repository-engine</artifactId>
+          <version>${project.version}</version>
+          <type>jar</type>
+          <classifier>tests</classifier>
+          <scope>test</scope>
+          <optional>true</optional>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <groupId>org.apache.maven.plugins</groupId>
+            <version>2.4</version>
+            <configuration>
+              <skip>true</skip>
+              <forkMode>always</forkMode>
+              <workingDirectory>${project.build.directory}</workingDirectory>
+              <systemProperties>
+                <property>
+                  <name>history.points</name>
+                  <value>${history.points}</value>
+                </property>
+              </systemProperties>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integration-tests</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                  <includes>
+                    <include>**/*IntegrationTest.java</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 

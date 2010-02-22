@@ -18,6 +18,7 @@
 <configuration xmlns:hippostd="http://www.onehippo.org/jcr/hippostd/nt/2.0">
     <!-- hippo aggregates -->
     <aggregates>
+        <nodetype>hippostd:html</nodetype>
         <childtype>hippostd:date</childtype>
     </aggregates>
     
