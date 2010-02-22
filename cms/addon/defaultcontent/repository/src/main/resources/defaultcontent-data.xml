@@ -336,6 +336,14 @@
               <sv:value>body</sv:value>
             </sv:property>
           </sv:node>
+          <sv:node sv:name="defaultcontent:internallink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
     </sv:node>
