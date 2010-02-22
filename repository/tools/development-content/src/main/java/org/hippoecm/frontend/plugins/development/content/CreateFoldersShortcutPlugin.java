@@ -20,8 +20,8 @@ import java.util.Collection;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -63,7 +63,7 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
         private static final long serialVersionUID = 1L;
 
         public Dialog() {
-            add(HeaderContributor.forCss(CreateFoldersShortcutPlugin.class, "style.css"));
+            add(CSSPackageResource.getHeaderContribution(CreateFoldersShortcutPlugin.class, "style.css"));
             
             setOkVisible(false);
             setCancelVisible(false);
