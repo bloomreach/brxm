@@ -26,6 +26,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -33,7 +34,7 @@ import org.hippoecm.frontend.model.tree.ObservableTreeModel.ObservableTreeModelE
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeModel> {
+public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeModel>, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -130,6 +131,10 @@ public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeMode
 
     public void valueForPathChanged(TreePath path, Object newValue) {
         jcrTreeModel.valueForPathChanged(path, newValue);
+    }
+
+    public void detach() {
+        jcrTreeModel.detach();
     }
 
 }

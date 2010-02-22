@@ -172,6 +172,7 @@ public class LinkPickerDialog extends AbstractDialog<String> {
         dialogRenderer = null;
         context.unregisterService(modelObserver, IObserver.class.getName());
         control.stop();
+        control = null;
     }
 
     @Override
@@ -197,9 +198,17 @@ public class LinkPickerDialog extends AbstractDialog<String> {
             error("No node selected");
             return;
         }
-        saveNode((Node) selectedNode.getObject());
+        saveNode(selectedNode.getObject());
     }
 
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+        if (selectedNode != null) {
+            selectedNode.detach();
+        }
+    }
+    
     protected void saveNode(Node node) {
         try {
             getModel().setObject(node.getUUID());
