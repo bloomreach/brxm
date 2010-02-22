@@ -184,9 +184,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             window.addComponentExcpetion(new HstComponentException(e));
             
             if (log.isDebugEnabled()) {
-                log.warn("Component exception caught: " + e.toString(), e);
+                log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": " + e.toString(), e);
             } else if (log.isWarnEnabled()) {
-                log.warn("Component exception caught: {}", e.toString());
+                log.warn("Component exception caught on window " + window.getName() + " with component " + component.getClass().getName() + ": {}", e.toString());
             }
         } finally {
             removeHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
