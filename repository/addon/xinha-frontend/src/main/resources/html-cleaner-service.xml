@@ -313,6 +313,7 @@
           <sv:value>height</sv:value>
           <sv:value>title</sv:value>
           <sv:value>facetselect</sv:value>
+          <sv:value>style</sv:value>
         </sv:property>
       </sv:node>
 
