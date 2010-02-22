@@ -28,6 +28,7 @@ import org.apache.wicket.Response;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.markup.html.form.AbstractTextComponent.ITextFormatProvider;
+import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.util.convert.IConverter;
 import org.apache.wicket.util.convert.converters.DateConverter;
@@ -46,6 +47,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
     private final static String SVN_ID = "$Id$";
     
     private static final PackagedTextTemplate INIT = new PackagedTextTemplate(YuiDatePicker.class, "init.js");
+    private static final ResourceReference SKIN = new CompressedResourceReference(YuiDatePicker.class, "skin.css");
     
     private Component component;
     private DynamicTextTemplate template;
@@ -65,12 +67,13 @@ public class YuiDatePicker extends AbstractYuiBehavior {
     
     @Override
     public void addHeaderContribution(IYuiContext helper) {
+        helper.addCssReference(SKIN);
         helper.addModule(HippoNamespace.NS, "datetime");
-        helper.addOnDomLoad(new AbstractReadOnlyModel() {
+        helper.addOnDomLoad(new AbstractReadOnlyModel<String>() {
             private static final long serialVersionUID = 1L;
             
             @Override
-            public Object getObject() {
+            public String getObject() {
                 return "YAHOO.hippo.DateTime.render('" + component.getMarkupId() + "', " + template.getConfigurationAsJSON() + ");";
             }
         });
