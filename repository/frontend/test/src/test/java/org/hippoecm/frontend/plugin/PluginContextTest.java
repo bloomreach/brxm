@@ -44,12 +44,12 @@ public class PluginContextTest {
 
         void test();
     }
-    
+
     public interface ILogService extends IClusterable {
 
         void log(String message);
     }
-    
+
     public static class TestPlugin extends Plugin implements ITestService {
 
         public TestPlugin(IPluginContext context, IPluginConfig config) {
@@ -63,13 +63,22 @@ public class PluginContextTest {
         }
     }
 
+    public static class NullServiceTestPlugin extends TestPlugin implements ITestService {
+
+        public NullServiceTestPlugin(IPluginContext context, IPluginConfig config) {
+            super(context, config);
+
+            context.registerService(this, null);
+        }
+    }
+
     public static class ThrowingTestPlugin extends Plugin {
 
         public ThrowingTestPlugin(IPluginContext context, IPluginConfig config) {
             super(context, config);
 
             context.registerService(this, "service.test");
-            
+
             throw new RuntimeException("exception");
         }
     }
@@ -77,7 +86,7 @@ public class PluginContextTest {
     public static class TestSubclassingPlugin extends TestPlugin {
 
         boolean initialized = false;
-        
+
         public TestSubclassingPlugin(IPluginContext context, IPluginConfig config) {
             super(context, config);
             initialized = true;
@@ -109,7 +118,7 @@ public class PluginContextTest {
             public void log(String message) {
                 messages.add(message);
             }
-            
+
         }, "service.log");
     }
 
@@ -140,12 +149,12 @@ public class PluginContextTest {
         cluster.addPlugin(config);
         IClusterControl control = context.newCluster(cluster, new JavaPluginConfig());
         control.start();
-        
+
         assertNotNull(context.getService("service.test", IClusterable.class));
         String id = context.getReference(context.getService("service.test", IClusterable.class)).getServiceId();
         assertNotNull(context.getService(id, IClusterable.class));
         assertEquals(context.getService(id, IClusterable.class), context.getService("service.test", IClusterable.class));
-        
+
         control.stop();
 
         assertNull(context.getService("service.test", IClusterable.class));
@@ -160,9 +169,9 @@ public class PluginContextTest {
         cluster.addPlugin(config);
         IClusterControl control = context.newCluster(cluster, new JavaPluginConfig());
         control.start();
-        
+
         assertNull(context.getService("service.test", IClusterable.class));
-        
+
         control.stop();
 
         assertNull(context.getService("service.test", IClusterable.class));
@@ -192,4 +201,21 @@ public class PluginContextTest {
         testService.test();
     }
 
+    @Test
+    public void nullRegistrationIsCleanedUp() {
+        JavaPluginConfig config = new JavaPluginConfig("test");
+        config.put("plugin.class", NullServiceTestPlugin.class.getName());
+        JavaClusterConfig cluster = new JavaClusterConfig();
+        cluster.addPlugin(config);
+        IClusterControl control = context.newCluster(cluster, new JavaPluginConfig());
+        control.start();
+
+        ITestService testService = context.getService("service.test", ITestService.class);
+        assertNotNull(testService);
+
+        String serviceId = context.getReference(testService).getServiceId();
+        control.stop();
+
+        assertNull(context.getService(serviceId, ITestService.class));
+    }
 }

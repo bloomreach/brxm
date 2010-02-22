@@ -56,8 +56,8 @@ public class PluginContext implements IPluginContext, IDetachable {
     private Map<String, List<IServiceTracker<? extends IClusterable>>> listeners;
     private Map<String, ClusterControl> children;
     private PluginManager manager;
-    private transient boolean initializing = true;
-    private transient boolean stopping = false;
+    transient boolean initializing = true;
+    transient boolean stopping = false;
 
     public PluginContext(PluginManager manager, IPluginConfig config) {
         this.manager = manager;
@@ -350,7 +350,9 @@ public class PluginContext implements IPluginContext, IDetachable {
                 log.debug("unregistering services for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
                 for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
                     for (IClusterable service : entry.getValue()) {
-                        manager.unregisterService(service, entry.getKey());
+                        if (entry.getKey() != null) {
+                            manager.unregisterService(service, entry.getKey());
+                        }
                     }
                 }
             } else {
