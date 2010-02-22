@@ -84,6 +84,10 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
+  <category additivity="false" name="org.hippoecm.repository.replication">
+    <level value="info"/>
+    <appender-ref ref="console"/>
+  </category>
   <category additivity="false" name="org.hippoecm.repository.LocalHippoRepository">
     <level value="warn"/>
     <appender-ref ref="console"/>
@@ -100,6 +104,7 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
+
 
   <root>
     <level value="warn"/>

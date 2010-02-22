@@ -311,21 +311,6 @@ public class DereferencedSessionImporter implements Importer {
             return;
         }
         if (parent.hasNode(nodeName)) {
-            if (importPath.equals(parent.safeGetJCRPath())) {
-                // this is the root target node, decided by the user self
-                // only throw an error on the most strict import
-                if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_SKIP) {
-                    String msg = "A node already exists add " + parent.safeGetJCRPath() + "!";
-                    log.warn(msg);
-                    importTargetNode.refresh(false);
-                    throw new ItemExistsException(msg);
-                } else {
-                    String msg = "Import base node already exists. skipping: " + parent.safeGetJCRPath();
-                    log.debug(msg);
-                    parents.push(parent.getNode(nodeName));
-                    return;
-                }
-            }
             nodeInfo = resolveMergeConflict(parent, parent.getNode(nodeName), nodeInfo);
             if (nodeInfo == null) {
                 parents.push(null); // push null onto stack for skipped node
