@@ -37,7 +37,7 @@
     
     <junit.version>4.5</junit.version>
     
-    <hst-configuration-editor.version>1.03.00</hst-configuration-editor.version>
+    <hst-configuration-editor.version>1.03.01</hst-configuration-editor.version>
     <hippoecm.version>2.12.02</hippoecm.version>
     <hst.version>2.04.04-SNAPSHOT</hst.version>
     
