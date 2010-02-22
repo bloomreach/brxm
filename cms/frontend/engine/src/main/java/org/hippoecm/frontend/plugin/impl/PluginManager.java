@@ -140,12 +140,12 @@ public class PluginManager implements IClusterable {
             return new ServiceRegistration(this, service, serviceId, name);
         } else {
             entry.getValue().addRef();
-        }
 
-        if (name != null) {
-            internalRegisterService(service, name);
+            if (name != null) {
+                internalRegisterService(service, name);
+            }
+            return null;
         }
-        return null;
     }
 
     void cleanup(IClusterable service) {
@@ -253,6 +253,10 @@ public class PluginManager implements IClusterable {
     }
 
     void internalRegisterService(IClusterable service, String name) {
+        if (name == null) {
+            throw new RuntimeException("Cannot internally register service " + service + "under a null name.");
+        }
+
         List<IClusterable> list = services.get(name);
         if (list == null) {
             list = new LinkedList<IClusterable>();

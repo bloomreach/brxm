@@ -51,10 +51,12 @@ class ServiceRegistration implements IClusterable {
 
     void notifyTrackers() {
         mgr.internalRegisterService(service, id);
+        Map.Entry<Integer, RefCount> entry = mgr.internalGetReference(service);
         for (String name : names) {
-            Map.Entry<Integer, RefCount> entry = mgr.internalGetReference(service);
-            entry.getValue().addRef();
-            mgr.internalRegisterService(service, name);
+            if (name != null) {
+                entry.getValue().addRef();
+                mgr.internalRegisterService(service, name);
+            }
         }
     }
 

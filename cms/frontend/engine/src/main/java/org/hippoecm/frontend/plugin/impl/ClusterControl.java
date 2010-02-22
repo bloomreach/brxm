@@ -68,6 +68,7 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
     private List<ServiceForwarder> forwarders;
     private PluginContext[] contexts;
     private boolean running = false;
+    private boolean hollow = false;
 
     ClusterControl(PluginManager mgr, PluginContext context, IClusterConfig config, String id) {
         this.mgr = mgr;
@@ -97,14 +98,20 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
             return;
         }
 
+        if (context.stopping) {
+            hollow = true;
+            log.debug("plugin is stopping, not starting cluster " + clusterId);
+            return;
+        }
+        
         running = true;
+        contexts = new PluginContext[config.getPlugins().size()];
         for (ServiceForwarder forwarder : forwarders) {
             forwarder.start();
         }
         for (String service : config.getServices()) {
             context.registerTracker(this, config.getString(service));
         }
-        contexts = new PluginContext[config.getPlugins().size()];
 
         int i = 0;
         for (IPluginConfig plugin : config.getPlugins()) {
@@ -119,6 +126,11 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
     }
 
     public void stop() {
+        if (hollow) {
+            hollow = false;
+            return;
+        }
+
         if (!running) {
             log.debug("cluster has already been stopped");
             return;
