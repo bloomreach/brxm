@@ -57,6 +57,9 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     // determined yet or the uuid cannot be resolved.
     private String absPath = null;
 
+    // recursion detection
+    private transient boolean detaching = false;
+
     // constructors
 
     public JcrItemModel(T item) {
@@ -136,7 +139,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     protected T load() {
         try {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-            if (uuid != null) {
+            if (uuid != null && session.isLive()) {
                 Node node = null;
                 try {
                     node = session.getNodeByUUID(uuid);
@@ -184,8 +187,10 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @Override
     public void detach() {
+        detaching = true;
         save();
         super.detach();
+        detaching = false;
     }
 
     private void save() {
@@ -271,12 +276,16 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @Override
     public String toString() {
-        boolean isAttached = isAttached();
-        String string = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", getPath()).toString();
-        if (!isAttached) {
-            detach();
+        if (!detaching) {
+            boolean isAttached = isAttached();
+            String string = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("path", getPath()).toString();
+            if (!isAttached) {
+                detach();
+            }
+            return string;
+        } else {
+            return super.toString();
         }
-        return string;
     }
 
     @SuppressWarnings("unchecked")
