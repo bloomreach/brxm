@@ -178,31 +178,6 @@
         <sv:property sv:name="hipposysedit:supertype" sv:type="String">
           <sv:value>hippostd:publishable</sv:value>
         </sv:property>
-        <sv:node sv:name="PublicationStatus">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippostd:state</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="Editor">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippostd:holder</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
         <sv:node sv:name="CreatedBy">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
@@ -264,7 +239,7 @@
             <sv:value>hipposysedit:field</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippostdholder</sv:value>
+            <sv:value>hippostdpubwf:publicationDate</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:type" sv:type="String">
             <sv:value>Date</sv:value>
