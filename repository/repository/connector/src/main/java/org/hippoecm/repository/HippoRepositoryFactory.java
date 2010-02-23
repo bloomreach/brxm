@@ -114,7 +114,6 @@ public class HippoRepositoryFactory {
 
         if (defaultRepository != null && (location.equals(defaultRepository.getLocation()) ||
                                           (defaultLocation != null && location.equals(defaultLocation)))) {
-            System.err.println(defaultRepository);
             return defaultRepository;
         }
 
