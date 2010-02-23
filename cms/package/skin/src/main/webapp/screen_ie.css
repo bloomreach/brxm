@@ -19,6 +19,8 @@ table.toolbarRow {
   position: relative;
 }
 
+.hippo-window-form td a.action {float:none;}
+
 .hippo-preview-document .hippo-editor-field {overflow: hidden;}
 .column-wrapper {width: 99%; overflow: hidden;}
 

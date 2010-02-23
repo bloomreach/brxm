@@ -31,7 +31,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextField;
@@ -43,6 +43,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
@@ -452,26 +453,38 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 typelabel.setVisible(false);
             }
 
-            add(uriComponent = new TextField<String>("uriinput", uriModel));
-            uriComponent.setEnabled(uriModified);
-            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel() {
+            add(uriComponent = new TextField<String>("uriinput", uriModel) {
                 @Override
-                public Object getObject() {
-                    return (uriComponent.isEnabled() ? "grayedin" : "grayedout");
+                public boolean isEnabled() {
+                    return uriModified;
+                }
+            });
+            
+            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
+                @Override
+                public String getObject() {
+                    return uriModified ? "grayedin" : "grayedout";
                 }
             }));
             uriComponent.setOutputMarkupId(true);
-
-            add(new AjaxCheckBox("uricheck", new PropertyModel<Boolean>(this, "uriModified")) {
-                protected void onUpdate(AjaxRequestTarget target) {
-                    uriComponent.setEnabled(uriModified);
-                    if (uriModified == false) {
-                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
+            
+            AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    uriModified = !uriModified;
+                    if (!uriModified) {
+                        uriModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(nameModel.getObject()));
                     }
                     target.addComponent(AddDocumentDialog.this);
-                    target.addComponent(uriComponent);
                 }
-            });
+            };
+            uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {
+                @Override
+                public String getObject() {
+                    return uriModified ? getString("url-reset") : getString("url-edit");
+                }
+            }));
+            add(uriAction);
         }
 
         @Override
@@ -518,26 +531,39 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             setFocus(nameComponent);
             add(nameComponent);
 
-            add(uriComponent = new TextField<String>("uriinput", uriModel));
-            uriComponent.setEnabled(uriModified);
-            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel() {
+            add(uriComponent = new TextField<String>("uriinput", uriModel) {
                 @Override
-                public Object getObject() {
-                    return (uriComponent.isEnabled() ? "grayedin" : "grayedout");
+                public boolean isEnabled() {
+                    return uriModified;
+                }
+            });
+
+            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
+                @Override
+                public String getObject() {
+                    return uriModified ? "grayedin" : "grayedout";
                 }
             }));
             uriComponent.setOutputMarkupId(true);
 
-            add(new AjaxCheckBox("uricheck", new PropertyModel<Boolean>(this, "uriModified")) {
-                protected void onUpdate(AjaxRequestTarget target) {
-                    uriComponent.setEnabled(uriModified);
-                    if (uriModified == false) {
-                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
+            AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    uriModified = !uriModified;
+                    if (!uriModified) {
+                        uriModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(
+                                nameModel.getObject()));
                     }
                     target.addComponent(RenameDocumentDialog.this);
-                    target.addComponent(uriComponent);
                 }
-            });
+            };
+            uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {
+                @Override
+                public String getObject() {
+                    return uriModified ? getString("url-reset") : getString("url-edit");
+                }
+            }));
+            add(uriAction);
         }
 
         @Override

@@ -27,14 +27,15 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
@@ -103,8 +104,10 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         add(infoAction = new StdWorkflow("info", "info") {
             @Override
             protected IModel getTitle() {
-                return translator.getValueName("hippostd:stateSummary", new PropertyModel(FullReviewedActionsWorkflowPlugin.this, "stateSummary"));
+                return translator.getValueName("hippostd:stateSummary", new PropertyModel(
+                        FullReviewedActionsWorkflowPlugin.this, "stateSummary"));
             }
+
             @Override
             protected void invoke() {
             }
@@ -116,6 +119,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 return new StringResourceModel("in-use-by", this, null, new Object[] { new PropertyModel(
                         FullReviewedActionsWorkflowPlugin.this, "inUseBy") });
             }
+
             @Override
             protected void invoke() {
             }
@@ -174,8 +178,8 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             protected Dialog createRequestDialog() {
                 final IModel docName = getDocumentName();
                 // FIXME: no longer necessary in Wicket-1.4.x; see WICKET-2381
-                IModel title = new StringResourceModel("depublish-title", FullReviewedActionsWorkflowPlugin.this,
-                        null, new Object[] { docName }) {
+                IModel title = new StringResourceModel("depublish-title", FullReviewedActionsWorkflowPlugin.this, null,
+                        new Object[] { docName }) {
                     @Override
                     public void detach() {
                         docName.detach();
@@ -280,12 +284,14 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    uriName =  ((WorkflowDescriptorModel)getDefaultModel()).getNode().getName();
-                    targetName = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
-                } catch(RepositoryException ex) {
+                    uriName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
+                    targetName = ((HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode())
+                            .getLocalizedName();
+                } catch (RepositoryException ex) {
                     uriName = targetName = "";
                 }
-                return new RenameDocumentDialog(this, new StringResourceModel("rename-title", FullReviewedActionsWorkflowPlugin.this, null));
+                return new RenameDocumentDialog(this, new StringResourceModel("rename-title",
+                        FullReviewedActionsWorkflowPlugin.this, null));
             }
 
             @Override
@@ -293,13 +299,13 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 if (targetName == null || targetName.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
-                HippoNode node = (HippoNode) ((WorkflowDescriptorModel)getDefaultModel()).getNode();
+                HippoNode node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                 String nodeName = getNodeNameCodec().encode(uriName);
                 String localName = getLocalizeCodec().encode(targetName);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                ((FullReviewedActionsWorkflow)wf).rename(nodeName);
-                if(!node.getLocalizedName().equals(localName)) {
+                ((FullReviewedActionsWorkflow) wf).rename(nodeName);
+                if (!node.getLocalizedName().equals(localName)) {
                     defaultWorkflow.localizeName(localName);
                 }
                 return null;
@@ -319,8 +325,8 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
-                } catch(RepositoryException ex) {
+                    name = ((HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode()).getLocalizedName();
+                } catch (RepositoryException ex) {
                     name = "";
                 }
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("copy-title",
@@ -353,8 +359,8 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
-                } catch(RepositoryException ex) {
+                    name = ((HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode()).getLocalizedName();
+                } catch (RepositoryException ex) {
                     name = "";
                 }
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
@@ -395,8 +401,8 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                     }
                 };
                 // FIXME: no longer necessary in Wicket-1.4.x; see WICKET-2381
-                IModel title = new StringResourceModel("delete-title", FullReviewedActionsWorkflowPlugin.this,
-                        null, new Object[] { getDocumentName() }) {
+                IModel title = new StringResourceModel("delete-title", FullReviewedActionsWorkflowPlugin.this, null,
+                        new Object[] { getDocumentName() }) {
                     @Override
                     public void detach() {
                         docName.detach();
@@ -461,13 +467,15 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
     protected StringCodec getLocalizeCodec() {
         StringCodecFactory stringCodecFactory = new StringCodecFactory();
-        String encoder = getPluginConfig().getString("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
+        String encoder = getPluginConfig().getString("encoding.display",
+                "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
         return stringCodecFactory.getStringCodec(encoder);
     }
 
     protected StringCodec getNodeNameCodec() {
         StringCodecFactory stringCodecFactory = new StringCodecFactory();
-        String encoder = getPluginConfig().getString("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
+        String encoder = getPluginConfig().getString("encoding.node",
+                "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
         return stringCodecFactory.getStringCodec(encoder);
     }
 
@@ -613,26 +621,39 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             setFocus(nameComponent);
             add(nameComponent);
 
-            add(uriComponent = new TextField<String>("uriinput", uriModel));
-            uriComponent.setEnabled(uriModified);
-            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel() {
+            add(uriComponent = new TextField<String>("uriinput", uriModel) {
                 @Override
-                public Object getObject() {
-                    return (uriComponent.isEnabled() ? "grayedin" : "grayedout");
+                public boolean isEnabled() {
+                    return uriModified;
+                }
+            });
+
+            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
+                @Override
+                public String getObject() {
+                    return uriModified ? "grayedin" : "grayedout";
                 }
             }));
             uriComponent.setOutputMarkupId(true);
 
-            add(new AjaxCheckBox("uricheck", new PropertyModel<Boolean>(this, "uriModified")) {
-                protected void onUpdate(AjaxRequestTarget target) {
-                    uriComponent.setEnabled(uriModified);
-                    if (uriModified == false) {
-                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
+            AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    uriModified = !uriModified;
+                    if (!uriModified) {
+                        uriModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(
+                                nameModel.getObject()));
                     }
                     target.addComponent(RenameDocumentDialog.this);
-                    target.addComponent(uriComponent);
                 }
-            });
+            };
+            uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {
+                @Override
+                public String getObject() {
+                    return uriModified ? getString("url-reset") : getString("url-edit");
+                }
+            }));
+            add(uriAction);
         }
 
         @Override

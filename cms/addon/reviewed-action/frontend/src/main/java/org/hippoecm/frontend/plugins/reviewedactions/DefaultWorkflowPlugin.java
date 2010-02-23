@@ -22,12 +22,14 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
@@ -40,8 +42,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IEditor;
-import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -161,12 +163,14 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    uriName =  ((WorkflowDescriptorModel)getDefaultModel()).getNode().getName();
-                    targetName = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
-                } catch(RepositoryException ex) {
+                    uriName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
+                    targetName = ((HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode())
+                            .getLocalizedName();
+                } catch (RepositoryException ex) {
                     uriName = targetName = "";
                 }
-                return new RenameDocumentDialog(this, new StringResourceModel("rename-title", DefaultWorkflowPlugin.this, null));
+                return new RenameDocumentDialog(this, new StringResourceModel("rename-title",
+                        DefaultWorkflowPlugin.this, null));
             }
 
             @Override
@@ -174,13 +178,13 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 if (targetName == null || targetName.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
-                HippoNode node = (HippoNode) ((WorkflowDescriptorModel)getDefaultModel()).getNode();
+                HippoNode node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                 String nodeName = getNodeNameCodec().encode(uriName);
                 String localName = getLocalizeCodec().encode(targetName);
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                ((DefaultWorkflow)wf).rename(nodeName);
-                if(!node.getLocalizedName().equals(localName)) {
+                ((DefaultWorkflow) wf).rename(nodeName);
+                if (!node.getLocalizedName().equals(localName)) {
                     defaultWorkflow.localizeName(localName);
                 }
                 return null;
@@ -200,8 +204,8 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
-                } catch(RepositoryException ex) {
+                    name = ((HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode()).getLocalizedName();
+                } catch (RepositoryException ex) {
                     name = "";
                 }
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
@@ -254,13 +258,15 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     protected StringCodec getLocalizeCodec() {
         StringCodecFactory stringCodecFactory = new StringCodecFactory();
-        String encoder = getPluginConfig().getString("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
+        String encoder = getPluginConfig().getString("encoding.display",
+                "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
         return stringCodecFactory.getStringCodec(encoder);
     }
 
     protected StringCodec getNodeNameCodec() {
         StringCodecFactory stringCodecFactory = new StringCodecFactory();
-        String encoder = getPluginConfig().getString("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
+        String encoder = getPluginConfig().getString("encoding.node",
+                "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
         return stringCodecFactory.getStringCodec(encoder);
     }
 
@@ -313,26 +319,39 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             setFocus(nameComponent);
             add(nameComponent);
 
-            add(uriComponent = new TextField<String>("uriinput", uriModel));
-            uriComponent.setEnabled(uriModified);
-            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel() {
+            add(uriComponent = new TextField<String>("uriinput", uriModel) {
                 @Override
-                public Object getObject() {
-                    return (uriComponent.isEnabled() ? "grayedin" : "grayedout");
+                public boolean isEnabled() {
+                    return uriModified;
+                }
+            });
+
+            uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
+                @Override
+                public String getObject() {
+                    return uriModified ? "grayedin" : "grayedout";
                 }
             }));
             uriComponent.setOutputMarkupId(true);
 
-            add(new AjaxCheckBox("uricheck", new PropertyModel<Boolean>(this, "uriModified")) {
-                protected void onUpdate(AjaxRequestTarget target) {
-                    uriComponent.setEnabled(uriModified);
-                    if (uriModified == false) {
-                        uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
+            AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    uriModified = !uriModified;
+                    if (!uriModified) {
+                        uriModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(
+                                nameModel.getObject()));
                     }
                     target.addComponent(RenameDocumentDialog.this);
-                    target.addComponent(uriComponent);
                 }
-            });
+            };
+            uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {
+                @Override
+                public String getObject() {
+                    return uriModified ? getString("url-reset") : getString("url-edit");
+                }
+            }));
+            add(uriAction);
         }
 
         @Override
