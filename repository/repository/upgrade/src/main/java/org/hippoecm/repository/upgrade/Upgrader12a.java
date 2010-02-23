@@ -249,10 +249,25 @@ public class Upgrader12a implements UpdaterModule {
                 // TODO: convert sections to navigation sections?
                 browser.getNode("browserPlugin").remove();
 
-                browser.getNode("configurationTreeLoader/cluster.config").getProperty("wicket.model").remove();
-                browser.getNode("documentsTreeLoader/cluster.config").setProperty("wicket.model", "model.browse.collection");
-                browser.getNode("imagesTreeLoader/cluster.config").getProperty("wicket.model").remove();
+                Node docTreeLoaderConfig = browser.getNode("documentsTreeLoader/cluster.config");
+                docTreeLoaderConfig.setProperty("wicket.model", "model.browse.collection");
+                docTreeLoaderConfig.getProperty("register.context.menu").remove();
+                docTreeLoaderConfig.setProperty("workflow.enabled", true);
 
+                Node confTreeLoaderConfig = browser.getNode("configurationTreeLoader/cluster.config");
+                confTreeLoaderConfig.getProperty("wicket.model").remove();
+                confTreeLoaderConfig.getProperty("register.context.menu").remove();
+                confTreeLoaderConfig.setProperty("workflow.enabled", true);
+
+                Node imagesTreeLoaderConfig = browser.getNode("imagesTreeLoader/cluster.config");
+                imagesTreeLoaderConfig.getProperty("wicket.model").remove();
+                imagesTreeLoaderConfig.getProperty("register.context.menu").remove();
+                imagesTreeLoaderConfig.setProperty("workflow.enabled", true);
+
+                Node assetsTreeLoaderConfig = browser.getNode("assetsTreeLoader/cluster.config");
+                assetsTreeLoaderConfig.getProperty("register.context.menu").remove();
+                assetsTreeLoaderConfig.setProperty("workflow.enabled", true);
+                
                 Node nav = browser.getNode("navigator");
                 nav.getProperty("extension.browser").remove();
                 nav.getProperty("wicket.extensions").remove();

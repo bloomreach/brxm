@@ -92,13 +92,17 @@ public class FolderTreePlugin extends RenderPlugin {
             @Override
             protected MarkupContainer newContextLink(final MarkupContainer parent, String id, final TreeNode node,
                     final MarkupContainer content) {
+
+                final boolean workflowEnabled = getPluginConfig().getAsBoolean("workflow.enabled", true);
                 parent.add(new AbstractBehavior() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void renderHead(IHeaderResponse response) {
                         response.renderOnLoadJavascript(treeHelperBehavior.getRenderString());
-                        response.renderOnLoadJavascript(treeHelperBehavior.getUpdateString());
+                        if(workflowEnabled) {
+                            response.renderOnLoadJavascript(treeHelperBehavior.getUpdateString());
+                        }
                     }
                 });
 
@@ -128,7 +132,11 @@ public class FolderTreePlugin extends RenderPlugin {
                     });
                     return null;
                 } else {
-                    return super.newContextLink(parent, id, node, content);
+                    MarkupContainer container = super.newContextLink(parent, id, node, content);
+                    if(!workflowEnabled) {
+                        container.setEnabled(false);
+                    }
+                    return container; 
                 }
             };
 

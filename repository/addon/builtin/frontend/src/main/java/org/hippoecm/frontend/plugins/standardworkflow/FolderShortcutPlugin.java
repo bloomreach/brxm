@@ -121,6 +121,16 @@ public class FolderShortcutPlugin extends RenderPlugin {
         }
     }
 
+    @Override
+    public boolean isEnabled() {
+        return getPluginConfig().getAsBoolean("workflow.enabled", true);
+    }
+
+    @Override
+    public boolean isVisible() {
+        return getPluginConfig().getAsBoolean("workflow.enabled", true);
+    }
+
     // FIXME: pure duplication of logic in FolderWorkflowPlugin
     @SuppressWarnings("unchecked")
     public static void select(JcrNodeModel nodeModel, IServiceReference<IBrowseService> browseServiceRef,

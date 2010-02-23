@@ -36,7 +36,7 @@
     <sv:property sv:name="frontend:properties" sv:type="String">
       <sv:value>use.width.from.classname</sv:value>
       <sv:value>bind.to.layout.unit</sv:value>
-      <sv:value>register.context.menu</sv:value>
+      <sv:value>workflow.enabled</sv:value>
     </sv:property>
 
     <sv:property sv:name="model.folder" sv:type="String">
@@ -101,8 +101,8 @@
       <sv:property sv:name="bind.to.layout.unit" sv:type="String">
         <sv:value>${bind.to.layout.unit}</sv:value>
       </sv:property>
-      <sv:property sv:name="register.context.menu" sv:type="String">
-        <sv:value>${register.context.menu}</sv:value>
+      <sv:property sv:name="workflow.enabled" sv:type="String">
+        <sv:value>${workflow.enabled}</sv:value>
       </sv:property>
       <sv:property sv:name="use.width.from.classname" sv:type="String">
         <sv:value>${use.width.from.classname}</sv:value>
@@ -219,6 +219,9 @@
       <sv:property sv:name="workflow.categories" sv:type="String">
         <sv:value>threepane</sv:value>
       </sv:property>
+      <sv:property sv:name="workflow.enabled" sv:type="String">
+        <sv:value>${workflow.enabled}</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
   <sv:node sv:name="images">
@@ -238,7 +241,7 @@
     <sv:property sv:name="frontend:properties" sv:type="String">
       <sv:value>use.width.from.classname</sv:value>
       <sv:value>bind.to.layout.unit</sv:value>
-      <sv:value>register.context.menu</sv:value>
+      <sv:value>workflow.enabled</sv:value>
     </sv:property>
     
     <sv:property sv:name="model.folder" sv:type="String">
@@ -300,8 +303,8 @@
       <sv:property sv:name="bind.to.layout.unit" sv:type="String">
         <sv:value>${bind.to.layout.unit}</sv:value>
       </sv:property>
-      <sv:property sv:name="register.context.menu" sv:type="String">
-        <sv:value>${register.context.menu}</sv:value>
+      <sv:property sv:name="workflow.enabled" sv:type="String">
+        <sv:value>${workflow.enabled}</sv:value>
       </sv:property>
       <sv:property sv:name="use.width.from.classname" sv:type="String">
         <sv:value>${use.width.from.classname}</sv:value>
@@ -427,6 +430,9 @@
       <sv:property sv:name="workflow.categories" sv:type="String">
         <sv:value>threepane</sv:value>
       </sv:property>
+      <sv:property sv:name="workflow.enabled" sv:type="String">
+        <sv:value>${workflow.enabled}</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
 
@@ -447,7 +453,7 @@
     <sv:property sv:name="frontend:properties" sv:type="String">
       <sv:value>use.width.from.classname</sv:value>
       <sv:value>bind.to.layout.unit</sv:value>
-      <sv:value>register.context.menu</sv:value>
+      <sv:value>workflow.enabled</sv:value>
     </sv:property>
     
     <sv:property sv:name="model.folder" sv:type="String">
@@ -509,8 +515,8 @@
       <sv:property sv:name="bind.to.layout.unit" sv:type="String">
         <sv:value>${bind.to.layout.unit}</sv:value>
       </sv:property>
-      <sv:property sv:name="register.context.menu" sv:type="String">
-        <sv:value>${register.context.menu}</sv:value>
+      <sv:property sv:name="workflow.enabled" sv:type="String">
+        <sv:value>${workflow.enabled}</sv:value>
       </sv:property>
       <sv:property sv:name="use.width.from.classname" sv:type="String">
         <sv:value>${use.width.from.classname}</sv:value>
@@ -630,6 +636,9 @@
       <sv:property sv:name="workflow.categories" sv:type="String">
         <sv:value>threepane</sv:value>
       </sv:property>
+      <sv:property sv:name="workflow.enabled" sv:type="String">
+        <sv:value>${workflow.enabled}</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
   <sv:node sv:name="configuration">
@@ -649,7 +658,7 @@
     <sv:property sv:name="frontend:properties" sv:type="String">
       <sv:value>use.width.from.classname</sv:value>
       <sv:value>bind.to.layout.unit</sv:value>
-      <sv:value>register.context.menu</sv:value>
+      <sv:value>workflow.enabled</sv:value>
     </sv:property>
     
     <sv:property sv:name="model.folder" sv:type="String">
@@ -707,8 +716,8 @@
       <sv:property sv:name="bind.to.layout.unit" sv:type="String">
         <sv:value>${bind.to.layout.unit}</sv:value>
       </sv:property>
-      <sv:property sv:name="register.context.menu" sv:type="String">
-        <sv:value>${register.context.menu}</sv:value>
+      <sv:property sv:name="workflow.enabled" sv:type="String">
+        <sv:value>${workflow.enabled}</sv:value>
       </sv:property>
       <sv:property sv:name="use.width.from.classname" sv:type="String">
         <sv:value>${use.width.from.classname}</sv:value>

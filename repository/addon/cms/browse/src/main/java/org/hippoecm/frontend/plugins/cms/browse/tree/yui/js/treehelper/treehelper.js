@@ -68,7 +68,7 @@ if (!YAHOO.hippo.TreeHelper) {
                 if(el == null) {
                     return;
                 }
-                if(el.treeHelper.cfg.registerContextMenu) {
+                if(el.treeHelper.cfg.workflowEnabled) {
                     var items = Dom.getElementsByClassName('a_', 'div', id);
                     for(var i=0; i<items.length; i++) {
                         this.updateMouseListener(items[i].parentNode);
