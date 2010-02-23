@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon-builtin</artifactId>
-    <version>2.12.04-SNAPSHOT</version>
+    <version>2.12.04</version>
   </parent>
 
   <name>Builtin addon tests</name>
@@ -28,9 +28,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin/test</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin/test</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin/test</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_04/addon/builtin/test</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_04/addon/builtin/test</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_04/addon/builtin/test</url>
   </scm>
 
   <dependencies>
@@ -45,25 +45,25 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
 
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-tools-testutils</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     
@@ -93,109 +93,109 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-upgrade</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-modules</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-xinha-frontend</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-plugins</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-auth</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-config</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-ldap-repository</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-repository</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-gotolink</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-faceteddate-repository</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-editor-repository</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-reporting-repository</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-gallery-repository</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-defaultcontent-repository</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>test</scope>
     </dependency>
 
