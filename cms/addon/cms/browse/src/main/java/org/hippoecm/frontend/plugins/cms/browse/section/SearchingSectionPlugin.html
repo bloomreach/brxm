@@ -16,7 +16,7 @@
 <html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
   <wicket:panel>
     <div class="hippo-accordion-unit-top hippo-browser-search">
-      <div wicket:id="container">
+      <form wicket:id="container">
         <table class="hippo-search-section">
           <tr>
             <td class="hippo-search-section-input">
@@ -37,7 +37,7 @@
             <a class="hippo-search-scope" wicket:id="all"><wicket:message key="all-label">all</wicket:message></a>
           </div>
         </div>
-      </div>
+      </form>
     </div>
     <div style="clear: both;" />
     <div wicket:id="extension.tree">tree here</div>
