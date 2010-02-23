@@ -26,7 +26,7 @@
   <name>Hippo Site Toolkit CND Addon Resources for ecm version 7.2</name>
   <description>Hippo Site Toolkit CND Addon Resources for ecm version 7.2</description>
   <groupId>org.onehippo.ecm.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-  <artifactId>hst-addon-cnd_7_2</artifactId>
+  <artifactId>hst-addon-cnd</artifactId>
   <packaging>jar</packaging>
 
   <build>

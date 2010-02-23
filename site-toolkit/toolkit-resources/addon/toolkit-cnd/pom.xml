@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>cnd_7_2</module>
+    <module>cnd</module>
   </modules>
 
   <build>
