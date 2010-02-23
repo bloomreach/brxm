@@ -61,7 +61,7 @@ Xinha.prototype._fullscreenCompatible = function(resize)
             y:   parseInt(e._htmlArea.style.height),
             dim: dim
         };
-    } 
+    }
 
     var h = dim.y - e.config.fullScreenMargins[0] -  e.config.fullScreenMargins[2];
     var w = dim.x - e.config.fullScreenMargins[1] -  e.config.fullScreenMargins[3];
@@ -103,10 +103,6 @@ Xinha.prototype._fullscreenCompatible = function(resize)
   
   if(resize === true) {
       sizeItUp();
-      //change original sizes rel to viewport changes
-      var vp = Xinha.viewportSize();
-      e.originalSizes.x += (vp.x - e.originalSizes.dim.x);
-      e.originalSizes.y += (vp.y - e.originalSizes.dim.y);
       return;
   }
   

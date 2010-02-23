@@ -43,17 +43,16 @@ if (!YAHOO.hippo.EditorManager) {
          * The editor-manager controls the life-cycle of Xinha editors.
          */
         YAHOO.hippo.EditorManagerImpl = function() {
+            this.editors = new YAHOO.hippo.HashMap();
+            this.activeEditors = new YAHOO.hippo.HashMap();
+            this.newEditors = new YAHOO.hippo.HashMap();
+            
+            this.initialized = false;
+            this.registered = false;
+            this.sizeState =  null;
         };
 
         YAHOO.hippo.EditorManagerImpl.prototype = {
-
-            defaultTimeout      : 2000,
-            editors             : new YAHOO.hippo.HashMap(),
-            activeEditors       : new YAHOO.hippo.HashMap(),
-            initMap             : new YAHOO.hippo.HashMap(),
-            initialized         : false,
-            resizeRegistered    : false,
-            sizeState           : null,
 
             /**
              * Setup Xinha global variables and start loading XinhaLoader.js
@@ -71,12 +70,32 @@ if (!YAHOO.hippo.EditorManager) {
                 _editor_skin = editorSkin;
                 
                 //and load XinhaLoader.js
-                var me = this;
-                this._loadback(editorUrl + 'XinhaLoader.js', function() { 
-                    me.initialized = true; 
-                });
+                 // Internal method that is used to load Xinha plugins et al
+                var loadJS = function(Url, Callback, Scope, Bonus) {
+                    var agt       = navigator.userAgent.toLowerCase();
+                    var is_ie    = ((agt.indexOf("msie") != -1) && (agt.indexOf("opera") == -1));
+                    var T = !is_ie ? "onload" : 'onreadystatechange';
+                    var S = document.createElement("script");
+                    S.type = "text/javascript";
+                    S.src = Url;
+                    if ( Callback ) {
+                      S[T] = function() {      
+                        if ( is_ie && ( ! ( /loaded|complete/.test(window.event.srcElement.readyState) ) ) ){
+                          return;
+                        }
+                        Callback.call(Scope ? Scope : this, Bonus);
+                        S[T] = null;
+                      };
+                    }
+                    document.getElementsByTagName("head")[0].appendChild(S);
+                };
+                
+                loadJS(editorUrl + 'XinhaLoader.js', function() {
+                    this.initialized = true; 
+                }, this);
 
                 //Save open editors when a WicketAjax callback is executed
+                var me = this;
                 Wicket.Ajax.registerPreCallHandler(function() { 
                     me.saveEditors(); 
                 });
@@ -84,60 +103,8 @@ if (!YAHOO.hippo.EditorManager) {
             },
             
             /**
-             * Internal method that is used to load Xinha plugins et al
-             */
-            _loadback : function(Url, Callback, Scope, Bonus) {
-                var agt       = navigator.userAgent.toLowerCase();
-                var is_ie    = ((agt.indexOf("msie") != -1) && (agt.indexOf("opera") == -1));
-                var T = !is_ie ? "onload" : 'onreadystatechange';
-                var S = document.createElement("script");
-                S.type = "text/javascript";
-                S.src = Url;
-                if ( Callback ) {
-                  S[T] = function() {      
-                    if ( is_ie && ( ! ( /loaded|complete/.test(window.event.srcElement.readyState) ) ) ){
-                      return;
-                    }
-                    Callback.call(Scope ? Scope : this, Bonus);
-                    S[T] = null;
-                  };
-                }
-                document.getElementsByTagName("head")[0].appendChild(S);
-            },
-            
-            /**
-             * Called upon window.load (maybe LayoutManager.afterRender would be better?)
-             * Starts rendering of all Xinha on current page.
-             */
-            renderAll : function() {
-                if (!this.initialized) {
-                    //XinhaLoader.js hasn't been added to the head section yet, wait a little longer
-                    var me = this;
-                    window.setTimeout(function() {
-                        me.renderAll();
-                    }, 100);
-                    return;
-                }
-                var newEditors = this.initMap.valueSet();
-                this.renderPreviews(newEditors);
-                
-                for(var i=0; i<newEditors.length; ++i) {
-                    var editor = newEditors[i];
-                    editor.container = this._getBaseContainer(editor.name); //cache it
-                    this.editors.put(editor.name, editor);
-                    
-                    if(editor.config.started) {
-                        editor.hideTooltip();
-                        this.createAndRender(editor.name);
-                    } else {
-                        editor.createTooltip("Click to edit");
-                    }
-                }
-                this.initMap.clear();
-            },
-            
-            /**
-             * Register a XinhaTextEditor. This method is called on dom.load.
+             * Register a XinhaTextEditor. This method is called on dom load.
+             * TODO: implement configurable editor instantiation
              */
             register : function(cfg) {
                 var editor = null;
@@ -145,70 +112,256 @@ if (!YAHOO.hippo.EditorManager) {
                     editor = this.editors.remove(cfg.name);
                     editor.reset(cfg);
                 } else {
-                    editor = new YAHOO.hippo.Editor(cfg);
+                    editor = new YAHOO.hippo.XinhaEditor(cfg);
                 }
-                this.initMap.put(cfg.name, editor);
+                this.newEditors.put(cfg.name, editor);
                 
-                if(!this.resizeRegistered) {
+                if(!this.registered) {
+                    var deltaProvider = null; //alternative element for width/height delta
+                    
+                    //Start at the editor container element and traverse up to the nearest form.
+                    //During the traversal monitor for a parent element with classname 'column-wrapper', 
+                    //if found save the current element as an alternative deltaProvider
+                    var form = Dom.getAncestorBy(Dom.get(cfg.name), function(element) {
+                        if(element.tagName.toLowerCase() === 'form') {
+                            return true;
+                        }
+                        if(Dom.hasClass(element.parentNode, 'column-wrapper')) {
+                            deltaProvider = element;
+                        }
+                        return false;
+                    });
+                    
+                    if(form == null) {
+                        return;
+                    }
+                    
+                    //register the form as a resize listene
                     var me = this;
-                    var form = Dom.getAncestorByTagName(cfg.name, 'form');
-                    YAHOO.hippo.LayoutManager.registerResizeListener(form, this, function(sizes) {
+                    YAHOO.hippo.LayoutManager.registerResizeListener(form, this, function(unitSize) {
+                        var sizes = deltaProvider == null ? {width: unitSize.wrap.w, height: unitSize.wrap.h} : Dom.getRegion(deltaProvider);
                         if(me.sizeState == null) {
-                            me.sizeState = {w: sizes.wrap.w, h: sizes.wrap.h};
+                            me.sizeState = {w: sizes.width, h: sizes.height};
                         } else {
-                            var deltaW = sizes.wrap.w - me.sizeState.w;
-                            var deltaH = sizes.wrap.h - me.sizeState.h;
-                            
-                            var editors = me.activeEditors.valueSet();
-                            for(var i=0; i<editors.length; ++i) {
-                                var editor = editors[i];
-                                var t = editor.xinha.plugins["FullscreenCompatible"];
-                                if(typeof(t) === 'object' && typeof(t.instance.editor._isFullScreen) === 'boolean' && t.instance.editor._isFullScreen) {
-                                    t.instance.editor._fullscreenCompatible(true);
-                                    t.instance.editor.originalSizes.w += deltaW;
-                                    return;
-                                }
-                            }
+                            var deltaW = sizes.width  - me.sizeState.w;
+                            var deltaH = sizes.height - me.sizeState.h;
                             me.resize(deltaW, deltaH);
-                            me.sizeState = {w: sizes.wrap.w, h: sizes.wrap.h};
+                            me.sizeState = {w: sizes.width, h: sizes.height};
                         }
                     }, true);
                     YAHOO.hippo.HippoAjax.registerDestroyFunction(form, function() {
                         YAHOO.hippo.LayoutManager.unregisterResizeListener(form, me);
-                        me.resizeRegistered = false;
+                        me.registered = false;
                         //a new form is loaded so clear editors map
                         me.editors.forEach(me, function(k, v){
                             v.destroy();
                         });
                         me.editors.clear();
                     }, this);
-                    this.resizeRegistered = true;
+                    this.registered = true;
                 }
             },
 
-            createAndRender : function(name) {
-                var editor = this.editors.get(name);
+            /**
+             * Called upon window.load (maybe LayoutManager.afterRender would be better?)
+             * Starts rendering of all Xinha on current page.
+             */
+            render : function() {
+                if (!this.initialized) {
+                    //XinhaLoader.js hasn't been added to the head section yet, wait a little longer
+                    Lang.later (100, this, this.render);
+                    return;
+                }
                 
-                editor.createStarted = true;
+                this.newEditors.forEach(this, function(name, editor) {
+                    this.editors.put(editor.name, editor);
+                    editor.render();
+                });
+                this.newEditors.clear();
+            },
+            
+            resize : function(deltaW, deltaH) {
+                this.activeEditors.forEach(this, function(k, v) {
+                    v.resize(deltaW, deltaH);
+                });
+            },
+            
+            editorLoaded : function(name) {
+                var editor = this.editors.get(name);
+                editor.onEditorLoaded();
+
+                this.registerCleanup(editor.getContainer(), name);                
+                this.activeEditors.put(name, editor);
+                
+                this.info('Editor successfully loaded');
+            },
+            
+            cleanup : function(name) {
+                this.sizeState = null;
+                var editor = this.activeEditors.remove(name);
+                // TODO: works now??
+                //Xinha.collectGarbageForIE(); 
+                this.info('Cleanup executed');
+            },
+
+            registerCleanup : function(element, name) {
+                //TODO: test
+                //Dom.setStyle(element.parentNode, 'display', 'block');
+                HippoAjax.registerDestroyFunction(element, this.cleanup, this, name);
+            },
+            
+            saveEditors : function() {
+                this.activeEditors.forEach(this, function(k, v) {
+                    v.save();
+                });
+            },
+
+            //TODO: should be something like widget.id
+            saveByTextareaId : function(id) {
+                var editor = this.getEditorByWidgetId(id);
+                if(editor != null) {
+                    editor.save();
+                    this.info("Saved!");
+                }
+            },
+            
+            getEditorByWidgetId : function(id) {
+                var values = this.activeEditors.valueSet();
+                for ( var i = 0; i < values.length; ++i) {
+                    var editor = values[i];
+                    if(editor.getWidgetId() === id) {
+                        return editor;
+                    }
+                }
+                return null;
+            }
+        };
+        
+        YAHOO.hippo.BaseEditor = function(config) {
+            if(!Lang.isString(config.name) || config.name.trim().length == 0) {
+                throw new Error("Editor configuration parameter 'name' is undefined or empty");
+            }
+            this.name = config.name;
+            this.config = config;
+            this.lastData = null;
+            this.container = null;
+            this.sizeState = {w: 0, h: 0};
+        };
+        
+        YAHOO.hippo.BaseEditor.prototype = {
+            render : function() {
+            },
+            
+            save : function() {
+            },
+            
+            reset : function(config) {
+                this.config = config;
+                this.container = null;
+            },
+            
+            destroy : function() {
+            },
+            
+            resize : function(deltaW, deltaH) {
+            },
+            
+            setSize : function(w, h) {
+                this.sizeState.w = w;
+                this.sizeState.h = h;
+            },
+
+            isFullScreen : function() {
+                return false;
+            },
+            
+            getWidgetId : function() {
+                return null;
+            },
+            
+            getContainer : function() {
+                if(this.container == null) {
+                    this.container = Dom.getAncestorBy(Dom.get(this.name), function(element) {
+                        return Dom.hasClass(element, 'hippo-editor-field-subfield');
+                    });
+                }
+                return this.container;
+            },
+            
+            info : function(msg) {
+            },
+            
+            error : function(msg) {
+            }
+
+        };
+
+        YAHOO.hippo.XinhaEditor = function(config) {
+            YAHOO.hippo.XinhaEditor.superclass.constructor.apply(this, arguments); 
+
+            this.createStarted = false;
+            this.pluginsLoaded = false;
+            this.xinha = null;
+            this.tooltip = null;
+        };
+
+        YAHOO.extend(YAHOO.hippo.XinhaEditor, YAHOO.hippo.BaseEditor, {
+            
+            render : function() {
+                var container = this.getContainer();
+                Dom.addClass(container, 'rte-preview-style');
+
+                var containerHeight = this.calculateHeight(); 
+                Dom.setStyle(container, 'height', containerHeight + 'px');
+                
+                var clickable = Dom.get(this.name);
+                var clickableMargin = YAHOO.hippo.Dom.getMargin(clickable);
+                var clickableHeight = containerHeight - clickableMargin.h;
+                Dom.setStyle(clickable, 'height', clickableHeight + 'px');
+                
+                if(this.config.started) {
+                    if(this.tooltip != null) {
+                        this.hideTooltip();
+                        this.createEditor();
+                        this.info('snel geopened');
+                    } else {
+                        this.info('vertraaged geopened');
+                        Lang.later (300, this, this.createEditor);
+                    }
+                } else {
+                    this.createTooltip("Click to edit");
+                }
+                
+            },
+            
+            createEditor : function() {
+                this.createStarted = true;
 
                 var me = this;
-                if (!Xinha.loadPlugins(editor.config.plugins, function() { me.createAndRender(name); })) {
+                if (!Xinha.loadPlugins(this.config.plugins, function() { me.createEditor(); })) {
                     //Plugins not loaded yet, createAndRender will be recalled
                     return;
                 }
-                editor.pluginsLoaded = true;
+                this.pluginsLoaded = true;
 
-                Xinha.prototype.initSize = function() {
-                    //don't use Xinha default initSize method
+                //Don't use Xinha's default initSize method
+                Xinha.prototype.initSize = function() { /* Nothing */ }
+                //Xinha registers a resize event handler on the window.. not configurable so hack it out! And send patch to Xinha
+                var func = Xinha.addDom0Event;
+                Xinha.addDom0Event = function(el, ev, fn) {
+                    if(el === window && ev === 'resize') {
+                        return;
+                    }
+                    func.call(Xinha, el, ev, fn);
                 }
 
                 var xinhaConfig = new Xinha.Config();
-                if (!Lang.isUndefined(editor.config.styleSheets)
-                        && editor.config.styleSheets.length > 0) {
+                if (!Lang.isUndefined(this.config.styleSheets)
+                        && this.config.styleSheets.length > 0) {
                     //load xinha stylesheets
-                    xinhaConfig.pageStyleSheets = [editor.config.styleSheets.length];
-                    for ( var i = 0; i < editor.config.styleSheets.length; i++) {
-                        var ss = editor.config.styleSheets[i];
+                    xinhaConfig.pageStyleSheets = [this.config.styleSheets.length];
+                    for ( var i = 0; i < this.config.styleSheets.length; i++) {
+                        var ss = this.config.styleSheets[i];
                         if (!ss.indexOf("/") == 0 && !ss.indexOf("http://") == 0) {
                             ss = _editor_url + ss;
                         }
@@ -217,18 +370,25 @@ if (!YAHOO.hippo.EditorManager) {
                 }
                 
                 //Set formatting options
-                if(!Lang.isUndefined(editor.config.formatBlock)) {
-                    xinhaConfig.formatblock = editor.config.formatBlock;
+                if(!Lang.isUndefined(this.config.formatBlock)) {
+                    xinhaConfig.formatblock = this.config.formatBlock;
                 }
                 
                 //make editors 
-                var textarea = editor.config.textarea;
-                var xinha = Xinha.makeEditors([textarea], xinhaConfig, editor.config.plugins)[textarea];
+                var textarea = this.config.textarea;
+                var xinha = Xinha.makeEditors([textarea], xinhaConfig, this.config.plugins)[textarea];
+                
+                var add = function(_base, _new) {
+                    for ( var i = 0; i < _new.length; i++) {
+                        _base[_new[i].key] = _new[i].value;
+                    }
+                    return _base;
+                }
                 
                 //concatenate default properties with configured properties
-                xinha.config = this._appendProperties(xinha.config, editor.config.properties);
+                xinha.config = add(xinha.config, this.config.properties);
                 
-                if(editor.config.toolbars.length == 0) {
+                if(this.config.toolbars.length == 0) {
                     //Load toolbar with all Xinha default buttons
                     //remove button popupeditor
                     outerLoop:
@@ -241,192 +401,64 @@ if (!YAHOO.hippo.EditorManager) {
                         }
                     }
                 } else {
-                    xinha.config.toolbar = [ editor.config.toolbars ];
+                    xinha.config.toolbar = [ this.config.toolbars ];
                 }
 
-                for ( var i = 0; i < editor.config.pluginProperties.length; i++) {
-                    var pp = editor.config.pluginProperties[i];
-                    //console.log('Adding properties to xinha[' + editor.name + ']plugin[' + pp.name + '] ');//+ Lang.dump(pp.values));
-                    xinha.config[pp.name] = this._appendProperties(
-                            xinha.config[pp.name], pp.values);
+                for ( var i = 0; i < this.config.pluginProperties.length; i++) {
+                    var pp = this.config.pluginProperties[i];
+                    xinha.config[pp.name] = add(xinha.config[pp.name], pp.values);
                 }
 
-                //xinha.registerPlugins(editor.config.plugins); //moved this to Xinha.makeEditors arguments
-                editor.xinha = xinha;
-                xinha_editors[editor.name] = xinha;
-                editor.xinhaAvailable = true;
+                this.xinha = xinha;
+                xinha_editors[this.name] = xinha;
                 
-                this.render(editor.name);
-            },
-
-            render : function(name) {
-                if(this.activeEditors.containsKey(name)) {
-                    this.log('Error: render called on already active editor[' + name + '] - should never happen')
-                    return;
+                var _name = this.name;
+                this.xinha._onGenerate = function() {
+                    YAHOO.hippo.EditorManager.editorLoaded(_name);
                 }
-                
-                var editor = this.editors.get(name);
-                if (!editor.xinhaAvailable) {
-                    if (!editor.createStarted) {
-                        this.createAndRender(name);
-                    }
-                    return;
-                }
-                
-                var me = this;
-                //register onload callback
-                editor.xinha._onGenerate = function() {
-                    me.editorLoaded(name);
-                }
-                Xinha.startEditors([editor.xinha]);
+                Xinha.startEditors([this.xinha]);
             },
             
-            resize : function(deltaW, deltaH) {
-                var editors = this.activeEditors.valueSet();
-                for(var i=0; i<editors.length; ++i) {
-                    var editor = editors[i];
-                    var newWidth = editor.sizeState.w + deltaW;
-                    var newHeight = editor.sizeState.h;
-                    this.sizeEditor(editor, newWidth, newHeight);
-                }
-            },
-            
-            sizeEditor : function(editor, w, h) {
-                editor.xinha.sizeEditor(w + 'px', h + 'px', true, true);
-                editor.sizeState.w = w;
-                editor.sizeState.h = h;
+            setSize : function(w, h) {
+                this.xinha.sizeEditor(w + 'px', h + 'px', true, true);
+                YAHOO.hippo.XinhaEditor.superclass.setSize.call(this, w, h);
             },
             
             /**
-             * Function called by Xinha after it finished creating the editor.
-             * At this point we can take some final steps:
-             * - set the editor's size according to the space available
-             * - remove the 'preview ' styling from the container
-             * - register this editor's cleanup function
-             * - initialize the lastData property with the initial contents of this editor
-             * - do some silly IE stuff
-             * - store the editor in our activeEditors map
-             * And finally give it focus. This last step is a bit blunt and should be 
-             * implemented better.
+             * FIXME: Xinha looses the caret in FF on resize
              */
-            editorLoaded : function(name) {
-                var w,h;
-                var editor = this.editors.get(name);
-                editor.afterEditorLoad();
-                if(this.hasPreviewStyles(name)) {
-                    this.removePreviewStyles(editor.name);
+            resize : function(deltaW, deltaH) {
+                //TODO: implement reasonable deltaH handling
+                deltaH = 0;
                     
-                    var container = Dom.get(name);
-                    
-                    //var container = editor.getContainer();
-                    var pr = Dom.getRegion(container);
-                    var marges = YAHOO.hippo.Dom.getMargin(container);
-                    w = pr.width - marges.w;
-                    h = pr.height - marges.h;
+                var newWidth = this.sizeState.w + deltaW;
+                var newHeight = this.sizeState.h + deltaH;
+                //check if there is a Xinha instance in fullscreen
+                if(this.isFullScreen()) {
+                    var t = this.xinha.plugins["FullscreenCompatible"];
+                    t.instance.editor._fullscreenCompatible(true);
+                    t.instance.editor.originalSizes.x = newWidth;
+                    t.instance.editor.originalSizes.y = newHeight;
+                    this.sizeState.w = newWidth;
+                    this.sizeState.h = newHeight;
                 } else {
-                    var dim = this.getDimensions(container, editor.config)
-                    w = dim.w;
-                    h = dim.h;
-                }
-                this.sizeEditor(editor, w, h);
-                
-                this.registerCleanup(container, name);
-                editor.lastData = editor.xinha.getInnerHTML();
-                
-                //Workaround for http://issues.onehippo.com/browse/HREPTWO-2960
-                //Test if IE8, than set&remove focus on Xinha to prevent UI lockup
-                if(YAHOO.env.ua.ie >= 8) {
-                  editor.xinha.activateEditor();
-                  editor.xinha.focusEditor();
-                  editor.xinha.deactivateEditor();
-                }
-                
-                this.activeEditors.put(editor.name, editor);
-                if(editor.config.focus) {
-                    editor.xinha.activateEditor();
-                    editor.xinha.focusEditor();
-                }
-
-            },
-            
-            renderPreviews : function(editors) {
-                for(var i=0; i<editors.length; ++i) {
-                    var editor = editors[i];
-                    var config = editor.config;
-                    var container = editor.getContainer();
-                    
-                    var containerMargin = YAHOO.hippo.Dom.getMargin(container);
-                    var containerHeight = this.getHeight(container, config) - containerMargin.h; 
-                    Dom.setStyle(container, 'height', containerHeight + 'px');
-                    Dom.addClass(container, 'rte-preview-style');
-                    
-                    var clickable = Dom.get(editor.name);
-                    var clickableMargin = YAHOO.hippo.Dom.getMargin(clickable);
-                    var clickableHeight = containerHeight - clickableMargin.h;
-                    Dom.setStyle(clickable, 'height', clickableHeight + 'px');
+                    this.setSize(newWidth, newHeight);
                 }
             },
             
-            getDimensions : function(el, cfg) {
-                var minWidth = 0, minHeight = 0;
-                for(var i=0; i<cfg.pluginProperties.length; ++i) {
-                    var x = cfg.pluginProperties[i];
-                    if(x.name === 'AutoResize') {
-                        for(var j=0; j<x.values.length; ++j) {
-                            if(x.values[j].key === 'minHeight') {
-                                minHeight = x.values[j].value; 
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-                
-                if(Lang.isUndefined(minWidth) || minWidth <= 0) {
-                    minWidth = 150;
-                }
-                if(Lang.isUndefined(minHeight) || minHeight <= 0) {
-                    minHeight= 150;
-                }
-                var vWidth = Dom.getViewportWidth();
-                var vHeight = Dom.getViewportHeight();
-                
-                var x = Dom.getRegion(el).width;
-                if(x < minWidth) {
-                    x = minWidth;
-                }
-                
-                var p = vHeight / minHeight;
-                var yy = 0;
-                if(p >= 2.2) {
-                    yy = (minHeight/20)*p;
-                }
-
-                y = minHeight;
-                if(vHeight - vHeight > 0) {  //what should this do?
-                    if(y - yy > minHeight) {
-                        y -= yy;
-                    }
-                } else {
-                    y += yy;
-                }
-                
-                var margins = YAHOO.hippo.Dom.getMargin(el);
-                var width = x - margins.w;
-                var height = Math.round(y) - margins.h;
-                return {
-                    w: width, 
-                    h: height,
-                    viewHeight: vHeight,
-                    viewWidth: vWidth
-                };
-
+            getWidgetId : function() {
+                return this.config.textarea;  
             },
             
-            getHeight : function(el, cfg) {
+            isFullScreen : function() {
+                var t = this.xinha.plugins["FullscreenCompatible"];
+                return Lang.isObject(t) && Lang.isBoolean(t.instance.editor._isFullScreen) && t.instance.editor._isFullScreen;
+            },
+            
+            calculateHeight : function() {
                 var minHeight = 175; //below this threshold Xinha will take too much height and bleed out out the parent element
-                for(var i=0; i<cfg.pluginProperties.length; ++i) {
-                    var x = cfg.pluginProperties[i];
+                for(var i=0; i<this.config.pluginProperties.length; ++i) {
+                    var x = this.config.pluginProperties[i];
                     if(x.name === 'AutoResize') {
                         for(var j=0; j<x.values.length; ++j) {
                             if(x.values[j].key === 'minHeight') {
@@ -439,7 +471,7 @@ if (!YAHOO.hippo.EditorManager) {
                 }
                 var vHeight = Dom.getViewportHeight();
                 var p = vHeight / minHeight;
-                var yy = 0;
+                var yy = 0; 
                 if(p >= 2.2) {
                     yy = (minHeight/20)*p;
                 }
@@ -452,119 +484,12 @@ if (!YAHOO.hippo.EditorManager) {
                 } else {
                     y += yy;
                 }
-                return Math.round(y);
+                
+                y = Math.round(y);
+                
+                var containerMargin = YAHOO.hippo.Dom.getMargin(this.getContainer());
+                return y - containerMargin.h;
             },
-            
-            addPreviewStyles : function(name) {
-                var container = this.editors.get(name).container;
-                if(container != null) {
-                    Dom.addClass(container, 'rte-preview-style')
-                }
-            },
-            
-            hasPreviewStyles : function(name) {
-                return Dom.hasClass(this.editors.get(name).container, 'rte-preview-style');
-            },
-            
-            removePreviewStyles : function(name) {
-                var container = this.editors.get(name).container;
-                if(container != null) {
-                    Dom.removeClass(container, 'rte-preview-style');
-                }
-            },
-            
-            _getBaseContainer : function(name) {
-                var el = Dom.get(name);
-                while (el != null && el != document.body) {
-                    if (Dom.hasClass(el, 'hippo-editor-field-subfield')) {
-                        return el;
-                    }
-                    el = el.parentNode;
-                }
-                return null;
-            },
-            
-            cleanup : function(name) {
-                var editor = this.activeEditors.remove(name);
-                //Xinha.collectGarbageForIE(); //TODO: doesn't work like this
-            },
-
-            registerCleanup : function(element, name) {
-                Dom.setStyle(element.parentNode, 'display', 'block');
-                HippoAjax.registerDestroyFunction(element, this.cleanup, this, name);
-            },
-            
-            saveEditors : function() {
-                var keys = this.activeEditors.keySet();
-                for ( var i = 0; i < keys.length; ++i) {
-                    this.save(keys[i]);
-                }
-            },
-
-            
-            saveByTextareaId : function(id) {
-                var values = this.activeEditors.valueSet();
-                for ( var i = 0; i < values.length; ++i) {
-                    var editor = values[i];
-                    if(editor.config.textarea === id) {
-                        this.save(editor.name);
-                        break;
-                    }
-                }
-            },
-
-            save: function(name) {
-                var editor = this.editors.get(name);
-                if(editor != null && editor.xinha.plugins['AutoSave']) {
-                    try {
-                        var data = editor.xinha.getInnerHTML();
-                        if(data != editor.lastData) {
-                            editor.xinha.plugins['AutoSave'].instance.save();
-                            editor.lastData = data;
-                        }
-                    } catch(e) {
-                        YAHOO.log('Error retrieving innerHTML from xinha, skipping save', 'error', 'EditorManager');
-                    }
-                }
-            },
-
-            clear : function() {
-                this.editors.forEach(this, function(k, v) {
-                    if (Dom.get(k) == null) {
-                        var ed = this.editors.remove(k);
-                        // TODO: cleanup xinha
-                    }
-                });
-            },
-
-            _appendProperties : function(base, properties) {
-                for ( var i = 0; i < properties.length; i++) {
-                    base[properties[i].key] = properties[i].value;
-                }
-                return base;
-            },
-
-            log : function(message) {
-                //YAHOO.log(message, "info", "EditorManager");           
-            }
-        };
-        
-        YAHOO.hippo.Editor = function(config) {
-            this.name = config.name;
-            this.config = config;
-        };
-
-        YAHOO.hippo.Editor.prototype = {
-            createStarted : false,
-            pluginsLoaded : false,
-            xinhaAvailable : false,
-            name : null,
-            config : null,
-            xinha : null,
-            lastData: null,
-            container: null,
-            sizeState: {w: 0, h: 0},
-            tooltip : null,
             
             createTooltip : function(defaultText) {
                 var context = this.getContainer();
@@ -594,18 +519,13 @@ if (!YAHOO.hippo.EditorManager) {
                     this.tooltip.hide();
                 }
             },
-                    
-            getContainer : function() {
-                if(this.container == null) {
-                    var el = Dom.get(this.name);
-                    while (el != null && el != document.body) {
-                        if (Dom.hasClass(el, 'hippo-editor-field-subfield')) {
-                            this.container = el;
-                        }
-                        el = el.parentNode;
-                    }
+            
+            destroyTooltip : function() {
+                if(this.tooltip != null) {
+                    this.hideTooltip();
+                    this.tooltip.destroy();
+                    this.tooltip = null;
                 }
-                return this.container;
             },
             
             getProperty : function(key, defaultValue) {
@@ -616,28 +536,80 @@ if (!YAHOO.hippo.EditorManager) {
                 }
                 return Lang.isUndefined(defaultValue) ? null : defaultValue; 
             },
-            
-            afterEditorLoad : function() {
-                this.destroyTooltip();
-            },
+                    
+            /**
+             * Function called by Xinha after it finished creating the editor.
+             * At this point we can take some final steps:
+             * - set the editor's size according to the space available
+             * - remove the 'preview ' styling from the container
+             * - register this editor's cleanup function
+             * - initialize the lastData property with the initial contents of this editor
+             * - do some silly IE stuff
+             * - store the editor in the activeEditors map
+             * And finally give it focus. This last step is a bit blunt and should be 
+             * implemented better.
+             */
 
-            reset : function(config) {
-                this.config = config;
-                this.container = null;
+            onEditorLoaded : function() {
+                this.destroyTooltip();
+                
+                var c = this.getContainer();
+                if(c == null) {
+                    return;
+                }
+                
+                var w,h;
+                if(Dom.hasClass(c, 'rte-preview-style')) {
+                    Dom.removeClass(c, 'rte-preview-style');
+
+                    var pr = Dom.getRegion(c);
+                    var marges = YAHOO.hippo.Dom.getMargin(c);
+                    w = pr.width - marges.w;
+                    h = pr.height - marges.h;
+                } else {
+                    var dim = this.getDimensions(c, this.config)
+                    w = dim.w;
+                    h = dim.h;
+                }
+                this.setSize(w, h);
+                
+                this.lastData = this.xinha.getInnerHTML();
+                
+                //Workaround for http://issues.onehippo.com/browse/HREPTWO-2960
+                //Test if IE8, than set&remove focus on Xinha to prevent UI lockup
+                if(YAHOO.env.ua.ie >= 8) {
+                  this.xinha.activateEditor();
+                  this.xinha.focusEditor();
+                  this.xinha.deactivateEditor();
+                }
+                if(this.config.focus) {
+                    this.xinha.activateEditor();
+                    this.xinha.focusEditor();
+                }
+            },
+            
+            save : function() {
+                if(this.xinha.plugins['AutoSave']) {
+                    try {
+                        var data = this.xinha.getInnerHTML();
+                        if(data != this.lastData) {
+                            this.xinha.plugins['AutoSave'].instance.save();
+                            this.lastData = data;
+                            
+                            this.info('Content saved.');
+                        }
+                    } catch(e) {
+                        this.error('Error retrieving innerHTML from xinha, skipping save');
+                    }
+                }
             },
             
             destroy : function() {
                 this.destroyTooltip();
-            },
-            
-            destroyTooltip : function() {
-                this.hideTooltip();
-                if(this.tooltip != null) {
-                    this.tooltip.destroy();
-                    this.tooltip = null;
-                }
             }
-        }
+
+            
+        });
     })();
 
     YAHOO.hippo.EditorManager = new YAHOO.hippo.EditorManagerImpl();
