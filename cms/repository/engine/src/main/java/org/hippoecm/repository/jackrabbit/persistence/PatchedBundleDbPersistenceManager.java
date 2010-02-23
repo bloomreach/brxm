@@ -39,6 +39,9 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeReferences;
 import org.apache.jackrabbit.core.state.NodeReferencesId;
 import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.core.state.PropertyState;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.uuid.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -433,11 +436,16 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
                 PropertyId refPropertyId;
                 refPropertyId = (PropertyId)refIterator.next();
                 try {
-                    ItemState propertyState = load(refPropertyId);
-                    checkPath(propertyState);
-                    if(fix) {
-                        log.info("keep reference "+refPropertyId+" to "+id);
-                        fixedRefs.addReference(refPropertyId);
+                    Name propertyName = refPropertyId.getName();
+                    if(!(propertyName.equals(NameConstants.JCR_VERSIONHISTORY) ||
+                         propertyName.equals(NameConstants.JCR_BASEVERSION) ||
+                         propertyName.equals(NameConstants.JCR_PREDECESSORS))) {
+                        PropertyState propertyState = load(refPropertyId);
+                        checkPath(propertyState);
+                        if(fix) {
+                            log.info("keep reference "+refPropertyId+" to "+id);
+                            fixedRefs.addReference(refPropertyId);
+                        }
                     }
                 } catch (NoSuchItemStateException e) {
                     if (!fix) {
