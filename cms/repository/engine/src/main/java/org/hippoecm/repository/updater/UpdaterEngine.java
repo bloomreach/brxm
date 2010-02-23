@@ -311,6 +311,10 @@ public class UpdaterEngine {
         return versionProperty;
     }
 
+    UpdaterEngine() {
+        // for unit testing purposes only
+    }
+
     public UpdaterEngine(Session session) throws RepositoryException {
         this(session, Modules.getModules());
     }
@@ -327,7 +331,7 @@ public class UpdaterEngine {
         updaterSession = new UpdaterSession(session);
     }
 
-    private boolean prepare() throws RepositoryException {
+    boolean prepare() throws RepositoryException {
         // Obtain which version we are currently at
         Set<String> currentVersions = new HashSet<String>();
 
@@ -345,6 +349,10 @@ public class UpdaterEngine {
         }
         log.info("Migration cycle starting with version tags:"+new String(logInfo));
 
+        return prepare(modules, currentVersions);
+    }
+
+    static boolean prepare(Vector<ModuleRegistration> modules, Set<String> currentVersions) throws RepositoryException {
         // Select applicable modules for the current version.
         for (Iterator<ModuleRegistration> iter = modules.iterator(); iter.hasNext();) {
             ModuleRegistration registration = iter.next();
@@ -353,14 +361,19 @@ public class UpdaterEngine {
                 if (!"m8-bootstrap".equals(registration.name)) {
                     log.warn("module "+registration.name+" did not specify start tag");
                 }
-                if(currentVersions.size() == 0)
+                if(!currentVersions.contains(registration.endTag)) {
                     isValid = true;
+                }
             }
             for (String requestedVersion : registration.startTag) {
                 if (currentVersions.contains(requestedVersion)) {
                     isValid = true;
                     break;
                 }
+            }
+            if(registration.endTag != null && registration.startTag.contains(registration.endTag)) {
+                log.error("module "+registration.name+" specified circular start-end tag dependency; disabling module");
+                isValid = false;
             }
             if (!isValid) {
                 iter.remove();
@@ -402,14 +415,16 @@ public class UpdaterEngine {
                         int index = -1;
                         for (ListIterator<ModuleRegistration> findAfter = modules.listIterator(); findAfter.hasNext(); ) {
                             if (findAfter.next().name.equals(after)) {
-                                index = findAfter.nextIndex();
-                                break;
+                                if (findAfter.nextIndex() >= iter.nextIndex()) {
+                                    index = findAfter.nextIndex();
+                                    break;
+                                }
                             }
                         }
                         if (index != -1) {
                             modified = true;
                             iter.remove();
-                            modules.insertElementAt(module, index-1);
+                            modules.insertElementAt(module, index-1); // minus one as we just removed an element before the index
                             break;
                         }
                     }
