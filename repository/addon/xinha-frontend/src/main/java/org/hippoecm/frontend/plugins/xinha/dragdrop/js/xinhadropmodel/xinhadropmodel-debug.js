@@ -40,18 +40,19 @@ YAHOO.namespace("hippo");
             if(textAreas == null || textAreas[0] == null)
                 return cp;
             
-            var id = textAreas[0].id;
-            var x= eval('xinha_editors.' + id);
-
-            var sel = x.getSelection();
-            var range = x.createRange(sel);
-
-            cp.put("emptySelection", x.selectionEmpty(sel));
-            var activeElement = x.activeElement(sel);
-            if(activeElement != null) {
-                YAHOO.log("Active element: " + activeElement.tagName.toLowerCase(), "info", "DragDropModel");
-                cp.put("activeElement", activeElement.tagName.toLowerCase());
-            }    
+            var editor = YAHOO.hippo.EditorManager.getEditorByWidgetId(textAreas[0].id);
+            if(editor != null) {
+                var xinha = editor.xinha;
+                var sel = xinha.getSelection();
+                var range = xinha.createRange(sel);
+    
+                cp.put("emptySelection", xinha.selectionEmpty(sel));
+                var activeElement = xinha.activeElement(sel);
+                if(activeElement != null) {
+                    YAHOO.log("Active element: " + activeElement.tagName.toLowerCase(), "info", "DragDropModel");
+                    cp.put("activeElement", activeElement.tagName.toLowerCase());
+                }
+            }
             return cp;
         }       
         
