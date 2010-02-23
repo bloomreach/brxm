@@ -462,7 +462,7 @@ background-image:url(images/box-blue2.png);}
 .hippo-root div.wicket-modal div.w_caption span{color: white; font-size: 11px; font-weight: bold; margin: 0px; padding: 0px; position: relative;}
 .hippo-root div.w_blue a.w_close{width: 44px; height: 18px; background-position: -154px -48px;}
 .hippo-root div.w_blue a.w_close:hover{background-position: -154px -66px; width: 44px; height: 18px;}
-.hippo-root div.wicket-modal div.w_content {background: white url("images/box-blue-back.png") repeat-x bottom left} 
+.hippo-root div.wicket-modal div.w_content {background: white url("images/box-blue-back.png") repeat-x bottom left;}
 .hippo-root div.wicket-modal div.w_content_3{border: none}
 .hippo-root div.wicket-modal div.w_content_2 {padding-top: 0px}
 .hippo-root div.wicket-modal div.w_content_1{margin-right: 7px;}
@@ -1381,4 +1381,8 @@ div.rte-preview-style table{ visibility: hidden; }
     opacity: .12;
     filter: alpha(opacity=12);  /* For IE */
 }
+
+/* Workflow reject request dialog: textarea styling */
+.hippo-window-form textarea.text-dialog-textarea { width: 420px; height: 150px; }
+
 
