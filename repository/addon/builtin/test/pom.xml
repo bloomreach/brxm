@@ -80,12 +80,6 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-tools-testutils</artifactId>
       <version>2.12.04-SNAPSHOT</version>
       <scope>test</scope>
@@ -99,6 +93,12 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
+      <version>2.12.04-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-repository-upgrade</artifactId>
       <version>2.12.04-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
@@ -282,6 +282,19 @@
               </excludes>
             </configuration>
           </execution>
+          <execution>
+            <id>integration-tests</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <skip>false</skip>
+              <includes>
+                <include>**/*IntegrationTest.java</include>
+              </includes>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -347,61 +360,6 @@
           </dependency>
         </dependencies>
       </dependencyManagement>
-    </profile>
-    <profile>
-      <id>integration-tests</id>
-      <activation>
-        <property>
-          <name>integrationTests</name>
-          <value>true</value>
-        </property>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.hippoecm</groupId>
-          <artifactId>hippo-ecm-repository-engine</artifactId>
-          <version>${project.version}</version>
-          <type>jar</type>
-          <classifier>tests</classifier>
-          <scope>test</scope>
-          <optional>true</optional>
-        </dependency>
-      </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <groupId>org.apache.maven.plugins</groupId>
-            <version>2.4</version>
-            <configuration>
-              <skip>true</skip>
-              <forkMode>always</forkMode>
-              <workingDirectory>${project.build.directory}</workingDirectory>
-              <systemProperties>
-                <property>
-                  <name>history.points</name>
-                  <value>${history.points}</value>
-                </property>
-              </systemProperties>
-            </configuration>
-            <executions>
-              <execution>
-                <id>integration-tests</id>
-                <phase>integration-test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>false</skip>
-                  <includes>
-                    <include>**/*IntegrationTest.java</include>
-                  </includes>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 

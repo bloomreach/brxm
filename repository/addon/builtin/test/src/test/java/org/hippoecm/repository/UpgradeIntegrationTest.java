@@ -36,7 +36,9 @@ import javax.jcr.Value;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 public class UpgradeIntegrationTest
 {
@@ -58,7 +60,7 @@ public class UpgradeIntegrationTest
         }
     }
 
-    @Test
+    @Ignore
     public void dump() throws RepositoryException, IOException {
         delete(new File("storage"));
         HippoRepository repository = HippoRepositoryFactory.getHippoRepository("storage");
@@ -71,9 +73,48 @@ public class UpgradeIntegrationTest
         version.setValue(newValues);
         session.save();
         repository.close();
-        FileOutputStream ostream = new FileOutputStream("../dump.zip");
+        FileOutputStream ostream = new FileOutputStream("../src/test/fixtures/dump.zip");
         dump(ostream, "storage");
         ostream.close();
+    }
+
+    @Test
+    public void migrate() throws RepositoryException, IOException {
+        delete(new File("storage"));
+        FileInputStream istream = new FileInputStream("../src/test/fixtures/dump.zip");
+        restore(istream);
+        istream.close();
+        HippoRepository repository = HippoRepositoryFactory.getHippoRepository("storage");
+        Session session = repository.login(USERNAME, PASSWORD);
+        assertTrue(session.getRootNode().hasNode("hippo:configuration"));
+        assertTrue(session.getRootNode().hasNode("hippo:configuration/hippo:initialize"));
+        assertTrue(session.getRootNode().hasProperty("hippo:configuration/hippo:initialize/hippo:version"));
+        Set<String> versionTags = new TreeSet<String>();
+        for(Value value : session.getRootNode().getProperty("hippo:configuration/hippo:initialize/hippo:version").getValues()) {
+            versionTags.add(value.getString());
+        }
+        assertTrue(versionTags.contains("v12a"));
+        assertTrue(versionTags.contains(MAGIC));
+    }
+
+    static public void restore(InputStream istream) throws IOException {
+        JarInputStream input = new JarInputStream(istream);
+        ZipEntry ze;
+        do {
+            ze = input.getNextEntry();
+            if(ze != null) {
+                if(ze.isDirectory()) {
+                    String name = ze.getName();
+                    File file = new File(name);
+                    file.mkdir();
+                } else {
+                    FileOutputStream ostream = new FileOutputStream(ze.getName());
+                    stream(input, ostream);
+                    ostream.close();
+                }
+            }
+        } while(ze != null);
+        input.close();
     }
 
     static public void dump(OutputStream ostream, String location) throws IOException {
