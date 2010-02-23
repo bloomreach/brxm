@@ -142,7 +142,7 @@
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
-        <sv:property sv:name="register.context.menu" sv:type="Boolean">
+        <sv:property sv:name="workflow.enabled" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
@@ -285,7 +285,7 @@
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
-        <sv:property sv:name="register.context.menu" sv:type="Boolean">
+        <sv:property sv:name="workflow.enabled" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
@@ -318,7 +318,7 @@
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
-        <sv:property sv:name="register.context.menu" sv:type="Boolean">
+        <sv:property sv:name="workflow.enabled" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
@@ -352,7 +352,7 @@
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
-        <sv:property sv:name="register.context.menu" sv:type="Boolean">
+        <sv:property sv:name="workflow.enabled" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
@@ -497,7 +497,7 @@
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
-        <sv:property sv:name="register.context.menu" sv:type="Boolean">
+        <sv:property sv:name="workflow.enabled" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
@@ -530,7 +530,7 @@
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
-        <sv:property sv:name="register.context.menu" sv:type="Boolean">
+        <sv:property sv:name="workflow.enabled" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
@@ -564,7 +564,7 @@
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
-        <sv:property sv:name="register.context.menu" sv:type="Boolean">
+        <sv:property sv:name="workflow.enabled" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">

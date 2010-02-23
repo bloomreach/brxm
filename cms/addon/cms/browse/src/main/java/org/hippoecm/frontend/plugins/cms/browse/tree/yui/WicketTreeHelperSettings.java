@@ -32,10 +32,11 @@ public class WicketTreeHelperSettings extends YuiObject {
     protected static final StringSetting SET_WIDTH_TO_CLASSNAME = new StringSetting("setWidthToClassname", "hippo-tree");
     protected static final StringSetting USE_WIDTH_FROM_CLASSNAME = new StringSetting("useWidthFromClassname");
     protected static final BooleanSetting BIND_TO_LAYOUT_UNIT = new BooleanSetting("bindToLayoutUnit", true);
-    protected static final BooleanSetting REGISTER_CONTEXT_MENU = new BooleanSetting("registerContextMenu", true);
+    
+    protected static final BooleanSetting WORKFLOW_ENABLED = new BooleanSetting("workflowEnabled", true);
 
     protected static final YuiType TYPE = new YuiType(TREE_AUTOWIDTH, SET_WIDTH_TO_CLASSNAME,
-            USE_WIDTH_FROM_CLASSNAME, BIND_TO_LAYOUT_UNIT, REGISTER_CONTEXT_MENU);
+            USE_WIDTH_FROM_CLASSNAME, BIND_TO_LAYOUT_UNIT, WORKFLOW_ENABLED);
 
     public WicketTreeHelperSettings(IPluginConfig config) {
         super(TYPE, config);
