@@ -84,9 +84,14 @@ public class TextSearchBuilder implements IClusterable {
         }
 
         boolean valid = false;
-        StringBuilder querySb = new StringBuilder(getScope());
+        StringBuilder querySb = new StringBuilder("//element(*, hippo:harddocument)[");
+        StringBuilder scope = getScope();
+        if (scope != null) {
+            querySb.append(scope);
+            querySb.append(" and ");
+        }
         for (StringTokenizer st = new StringTokenizer(value, " "); st.hasMoreTokens();) {
-            querySb.append(" and jcr:contains(., '");
+            querySb.append("jcr:contains(., '");
             String token = st.nextToken();
             if (token.length() < getMinimalLength()) {
                 continue;
@@ -117,24 +122,23 @@ public class TextSearchBuilder implements IClusterable {
         return new TextSearchResultModel(value, new BrowserSearchResult(TEXT_QUERY_NAME, resultModel));
     }
 
-    private String getScope() {
+    private StringBuilder getScope() {
         javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
 
-        StringBuilder sb = new StringBuilder("//element(*, hippo:harddocument)[");
+        StringBuilder sb = new StringBuilder();
+        boolean haveTypeRestriction = false;
         if (excludedPrimaryTypes.length > 0) {
             sb.append("not(");
-            boolean addOr = false;
             for (String exclude : excludedPrimaryTypes) {
-                if (addOr) {
+                if (haveTypeRestriction) {
                     sb.append(" or ");
                 } else
-                    addOr = true;
+                    haveTypeRestriction = true;
                 sb.append("@jcr:primaryType='").append(exclude).append('\'');
             }
-            sb.append(") and ");
+            sb.append(")");
         }
-        sb.append("(");
-        boolean addOr = false;
+        boolean haveScope = false;
         for (String path : scope) {
             if (!path.startsWith("/")) {
                 throw new IllegalArgumentException("Search path should be absolute: " + path);
@@ -143,10 +147,14 @@ public class TextSearchBuilder implements IClusterable {
                 Node content = (Node) session.getItem(path);
                 if (content.isNodeType("mix:referenceable")) {
                     String uuid = content.getUUID();
-                    if (addOr) {
+                    if (haveScope) {
                         sb.append(" or ");
                     } else {
-                        addOr = true;
+                        if (haveTypeRestriction) {
+                            sb.append(" and ");
+                        }
+                        sb.append("(");
+                        haveScope = true;
                     }
                     sb.append("hippo:paths = '").append(uuid).append('\'');
                 } else {
@@ -159,8 +167,13 @@ public class TextSearchBuilder implements IClusterable {
                         "An error occured while constructing the default search where-clause part", e);
             }
         }
-        sb.append(')');
-        return sb.toString();
+        if (haveScope) {
+            sb.append(')');
+        }
+        if (haveScope || haveTypeRestriction) {
+            return sb;
+        }
+        return null;
     }
 
     public void setMinimalLength(int minimalLength) {

@@ -19,6 +19,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -46,6 +49,16 @@ public class TextSearchTest extends PluginTest {
     String[] alternative = {
         "/test/alternative", "nt:unstructured",
             "jcr:mixinTypes", "mix:referenceable",
+            "/test/alternative/a", "hippo:handle",
+                "jcr:mixinTypes", "hippo:hardhandle",
+                "/test/alternative/a/a", "frontendtest:document",
+                    "jcr:mixinTypes", "hippo:harddocument",
+                    "hippostd:state", "published",
+                    "title", "title",
+                    "ab", "ab",
+    };
+    String[] nonreferenceable = {
+        "/test/alternative", "nt:unstructured",
             "/test/alternative/a", "hippo:handle",
                 "jcr:mixinTypes", "hippo:hardhandle",
                 "/test/alternative/a/a", "frontendtest:document",
@@ -124,4 +137,22 @@ public class TextSearchTest extends PluginTest {
         assertFalse(nodes.hasNext());
     }
 
+    @Test
+    public void unReferenceableScopeIsIgnored() throws RepositoryException {
+        build(session, content);
+        build(session, nonreferenceable);
+        session.save();
+
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        tsb.setText("title");
+        tsb.setScope(new String[] { "/test/alternative"} );
+        BrowserSearchResult result = tsb.getResultModel().getObject();
+        NodeIterator nodes = result.getQueryResult().getNodes();
+        Set<String> paths = new TreeSet<String>();
+        while (nodes.hasNext()) {
+            paths.add(nodes.nextNode().getPath());
+        }
+        assertTrue(paths.contains("/test/alternative/a/a"));
+        assertTrue(paths.contains("/test/content/a/a"));
+    }
 }
