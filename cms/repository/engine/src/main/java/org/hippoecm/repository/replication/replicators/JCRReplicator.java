@@ -95,7 +95,6 @@ public class JCRReplicator extends AbstractReplicator {
 
     @Override
     protected void disconnect() {
-
     }
 
     //------------------------------- Remote Session methods  -------------------------//
@@ -231,8 +230,12 @@ public class JCRReplicator extends AbstractReplicator {
 
             Node remoteNode = createNode(remoteParentNode, nodeName, nodeType, id);
 
-            log.info("Replicator '{}': created node: '{}'.", getId(), parentPath + "/" + nodeName);
-
+            if ("/".equals(parentPath)) {
+                log.info("Replicator '{}': created node: '{}'.", getId(), "/" + nodeName);
+            } else {
+                log.info("Replicator '{}': created node: '{}'.", getId(), parentPath + "/" + nodeName);
+            }
+            
             // set mixins
             Set<Name> mixins = state.getMixinTypeNames();
             for (Name mixin : mixins) {
@@ -349,6 +352,9 @@ public class JCRReplicator extends AbstractReplicator {
      */
     private void setProperty(NodeId id, Node remoteNode, Name propName) throws NoSuchItemStateException,
             ItemStateException, RepositoryException {
+        if (propertyIsVirtual(propName)) {
+            return;
+        }
         PropertyState propState = helper.getPropertyState(id, propName);
         PropDef def = helper.getPropertyDefinition(propState);
 
@@ -356,8 +362,6 @@ public class JCRReplicator extends AbstractReplicator {
             return;
         }
         Value[] values = helper.getPropertyValues(propState);
-
-        // set property
         if (def.isMultiple()) {
             remoteNode.setProperty(context.getNamePathResolver().getJCRName(propName), values);
         } else {
