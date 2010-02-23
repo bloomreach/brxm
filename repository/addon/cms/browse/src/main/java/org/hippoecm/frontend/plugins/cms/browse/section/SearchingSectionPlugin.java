@@ -20,13 +20,16 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
@@ -61,6 +64,66 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(SearchingSectionPlugin.class);
+
+    private final class SubmittingTextField extends TextField<String> implements IFormSubmittingComponent {
+        private static final long serialVersionUID = 1L;
+
+        private SubmittingTextField(String id, IModel<String> model) {
+            super(id, model);
+
+            add(new OnEnterAjaxBehavior() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected IAjaxCallDecorator getAjaxCallDecorator() {
+                    return new IAjaxCallDecorator() {
+
+                        public CharSequence decorateScript(CharSequence script) {
+                            return script;
+                        }
+
+                        public CharSequence decorateOnSuccessScript(CharSequence script) {
+                            return script;
+                        }
+
+                        public CharSequence decorateOnFailureScript(CharSequence script) {
+                            return script;
+                        }
+                    };
+                }
+                
+                @Override
+                protected void onSubmit(AjaxRequestTarget target) {
+                    updateSearch(true);
+                }
+
+                @Override
+                protected void onError(AjaxRequestTarget target) {
+                }
+            });
+        }
+
+        public boolean getDefaultFormProcessing() {
+            return true;
+        }
+
+//        @Override
+//        protected void onComponentTag(ComponentTag tag) {
+//            tag.put("onkeyup",
+//                    "Wicket.stopEvent(event);\n" +
+//                    "if (Wicket.Browser.isIE() || Wicket.Browser.isKHTML() || Wicket.Browser.isSafari()) {\n" +
+//                    "  if(wicketKeyCode(Wicket.fixEvent(event)) == 13) {\n" +
+//                    "    Wicket.$(" + getComponent().getMarkupId() + ").onchange();\n" +
+//                    "  }\n" +
+//                    "}\n" +
+//                    "return false;\n");
+//            tag.put("onchange", "Wicket.stopEvent(event); return false;");
+//            super.onComponentTag(tag);
+//        }
+
+        public void onSubmit() {
+        }
+    }
 
     private class FolderModelService extends ModelReference<Node> {
         private static final long serialVersionUID = 1L;
@@ -98,7 +161,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private String query;
     private transient boolean redrawSearch = false;
 
-    private MarkupContainer container;
+    private Form container;
 
     public SearchingSectionPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -122,7 +185,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         add(CSSPackageResource.getHeaderContribution(SearchingSectionPlugin.class, "search.css"));
 
-        container = new WebMarkupContainer("container") {
+        container = new Form("container") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -130,25 +193,29 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 redrawSearch = false;
                 super.onBeforeRender();
             }
+
+            @Override
+            protected void onSubmit() {
+            }
+
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                tag.put("onkeyup", "Wicket.stopEvent(event); return false;");
+                tag.put("onkeypress", "Wicket.stopEvent(event); return false;");
+                tag.put("onsubmit", "Wicket.stopEvent(event); return false;");
+            }
         };
         container.setOutputMarkupId(true);
 
-        TextField tx = new TextField("searchBox", new PropertyModel(this, "query"));
-        tx.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                updateSearch(true);
-            }
-        });
+        TextField<String> tx = new SubmittingTextField("searchBox", new PropertyModel<String>(this, "query"));
         container.add(tx);
 
-        final AjaxLink browseLink = new AjaxLink("toggle") {
+        final AjaxSubmitLink browseLink = new AjaxSubmitLink("toggle") {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (collection.getType() == DocumentCollectionType.SEARCHRESULT) {
                     collection.setSearchResult(new Model(null));
                 } else {
@@ -385,7 +452,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     public Match contains(IModel<Node> nodeModel) {
         try {
             String path = nodeModel.getObject().getPath();
-            if(path != null && path.startsWith(rootPath)) {
+            if (path != null && path.startsWith(rootPath)) {
                 Node node = nodeModel.getObject();
                 int distance = 0;
                 while (node.getDepth() > 0 && node.getPath().startsWith(rootPath)) {
