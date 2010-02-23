@@ -95,6 +95,7 @@ if (!YAHOO.hippo.TreeHelper) {
                 
                 if(el.treeHelper.cfg.treeAutowidth) {
                     var computedWidth = 0;
+                    var computedHeight = 0;
                     var items = Dom.getElementsByClassName('a_', 'div', id);
                     
                     var isWin = (/windows|win32/).test(navigator.userAgent.toLowerCase());
@@ -105,17 +106,26 @@ if (!YAHOO.hippo.TreeHelper) {
                             var childNode = itemChildNodes[j];
                             var reg = Dom.getRegion(childNode);
                             computedWidth += reg.width;
-                        }
-                        //Add margin since the above calculation isn't pixel-perfect.
-                        //Windows browsers need 10 pixels more
-                        computedWidth += 39; //somehow YUI seems to miss the correct width of the text labels icon
-                        if(isWin) {
-                            //computedWidth += 5;
+                            if(j == 0) {
+                                computedHeight += reg.height;
+                            }
                         }
                         if(computedWidth > width) {
                             width = computedWidth;
                         }
                         computedWidth = 0;
+                    }
+                    
+                    var ref = Dom.getRegion(el.parentNode);
+                    if(computedHeight > ref.height) {
+                        //tree content overflows container element, browser will render scrollbars, so change width
+                        width += YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                    }
+                    
+                    if(el.treeHelper.cfg.workflowEnabled) {
+                        width += 30;
+                    } else {
+                        width += 10;
                     }
                 }
                 if(width > 0) {
