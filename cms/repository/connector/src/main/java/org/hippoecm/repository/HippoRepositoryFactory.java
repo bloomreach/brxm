@@ -95,11 +95,6 @@ public class HippoRepositoryFactory {
             location = location.substring("file:".length());
         }
 
-        if (defaultRepository != null && (location.equals(defaultRepository.getLocation()) ||
-                                          (defaultLocation != null && location.equals(defaultLocation)))) {
-            return defaultRepository;
-        }
-
         if (location.startsWith("rmi://")) {
             try {
                 defaultLocation = location;
@@ -116,6 +111,13 @@ public class HippoRepositoryFactory {
                 throw new RepositoryException("Unable to locate remote repository", ex);
             }
         }
+
+        if (defaultRepository != null && (location.equals(defaultRepository.getLocation()) ||
+                                          (defaultLocation != null && location.equals(defaultLocation)))) {
+            System.err.println(defaultRepository);
+            return defaultRepository;
+        }
+
 
         if(location.startsWith("java:")) {
             try {
