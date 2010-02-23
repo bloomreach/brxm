@@ -385,6 +385,7 @@ class ExportEngine {
             Node contentNode = scratch.addNode("content");
             session.save();
             base(root, projectsNode, contentNode);
+            root.getSession().refresh(false);
             diff(root);
             
             ProjectElement newProject = new ProjectElement();
@@ -458,28 +459,33 @@ class ExportEngine {
         for (ContentElement content : contentElements(elements).values()) {
             Node previous = content.getPrevious();
             Node current = content.getCurrent();
-            if(previous == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("compare " + content.getPath() + " new");
+            try {
+                if (previous == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("compare " + content.getPath() + " new");
+                    }
+                    content.setDirty();
+                } else if (current == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("compare " + content.getPath() + " deleted");
+                    }
+                    content.setDirty();
+                } else if (!(diff.diff(previous, current))) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("compare " + content.getPath() + " dirty");
+                    }
+                    for (Node added : diff.addedNodes) {
+                        addedContent.add(new ContentElement(added));
+                    }
+                    content.setDirty();
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("compare " + content.getPath() + " clean");
+                    }
                 }
+            } catch(RepositoryException ex) {
                 content.setDirty();
-            } else if(current == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("compare " + content.getPath() + " deleted");
-                }
-                content.setDirty();
-            } else if (!(diff.diff(content.getPrevious(), content.getCurrent()))) {
-                if (log.isDebugEnabled()) {
-                    log.debug("compare " + content.getPath() + " dirty");
-                }
-                for(Node added : diff.addedNodes) {
-                    addedContent.add(new ContentElement(added));
-                }
-                content.setDirty();
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("compare " + content.getPath() + " clean");
-                }
+                log.error("diff failed");
             }
             elements.addAll(addedContent);
         }
