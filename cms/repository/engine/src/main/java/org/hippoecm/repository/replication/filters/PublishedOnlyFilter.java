@@ -65,6 +65,10 @@ public class PublishedOnlyFilter implements Filter {
     }
 
     public boolean isNodeExcluded(NodeId id) {
+        if (!isInContentPath(id)) {
+            return false;
+        }
+
         if (isPublishable(id)) {
             if (isPublished(id)) {
                 return false;
@@ -87,6 +91,13 @@ public class PublishedOnlyFilter implements Filter {
         }
     }
 
+    private boolean isInContentPath(NodeId id) {
+        String path = helper.getJCRPath(id);
+        if (path != null && path.startsWith("/content")) {
+            return true;
+        }
+        return false;
+    }
     private boolean isPublishable(NodeId id) {
         String wfState = getWorkflowStateProperty(id);
         if (wfState != null) {
