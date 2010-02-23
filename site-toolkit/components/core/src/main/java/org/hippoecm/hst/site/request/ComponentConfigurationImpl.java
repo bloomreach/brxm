@@ -51,6 +51,7 @@ public class ComponentConfigurationImpl implements ComponentConfiguration{
         return parameters;
     }
     
+   
     public String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem) {
         String paramValue = componentConfiguration.getParameter(name);
         PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getParameters());
@@ -77,6 +78,14 @@ public class ComponentConfigurationImpl implements ComponentConfiguration{
         return parsedParamValue;
     }
     
+    public Map<String, String> getRawParameters() {
+        return componentConfiguration.getParameters();
+    }
+    
+    public Map<String, String> getRawLocalParameters() {
+        return componentConfiguration.getLocalParameters();
+    }
+    
     public String getRenderPath() {
         return componentConfiguration.getRenderPath();
     }
@@ -84,5 +93,7 @@ public class ComponentConfigurationImpl implements ComponentConfiguration{
     public String getServeResourcePath() {
         return componentConfiguration.getServeResourcePath();
     }
+
+   
     
 }
