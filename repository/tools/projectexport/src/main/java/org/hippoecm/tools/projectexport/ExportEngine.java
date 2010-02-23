@@ -417,7 +417,9 @@ class ExportEngine {
                     if(((NamespaceElement)element).uri == null) {
                         ((NamespaceElement)element).uri = session.getNamespaceURI(element.getElementName());
                     }
-                    newProject.elements.add(new ContentElement(session.getRootNode().getNode("hippo:namespaces").getNode(element.getElementName())));
+                    if(session.getRootNode().getNode("hippo:namespaces").hasNode(element.getElementName())) {
+                        newProject.elements.add(new ContentElement(session.getRootNode().getNode("hippo:namespaces").getNode(element.getElementName())));
+                    }
                 }
             }
             elements.add(newProject);
