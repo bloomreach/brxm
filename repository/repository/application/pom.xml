@@ -336,32 +336,6 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>legacy</id>
-      <activation>
-        <jdk>1.4</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>retrotranslator-maven-plugin</artifactId>
-            <version>1.0-alpha-2</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>translate-war</goal>
-                </goals>
-                <configuration>
-                  <classifier>jdk1.4</classifier>
-                  <attach>true</attach>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 </project>
 
