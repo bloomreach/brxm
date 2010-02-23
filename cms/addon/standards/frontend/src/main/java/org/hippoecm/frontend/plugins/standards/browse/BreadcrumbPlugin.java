@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -38,6 +37,7 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -212,7 +212,7 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
 
                     @Override
                     protected String load() {
-                        return item.getModelObject().getDecodedName();
+                        return item.getModelObject().getName();
                     }
                 }, " "));
 
@@ -250,20 +250,12 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
         String name;
 
         public NodeItem(JcrNodeModel model, boolean enabled) {
-            try {
-                if (model != null && model.getNode() != null) {
-                    this.name = model.getNode().getName();
-                }
-            } catch (RepositoryException e) {
-                String path = model.getItemModel().getPath();
-                this.name = path.substring(path.lastIndexOf('/'));
-                log.warn("Error retrieving name from node[" + path + "]");
-            }
+            this.name = new NodeTranslator(model).getNodeName().getObject();
             this.model = model;
             this.enabled = enabled;
         }
 
-        public String getDecodedName() {
+        public String getName() {
             return (name != null ? NodeNameCodec.decode(name) : null);
         }
 
