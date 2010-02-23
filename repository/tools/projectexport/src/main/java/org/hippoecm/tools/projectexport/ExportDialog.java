@@ -157,6 +157,7 @@ public class ExportDialog extends AbstractDialog {
             }
         });
         downloadComponent.setEnabled(false);
+        downloadComponent.setOutputMarkupId(true);
         okComponent.setEnabled(false);
         okComponent.setOutputMarkupId(true);
         add(projectNameComponent = new Label("name", new PropertyModel(this, "projectName")));

@@ -57,12 +57,12 @@ class ExportTreeModel extends DefaultTreeModel implements TreeModel, IDetachable
 
         public TreeNode getChildAt(int childIndex) {
             substantiate();
-            return children.get(childIndex);
+            return (children != null ? children.get(childIndex) : null);
         }
 
         public int getChildCount() {
             substantiate();
-            return children.size();
+            return (children != null ? children.size() : 0);
         }
 
         public TreeNode getParent() {
