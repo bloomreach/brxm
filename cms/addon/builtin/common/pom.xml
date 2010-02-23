@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon-builtin</artifactId>
-    <version>2.12.04</version>
+    <version>2.13.00-SNAPSHOT</version>
   </parent>
 
   <name>Builtin common addon</name>
@@ -28,16 +28,16 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_04/addon/builtin/common</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_04/addon/builtin/common</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_04/addon/builtin/common</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin/common</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin/common</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/builtin/common</url>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.12.04</version>
+      <version>2.13.00-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
