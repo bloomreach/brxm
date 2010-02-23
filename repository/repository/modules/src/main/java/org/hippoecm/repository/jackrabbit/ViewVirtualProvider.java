@@ -40,6 +40,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
 
     Name handleName;
     Name requestName;
+    Name translationName;
     Name facetSelectName;
 
     @Override
@@ -49,6 +50,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         facetSelectName = resolveName(HippoNodeType.NT_FACETSELECT);
         handleName = resolveName(HippoNodeType.NT_HANDLE);
         requestName = resolveName(HippoNodeType.NT_REQUEST);
+        translationName = resolveName(HippoNodeType.NT_TRANSLATION);
     }
 
     protected NodeState populate(ViewVirtualProvider subProvider, NodeState state, String[] docbase, String[] newFacets, String[] newValues, String[] newModes, boolean newCriteria) throws RepositoryException {
@@ -139,7 +141,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                 ViewNodeId.Child[] childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
                 Arrays.sort(childrenArray);
                 for (int i = 0; i < childrenArray.length && (i == 0 || !singledView); i++) {
-                    if (singledView && childrenArray[i].getKey().equals(requestName)) {
+                    if (singledView && (childrenArray[i].getKey().equals(requestName) || childrenArray[i].getKey().equals(translationName))) {
                         continue;
                     } else {
                         state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
@@ -154,7 +156,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                     ChildNodeEntry entry = (ChildNodeEntry)iter.next();
                     // filtering is only applied on handles
                     if (!isHandle || subProvider.match(view, entry.getId())) {
-                        if (isHandle && singledView && entry.getName().equals(requestName)) {
+                        if (isHandle && singledView && (entry.getName().equals(requestName) || entry.getName().equals(translationName))) {
                             continue;
                         } else {
                             ViewNodeId childNodeId = subProvider.new ViewNodeId(state.getNodeId(), entry.getId(), entry.getName(), view, order, singledView);
@@ -216,7 +218,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                  * extra performance hit
                  */
                 if (viewId.singledView && isHandle) {
-                    if (entry.getName().equals(requestName)) {
+                    if (entry.getName().equals(requestName) || entry.getName().equals(translationName)) {
                         continue;
                     } else {
                         ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view, viewId.order, viewId.singledView);
@@ -282,9 +284,9 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                     return 0;
                 }
                 if (order == null) {
-                    if (name.equals(requestName)) {
+                    if (name.equals(requestName) || name.equals(translationName)) {
                         return 1;
-                    } else if (o.name.equals(requestName)) {
+                    } else if (o.name.equals(requestName) || o.name.equals(translationName)) {
                         return -1;
                     }
                     // never return 0 (See Comparable api)
@@ -329,9 +331,9 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                 }
 
                 // make sure the hippo:request entries are at the end
-                if(name.equals(requestName)) {
+                if(name.equals(requestName) || name.equals(translationName)) {
                     return 1;
-                } else if(o.name.equals(requestName)) {
+                } else if(o.name.equals(requestName) || o.name.equals(translationName)) {
                     return -1;
                 }
 

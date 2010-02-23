@@ -43,6 +43,7 @@ public class FacetSelectProvider extends ViewVirtualProvider
         modesName = resolveName(HippoNodeType.HIPPO_MODES);
         handleName = resolveName(HippoNodeType.NT_HANDLE);
         requestName = resolveName(HippoNodeType.NT_REQUEST);
+        translationName = resolveName(HippoNodeType.NT_TRANSLATION);
     }
 
     @Override
