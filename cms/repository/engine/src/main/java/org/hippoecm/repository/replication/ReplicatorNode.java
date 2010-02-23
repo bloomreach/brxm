@@ -126,6 +126,11 @@ public class ReplicatorNode implements Runnable, ClusterRecordProcessor, RecordC
     private final ReplicatorNodeConfig config;
 
     /**
+     * Keep count of the amount of (unsuccessful) tries.
+     */
+    private int tries;
+    
+    /**
      * 
      * @param config
      * @throws ConfigurationException
@@ -242,6 +247,33 @@ public class ReplicatorNode implements Runnable, ClusterRecordProcessor, RecordC
         }
     }
 
+    public void waitWithoutLock(long timeout) throws JournalException {
+        syncLock.release();
+        journal.getLock().readLock().release();
+        
+        try {
+            Thread.sleep(getRetryDelay());
+        } catch (InterruptedException ex) {
+            log.debug("Waking up for retry.");
+        }
+
+        try {
+            journal.getLock().readLock().acquire();
+        } catch (InterruptedException e) {
+            String msg = "Unable to acquire read lock.";
+            throw new JournalException(msg, e);
+        }
+        
+        try {
+            syncLock.acquire();
+        } catch (InterruptedException e) {
+            String msg = "Interrupted while waiting for mutex.";
+            throw new JournalException(msg);
+        }
+    }
+    
+    
+    
     /**
      * Stops this replicator node.
      */
@@ -344,28 +376,28 @@ public class ReplicatorNode implements Runnable, ClusterRecordProcessor, RecordC
      * retryDelay and numberOfRetries parameters.
      */
     public void consume(Record record) {
+        if (status == STOPPED) {
+            return;
+        }
+        
         log.debug("{} consuming revision: {}", getIdString(), record.getRevision());
         try {
-            int tries = 0;
             Exception error = null;
             ClusterRecord clusterRecored = deserializer.deserialize(record);
             while (tries <= getMaxRetries() && (status != STOPPED)) {
                 error = null;
                 try {
                     clusterRecored.process(this);
+                    tries = 0;
                     return;
                 } catch (RetryReplicationException e) {
-                    log.info("Recoverable exception encountered with revision: " + record.getRevision()
+                    tries++;
+                    log.info("Recoverable exception (" + e.getMessage() + ") encountered with revision: " + record.getRevision()
                             + ". Trying again in " + getRetryDelay() + " ms. Try " + tries + " of "
                             + getMaxRetries());
                     error = e;
-                    try {
-                        Thread.sleep(getRetryDelay());
-                    } catch (InterruptedException ex) {
-                        log.debug("Waking up for retry.");
-                    }
+                    waitWithoutLock(getRetryDelay());
                 }
-                tries++;
             }
             String msg = getIdString() + ": Unable to replicate revision '" + record.getRevision() + "'.";
             if (error == null) {
@@ -376,6 +408,8 @@ public class ReplicatorNode implements Runnable, ClusterRecordProcessor, RecordC
         } catch (JournalException e) {
             String msg = getIdString() + ": Unable to read revision '" + record.getRevision() + "'.";
             log.error(msg, e);
+        } finally {
+            tries = 0;
         }
     }
 
@@ -383,11 +417,13 @@ public class ReplicatorNode implements Runnable, ClusterRecordProcessor, RecordC
      * {@inheritDoc}
      */
     public void setRevision(long revision) {
-        try {
-            instanceRevision.set(revision);
-        } catch (JournalException e) {
-            String msg = getIdString() + ": Unable to set current revision to '" + revision + "'.";
-            log.error(msg, e);
+        if (status != STOPPED) {
+            try {
+                instanceRevision.set(revision);
+            } catch (JournalException e) {
+                String msg = getIdString() + ": Unable to set current revision to '" + revision + "'.";
+                log.error(msg, e);
+            }
         }
     }
 
