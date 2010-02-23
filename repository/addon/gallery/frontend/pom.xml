@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-addon-gallery</artifactId>
-    <version>2.12.04-SNAPSHOT</version>
+    <version>2.12.04</version>
   </parent>
 
   <name>Gallery frontend addon</name>
@@ -28,9 +28,9 @@
   <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/gallery/frontend</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/gallery/frontend</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/trunk/addon/gallery/frontend</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_04/addon/gallery/frontend</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_04/addon/gallery/frontend</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-ecm/tags/Tag-HREPTWO-v2_12_04/addon/gallery/frontend</url>
   </scm>
 
   <dependencies>
@@ -42,39 +42,39 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-gallery-common</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-workflow</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-builtin-frontend</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-yui</artifactId>
-      <version>2.12.04-SNAPSHOT</version>
+      <version>2.12.04</version>
     </dependency>
   </dependencies>
 
