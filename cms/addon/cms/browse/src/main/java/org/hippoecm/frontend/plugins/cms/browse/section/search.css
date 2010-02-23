@@ -20,18 +20,18 @@ td.hippo-search-section-input {
     width: 21px;
 }
 .hippo-search-scope-container {
-	width: 100%;
+	margin: 0 50%;
 	padding: 0 20px;
 }
 
-div.hippo-search-inactive-scope {
+td.hippo-search-inactive-scope {
     height: 16px;
     padding: 0 0 0 8px;
     float: left;
     margin: 2px;
 }
 
-div.hippo-search-active-scope {
+td.hippo-search-active-scope {
 	background: url("active-back.png") no-repeat;
 	height: 16px;
 	padding: 0 0 0 8px;
@@ -44,7 +44,7 @@ div.hippo-search-active-scope {
 	font-size: 10px;
 }
 
-div.hippo-search-active-scope span.hippo-search-scope-right {
+td.hippo-search-active-scope span.hippo-search-scope-right {
 	background: url("active-right.png") no-repeat;
 	width: 8px;
 	height: 16px;
