@@ -39,6 +39,11 @@
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
+  <category additivity="false" name="org.apache.jackrabbit">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+
   <category additivity="false" name="org.apache.jackrabbit.core">
     <level value="warn"/>
     <appender-ref ref="root"/>
@@ -64,12 +69,26 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
+  <category additivity="true" name="org.hippoecm.repository.updater">
+    <level value="info"/>
+    <appender-ref ref="root"/>
+  </category>
+
+  <category additivity="false" name="org.hippoecm.repository.LocalHippoRepository">
+    <level value="info"/>
+    <appender-ref ref="root"/>
+  </category>
+
+  <category additivity="true" name="org.hippoecm.repository.jackrabbit.persistence.PatchedBundleDbPersistenceManager">
+    <level value="info"/>
+    <appender-ref ref="root"/>
+  </category>
 
   <category additivity="true" name="org.hippoecm.repository.ReferringDocumentsTest">
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-  
+
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>
