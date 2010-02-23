@@ -294,8 +294,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
                 TextAreaWidget textfield;
                 add(textfield = new TextAreaWidget("value", textModel));
-                textfield.setCols("25");
-                textfield.setRows("4");
+                textfield.addBehaviourOnFormComponent(new AttributeAppender("class", true, new Model<String>("text-dialog-textarea"), " "));
                 setFocus(textfield.getFocusComponent());
             }
 
