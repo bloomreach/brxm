@@ -134,9 +134,6 @@
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.images</sv:value>
         </sv:property>
-        <sv:property sv:name="model.folder" sv:type="String">
-          <sv:value>${cluster.id}.model.folder</sv:value>
-        </sv:property>
 
         <!-- Wicket tree helper properties -->
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
@@ -277,10 +274,7 @@
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.content</sv:value>
         </sv:property>
-        <sv:property sv:name="model.folder" sv:type="String">
-          <sv:value>${cluster.id}.model.folder</sv:value>
-        </sv:property>
-        
+
         <!-- Wicket tree helper properties -->
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -309,9 +303,6 @@
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.images</sv:value>
-        </sv:property>
-        <sv:property sv:name="model.folder" sv:type="String">
-          <sv:value>${cluster.id}.model.folder</sv:value>
         </sv:property>
         
         <!-- Wicket tree helper properties -->
@@ -343,9 +334,6 @@
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.files</sv:value>
-        </sv:property>
-        <sv:property sv:name="model.folder" sv:type="String">
-          <sv:value>${cluster.id}.model.folder</sv:value>
         </sv:property>
         
         <!-- Wicket tree helper properties -->
@@ -410,7 +398,7 @@
         <sv:value>${wicket.model}</sv:value>
       </sv:property>
       <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${cluster.id}.model.folder</sv:value>
+        <sv:value>${wicket.model.folder}</sv:value>
       </sv:property>
       <sv:property sv:name="model.default.path" sv:type="String">
         <sv:value>/content</sv:value>
@@ -489,9 +477,6 @@
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.content</sv:value>
         </sv:property>
-        <sv:property sv:name="model.folder" sv:type="String">
-          <sv:value>${wicket.model.folder}</sv:value>
-        </sv:property>
         
         <!-- Wicket tree helper properties -->
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
@@ -521,9 +506,6 @@
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.images</sv:value>
-        </sv:property>
-        <sv:property sv:name="model.folder" sv:type="String">
-          <sv:value>${wicket.model.folder}</sv:value>
         </sv:property>
         
         <!-- Wicket tree helper properties -->
@@ -555,9 +537,6 @@
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.files</sv:value>
-        </sv:property>
-        <sv:property sv:name="model.folder" sv:type="String">
-          <sv:value>${wicket.model.folder}</sv:value>
         </sv:property>
         
         <!-- Wicket tree helper properties -->
