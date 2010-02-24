@@ -69,7 +69,7 @@ public class DepublishDialog extends WorkflowAction.WorkflowDialog implements IT
 
     @Override
     protected void init() {
-        setFocusOnCancel();
+        setFocusOnOk();
     }
 
     @Override
