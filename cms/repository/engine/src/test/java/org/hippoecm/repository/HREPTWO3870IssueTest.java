@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ public class HREPTWO3870IssueTest extends TestCase {
         try {
             session.save();
 
-            // test integrety
+            // test integrity
             facetsearch = session.getRootNode().getNode("test").getNode("tags");
             facetsearch.getPath();
             iter = facetsearch.getNodes();
