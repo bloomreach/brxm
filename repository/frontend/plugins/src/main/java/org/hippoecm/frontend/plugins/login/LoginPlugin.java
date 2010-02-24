@@ -15,19 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
-import javax.jcr.Repository;
-import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
@@ -47,7 +39,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.protocol.http.WebResponse;
@@ -57,7 +48,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,99 +63,15 @@ public class LoginPlugin extends RenderPlugin {
 
     protected ValueMap credentials = new ValueMap();
 
-    private static String cmsVersion;
-    private static String cmsBuild;
-    private static String repositoryVersion;
-
     public LoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         add(createSignInForm("signInForm"));
         add(new Label("pinger"));
-
-        Label versionLabel, buildLabel, repositoryLabel;
-        add(versionLabel = new Label("version"));
-        add(buildLabel = new Label("build"));
-        add(repositoryLabel = new Label("repository"));
-
-        versionLabel.setDefaultModel(new Model<String>(getCMSVersion()));
-        buildLabel.setDefaultModel(new Model<String>(getCMSBuild()));
-        repositoryLabel.setDefaultModel(new Model<String>(getRepositoryVersion()));
     }
 
     protected SignInForm createSignInForm(String id) {
         return new SignInForm(id);
-    }
-
-    private String getCMSVersion() {
-        if (cmsVersion == null || cmsBuild == null) {
-            // set default cms version from frontend-engine jar
-            try {
-                InputStream istream = HippoRepositoryFactory.getManifest(Home.class).openStream();
-                if (istream != null) {
-                    Manifest manifest = new Manifest(istream);
-                    Attributes atts = manifest.getMainAttributes();
-                    if (atts.getValue("Implementation-Version") != null) {
-                        cmsVersion = atts.getValue("Implementation-Version");
-                    }
-                    if (atts.getValue("Implementation-Build") != null) {
-                        cmsBuild = atts.getValue("Implementation-Build");
-                    }
-                }
-            } catch (IOException ex) {
-                log.info("Unable to determine CMS version and build info from Home.class manifest.", ex.getMessage());
-            }
-
-            // allow version overwrites from war
-            try {
-                ServletContext servletContext = ((WebApplication) getApplication()).getServletContext();
-                InputStream istream = servletContext.getResourceAsStream("META-INF/MANIFEST.MF");
-                if (istream == null) {
-                    File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
-                    if (manifestFile.exists()) {
-                        istream = new FileInputStream(manifestFile);
-                    }
-                }
-                if (istream != null) {
-                    Manifest manifest = new Manifest(istream);
-                    Attributes atts = manifest.getMainAttributes();
-                    if (atts.getValue("Implementation-Version") != null
-                            && atts.getValue("Implementation-Version").length() > 0) {
-                        cmsVersion = atts.getValue("Implementation-Version");
-                    }
-                    if (atts.getValue("Implementation-Build") != null
-                            && atts.getValue("Implementation-Build").length() > 0) {
-                        cmsBuild = atts.getValue("Implementation-Build");
-                    }
-                }
-            } catch (IOException ex) {
-                log.info("Unable to determine CMS version and build from war override.", ex.getMessage());
-            }
-        }
-        return cmsVersion;
-    }
-
-    private String getCMSBuild() {
-        if (cmsBuild == null) {
-            getCMSVersion();
-        }
-        return cmsBuild;
-    }
-
-    private String getRepositoryVersion() {
-        if (repositoryVersion == null) {
-            StringBuilder sb = new StringBuilder();
-            if (((UserSession) getSession()).getJcrSession() != null) {
-                Repository repository = ((UserSession) getSession()).getJcrSession().getRepository();
-                if (repository != null) {
-                    sb.append(repository.getDescriptor(Repository.REP_NAME_DESC));
-                    sb.append(" ");
-                    sb.append(repository.getDescriptor(Repository.REP_VERSION_DESC));
-                }
-            }
-            repositoryVersion = sb.toString();
-        }
-        return repositoryVersion;
     }
 
     @Override
