@@ -62,6 +62,13 @@ public class SiteResolvingValve extends AbstractValve {
             throw new ContainerException("No siteName found for matchedMapping. Configure one in your virtual hosting.");
         }
         
+        // temp solution to know whether we are in preview
+        if(baseURL.getServletPath().equals(getContainerConfiguration().getString("preview.servlet.path"))) {
+            requestContext.setAttribute(ContainerConstants.IS_PREVIEW, Boolean.TRUE);
+        } else {
+            requestContext.setAttribute(ContainerConstants.IS_PREVIEW, Boolean.FALSE);
+        }
+        
         // continue
         context.invokeNext();
     }

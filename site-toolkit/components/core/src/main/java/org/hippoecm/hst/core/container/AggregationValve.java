@@ -33,6 +33,7 @@ import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.HstServices;
 
 /**
  * AggregationValve
@@ -51,8 +52,9 @@ public class AggregationValve extends AbstractValve {
         
         if (!context.getServletResponse().isCommitted() && requestContext.getBaseURL().getResourceWindowReferenceNamespace() == null) {
             HstComponentWindow rootWindow = context.getRootComponentWindow();
-
+            
             if (rootWindow != null) {
+                
                 Map<HstComponentWindow, HstRequest> requestMap = new HashMap<HstComponentWindow, HstRequest>();
                 Map<HstComponentWindow, HstResponse> responseMap = new HashMap<HstComponentWindow, HstResponse>();
 
@@ -98,6 +100,11 @@ public class AggregationValve extends AbstractValve {
                 HstContainerConfig requestContainerConfig = context.getRequestContainerConfig();
                 // process doBeforeRender() of each component as sorted order, parent first.
                 processWindowsBeforeRender(requestContainerConfig, rootWindow, sortedComponentWindows, requestMap, responseMap);
+                
+                // add the hst-version as a response header if we are in preview:
+                if(Boolean.TRUE == requestContext.getAttribute(ContainerConstants.IS_PREVIEW)) {
+                    rootWindow.getResponseState().addHeader("HST-VERSION", HstServices.getImplementationVersion());
+                }
                 
                 // check if it's requested to forward.
                 String forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();

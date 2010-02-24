@@ -29,7 +29,6 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.digester.Digester;
 import org.hippoecm.hst.configuration.HstSite;
@@ -239,16 +238,7 @@ public class BaseHstComponent extends GenericHstComponent {
     }
     
     public boolean isPreview(HstRequest request) {
-        HstRequestContext hstRequestContext = request.getRequestContext();
-        Boolean isPreview = (Boolean) hstRequestContext.getAttribute(IS_PREVIEW_ATTRIBUTE);
-        
-        if (isPreview == null) {
-            String previewRepositoryEntryPath = request.getRequestContext().getContainerConfiguration().getString(ContainerConstants.PREVIEW_REPOSITORY_ENTRY_PATH, "");
-            isPreview = (getSiteContentBasePath(request).startsWith(previewRepositoryEntryPath) ? Boolean.TRUE : Boolean.FALSE);
-            hstRequestContext.setAttribute(IS_PREVIEW_ATTRIBUTE, isPreview);
-        }
-        
-        return isPreview.booleanValue();
+        return Boolean.TRUE == request.getRequestContext().getAttribute(ContainerConstants.IS_PREVIEW);
     }
     
     /**
