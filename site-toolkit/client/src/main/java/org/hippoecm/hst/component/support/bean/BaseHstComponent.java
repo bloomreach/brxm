@@ -654,7 +654,8 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return
      */
     protected Session getPersistableSession(HstRequest request) throws RepositoryException {
-        Credentials credentials = HstServices.getComponentManager().getComponent("javax.jcr.Credentials.writable");
+        HstRequestContext requestContext = request.getRequestContext();
+        Credentials credentials = requestContext.getContextCredentialsProvider().getWritableCredentials(requestContext);
         return getPersistableSession(request, credentials);
     }
     

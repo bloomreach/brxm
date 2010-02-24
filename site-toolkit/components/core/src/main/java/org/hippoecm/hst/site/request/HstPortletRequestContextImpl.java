@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.site.request;
 
-import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletRequest;
@@ -23,6 +22,7 @@ import javax.portlet.PortletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstPortletRequestContext;
 
 /**
@@ -39,8 +39,8 @@ public class HstPortletRequestContextImpl extends HstRequestContextImpl implemen
         super(repository);
     }
 
-    public HstPortletRequestContextImpl(Repository repository, Credentials defaultCredentials) {
-        super(repository, defaultCredentials);
+    public HstPortletRequestContextImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider) {
+        super(repository, contextCredentialsProvider);
     }
     
     public void initPortletContext(HttpServletRequest request, HttpServletResponse responsse) {

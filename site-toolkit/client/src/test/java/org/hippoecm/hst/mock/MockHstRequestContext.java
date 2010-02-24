@@ -29,6 +29,7 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -51,6 +52,7 @@ public class MockHstRequestContext implements HstRequestContext {
     protected HstQueryManagerFactory hstQueryManagerFactory;
     protected Credentials defaultCredentials;
     protected ContainerConfiguration containerConfiguration;
+    protected ContextCredentialsProvider contextCredentialsProvider;
 
     public Object getAttribute(String name) {
         return this.attributes.get(name);
@@ -177,4 +179,13 @@ public class MockHstRequestContext implements HstRequestContext {
     public boolean isPortletContext() {
         return false;
     }
+    
+    public ContextCredentialsProvider getContextCredentialsProvider() {
+        return contextCredentialsProvider;
+    }
+    
+    public void setContextCredentialsProvider(ContextCredentialsProvider contextCredentialsProvider) {
+        this.contextCredentialsProvider = contextCredentialsProvider;
+    }
+    
 }

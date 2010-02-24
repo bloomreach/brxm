@@ -21,7 +21,6 @@ import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -171,4 +170,11 @@ public interface HstRequestContext {
      * If true, this instance will also implement HstPortletRequestContext.
      */
     boolean isPortletContext();
+    
+    /**
+     * Returns the context credentials provider
+     * @return
+     */
+    ContextCredentialsProvider getContextCredentialsProvider();
+    
 }

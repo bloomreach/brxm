@@ -15,12 +15,12 @@
  */
 package org.hippoecm.hst.site.request;
 
-import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContextComponent;
 
@@ -32,27 +32,28 @@ import org.hippoecm.hst.core.request.HstRequestContextComponent;
 public class HstRequestContextComponentImpl implements HstRequestContextComponent {
 
     protected Repository repository;
-    protected Credentials defaultCredentials;
+    protected ContextCredentialsProvider contextCredentialsProvider;
 
-    public HstRequestContextComponentImpl(Repository repository, Credentials defaultCredentials) {
+    public HstRequestContextComponentImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider) {
         this.repository = repository;
-        this.defaultCredentials = defaultCredentials;
+        this.contextCredentialsProvider = contextCredentialsProvider;
     }
 
     public HstRequestContext create(HttpServletRequest req, HttpServletResponse resp, ContainerConfiguration config) {
         HstRequestContextImpl rc = null;
+        
         if (req.getAttribute("javax.portlet.request") != null) {
             // portlet invoked request context
-            HstPortletRequestContextImpl prc = new HstPortletRequestContextImpl(this.repository, this.defaultCredentials);
+            HstPortletRequestContextImpl prc = new HstPortletRequestContextImpl(repository, contextCredentialsProvider);
             prc.initPortletContext(req, resp);
             rc = prc;
-        }
-        else {
+        } else {
             // servlet invoked request context
-            rc = new HstRequestContextImpl(this.repository, this.defaultCredentials);
+            rc = new HstRequestContextImpl(repository, contextCredentialsProvider);
         }
             
         rc.setContainerConfiguration(config);
+        
         return rc;
     }
     

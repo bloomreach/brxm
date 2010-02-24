@@ -23,16 +23,21 @@
                            http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-
+  
+  <!-- Default request context based credentials provider -->
+  <bean id="org.hippoecm.hst.core.request.ContextCredentialsProvider" class="org.hippoecm.hst.site.request.DefaultContextCredentialsProvider">
+    <constructor-arg ref="javax.jcr.Credentials.default" />
+  </bean>
+  
   <!-- Commons configuration from collab.properties -->
   <bean id="org.hippoecm.hst.core.request.HstRequestContextComponent" class="org.hippoecm.hst.site.request.HstRequestContextComponentImpl">
     <constructor-arg ref="javax.jcr.Repository" />
-    <constructor-arg ref="javax.jcr.Credentials.default" />
+    <constructor-arg ref="org.hippoecm.hst.core.request.ContextCredentialsProvider" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstRequestProcessor" class="org.hippoecm.hst.core.container.HstRequestProcessorImpl">
     <constructor-arg ref="org.hippoecm.hst.core.container.Pipelines" />
   </bean>
-   
+  
 </beans>
 

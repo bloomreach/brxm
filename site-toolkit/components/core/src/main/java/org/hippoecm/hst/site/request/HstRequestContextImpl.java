@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -34,6 +33,7 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.hosting.VirtualHost;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstEmbeddedRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -50,8 +50,8 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 public class HstRequestContextImpl implements HstRequestContext {
 
     protected Repository repository;
+    protected ContextCredentialsProvider contextCredentialsProvider;
     protected Session session;
-    protected Credentials defaultCredentials;
     protected MatchedMapping matchedMapping;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
     protected HstURLFactory urlFactory;
@@ -69,9 +69,9 @@ public class HstRequestContextImpl implements HstRequestContext {
         this(repository, null);
     }
     
-    public HstRequestContextImpl(Repository repository, Credentials defaultCredentials) {
+    public HstRequestContextImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider) {
         this.repository = repository;
-        this.defaultCredentials = defaultCredentials;
+        this.contextCredentialsProvider = contextCredentialsProvider;
     }
     
     public void setContextNamespace(String contextNamespace) {
@@ -84,7 +84,7 @@ public class HstRequestContextImpl implements HstRequestContext {
     
     public Session getSession() throws LoginException, RepositoryException {
         if (this.session == null) {
-            this.session = this.repository.login(this.defaultCredentials);
+            this.session = this.repository.login(contextCredentialsProvider.getDefaultCredentials(this));
         } else if (!this.session.isLive()) {
             throw new HstComponentException("Invalid session.");
         }
@@ -250,5 +250,10 @@ public class HstRequestContextImpl implements HstRequestContext {
 
     public boolean isPortletContext() {
         return false;
-    }    
+    }
+    
+    public ContextCredentialsProvider getContextCredentialsProvider() {
+        return contextCredentialsProvider;
+    }
+    
 }
