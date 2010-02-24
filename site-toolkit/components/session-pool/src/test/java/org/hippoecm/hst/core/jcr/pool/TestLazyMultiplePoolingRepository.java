@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import java.util.NoSuchElementException;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
@@ -44,6 +46,7 @@ public class TestLazyMultiplePoolingRepository {
     static Logger log = LoggerFactory.getLogger(TestLazyMultiplePoolingRepository.class);
     
     private Map<String, String> basicPoolConfigMap = new HashMap<String, String>();
+    private SimpleCredentials nonExistingUserCreds = new SimpleCredentials("non-existing-user", "non-existing-user-password".toCharArray());
     private SimpleCredentials defaultCreds = new SimpleCredentials("admin@onehippo.org", "admin".toCharArray());
     private SimpleCredentials wikiCreds = new SimpleCredentials("admin@wiki.onehippo.org", "admin".toCharArray());
     private MultipleRepository multipleRepository;
@@ -54,7 +57,7 @@ public class TestLazyMultiplePoolingRepository {
         basicPoolConfigMap.put("maxActive", "4");
         basicPoolConfigMap.put("maxIdle", "2");
         basicPoolConfigMap.put("minIdle", "0");
-        basicPoolConfigMap.put("initialSize", "0");
+        basicPoolConfigMap.put("initialSize", "1");
         basicPoolConfigMap.put("maxWait", "10000");
         basicPoolConfigMap.put("testOnBorrow", "true");
         basicPoolConfigMap.put("testOnReturn", "false");
@@ -89,6 +92,12 @@ public class TestLazyMultiplePoolingRepository {
         assertNotNull(wikiRepo);
         assertPoolProperties(basicPoolConfigMap, wikiRepo);
         session.logout();
+        
+        try {
+            session = multipleRepository.login(nonExistingUserCreds);
+            fail("It should throw repository exception here.");
+        } catch (RepositoryException ignore) {
+        }
     }
     
     @Test

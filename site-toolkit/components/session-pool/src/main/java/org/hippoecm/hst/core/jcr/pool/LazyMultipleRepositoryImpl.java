@@ -40,6 +40,7 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
     private BasicPoolingRepositoryFactory poolingRepositoryFactory;
     private Map<String, String> defaultConfigMap;
     private boolean pooledSessionLifecycleManagementActive = true;
+    private String credentialsDomainSeparator = "@";
     
     private ResourceLifecycleManagement [] lazyResourceLifecycleManagements;
     
@@ -65,6 +66,10 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
     
     public void setPooledSessionLifecycleManagementActive(boolean pooledSessionLifecycleManagementActive) {
         this.pooledSessionLifecycleManagementActive = pooledSessionLifecycleManagementActive;
+    }
+    
+    public void setCredentialsDomainSeparator(String credentialsDomainSeparator) {
+        this.credentialsDomainSeparator = credentialsDomainSeparator;
     }
     
     @Override
@@ -95,7 +100,7 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             }
         }
         
-        String credentialsDomain = StringUtils.substringAfter(credentialsWrapper.getUserID(), "@");
+        String credentialsDomain = StringUtils.substringAfter(credentialsWrapper.getUserID(), credentialsDomainSeparator);
         Set<String> credsDomains = tlCurrentCredsDomains.get();
         if (credsDomains == null) {
             credsDomains = new HashSet<String>();
@@ -134,7 +139,7 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             resourceLifecycleManagement.setAlwaysActive(pooledSessionLifecycleManagementActive);
         }
 
-        String credentialsDomain = StringUtils.substringAfter(userID, "@");
+        String credentialsDomain = StringUtils.substringAfter(userID, credentialsDomainSeparator);
         Map<String, PoolingRepository> credsDomainRepos = repositoriesMapByCredsDomain.get(credentialsDomain);
         
         if (credsDomainRepos == null) {
@@ -217,7 +222,7 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
         
         private ResourceLifecycleManagement getResourceLifecycleManagementBySession(PooledSession session) {
             String userID = session.getUserID();
-            String credsDomain = StringUtils.substringAfter(userID, "@");
+            String credsDomain = StringUtils.substringAfter(userID, credentialsDomainSeparator);
             Map<String, PoolingRepository> repoMap = repositoriesMapByCredsDomain.get(credsDomain);
             
             if (repoMap != null) {
