@@ -446,7 +446,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
         if (folder.hasNode(name)) {
             if (folder.hasNode(newName)) {
-                throw new WorkflowException("Cannot move document to same name");
+                throw new WorkflowException("Cannot rename document to same name");
             }
             Node offspring = folder.getNode(name);
             if(offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(HippoNodeType.NT_HANDLE))  {
@@ -468,7 +468,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
             if (folderNode.hasNode(newName)) {
-                throw new WorkflowException("Cannot move document to same name");
+                throw new WorkflowException("Cannot rename document to same name");
             }
             documentNode.checkout();
             folderNode.getSession().move(documentNode.getPath(), folderNode.getPath()+"/"+newName);
