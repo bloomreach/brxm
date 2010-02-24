@@ -50,6 +50,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
@@ -143,6 +144,9 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
         protected void execute(WorkflowDescriptorModel<T> model) throws Exception {
             WorkflowDescriptor descriptor = (WorkflowDescriptor) model.getObject();
+            if (descriptor == null) {
+                throw new MappingException("action no longer valid");
+            }
             WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
             javax.jcr.Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
             session.refresh(true);
