@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletConfig;
 
@@ -69,7 +68,6 @@ import org.hippoecm.hst.core.component.HstComponentFatalException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -111,8 +109,15 @@ public class BaseHstComponent extends GenericHstComponent {
 
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "beans-annotated-classes";
     public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
-
+    
+    /**
+     * @deprecated
+     */
     public static final String DEFAULT_WRITABLE_USERNAME_PROPERTY = "writable.repository.user.name";
+    
+    /**
+     * @deprecated
+     */
     public static final String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";
     
 
@@ -649,10 +654,8 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return
      */
     protected Session getPersistableSession(HstRequest request) throws RepositoryException {
-        ContainerConfiguration config = request.getRequestContext().getContainerConfiguration();
-        String username = config.getString(DEFAULT_WRITABLE_USERNAME_PROPERTY);
-        String password = config.getString(DEFAULT_WRITABLE_PASSWORD_PROPERTY);
-        return getPersistableSession(request, new SimpleCredentials(username, password.toCharArray()));
+        Credentials credentials = HstServices.getComponentManager().getComponent("javax.jcr.Credentials.writable");
+        return getPersistableSession(request, credentials);
     }
     
     /**
