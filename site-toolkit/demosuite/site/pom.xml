@@ -719,10 +719,12 @@
                       <replacefilter token="#hstconfigreader.repository.address = vm://" value="hstconfigreader.repository.address = vm://" />
                       <replacefilter token="#binaries.repository.address = vm://" value="binaries.repository.address = vm://" />
                       <replacefilter token="#default.repository.address = vm://" value="default.repository.address = vm://" />
+                      <replacefilter token="#preview.repository.address = vm://" value="preview.repository.address = vm://" />
                       <replacefilter token="#writable.repository.address = vm://" value="writable.repository.address = vm://" />
                       <replacefilter token="hstconfigreader.repository.address = rmi://" value="#hstconfigreader.repository.address = rmi://" />
                       <replacefilter token="binaries.repository.address = rmi://" value="#binaries.repository.address = rmi://" />
                       <replacefilter token="default.repository.address = rmi://" value="#default.repository.address = rmi://" />
+                      <replacefilter token="preview.repository.address = rmi://" value="#preview.repository.address = rmi://" />
                       <replacefilter token="writable.repository.address = rmi://" value="#writable.repository.address = rmi://" />
                     </replace>
                     <echo><![CDATA[
