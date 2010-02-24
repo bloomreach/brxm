@@ -52,31 +52,33 @@ if (!YAHOO.hippo.DateTime) {
         };
 
         YAHOO.hippo.DatePicker = function(id, config) {
-            this.config(id, config);
+            this.init(id, config);
         };
 
         YAHOO.hippo.DatePicker.prototype = {
             picker : null,
             id: null,
             config: null,
+            containerId : null,
                 
-            config : function(id, cfg) {
+            init : function(id, cfg) {
                 this.id = id;
                 this.config = cfg;
+                
+                if(this.containerId == null) {
+                    this.containerId = Dom.generateId();
+                    container = document.createElement("div");
+                    container.id = this.containerId;
+                    document.body.appendChild(container);
+                }
 
                 this.config.dpJs = this.id + "DpJs";
-                this.config.dp = this.id + "Dp";
+                //this.config.dp = this.id + "Dp";
+                this.config.dp = this.containerId;                
                 this.config.icon = this.id +"Icon";
                 
-                YAHOO.hippo.HippoAjax.registerDestroyFunction(Dom.get(this.id), this.destroy, this);
-                
-//                if (cfg.calendarInit.pages && cfg.calendarInit.pages > 1) {
-//                    this.picker = new YAHOO.widget.CalendarGroup(cfg.dpJs,cfg.dp, cfg.calendarInit);
-//                } else {
-//                    this.picker = new YAHOO.widget.Calendar(cfg.dpJs, cfg.dp, cfg);
-//                }   
-
                 YAHOO.util.Event.addListener(cfg.icon, "click", this.showCalendar, this, true);
+                YAHOO.hippo.HippoAjax.registerDestroyFunction(Dom.get(this.id), this.destroy, this);
             },
             
             /**
@@ -105,6 +107,8 @@ if (!YAHOO.hippo.DateTime) {
                 if (this.config.alignWithIcon) {
                     this.positionRelativeTo(this.picker.oDomContainer, this.config.icon);
                 }
+                
+                this.picker.visible = true;
             },
             
             destroy : function() {
@@ -123,7 +127,11 @@ if (!YAHOO.hippo.DateTime) {
                 Dom.get(this.id).value = this._substituteDate(this.config.datePattern, args[0][0]);
                 
                 if (this.isPickerVisible()) {
-                    if (this.config.hideOnSelect) this.picker.hide();
+                    if (this.config.hideOnSelect) {
+                        this.picker.hide();
+                        //Dom.setStyle(this.config.dp, 'display', 'none');
+                        this.picker.visible = false;
+                    }
                     if (this.config.fireChangeEvent) {
                         var field = Dom.get(this.id);
                         if (field.onchange != null && typeof(field.onchange) != 'undefined') field.onchange();
@@ -178,8 +186,7 @@ if (!YAHOO.hippo.DateTime) {
             },
             
             isPickerVisible : function() {
-                var dp = Dom.getStyle(this.picker.oDomContainer, 'display');
-                return dp == 'block';
+                return this.picker.visible;
             },
             
             /**

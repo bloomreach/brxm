@@ -5,6 +5,7 @@
     background-color:#f2f2f2;
     border:1px solid #808080;
     padding:10px;
+    z-index: 21000;
 }
 
 /* CALENDARGROUP BOUNDING BOX */
