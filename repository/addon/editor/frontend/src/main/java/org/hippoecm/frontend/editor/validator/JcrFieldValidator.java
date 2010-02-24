@@ -90,7 +90,10 @@ public class JcrFieldValidator implements ITypeValidator {
         boolean nonEmpty = validators.contains("non-empty");
         if ((required || fieldType.isNode() || nonEmpty || htmlValidator != null) && !field.isProtected()) {
             if ("*".equals(field.getPath())) {
-                log.warn("Wildcard properties are not validated");
+                if ((fieldType.isNode() && (required || field.getTypeDescriptor().isValidationCascaded()))
+                        || (!fieldType.isNode() && (htmlValidator != null || nonEmpty))) {
+                    log.debug("Wildcard properties are not validated");
+                }
                 return violations;
             }
             JcrNodeModel nodeModel = (JcrNodeModel) model;
