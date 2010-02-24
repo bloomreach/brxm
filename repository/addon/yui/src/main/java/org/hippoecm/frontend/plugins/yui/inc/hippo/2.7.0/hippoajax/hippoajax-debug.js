@@ -24,6 +24,23 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
             prefix : 'hippo-destroyable-',
             callbacks : new YAHOO.hippo.HashMap(),
             _scrollbarWidth : null,
+            
+            loadJavascript : function(url, callback, scope) {
+                var evt = !YAHOO.env.ua.ie ? "onload" : 'onreadystatechange';
+                var element = document.createElement("script");
+                element.type = "text/javascript";
+                element.src = url;
+                if (callback) {
+                  element[evt] = function() {      
+                    if (YAHOO.env.ua.ie && ( ! ( /loaded|complete/.test(window.event.srcElement.readyState) ) ) ){
+                      return;
+                    }
+                    callback.call(scope);
+                    element[evt] = null;
+                  };
+                }
+                document.getElementsByTagName("head")[0].appendChild(element);
+            },
 
             getScrollbarWidth : function() {
                 if(this._scrollbarWidth == null) {
@@ -82,26 +99,22 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
         Wicket.Ajax.Call.prototype.processComponent = function(steps, node) {
             var compId = node.getAttribute("id");
             var el = YAHOO.util.Dom.get(compId);
-        
-            var start = new Date();
-            var els = YAHOO.util.Dom.getElementsBy(function(node) {
-                return !YAHOO.lang.isUndefined(node.HippoDestroyID);
-            }, null, el);
-            
-            for(var i=0; i<els.length; i++) {
-                YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
+            if(el != null) {
+                //console.time("HippoAjax.processComponent.cleanup");
+                var els = YAHOO.util.Dom.getElementsBy(function(node) {
+                    return !YAHOO.lang.isUndefined(node.HippoDestroyID);
+                }, null, el);
+                
+                for(var i=0; i<els.length; i++) {
+                    YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
+                }
+                //console.time('HippoAjax.processComponent.purgeElement');
+                YAHOO.util.Event.purgeElement(el, false);
+                //console.timeEnd('HippoAjax.processComponent.purgeElement');
+                //console.timeEnd("HippoAjax.processComponent.cleanup");
             }
-            var cleanupTook = 'Cleanup took ' + (new Date().getTime() - start.getTime()) + 'ms';
-            YAHOO.log(cleanupTook, 'info', 'HippoAjax');
-        
-            start = new Date();
-            YAHOO.util.Event.purgeElement(el, false);
-        
-            var purgeTook = 'Purge took ' + (new Date().getTime() - start.getTime()) + 'ms for element ' + el.id;
-            YAHOO.log(purgeTook, 'info', 'HippoAjax');
-            tmpFunc(steps, node);
+            tmpFunc.call(this, steps, node);
         }
-
 
     })();
 
