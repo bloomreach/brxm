@@ -38,6 +38,7 @@ import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.editor.prototype.JcrPrototypeStore;
 import org.hippoecm.editor.template.BuiltinTemplateStore;
 import org.hippoecm.editor.template.JcrTemplateStore;
+import org.hippoecm.editor.template.TemplateLocator;
 import org.hippoecm.editor.type.JcrDraftStore;
 import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
@@ -554,7 +555,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private IModel selectedExtPtModel;
 
     private IStore<IClusterConfig> jcrTemplateStore;
-    private IStore<IClusterConfig> builtinTemplateStore;
+    private BuiltinTemplateStore builtinTemplateStore;
 
     private JcrTypeStore jcrTypeStore;
     private ITypeLocator typeLocator;
@@ -595,6 +596,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         this.jcrTemplateStore = new JcrTemplateStore(typeLocator);
         this.builtinTemplateStore = new BuiltinTemplateStore(typeLocator);
+        builtinTemplateStore.setTemplateLocator(new TemplateLocator(new IStore[] { jcrTemplateStore }));
 
         this.prototypeStore = new JcrPrototypeStore();
 
@@ -922,7 +924,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             ((IDetachable) object).detach();
         }
     }
-    
+
     // IObservable
 
     public void setObservationContext(IObservationContext context) {
