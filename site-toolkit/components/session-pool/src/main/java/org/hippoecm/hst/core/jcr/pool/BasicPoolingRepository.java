@@ -53,9 +53,10 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     
     protected String repositoryProviderClassName = "org.hippoecm.hst.core.jcr.pool.JcrHippoRepositoryProvider";
     protected JcrRepositoryProvider jcrRepositoryProvider;
-    protected String validRepositoryAddressPattern = "^[^\\$]*$";
+    protected String validRepositoryAddressPattern = "^((\\s*)|(([^\\$].*)|(\\$[^{].*)))$"; // default allowed repo address: blank string or string not starting with '${'.
     protected String repositoryAddress;
     protected String defaultCredentialsUserID;
+    protected String defaultCredentialsUserIDSeparator = "@";
     protected char [] defaultCredentailsPassword;
     
     protected boolean refreshOnPassivate = true;
@@ -108,7 +109,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
         
         if (isSimpleDefaultCredentials) {
             String userID = ((SimpleCredentials) defaultCredentials).getUserID();
-            String userIDOnly = StringUtils.substringBefore(userID, "@");
+            String userIDOnly = StringUtils.substringBefore(userID, defaultCredentialsUserIDSeparator);
             
             if (!userID.equals(userIDOnly)) {
                 internalDefaultCredentials = new SimpleCredentials(userIDOnly, ((SimpleCredentials) defaultCredentials).getPassword());
@@ -126,6 +127,14 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     
     public String getDefaultCredentialsUserID() {
         return this.defaultCredentialsUserID;
+    }
+    
+    public void setDefaultCredentialsUserIDSeparator(String defaultCredentialsUserIDSeparator) {
+        this.defaultCredentialsUserIDSeparator = defaultCredentialsUserIDSeparator;
+    }
+    
+    public String getDefaultCredentialsUserIDSeparator() {
+        return this.defaultCredentialsUserIDSeparator;
     }
     
     public void setDefaultCredentialsPassword(char [] defaultCredentailsPassword) {

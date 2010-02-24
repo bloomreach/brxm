@@ -17,13 +17,17 @@ package org.hippoecm.hst.site.container;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
+import java.util.Map;
+
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.junit.Test;
 
 public class TestSpringComponentManager {
     
     private static final String SIMPLE_BEANS_1 = "/META-INF/assembly/simple-beans-1.xml";
     private static final String SIMPLE_BEANS_2 = "/META-INF/assembly/simple-beans-2.xml";
+    private static final String SIMPLE_BEANS_3 = "/META-INF/assembly/simple-beans-3.xml";
     private static final String NON_EXISTING_BEANS = "/META-INF/assembly/non-existing-ones/*.xml";
     
     @Test
@@ -56,4 +60,61 @@ public class TestSpringComponentManager {
         componentManager.close();
     }
     
+    @Test
+    public void testProperties() {
+        SpringComponentManager componentManager = new SpringComponentManager();
+        String [] configurationResources = new String [] { SIMPLE_BEANS_3 };
+        componentManager.setConfigurationResources(configurationResources);
+        
+        componentManager.initialize();
+        componentManager.start();
+        
+        Map<String, String> greetingMap = componentManager.getComponent("greetingMap");
+        
+        assertEquals("Hello from the property file!", greetingMap.get("props.greeting"));
+        assertEquals("${props.greeting.nonexisting}", greetingMap.get("props.greeting.nonexisting"));
+        
+        componentManager.stop();
+        componentManager.close();
+    }
+    
+    @Test
+    public void testConfigurationAndProperties() {
+        Configuration configuration = new PropertiesConfiguration();
+        configuration.setProperty("props.greeting", "Hello from the configuration!");
+        SpringComponentManager componentManager = new SpringComponentManager(configuration);
+        String [] configurationResources = new String [] { SIMPLE_BEANS_3 };
+        componentManager.setConfigurationResources(configurationResources);
+        
+        componentManager.initialize();
+        componentManager.start();
+        
+        Map<String, String> greetingMap = componentManager.getComponent("greetingMap");
+        
+        assertEquals("Hello from the configuration!", greetingMap.get("props.greeting"));
+        assertEquals("${props.greeting.nonexisting}", greetingMap.get("props.greeting.nonexisting"));
+        
+        componentManager.stop();
+        componentManager.close();
+    }
+
+    @Test
+    public void testSystemPropertiesFallback() {
+        System.setProperty("props.greeting", "Hello from the system props!");
+        System.setProperty("props.greeting.nonexisting", "Hello from the system props!");
+        SpringComponentManager componentManager = new SpringComponentManager();
+        String [] configurationResources = new String [] { SIMPLE_BEANS_3 };
+        componentManager.setConfigurationResources(configurationResources);
+        
+        componentManager.initialize();
+        componentManager.start();
+        
+        Map<String, String> greetingMap = componentManager.getComponent("greetingMap");
+        
+        assertEquals("Hello from the property file!", greetingMap.get("props.greeting"));
+        assertEquals("Hello from the system props!", greetingMap.get("props.greeting.nonexisting"));
+        
+        componentManager.stop();
+        componentManager.close();
+    }
 }

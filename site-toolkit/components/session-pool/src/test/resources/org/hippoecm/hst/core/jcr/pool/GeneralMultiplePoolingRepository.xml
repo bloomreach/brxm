@@ -25,12 +25,12 @@
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
   
   <bean id="javax.jcr.Credentials.default" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="admin" />
+    <constructor-arg value="admin@default" />
     <constructor-arg value="admin" />
   </bean>
   
   <bean id="javax.jcr.Credentials.writable" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="admin" />
+    <constructor-arg value="admin@writable" />
     <constructor-arg value="admin" />
   </bean>
   
@@ -50,7 +50,7 @@
         init-method="initialize" destroy-method="close">
     <!-- delegated JCR repository -->
     <property name="repositoryAddress"><null/></property>
-    <property name="defaultCredentialsUserID" value="admin" />
+    <property name="defaultCredentialsUserID" value="admin@default" />
     <property name="defaultCredentialsPassword" value="admin" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="25" />
@@ -70,7 +70,7 @@
         init-method="initialize" destroy-method="close">
     <!-- delegated JCR repository -->
     <property name="repositoryAddress"><null/></property>
-    <property name="defaultCredentialsUserID" value="admin" />
+    <property name="defaultCredentialsUserID" value="admin@writable" />
     <property name="defaultCredentialsPassword" value="admin" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="25" />

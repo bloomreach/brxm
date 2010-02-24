@@ -25,22 +25,22 @@
   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
   
   <bean id="javax.jcr.Credentials.default" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="${default.repository.user.name}"/>
+    <constructor-arg value="${default.repository.user.name}${repository.pool.user.name.separator}${default.repository.pool.name}"/>
     <constructor-arg value="${default.repository.password}"/>
   </bean>
   
   <bean id="javax.jcr.Credentials.writable" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="${writable.repository.user.name}"/>
+    <constructor-arg value="${writable.repository.user.name}${repository.pool.user.name.separator}${writable.repository.pool.name}"/>
     <constructor-arg value="${writable.repository.password}"/>
   </bean>
   
   <bean id="javax.jcr.Credentials.hstconfigreader" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="${hstconfigreader.repository.user.name}"/>
+    <constructor-arg value="${hstconfigreader.repository.user.name}${repository.pool.user.name.separator}${hstconfigreader.repository.pool.name}"/>
     <constructor-arg value="${hstconfigreader.repository.password}"/>
   </bean>
   
   <bean id="javax.jcr.Credentials.binaries" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="${binaries.repository.user.name}"/>
+    <constructor-arg value="${binaries.repository.user.name}${repository.pool.user.name.separator}${binaries.repository.pool.name}"/>
     <constructor-arg value="${binaries.repository.password}"/>
   </bean>
   
@@ -61,7 +61,8 @@
             <!-- delegated JCR repository -->
             <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
             <property name="repositoryAddress" value="${default.repository.address}"/>
-            <property name="defaultCredentialsUserID" value="${default.repository.user.name}"/>
+            <property name="defaultCredentialsUserID" value="${default.repository.user.name}${repository.pool.user.name.separator}${default.repository.pool.name}"/>
+            <property name="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
             <property name="defaultCredentialsPassword" value="${default.repository.password}"/>
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
             <property name="maxActive" value="${default.repository.maxActive}"/>
@@ -84,7 +85,8 @@
             <!-- delegated JCR repository -->
             <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
             <property name="repositoryAddress" value="${writable.repository.address}"/>
-            <property name="defaultCredentialsUserID" value="${writable.repository.user.name}"/>
+            <property name="defaultCredentialsUserID" value="${writable.repository.user.name}${repository.pool.user.name.separator}${writable.repository.pool.name}"/>
+            <property name="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
             <property name="defaultCredentialsPassword" value="${writable.repository.password}"/>
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
             <property name="maxActive" value="${writable.repository.maxActive}"/>
@@ -107,7 +109,8 @@
             <!-- delegated JCR repository -->
             <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
             <property name="repositoryAddress" value="${hstconfigreader.repository.address}"/>
-            <property name="defaultCredentialsUserID" value="${hstconfigreader.repository.user.name}"/>
+            <property name="defaultCredentialsUserID" value="${hstconfigreader.repository.user.name}${repository.pool.user.name.separator}${hstconfigreader.repository.pool.name}"/>
+            <property name="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
             <property name="defaultCredentialsPassword" value="${hstconfigreader.repository.password}"/>
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
             <property name="maxActive" value="${hstconfigreader.repository.maxActive}"/>
@@ -130,7 +133,8 @@
             <!-- delegated JCR repository -->
             <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
             <property name="repositoryAddress" value="${binaries.repository.address}"/>
-            <property name="defaultCredentialsUserID" value="${binaries.repository.user.name}"/>
+            <property name="defaultCredentialsUserID" value="${binaries.repository.user.name}${repository.pool.user.name.separator}${binaries.repository.pool.name}"/>
+            <property name="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
             <property name="defaultCredentialsPassword" value="${binaries.repository.password}"/>
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
             <property name="maxActive" value="${binaries.repository.maxActive}"/>
