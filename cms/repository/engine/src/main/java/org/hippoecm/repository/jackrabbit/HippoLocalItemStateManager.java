@@ -98,6 +98,8 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     Map<ItemId,Object> deletedExternals = new WeakHashMap<ItemId,Object>();
     private NodeId rootNodeId;
     private boolean virtualLayerEnabled = false;
+    private int virtualLayerEnabledCount = 0;
+    private boolean virtualLayerRefreshing = true;
 
     public HippoLocalItemStateManager(SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory,
                                       ItemStateCacheFactory cacheFactory, String attributeName, NodeTypeRegistry ntReg, boolean enabled,
@@ -111,16 +113,18 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         virtualPropertyNames = new HashSet<Name>();
     }
 
-    private int removal = 0;
     public boolean isEnabled() {
-        return virtualLayerEnabled && removal==0;
+        return virtualLayerEnabled && virtualLayerEnabledCount == 0;
     }
     public void setEnabled(boolean enabled) {
         if(enabled) {
-            --removal;
+            --virtualLayerEnabledCount;
         } else {
-            ++removal;
+            ++virtualLayerEnabledCount;
         }
+    }
+    public void setRefreshing(boolean enabled) {
+        virtualLayerRefreshing = enabled;
     }
     
     public NodeTypeRegistry getNodeTypeRegistry() {
@@ -434,6 +438,9 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         }
 
         void invalidate() {
+            if (!virtualLayerRefreshing) {
+                return;
+            }
             List<ItemState> deletedStates = new LinkedList<ItemState>();
             for(Iterator iter = upstream.deletedStates(); iter.hasNext(); )
                 deletedStates.add((ItemState)iter.next());
