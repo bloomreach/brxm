@@ -28,6 +28,7 @@
   <bean id="org.hippoecm.hst.core.request.ContextCredentialsProvider" class="org.hippoecm.hst.site.request.DefaultContextCredentialsProvider">
     <constructor-arg ref="javax.jcr.Credentials.default" />
     <constructor-arg ref="javax.jcr.Credentials.preview" />
+    <constructor-arg ref="javax.jcr.Credentials.writable" />
   </bean>
   
   <!-- Commons configuration from collab.properties -->

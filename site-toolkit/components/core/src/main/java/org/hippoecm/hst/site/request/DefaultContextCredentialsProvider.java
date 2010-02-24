@@ -20,7 +20,6 @@ import javax.jcr.Credentials;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.site.HstServices;
 
 /**
  * DefaultContextCredentialsProvider
@@ -31,14 +30,20 @@ public class DefaultContextCredentialsProvider implements ContextCredentialsProv
     
     protected Credentials defaultCredentials;
     protected Credentials defaultCredentialsForPreviewMode;
+    protected Credentials writableCredentials;
     
     public DefaultContextCredentialsProvider(Credentials defaultCredentials) {
         this(defaultCredentials, null);
     }
     
     public DefaultContextCredentialsProvider(Credentials defaultCredentials, Credentials defaultCredentialsForPreviewMode) {
+        this(defaultCredentials, defaultCredentialsForPreviewMode, null);
+    }
+    
+    public DefaultContextCredentialsProvider(Credentials defaultCredentials, Credentials defaultCredentialsForPreviewMode, Credentials writableCredentials) {
         this.defaultCredentials = defaultCredentials;
         this.defaultCredentialsForPreviewMode = defaultCredentialsForPreviewMode;
+        this.writableCredentials = writableCredentials;
     }
     
     public Credentials getDefaultCredentials(HstRequestContext requestContext) {
@@ -50,7 +55,6 @@ public class DefaultContextCredentialsProvider implements ContextCredentialsProv
     }
     
     public Credentials getWritableCredentials(HstRequestContext requestContext) {
-        Credentials creds = HstServices.getComponentManager().getComponent("javax.jcr.Credentials.writable");
-        return creds;
+        return writableCredentials;
     }
 }
