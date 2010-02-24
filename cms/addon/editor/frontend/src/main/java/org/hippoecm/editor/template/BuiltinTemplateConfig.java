@@ -18,15 +18,20 @@ package org.hippoecm.editor.template;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
+import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
+import org.hippoecm.frontend.model.ocm.StoreException;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +43,15 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
     
     static final Logger log = LoggerFactory.getLogger(BuiltinTemplateConfig.class);
 
+    private ITypeLocator typeLocator;
+    private ITemplateLocator locator;
     private ITypeDescriptor type;
     private String name;
 
-    public BuiltinTemplateConfig(ITypeDescriptor type) {
+    public BuiltinTemplateConfig(ITypeDescriptor type, ITypeLocator typeLocator, ITemplateLocator locator) {
         this.type = type;
+        this.locator = locator;
+        this.typeLocator = typeLocator;
         super.put("type", type.getName());
         this.name = type.getName().replace(':', '_');
     }
@@ -83,10 +92,47 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
         config.put("item", "${cluster.id}.field");
         list.add(config);
 
+        Map<String, ITypeDescriptor> declarations = new TreeMap<String, ITypeDescriptor>();
+        Map<String, IClusterConfig> templates = new TreeMap<String, IClusterConfig>();
+        for (String superType : type.getSuperTypes()) {
+            try {
+                ITypeDescriptor type = typeLocator.locate(superType);
+                for (Map.Entry<String, IFieldDescriptor> entry : type.getFields().entrySet()) {
+                    declarations.put(entry.getKey(), type);
+                }
+
+                try {
+                    Map<String, Object> criteria = new MiniMap<String, Object>(1);
+                    criteria.put("type", type);
+                    templates.put(superType, locator.getTemplate(criteria));
+                } catch (StoreException ex) {
+                    // ignore
+                }
+            } catch (StoreException e) {
+                throw new RuntimeException("Could not locate superType " + superType);
+            }
+        }
+
         Map<String, IFieldDescriptor> fields = type.getFields();
         for (Map.Entry<String, IFieldDescriptor> entry : fields.entrySet()) {
             IFieldDescriptor field = entry.getValue();
             ITypeDescriptor type = field.getTypeDescriptor();
+
+            if (declarations.containsKey(entry.getKey())) {
+                if (!templates.containsKey(declarations.get(entry.getKey()).getName())) {
+                    continue;
+                } else {
+                    // TODO: extract plugin from super configuration
+                }
+            } else {
+                try {
+                    Map<String, Object> criteria = new MiniMap<String, Object>(1);
+                    criteria.put("type", type);
+                    /* IClusterConfig cluster = */ locator.getTemplate(criteria);
+                } catch (StoreException e) {
+                    continue;
+                }
+            }
 
             config = new JavaPluginConfig(entry.getKey());
             if (type.isNode()) {

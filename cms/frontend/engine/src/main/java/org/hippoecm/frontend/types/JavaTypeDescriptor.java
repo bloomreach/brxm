@@ -42,7 +42,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
     private String name;
     private String type;
     private List<String> superTypes;
-    private Map<String, IFieldDescriptor> fields;
+    private transient Map<String, IFieldDescriptor> fields = null;
     private Map<String, IFieldDescriptor> declaredFields;
     private JavaFieldDescriptor primary;
     private boolean node;
@@ -56,7 +56,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
         this.name = name;
         this.type = type;
         this.superTypes = new LinkedList<String>();
-        this.fields = new HashMap<String, IFieldDescriptor>();
+        this.declaredFields = new HashMap<String, IFieldDescriptor>();
         this.primary = null;
         this.node = true;
         this.mixin = false;
@@ -88,6 +88,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
     public void setSuperTypes(List<String> superTypes) {
         checkMutable();
         this.superTypes = superTypes;
+        fields = null;
     }
 
     public Map<String, IFieldDescriptor> getDeclaredFields() {
@@ -95,6 +96,17 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
     }
 
     public Map<String, IFieldDescriptor> getFields() {
+        if (fields == null) {
+            fields = new HashMap<String, IFieldDescriptor>();
+            for (String superType : superTypes) {
+                try {
+                    fields.putAll(locator.locate(superType).getFields());
+                } catch (StoreException e) {
+                    throw new RuntimeException("Supertype cannot be found", e);
+                }
+            }
+            fields.putAll(declaredFields);
+        }
         return fields;
     }
 
@@ -105,7 +117,8 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
     public void addField(IFieldDescriptor field) {
         checkMutable();
         String name = field.getName();
-        fields.put(name, field);
+        declaredFields.put(name, field);
+        fields = null;
         if (obContext != null) {
             EventCollection<IEvent<ITypeDescriptor>> collection = new EventCollection<IEvent<ITypeDescriptor>>();
             collection.add(new TypeDescriptorEvent(this, field, TypeDescriptorEvent.EventType.FIELD_ADDED));
@@ -115,7 +128,8 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
 
     public void removeField(String name) {
         checkMutable();
-        IFieldDescriptor field = fields.remove(name);
+        IFieldDescriptor field = declaredFields.remove(name);
+        fields = null;
         if (obContext != null) {
             EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
             collection.add(new TypeDescriptorEvent(this, field, TypeDescriptorEvent.EventType.FIELD_REMOVED));
@@ -134,7 +148,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
             }
         }
 
-        IFieldDescriptor field = fields.get(name);
+        IFieldDescriptor field = declaredFields.get(name);
         if (field != null) {
             if (field instanceof JavaFieldDescriptor) {
                 ((JavaFieldDescriptor) field).setPrimary(true);
@@ -202,7 +216,8 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
     }
 
     public void detach() {
-        for (IFieldDescriptor field : fields.values()) {
+        fields = null;
+        for (IFieldDescriptor field : declaredFields.values()) {
             if (field instanceof IDetachable) {
                 ((IDetachable) field).detach();
             }

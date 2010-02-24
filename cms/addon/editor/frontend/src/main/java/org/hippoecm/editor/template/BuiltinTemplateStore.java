@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -37,15 +38,30 @@ public class BuiltinTemplateStore implements ITemplateStore {
     static final Logger log = LoggerFactory.getLogger(BuiltinTemplateStore.class);
 
     private ITypeLocator typeLocator;
+    private ITemplateLocator locator;
 
     public BuiltinTemplateStore(ITypeLocator typeStore) {
         this.typeLocator = typeStore;
+        locator = new TemplateLocator(new IStore[0]);
+    }
+
+    public ITemplateLocator getTypeLocator() {
+        return this.locator;
+    }
+
+    /**
+     * Set the type locator that will be used by type descriptors to resolve super
+     * types.
+     * @param locator
+     */
+    public void setTemplateLocator(ITemplateLocator locator) {
+        this.locator = locator;
     }
 
     public Iterator<IClusterConfig> find(Map<String, Object> criteria) {
         if (criteria.containsKey("type")) {
             List<IClusterConfig> list = new ArrayList<IClusterConfig>(1);
-            list.add(new BuiltinTemplateConfig((ITypeDescriptor) criteria.get("type")));
+            list.add(new BuiltinTemplateConfig((ITypeDescriptor) criteria.get("type"), typeLocator, locator));
             return list.iterator();
         }
         return new ArrayList<IClusterConfig>(0).iterator();
@@ -53,7 +69,7 @@ public class BuiltinTemplateStore implements ITemplateStore {
 
     public IClusterConfig load(String id) throws StoreException {
         try {
-            return new BuiltinTemplateConfig(typeLocator.locate(id));
+            return new BuiltinTemplateConfig(typeLocator.locate(id), typeLocator, locator);
         } catch (StoreException ex) {
             throw new StoreException("No type found for " + id, ex);
         }

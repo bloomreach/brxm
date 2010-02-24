@@ -31,9 +31,12 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
+import org.hippoecm.editor.cnd.CndSerializer;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.repository.TemplateEditorWorkflow;
+import org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin;
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -331,6 +334,40 @@ public class TemplateEditorWorkflowTest extends TestCase {
         }
         assertNotNull(draft);
         assertTrue(draft.isNodeType("test:mixin"));
+    }
+
+    String cndmandatory =
+        "<rep='internal'>\n" +
+        "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
+        "<nt='http://www.jcp.org/jcr/nt/1.0'>\n" +
+        "<mix='http://www.jcp.org/jcr/mix/1.0'>\n" +
+        "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>\n" +
+        "<test='http://www.hippoecm.org/editor/test/nt/0.2'>\n" +
+        "\n" +
+        "[test:mandatorybase]\n" +
+        "- test:base (string) mandatory\n" + 
+        "[test:mandatory] > test:mandatorybase\n" +
+        "- test:mandatory (string) mandatory\n" +
+        "- test:withdefaults (string) mandatory < 'aap', 'noot'\n" +
+        "- test:autocreated (string) = 'mies' mandatory autocreated\n";
+
+    @Test
+    public void superMandatoryPropertiesAreCreated() throws RepositoryException, WorkflowException, RemoteException,
+            StoreException {
+        Node root = session.getRootNode();
+
+        Node nsNode = root.getNode("hippo:namespaces/test");
+
+        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Workflow workflow = workflowManager.getWorkflow("test", nsNode);
+        assertTrue(workflow instanceof NamespaceWorkflow);
+
+        ((NamespaceWorkflow) workflow).updateModel(cndmandatory, RemodelWorkflowPlugin.makeCargo(session, "test"));
+
+        session.logout();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+
+        
     }
 
 }

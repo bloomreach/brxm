@@ -72,3 +72,11 @@
 [test:inheritingfromedited] > test:edited
 - test:extra (string)
 
+[test:mandatorybase]
+- test:base (string) mandatory
+
+[test:mandatory] > test:mandatorybase
+- test:mandatory (string) mandatory
+- test:withdefaults (string) mandatory < 'aap', 'noot'
+- test:autocreated (string) = 'mies' mandatory autocreated
+
