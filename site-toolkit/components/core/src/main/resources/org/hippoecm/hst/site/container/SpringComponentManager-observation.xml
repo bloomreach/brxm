@@ -136,6 +136,15 @@
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
                       <list>
+                        <ref bean="javax.jcr.Credentials.preview"/>
+                      </list>
+                    </property>
+                  </bean>
+                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
                         <ref bean="javax.jcr.Credentials.writable"/>
                       </list>
                     </property>
