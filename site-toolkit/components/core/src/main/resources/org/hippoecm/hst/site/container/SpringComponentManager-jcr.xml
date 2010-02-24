@@ -29,6 +29,11 @@
     <constructor-arg value="${default.repository.password}"/>
   </bean>
   
+  <bean id="javax.jcr.Credentials.preview" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="${preview.repository.user.name}${repository.pool.user.name.separator}${preview.repository.pool.name}"/>
+    <constructor-arg value="${preview.repository.password}"/>
+  </bean>
+  
   <bean id="javax.jcr.Credentials.writable" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="${writable.repository.user.name}${repository.pool.user.name.separator}${writable.repository.pool.name}"/>
     <constructor-arg value="${writable.repository.password}"/>
@@ -67,6 +72,30 @@
             <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
             <property name="maxActive" value="${default.repository.maxActive}"/>
             <property name="maxIdle" value="${default.repository.maxIdle}"/>
+            <property name="minIdle" value="0"/>
+            <property name="initialSize" value="0"/>
+            <property name="maxWait" value="10000"/>
+            <property name="testOnBorrow" value="true"/>
+            <property name="testOnReturn" value="false"/>
+            <property name="testWhileIdle" value="false"/>
+            <property name="timeBetweenEvictionRunsMillis" value="3600000"/>
+            <property name="numTestsPerEvictionRun" value="1"/>
+            <property name="minEvictableIdleTimeMillis" value="3600000"/>
+            <property name="refreshOnPassivate" value="false"/>
+          </bean>
+        </entry>
+        <entry key-ref="javax.jcr.Credentials.preview">
+          <bean class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
+            init-method="initialize" destroy-method="close">
+            <!-- delegated JCR repository -->
+            <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
+            <property name="repositoryAddress" value="${preview.repository.address}"/>
+            <property name="defaultCredentialsUserID" value="${preview.repository.user.name}${repository.pool.user.name.separator}${preview.repository.pool.name}"/>
+            <property name="defaultCredentialsUserIDSeparator" value="${repository.pool.user.name.separator}"/>
+            <property name="defaultCredentialsPassword" value="${preview.repository.password}"/>
+            <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
+            <property name="maxActive" value="${preview.repository.maxActive}"/>
+            <property name="maxIdle" value="${preview.repository.maxIdle}"/>
             <property name="minIdle" value="0"/>
             <property name="initialSize" value="0"/>
             <property name="maxWait" value="10000"/>

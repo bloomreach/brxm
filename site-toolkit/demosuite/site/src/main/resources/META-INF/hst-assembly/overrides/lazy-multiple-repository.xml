@@ -23,7 +23,7 @@
                            http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-
+  
   <!-- If you want to use a lazy multiple pooling JCR repository, uncomment the following and configure the correct configuration properties. -->
   <!--
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.LazyMultipleRepositoryImpl">
@@ -32,12 +32,12 @@
       <map key-type="java.lang.String" value-type="java.lang.String">
         <entry key="repositoryProviderClassName" value="${repositoryProviderClassName}" />
         <entry key="repositoryAddress" value="${default.repository.address}"/>
-        <entry key="defaultCredentialsUserID" value="${default.repository.user.name}"/>
+        <entry key="defaultCredentialsUserID" value="${default.repository.user.name}${repository.pool.user.name.separator}${default.repository.pool.name}"/>
         <entry key="defaultCredentialsPassword" value="${default.repository.password}"/>
         <entry key="maxActive" value="25"/>
         <entry key="maxIdle" value="10"/>
         <entry key="minIdle" value="0"/>
-        <entry key="initialSize" value="0"/>
+        <entry key="initialSize" value="1"/>
         <entry key="maxWait" value="10000"/>
         <entry key="testOnBorrow" value="true"/>
         <entry key="testOnReturn" value="false"/>

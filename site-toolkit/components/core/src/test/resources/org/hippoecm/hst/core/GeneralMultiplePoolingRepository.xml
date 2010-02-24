@@ -29,6 +29,11 @@
     <constructor-arg value="admin" />
   </bean>
   
+  <bean id="javax.jcr.Credentials.preview" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="admin@preview" />
+    <constructor-arg value="admin" />
+  </bean>
+  
   <bean id="javax.jcr.Credentials.writable" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="admin@writable" />
     <constructor-arg value="admin" />
@@ -44,6 +49,7 @@
     <constructor-arg>
       <map>
         <entry key-ref="javax.jcr.Credentials.default" value-ref="javax.jcr.Repository.default" />
+        <entry key-ref="javax.jcr.Credentials.preview" value-ref="javax.jcr.Repository.preview" />
         <entry key-ref="javax.jcr.Credentials.writable" value-ref="javax.jcr.Repository.writable" />
         <entry key-ref="javax.jcr.Credentials.hstconfigreader" value-ref="javax.jcr.Repository.hstconfigreader" />
       </map>
@@ -61,6 +67,26 @@
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="${default.repository.maxActive}" />
     <property name="maxIdle" value="${default.repository.maxIdle}" />
+    <property name="minIdle" value="0" />
+    <property name="initialSize" value="0" />
+    <property name="maxWait" value="10000" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testOnReturn" value="false" />
+    <property name="testWhileIdle" value="false" />
+    <property name="timeBetweenEvictionRunsMillis" value="60000" />
+    <property name="numTestsPerEvictionRun" value="1" />
+    <property name="minEvictableIdleTimeMillis" value="60000" />
+  </bean>
+  
+  <bean id="javax.jcr.Repository.preview" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
+        init-method="initialize" destroy-method="close">
+    <!-- delegated JCR repository -->
+    <property name="repositoryAddress"><null/></property>
+    <property name="defaultCredentialsUserID" value="admin@preview" />
+    <property name="defaultCredentialsPassword" value="admin" />
+    <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
+    <property name="maxActive" value="${preview.repository.maxActive}" />
+    <property name="maxIdle" value="${preview.repository.maxIdle}" />
     <property name="minIdle" value="0" />
     <property name="initialSize" value="0" />
     <property name="maxWait" value="10000" />
