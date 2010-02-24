@@ -71,26 +71,7 @@ if (!YAHOO.hippo.EditorManager) {
                 
                 //and load XinhaLoader.js
                  // Internal method that is used to load Xinha plugins et al
-                var loadJS = function(Url, Callback, Scope, Bonus) {
-                    var agt       = navigator.userAgent.toLowerCase();
-                    var is_ie    = ((agt.indexOf("msie") != -1) && (agt.indexOf("opera") == -1));
-                    var T = !is_ie ? "onload" : 'onreadystatechange';
-                    var S = document.createElement("script");
-                    S.type = "text/javascript";
-                    S.src = Url;
-                    if ( Callback ) {
-                      S[T] = function() {      
-                        if ( is_ie && ( ! ( /loaded|complete/.test(window.event.srcElement.readyState) ) ) ){
-                          return;
-                        }
-                        Callback.call(Scope ? Scope : this, Bonus);
-                        S[T] = null;
-                      };
-                    }
-                    document.getElementsByTagName("head")[0].appendChild(S);
-                };
-                
-                loadJS(editorUrl + 'XinhaLoader.js', function() {
+                YAHOO.hippo.HippoAjax.loadJavascript(editorUrl + 'XinhaLoader.js', function() {
                     this.initialized = true; 
                 }, this);
 
@@ -247,7 +228,7 @@ if (!YAHOO.hippo.EditorManager) {
         };
         
         YAHOO.hippo.BaseEditor = function(config) {
-            if(!Lang.isString(config.name) || config.name.trim().length == 0) {
+            if(!Lang.isString(config.name) || Lang.trim(config.name).length === 0) {
                 throw new Error("Editor configuration parameter 'name' is undefined or empty");
             }
             this.name = config.name;
@@ -344,9 +325,9 @@ if (!YAHOO.hippo.EditorManager) {
                     if(this.tooltip != null) {
                         this.hideTooltip();
                         this.createEditor();
-                        this.info('snel geopened');
+                        this.info('Editor created directly');
                     } else {
-                        this.info('vertraaged geopened');
+                        this.info('Editor created with a slight delay');
                         Lang.later (300, this, this.createEditor);
                     }
                 } else {
