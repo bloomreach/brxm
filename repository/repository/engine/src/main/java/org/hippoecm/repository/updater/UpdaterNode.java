@@ -215,7 +215,7 @@ final public class UpdaterNode extends UpdaterItem implements Node {
         }
 
         if (!hollow && origin != null && origin.isNode()) {
-            if(((Node)origin).isNodeType("mix:versionable")) {
+            if(((Node)origin).isNodeType("mix:versionable") && !((Node)origin).isCheckedOut()) {
                 if(UpdaterEngine.log.isDebugEnabled()) {
                     UpdaterEngine.log.debug("commit checkout "+origin.getPath());
                 }
@@ -238,6 +238,9 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                         UpdaterEngine.log.debug("commit create "+getPath()+" in "+((Node)parent.origin).getPath()+" (primary type "+((Node)parent.origin).getProperty("jcr:primaryType").getString()+") type "+getInternalProperty("jcr:primaryType")[0]);
                     }
                     if(!((Node)parent.origin).isCheckedOut()) {
+                        if(UpdaterEngine.log.isDebugEnabled()) {
+                            UpdaterEngine.log.debug("commit checkout parent "+((Node)parent.origin).getPath());
+                        }
                         ((Node)parent.origin).checkout();
                     }
                     String[] primaryType = getInternalProperty("jcr:primaryType");
@@ -281,6 +284,9 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             String name = nodeName;
             UpdaterEngine.log.debug("move unchanged node "+origin.getPath()+" to "+parent.origin.getPath()+"/"+name+" ("+((Node)parent.origin).getProperty("jcr:primaryType").getString()+")");
             if(!origin.getParent().isCheckedOut()) {
+                if(UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.debug("commit checkout parent "+((Node)parent.origin).getPath());
+                }
                 origin.getParent().checkout();
             }
             try {
@@ -310,6 +316,9 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                 }
             }
             if (!((Node)origin).isCheckedOut()) {
+                if(UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.debug("commit checkout "+((Node)origin).getPath());
+                }
                 ((Node)origin).checkout();
             }
             if(((Node)origin).hasProperty("jcr:mixinTypes")) {

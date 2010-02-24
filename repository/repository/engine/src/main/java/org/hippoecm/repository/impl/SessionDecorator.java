@@ -117,6 +117,10 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         ((HippoLocalItemStateManager)((org.apache.jackrabbit.core.WorkspaceImpl)session.getWorkspace()).getItemStateManager()).setEnabled(enabled);
     }
 
+    public void postRefreshEnabled(boolean enabled) {
+        ((HippoLocalItemStateManager)((org.apache.jackrabbit.core.WorkspaceImpl)session.getWorkspace()).getItemStateManager()).setRefreshing(enabled);
+    }
+
     Node getCanonicalNode(Node node) throws RepositoryException {
         if (session instanceof XASession) {
             return ((XASessionImpl)session).getCanonicalNode(node);

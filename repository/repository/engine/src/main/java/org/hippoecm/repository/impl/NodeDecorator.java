@@ -169,9 +169,11 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     public void checkout() throws UnsupportedRepositoryOperationException, LockException, RepositoryException {
         try {
             ((SessionDecorator)getSession()).postMountEnabled(false);
+            ((SessionDecorator)getSession()).postRefreshEnabled(false);
             super.checkout();
         } finally {
             ((SessionDecorator)getSession()).postMountEnabled(true);
+            ((SessionDecorator)getSession()).postRefreshEnabled(true);
         }
     }
 
