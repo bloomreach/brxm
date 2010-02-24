@@ -39,7 +39,6 @@ import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NodeComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,30 +97,14 @@ public class DocumentsProvider extends SortableDataProvider<Node> implements IOb
         Node node = folder.getObject();
         if (node != null) {
             try {
-                String user = node.getSession().getUserID();
                 NodeIterator subNodes = filter.filter(node, node.getNodes());
                 while (subNodes.hasNext()) {
                     Node subNode = subNodes.nextNode();
-                    // Skip deleted or draft-only documents
+                    // Skip deleted documents
                     if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                         if (!subNode.hasNode(subNode.getName())) {
                             observed.add(new JcrNodeModel(subNode));
                             continue;
-                        }
-                        // assure that when only a draft exists, the user is the holder
-                        if (user != null) {
-                            NodeIterator iter = subNode.getNodes(subNode.getName());
-                            Node document = iter.nextNode();
-                            if (!iter.hasNext() && document.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-                                String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                                if ("draft".equals(state)
-                                        && document.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
-                                        && !user.equals(document.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
-                                                .getString())) {
-                                    observed.add(new JcrNodeModel(document));
-                                    continue;
-                                }
-                            }
                         }
                     }
                     // skip translations

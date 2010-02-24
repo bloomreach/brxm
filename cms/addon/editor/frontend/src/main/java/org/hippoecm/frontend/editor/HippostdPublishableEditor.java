@@ -187,7 +187,9 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
     static IModel<Node> getPreviewModel(IModel<Node> handle) {
         try {
             Node handleNode = handle.getObject();
+            Node nostate = null;
             Node published = null;
+            Node draft = null;
             if (handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
@@ -198,14 +200,20 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
                                 return new JcrNodeModel(child);
                             } else if (state.equals(HippoStdNodeType.PUBLISHED)) {
                                 published = child;
+                            } else if (state.equals(HippoStdNodeType.DRAFT)) {
+                                draft = child;
                             }
                         } else {
-                            published = child;
+                            nostate = child;
                         }
                     }
                 }
                 if (published != null) {
                     return new JcrNodeModel(published);
+                } else if (draft != null) {
+                    return new JcrNodeModel(draft);
+                } else if (nostate != null) {
+                    return new JcrNodeModel(nostate);
                 }
             } else {
                 return handle;
