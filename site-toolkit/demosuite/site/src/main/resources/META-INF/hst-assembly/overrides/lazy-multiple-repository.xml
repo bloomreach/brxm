@@ -35,6 +35,7 @@
     <constructor-arg ref="javax.jcr.Credentials.default" />
     <constructor-arg ref="javax.jcr.Credentials.preview" />
     <constructor-arg ref="javax.jcr.Credentials.writable" />
+    <property name="siteNameSeparator" value="${repository.pool.user.name.separator}" />
   </bean>
   
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.LazyMultipleRepositoryImpl">
