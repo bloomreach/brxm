@@ -237,6 +237,16 @@ public class DereferencedSessionImporter implements Importer {
                 }
             }
         }
+        if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_DISABLE) {
+            if (def.allowsSameNameSiblings()) {
+                return nodeInfo;
+            } else {
+                String msg = "A node already exists add " + conflicting.safeGetJCRPath() + "!";
+                log.debug(msg);
+                importTargetNode.refresh(false);
+                throw new ItemExistsException(msg);
+            }
+        }
 
         String msg = "unknown mergeBehavior: " + mergeBehavior;
         log.warn(msg);
@@ -314,15 +324,13 @@ public class DereferencedSessionImporter implements Importer {
             if (importPath.equals(parent.safeGetJCRPath())) {
                 // this is the root target node, decided by the user self
                 // only throw an error on the most strict import
-                if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_SKIP) {
-                    String msg = "A node already exists add " + parent.safeGetJCRPath() + "!";
-                    log.warn(msg);
-                    importTargetNode.refresh(false);
-                    throw new ItemExistsException(msg);
+                if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_DISABLE) {
+                    String msg = "The node already exists add " + parent.safeGetJCRPath() + ", creating new one.";
+                    log.info(msg);
                 } else {
-                    String msg = "Import base node already exists. skipping: " + parent.safeGetJCRPath();
-                    log.debug(msg);
-                    parents.push(parent.getNode(nodeName));
+                    String msg = "The base node already exists add " + parent.safeGetJCRPath() + ", merging.";
+                    log.info(msg);
+                    parents.push(parent.getNode(nodeName)); // push null onto stack for skipped node
                     return;
                 }
             }

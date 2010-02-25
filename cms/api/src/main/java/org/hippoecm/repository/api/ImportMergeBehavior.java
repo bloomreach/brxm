@@ -49,4 +49,8 @@ public interface ImportMergeBehavior {
      * When a node alread exist, throw an {@link javax.jcr.ItemExistsException} exception and abort the import.  The import so far is kept in session transient state.
      */
     public static final int IMPORT_MERGE_THROW = 4;
+    /**
+     * Disable merging with existing nodes.
+     */
+    public static final int IMPORT_MERGE_DISABLE = 5;
 }
