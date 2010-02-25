@@ -25,3 +25,7 @@ table.toolbarRow {
 .column-wrapper {width: 99%; overflow: hidden;}
 
 .yui-resize .yui-resize-handle-r { width: 10px; }
+
+.hippo-search-scope-container-ul li {
+  width: 42%;
+}

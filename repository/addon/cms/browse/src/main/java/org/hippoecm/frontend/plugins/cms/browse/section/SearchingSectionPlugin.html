@@ -29,13 +29,17 @@
         </table>
         <table class="hippo-search-scope-container">
           <tr>
-            <td wicket:id="scope-container">
-              <span class="hippo-search-scope-right" />
-              <a class="hippo-search-scope" wicket:id="scope"><span wicket:id="scope-label">scope</span></a>
-            </td>
-            <td wicket:id="all-container">
-              <span class="hippo-search-scope-right" />
-              <a class="hippo-search-scope" wicket:id="all"><wicket:message key="all-label">all</wicket:message></a>
+            <td>
+              <ul class="hippo-search-scope-container-ul">
+                <li wicket:id="scope-container">
+                  <span class="hippo-search-scope-right" />
+                  <a class="hippo-search-scope" wicket:id="scope"><span wicket:id="scope-label">scope</span></a>
+                </li>
+                <li wicket:id="all-container">
+                  <span class="hippo-search-scope-right" />
+                  <a class="hippo-search-scope" wicket:id="all"><wicket:message key="all-label">all</wicket:message></a>
+                </li>
+              </ul>
             </td>
           </tr>
         </table>
