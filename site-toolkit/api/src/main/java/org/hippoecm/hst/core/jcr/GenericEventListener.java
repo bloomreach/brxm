@@ -28,18 +28,46 @@ import javax.jcr.observation.EventListener;
  * its own interests.
  */
 public class GenericEventListener implements EventListener {
-
-    public final void onEvent(EventIterator events) {
+    
+    // By default, not interested in events from the logging in the repository or the version environment
+    protected String [] skipPaths = new String [] { "/jcr:system", "/hippo:log" };
+    
+    public String [] getSkipPaths() {
+        return skipPaths;
+    }
+    
+    public void setSkipPaths(String [] skipPaths) {
+        this.skipPaths = skipPaths;
+    }
+    
+    protected boolean isEventOnSkippedPath(Event event) throws RepositoryException {
+        if (skipPaths == null || skipPaths.length == 0) {
+            return false;
+        }
+        
+        String eventPath = event.getPath();
+        
+        for (String skipPath : skipPaths) {
+            if (eventPath.startsWith(skipPath)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public void onEvent(EventIterator events) {
         while (events.hasNext()) {
             Event event = events.nextEvent();
+
             try {
-                // we are never interested in events from the cms logging in the repository or the version environment
-                if(event.getPath().startsWith("/hippo:log") || event.getPath().startsWith("/jcr:system")) {
+                if (isEventOnSkippedPath(event)) {
                     continue;
                 }
             } catch (RepositoryException e) {
-               continue;
+                continue;
             }
+            
             int type = event.getType();
             
             switch (type) {

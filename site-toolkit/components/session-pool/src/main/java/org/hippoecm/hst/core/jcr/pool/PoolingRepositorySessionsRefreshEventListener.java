@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.core.jcr.GenericEventListener;
 import org.slf4j.Logger;
@@ -34,52 +35,35 @@ public class PoolingRepositorySessionsRefreshEventListener extends GenericEventL
         this.poolingRepositories = poolingRepositories;
     }
     
-    protected void onNodeAdded(Event event) {
-        try {
-            if (log.isDebugEnabled()) log.debug("Event received on {} by {}.", event.getPath(), event.getUserID());
-            doInvalidation(event.getPath());
-        } catch (RepositoryException e) {
-            if (log.isWarnEnabled()) log.warn("Cannot retreive the path of the event: {}", e.getMessage());
-        }
-    }
+    public void onEvent(EventIterator events) {
+        Event invaliationEvent = null;
+        
+        while (events.hasNext()) {
+            Event event = events.nextEvent();
 
-    protected void onNodeRemoved(Event event) {
-        try {
-            if (log.isDebugEnabled()) log.debug("Event received on {} by {}.", event.getPath(), event.getUserID());
-            doInvalidation(event.getPath());
-        } catch (RepositoryException e) {
-            if (log.isWarnEnabled()) log.warn("Cannot retreive the path of the event: {}", e.getMessage());
+            try {
+                if (isEventOnSkippedPath(event)) {
+                    continue;
+                }
+            } catch (RepositoryException e) {
+                continue;
+            }
+            
+            invaliationEvent = event;
+            break;
+        }
+        
+        if (invaliationEvent != null) {
+            try {
+                if (log.isDebugEnabled()) log.debug("Event received on {} by {}.", invaliationEvent.getPath(), invaliationEvent.getUserID());
+                doInvalidation();
+            } catch (RepositoryException e) {
+                if (log.isWarnEnabled()) log.warn("Cannot retreive the path of the event: {}", e.getMessage());
+            }
         }
     }
     
-    protected void onPropertyAdded(Event event) {
-        try {
-            if (log.isDebugEnabled()) log.debug("Event received on {} by {}.", event.getPath(), event.getUserID());
-            doInvalidation(event.getPath());
-        } catch (RepositoryException e) {
-            if (log.isWarnEnabled()) log.warn("Cannot retreive the path of the event: {}", e.getMessage());
-        }
-    }
-    
-    protected void onPropertyChanged(Event event) {
-        try {
-            if (log.isDebugEnabled()) log.debug("Event received on {} by {}.", event.getPath(), event.getUserID());
-            doInvalidation(event.getPath());
-        } catch (RepositoryException e) {
-            if (log.isWarnEnabled()) log.warn("Cannot retreive the path of the event: {}", e.getMessage());
-        }
-    }
-    
-    protected void onPropertyRemoved(Event event) {
-        try {
-            if (log.isDebugEnabled()) log.debug("Event received on {} by {}.", event.getPath(), event.getUserID());
-            doInvalidation(event.getPath());
-        } catch (RepositoryException e) {
-            if (log.isWarnEnabled()) log.warn("Cannot retreive the path of the event: {}", e.getMessage());
-        }
-    }
-
-    private void doInvalidation(String path) {
+    private void doInvalidation() {
         long currentTimeMillis = System.currentTimeMillis();
         
         if (this.poolingRepositories != null) {
