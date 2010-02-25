@@ -157,7 +157,7 @@ public class ReplicatorHelper {
         try {
             return (PropertyState) context.getItemStateManager().getItemState(propId);
         } catch (NoSuchItemStateException e) {
-            log.warn("Unable to retrieve property state of node id '{}' with name '{}'.", id, propName);
+            log.info("Unable to retrieve property state of node id '{}' with name '{}'.", id, propName);
             return null;
         } catch (ItemStateException e) {
             log.warn("Error while trying to retrieve property state of node id '{}' with name '{}'.", id, propName);
