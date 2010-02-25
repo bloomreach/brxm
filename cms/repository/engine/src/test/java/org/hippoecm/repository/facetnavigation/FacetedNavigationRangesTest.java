@@ -29,8 +29,8 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
+import org.junit.Ignore;
 import org.junit.Test;
-
 
 public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTest {
     @SuppressWarnings("unused")
