@@ -181,6 +181,12 @@
       <scope>test</scope>
     </dependency>
     
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
     <!-- Hst test dependencies -->
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>

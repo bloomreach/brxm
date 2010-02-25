@@ -24,8 +24,19 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
   
-  <!-- If you want to use a lazy multiple pooling JCR repository, uncomment the following and configure the correct configuration properties. -->
   <!--
+  If you want to use a lazy multiple pooling JCR repository, uncomment the following and configure the correct configuration properties.
+  By default, this configuration forces to use different session pool per each site.
+  -->
+  
+  <!--
+  
+  <bean id="org.hippoecm.hst.core.request.ContextCredentialsProvider" class="org.hippoecm.hst.site.request.SiteNameDecoratedContextCredentialsProvider">
+    <constructor-arg ref="javax.jcr.Credentials.default" />
+    <constructor-arg ref="javax.jcr.Credentials.preview" />
+    <constructor-arg ref="javax.jcr.Credentials.writable" />
+  </bean>
+  
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.LazyMultipleRepositoryImpl">
     <constructor-arg><ref bean="javax.jcr.Credentials.default"/></constructor-arg>
     <constructor-arg>
@@ -49,6 +60,7 @@
       </map>
     </constructor-arg>
   </bean>
+  
   -->
   
 </beans>
