@@ -38,7 +38,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
 
     
 
-    @Test
+    @Ignore
     public void testDateRanges() throws RepositoryException, IOException {
         if(testShouldSkip()) {
             assertTrue(true);
@@ -75,7 +75,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
     }
 
 
-    @Test
+    @Ignore
     public void testDateOpenRange() throws RepositoryException, IOException {
         if(testShouldSkip()) {
             assertTrue(true);
