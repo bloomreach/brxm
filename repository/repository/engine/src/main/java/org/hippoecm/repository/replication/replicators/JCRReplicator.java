@@ -420,8 +420,8 @@ public class JCRReplicator extends AbstractReplicator {
             InputStream in = new BufferedInputStream(new ByteArrayInputStream(sb.toString().getBytes("UTF-8")));
             ((HippoSession) session).importDereferencedXML(remoteParent.getPath(), in,
                     ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING,
-                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE,
-                    ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
+                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT,
+                    ImportMergeBehavior.IMPORT_MERGE_DISABLE);
             return getRemoteNode(id);
         } catch (IOException e) {
             throw new FatalReplicationException("Unable to add remote node '" + name + "' of type '" + primaryType

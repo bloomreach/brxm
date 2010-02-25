@@ -100,6 +100,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> implements ITitle
         mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_OVERWRITE), "Overwrite same name nodes");
         mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_SKIP), "Skip same name nodes");
         mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_THROW), "Throw error on naming conflict");
+        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_DISABLE), "Disable merging");
 
         derefOpts.put(new Integer(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE), "Remove reference when not found");
         derefOpts.put(new Integer(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW), "Throw error when not found");
