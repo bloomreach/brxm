@@ -137,7 +137,7 @@ public class ReplicationConfig {
             log.info("Using default replication config context:/{}", REPLICATION_XML);
             InputStream is = ReplicationConfig.class.getResourceAsStream(REPLICATION_XML);
             if (is == null) {
-                log.warn("Replication config not found: context:/{}. Disabling replicaiton.", REPLICATION_XML);
+                log.info("Replication config not found: context:/{}. Disabling replicaiton.", REPLICATION_XML);
                 return null;
             }
             return ReplicationConfig.class.getResourceAsStream(REPLICATION_XML);
@@ -148,7 +148,7 @@ public class ReplicationConfig {
             log.info("Using resource replication config context:/{}", configName);
             InputStream is = ReplicationConfig.class.getResourceAsStream(configName);
             if (is == null) {
-                log.warn("Replication config not found: context:/{}. Disabling replicaiton.", configName);
+                log.info("Replication config not found: context:/{}. Disabling replicaiton.", configName);
                 return null;
             }
             return new BufferedInputStream(is);
@@ -170,7 +170,7 @@ public class ReplicationConfig {
             FileInputStream fis = new FileInputStream(configFile);
             return new BufferedInputStream(fis);
         } catch (FileNotFoundException e) {
-            log.warn("Replication config not found: file:/{}. Disabling replicaiton.", configName);
+            log.info("Replication config not found: file:/{}. Disabling replicaiton.", configName);
             log.debug("Cause: ", e);
             return null;
         }
