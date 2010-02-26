@@ -54,7 +54,7 @@
         <entry key="testOnBorrow" value="true"/>
         <entry key="testOnReturn" value="false"/>
         <entry key="testWhileIdle" value="false"/>
-        <entry key="timeBetweenEvictionRunsMillis" value="3600000"/>
+        <entry key="timeBetweenEvictionRunsMillis" value="60000"/>
         <entry key="numTestsPerEvictionRun" value="1"/>
         <entry key="minEvictableIdleTimeMillis" value="3600000"/>
         <entry key="refreshOnPassivate" value="false"/>
