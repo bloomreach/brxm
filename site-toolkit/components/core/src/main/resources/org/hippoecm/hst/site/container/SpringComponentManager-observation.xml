@@ -25,7 +25,7 @@
   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
   >
   
-  <bean id="baseEventListener" abstract="true">
+  <bean id="baseEventListener" abstract="true" depends-on="org.hippoecm.hst.logging.LoggerFactory">>
     <property name="skipPaths">
       <list>
         <value>/jcr:system</value>

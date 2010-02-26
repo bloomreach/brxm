@@ -145,8 +145,8 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                     }
                 }
                 
-                if (itemExistsOnAbsolutePath) {
-                    log.warn("An event handler will be registered for a path where no node currently exists: " + absolutePath);
+                if (!itemExistsOnAbsolutePath) {
+                    log.warn("An event handler will be registered for a path where no node currently is available: " + absolutePath);
                 }
                 
                 if (log.isInfoEnabled()) {
