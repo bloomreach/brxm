@@ -97,7 +97,7 @@ public class SpringComponentManager implements ComponentManager, BeanPostProcess
             
             if (configuration != null) {
                 Properties initProps = ConfigurationConverter.getProperties(configuration);
-                PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
+                PropertyPlaceholderConfigurer ppc = new OverridingByAttributesPropertyPlaceholderConfigurer();
                 ppc.setIgnoreUnresolvablePlaceholders(configuration.getBoolean(IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
                 ppc.setSystemPropertiesMode(configuration.getInt(SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
                 ppc.setProperties(initProps);

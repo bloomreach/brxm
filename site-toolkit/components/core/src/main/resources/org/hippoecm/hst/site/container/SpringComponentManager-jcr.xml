@@ -49,13 +49,6 @@
     <constructor-arg value="${binaries.repository.password}"/>
   </bean>
   
-  <!--
-    <bean id="javax.jcr.Credentials.event.based" class="javax.jcr.SimpleCredentials">
-    <constructor-arg value="${event.based.repository.user.name}" />
-    <constructor-arg value="${event.based.repository.password}" />
-    </bean>
-  -->
-  
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl">
     <!-- Delegating session pool repositories -->
     <constructor-arg>
