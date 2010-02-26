@@ -67,7 +67,7 @@ public class HstSitesConfigurationEventListener extends GenericEventListener {
         
         if (invaliationEvent != null) {
             try {
-                if (log.isDebugEnabled()) log.debug("Event received on {} by {}.", invaliationEvent.getPath(), invaliationEvent.getUserID());
+                if (log.isDebugEnabled()) log.debug("Event received on {}.", invaliationEvent.getPath());
                 doInvalidation();
             } catch (RepositoryException e) {
                 if (log.isWarnEnabled()) log.warn("Cannot retreive the path of the event: {}", e.getMessage());

@@ -36,7 +36,7 @@ public class PoolingRepositorySessionsRefreshEventListener extends GenericEventL
     }
     
     public void onEvent(EventIterator events) {
-        Event invaliationEvent = null;
+        boolean invalidatePools = false;
         
         while (events.hasNext()) {
             Event event = events.nextEvent();
@@ -49,17 +49,13 @@ public class PoolingRepositorySessionsRefreshEventListener extends GenericEventL
                 continue;
             }
             
-            invaliationEvent = event;
+            invalidatePools = true;
             break;
         }
         
-        if (invaliationEvent != null) {
-            try {
-                if (log.isDebugEnabled()) log.debug("Event received on {} by {}.", invaliationEvent.getPath(), invaliationEvent.getUserID());
-                doInvalidation();
-            } catch (RepositoryException e) {
-                if (log.isWarnEnabled()) log.warn("Cannot retreive the path of the event: {}", e.getMessage());
-            }
+        if (invalidatePools) {
+            if (log.isDebugEnabled()) log.debug("Event received. Invalidating session pools.");
+            doInvalidation();
         }
     }
     
