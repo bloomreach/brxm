@@ -432,8 +432,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 if (wf instanceof FolderWorkflow) {
                     FolderWorkflow fwf = (FolderWorkflow) wf;
                     fwf.delete(nodeName);
-                    // after a fwf action, we need to refresh the current session as fwf is executed by a different session in the repository
-                    session.refresh(false);
+                    
                 } else {
                     throw new ObjectBeanPersistenceException("The workflow is not a FolderWorkflow for " + folderBean.getPath() + ": " + wf);
                 }
@@ -452,6 +451,9 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     public void save() throws ObjectBeanPersistenceException {
         try {
             session.save();
+            // also do a refresh, because it is possible that through workflow another jcr session made the changes, and that the current
+            // has no changes, hence a session.save() does not trigger a refresh
+            session.refresh(false); 
         } catch (Exception e) {
             throw new ObjectBeanPersistenceException(e);
         }
