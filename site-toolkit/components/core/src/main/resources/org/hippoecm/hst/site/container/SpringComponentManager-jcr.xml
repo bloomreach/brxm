@@ -71,7 +71,7 @@
             <property name="testOnBorrow" value="true"/>
             <property name="testOnReturn" value="false"/>
             <property name="testWhileIdle" value="false"/>
-            <property name="timeBetweenEvictionRunsMillis" value="3600000"/>
+            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
             <property name="numTestsPerEvictionRun" value="1"/>
             <property name="minEvictableIdleTimeMillis" value="3600000"/>
             <property name="refreshOnPassivate" value="false"/>
@@ -95,9 +95,10 @@
             <property name="testOnBorrow" value="true"/>
             <property name="testOnReturn" value="false"/>
             <property name="testWhileIdle" value="false"/>
-            <property name="timeBetweenEvictionRunsMillis" value="3600000"/>
+            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
             <property name="numTestsPerEvictionRun" value="1"/>
-            <property name="minEvictableIdleTimeMillis" value="3600000"/>
+            <!-- after 10 min unused, we evict preview sessions -->
+            <property name="minEvictableIdleTimeMillis" value="600000"/>
             <property name="refreshOnPassivate" value="false"/>
           </bean>
         </entry>
@@ -119,9 +120,10 @@
             <property name="testOnBorrow" value="true"/>
             <property name="testOnReturn" value="false"/>
             <property name="testWhileIdle" value="false"/>
-            <property name="timeBetweenEvictionRunsMillis" value="3600000"/>
+            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
             <property name="numTestsPerEvictionRun" value="1"/>
-            <property name="minEvictableIdleTimeMillis" value="3600000"/>
+            <!-- after 5 min unused, we evict writable sessions -->
+            <property name="minEvictableIdleTimeMillis" value="300000"/>
             <property name="refreshOnPassivate" value="false"/>
           </bean>
         </entry>
@@ -143,9 +145,10 @@
             <property name="testOnBorrow" value="true"/>
             <property name="testOnReturn" value="false"/>
             <property name="testWhileIdle" value="false"/>
-            <property name="timeBetweenEvictionRunsMillis" value="3600000"/>
+            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
             <property name="numTestsPerEvictionRun" value="1"/>
-            <property name="minEvictableIdleTimeMillis" value="3600000"/>
+            <!-- after 5 min unused, we evict config reader sessions -->
+            <property name="minEvictableIdleTimeMillis" value="300000"/>
             <property name="refreshOnPassivate" value="false"/>
           </bean>
         </entry>
@@ -167,9 +170,10 @@
             <property name="testOnBorrow" value="true"/>
             <property name="testOnReturn" value="false"/>
             <property name="testWhileIdle" value="false"/>
-            <property name="timeBetweenEvictionRunsMillis" value="3600000"/>
+            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
             <property name="numTestsPerEvictionRun" value="1"/>
-            <property name="minEvictableIdleTimeMillis" value="3600000"/>
+            <!-- after 10 min unused, we evict binaries sessions -->
+            <property name="minEvictableIdleTimeMillis" value="600000"/>
             <property name="refreshOnPassivate" value="false"/>
           </bean>
         </entry>
