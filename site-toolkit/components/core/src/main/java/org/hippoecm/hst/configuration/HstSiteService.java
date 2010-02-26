@@ -25,14 +25,16 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
-import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
 import org.hippoecm.hst.core.linking.LocationMapTree;
+import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -139,7 +141,10 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
        this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, templateRenderMap); 
       
        Node siteMapNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
-       this.siteMapService = new HstSiteMapService(this, siteMapNode);   
+       this.siteMapService = new HstSiteMapService(this, siteMapNode); 
+       
+       checkAndLogAccessibleRootComponents();
+       
        this.locationMapTree = new LocationMapTreeImpl(this.getSiteMap().getSiteMapItems());
        
        if(configurationNode.hasNode(HstNodeTypes.NODENAME_HST_SITEMENUS)) {
@@ -154,6 +159,38 @@ public class HstSiteService extends AbstractJCRService implements HstSite, Servi
        }
     }
    
+    /*
+     * meant to check all accessible root components from the sitemap space, and check whether every component has at least a template 
+     * (jsp/freemarker/etc) configured. If not, we log a warning about this
+     */
+    private void checkAndLogAccessibleRootComponents() {
+        for(HstSiteMapItem hstSiteMapItem :this.siteMapService.getSiteMapItems()){
+            sanitizeSiteMapItem(hstSiteMapItem);
+        }
+    }
+
+    private void sanitizeSiteMapItem(HstSiteMapItem hstSiteMapItem) {
+        HstComponentConfiguration hstComponentConfiguration = this.getComponentsConfiguration().getComponentConfiguration(hstSiteMapItem.getComponentConfigurationId());
+        if(hstComponentConfiguration == null) {
+            log.info("HST Configuration info: The sitemap item '{}' does not point to an existing HST Component and cannot be used for generating a page.", hstSiteMapItem.getId());
+        } else {
+            sanitizeHstComponentConfiguration(hstComponentConfiguration);
+        }
+        for(HstSiteMapItem child : hstSiteMapItem.getChildren()) {
+            sanitizeSiteMapItem(child);
+        }
+    }
+    
+    private void sanitizeHstComponentConfiguration(HstComponentConfiguration hstComponentConfiguration) {
+        String renderPath = hstComponentConfiguration.getRenderPath();
+        if(renderPath == null) {
+            log.warn("HST Configuration Error: the component '{}' does not have a render path. Component id = '{}' ",hstComponentConfiguration.getName(),  hstComponentConfiguration.getId());
+        }
+        for(HstComponentConfiguration child : hstComponentConfiguration.getChildren().values()) {
+            sanitizeHstComponentConfiguration(child);
+        }
+    }
+
     public HstComponentsConfiguration getComponentsConfiguration() {
         return this.componentsConfigurationService;
     }
