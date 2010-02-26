@@ -31,7 +31,7 @@ public class PoolingRepositorySessionsRefreshEventListener extends GenericEventL
     
     protected List<PoolingRepository> poolingRepositories;
     
-    public void setPoolingRepositoris(List<PoolingRepository> poolingRepositories) {
+    public void setPoolingRepositories(List<PoolingRepository> poolingRepositories) {
         this.poolingRepositories = poolingRepositories;
     }
     

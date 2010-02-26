@@ -39,7 +39,7 @@
   </bean>
   
   <bean id="hstconfigreaderSessionPoolRefresher" parent="baseEventListener" class="org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionsRefreshEventListener">
-    <property name="poolingRepositoris">
+    <property name="poolingRepositories">
       <list>
         <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
           <property name="targetObject" ref="javax.jcr.Repository"/>
@@ -152,7 +152,7 @@
           <property name="noLocal" value="false"/>
           <property name="eventListener">
             <bean parent="baseEventListener" class="org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionsRefreshEventListener">
-              <property name="poolingRepositoris">
+              <property name="poolingRepositories">
                 <list>
                   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
                     <property name="targetObject" ref="javax.jcr.Repository"/>
