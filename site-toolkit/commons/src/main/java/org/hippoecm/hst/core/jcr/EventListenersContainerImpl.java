@@ -105,7 +105,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
             } else {
                 session = this.repository.login(this.credentials);
             }
-            this.workspace = this.session.getWorkspace();
+            this.workspace = session.getWorkspace();
             this.observationManager = this.workspace.getObservationManager();
 
             for (EventListenerItem item : this.eventListenerItems) {
@@ -132,9 +132,25 @@ public class EventListenersContainerImpl implements EventListenersContainer {
 
                 this.observationManager.addEventListener(eventListener, eventTypes, absolutePath, isDeep, uuids,
                         nodeTypeNames, noLocal);
-
-                if (log.isDebugEnabled()) {
-                    log.debug("event listener registered: listener=" + eventListener + ", eventTypes=" + eventTypes
+                
+                boolean itemExistsOnAbsolutePath = false;
+                
+                try {
+                    itemExistsOnAbsolutePath = session.itemExists(absolutePath);
+                } catch (Exception anyEx) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to check if item exists on " + absolutePath + ": " + anyEx, anyEx);
+                    } else {
+                        log.warn("Failed to check if item exists on " + absolutePath + ": " + anyEx);
+                    }
+                }
+                
+                if (itemExistsOnAbsolutePath) {
+                    log.warn("An event handler will be registered for a path where no node currently exists: " + absolutePath);
+                }
+                
+                if (log.isInfoEnabled()) {
+                    log.info("An event listener registered: listener=" + eventListener + ", eventTypes=" + eventTypes
                             + ", absolutePath=" + absolutePath + ", isDeep=" + isDeep + ", uuids=" + uuids
                             + ", nodeTypeNames=" + nodeTypeNames + ", noLocal=" + noLocal);
                 }
