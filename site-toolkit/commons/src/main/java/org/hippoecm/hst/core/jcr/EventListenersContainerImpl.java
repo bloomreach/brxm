@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Credentials;
+import javax.jcr.Item;
 import javax.jcr.LoginException;
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -30,6 +32,7 @@ import javax.jcr.observation.ObservationManager;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.logging.LoggerFactory;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.api.HippoNode;
 
 public class EventListenersContainerImpl implements EventListenersContainer {
 
@@ -151,6 +154,17 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                 
                 try {
                     itemExistsOnAbsolutePath = session.itemExists(absolutePath);
+                    if(itemExistsOnAbsolutePath) {
+                        Item jcrItem = session.getItem(absolutePath);
+                        if(!jcrItem.isNode()) {
+                            jcrItem = jcrItem.getParent();
+                        }
+                        Node canonical = ((HippoNode)jcrItem).getCanonicalNode();
+                        if(canonical == null || !canonical.isSame(jcrItem)) {
+                            log.warn("An event handler will be registered for a virtual node. Virtual nodes never have events. You should take the canonical location most likely. Virtual path = " + absolutePath);
+                        }
+                        
+                    }
                 } catch (Exception anyEx) {
                     if (log.isDebugEnabled()) {
                         log.warn("Failed to check if item exists on " + absolutePath + ": " + anyEx, anyEx);
