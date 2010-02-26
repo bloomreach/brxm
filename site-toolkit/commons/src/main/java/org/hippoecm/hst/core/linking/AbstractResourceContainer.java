@@ -121,6 +121,11 @@ public abstract class AbstractResourceContainer implements ResourceContainer {
                return null;
            }
            Node node = (Node)item;
+           if(node.isNodeType(HippoNodeType.NT_RESOURCE)) {
+               // the path directly map to a resource node: return this one
+               log.debug("Resource Node found at '{}'. Return resource", actualPath);
+               return node;
+           }
            if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
                try {
                    node = node.getNode(node.getName());
