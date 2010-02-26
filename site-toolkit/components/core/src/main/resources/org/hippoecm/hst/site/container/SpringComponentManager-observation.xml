@@ -25,7 +25,7 @@
   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
   >
   
-  <bean id="baseEventListener" abstract="true" depends-on="org.hippoecm.hst.logging.LoggerFactory">
+  <bean id="baseEventListener" abstract="true">
     <property name="skipPaths">
       <list>
         <value>/jcr:system</value>
@@ -61,6 +61,7 @@
     <property name="sessionLiveCheck" value="true"/>
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader"/>
     <property name="sessionLiveCheckInterval" value="60000"/>
+    <property name="loggerFactory" ref="org.hippoecm.hst.logging.LoggerFactory"/>
     <property name="eventListenerItems">
       <list>
 

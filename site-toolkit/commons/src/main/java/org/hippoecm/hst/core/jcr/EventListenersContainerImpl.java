@@ -28,6 +28,7 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
 import org.hippoecm.hst.logging.Logger;
+import org.hippoecm.hst.logging.LoggerFactory;
 import org.hippoecm.hst.site.HstServices;
 
 public class EventListenersContainerImpl implements EventListenersContainer {
@@ -47,6 +48,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     protected boolean firstInitializationDone;
     protected EventListenersContainerSessionChecker eventListenersContainerSessionChecker;
     protected volatile boolean stopped;
+    protected LoggerFactory loggerFactory;
 
     public void setRepository(Repository repository) {
         this.repository = repository;
@@ -79,7 +81,19 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     public void setSessionLiveCheckInterval(long sessionLiveCheckInterval) {
         this.sessionLiveCheckInterval = sessionLiveCheckInterval;
     }
-
+    
+    public void setLoggerFactory(LoggerFactory loggerFactory) {
+        this.loggerFactory = loggerFactory;
+    }
+    
+    protected Logger getLogger() {
+        if (loggerFactory != null) {
+            return loggerFactory.getLogger(LOGGER_CATEGORY_NAME);
+        } else {
+            return HstServices.getLogger(LOGGER_CATEGORY_NAME);
+        }
+    }
+    
     public void start() {
         this.stopped = false;
         
@@ -92,7 +106,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     }
 
     protected void doInit() {
-        Logger log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+        Logger log = getLogger();
         
         if (log.isDebugEnabled())
             log.debug("EventListenersContainer will initialize itself.");
@@ -187,7 +201,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
             try {
                 this.eventListenersContainerSessionChecker.interrupt();
             } catch (Exception e) {
-                Logger log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+                Logger log = getLogger();
                 
                 if (log.isDebugEnabled()) {
                     log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread", e);
@@ -205,7 +219,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                 try {
                     this.observationManager.removeEventListener(item.getEventListener());
                 } catch (Exception e) {
-                    Logger log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+                    Logger log = getLogger();
                     if (log.isWarnEnabled()) {
                         log.warn("Cannot remove event listener. {}", e.toString());
                     }
