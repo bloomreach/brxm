@@ -41,6 +41,7 @@
     <module>reviewed-action</module>
     <module>xinha</module>
     <module>xinha-frontend</module>
+    <module>xinha-test</module>
     <module>yui</module>
     <module>cms</module>
     <module>gallery</module>

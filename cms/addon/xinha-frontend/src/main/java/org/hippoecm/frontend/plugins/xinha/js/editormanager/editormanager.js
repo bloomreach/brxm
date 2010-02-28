@@ -20,7 +20,7 @@
  * Todo
  * </p>
  * @namespace YAHOO.hippo
- * @requires hippoajax, hashmap, hippodom, layoutmanager
+ * @requires hippoajax, hashmap, hippodom, layoutmanager, container
  * @module editormanager
  */
 
