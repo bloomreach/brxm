@@ -38,6 +38,10 @@ public class AbstractYuiBehavior extends AbstractBehavior {
         this.component = component;
     }
 
+    protected Component getComponent() {
+        return component;
+    }
+
     /**
      * Override to implement header contrib
      * @param helper
@@ -61,7 +65,8 @@ public class AbstractYuiBehavior extends AbstractBehavior {
                 }
             }
             if (_helper == null) {
-                throw new IllegalStateException("Page has no yui manager behavior, unable to register module dependencies.");
+                throw new IllegalStateException(
+                        "Page has no yui manager behavior, unable to register module dependencies.");
             }
         }
         onRenderHead(response);
@@ -70,5 +75,5 @@ public class AbstractYuiBehavior extends AbstractBehavior {
 
     protected void onRenderHead(IHeaderResponse response) {
     }
-    
+
 }
