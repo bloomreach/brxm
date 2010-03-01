@@ -24,14 +24,14 @@
   <@hst.attribute name="type" value="text/javascript" />
   <@hst.attribute name="src" value="${yuiLoaderSrc}" />
 </@hst.element>
-<@hst.headContribution keyHint="yuiLoader" elementByBeanPath="yuiLoader" />
+<@hst.headContribution keyHint="yuiLoader" elementByBeanPath="yuiLoader" category="jsExternal"/>
 
 <@hst.element var="inlineEditing" name="script">
   <@hst.attribute name="id" value="inlineEditing" />
   <@hst.attribute name="type" value="text/javascript" />
   <@hst.attribute name="src" value="${inlineEditingSrc}" />
 </@hst.element>
-<@hst.headContribution keyHint="inlineEditing" elementByBeanPath="inlineEditing" />
+<@hst.headContribution keyHint="inlineEditing" elementByBeanPath="inlineEditing"  category="jsExternal"/>
 
 <@hst.element var="documentTitle" name="title">
 ${document.title}
@@ -49,7 +49,7 @@ ${document.title}
 </#if>
 
 <div class="yui-u">
-  <a href="<@hst.surfandeditlink hippobeanByBeanPath="document"/>">[surf&edit]</a>
+  <a href="<@hst.surfandeditlink hippobeanByBeanPath="document"/>">[surf&amp;edit]</a>
   <div id="editable_cont" class="inline-editor-editable-container">
     <h2>${document.title}</h2>
     <p>
@@ -100,12 +100,12 @@ ${document.title}
       <h4>Enter your comment here:</h4>
       <table>
         <tr>
-          <th>Title:</th>
-          <td><input type="text" name="title" value="" /></td>
+          <th><label for="title">Title:</label></th>
+          <td><input type="text" id="title" name="title" value="" /></td>
         </tr>
         <tr>
-          <th valign="top">Comment:</th>
-          <td><textarea name="comment" rows="4" cols="40"></textarea></td>
+          <th valign="top"><label for="comment">Comment:</label></th>
+          <td><textarea name="comment" id="comment" rows="4" cols="40"></textarea></td>
         </tr>
         <tr>
           <td colspan="2">
@@ -138,8 +138,9 @@ ${document.title}
   </div>
 </form>
 
-
+<@hst.headContribution category="jsInline">
 <script type="text/javascript" language="javascript">
+<![CDATA[<!--]]>
 //Instantiate and configure Loader:
 var loader = new YAHOO.util.YUILoader({
 
@@ -182,4 +183,6 @@ var loader = new YAHOO.util.YUILoader({
 // configuration object, and in this case we have configured everything in
 // the constructor, so we don't need to pass anything to insert().
 loader.insert();
+<![CDATA[//-->]]>
 </script>
+</@hst.headContribution>

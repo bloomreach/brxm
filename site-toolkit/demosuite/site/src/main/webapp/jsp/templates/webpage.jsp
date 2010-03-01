@@ -22,8 +22,8 @@
 
 <html  xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <hst:head-contributions />
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <hst:headContributions categoryExcludes="jsInline,jsExternal" />
   </head>
   <body>
       <div id="custom-doc" class="yui-t6">
@@ -31,5 +31,7 @@
         <hst:include ref="body"/>
         <hst:include ref="footer"/>
       </div>
+      <hst:headContributions categoryIncludes="jsExternal"/>
+      <hst:headContributions categoryIncludes="jsInline"/>
   </body>
 </html>

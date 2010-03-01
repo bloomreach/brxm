@@ -23,31 +23,34 @@
   <h2>Faceted Navigation</h2>
         <c:if test="${childNav}">
             <hst:facetnavigationlink var="removeAll" current="${facetnav}" removeList="${facetnav.ancestorsAndSelf}"/>
-            Clear all [<a href="${removeAll}" style="color:red">X</a>]
-            <br/><br/>
+            <p>Clear all [<a href="${removeAll}" class="deleteFacet">X</a>]</p>
         </c:if> 
         <c:forEach var="facet" items="${facetnav.folders}">
            <ul>               
             <li class="title">
                 ${facet.name} (${facet.count})
+                <c:if test="${not empty facet.folders}">
+                    <ul class="facets">
+                        <c:forEach var="facetvalue" items="${facet.folders}">
+                          <li>
+                             <c:choose>
+                               <c:when test="${facetvalue.leaf}">
+                                  <c:out value="${facetvalue.name}" escapeXml="true"/> <b>(${facetvalue.count})</b>
+                                  <c:if test="${facetvalue.count > 0}">
+                                      <hst:facetnavigationlink var="remove" current="${facetnav}" remove="${facetvalue}"/>
+                                      [<a href="${remove}" class="deleteFacet">X</a>]
+                                  </c:if>
+                               </c:when>
+                               <c:otherwise>
+                                 <hst:link var="link" hippobean="${facetvalue}"/>
+                                 <a href="${link}"><c:out value="${facetvalue.name}" escapeXml="true"/> <b>(${facetvalue.count})</b></a> 
+                               </c:otherwise>
+                             </c:choose>
+                          </li>
+                        </c:forEach>
+                    </ul>
+                </c:if>
             </li>
-            <c:forEach var="facetvalue" items="${facet.folders}">
-	            <div style="margin-left:20px">
-	               <c:choose>
-	                 <c:when test="${facetvalue.leaf}">
-	                    ${facetvalue.name} <b>(${facetvalue.count})</b>
-	                    <c:if test="${facetvalue.count > 0}">
-	                        <hst:facetnavigationlink var="remove" current="${facetnav}" remove="${facetvalue}"/>
-	                        [<a href="${remove}" style="color:red">X</a>]
-	                    </c:if>
-	                 </c:when>
-	                 <c:otherwise>
-	              	   <hst:link var="link" hippobean="${facetvalue}"/>
-	         	  	   <a href="${link}">${facetvalue.name} <b>(${facetvalue.count})</b></a> 
-	                 </c:otherwise>
-	               </c:choose>
-	            </div>
-	        </c:forEach>
           </ul>
    </c:forEach>
 </div>

@@ -173,6 +173,10 @@ a.back {
 	position: absolute;
 }
 
+a.deleteFacet {
+    color:red;
+}
+
 strong {font-weight: bold;}
 em {font-style: italic;}
 img {max-width: 450px;}
@@ -204,6 +208,10 @@ li.todo {
   list-style-position:outside;
   list-style-type:circle;
 }
+
+ul.facets li {
+ margin-left:20px;
+ }
 
 div.right {
     float:right;
