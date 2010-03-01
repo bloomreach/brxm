@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008 Hippo
+  
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:lang="http://www.springframework.org/schema/lang"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-2.5.xsd
+  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+  http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+  
+  <bean id="hstMBeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+    <property name="locateExistingServerIfPossible" value="true" />
+  </bean>
+  
+  <bean id="hstSessionPoolsMBeanExporter" class="org.springframework.jmx.export.MBeanExporter">
+    <property name="server" ref="hstMBeanServer" />
+    <property name="beans">
+      <map>
+        <entry key="bean:name=defaultSessionPool">
+          <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetObject" ref="javax.jcr.Repository"/>
+            <property name="targetMethod" value="getRepositoryByCredentials"/>
+            <property name="arguments">
+              <list>
+                <ref bean="javax.jcr.Credentials.default"/>
+              </list>
+            </property>
+          </bean>
+        </entry>
+        <entry key="bean:name=previewSessionPool">
+          <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetObject" ref="javax.jcr.Repository"/>
+            <property name="targetMethod" value="getRepositoryByCredentials"/>
+            <property name="arguments">
+              <list>
+                <ref bean="javax.jcr.Credentials.preview"/>
+              </list>
+            </property>
+          </bean>
+        </entry>
+        <entry key="bean:name=binariesSessionPool">
+          <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetObject" ref="javax.jcr.Repository"/>
+            <property name="targetMethod" value="getRepositoryByCredentials"/>
+            <property name="arguments">
+              <list>
+                <ref bean="javax.jcr.Credentials.binaries"/>
+              </list>
+            </property>
+          </bean>
+        </entry>
+        <entry key="bean:name=writableSessionPool">
+          <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetObject" ref="javax.jcr.Repository"/>
+            <property name="targetMethod" value="getRepositoryByCredentials"/>
+            <property name="arguments">
+              <list>
+                <ref bean="javax.jcr.Credentials.writable"/>
+              </list>
+            </property>
+          </bean>
+        </entry>
+        <entry key="bean:name=hstconfigreaderSessionPool">
+          <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetObject" ref="javax.jcr.Repository"/>
+            <property name="targetMethod" value="getRepositoryByCredentials"/>
+            <property name="arguments">
+              <list>
+                <ref bean="javax.jcr.Credentials.hstconfigreader"/>
+              </list>
+            </property>
+          </bean>
+        </entry>
+      </map>
+    </property>
+    <property name="assembler">
+      <bean class="org.springframework.jmx.export.assembler.MethodNameBasedMBeanInfoAssembler">
+        <property name="managedMethods">
+          <value>initialize,close,getNumActive,getNumIdle</value>
+        </property>
+      </bean>
+    </property>
+  </bean>
+  
+  <bean id="hstRmiRegistry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean">
+    <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
+          value="config.containsKey('management.rmi.registry.port')" /> 
+    <property name="port" value="${management.rmi.registry.port}" />
+  </bean>
+  
+  <bean id="hstConnectorServer" class="org.springframework.jmx.support.ConnectorServerFactoryBean">
+    <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
+          value="config.containsKey('management.connector.server.serviceUrl')" /> 
+    <property name="objectName" value="${management.connector.server.objectName}" />
+    <property name="serviceUrl" value="${management.connector.server.serviceUrl}" />
+  </bean>
+  
+</beans>
