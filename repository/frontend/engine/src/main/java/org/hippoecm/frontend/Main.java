@@ -81,6 +81,7 @@ public class Main extends WebApplication {
     public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
     public final static String MAXUPLOAD_PARAM = "upload-limit";
     public final static String PLUGIN_APPLICATION_NAME = "config";
+    public final static String ENCRYPT_URLS = "encrypt-urls";
 
     @Override
     protected void init() {
