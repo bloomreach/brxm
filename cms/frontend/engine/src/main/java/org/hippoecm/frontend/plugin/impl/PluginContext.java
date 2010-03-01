@@ -234,7 +234,9 @@ public class PluginContext implements IPluginContext, IDetachable {
                                 + " is unregistering service at " + name + " that wasn't registered.");
                     }
                 } else {
-                    manager.unregisterService(service, name);
+                    if (name != null) {
+                        manager.unregisterService(service, name);
+                    }
                 }
             } else {
                 log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
