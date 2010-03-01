@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.utils;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.beanutils.NestedNullException;
@@ -34,8 +37,45 @@ public class PageContextPropertyUtils {
         Object bean = null;
         
         if (!StringUtils.isBlank(beanPath)) {
+            int index  = -1;
             String [] paths = StringUtils.split(beanPath, ".", 2);
-            bean = pageContext.findAttribute(paths[0]);
+            String name = paths[0];
+            if(name.indexOf("[") > -1 && name.indexOf("]") > -1) {
+                if(name.indexOf("]") != name.length() -1) {
+                    throw new IllegalArgumentException("Invalid bean path '"+beanPath+"'");
+                } 
+                String strIndex = name.substring(name.indexOf("[")+1, name.length() -1);
+                name = name.substring(0, name.indexOf("["));
+                try {
+                    index = Integer.parseInt(strIndex);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid bean path '"+beanPath+"'");
+                }
+            }
+            
+            bean = pageContext.findAttribute(name);
+            
+            if(index > -1 && bean != null) {
+                if(bean.getClass().isArray()) {
+                    bean = ((Object[])bean)[index]; 
+                }
+                if(bean instanceof List) {
+                    bean = ((List)bean).get(index);
+                }
+                else if(bean instanceof Iterable ) {
+                    Iterable iterable = (Iterable)bean;
+                    Iterator it = iterable.iterator();
+                    int i = 0;
+                    while(it.hasNext()) {
+                        Object o = it.next();
+                        if(i == index) {
+                            bean = o;
+                            break;
+                        }
+                        i++;
+                    }
+                }
+            }
             
             if (bean != null && paths.length > 1) {
                 try {

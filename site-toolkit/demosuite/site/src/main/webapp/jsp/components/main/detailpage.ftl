@@ -90,7 +90,7 @@ ${document.title}
          <div style="border:1px solid black; padding:15px;">
              <b>${comment.title}</b>
              <br/>
-             <@hst.html hippohtmlByBeanPath="comment.html"/>
+             <@hst.html hippohtmlByBeanPath="comments[${comment_index}].html"/>
          </div>
       </#list>
   </div>
