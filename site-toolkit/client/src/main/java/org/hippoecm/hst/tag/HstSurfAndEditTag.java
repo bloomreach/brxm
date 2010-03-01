@@ -37,7 +37,6 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.utils.EncodingUtils;
 import org.hippoecm.hst.utils.PageContextPropertyUtils;
 import org.hippoecm.repository.api.HippoNode;
@@ -104,15 +103,8 @@ public class HstSurfAndEditTag extends TagSupport {
         }
 
         HstRequestContext hstRequestContext = hstRequest.getRequestContext();
-        String previewRepositoryEntryPath = hstRequest.getRequestContext().getContainerConfiguration().getString(ContainerConstants.PREVIEW_REPOSITORY_ENTRY_PATH, "");
-        if(previewRepositoryEntryPath == null) {
-            log.warn("Cannot create a surf & edit link because preview repository entry path is not configured. Configure '{}' property in your hst-config.properties.", ContainerConstants.PREVIEW_REPOSITORY_ENTRY_PATH);
-            return EVAL_PAGE;
-        }
-        String siteContentBasePath = hstRequestContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite().getContentPath();
-        siteContentBasePath = PathUtils.normalizePath(siteContentBasePath);
-        boolean isPreview = (siteContentBasePath.startsWith(previewRepositoryEntryPath) ? true : false);
-        if(!isPreview) {
+          
+        if(Boolean.TRUE == hstRequestContext.getAttribute(ContainerConstants.IS_PREVIEW)) {
             log.debug("Skipping surf & edit link because not in preview.");
             return EVAL_PAGE;
         }

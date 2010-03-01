@@ -103,8 +103,6 @@ import org.xml.sax.SAXException;
  */
 public class BaseHstComponent extends GenericHstComponent {
 
-    public static final String IS_PREVIEW_ATTRIBUTE = BaseHstComponent.class.getName() + ".isPreview";
-
     private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);
 
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "beans-annotated-classes";
