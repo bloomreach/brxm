@@ -15,10 +15,13 @@
  */
 package org.hippoecm.frontend;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.protocol.http.WebRequestCycleProcessor;
+import org.apache.wicket.protocol.http.request.CryptedUrlWebRequestCodingStrategy;
+import org.apache.wicket.request.IRequestCodingStrategy;
 import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
 import org.apache.wicket.request.target.component.IPageRequestTarget;
 
@@ -49,4 +52,16 @@ public class PluginRequestCycleProcessor extends WebRequestCycleProcessor {
             }
         }
     }
+
+    @Override
+    protected IRequestCodingStrategy newRequestCodingStrategy() {
+        Main main = (Main) Application.get();
+        String encrypt = main.getInitParameter(Main.ENCRYPT_URLS);
+        if (encrypt != null && "true".equals(encrypt)) {
+            return new CryptedUrlWebRequestCodingStrategy(super.newRequestCodingStrategy());
+        } else {
+            return super.newRequestCodingStrategy();
+        }
+    }
+
 }
