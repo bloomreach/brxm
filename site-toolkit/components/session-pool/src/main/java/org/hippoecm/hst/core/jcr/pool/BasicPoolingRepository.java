@@ -440,6 +440,23 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             PoolUtils.prefill(sessionPool, initialSize);
         }
     }
+
+    /*
+     * Clears any sessions sitting idle in the pool by removing them from the idle instance pool.
+     * */
+    public void clear() {
+        if (this.sessionPool != null) {
+            try {
+                this.sessionPool.clear();
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to clear session pool.", e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Failed to clear session pool. {}", e.toString());
+                }
+            }
+        }
+    }
     
     /**
      * Close and release all sessions that are currently stored in the

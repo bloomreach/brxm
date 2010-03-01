@@ -92,7 +92,45 @@
     <property name="assembler">
       <bean class="org.springframework.jmx.export.assembler.MethodNameBasedMBeanInfoAssembler">
         <property name="managedMethods">
-          <value>initialize,close,getNumActive,getNumIdle</value>
+          <list>
+            <value>getRepositoryAddress</value>
+            <value>getDefaultCredentialsUserID</value>
+            <value>initialize</value>
+            <value>clear</value>
+            <value>close</value>
+            <value>getNumActive</value>
+            <value>getNumIdle</value>
+            <value>getMaxActive</value>
+            <value>setMaxActive</value>
+            <value>getMaxIdle</value>
+            <value>setMaxIdle</value>
+            <value>getMinIdle</value>
+            <value>setMinIdle</value>
+            <value>getMaxWait</value>
+            <value>setMaxWait</value>
+            <value>getInitialSize</value>
+            <value>setInitialSize</value>
+            <value>getMinEvictableIdleTimeMillis</value>
+            <value>setMinEvictableIdleTimeMillis</value>
+            <value>getNumTestsPerEvictionRun</value>
+            <value>setNumTestsPerEvictionRun</value>
+            <value>getTestOnBorrow</value>
+            <value>setTestOnBorrow</value>
+            <value>getTestOnReturn</value>
+            <value>setTestOnReturn</value>
+            <value>getTestWhileIdle</value>
+            <value>setTestWhileIdle</value>
+            <value>getTimeBetweenEvictionRunsMillis</value>
+            <value>setTimeBetweenEvictionRunsMillis</value>
+            <value>getValidationQuery</value>
+            <value>setValidationQuery</value>
+            <value>getWhenExhaustedAction</value>
+            <value>setWhenExhaustedAction</value>
+            <value>getKeepChangesOnRefresh</value>
+            <value>setKeepChangesOnRefresh</value>
+            <value>getRefreshOnPassivate</value>
+            <value>setRefreshOnPassivate</value>
+          </list>
         </property>
       </bean>
     </property>

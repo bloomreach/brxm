@@ -56,6 +56,11 @@ public interface PoolingRepository extends Repository {
     void initialize() throws Exception;
     
     /**
+     * Clears any sessions sitting idle in the pool by removing them from the idle instance pool.
+     */
+    void clear();
+    
+    /**
      * Closes the pool
      */
     void close() throws Exception;
