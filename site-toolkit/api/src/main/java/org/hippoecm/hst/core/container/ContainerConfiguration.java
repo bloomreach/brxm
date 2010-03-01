@@ -30,6 +30,13 @@ import java.util.Properties;
 public interface ContainerConfiguration {
     
     /**
+     * Check if the configuration contains the specified key.
+     * @param key the key whose presence in this configuration is to be tested 
+     * @return true if the configuration contains a value for this key, false otherwise
+     */
+    boolean containsKey(String key);
+    
+    /**
      * Get a boolean associated with the given configuration key.
      * @param key
      * @return

@@ -16,6 +16,8 @@
 package org.hippoecm.hst.site.container;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.Map;
 
@@ -28,6 +30,7 @@ public class TestSpringComponentManager {
     private static final String SIMPLE_BEANS_1 = "/META-INF/assembly/simple-beans-1.xml";
     private static final String SIMPLE_BEANS_2 = "/META-INF/assembly/simple-beans-2.xml";
     private static final String SIMPLE_BEANS_3 = "/META-INF/assembly/simple-beans-3.xml";
+    private static final String SIMPLE_BEANS_4 = "/META-INF/assembly/simple-beans-4.xml";
     private static final String NON_EXISTING_BEANS = "/META-INF/assembly/non-existing-ones/*.xml";
     
     @Test
@@ -113,6 +116,27 @@ public class TestSpringComponentManager {
         
         assertEquals("Hello from the property file!", greetingMap.get("props.greeting"));
         assertEquals("Hello from the system props!", greetingMap.get("props.greeting.nonexisting"));
+        
+        componentManager.stop();
+        componentManager.close();
+    }
+    
+    @Test
+    public void testConditionalBeanRegistration() {
+        Configuration configuration = new PropertiesConfiguration();
+        configuration.setProperty("existing.key", "some value");
+        SpringComponentManager componentManager = new SpringComponentManager(configuration);
+        String [] configurationResources = new String [] { SIMPLE_BEANS_4 };
+        componentManager.setConfigurationResources(configurationResources);
+        
+        componentManager.initialize();
+        componentManager.start();
+        
+        assertNotNull(componentManager.getComponent("greeting1"));
+        assertNull(componentManager.getComponent("greeting2"));
+        assertNull(componentManager.getComponent("greeting3"));
+        assertNotNull(componentManager.getComponent("greeting4"));
+        assertNotNull(componentManager.getComponent("greeting5"));
         
         componentManager.stop();
         componentManager.close();

@@ -37,7 +37,11 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
     public ContainerConfigurationImpl(Configuration configuration) {
         this.configuration = configuration;
     }
-
+    
+    public boolean containsKey(String key) {
+        return configuration.containsKey(key);
+    }
+    
     public boolean getBoolean(String key, boolean defaultValue) {
         return configuration.getBoolean(key, defaultValue);
     }
