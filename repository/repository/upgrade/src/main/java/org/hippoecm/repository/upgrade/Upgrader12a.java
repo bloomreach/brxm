@@ -197,8 +197,10 @@ public class Upgrader12a implements UpdaterModule {
         context.registerVisitor(new UpdaterItemVisitor.PathVisitor("/hippo:configuration/hippo:derivatives") {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
-                Node reviewedAction = node.getNode("reviewed-action/hipposys:accessed/request");
-                reviewedAction.setProperty("hipposys:relPath", "../request[@hippostdpubwf:type='publish']/type");
+                if(node.hasNode("reviewed-action/hipposys:accessed/request")) {
+                    Node reviewedAction = node.getNode("reviewed-action/hipposys:accessed/request");
+                    reviewedAction.setProperty("hipposys:relPath", "../request[@hippostdpubwf:type='publish']/type");
+                }
             }
         });
 
@@ -235,70 +237,102 @@ public class Upgrader12a implements UpdaterModule {
         context.registerVisitor(new UpdaterItemVisitor.PathVisitor("/hippo:configuration/hippo:frontend/cms") {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
-                node.getNode("cms-browser/assetsTreeLoader/cluster.config").getProperty("wicket.model").remove();
+
+                if(node.hasNode("cms-browser/assetsTreeLoader/cluster.config")) {
+                    node.getNode("cms-browser/assetsTreeLoader/cluster.config").getProperty("wicket.model").remove();
+                }
 
                 Node browser = node.getNode("cms-browser");
-                Node bp = browser.getNode("browserPerspective");
-                bp.getProperty("browser.viewers").remove();
-                bp.getProperty("editor.id").remove();
-                bp.getProperty("extension.list").remove();
-                bp.getProperty("model.document").remove();
-                bp.getProperty("model.folder").remove();
-                bp.getProperty("model.folder.root").remove();
+
+                if(browser.hasNode("browserPerspective")) {
+                    Node bp = browser.getNode("browserPerspective");
+                    bp.getProperty("browser.viewers").remove();
+                    bp.getProperty("editor.id").remove();
+                    bp.getProperty("extension.list").remove();
+                    bp.getProperty("model.document").remove();
+                    bp.getProperty("model.folder").remove();
+                    bp.getProperty("model.folder.root").remove();
+                }
 
                 // TODO: convert sections to navigation sections?
-                browser.getNode("browserPlugin").remove();
+                if(browser.hasNode("browserPlugin")) {
+                    browser.getNode("browserPlugin").remove();
+                }
 
-                Node docTreeLoaderConfig = browser.getNode("documentsTreeLoader/cluster.config");
-                docTreeLoaderConfig.setProperty("wicket.model", "model.browse.collection");
-                docTreeLoaderConfig.getProperty("register.context.menu").remove();
-                docTreeLoaderConfig.setProperty("workflow.enabled", true);
+                if(browser.hasNode("documentsTreeLoader")) {
+                    Node docTreeLoaderConfig = browser.getNode("documentsTreeLoader/cluster.config");
+                    docTreeLoaderConfig.setProperty("wicket.model", "model.browse.collection");
+                    docTreeLoaderConfig.getProperty("register.context.menu").remove();
+                    docTreeLoaderConfig.setProperty("workflow.enabled", true);
+                }
 
-                Node confTreeLoaderConfig = browser.getNode("configurationTreeLoader/cluster.config");
-                confTreeLoaderConfig.getProperty("wicket.model").remove();
-                confTreeLoaderConfig.getProperty("register.context.menu").remove();
-                confTreeLoaderConfig.setProperty("workflow.enabled", true);
+                if(browser.hasNode("configurationTreeLoader")) {
+                    Node confTreeLoaderConfig = browser.getNode("configurationTreeLoader/cluster.config");
+                    confTreeLoaderConfig.getProperty("wicket.model").remove();
+                    confTreeLoaderConfig.getProperty("register.context.menu").remove();
+                    confTreeLoaderConfig.setProperty("workflow.enabled", true);
+                }
 
-                Node imagesTreeLoaderConfig = browser.getNode("imagesTreeLoader/cluster.config");
-                imagesTreeLoaderConfig.getProperty("wicket.model").remove();
-                imagesTreeLoaderConfig.getProperty("register.context.menu").remove();
-                imagesTreeLoaderConfig.setProperty("workflow.enabled", true);
+                if(browser.hasNode("imagesTreeLoader")) {
+                    Node imagesTreeLoaderConfig = browser.getNode("imagesTreeLoader/cluster.config");
+                    imagesTreeLoaderConfig.getProperty("wicket.model").remove();
+                    imagesTreeLoaderConfig.getProperty("register.context.menu").remove();
+                    imagesTreeLoaderConfig.setProperty("workflow.enabled", true);
+                }
 
-                Node assetsTreeLoaderConfig = browser.getNode("assetsTreeLoader/cluster.config");
-                assetsTreeLoaderConfig.getProperty("register.context.menu").remove();
-                assetsTreeLoaderConfig.setProperty("workflow.enabled", true);
-                
-                Node nav = browser.getNode("navigator");
-                nav.getProperty("extension.browser").remove();
-                nav.getProperty("wicket.extensions").remove();
-                nav.setProperty("browser.id", "service.browse");
-                nav.setProperty("browser.viewers", "cms-folder-views");
-                nav.setProperty("model.default.path", "/content/documents");
-                nav.setProperty("model.document", "model.browse.document");
-                nav.setProperty("model.folder", "model.browse.folder");
-                nav.setProperty("search.viewers", "cms-search-views");
-                nav.setProperty("section.configuration", "service.browse.tree.configuration");
-                nav.setProperty("section.content", "service.browse.tree.content");
-                nav.setProperty("section.files", "service.browse.tree.files");
-                nav.setProperty("section.images", "service.browse.tree.images");
-                nav.setProperty("sections", new String[] { "section.content", "section.images", "section.files", "section.configuration" });
-                nav.setProperty("wicket.variant", "yui");
+                if(browser.hasNode("assetsTreeLoader")) {
+                    Node assetsTreeLoaderConfig = browser.getNode("assetsTreeLoader/cluster.config");
+                    assetsTreeLoaderConfig.getProperty("register.context.menu").remove();
+                    assetsTreeLoaderConfig.setProperty("workflow.enabled", true);
+                }
 
-                Node dashLayout = node.getNode("cms-dashboard/dashboardLayout/yui.config");
-                dashLayout.setProperty("units", new String[] {"top", "left", "center", "right"});
-                dashLayout.setProperty("top", "id=top,height=23px");
+                if(browser.hasNode("navigator")) {
+                    Node nav = browser.getNode("navigator");
+                    nav.getProperty("extension.browser").remove();
+                    nav.getProperty("wicket.extensions").remove();
+                    nav.setProperty("browser.id", "service.browse");
+                    nav.setProperty("browser.viewers", "cms-folder-views");
+                    nav.setProperty("model.default.path", "/content/documents");
+                    nav.setProperty("model.document", "model.browse.document");
+                    nav.setProperty("model.folder", "model.browse.folder");
+                    nav.setProperty("search.viewers", "cms-search-views");
+                    nav.setProperty("section.configuration", "service.browse.tree.configuration");
+                    nav.setProperty("section.content", "service.browse.tree.content");
+                    nav.setProperty("section.files", "service.browse.tree.files");
+                    nav.setProperty("section.images", "service.browse.tree.images");
+                    nav.setProperty("sections", new String[] { "section.content", "section.images", "section.files", "section.configuration" });
+                    nav.setProperty("wicket.variant", "yui");
+                }
 
-                node.getNode("cms-editor").remove();
-                node.getNode("cms-preview").remove();
-                node.getNode("cms-pickers").remove();
+                if(node.hasNode("cms-dashboard/dashboardLayout/yui.config")) {
+                    Node dashLayout = node.getNode("cms-dashboard/dashboardLayout/yui.config");
+                    dashLayout.setProperty("units", new String[] {"top", "left", "center", "right"});
+                    dashLayout.setProperty("top", "id=top,height=23px");
+                }
+
+                if(node.hasNode("cms-editor")) {
+                    node.getNode("cms-editor").remove();
+                }
+
+                if(node.hasNode("cms-preview")) {
+                    node.getNode("cms-preview").remove();
+                }
+
+                if(node.hasNode("cms-pickers")) {
+                    node.getNode("cms-pickers").remove();
+                }
 
                 // TODO: upgrade iso replace
-                node.getNode("cms-tree-views").remove();
+                if(node.hasNode("cms-tree-views")) {
+                    node.getNode("cms-tree-views").remove();
+                }
 
-                Node hidePubWf = node.getNode("cms-folder-views/hipposysedit:namespacefolder/root/filters").addNode("hideHippostdpubwfNamespace", "frontend:pluginconfig");
-                hidePubWf.setProperty("display", false);
-                hidePubWf.setProperty("path", "/hippo:namespaces/hippostdpubwf");
+                if(node.hasNode("cms-folder-views")) {
+                    Node hidePubWf = node.getNode("cms-folder-views/hipposysedit:namespacefolder/root/filters").addNode("hideHippostdpubwfNamespace", "frontend:pluginconfig");
+                    hidePubWf.setProperty("display", false);
+                    hidePubWf.setProperty("path", "/hippo:namespaces/hippostdpubwf");
 //                hidePubWf.getParent().orderBefore("hideHippostdpubwfNamespace", "hideHipposyseditNamespace");
+                }
 
                 for (NodeIterator cleanupEls = node.getNode("cms-services/htmlCleanerService/cleaner.config/hippohtmlcleaner:cleanup").getNodes("hippohtmlcleaner:cleanupElement"); cleanupEls.hasNext();) {
                     Node element = cleanupEls.nextNode();
