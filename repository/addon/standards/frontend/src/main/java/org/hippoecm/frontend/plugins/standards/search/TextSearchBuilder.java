@@ -86,11 +86,16 @@ public class TextSearchBuilder implements IClusterable {
         boolean valid = false;
         StringBuilder querySb = new StringBuilder("//element(*, hippo:harddocument)[");
         StringBuilder scope = getScope();
+        boolean hasCriteria = (scope != null);
         if (scope != null) {
             querySb.append(scope);
-            querySb.append(" and ");
         }
         for (StringTokenizer st = new StringTokenizer(value, " "); st.hasMoreTokens();) {
+            if (hasCriteria) {
+                querySb.append(" and ");
+            } else {
+                hasCriteria = true;
+            }
             querySb.append("jcr:contains(., '");
             String token = st.nextToken();
             if (token.length() < getMinimalLength()) {
