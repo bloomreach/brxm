@@ -39,7 +39,8 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
         IModel<String> valueModel = getModel();
         String mode = config.getString("mode", "view");
         if (ITemplateEngine.EDIT_MODE.equals(mode)) {
-            TextAreaWidget widget = new TextAreaWidget("value", valueModel);
+            IModel<String> encodedStringModel  = new EncodedStringModel(valueModel);
+            TextAreaWidget widget = new TextAreaWidget("value", encodedStringModel);
             if (config.getString("rows") != null) {
                 widget.setRows(config.getString("rows"));
             }
@@ -48,7 +49,7 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
             }
             add(widget);
         } else {
-            add(new Label("value", valueModel));
+            add(new Label("value", valueModel).setEscapeModelStrings(false));
         }
     }
 

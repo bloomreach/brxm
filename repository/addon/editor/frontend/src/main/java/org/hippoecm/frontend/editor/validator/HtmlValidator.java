@@ -23,9 +23,7 @@ import java.util.regex.Pattern;
 
 import org.apache.wicket.IClusterable;
 import org.cyberneko.html.parsers.SAXParser;
-import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.Violation;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

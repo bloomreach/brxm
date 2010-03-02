@@ -18,6 +18,7 @@ package org.hippoecm.frontend.editor.validator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.jcr.RepositoryException;
 
@@ -46,8 +47,11 @@ public class JcrFieldValidator implements ITypeValidator {
 
     static final Logger log = LoggerFactory.getLogger(JcrFieldValidator.class);
 
+    static final Pattern INVALID_CHARS = Pattern.compile(".*[<>&\"'].*");
+
     public static final String REQUIRED_FIELD_NOT_PRESENT = "required-field-not-present";
     public static final String STRING_VALUE_IS_EMPTY = "string-value-is-empty";
+    public static final String INVALID_CHARACTER = "invalid-character";
 
     private IFieldDescriptor field;
     private ITypeDescriptor fieldType;
@@ -86,9 +90,10 @@ public class JcrFieldValidator implements ITypeValidator {
         }
         Set<Violation> violations = new HashSet<Violation>();
         Set<String> validators = field.getValidators();
+        boolean escaped = validators.contains("escaped");
         boolean required = validators.contains("required");
         boolean nonEmpty = validators.contains("non-empty");
-        if ((required || fieldType.isNode() || nonEmpty || htmlValidator != null) && !field.isProtected()) {
+        if ((required || fieldType.isNode() || nonEmpty || escaped || htmlValidator != null) && !field.isProtected()) {
             if ("*".equals(field.getPath())) {
                 if ((fieldType.isNode() && (required || field.getTypeDescriptor().isValidationCascaded()))
                         || (!fieldType.isNode() && (htmlValidator != null || nonEmpty))) {
@@ -117,15 +122,22 @@ public class JcrFieldValidator implements ITypeValidator {
                             addTypeViolations(violations, childModel, typeViolations);
                         }
                     }
-                } else if (htmlValidator != null || nonEmpty) {
+                } else {
                     String value = (String) childModel.getObject();
                     if (htmlValidator != null) {
                         for (String key : htmlValidator.validateNonEmpty(value)) {
                             violations.add(newValueViolation(childModel, key));
                         }
-                    } else if (nonEmpty) {
-                        if ("".equals(value)) {
-                            violations.add(newValueViolation(childModel, STRING_VALUE_IS_EMPTY));
+                    } else {
+                        if (nonEmpty) {
+                            if ("".equals(value)) {
+                                violations.add(newValueViolation(childModel, STRING_VALUE_IS_EMPTY));
+                            }
+                        }
+                        if (escaped) {
+                            if (INVALID_CHARS.matcher(value).matches()) {
+                                violations.add(newValueViolation(childModel, INVALID_CHARACTER));
+                            }
                         }
                     }
                 }
