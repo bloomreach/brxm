@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.standards.search;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -44,6 +46,7 @@ public class TextSearchTest extends PluginTest {
                         "jcr:mixinTypes", "hippo:harddocument",
                         "hippostd:state", "published",
                         "title", "title",
+                        "introduction", "introduction",
                         "ab", "ab",
     };
     String[] alternative = {
@@ -92,6 +95,25 @@ public class TextSearchTest extends PluginTest {
         TextSearchBuilder tsb = new TextSearchBuilder();
         tsb.setText("ab");
         assertNull(tsb.getResultModel());
+    }
+
+    @Test
+    public void multipleKeywordsAreAllPresent() throws RepositoryException {
+        build(session, content);
+        build(session, alternative);
+        session.save();
+
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        tsb.setWildcardSearch(true);
+        tsb.setText("tit intr");
+        assertNotNull(tsb.getResultModel());
+        BrowserSearchResult bsr = tsb.getResultModel().getObject();
+        int count = 0;
+        for (NodeIterator iter = bsr.getQueryResult().getNodes(); iter.hasNext();) {
+            iter.next();
+            count++;
+        }
+        assertEquals(1, count);
     }
 
     @Test
