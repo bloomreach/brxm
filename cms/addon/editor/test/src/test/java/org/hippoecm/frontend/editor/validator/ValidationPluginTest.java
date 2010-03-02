@@ -24,14 +24,11 @@ import java.util.TreeSet;
 
 import javax.jcr.Node;
 
-import org.hippoecm.editor.type.JcrTypeDescriptor;
-import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
-import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
@@ -83,6 +80,28 @@ public class ValidationPluginTest extends PluginTest {
 
         Set<Violation> violations = getViolations();
         assertEquals(2, violations.size());
+    }
+
+
+    @Test
+    public void testEscapedProperty() throws Exception {
+        start(config);
+
+        Node content = root.getNode("test").addNode("content", "test:validator");
+        content.setProperty("test:nonempty", "something");
+        content.setProperty("test:mandatory", "something");
+        content.setProperty("test:multiple", new String[] { "something" });
+        validate(content);
+
+        Set<Violation> violations = getViolations();
+        assertEquals(0, violations.size());
+
+        for (char c : "<>\"'&".toCharArray()) {
+            content.setProperty("test:escaped", "a" + c);
+            validate(content);
+            violations = getViolations();
+            assertEquals(1, violations.size());
+        }
     }
 
     @Test
