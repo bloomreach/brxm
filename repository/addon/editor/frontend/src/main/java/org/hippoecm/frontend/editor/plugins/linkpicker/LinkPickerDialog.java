@@ -147,7 +147,10 @@ public class LinkPickerDialog extends AbstractDialog<String> {
         //save modelServiceId and dialogServiceId in cluster config
         String modelServiceId = clusterConfig.getString("wicket.model");
         final IModelReference modelRef = context.getService(modelServiceId, IModelReference.class);
-        modelRef.setModel(getInitialNode());
+        IModel<Node> initial = getInitialNode();
+        if (initial != null) {
+            modelRef.setModel(initial);
+        }
         context.registerService(modelObserver = new IObserver() {
             private static final long serialVersionUID = 1L;
 
