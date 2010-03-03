@@ -194,7 +194,7 @@ public class DerivedDataEngine {
 
     private final boolean compute(ValueFactory valueFactory, Node derivatesFolder, Node modified) throws ConstraintViolationException, RepositoryException {
                 if(!modified.isCheckedOut()) {
-                    modified.checkout();
+                    modified.checkout(); // FIXME: is this node always versionable?
                 }
                 SortedSet<String> dependencies = new TreeSet<String>();
 
@@ -432,7 +432,7 @@ public class DerivedDataEngine {
                                             if(values != null && values.length >= 1) {
                                                     try {
                                                         if(!targetModifiedNode.isCheckedOut()) {
-                                                            targetModifiedNode.checkout();
+                                                            targetModifiedNode.checkout(); // FIXME: is this node always versionalble?
                                                         }
                                                         targetModifiedNode.setProperty(targetModifiedPropertyPath, values[0]);
                                                         if(logger.isDebugEnabled()) {
@@ -462,7 +462,7 @@ public class DerivedDataEngine {
                                             }
                                             try {
                                                 if(!targetModifiedNode.isCheckedOut()) {
-                                                    targetModifiedNode.checkout();
+                                                    targetModifiedNode.checkout(); // FIXME: is this node always versionalble?
                                                 }
                                                 targetModifiedNode.setProperty(targetModifiedPropertyPath, values);
                                                 if(logger.isDebugEnabled()) {
@@ -533,7 +533,7 @@ public class DerivedDataEngine {
                 if(changed) {
                     try {
                         if(!modified.isCheckedOut()) {
-                            modified.checkout();
+                            modified.checkout(); // FIXME: is this node always versionalble?
                         }
                         modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues);
                     } catch(ItemNotFoundException ex) {

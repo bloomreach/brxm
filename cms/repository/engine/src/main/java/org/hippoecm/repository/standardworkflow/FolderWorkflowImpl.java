@@ -269,7 +269,10 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 if (target.isNodeType(HippoNodeType.NT_HANDLE) && target.hasNodes()) {
                     target.checkout();
                     for (NodeIterator iter = target.getNodes(); iter.hasNext(); ) {
-                        iter.nextNode().checkin();
+                        Node child = iter.nextNode();
+                        if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                            child.checkin();
+                        }
                     }
                     for (NodeIterator iter = target.getNodes(); iter.hasNext(); ) {
                         iter.nextNode().remove();
