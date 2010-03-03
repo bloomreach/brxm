@@ -187,9 +187,9 @@ public class EventListenersContainerImpl implements EventListenersContainer {
             this.firstInitializationDone = true;
 
             if (log.isInfoEnabled()) {
-                log.info("EventListenersContainer's initialization done.");
+                log.info("- INFO: EventListenersContainer's initialization done.");
             } else {
-                log.warn("EventListenersContainer's initialization done.");
+                log.warn("- INFO: EventListenersContainer's initialization done.");
             }
         } catch (LoginException e) {
             if (log.isDebugEnabled()) {
