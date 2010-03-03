@@ -170,7 +170,10 @@ public class UserSession extends WebSession {
      * model will take care of saving any pending changes.
      */
     public void releaseJcrSession() {
-        getJcrSessionModel().detach();
+        IModel<Session> sessionModel = getJcrSessionModel();
+        if (sessionModel != null) {
+            getJcrSessionModel().detach();
+        }
         classLoader.detach();
         workflowManager.detach();
         facetSearchObserver = null;
