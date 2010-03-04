@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.yui.layout;
 
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -25,6 +26,13 @@ import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * Special purpose {@link Plugin} that allows us to add the behavior through configuration instead of adding it 
+ * in code to our component.  
+ * 
+ * See {@link IBehaviorService} and {@link IPlugin} for more info.
+ */
 public class UnitPlugin extends Plugin implements IBehaviorService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

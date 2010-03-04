@@ -39,15 +39,24 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Wicket Ajax request can generate a response containing additional javascript and css resources
- * to be loaded on the client. Subsequently requesting a component that dependends on, for example,
- * six YUI-modules that have to be loaded in a specific order as well, can lead to some heavy extra 
+ * to be loaded on the client. Subsequently requesting a component that depends on, for example,
+ * six YUI-modules that have to be loaded in a pre-defined order, will lead to lot's of redundant 
  * data in the response, not to mention the IO and file parsing that is produced by the YUI module 
- * loading mechanism.
+ * loading mechanism on the server.
+ * 
+ * <p>
  * This class uses the {@link CachedYuiDependencyResolver} to retrieve the <code>Set</code> 
  * of resources belonging to a YUI-module and caches them locally. {@link YuiContext}s will share
  * a reference to the resources, making it possible to skip static resources that have already been
- * loaded on the client. 
+ * loaded on the client.
+ * </p>
  * 
+ * <p>
+ * It will automatically load the YUI-logger through it's local {@link IYuiContext} when running in Wicket development
+ * mode. See {@link org.apache.wicket.Application#getConfigurationType}.<br/>
+ * It will also the Wicket-Ajax javascript dependencies if needed and subsequently load the hippoajax YUI module, which
+ * adds cleanup-hooks for YUI modules as well as some other utility methods.  
+ * </p>
  */
 public class YuiHeaderCache implements IHeaderContributor {
     @SuppressWarnings("unused")
@@ -69,7 +78,6 @@ public class YuiHeaderCache implements IHeaderContributor {
     final Map<String, Module> moduleCache = new HashMap<String, Module>();
     final Map<String, ModuleSet> moduleSetsCache = new HashMap<String, ModuleSet>();
 
-    //final Set<ModuleSet> localModules = new LinkedHashSet<ModuleSet>();
     final YuiContext localContext = new YuiContext(this);
 
     private boolean loadWicketAjax = false;

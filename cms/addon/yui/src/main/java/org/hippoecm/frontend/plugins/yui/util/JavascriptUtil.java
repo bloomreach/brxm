@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.yui.util;
 
 import java.util.regex.Pattern;
 
+//TODO: remove
+@Deprecated
 public class JavascriptUtil {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -25,8 +27,8 @@ public class JavascriptUtil {
     public static final String SINGLE_QUOTE = "'";
 
     private static Pattern numbers = Pattern.compile("\\d*");
-    //private static Pattern functions = Pattern.compile("(\\w+)\\.(\\w+)");
-
+    
+    @Deprecated
     public static String serialize2JS(String value) {
         if (value == null)
             return "null";

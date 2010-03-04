@@ -20,15 +20,16 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 
 /**
- * {@link IYuiManager} implementations will be used as a service for creating {@link IYuiContext} instances.
- * These should all use the same {@link YuiHeaderCache}. 
+ * {@link IYuiManager} implementations will be used as a service for creating {@link IYuiContext} instances. These 
+ * should all use the same {@link org.hippoecm.frontend.plugins.yui.header.YuiHeaderCache} as their backing model. 
  */
 public interface IYuiManager extends IClusterable {
 
     final static String SVN_ID = "$Id$";
-    
+
     /**
-     * Create a new {@link IYuiContext} that is backed up by a centrally managed {@link YuiHeaderCache}
+     * Create a new {@link IYuiContext} that is backed up by a centrally managed
+     * {@link org.hippoecm.frontend.plugins.yui.header.YuiHeaderCache}
      * 
      * @return A new {@link IYuiContext} to add header contributions to
      */

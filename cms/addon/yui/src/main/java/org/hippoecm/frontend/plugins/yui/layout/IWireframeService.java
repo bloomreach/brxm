@@ -15,11 +15,21 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
+import org.apache.wicket.behavior.IBehavior;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
 
-public interface IWireframeService {
-    @SuppressWarnings("unused")
+/**
+ * Behaviors implementing this service can be queried by nested component {@link WireframeBehavior}'s for their id 
+ * value. This is because a nested wireframe needs to know it's parent id value during the render phase.   
+ */
+public interface IWireframeService extends IBehavior {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * Return the {@link YuiId} value that represents the wireframe managed by the {@link IBehavior} that is 
+     * implementing this interface.
+     * 
+     * @return a {@link YuiId} value representing the wireframe 
+     */
     YuiId getParentId();
 }
