@@ -117,6 +117,25 @@ public class TextSearchTest extends PluginTest {
     }
 
     @Test
+    public void shortKeywordsAreIgnored() throws RepositoryException {
+        build(session, content);
+        build(session, alternative);
+        session.save();
+
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        tsb.setWildcardSearch(true);
+        tsb.setText("tit i");
+        assertNotNull(tsb.getResultModel());
+        BrowserSearchResult bsr = tsb.getResultModel().getObject();
+        int count = 0;
+        for (NodeIterator iter = bsr.getQueryResult().getNodes(); iter.hasNext();) {
+            Node node = iter.nextNode();
+            count++;
+        }
+        assertEquals(2, count);
+    }
+
+    @Test
     public void wildcardSearchFindsWordHead() throws RepositoryException {
         build(session, content);
         session.save();

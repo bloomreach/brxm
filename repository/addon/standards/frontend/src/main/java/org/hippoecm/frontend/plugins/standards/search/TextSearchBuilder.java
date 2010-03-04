@@ -91,26 +91,31 @@ public class TextSearchBuilder implements IClusterable {
             querySb.append(scope);
         }
         for (StringTokenizer st = new StringTokenizer(value, " "); st.hasMoreTokens();) {
+            String token = st.nextToken();
+            if (token.length() < getMinimalLength()) {
+                continue;
+            }
+            StringBuilder tb = new StringBuilder();
+            for (int i = 0; i < token.length(); i++) {
+                char c = token.charAt(i);
+                if (ignoredChars.indexOf(c) == -1) {
+                    if (c == '\'') {
+                        tb.append('\'');
+                    }
+                    tb.append(c);
+                }
+            }
+            if (tb.length() < getMinimalLength()) {
+                continue;
+            }
             if (hasCriteria) {
                 querySb.append(" and ");
             } else {
                 hasCriteria = true;
             }
             querySb.append("jcr:contains(., '");
-            String token = st.nextToken();
-            if (token.length() < getMinimalLength()) {
-                continue;
-            }
+            querySb.append(tb.toString());
             valid = true;
-            for (int i = 0; i < token.length(); i++) {
-                char c = token.charAt(i);
-                if (ignoredChars.indexOf(c) == -1) {
-                    if (c == '\'') {
-                        querySb.append('\'');
-                    }
-                    querySb.append(c);
-                }
-            }
             if (wildcardSearch) {
                 querySb.append('*');
             }
