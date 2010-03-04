@@ -66,10 +66,8 @@ import org.hippoecm.frontend.plugins.xinha.json.JsonParser;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
-import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.render.HeaderContributorHelper;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -94,7 +92,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private static final ResourceReference XINHA_MODAL_JS = new JavascriptResourceReference(XinhaDialogBehavior.class,
             "xinha-modal.js");
 
-    private static final PackagedTextTemplate XINHA_INIT_GLOBALS = new PackagedTextTemplate(AbstractXinhaPlugin.class,
+    private final PackagedTextTemplate XINHA_INIT_GLOBALS = new PackagedTextTemplate(AbstractXinhaPlugin.class,
             "xinha_init.js");
 
     private final String mode;

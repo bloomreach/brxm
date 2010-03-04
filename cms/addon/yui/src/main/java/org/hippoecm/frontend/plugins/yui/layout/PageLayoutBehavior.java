@@ -31,8 +31,7 @@ public class PageLayoutBehavior extends AbstractYuiAjaxBehavior implements IWire
 
     private static final long serialVersionUID = 1L;
 
-    private static final PackagedTextTemplate INIT_PAGE = new PackagedTextTemplate(PageLayoutBehavior.class,
-            "init_page.js");
+    private final PackagedTextTemplate INIT_PAGE = new PackagedTextTemplate(PageLayoutBehavior.class, "init_page.js");
 
     private PageLayoutSettings settings;
     private HippoTextTemplate template;

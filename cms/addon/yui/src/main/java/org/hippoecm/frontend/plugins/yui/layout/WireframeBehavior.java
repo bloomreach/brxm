@@ -37,7 +37,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    private static final PackagedTextTemplate behaviorJs = new PackagedTextTemplate(WireframeBehavior.class,
+    private final PackagedTextTemplate behaviorJs = new PackagedTextTemplate(WireframeBehavior.class,
             "add_wireframe.js");
 
     private WireframeSettings settings;

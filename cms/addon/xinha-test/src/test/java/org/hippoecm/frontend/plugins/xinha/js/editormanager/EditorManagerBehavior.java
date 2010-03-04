@@ -21,7 +21,7 @@ import org.hippoecm.frontend.service.render.HeaderContributorHelper;
 public class EditorManagerBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
 
-    private static final PackagedTextTemplate XINHA_INIT_GLOBALS = new PackagedTextTemplate(AbstractXinhaPlugin.class,
+    private final PackagedTextTemplate XINHA_INIT_GLOBALS = new PackagedTextTemplate(AbstractXinhaPlugin.class,
             "xinha_init.js");
 
     DynamicTextTemplate globals;

@@ -46,7 +46,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     
-    private static final PackagedTextTemplate INIT = new PackagedTextTemplate(YuiDatePicker.class, "init.js");
+    private final PackagedTextTemplate INIT = new PackagedTextTemplate(YuiDatePicker.class, "init.js");
     private static final ResourceReference SKIN = new CompressedResourceReference(YuiDatePicker.class, "skin.css");
     
     private Component component;

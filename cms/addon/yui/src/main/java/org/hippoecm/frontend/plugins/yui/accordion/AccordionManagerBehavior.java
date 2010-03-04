@@ -30,7 +30,7 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
     private final static String SVN_ID = "$Id$";
     
     //Provide a more generic approach by making the function call variable as well
-    private static final PackagedTextTemplate INIT = new PackagedTextTemplate(AccordionManagerBehavior.class, "init.js");
+    private final PackagedTextTemplate INIT = new PackagedTextTemplate(AccordionManagerBehavior.class, "init.js");
     
     private DynamicTextTemplate template;
     private String id;

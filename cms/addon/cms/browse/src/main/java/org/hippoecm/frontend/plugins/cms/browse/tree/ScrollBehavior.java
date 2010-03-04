@@ -33,7 +33,7 @@ public class ScrollBehavior extends AbstractDefaultAjaxBehavior {
     private static final long serialVersionUID = 1L;
 
     private static final ResourceReference SCRIPT = new JavascriptResourceReference(ScrollBehavior.class, "scroll.js");
-    private static final PackagedTextTemplate INIT = new PackagedTextTemplate(ScrollBehavior.class, "init_scroll.js");
+    private final PackagedTextTemplate INIT = new PackagedTextTemplate(ScrollBehavior.class, "init_scroll.js");
     private final ParameterModel model = new ParameterModel();
 
     public ScrollBehavior() {

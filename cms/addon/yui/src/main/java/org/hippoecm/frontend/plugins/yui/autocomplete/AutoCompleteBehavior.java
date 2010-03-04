@@ -31,7 +31,7 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
     private static final long serialVersionUID = 1L;
 
     //Provide a more generic approach by making the function call variable as well
-    private static final PackagedTextTemplate INIT_AUTOCOMPLETE = new PackagedTextTemplate(AutoCompleteBehavior.class,
+    private final PackagedTextTemplate INIT_AUTOCOMPLETE = new PackagedTextTemplate(AutoCompleteBehavior.class,
             "init_autocomplete.js");
 
     protected final AutoCompleteSettings settings;
