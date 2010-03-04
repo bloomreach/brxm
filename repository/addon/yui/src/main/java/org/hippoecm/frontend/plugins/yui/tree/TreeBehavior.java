@@ -28,7 +28,6 @@ import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
-import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,7 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
     static final Logger log = LoggerFactory.getLogger(TreeBehavior.class);
 
     //Provide a more generic approach by making the function call variable as well
-    private static final PackagedTextTemplate INIT_TREE = new PackagedTextTemplate(TreeBehavior.class, "init_tree.js");
+    private final PackagedTextTemplate INIT_TREE = new PackagedTextTemplate(TreeBehavior.class, "init_tree.js");
 
     protected final TreeSettings settings;
     private HippoTextTemplate template;
