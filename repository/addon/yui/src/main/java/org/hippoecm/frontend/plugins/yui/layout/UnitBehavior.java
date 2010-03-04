@@ -31,6 +31,11 @@ import org.apache.wicket.behavior.IBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This behavior stores the component id as it's markupId in the {@link UnitSettings} and if the request rendering this
+ * behavior is an Ajax-request, it will force the whole wireframe to re-render (since this unit might be added to a 
+ * wireframe that has already rendered.  
+ */
 public class UnitBehavior extends AbstractBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

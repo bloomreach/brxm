@@ -23,14 +23,24 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
+/**
+ * Base class for behaviors that want to use YUI modules. It uses a {@link IYuiContext} to register all 
+ * required components. The {@link IYuiContext} is created by a (global) {@link IYuiManager} which, in this case, lives
+ * inside the {@link Page} (as an {@link IBehavior}) that is retrieved by <code>component.getPage()</code> 
+ *  
+ *  <p>
+ *  Subclasses should override <code>addHeaderContribution(IYuiContext context)</code> to get access to the 
+ *  {@link IYuiContext}.
+ *  </p>
+ */
 public class AbstractYuiBehavior extends AbstractBehavior {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     private Component component;
-    private IYuiContext _helper;
+    private IYuiContext context;
 
     @Override
     public void bind(Component component) {
@@ -43,10 +53,11 @@ public class AbstractYuiBehavior extends AbstractBehavior {
     }
 
     /**
-     * Override to implement header contrib
-     * @param helper
+     * Override this method to get access to the IYuiContext
+     * 
+     * @param context The IYuiContext this behavior can use to register YUI-modules and the likes.
      */
-    public void addHeaderContribution(IYuiContext helper) {
+    public void addHeaderContribution(IYuiContext context) {
     }
 
     /**
@@ -55,24 +66,29 @@ public class AbstractYuiBehavior extends AbstractBehavior {
      */
     @Override
     public final void renderHead(IHeaderResponse response) {
-        if (_helper == null) {
+        if (context == null) {
             Page page = component.getPage();
             for (IBehavior behavior : page.getBehaviors()) {
                 if (behavior instanceof IYuiManager) {
-                    _helper = ((IYuiManager) behavior).newContext();
-                    addHeaderContribution(_helper);
+                    context = ((IYuiManager) behavior).newContext();
+                    addHeaderContribution(context);
                     break;
                 }
             }
-            if (_helper == null) {
+            if (context == null) {
                 throw new IllegalStateException(
                         "Page has no yui manager behavior, unable to register module dependencies.");
             }
         }
         onRenderHead(response);
-        _helper.renderHead(response);
+        context.renderHead(response);
     }
-
+    
+    /**
+     * Hook method for doing some custom renderHead logic.
+     *  
+     * @param response
+     */
     protected void onRenderHead(IHeaderResponse response) {
     }
 

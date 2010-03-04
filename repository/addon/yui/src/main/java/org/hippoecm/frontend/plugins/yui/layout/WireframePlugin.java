@@ -16,49 +16,34 @@
 package org.hippoecm.frontend.plugins.yui.layout;
 
 import org.apache.wicket.behavior.IBehavior;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.service.IBehaviorService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class WireframePlugin extends WireframeBehavior implements IPlugin, IBehaviorService {
+/**
+ * Special purpose {@link Plugin} that allows us to add the behavior through configuration instead of adding it 
+ * in code to our component.  
+ * 
+ * See {@link IBehaviorService} for info how to configure this.
+ */
+public class WireframePlugin extends Plugin implements IBehaviorService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private final static Logger log = LoggerFactory.getLogger(WireframePlugin.class);
-
-    public static final String UNITS = "yui.units";
-    public static final String WRAPPERS = "yui.wrappers";
-    public static final String ROOT = "yui.root";
-    public static final String LINKED = "yui.linked";
-    public static final String CLIENT_CLASSNAME = "yui.classname";
-
-    private IPluginConfig config;
-
     public WireframePlugin(IPluginContext context, IPluginConfig config) {
-        super(new WireframeSettings(YuiPluginHelper.getConfig(config)));
-
-        this.config = config;
+        super(context, config);
         context.registerService(this, config.getString(ID));
     }
 
-    public IBehavior getBehavior() {
-        return this;
-    }
-
     public String getComponentPath() {
-        return config.getString(IBehaviorService.PATH);
+        return getPluginConfig().getString(IBehaviorService.PATH);
     }
 
-    public void start() {
+    public IBehavior getBehavior() {
+        return new WireframeBehavior(new WireframeSettings(YuiPluginHelper.getConfig(getPluginConfig())));
     }
-
-    public void stop() {
-    }
-
 }

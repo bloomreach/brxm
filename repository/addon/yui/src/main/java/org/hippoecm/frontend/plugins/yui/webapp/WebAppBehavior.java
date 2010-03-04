@@ -23,6 +23,24 @@ import org.hippoecm.frontend.plugins.yui.header.YuiContext;
 import org.hippoecm.frontend.plugins.yui.header.YuiHeaderCache;
 import org.onehippo.yui.YahooNamespace;
 
+/**
+ * This is the base behavior needed for developing Wicket applications using the YUI framework developed by Hippo.
+ * 
+ * <p>
+ * It's most important feature is implementing the {@link IYuiManager} interface, enabling the 
+ * {@link AbstractYuiBehavior} and {@link AbstractYuiAjaxBehavior} to retrieve {@link IYuiContext} instances, and thus 
+ * should be added to the {@link Page} instance of your application (this is required).
+ * </p>
+ * <p>
+ * It also exposes the possibility of pre-loading the stylesheets of the YUI CSS foundation: 
+ * <a href="http://developer.yahoo.com/yui/reset/">reset</a>, <a href="http://developer.yahoo.com/yui/fonts/">fonts</a>, 
+ * <a href="http://developer.yahoo.com/yui/grids/">grids</a>, <a href="http://developer.yahoo.com/yui/base/">base</a> 
+ * and reset-fonts-grids stylesheets, as well as pre-loading Wicket-Ajax dependencies. This can be configured in the
+ * {@link WebAppSettings}.
+ * </p>
+ * 
+ * @see IYuiManager
+ */
 public class WebAppBehavior extends AbstractBehavior implements IYuiManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

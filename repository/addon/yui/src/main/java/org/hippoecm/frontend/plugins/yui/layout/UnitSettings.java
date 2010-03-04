@@ -27,6 +27,54 @@ import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Contains all settings of a YUI unit.
+ * 
+ * <ul>
+ *   <li>
+ *   POSITION: String representation of the position this unit has in the wireframe; top, right, bottom, left or center
+ *   </li>
+ *   <li>
+ *   ID: a {@link YuiId} value representing the unit's root element.
+ *   </li>
+ *   <li>
+ *   BODY: a {@link YuiId} value representing the unit's body element.
+ *   </li>
+ *   <li>
+ *   WIDTH: width (in pixels) that the unit will take up in the wireframe (only applies to left and right units and 
+ *   is required)
+ *   </li>
+ *   <li>
+ *   HEIGHT: height (in pixels) that the unit will take up in the wireframe (only applies to top and bottom units 
+ *   and is required).
+ *   </li>
+ *   <li>
+ *   MIN_WIDTH: minimum width (in pixels) the unit will take up in the wireframe (only applies to left and right units 
+ *   and is required)
+ *   </li>
+ *   <li>
+ *   MIN_HEIGHT: minimum height (in pixels) that the unit will take up in the wireframe (only applies to top and bottom 
+ *   units and is required).
+ *   </li>
+ *   <li>
+ *   GUTTER: the gutter applied to the unit's wrapper, before the content, for example "5px".
+ *   </li>
+ *   <li>
+ *   SCROLL: Boolean indicating whether the unit's body should have scroll bars if the body content is larger than the 
+ *   display area.
+ *   </li>
+ *   <li>
+ *   RESIZE: Boolean indicating whether this unit is resizeable.
+ *   </li>
+ *   <li>
+ *   USE_SHIM: Sometimes resizing a unit over an iframe (or other elements) will lead to unexpected behavior, especially
+ *   in everyone's favorite browser IE. Set this property to true to fix it. 
+ *   </li>
+ *   <li>
+ *   Z_INDEX: z-index for this unit. TODO: check if this works. 
+ *   </li>
+ * </ul>
+ */
 public class UnitSettings extends YuiObject {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -49,7 +97,8 @@ public class UnitSettings extends YuiObject {
     private static final BooleanSetting SCROLL = new BooleanSetting("scroll");
     private static final BooleanSetting RESIZE = new BooleanSetting("resize");
     private static final BooleanSetting USE_SHIM = new BooleanSetting("useShim");
-
+    
+    //TODO: does this still work?
     private static final IntSetting Z_INDEX = new IntSetting("zindex");
 
     protected final static YuiType TYPE = new YuiType(POSITION, ID, BODY, WIDTH, HEIGHT, MIN_WIDTH, MIN_HEIGHT, GUTTER,

@@ -25,6 +25,19 @@ import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
 
+/**
+ * Special purpose {@link WireframeBehavior} that automatically binds itself to the document body and creates a 
+ * wireframe that takes up the full viewport and is registered as the root of the applications wireframe structure.
+ * <p>
+ * In accordance with YUI-grids CSS, the default id value for the wireframe root element is set to "doc3".
+ * </p>
+ * <p>
+ * Note: It doesn't support dynamic registration with parent wireframes or looking up {@link Unitbehavior}'s from child 
+ * components because of it's static nature. This can be achieved by the {@link WireframeBehavior}
+ * <p>
+ * 
+ * @see WireframeBehavior
+ */
 public class PageLayoutBehavior extends AbstractYuiAjaxBehavior implements IWireframeService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

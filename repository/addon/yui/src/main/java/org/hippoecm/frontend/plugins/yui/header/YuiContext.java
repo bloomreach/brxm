@@ -31,8 +31,15 @@ import org.onehippo.yui.YahooNamespace;
 import org.onehippo.yui.YuiNamespace;
 
 /**
- * The YuiContext uses the shared {@link YuiHeaderCache} service to load YUI-modules
- * and minimize the response footprint.  
+ * The YuiContext uses the shared {@link YuiHeaderCache} service for loading/caching YUI-modules and header 
+ * contributions.
+ * 
+ * <p>
+ * Note: the <code>addModule(String module)</code> method will load the provided module within the 
+ * {@link YahooNamespace} scope.
+ * </p>
+ * 
+ * @see IYuiContext
  */
 public class YuiContext implements IYuiContext {
     @SuppressWarnings("unused")
@@ -78,86 +85,50 @@ public class YuiContext implements IYuiContext {
         onloads = new LinkedHashSet<Onload>();
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.frontend.plugins.yui.header.IYuiContext#addModule(java.lang.String)
-     */
     public void addModule(String module) {
         addModule(YahooNamespace.NS, module);
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.frontend.plugins.yui.header.IYuiContext#addModule(org.onehippo.yui.YuiNamespace, java.lang.String)
-     */
     public void addModule(YuiNamespace ns, String module) {
         modules.add(cache.getDependenciesSet(ns, module));
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.frontend.plugins.yui.header.IYuiContext#addTemplate(org.hippoecm.frontend.plugins.yui.header.templates.FinalTextTemplate)
-     */
     public void addTemplate(FinalTextTemplate template) {
         templates.add(template);
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.frontend.plugins.yui.header.IYuiContext#addTemplate(java.lang.Class, java.lang.String, java.util.Map)
-     */
     public void addTemplate(Class<?> clazz, String filename, Map<String, Object> parameters) {
         templates.add(new FinalTextTemplate(clazz, filename, parameters));
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.frontend.plugins.yui.header.IYuiContext#addTemplate(org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate)
-     */
     public void addTemplate(DynamicTextTemplate template) {
         templates.add(template);
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.frontend.plugins.yui.header.IYuiContext#addCssReference(org.apache.wicket.ResourceReference)
-     */
     public void addCssReference(ResourceReference reference) {
         refs.add(cache.getCssReference(reference));
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.frontend.plugins.yui.header.IYuiContext#addJavascriptReference(org.apache.wicket.ResourceReference)
-     */
     public void addJavascriptReference(ResourceReference reference) {
         refs.add(cache.getJavascriptReference(reference));
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.frontend.plugins.yui.header.IYuiContext#addOnDomLoad(java.lang.String)
-     */
     public void addOnDomLoad(String string) {
         addOnDomLoad(new Model(string));
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.frontend.plugins.yui.header.IYuiContext#addOnDomLoad(org.apache.wicket.model.IModel)
-     */
     public void addOnDomLoad(IModel model) {
         onloads.add(new Onload(model, Onload.Type.DOM));
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.frontend.plugins.yui.header.IYuiContext#addOnWinLoad(java.lang.String)
-     */
     public void addOnWinLoad(String string) {
         addOnWinLoad(new Model(string));
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.frontend.plugins.yui.header.IYuiContext#addOnWinLoad(org.apache.wicket.model.IModel)
-     */
     public void addOnWinLoad(IModel model) {
         onloads.add(new Onload(model, Onload.Type.WINDOW));
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wicket.markup.html.IHeaderContributor#renderHead(org.apache.wicket.markup.html.IHeaderResponse)
-     */
     public void renderHead(IHeaderResponse response) {
         if (modules != null) {
             renderModules(modules, response);

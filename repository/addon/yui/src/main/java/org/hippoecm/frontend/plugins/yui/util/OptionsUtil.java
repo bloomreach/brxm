@@ -19,12 +19,16 @@ package org.hippoecm.frontend.plugins.yui.util;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO: remove
+
+@Deprecated
 public class OptionsUtil {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     public static final String KEY_VALUE_DELIM = "=";
 
+    @Deprecated
     public static void addKeyValuePairsToMap(Map<String, String> map, String... pairs) {
         for(String option : pairs) {
             int delimIndex = option.indexOf(KEY_VALUE_DELIM);
@@ -34,6 +38,7 @@ public class OptionsUtil {
         }
     }
 
+    @Deprecated
     public static Map<String, String> keyValuePairsToMap(String... pairs) {
         Map<String, String> map = new HashMap<String, String>();
         addKeyValuePairsToMap(map, pairs);

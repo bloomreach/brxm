@@ -17,6 +17,11 @@ package org.hippoecm.frontend.plugins.yui.webapp;
 
 import java.io.Serializable;
 
+/**
+ * Setting for {@link WebAppbehavior}.
+ * 
+ * Wicket-Ajax is loaded by default.
+ */
 public class WebAppSettings implements Serializable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

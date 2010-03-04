@@ -26,6 +26,39 @@ import org.hippoecm.frontend.plugins.yui.javascript.YuiIdSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 
+/**
+ * Contains all settings of a wireframe and it's units.
+ * 
+ * <ul>
+ *   <li>
+ *   ROOT_ID: a {@link YuiId} value representing the wireframe's root element.
+ *   </li>
+ *   <li>
+ *   PARENT_ID: a {@link YuiId} value representing the parent wireframe (value will be auto-set by the {@link 
+ *   WireframeBehavior} when LINKED_WITH_PARENT is true. 
+ *   </li>
+ *   <li>
+ *   LINKED_WITH_PARENT: when set to true, the wireframe will register itself with it's parent wireframe and sync render 
+ *   and resize events. 
+ *   </li>
+ *   <li>
+ *   UNITS: Array of {@UnitSettings} representing the units for this wireframe. These can either be set by the same 
+ *   IPluginConfig object as the {@link WireframeSettings} or by merging the {@UnitSettings} of dynamically found 
+ *   {@link UnitBehavior}s.<br/>
+ *   The easiest way to configure units is storing the html and configuration all in the same place as the wireframe's 
+ *   html and configuration. If we use an {@link IPluginConfig} for configuration, we can add a StringArray property
+ *   and add the positional name of the units we'd like to add: for example "top" and "center". This will cause the 
+ *   {@link WireframeSettings} to lookup two String properties on the IPluginConfig named "top" and "center" which 
+ *   should contain a comma-separated string of UnitSettings, like "id=center,scroll=true,width=120". 
+ *   </li>
+ *   <li>
+ *   WRAPPERS: TODO
+ *   </li>
+ * </ul>
+ * 
+ * Warning: this class currently extends the YuiObject which is deprecated and will soon be replaced by a POJO settings
+ * file. Not sure how to handle default values and things like dont-escape-string yet.
+ */
 public class WireframeSettings extends YuiObject {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

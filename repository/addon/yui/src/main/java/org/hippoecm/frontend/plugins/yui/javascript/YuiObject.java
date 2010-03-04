@@ -28,7 +28,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  * Base class for passing configuration to a YUI component on the client.
  * <p>
  * This class has been deprecated.  Create a java bean instead and use the
- * PluginConfigMapper and JavascriptMapper helpers to do the serialization. 
+ * {@link PluginConfigMapper} and JavascriptMapper helpers to do the serialization. 
  */
 @Deprecated
 public class YuiObject implements IClusterable {
