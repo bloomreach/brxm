@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This behavior stores the component id as it's markupId in the {@link UnitSettings} and if the request rendering this
- * behavior is an Ajax-request, it will force the whole wireframe to re-render (since this unit might be added to a 
- * wireframe that has already rendered.  
+ * behavior is an Ajax-request, it will force the whole wireframe to re-render (since this unit might be added to an
+ * already existing wireframe).  
  */
 public class UnitBehavior extends AbstractBehavior {
     @SuppressWarnings("unused")
