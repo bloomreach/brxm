@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +110,7 @@ public class LoggingServlet extends HttpServlet {
         writer.println("Logger: <select name=\"logger\">");
         for (Iterator<String> iter = loggerLevelMap.keySet().iterator(); iter.hasNext();) {
             String loggerName = iter.next();
+            loggerName = StringEscapeUtils.escapeHtml(loggerName);
             writer.println("<option label=\"" + loggerName + "\" value=\"" + loggerName + "\">" + loggerName
                     + "</option>");
         }
@@ -141,8 +143,11 @@ public class LoggingServlet extends HttpServlet {
         writer.println("      <tr><th>logger</th><th>level</th></tr>");
         for (Iterator<Map.Entry<String, String>> iter = loggerLevelMap.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, String> logMap = iter.next();
-            writer.println("      <tr><td><tt>" + logMap.getKey() + "</tt></td><td>" + logMap.getValue()
-                    + "</td></tr>");
+            writer.print("      <tr><td><tt>");
+            writer.print(StringEscapeUtils.escapeHtml(logMap.getKey()));
+            writer.print("</tt></td><td>");
+            writer.print(logMap.getValue());
+            writer.println("</td></tr>");
         }
         writer.println("    </table>");
     }
