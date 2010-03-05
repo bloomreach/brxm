@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import java.util.Iterator;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Component.IVisitor;
@@ -105,7 +103,7 @@ import org.hippoecm.frontend.service.render.RenderService;
  * render time. They are stored inside the {@link WireframeSettings} object which is serialized to JSON and registered
  * on the client.<br/> 
  * If our application only contains one single wireframe with two static unit, we can hard-code the id values into the 
- * accompanying .html file and {@WireframeSettings}. But, as we are working in a composite environment,
+ * accompanying .html file and {@link WireframeSettings}. But, as we are working in a composite environment,
  * we want our wireframes to be re-usable, without having to worry about id clashes on the client. To accompany this, we
  * created the {@link YuiId}, which allows us to do just that. See {@link YuiId} for more about that.
  * <p>
@@ -128,14 +126,17 @@ import org.hippoecm.frontend.service.render.RenderService;
  * For more info see the comments in 
  * hippo-ecm-addon-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/2.7.0/layoutmanager/layoutmanager-debug.js
  * </p>
+ *
+ * @see org.hippoecm.frontend.plugins.yui.layout.WireframeSettings
+ * @see org.hippoecm.frontend.plugins.yui.javascript.YuiId
  */
 
 public class WireframeBehavior extends AbstractYuiBehavior implements IWireframeService {
+    private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final long serialVersionUID = 1L;
     private final PackagedTextTemplate behaviorJs = new PackagedTextTemplate(WireframeBehavior.class,
             "add_wireframe.js");
 
@@ -214,8 +215,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
                     throw new RuntimeException("Parent layout behavior not found for component["
                             + component.getMarkupId() + "]");
                 }
-                for (Iterator j = parent.getBehaviors().iterator(); j.hasNext();) {
-                    Object parentBehavior = j.next();
+                for (Object parentBehavior : parent.getBehaviors()) {
                     if (parentBehavior instanceof IWireframeService) {
                         IWireframeService service = (IWireframeService) parentBehavior;
                         settings.setParentId(service.getParentId());
@@ -231,8 +231,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
         MarkupContainer cont = (MarkupContainer) component;
         cont.visitChildren(new IVisitor() {
             public Object component(Component component) {
-                for (Iterator i = component.getBehaviors().iterator(); i.hasNext();) {
-                    Object behavior = i.next();
+                for (Object behavior : component.getBehaviors()) {
                     if (behavior instanceof IWireframeService) {
                         return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     } else if (behavior instanceof UnitBehavior) {

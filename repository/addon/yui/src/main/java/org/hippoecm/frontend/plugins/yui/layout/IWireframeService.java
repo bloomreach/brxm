@@ -19,17 +19,16 @@ import org.apache.wicket.behavior.IBehavior;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
 
 /**
- * Behaviors implementing this service can be queried by nested component {@link WireframeBehavior}'s for their id 
- * value. This is because a nested wireframe needs to know it's parent id value during the render phase.   
+ * Base wireframe interface, allows wireframes that are linked to their parent to register
+ * with their parent through the Wicket component tree model.
  */
 public interface IWireframeService extends IBehavior {
     final static String SVN_ID = "$Id$";
 
     /**
-     * Return the {@link YuiId} value that represents the wireframe managed by the {@link IBehavior} that is 
-     * implementing this interface.
+     * Return the root id of this wireframe
      * 
-     * @return a {@link YuiId} value representing the wireframe 
+     * @return the root {@link YuiId} of this wireframe 
      */
     YuiId getParentId();
 }
