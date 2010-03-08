@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.standards.behaviors;
+package org.hippoecm.frontend.plugins.login;
 
 import java.util.StringTokenizer;
 
@@ -22,27 +22,19 @@ import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
-import org.hippoecm.frontend.plugin.IPlugin;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BrowserCheckPlugin extends AbstractBehavior implements IPlugin, IBehaviorService {
+public class BrowserCheckBehavior extends AbstractBehavior {
     private static final long serialVersionUID = 1L;
 
-    static Logger log = LoggerFactory.getLogger(BrowserCheckPlugin.class);
+    static Logger log = LoggerFactory.getLogger(BrowserCheckBehavior.class);
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String SUPPORTED = "supported";
-
-    IPluginConfig config;
     BrowserCheck check;
 
     public static class BrowserCheck implements IClusterable {
@@ -258,13 +250,8 @@ public class BrowserCheckPlugin extends AbstractBehavior implements IPlugin, IBe
 
     }
 
-    public BrowserCheckPlugin(IPluginContext context, IPluginConfig config) {
-        this.config = config;
-
-        if (config.containsKey(SUPPORTED)) {
-            check = new BrowserCheck(config.getStringArray(SUPPORTED));
-        }
-        context.registerService(this, config.getString(ID));
+    public BrowserCheckBehavior(String[] supported) {
+        check = new BrowserCheck(supported);
     }
 
     @Override
@@ -275,20 +262,6 @@ public class BrowserCheckPlugin extends AbstractBehavior implements IPlugin, IBe
         if (check != null && !check.isSupported(new WicketBrowserInfo(info))) {
             component.info(new StringResourceModel("browser.unsupported.warning", component, null).getString());
         }
-    }
-
-    public IBehavior getBehavior() {
-        return this;
-    }
-
-    public String getComponentPath() {
-        return config.getString(IBehaviorService.PATH);
-    }
-
-    public void start() {
-    }
-
-    public void stop() {
     }
 
 }

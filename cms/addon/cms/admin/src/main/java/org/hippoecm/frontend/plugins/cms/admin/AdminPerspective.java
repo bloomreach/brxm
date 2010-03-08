@@ -18,12 +18,13 @@ package org.hippoecm.frontend.plugins.cms.admin;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbBar;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 
 public class AdminPerspective extends Perspective {
     @SuppressWarnings("unused")
@@ -60,6 +61,8 @@ public class AdminPerspective extends Perspective {
                 redraw();
             }
         });
+
+        add(new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))));
     }
 
     public void showDialog(IDialogService.Dialog dialog) {

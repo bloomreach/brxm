@@ -63,6 +63,11 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
     public RememberMeLoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        String[] supported = config.getStringArray("browsers.supported");
+        if (supported != null) {
+            add(new BrowserCheckBehavior(supported));
+        }
     }
 
     @Override
