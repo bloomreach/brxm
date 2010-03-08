@@ -400,18 +400,8 @@
     <sv:property sv:name="extension.center" sv:type="String">
       <sv:value>service.center</sv:value>
     </sv:property>
-    <sv:property sv:name="extension.logout" sv:type="String">
-      <sv:value>service.logout</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.shortcuts" sv:type="String">
-      <sv:value>service.browse.shortcuts</sv:value>
-    </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.root.RootPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.logout</sv:value>
-      <sv:value>extension.shortcuts</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.root</sv:value>
@@ -494,37 +484,6 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="browseShortcutsListPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="item" sv:type="String">
-      <sv:value>service.browse.shortcuts.shortcut</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.shortcuts</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="browseShortcutsPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugin.workflow.ShortcutsPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="shortcuts.id" sv:type="String">
-      <sv:value>shortcutstoo.id</sv:value>
-    </sv:property>
-    <sv:property sv:name="shortcuts.query" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:frontend/cms/cms-headshortcuts/node()</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.shortcuts.shortcut</sv:value>
-    </sv:property>
-  </sv:node>
   <!-- Needs to load first to make the DashboardPerspective correspond with the first button -->
   <sv:node sv:name="dashboardLoader">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -551,18 +510,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="logoutPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.root.LogoutPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.logout</sv:value>
-    </sv:property>
-  </sv:node>
-
   <sv:node sv:name="adminPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -575,9 +522,6 @@
     </sv:property>
     <sv:property sv:name="translator.id" sv:type="String">
       <sv:value>service.translator.config</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.behavior" sv:type="String">
-      <sv:value>service.behavior.tabs</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.tab</sv:value>

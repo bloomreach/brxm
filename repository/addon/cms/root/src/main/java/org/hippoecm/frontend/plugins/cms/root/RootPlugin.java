@@ -46,6 +46,7 @@ public class RootPlugin extends TabsPlugin {
         super(context, config);
 
         add(new Pinger("pinger"));
+        add(new LogoutLink("logout"));
 
         PageLayoutSettings plSettings = new PageLayoutSettings(config.getPluginConfig("layout.page"));
         add(new PageLayoutBehavior(plSettings));

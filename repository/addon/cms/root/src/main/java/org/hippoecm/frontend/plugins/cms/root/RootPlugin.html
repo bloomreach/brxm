@@ -24,10 +24,14 @@
           <div class="headerplugin">
             <div class="hippo-header">
               <a class="hippo-header-home">Hippo CMS 7</a>
-              <div class="hippo-header-logout" wicket:id="extension.logout">logout</div>
-            </div>
-            <div class="hippo-header-shortcuts">
-              <div wicket:id="extension.shortcuts">shortcuts here</div>
+              <div class="hippo-header-logout" wicket:id="logout">
+                <span class="hippo-logout-username" wicket:id="username">[ user ]</span>
+                <ul class="hippo-logout">
+                  <li>
+                    <a href="#" wicket:id="logout-link"><wicket:message key="logout-label"/></a>  
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>          
         </div>
