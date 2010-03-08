@@ -189,7 +189,7 @@
         <sv:value>Name</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hippo:facetsubsearch</sv:value>
+        <sv:value>hipposys:facetsubsearch</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
