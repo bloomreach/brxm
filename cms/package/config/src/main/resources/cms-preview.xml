@@ -57,7 +57,7 @@
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>${wicket.model}</sv:value>
     </sv:property>
-    <sv:node sv:name="yui.config">
+    <sv:node sv:name="layout.wireframe">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>

@@ -13,7 +13,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<html xmlns:wicket="http://wicket.apache.org/">
+<html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
   <wicket:panel>
+    <div yui:id="browse-perspective-wrapper">
+      <div class="hippo-browser-small" yui:id="browse-perspective-left">
+        <div yui:id="browse-perspective-left-body">
+          <div wicket:id="extension.navigator">navigator here</div>
+        </div>
+        <div yui:id="browse-perspective-center">
+          <div yui:id="browse-perspective-center-body">
+            <div wicket:id="extension.editor">[ Editor ]</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </wicket:panel>
 </html>

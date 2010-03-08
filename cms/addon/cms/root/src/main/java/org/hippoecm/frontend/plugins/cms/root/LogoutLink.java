@@ -15,38 +15,31 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import java.rmi.RemoteException;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LogoutPlugin extends RenderPlugin {
+public class LogoutLink extends MarkupContainer {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(LogoutPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(LogoutLink.class);
 
     @SuppressWarnings("unused")
     private String username;
 
-    public LogoutPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+    public LogoutLink(String id) {
+        super(id);
 
         UserSession session = (UserSession) getSession();
         username = session.getJcrSession().getUserID();
@@ -58,7 +51,7 @@ public class LogoutPlugin extends RenderPlugin {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                LogoutPlugin.this.logout();
+                LogoutLink.this.logout();
             }
         });
     }

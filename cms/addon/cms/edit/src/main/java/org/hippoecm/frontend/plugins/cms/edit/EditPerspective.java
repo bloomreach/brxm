@@ -36,8 +36,8 @@ import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
@@ -102,7 +102,11 @@ public class EditPerspective extends Perspective {
             }, config.getString(IValidationService.VALIDATE_ID));
         }
 
-        wfSettings = new WireframeSettings(YuiPluginHelper.getConfig(config));
+        IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
+        if (wfConfig == null) {
+            wfConfig = new JavaPluginConfig();
+        }
+        wfSettings = new WireframeSettings(wfConfig);
         UnitSettings topSettings = wfSettings.getUnitSettingsByPosition("top");
         topHeight = topSettings.getHeight();
         add(new WireframeBehavior(wfSettings));

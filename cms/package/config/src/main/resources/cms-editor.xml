@@ -66,7 +66,7 @@
     <sv:property sv:name="validator.id" sv:type="String">
       <sv:value>${validator.id}</sv:value>
     </sv:property>
-    <sv:node sv:name="yui.config">
+    <sv:node sv:name="layout.wireframe">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
@@ -122,9 +122,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
-    <sv:property sv:name="validator.id" sv:type="String">
-      <sv:value>${cluster.id}.validator</sv:value>
-    </sv:property>
+      <sv:property sv:name="validator.id" sv:type="String">
+        <sv:value>${cluster.id}.validator</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
   <sv:node sv:name="workflowPlugin">
