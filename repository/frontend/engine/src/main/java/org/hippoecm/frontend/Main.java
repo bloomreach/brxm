@@ -82,6 +82,7 @@ public class Main extends WebApplication {
     public final static String MAXUPLOAD_PARAM = "upload-limit";
     public final static String PLUGIN_APPLICATION_NAME = "config";
     public final static String ENCRYPT_URLS = "encrypt-urls";
+    public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
 
     @Override
     protected void init() {
@@ -293,6 +294,11 @@ public class Main extends WebApplication {
 
             // don't show exception page
             getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_NO_EXCEPTION_PAGE);
+        }
+
+        String outputWicketpaths = getInitParameter(OUTPUT_WICKETPATHS);
+        if (outputWicketpaths != null && "true".equalsIgnoreCase(outputWicketpaths)) {
+            getDebugSettings().setOutputComponentPath(true);
         }
     }
 
