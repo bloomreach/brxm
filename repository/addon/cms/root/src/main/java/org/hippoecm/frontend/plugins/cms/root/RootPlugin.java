@@ -15,18 +15,26 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.Browser;
+import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.StylesheetConfiguration;
+import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.UserAgent;
+import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutSettings;
+import org.hippoecm.frontend.plugins.yui.layout.UnitBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
-import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.Pinger;
 
-public class RootPlugin extends RenderPlugin {
+public class RootPlugin extends TabsPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -39,10 +47,36 @@ public class RootPlugin extends RenderPlugin {
 
         add(new Pinger("pinger"));
 
-        PageLayoutSettings plSettings = new PageLayoutSettings(config.getPluginConfig("yui.config"));
+        PageLayoutSettings plSettings = new PageLayoutSettings(config.getPluginConfig("layout.page"));
         add(new PageLayoutBehavior(plSettings));
 
         add(new AjaxIndicatorBehavior());
+
+        String[] browsers = config.getStringArray("browsers");
+        StylesheetConfiguration[] configurations = new StylesheetConfiguration[browsers.length];
+        for (int i = 0; i < browsers.length; i++) {
+            if (config.containsKey(browsers[i])) {
+                IPluginConfig browserConf = config.getPluginConfig(browsers[i]);
+                String ua = browserConf.getString("user.agent", "unsupported").toUpperCase();
+                Browser browser = new Browser(UserAgent.valueOf(ua), browserConf.getInt("major.version", -1),
+                        browserConf.getInt("minor.version", -1));
+
+                configurations[i] = new StylesheetConfiguration(browser, browserConf.getStringArray("stylesheets"));
+            }
+        }
+        add(new BrowserSpecificStylesheetsBehavior(configurations));
+
+        get("tabs").add(new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))));
+        get("tabs:panel-container").add(new UnitBehavior(createSettings(config.getPluginConfig("layout.panel"))));
+        get("tabs:tabs-container").add(new UnitBehavior(createSettings(config.getPluginConfig("layout.tabs"))));
+    }
+
+    static UnitSettings createSettings(IPluginConfig config) {
+        if (config.containsKey("options")) {
+            return new UnitSettings(config.getString("position"), new ValueMap(config.getString("options")));
+        } else {
+            return new UnitSettings(config);
+        }
     }
 
     @Override

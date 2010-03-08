@@ -14,14 +14,13 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.standards.browsercheck;
-
-import org.hippoecm.frontend.plugins.standards.behaviors.BrowserCheckPlugin.BrowserCheck;
-import org.hippoecm.frontend.plugins.standards.behaviors.BrowserCheckPlugin.BrowserInfo;
+package org.hippoecm.frontend.plugins.login;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.hippoecm.frontend.plugins.login.BrowserCheckBehavior.BrowserCheck;
+import org.hippoecm.frontend.plugins.login.BrowserCheckBehavior.BrowserInfo;
 import org.junit.Test;
 
 public class BrowserTest {
