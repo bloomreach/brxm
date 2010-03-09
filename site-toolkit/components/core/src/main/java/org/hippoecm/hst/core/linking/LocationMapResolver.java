@@ -428,9 +428,8 @@ public class LocationMapResolver {
         }
         if(((LocationMapTreeItemImpl)locationMapTreeItem).isWildCard()) {
             if(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.WILDCARD))){
-                // HERE
                 return traverseInToLocationMapTreeItem(locationMapTreeItem, position, elements);
-            } else if(locationMapTreeItem.getChild(HstNodeTypes.ANY) != null) {
+            } else if(locationMapTreeItem.getChild(HstNodeTypes.ANY) != null && !checkedLocationMapTreeItems.contains(locationMapTreeItem.getChild(HstNodeTypes.ANY))){
                 return traverseInToLocationMapTreeItem(locationMapTreeItem,position, elements);
             }
             // as this tree path did not result in a match, remove some params again
