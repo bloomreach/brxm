@@ -18,11 +18,13 @@ package org.hippoecm.frontend.editor.plugins.resource;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Response;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
@@ -54,6 +56,12 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         Fragment fragment = new Fragment("fragment", "unknown", this);
         try {
             Node node = getModelObject();
+            final String filename;
+            if(node.getDefinition().getName().equals("*")) {
+                filename = node.getName();
+            } else {
+                filename = node.getParent().getName();
+            }
             String mimeType = node.getProperty("jcr:mimeType").getString();
             if (mimeType.indexOf('/') > 0) {
                 String category = mimeType.substring(0, mimeType.indexOf('/'));
@@ -64,7 +72,14 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
                     fragment = new Fragment("fragment", "embed", this);
                     fragment.add(new Label("filesize", new Model<String>(formatter.format(resource.length()))));
                     fragment.add(new Label("mimetype", new Model<String>(resource.getContentType())));
-                    fragment.add(new ResourceLink("link", new JcrResource(resource)));
+                    fragment.add(new ResourceLink("link", new JcrResource(resource) {
+                        @Override
+                        protected void configureResponse(Response response) {
+                            if(response instanceof WebResponse) {
+                                ((WebResponse)response).setHeader("Content-Disposition", "attachment; filename=" + filename);
+                            }
+                        }
+                    }));
                 }
             }
         } catch (RepositoryException ex) {
