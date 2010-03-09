@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -27,7 +26,6 @@ import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutSettings;
 import org.hippoecm.frontend.plugins.yui.layout.UnitBehavior;
-import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
@@ -48,7 +46,9 @@ public class RootPlugin extends TabsPlugin {
         add(new Pinger("pinger"));
         add(new LogoutLink("logout"));
 
-        PageLayoutSettings plSettings = new PageLayoutSettings(config.getPluginConfig("layout.page"));
+        PageLayoutSettings plSettings = new PageLayoutSettings();
+        plSettings.setHeaderHeight(50);
+        // TODO: update settings from config
         add(new PageLayoutBehavior(plSettings));
 
         add(new AjaxIndicatorBehavior());
@@ -68,16 +68,8 @@ public class RootPlugin extends TabsPlugin {
         add(new BrowserSpecificStylesheetsBehavior(configurations));
 
         get("tabs").add(new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))));
-        get("tabs:panel-container").add(new UnitBehavior(createSettings(config.getPluginConfig("layout.panel"))));
-        get("tabs:tabs-container").add(new UnitBehavior(createSettings(config.getPluginConfig("layout.tabs"))));
-    }
-
-    static UnitSettings createSettings(IPluginConfig config) {
-        if (config.containsKey("options")) {
-            return new UnitSettings(config.getString("position"), new ValueMap(config.getString("options")));
-        } else {
-            return new UnitSettings(config);
-        }
+        get("tabs:panel-container").add(new UnitBehavior("center"));
+        get("tabs:tabs-container").add(new UnitBehavior("left"));
     }
 
     @Override

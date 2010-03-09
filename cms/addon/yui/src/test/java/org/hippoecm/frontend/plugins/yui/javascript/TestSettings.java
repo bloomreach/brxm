@@ -15,11 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.yui.javascript;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import junit.framework.TestCase;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
@@ -33,6 +36,8 @@ import org.hippoecm.frontend.plugins.yui.layout.UnitBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
+import org.hippoecm.frontend.plugins.yui.layout.YuiId;
+import org.hippoecm.frontend.plugins.yui.layout.YuiIdProcessor;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.junit.Test;
@@ -61,26 +66,10 @@ public class TestSettings extends TestCase {
     }
 
     @Test
-    public void testUnitSettingsInitializationFromConfig() {
-        IPluginConfig config = new JavaPluginConfig();
-        config.put("position", "top");
-        config.put("scroll", Boolean.TRUE);
-
-        UnitSettings unitSettings = new UnitSettings(config);
-        assertTrue("top".equals(unitSettings.getPosition()));
-
-        JSONObject wfObject = JSONObject.fromObject(unitSettings.toScript());
-        assertTrue("top".equals(wfObject.get("position")));
-        assertTrue(Boolean.TRUE.equals(wfObject.get("scroll")));
-    }
-
-    @Test
     public void testUnitSettingsInitializationFromString() {
         UnitSettings unitSettings = new UnitSettings("top", new ValueMap("scroll=true"));
         assertTrue("top".equals(unitSettings.getPosition()));
-        JSONObject wfObject = JSONObject.fromObject(unitSettings.toScript());
-        assertTrue("top".equals(wfObject.get("position")));
-        assertTrue(Boolean.TRUE.equals(wfObject.get("scroll")));
+        assertTrue(Boolean.TRUE.equals(unitSettings.isScroll()));
     }
 
     public static class TestLabel extends Label {
@@ -108,14 +97,16 @@ public class TestSettings extends TestCase {
             add(new WebAppBehavior(new WebAppSettings()));
 
             IPluginConfig config = new JavaPluginConfig();
-            config.put("wrappers", new String[] { "center" });
-            config.put("center", "center-wrapper");
+            config.put("units", new String[] { "center", "top" });
+            config.put("top", "id=top,body=top-body");
+            config.put("center", "id=center-wrapper");
+            config.put("linked.with.parent", false);
             wfSettings = new WireframeSettings(config);
             add(new WireframeBehavior(wfSettings));
 
             Label panel;
             add(panel = new TestLabel("label", "label1", new Model("test")));
-            panel.add(new UnitBehavior(new UnitSettings("center", new ValueMap(""))));
+            panel.add(new UnitBehavior("center"));
 
             add(new Link("action") {
                 private static final long serialVersionUID = 1L;
@@ -123,7 +114,7 @@ public class TestSettings extends TestCase {
                 @Override
                 public void onClick() {
                     Label label = new TestLabel("label", "label2", new Model("testing 1 2 3"));
-                    label.add(new UnitBehavior(new UnitSettings("center", new ValueMap("scroll=true"))));
+                    label.add(new UnitBehavior("center"));
                     TestPage.this.replace(label);
                 }
 
@@ -141,24 +132,29 @@ public class TestSettings extends TestCase {
         TestPage page = (TestPage) tester.startPage(TestPage.class);
         WireframeSettings wfSettings = page.getWireframeSettings();
 
-        System.out.println(wfSettings.toScript());
-        JSONObject wfObject = JSONObject.fromObject(wfSettings.toScript());
+//        System.out.println(wfSettings.toScript());
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
+        JSONObject wfObject = JSONObject.fromObject(wfSettings, jsonConfig);
         assertTrue("".equals(wfObject.get("rootId")));
 
         JSONArray units = wfObject.getJSONArray("units");
-        JSONObject centerObject = null;
+        Map<String, JSONObject> unitMap = new TreeMap<String, JSONObject>();
         for (int i = 0; i < units.size(); i++) {
             JSONObject unitObject = units.getJSONObject(i);
-            if ("center".equals(unitObject.get("position"))) {
-                centerObject = unitObject;
-                break;
-            }
+            unitMap.put((String) unitObject.get("position"), unitObject);
         }
+
+        JSONObject centerObject = unitMap.get("center");
         assertNotNull(centerObject);
         assertTrue("center".equals(centerObject.get("position")));
         assertTrue("id01:center-wrapper".equals(centerObject.get("id")));
         assertTrue("label1".equals(centerObject.get("body")));
         assertTrue(Boolean.FALSE.equals(centerObject.get("scroll")));
+
+        JSONObject topObject = unitMap.get("top");
+        assertTrue("id01:top".equals(topObject.get("id")));
+        assertTrue("id01:top-body".equals(topObject.get("body")));
     }
 
     @Test
@@ -170,7 +166,9 @@ public class TestSettings extends TestCase {
         TestPage page = (TestPage) tester.getLastRenderedPage();
         WireframeSettings wfSettings = page.getWireframeSettings();
 
-        JSONObject wfObject = JSONObject.fromObject(wfSettings.toScript());
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
+        JSONObject wfObject = JSONObject.fromObject(wfSettings, jsonConfig);
         assertTrue("".equals(wfObject.get("rootId")));
 
         JSONArray units = wfObject.getJSONArray("units");
