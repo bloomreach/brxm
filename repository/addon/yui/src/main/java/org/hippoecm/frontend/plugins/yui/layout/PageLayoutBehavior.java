@@ -15,15 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
+import net.sf.json.JsonConfig;
+
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.util.template.PackagedTextTemplate;
-import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
+import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
-import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
-import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
 
 /**
  * Special purpose {@link WireframeBehavior} that automatically binds itself to the document body and creates a 
@@ -38,7 +37,7 @@ import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
  * 
  * @see WireframeBehavior
  */
-public class PageLayoutBehavior extends AbstractYuiAjaxBehavior implements IWireframeService {
+public class PageLayoutBehavior extends AbstractYuiBehavior implements IWireframeService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -50,7 +49,6 @@ public class PageLayoutBehavior extends AbstractYuiAjaxBehavior implements IWire
     private HippoTextTemplate template;
 
     public PageLayoutBehavior(final PageLayoutSettings settings) {
-        super(settings);
         this.settings = settings;
         template = new HippoTextTemplate(INIT_PAGE, "YAHOO.hippo.GridsRootWireframe") {
             private static final long serialVersionUID = 1L;
@@ -61,8 +59,15 @@ public class PageLayoutBehavior extends AbstractYuiAjaxBehavior implements IWire
             }
 
             @Override
-            public YuiObject getSettings() {
+            public PageLayoutSettings getSettings() {
                 return settings;
+            }
+
+            @Override
+            public JsonConfig getJsonConfig() {
+                JsonConfig jsonConfig = new JsonConfig();
+                jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
+                return jsonConfig;
             }
         };
     }
@@ -72,10 +77,6 @@ public class PageLayoutBehavior extends AbstractYuiAjaxBehavior implements IWire
         context.addModule(HippoNamespace.NS, "layoutmanager");
         context.addTemplate(template);
         context.addOnDomLoad("YAHOO.hippo.LayoutManager.render()");
-    }
-
-    @Override
-    protected void respond(AjaxRequestTarget target) {
     }
 
     @Override

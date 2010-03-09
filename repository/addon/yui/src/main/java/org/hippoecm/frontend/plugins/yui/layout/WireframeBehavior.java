@@ -15,19 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
+import java.io.Serializable;
+
+import net.sf.json.JsonConfig;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Component.IVisitor;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
-import org.hippoecm.frontend.plugins.yui.javascript.IYuiListener;
-import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
-import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
 import org.hippoecm.frontend.service.render.RenderService;
 
 /**
@@ -128,7 +128,7 @@ import org.hippoecm.frontend.service.render.RenderService;
  * </p>
  *
  * @see org.hippoecm.frontend.plugins.yui.layout.WireframeSettings
- * @see org.hippoecm.frontend.plugins.yui.javascript.YuiId
+ * @see org.hippoecm.frontend.plugins.yui.layout.YuiId
  */
 
 public class WireframeBehavior extends AbstractYuiBehavior implements IWireframeService {
@@ -146,31 +146,25 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
 
     public WireframeBehavior(final WireframeSettings settings) {
         this.settings = settings;
-        this.settings.addListener(new IYuiListener() {
-            private static final long serialVersionUID = 1L;
-
-            public void onEvent(Event event) {
-                if (component != null) {
-                    AjaxRequestTarget target = AjaxRequestTarget.get();
-                    if (target != null) {
-                        target.addComponent(component);
-                    }
-                }
-            }
-
-        });
 
         template = new HippoTextTemplate(behaviorJs, settings.getClientClassName()) {
             private static final long serialVersionUID = 1L;
 
             @Override
             public String getId() {
-                return settings.getRootElementId().getElementId();
+                return settings.getRootId().getElementId();
             }
 
             @Override
-            public YuiObject getSettings() {
+            public Serializable getSettings() {
                 return settings;
+            }
+
+            @Override
+            public JsonConfig getJsonConfig() {
+                JsonConfig jsonConfig = new JsonConfig();
+                jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
+                return jsonConfig;
             }
         };
     }
@@ -179,7 +173,7 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
      * Implements IWireframeService
      */
     public YuiId getParentId() {
-        return settings.getRootElementId();
+        return settings.getRootId();
     }
 
     @Override
@@ -229,13 +223,23 @@ public class WireframeBehavior extends AbstractYuiBehavior implements IWireframe
         //Visit child components in order to find components that contain a {@link UnitBehavior}. If another wireframe
         //or unit is encountered, stop going deeper.
         MarkupContainer cont = (MarkupContainer) component;
-        cont.visitChildren(new IVisitor() {
+        cont.visitChildren(new IVisitor<Component>() {
             public Object component(Component component) {
                 for (Object behavior : component.getBehaviors()) {
                     if (behavior instanceof IWireframeService) {
                         return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     } else if (behavior instanceof UnitBehavior) {
-                        settings.register(((UnitBehavior) behavior).getSettings());
+                        String position = ((UnitBehavior) behavior).getPosition();
+                        UnitSettings unit = settings.getUnit(position);
+                        if (unit != null) {
+                            YuiId body = unit.getBody();
+                            if (body != null) {
+                                body.setParentId(null);
+                                body.setId(component.getMarkupId());
+                            }
+                        } else {
+                            throw new RuntimeException("Invalid UnitBehavior position " + position);
+                        }
                         return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     }
                 }
