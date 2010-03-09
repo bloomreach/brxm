@@ -128,7 +128,7 @@ public class EditPerspective extends Perspective {
             feedbackShown = false;
             updateTop = true;
         }
-        if (updateTop && isVisibleInHierarchy()) {
+        if (updateTop && isVisibleInHierarchy() && target != null) {
             String topId = topSettings.getId().getElementId();
             target.appendJavascript("YAHOO.hippo.LayoutManager.findLayoutUnit(YAHOO.util.Dom.get('" + topId
                     + "')).set('height', " + topSettings.getHeight() + ");");
