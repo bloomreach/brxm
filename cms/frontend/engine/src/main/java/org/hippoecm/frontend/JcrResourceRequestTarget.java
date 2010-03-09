@@ -118,6 +118,10 @@ public class JcrResourceRequestTarget implements IRequestTarget {
                 response.setContentType(mimeType);
             }
 
+            if (!mimeType.toLowerCase().startsWith("image/")) {
+                response.setHeader("Content-Disposition", "attachment; filename=" + node.getName());
+            }
+
             // Make sure it is not cached by a client
             response.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
             response.setHeader("Cache-Control", "no-cache, must-revalidate");
