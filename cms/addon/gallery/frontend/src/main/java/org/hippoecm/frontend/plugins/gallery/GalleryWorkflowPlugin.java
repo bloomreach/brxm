@@ -133,6 +133,7 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                     mimetype = upload.getContentType();
                     InputStream istream = upload.getInputStream();
                     WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                    HippoNode node = null;
                     try {
                         WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
                                 .getDefaultModel();
@@ -141,25 +142,44 @@ public class GalleryWorkflowPlugin extends FolderWorkflowPlugin {
                         String nodeName = getNodeNameCodec().encode(filename);
                         String localName = getLocalizeCodec().encode(filename);
                         Document document = workflow.createGalleryItem(nodeName, type);
-                        HippoNode node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
+                        node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
                         DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                         if(!node.getLocalizedName().equals(localName)) {
                             defaultWorkflow.localizeName(localName);
                         }
-                        ImageUtils.galleryProcessor(getPluginConfig()).makeImage(node, istream, mimetype, filename);
-                        node.getSession().save();
                     } catch (WorkflowException ex) {
                         GalleryWorkflowPlugin.log.error(ex.getMessage());
-                        error(new StringResourceModel("workflow-error-label", GalleryWorkflowPlugin.this, null)
-                                .getString());
+                        error(ex);
                     } catch (MappingException ex) {
                         GalleryWorkflowPlugin.log.error(ex.getMessage());
-                        error(new StringResourceModel("workflow-error-label", GalleryWorkflowPlugin.this, null)
-                                .getString());
+                        error(ex);
                     } catch (RepositoryException ex) {
                         GalleryWorkflowPlugin.log.error(ex.getMessage());
-                        error(new StringResourceModel("workflow-error-label", GalleryWorkflowPlugin.this, null)
-                                .getString());
+                        error(ex);
+                    }
+                    if (node != null) {
+                        try {
+                            ImageUtils.galleryProcessor(getPluginConfig()).makeImage(node, istream, mimetype, filename);
+                            node.getSession().save();
+                        } catch (RepositoryException ex) {
+                            GalleryWorkflowPlugin.log.error(ex.getMessage());
+                            error(ex);
+                            try {
+                                DefaultWorkflow defaultWorkflow = (DefaultWorkflow)manager.getWorkflow("core", node);
+                                defaultWorkflow.delete();
+                            } catch (WorkflowException e) {
+                                GalleryWorkflowPlugin.log.error(e.getMessage());
+                            } catch (MappingException e) {
+                                GalleryWorkflowPlugin.log.error(e.getMessage());
+                            } catch (RepositoryException e) {
+                                GalleryWorkflowPlugin.log.error(e.getMessage());
+                            }
+                            try {
+                                node.getSession().refresh(false);
+                            } catch(RepositoryException e) {
+                                // deliberate ignore
+                            }
+                        }
                     }
                 } catch (IOException ex) {
                     GalleryWorkflowPlugin.log.info("upload of image truncated");

@@ -125,6 +125,7 @@ class UploadForm extends Form {
                 mimetype = upload.getContentType();
                 InputStream istream = upload.getInputStream();
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                HippoNode node = null;
                 try {
                     Node galleryNode = uploadDialog.getGalleryNode();
                     GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog
@@ -132,24 +133,47 @@ class UploadForm extends Form {
                     String nodeName = uploadDialog.getNodeNameCodec().encode(filename);
                     String localName = uploadDialog.getLocalizeCodec().encode(filename);
                     Document document = workflow.createGalleryItem(nodeName, type);
-                    HippoNode node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
+                    node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                     if(!node.getLocalizedName().equals(localName)) {
                         defaultWorkflow.localizeName(localName);
                     }
-                    GalleryProcessor processor = ImageUtils.galleryProcessor(uploadDialog.pluginConfig);
-                    processor.makeImage(node, istream, mimetype, filename);
-                    node.getSession().save();
-                    uploadDialog.getWizardModel().next();
                 } catch (WorkflowException ex) {
                     Gallery.log.error(ex.getMessage());
-                    error(new StringResourceModel("workflow-error-label", this, null).getString());
+                    error(ex);
                 } catch (MappingException ex) {
                     Gallery.log.error(ex.getMessage());
-                    error(new StringResourceModel("workflow-error-label", this, null).getString());
+                    error(ex);
                 } catch (RepositoryException ex) {
                     Gallery.log.error(ex.getMessage());
-                    error(new StringResourceModel("workflow-error-label", this, null).getString());
+                    error(ex);
+                }
+                if (node != null) {
+                    try {
+                        GalleryProcessor processor = ImageUtils.galleryProcessor(uploadDialog.pluginConfig);
+                        processor.makeImage(node, istream, mimetype, filename);
+                        node.getSession().save();
+                        uploadDialog.getWizardModel().next();
+                        Session.get().getFeedbackMessages().clear();
+                    } catch (RepositoryException ex) {
+                        Gallery.log.error(ex.getMessage());
+                        error(ex);
+                        try {
+                            DefaultWorkflow defaultWorkflow = (DefaultWorkflow)manager.getWorkflow("core", node);
+                            defaultWorkflow.delete();
+                        } catch (WorkflowException e) {
+                            Gallery.log.error(e.getMessage());
+                        } catch (MappingException e) {
+                            Gallery.log.error(e.getMessage());
+                        } catch (RepositoryException e) {
+                            Gallery.log.error(e.getMessage());
+                        }
+                        try {
+                            node.getSession().refresh(false);
+                        } catch(RepositoryException e) {
+                            // deliberate ignore
+                        }
+                    }
                 }
             } catch (IOException ex) {
                 Gallery.log.info("upload of image truncated");

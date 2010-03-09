@@ -19,10 +19,12 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -38,6 +40,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -241,6 +244,7 @@ public class ImageUtils implements GalleryProcessor {
             primaryChild.setProperty("jcr:mimeType", mimeType);
             primaryChild.setProperty("jcr:data", istream);
         }
+        validateResource(primaryChild, filename);
         for (NodeDefinition childDef : node.getPrimaryNodeType().getChildNodeDefinitions()) {
             if (childDef.getDefaultPrimaryType() != null && childDef.getDefaultPrimaryType().isNodeType("hippo:resource")) {
                 makeRegularImage(node, childDef.getName(),
@@ -249,8 +253,63 @@ public class ImageUtils implements GalleryProcessor {
                         primaryChild.getProperty("jcr:lastModified").getDate());
             }
         }
-        String description = ImageInfo.analyse(filename, primaryChild.getProperty("jcr:data").getStream());
         makeThumbnailImage(primaryChild, primaryChild.getProperty("jcr:data").getStream(), primaryChild.getProperty("jcr:mimeType").getString());
+    }
+
+    public void validateResource(Node resource, String filename) throws ValueFormatException, RepositoryException {
+        try {
+            String mimeType;
+            try {
+                mimeType = (resource.hasProperty("jcr:mimeType") ? resource.getProperty("jcr:mimeType").getString() : "");
+                mimeType = mimeType.toLowerCase();
+                if(mimeType.equals(MIME_IMAGE_PJPEG)) {
+                    mimeType = MIME_IMAGE_JPEG;
+                }
+            } catch (RepositoryException ex) {
+                throw new RepositoryException("unexpected error validating mime type", ex);
+            }
+            if (mimeType.startsWith("image/")) {
+                ImageInfo imageInfo = new ImageInfo();
+                try {
+                    imageInfo.setInput(resource.getProperty("jcr:data").getStream());
+                } catch (RepositoryException ex) {
+                    throw new RepositoryException("unexpected error validating mime type", ex);
+                }
+                if (imageInfo.check()) {
+                    if(!imageInfo.getMimeType().equalsIgnoreCase(mimeType)) {
+                        throw new ValueFormatException("mismatch image mime type");
+                    }
+                } else {
+                    throw new ValueFormatException("impermissable image type content");
+                }
+            } else if (mimeType.equals("application/pdf")) {
+                String line;
+                try {
+                    line = new BufferedReader(new InputStreamReader(resource.getProperty("jcr:data").getStream())).readLine().toUpperCase();
+                } catch (RepositoryException ex) {
+                    throw new RepositoryException("unexpected error validating mime type", ex);
+                }
+                if (!line.startsWith("%PDF-")) {
+                    throw new ValueFormatException("impermissable pdf type content");
+                }
+            } else if (mimeType.equals("application/postscript")) {
+                String line;
+                try {
+                    line = new BufferedReader(new InputStreamReader(resource.getProperty("jcr:data").getStream())).readLine().toUpperCase();
+                } catch (RepositoryException ex) {
+                    throw new RepositoryException("unexpected error validating mime type", ex);
+                }
+                if (!line.startsWith("%!")) {
+                    throw new ValueFormatException("impermissable postscript type content");
+                }
+            } else {
+                // This method can be overridden to allow more such checks on content type.  if such an override
+                // wants to be really strict and not allow unknown content, the following thrown exception is to be included
+                // throw new ValueFormatException("impermissable unrecognized type content");
+            }
+        } catch (IOException ex) {
+            throw new ValueFormatException("impermissable unknown type content");
+        }
     }
 
     protected void makeRegularImage(Node node, String name, InputStream istream, String mimeType, Calendar lastModified) throws RepositoryException {
