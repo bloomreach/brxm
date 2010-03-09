@@ -22,6 +22,7 @@ import java.util.Date;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IComponentAssignedModel;
 import org.apache.wicket.model.IModel;
@@ -43,13 +44,13 @@ public class EventModel implements IComponentAssignedModel {
     private String time;
     private String method;
     private String user;
-    private IModel nameModel;
+    private IModel<String> nameModel;
 
     public EventModel(JcrNodeModel eventNode) {
         this(eventNode, null);
     }
 
-    public EventModel(JcrNodeModel eventNode, IModel nameModel) {
+    public EventModel(JcrNodeModel eventNode, IModel<String> nameModel) {
         Node node = eventNode.getNode();
         try {
             if (node == null || !node.isNodeType("hippolog:item")) {
@@ -184,8 +185,10 @@ public class EventModel implements IComponentAssignedModel {
 
         public Object getObject() {
             if (nameModel != null) {
+                String name = nameModel.getObject();
+                name = StringEscapeUtils.escapeHtml(name);
                 return new StringResourceModel(time, component, null, "").getString()
-                        + new StringResourceModel(method, component, null, new Object[] { user, nameModel.getObject() }).getString();
+                        + new StringResourceModel(method, component, null, new Object[] { user, name }).getString();
             } else {
                 return new StringResourceModel(time, component, null, "").getString()
                         + new StringResourceModel(method, component, null, new Object[] { user }).getString();
