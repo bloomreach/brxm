@@ -16,13 +16,12 @@
 package org.hippoecm.frontend.plugins.yui.javascript;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.util.PluginConfigMapper;
 
 /**
  * Base class for passing configuration to a YUI component on the client.
@@ -39,11 +38,9 @@ public class YuiObject implements IClusterable {
 
     private YuiType type;
     private Map<Setting<?>, Object> settings;
-    private List<IYuiListener> listeners;
 
     public YuiObject(YuiType type) {
         this.type = type;
-        listeners = new LinkedList<IYuiListener>();
         settings = new HashMap<Setting<?>, Object>();
         for (Setting<?> setting : type.getProperties()) {
             this.settings.put(setting, setting.newValue());
@@ -78,29 +75,6 @@ public class YuiObject implements IClusterable {
 
     void set(Setting<?> key, Object value) {
         settings.put(key, value);
-        notifyListeners();
-    }
-
-    public void addListener(IYuiListener listener) {
-        listeners.add(listener);
-    }
-    
-    public void removeListener(IYuiListener listener) {
-        listeners.remove(listener);
-    }
-    
-    protected void notifyListeners() {
-        if (listeners.size() > 0) {
-            IYuiListener.Event event = new IYuiListener.Event() {
-                @Override
-                public YuiObject getSource() {
-                    return YuiObject.this;
-                }
-            };
-            for (IYuiListener listener : listeners) {
-                listener.onEvent(event);
-            }
-        }
     }
 
     public String toScript() {
