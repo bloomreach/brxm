@@ -37,7 +37,7 @@ public class AdminBreadCrumbBar extends BreadCrumbBar {
         public BreadCrumbComponent(String id, int index, IBreadCrumbModel breadCrumbModel,
                 final IBreadCrumbParticipant participant, boolean enableLink) {
             super(id);
-            add(new Label("sep", (index > 0) ? "" : "").setEscapeModelStrings(false).setRenderBodyOnly(true));
+            add(new Label("sep", "").setRenderBodyOnly(true));
             BreadCrumbLink link = new BreadCrumbLink("link", breadCrumbModel) {
                 private static final long serialVersionUID = 1L;
 
