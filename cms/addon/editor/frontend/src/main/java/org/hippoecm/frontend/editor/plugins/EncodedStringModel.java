@@ -32,7 +32,12 @@ public class EncodedStringModel implements IModel<String> {
     }
 
     public void setObject(String object) {
-        decorated.setObject(Strings.escapeMarkup(object).toString());
+        CharSequence escaped = Strings.escapeMarkup(object);
+        if (escaped != null) {
+            decorated.setObject(escaped.toString());
+        } else {
+            decorated.setObject(null);
+        }
     }
 
     public void detach() {
