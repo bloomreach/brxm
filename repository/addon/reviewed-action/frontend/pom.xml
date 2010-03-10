@@ -68,11 +68,6 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-workflow</artifactId>
-      <version>2.13.00-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-yui</artifactId>
       <version>2.13.00-SNAPSHOT</version>
     </dependency>
