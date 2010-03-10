@@ -820,8 +820,9 @@ public class UpdaterEngine {
                         log.info("migration update traverse iterated for module " + module.name + " (" + visitor.toString() + ")");
                         while (nodeIter.hasNext()) {
                             Node node = nodeIter.nextNode();
+                            String path = "";
                             try {
-                                String path = node.getPath();
+                                path = node.getPath();
                                 node = updaterSession.getRootNode();
                                 if (!path.equals("/")) {
                                     node = node.getNode(path.substring(1));
@@ -982,6 +983,7 @@ public class UpdaterEngine {
             if (node.getPath().equals("/jcr:system")) {
                 return;
             }
+            node.getPath();
             if (node instanceof HippoNode) {
                 Node canonical = ((HippoNode)node).getCanonicalNode();
                 if (canonical == null || !canonical.isSame(node)) {

@@ -27,7 +27,6 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.InvalidItemStateException;
@@ -37,7 +36,6 @@ import org.hippoecm.repository.api.HippoWorkspace;
 
 /**
  * 
- * @author berry
  */
 public abstract class UpdaterItemVisitor implements ItemVisitor {
     @SuppressWarnings("unused")
@@ -121,7 +119,7 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         }
         if(node instanceof HippoNode) {
             Node canonical = ((HippoNode) node).getCanonicalNode();
-            if(canonical == null || canonical.isSame(node)) {
+            if(canonical == null || !canonical.isSame(node)) {
                 return;
             }
         }
@@ -260,13 +258,29 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
          * @throws javax.jcr.RepositoryException
          */
         public abstract NodeIterator iterator(Session session) throws RepositoryException;
+
+        /**
+         * THIS METHOD WAS NEVER PART OF THE API, NO NOT USE UNLESS TRUELY NECESSARY AND REPORT AN ISSUE WITH YOUR USE CASE.
+         * 
+         * @return the same instance on which this method was invoked
+         * @deprecated
+         */
+        @Deprecated
         public final Iterated setAtomic() {
             isAtomic = true;
             return this;
         }
+
+        /**
+         * THIS METHOD WAS NEVER PART OF THE API, NO NOT USE UNLESS TRUELY NECESSARY AND REPORT AN ISSUE WITH YOUR USE CASE.
+         * @return whether the #setAtomic method has been called on this visitor
+         */
         public final boolean isAtomic() {
             return isAtomic;
         }
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public final void visit(Node node, int level, boolean leaving) throws RepositoryException {
             if(leaving)
@@ -274,10 +288,16 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             else
                 entering(node, level);
         }
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected final void entering(Node node, int level)
                 throws RepositoryException {
         }
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected final void entering(Property property, int level)
                 throws RepositoryException {
