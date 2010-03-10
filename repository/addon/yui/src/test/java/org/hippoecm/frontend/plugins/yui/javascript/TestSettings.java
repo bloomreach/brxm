@@ -136,7 +136,7 @@ public class TestSettings extends TestCase {
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
         JSONObject wfObject = JSONObject.fromObject(wfSettings, jsonConfig);
-        assertTrue("".equals(wfObject.get("rootId")));
+        assertTrue(((JSONObject) wfObject.get("rootId")).isNullObject());
 
         JSONArray units = wfObject.getJSONArray("units");
         Map<String, JSONObject> unitMap = new TreeMap<String, JSONObject>();
@@ -169,7 +169,7 @@ public class TestSettings extends TestCase {
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
         JSONObject wfObject = JSONObject.fromObject(wfSettings, jsonConfig);
-        assertTrue("".equals(wfObject.get("rootId")));
+        assertTrue(((JSONObject) wfObject.get("rootId")).isNullObject());
 
         JSONArray units = wfObject.getJSONArray("units");
         JSONObject centerObject = null;
