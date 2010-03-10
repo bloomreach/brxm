@@ -55,12 +55,6 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-api</artifactId>
-      <version>2.13.00-SNAPSHOT</version>                        
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-plugins</artifactId>
       <version>2.13.00-SNAPSHOT</version>
       <scope>provided</scope>
