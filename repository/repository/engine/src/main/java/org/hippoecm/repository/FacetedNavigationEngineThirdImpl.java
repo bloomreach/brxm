@@ -238,7 +238,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         
         // TODO perhaps create cached user specific filter for authorisation to gain speed
         if (contextImpl.authorizationQuery.getQuery().clauses().size() > 0) {
-            searchQuery.add(contextImpl.authorizationQuery.getQuery(), Occur.MUST);
+            // TODO enable again after HREPTWO-3959 is fixed
+            //searchQuery.add(contextImpl.authorizationQuery.getQuery(), Occur.MUST);
         }
 
         if (initialLuceneQuery != null) {
