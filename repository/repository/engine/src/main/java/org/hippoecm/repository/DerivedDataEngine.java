@@ -163,6 +163,9 @@ public class DerivedDataEngine {
             for(Node modified : recomputeSet) {
                 compute(session.getValueFactory(), derivatesFolder, modified);
             }
+        } catch(NamespaceException ex) {
+            // be lenient against confiuration problems
+            logger.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch(ConstraintViolationException ex) {
             logger.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } finally {
