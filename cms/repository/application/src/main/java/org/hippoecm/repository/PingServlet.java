@@ -17,8 +17,10 @@ package org.hippoecm.repository;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Calendar;
 
 import javax.jcr.LoginException;
+import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -30,11 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * A simple servlet that can be used to check if the repository is up-n-running. This
+ * A servlet that can be used to check if the repository is up-and-running. This
  * is especially useful for load balancer checks. The check does the following steps:
  * - obtain the repository with the connection string
- * - login to the default workspace with the specified username and password
- * - try to read the check nod
+ * - obtain the session with the specified username and password
+ * - try to read the check node
+ * - try to write to the repository if enabled
  * - logout and close session
  * On success the servlet prints "Ok" and returns a 200 status, on failure, the error is 
  * printed and a 500 (internal server error) status is returned.
@@ -56,6 +59,18 @@ import javax.servlet.http.HttpSession;
         <param-name>check-password</param-name>
         <param-value>admin</param-value>
       </init-param>
+      <init-param>
+        <param-name>check-node</param-name>
+        <param-value>content/documents</param-value>
+      </init-param>
+      <init-param>
+        <param-name>write-check-enable</param-name>
+        <param-value>false</param-value>
+      </init-param>
+      <init-param>
+        <param-name>write-check-node</param-name>
+        <param-value>pingcheck</param-value>
+      </init-param>
     </servlet>
     <servlet-mapping>
       <servlet-name>PingServlet</servlet-name>
@@ -70,37 +85,33 @@ public class PingServlet extends HttpServlet {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
-    /** The repository address parameter */
+    /** Servlet parameters */
     private static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
-
-    /** The username parameter */
     private static final String USERNAME_PARAM = "check-username";
-
-    /** The password parameter */
     private static final String PASSWORD_PARAM = "check-password";
-
-    /** The check node parameter */
     private static final String NODE_PARAM = "check-node";
+    private static final String WRITE_ENABLE_PARAM = "write-check-enable";
+    private static final String WRITE_PATH_PARAM = "write-check-path";
 
-    /** The default repository connection string */
+    /** Default values */
     private static final String DEFAULT_REPOSITORY_ADDRESS = "rmi://localhost:1099/hipporepository";
-
-    /** The default user */
     private static final String DEFAULT_USERNAME = "admin";
-
-    /** The default password */
     private static final String DEFAULT_PASSWORD = "admin";
-
-    /** The default check node */
     private static final String DEFAULT_NODE = "content/documents";
+    private static final String DEFAULT_WRITE_ENABLE = "false";
+    private static final String DEFAULT_WRITE_PATH = "pingcheck";
 
+    /** Running config */
     private String repositoryLocation;
     private String username;
     private String password;
     private String checkNode;
+    private String writeTestPath;
+    private boolean writeTestEnabled = false;
 
-    public PingServlet() {
-    }
+    /** Local vars */
+    private HippoRepository repository;
+    private Session session;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -108,19 +119,55 @@ public class PingServlet extends HttpServlet {
         repositoryLocation = getParameter(config, REPOSITORY_ADDRESS_PARAM, DEFAULT_REPOSITORY_ADDRESS);
         username = getParameter(config, USERNAME_PARAM, DEFAULT_USERNAME);
         password = getParameter(config, PASSWORD_PARAM, DEFAULT_PASSWORD);
-        checkNode = getParameter(config, NODE_PARAM, DEFAULT_NODE);
-        if (checkNode.startsWith("/")) {
-            checkNode = checkNode.substring(1);
+        checkNode = makePathRelative(getParameter(config, NODE_PARAM, DEFAULT_NODE));
+        writeTestPath = makePathRelative(getParameter(config, WRITE_PATH_PARAM, DEFAULT_WRITE_PATH));
+        writeTestEnabled = isTrueOrYes(getParameter(config, WRITE_ENABLE_PARAM, DEFAULT_WRITE_ENABLE));
+    }
+
+    private String getParameter(ServletConfig config, String paramName, String defaultValue) {
+        String initValue = config.getInitParameter(paramName);
+        String contextValue = config.getServletContext().getInitParameter(paramName);
+        
+        if (isNotNullAndNotEmpty(initValue)) {
+            return initValue;
+        } else if (isNotNullAndNotEmpty(contextValue)) {
+            return contextValue;
+        } else {
+            return defaultValue;
         }
+    }
+    
+    private boolean isNotNullAndNotEmpty(String s) {
+        if (s != null && s.length() != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    private String makePathRelative(String path) {
+        while (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        return path;
+    }
+
+    private boolean isTrueOrYes(String s) {
+        if ("true".equalsIgnoreCase(s) || "yes".equalsIgnoreCase(s)) {
+            return true;
+        }
+        return false;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         int resultStatus = HttpServletResponse.SC_OK;
-        String resultMessage = "OK - Repository online and accessible";
+        String resultMessage = "OK - Repository online and accessible.";
+        if (writeTestEnabled) {
+            resultMessage = "OK - Repository online, accessible and writable.";
+        }
         Exception exception = null;
         try {
-            findNodeInRepository();
+            doRepositoryChecks();
         } catch (PingException e) {
             resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
             resultMessage = e.getMessage();
@@ -142,61 +189,62 @@ public class PingServlet extends HttpServlet {
         closeHttpSession(req);
     }
 
-    @Override
-    public void destroy() {
-        super.destroy();
+    private void closeHttpSession(HttpServletRequest req) {
+        if (req != null) {
+            // close open session
+            HttpSession httpSession = req.getSession(false);
+            if (httpSession != null) {
+                httpSession.invalidate();
+            }
+        }
     }
 
-    /**
-     * Reads a node from the repository and throws an exception if the repository cannot be found, we cannot obtain
-     * a session of the configured path cannot be found.
-     *
-     * @throws PingException when the repository cannot be opened
-     */
-    private void findNodeInRepository() throws PingException {
-        HippoRepository hippoRepository;
+    private void doRepositoryChecks() throws PingException {
         try {
-            hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryLocation);
+            obtainRepository();
+            obtainSession();
+            doReadTest();
+            doWriteTestIfEnabled();
+        } finally {
+            closeSession();
+        }
+    }
+
+    private void obtainRepository() throws PingException {
+        try {
+            repository = null;
+            repository = HippoRepositoryFactory.getHippoRepository(repositoryLocation);
         } catch (RepositoryException e) {
-            String msg = "FAILURE - Problem obtaining repository connection in ping servlet : Is the property"
-                    + " repository-address configured as a context-param?";
+            String msg = "FAILURE - Problem obtaining repository connection in ping servlet : Is the property" + " '"
+                    + REPOSITORY_ADDRESS_PARAM + "' configured as an init-param or context-param?";
             throw new PingException(msg, e);
         }
-        Session session = obtainSession(hippoRepository);
-        if (session.isLive()) {
-            lookupNode(session);
-        }
-        session.logout();
-
     }
 
-    /**
-     * Logs in to the provided repository and returns the session
-     * @param hippoRepository HippoRepository used to obtain a session
-     * @throws PingException thrown when the provided credentials cannot be used to login to the repository
-     * @return Session that we logged in to with the provided credentials
-     */
-    private Session obtainSession(HippoRepository hippoRepository) throws PingException {
+    private void obtainSession() throws PingException {
         try {
-            return hippoRepository.login(username, password.toCharArray());
+            session = null;
+            session = repository.login(username, password.toCharArray());
         } catch (LoginException e) {
             String msg = "FAILURE - Wrong credentials for obtaining session from repository in ping servlet : " + ""
-                    + "Are the 'check-username' and check-password configured as an init-param or context-param?";
+                    + "Are the '" + USERNAME_PARAM + "' and '" + PASSWORD_PARAM
+                    + "' configured as an init-param or context-param?";
             throw new PingException(msg, e);
         } catch (RepositoryException e) {
-            String msg = "FAILURE - Problem obtaining session from repository in ping servlet : Are the 'check-username' and"
-                    + " check-password configured as an init-param or context-param?";
+            String msg = "FAILURE - Problem obtaining session from repository in ping servlet : Are the '"
+                    + USERNAME_PARAM + "' and" + " '" + PASSWORD_PARAM
+                    + "' configured as an init-param or context-param?";
             throw new PingException(msg, e);
         }
     }
 
-    /**
-     * Use the provided session to lookup a node with the configured path
-     *
-     * @param session Session to use for obtaining the node
-     * @throws PingException Exception thrown when the path for the node cannot be found
-     */
-    private void lookupNode(Session session) throws PingException {
+    private void closeSession() {
+        if (session != null && session.isLive()) {
+            session.logout();
+        }
+    }
+
+    private void doReadTest() throws PingException {
         String msg;
         try {
             if (checkNode.length() == 0) {
@@ -214,36 +262,62 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Try to close the session if there is one associated with the request.
-     * @param req The HttpServletRequest
-     */
-    private void closeHttpSession(HttpServletRequest req) {
-        if (req != null) {
-            // close open session
-            HttpSession httpSession = req.getSession(false);
-            if (httpSession != null) {
-                httpSession.invalidate();
-            }
+    private void doWriteTestIfEnabled() throws PingException {
+        if (writeTestEnabled) {
+            doWriteTest();
         }
     }
 
-    /**
-     * Helper method for easily finding init parameters with a default value
-     * @param config the servlet configuration
-     * @param paramName the name of the parameter
-     * @param defaultValue the default
-     * @return the value of the parameter or the defaultValue if not set
-     */
-    private String getParameter(ServletConfig config, String paramName, String defaultValue) {
-        String value = config.getInitParameter(paramName);
-        if (value == null || value.equals("")) {
-            value = config.getServletContext().getInitParameter(paramName);
+    private void doWriteTest() throws PingException {
+        try {
+            Node writePath = getOrCreateWriteNode();
+            writePath.setProperty("lastcheck", Calendar.getInstance());
+            writePath.save();
+        } catch (RepositoryException e) {
+            String msg = "FAILURE - Error during write test. There could be an issue with the (connection to) the storage.";
+            throw new PingException(msg, e);
         }
-        if (value == null || value.equals("")) {
-            value = defaultValue;
+    }
+
+    private Node getOrCreateWriteNode() throws PingException {
+        Node path = getOrCreateWritePath();
+        String clusterId = getClusterNodeId();
+        try {
+            if (path.hasNode(clusterId)) {
+                return path.getNode(clusterId);
+            } else {
+                Node node = path.addNode(clusterId);
+                session.save();
+                return node;
+            }
+        } catch (RepositoryException e) {
+            String msg = "FAILURE - Could not obtain the write test node '" + writeTestPath + "/" + clusterId + "'.";
+            throw new PingException(msg, e);
         }
-        return value;
+    }
+
+    private Node getOrCreateWritePath() throws PingException {
+        Node path;
+        try {
+            if (session.getRootNode().hasNode(writeTestPath)) {
+                path = session.getRootNode().getNode(writeTestPath);
+            } else {
+                path = session.getRootNode().addNode(writeTestPath);
+                session.save();
+            }
+            return path;
+        } catch (RepositoryException e) {
+            String msg = "FAILURE - Could not obtain the write path node '" + writeTestPath + "'.";
+            throw new PingException(msg, e);
+        }
+    }
+
+    private String getClusterNodeId() {
+        String id = System.getProperty("org.apache.jackrabbit.core.cluster.node_id");
+        if (id == null || id.length() == 0) {
+            return "default";
+        }
+        return id;
     }
 
     /**
