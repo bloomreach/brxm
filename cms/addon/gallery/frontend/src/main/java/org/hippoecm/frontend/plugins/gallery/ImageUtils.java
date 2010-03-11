@@ -276,8 +276,16 @@ public class ImageUtils implements GalleryProcessor {
                     throw new RepositoryException("unexpected error validating mime type", ex);
                 }
                 if (imageInfo.check()) {
-                    if(!imageInfo.getMimeType().equalsIgnoreCase(mimeType)) {
-                        throw new ValueFormatException("mismatch image mime type");
+                    String imageInfoMimeType = imageInfo.getMimeType();
+                    if (imageInfoMimeType == null) {
+                        throw new ValueFormatException("impermissable image type content");
+                    } else {
+                        if(imageInfoMimeType.equals(MIME_IMAGE_PJPEG)) {
+                            imageInfoMimeType = MIME_IMAGE_JPEG;
+                        }
+                        if (!imageInfoMimeType.equalsIgnoreCase(mimeType)) {
+                            throw new ValueFormatException("mismatch image mime type");
+                        }
                     }
                 } else {
                     throw new ValueFormatException("impermissable image type content");
