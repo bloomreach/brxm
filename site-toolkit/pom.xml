@@ -87,13 +87,13 @@
 
     <jackrabbit.version>1.5.0</jackrabbit.version>
 
-    <hippoecm.version>2.12.06</hippoecm.version>
+    <hippoecm.version>2.12.07</hippoecm.version>
     <hst-configuration-editor.version>1.03.02</hst-configuration-editor.version>
     
     <jdo.version>2.0</jdo.version>
     <htmlcleaner.version>2.1</htmlcleaner.version>
     
-    <yui.sources.version>1.01.06</yui.sources.version>
+    <yui.sources.version>1.01.07</yui.sources.version>
     <spring.js.version>2.0.5.RELEASE</spring.js.version>
 
     <cxf.version>2.2.5</cxf.version>
@@ -689,6 +689,12 @@
         <groupId>org.onehippo.yui</groupId>
         <artifactId>yui-2.xx-sources</artifactId>
         <version>${yui.sources.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       
       <dependency>
