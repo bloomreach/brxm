@@ -28,7 +28,7 @@
 
   <groupId>org.onehippo.ecm</groupId>
   <artifactId>hst</artifactId>
-  <version>2.04.05-SNAPSHOT</version>
+  <version>2.04.05</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
@@ -108,9 +108,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html 
   -->
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/ecm/site-toolkit/tags/Release-HSTTWO-v2_04_05</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/tags/Release-HSTTWO-v2_04_05</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/ecm/site-toolkit/tags/Release-HSTTWO-v2_04_05</url>
   </scm>
 
   <distributionManagement>
