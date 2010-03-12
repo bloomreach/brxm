@@ -38,6 +38,16 @@
     </div>
   </div>
   
+  <div>
+    page#: ${param.page}
+    [ 
+       <a href="<hst:renderURL><hst:param name="page" value="1"/></hst:renderURL>">1</a> |
+       <a href="<hst:renderURL><hst:param name="page" value="2"/></hst:renderURL>">2</a> |
+       <a href="<hst:renderURL><hst:param name="page" value="3"/></hst:renderURL>">3</a> |
+       <a href="<hst:renderURL><hst:param name="page"/></hst:renderURL>">reset</a>
+    ]
+  </div>
+  
   <br/>
   
   <div>

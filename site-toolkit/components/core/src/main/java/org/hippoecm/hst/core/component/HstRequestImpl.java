@@ -77,38 +77,76 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         
         String namespace = getReferenceNamespacePath(referencePath);
         String prefix = getFullNamespacePrefix(namespace);
+        
         if (namespaceParametersMap.isEmpty()) {
+            
             if (referenceNamespaceIgnored) {
-                namespaceParametersMap.put("",new HashMap<String, String[]>((Map<String,String[]>)super.getParameterMap()));                
-            }
-            else {
-                String targetComponentReferencePrefix = HstRequest.RENDER_PHASE.equals(lifecyclePhase) ? "" : getFullNamespacePrefix(getReferenceNamespace());
+                
+                namespaceParametersMap.put("", new HashMap<String, String[]>((Map<String,String[]>)super.getParameterMap()));
+                
+            } else {
+                
+                boolean isRenderPhase = HstRequest.RENDER_PHASE.equals(lifecyclePhase);
+                String targetComponentReferencePrefix = (isRenderPhase ? "" : getFullNamespacePrefix(getReferenceNamespace()));
+                boolean emptyTargetComponentReferencePrefix = "".equals(targetComponentReferencePrefix);
+                boolean namespacedParameter = false;
+                
                 for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
-                    String param = (String) paramNames.nextElement();
+                    String paramName = (String) paramNames.nextElement();
                     String prefixKey = null;
                     String paramKey = null;
-                    int index = param.indexOf(parameterNameComponentSeparator);
-                    if (index != -1 && index < param.length()-1) {
-                        prefixKey = param.substring(0, index+1);
-                        paramKey = param.substring(index+1);
-                    }
-                    else {
+                    
+                    int index = paramName.indexOf(parameterNameComponentSeparator);
+                    namespacedParameter = (index != -1 && index < paramName.length() - 1);
+                    
+                    if (namespacedParameter) {
+                        prefixKey = paramName.substring(0, index + 1);
+                        paramKey = paramName.substring(index + 1);
+                    } else {
                         prefixKey = targetComponentReferencePrefix;
-                        paramKey = param;
+                        paramKey = paramName;
                     }
+                    
                     parameterMap = namespaceParametersMap.get(prefixKey);
                     if (parameterMap == null ) {
                         parameterMap = new HashMap<String, String[]>();
                         namespaceParametersMap.put(prefixKey, parameterMap);
                     }
-                    parameterMap.put(paramKey, super.getParameterValues(param));
+                    
+                    String [] paramValues = super.getParameterValues(paramName);
+                    
+                    // if query parameter with namespace prefix exists and form parameter exists with same name,
+                    // the query parameter must be kept, not overwriting it by the form parameter.
+                    if (!parameterMap.containsKey(paramKey)) {
+                        parameterMap.put(paramKey, paramValues);
+                    }
+                    
+                    // if it is not render phase and the target component ref prefix is not an empty one,
+                    // then put the parameter into the empty prefix map also to allow clients to retrieve
+                    // the *public request parameter*. 
+                    if (!namespacedParameter && !isRenderPhase && !emptyTargetComponentReferencePrefix) {
+                        parameterMap = namespaceParametersMap.get("");
+                        if (parameterMap == null ) {
+                            parameterMap = new HashMap<String, String[]>();
+                            namespaceParametersMap.put("", parameterMap);
+                        }
+                        
+                        // if query parameter with namespace prefix exists and form parameter exists with same name,
+                        // the query parameter must be kept, not overwriting it by the form parameter.
+                        if (!parameterMap.containsKey(paramKey)) {
+                            parameterMap.put(paramKey, paramValues);
+                        }
+                    }
                 }
+                
             }
         }
+        
         parameterMap = namespaceParametersMap.get(prefix);
         if (parameterMap == null ) {
             parameterMap = Collections.emptyMap();
         }
+        
         return parameterMap;
     }
     
@@ -278,8 +316,8 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     }
 
     protected String getFullNamespacePrefix(String referenceNamespace, boolean noSeparatorForEmpty) {
-        if (noSeparatorForEmpty && (referenceNamespace == null || "".equals(referenceNamespace))) {
-            return "";
+        if (referenceNamespace == null || "".equals(referenceNamespace)) {
+            return (noSeparatorForEmpty ? "" : this.parameterNameComponentSeparator);
         }
         
         String prefix = referenceNamespace + this.parameterNameComponentSeparator;

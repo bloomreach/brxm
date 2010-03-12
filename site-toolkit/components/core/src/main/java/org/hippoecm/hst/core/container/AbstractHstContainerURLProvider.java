@@ -37,13 +37,15 @@ import org.slf4j.LoggerFactory;
 /**
  * The default implementation providing HstContainerURL.
  * This implementation assume the urls are like the following examples:
+ * <P>
  * <code><xmp>
  * 1) render url will not be encoded : http://localhost/site/content/news/2008/08
  * 2) action url will be encoded     : http://localhost/site/content/_hn:<encoded_params>/news/2008/08
- *          the <encoded_params>     : <request_type>|<action reference namespace>|<params query string>
+ *          the <encoded_params>     : <request_type>|<action reference namespace>
  * 3) resource url will be encoded   : http://localhsot/site/content/_hn:<encoded_params>/news/2008/08
  *          the <encoded_params>     : <request_type>|<resource reference namespace>|<resource ID>
  * </xmp></code> 
+ * </P>
  * 
  * @version $Id$
  */
@@ -185,6 +187,7 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
         } else if (HstURL.RESOURCE_TYPE.equals(type)) {
             containerURL.setResourceWindowReferenceNamespace(hstUrl.getReferenceNamespace());
             containerURL.setResourceId(hstUrl.getResourceID());
+            mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
         } else {
             mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
         }
@@ -193,29 +196,32 @@ public abstract class AbstractHstContainerURLProvider implements HstContainerURL
     }
     
     public void mergeParameters(HstContainerURL containerURL, String referenceNamespace, Map<String, String []> parameterMap) {
-        if (referenceNamespace != null ) {
-            String prefix = "";
-            if (!referenceNamespace.equals("")) {
-                prefix = referenceNamespace + parameterNameComponentSeparator;
+        String prefix = (StringUtils.isEmpty(referenceNamespace) ? "" : referenceNamespace + parameterNameComponentSeparator);
+
+        // first drop existing referenceNamespace parameters
+        if (!"".equals(prefix)) {
+            Map<String, String []> containerParamsMap = containerURL.getParameterMap();
+            if (containerParamsMap != null && !containerParamsMap.isEmpty()) {
                 int prefixLen = prefix.length();
-                String name;
-                if (containerURL.getParameterMap() != null) {
-                    // first drop existing referenceNamespace parameters
-                    for (Iterator<Map.Entry<String,String[]>> iter = containerURL.getParameterMap().entrySet().iterator(); iter.hasNext(); ) {
-                        name = iter.next().getKey();
-                        if (name.startsWith(prefix) && name.length() > prefixLen) {
-                            iter.remove();
-                        }
+                String paramName = null;
+                
+                for (Iterator<Map.Entry<String, String[]>> iter = containerParamsMap.entrySet().iterator(); iter.hasNext(); ) {
+                    paramName = iter.next().getKey();
+                    if (paramName.startsWith(prefix) && paramName.length() > prefixLen) {
+                        iter.remove();
                     }
                 }
             }
-            for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-                String [] values = entry.getValue();
-                if (values == null || values.length == 0) {
-                    containerURL.setParameter(prefix+entry.getKey(), (String) null);
-                } else {
-                    containerURL.setParameter(prefix+entry.getKey(), values);
-                }
+        }
+        
+        for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+            String paramName = prefix + entry.getKey();
+            String [] paramValues = entry.getValue();
+            
+            if (paramValues == null || paramValues.length == 0) {
+                containerURL.setParameter(paramName, (String) null);
+            } else {
+                containerURL.setParameter(paramName, paramValues);
             }
         }
     }
