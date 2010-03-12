@@ -74,7 +74,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
 
     private String configurationRootNodePath;
 
-    private List<String> usedChildReferenceNames = new ArrayList<String>();
+    private ArrayList<String> usedChildReferenceNames = new ArrayList<String>();
     private int autocreatedCounter = 0;
 
     private Map<String, String> parameters = new HashMap<String, String>();
@@ -274,8 +274,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
         copy.parameters = new HashMap<String, String>(child.parameters);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new HashMap<String, String>(child.localParameters);
-        List<String> copyToList = new ArrayList<String>();
-        Collections.copy(copyToList, child.usedChildReferenceNames);
+        ArrayList<String> copyToList = (ArrayList<String>) child.usedChildReferenceNames.clone();
         copy.usedChildReferenceNames = copyToList;
         for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
             String descId = copy.id + descendant.id;
@@ -343,8 +342,7 @@ public class HstComponentConfigurationService extends AbstractJCRService impleme
                     }
                 }
 
-                List<String> copyToList = new ArrayList<String>();
-                Collections.copy(copyToList, referencedComp.usedChildReferenceNames);
+                ArrayList<String> copyToList = (ArrayList<String>) referencedComp.usedChildReferenceNames.clone();
                 this.usedChildReferenceNames.addAll(copyToList);
 
                 // now we need to merge all the descendant components from the referenced component with this component.

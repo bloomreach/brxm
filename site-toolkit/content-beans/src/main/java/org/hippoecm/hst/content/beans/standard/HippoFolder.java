@@ -32,8 +32,8 @@ import org.slf4j.LoggerFactory;
 @Node(jcrType="hippostd:folder")
 public class HippoFolder extends HippoItem implements HippoFolderBean {
     private static Logger log = LoggerFactory.getLogger(HippoFolder.class);
-    protected List<HippoFolderBean> hippoFolders;
-    protected List<HippoDocumentBean> hippoDocuments;
+    protected ArrayList<HippoFolderBean> hippoFolders;
+    protected ArrayList<HippoDocumentBean> hippoDocuments;
     
     public List<HippoFolderBean> getFolders(){
          return this.getFolders(false);
@@ -42,8 +42,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
     public List<HippoFolderBean> getFolders(boolean sorted){
         if(this.hippoFolders != null) {
             if(sorted) {
-                List<HippoFolderBean> dest = new ArrayList<HippoFolderBean>(this.hippoFolders.size());
-                Collections.copy(dest, this.hippoFolders);
+                ArrayList<HippoFolderBean> dest = (ArrayList<HippoFolderBean>) this.hippoFolders.clone();
                 Collections.sort(dest);
                 return dest;
             }
@@ -66,8 +65,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
             }
             if(sorted) {
                 if(sorted) {
-                    List<HippoFolderBean> dest = new ArrayList<HippoFolderBean>(this.hippoFolders.size());
-                    Collections.copy(dest, this.hippoFolders);
+                    ArrayList<HippoFolderBean> dest = (ArrayList<HippoFolderBean>) this.hippoFolders.clone();
                     Collections.sort(dest);
                     return dest;
                 }
@@ -115,8 +113,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
     public List<HippoDocumentBean> getDocuments(boolean sorted) {
         if(this.hippoDocuments != null) {
             if(sorted) {
-                List<HippoDocumentBean> dest = new ArrayList<HippoDocumentBean>(this.hippoDocuments.size());
-                Collections.copy(dest, this.hippoDocuments);
+                ArrayList<HippoDocumentBean> dest = (ArrayList<HippoDocumentBean>) this.hippoDocuments.clone();
                 Collections.sort(dest);
                 return dest;
             }
@@ -139,8 +136,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
             }
             if(sorted) {
                 // do not sort the actual list, but first copy the list:
-                List<HippoDocumentBean> dest = new ArrayList<HippoDocumentBean>(this.hippoDocuments.size());
-                Collections.copy(dest, this.hippoDocuments);
+                ArrayList<HippoDocumentBean> dest = (ArrayList<HippoDocumentBean>) this.hippoDocuments.clone();
                 Collections.sort(dest);
                 return dest;
             }
