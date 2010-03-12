@@ -445,16 +445,10 @@
                 <phase>install</phase>
                 <configuration>
                   <tasks>
-                    <replace file="${tomcat.server.home}/webapps/${project.build.finalName}/WEB-INF/hst-config.properties">
-                      <replacefilter token="#hstconfigreader.repository.address = vm://" value="hstconfigreader.repository.address = vm://" />
-                      <replacefilter token="#binaries.repository.address = vm://" value="binaries.repository.address = vm://" />
-                      <replacefilter token="#default.repository.address = vm://" value="default.repository.address = vm://" />
-                      <replacefilter token="#writable.repository.address = vm://" value="writable.repository.address = vm://" />
-                      <replacefilter token="hstconfigreader.repository.address = rmi://" value="#hstconfigreader.repository.address = rmi://" />
-                      <replacefilter token="binaries.repository.address = rmi://" value="#binaries.repository.address = rmi://" />
-                      <replacefilter token="default.repository.address = rmi://" value="#default.repository.address = rmi://" />
-                      <replacefilter token="writable.repository.address = rmi://" value="#writable.repository.address = rmi://" />
-                    </replace>
+                    <replaceregexp file="${tomcat.server.home}/webapps/${project.build.finalName}/WEB-INF/hst-config.properties"
+                                   match="^#\s*(\w+\.repository\.address\s*=\s*vm://)" replace="\1" byline="true" />
+                    <replaceregexp file="${tomcat.server.home}/webapps/${project.build.finalName}/WEB-INF/hst-config.properties"
+                                   match="^(\s*\w+\.repository\.address\s*=\s*rmi://)" replace="#\1" byline="true" />
                   </tasks>
                 </configuration>
                 <goals>
@@ -462,6 +456,13 @@
                 </goals>
               </execution>
             </executions>
+            <dependencies>
+              <dependency>
+                <groupId>ant</groupId>
+                <artifactId>ant-nodeps</artifactId>
+                <version>1.6.5</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
@@ -715,18 +716,10 @@
                 <phase>install</phase>
                 <configuration>
                   <tasks>
-                    <replace file="${jetspeed.portal.webapp}/WEB-INF/hst-config.properties">
-                      <replacefilter token="#hstconfigreader.repository.address = vm://" value="hstconfigreader.repository.address = vm://" />
-                      <replacefilter token="#binaries.repository.address = vm://" value="binaries.repository.address = vm://" />
-                      <replacefilter token="#default.repository.address = vm://" value="default.repository.address = vm://" />
-                      <replacefilter token="#preview.repository.address = vm://" value="preview.repository.address = vm://" />
-                      <replacefilter token="#writable.repository.address = vm://" value="writable.repository.address = vm://" />
-                      <replacefilter token="hstconfigreader.repository.address = rmi://" value="#hstconfigreader.repository.address = rmi://" />
-                      <replacefilter token="binaries.repository.address = rmi://" value="#binaries.repository.address = rmi://" />
-                      <replacefilter token="default.repository.address = rmi://" value="#default.repository.address = rmi://" />
-                      <replacefilter token="preview.repository.address = rmi://" value="#preview.repository.address = rmi://" />
-                      <replacefilter token="writable.repository.address = rmi://" value="#writable.repository.address = rmi://" />
-                    </replace>
+                    <replaceregexp file="${jetspeed.portal.webapp}/WEB-INF/hst-config.properties"
+                                   match="^#\s*(\w+\.repository\.address\s*=\s*vm://)" replace="\1" byline="true" />
+                    <replaceregexp file="${jetspeed.portal.webapp}/WEB-INF/hst-config.properties"
+                                   match="^(\s*\w+\.repository\.address\s*=\s*rmi://)" replace="#\1" byline="true" />
                     <echo><![CDATA[
 ========================================================================
 [Notice]
@@ -762,6 +755,13 @@ And, click `HST-2 Demo' menu!
                 </goals>
               </execution>
             </executions>
+            <dependencies>
+              <dependency>
+                <groupId>ant</groupId>
+                <artifactId>ant-nodeps</artifactId>
+                <version>1.6.5</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
