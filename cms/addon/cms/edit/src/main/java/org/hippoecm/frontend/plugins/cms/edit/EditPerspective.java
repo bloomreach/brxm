@@ -107,7 +107,7 @@ public class EditPerspective extends Perspective {
             wfConfig = new JavaPluginConfig();
         }
         wfSettings = new WireframeSettings(wfConfig);
-        UnitSettings topSettings = wfSettings.getUnit("top");
+        UnitSettings topSettings = wfSettings.getUnitSettingsByPosition("top");
         topHeight = topSettings.getHeight();
         add(new WireframeBehavior(wfSettings));
     }
@@ -116,7 +116,7 @@ public class EditPerspective extends Perspective {
     public void render(PluginRequestTarget target) {
         super.render(target);
         boolean hasMessage = feedback.anyMessage();
-        UnitSettings topSettings = wfSettings.getUnit("top");
+        UnitSettings topSettings = wfSettings.getUnitSettingsByPosition("top");
         boolean updateTop = false;
         if (hasMessage && !feedbackShown) {
             topSettings.setHeight(Integer.valueOf(
@@ -129,7 +129,7 @@ public class EditPerspective extends Perspective {
             updateTop = true;
         }
         if (updateTop && isVisibleInHierarchy() && target != null) {
-            String topId = topSettings.getId().getElementId();
+            String topId = topSettings.getElementId();
             target.appendJavascript("YAHOO.hippo.LayoutManager.findLayoutUnit(YAHOO.util.Dom.get('" + topId
                     + "')).set('height', " + topSettings.getHeight() + ");");
             target.addComponent(feedback);

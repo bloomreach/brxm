@@ -13,12 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.yui.layout;
-
-import java.io.Serializable;
+package org.hippoecm.frontend.plugins.yui.javascript;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.wicket.IClusterable;
 
 /**
  * The YuiId allows for transparent element id resolution, without having to worry about id clashes on the client. 
@@ -33,14 +32,14 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * For more info see: 
  * hippo-ecm-addon-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/2.7.0/hippodom/hippodom.js  
  */
-public class YuiId implements Serializable {
+public class YuiId implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private String id;
-    private String parentId;
+    String id;
+    String parentId;
 
     public YuiId(String id) {
         this.id = id;

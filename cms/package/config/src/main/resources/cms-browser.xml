@@ -66,6 +66,10 @@
       <sv:property sv:name="root.id" sv:type="String">
         <sv:value>browse-perspective-wrapper</sv:value>
       </sv:property>
+      <sv:property sv:name="units" sv:type="String">
+        <sv:value>left</sv:value>
+        <sv:value>center</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
   <sv:node sv:name="navigator">
@@ -138,20 +142,25 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
-      <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=navigator-top,height=25px,resize=false</sv:value>
+      <sv:property sv:name="center" sv:type="String">
+        <sv:value>id=navigator-center,body=navigator-center-body,width=250</sv:value>
       </sv:property>
       <sv:property sv:name="left" sv:type="String">
         <sv:value>id=navigator-left,body=navigator-left-body,width=200,zindex=2,resize=true</sv:value>
-      </sv:property>
-      <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=navigator-center,body=navigator-center-body,width=250</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="root.id" sv:type="String">
         <sv:value>navigator-wrapper</sv:value>
+      </sv:property>
+      <sv:property sv:name="top" sv:type="String">
+        <sv:value>id=navigator-top,height=25px,resize=false</sv:value>
+      </sv:property>
+      <sv:property sv:name="units" sv:type="String">
+        <sv:value>top</sv:value>
+        <sv:value>left</sv:value>
+        <sv:value>center</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -312,17 +321,21 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
-      <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=tabbed-panel-layout-top,height=25,gutter=0px 0px 0px 0px</sv:value>
-      </sv:property>
       <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=tabbed-panel-layout-center,gutter=0px 0px 0px 0px</sv:value>
+        <sv:value>tabbed-panel-layout-center</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="root.id" sv:type="String">
         <sv:value>tabbed-panel-layout</sv:value>
+      </sv:property>
+      <sv:property sv:name="top" sv:type="String">
+        <sv:value>tabbed-panel-layout-top</sv:value>
+      </sv:property>
+      <sv:property sv:name="wrappers" sv:type="String">
+        <sv:value>top</sv:value>
+        <sv:value>center</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -339,9 +352,17 @@
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.yui.layout.UnitPlugin</sv:value>
     </sv:property>
-    <sv:property sv:name="position" sv:type="String">
-      <sv:value>center</sv:value>
-    </sv:property>
+    <sv:node sv:name="yui.config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="options" sv:type="String">
+        <sv:value>gutter=0px 0px 0px 0px</sv:value>
+      </sv:property>
+      <sv:property sv:name="position" sv:type="String">
+        <sv:value>center</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="editorTabTopUnit">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -356,9 +377,17 @@
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.yui.layout.UnitPlugin</sv:value>
     </sv:property>
-    <sv:property sv:name="position" sv:type="String">
-      <sv:value>top</sv:value>
-    </sv:property>
+    <sv:node sv:name="yui.config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="options" sv:type="String">
+        <sv:value>height=25,gutter=0px 0px 0px 0px</sv:value>
+      </sv:property>
+      <sv:property sv:name="position" sv:type="String">
+        <sv:value>top</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="tabbedEditorTabs">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

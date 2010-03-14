@@ -397,6 +397,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
+    <sv:property sv:name="extension.center" sv:type="String">
+      <sv:value>service.center</sv:value>
+    </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.root.RootPlugin</sv:value>
     </sv:property>
@@ -423,21 +426,61 @@
         <sv:value>ie</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="layout.page">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="body.gutter" sv:type="String">
+        <sv:value>0px 0px 0px 0px</sv:value>
+      </sv:property>
+      <sv:property sv:name="header.gutter" sv:type="String">
+        <sv:value>0px 0px 0px 0px</sv:value>
+      </sv:property>
+      <sv:property sv:name="header.height" sv:type="String">
+        <sv:value>50</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="layout.wireframe">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=tabbed-panel-layout-center,height=1000</sv:value>
+        <sv:value>tabbed-panel-layout-center</sv:value>
       </sv:property>
       <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=tabbed-panel-layout-left,width=50</sv:value>
+        <sv:value>tabbed-panel-layout-left</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="root.id" sv:type="String">
         <sv:value>tabbed-panel-layout</sv:value>
+      </sv:property>
+      <sv:property sv:name="wrappers" sv:type="String">
+        <sv:value>left</sv:value>
+        <sv:value>center</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="layout.panel">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="options" sv:type="String">
+        <sv:value>height=1000</sv:value>
+      </sv:property>
+      <sv:property sv:name="position" sv:type="String">
+        <sv:value>center</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="layout.tabs">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="options" sv:type="String">
+        <sv:value>width=50</sv:value>
+      </sv:property>
+      <sv:property sv:name="position" sv:type="String">
+        <sv:value>left</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -498,6 +541,10 @@
       </sv:property>
       <sv:property sv:name="top" sv:type="String">
         <sv:value>id=hippo-controlpanel-perspective-top,body=hippo-controlpanel-perspective-top-body,height=35</sv:value>
+      </sv:property>
+      <sv:property sv:name="units" sv:type="String">
+        <sv:value>top</sv:value>
+        <sv:value>center</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

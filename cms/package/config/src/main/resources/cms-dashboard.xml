@@ -86,6 +86,12 @@
       <sv:property sv:name="root.id" sv:type="String">
         <sv:value>dashboard-perspective-wrapper</sv:value>
       </sv:property>
+      <sv:property sv:name="units" sv:type="String">
+        <sv:value>top</sv:value>
+        <sv:value>left</sv:value>
+        <sv:value>center</sv:value>
+        <sv:value>right</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
   <sv:node sv:name="shortcutsListPlugin">
