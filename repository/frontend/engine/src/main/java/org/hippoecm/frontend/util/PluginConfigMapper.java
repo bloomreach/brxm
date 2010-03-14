@@ -20,8 +20,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.BeanUtilsBean;
-import org.apache.wicket.util.value.IValueMap;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,17 +33,16 @@ public class PluginConfigMapper implements Serializable {
 
     static final Logger log = LoggerFactory.getLogger(PluginConfigMapper.class);
     
-    public static void populate(Object bean, IValueMap config) throws MappingException {
+    public static void populate(Object bean, IPluginConfig config) throws MappingException {
         try {
             Map<String, Object> entries = BeanUtils.describe(bean);
-            BeanUtilsBean bub = BeanUtilsBean.getInstance();
             for (Map.Entry<String, Object> entry : entries.entrySet()) {
                 if ("class".equals(entry.getKey())) {
                     continue;
                 }
                 String configKey = toConfigKey(entry.getKey());
                 if (config.containsKey(configKey)) {
-                    bub.setProperty(bean, entry.getKey(), config.get(configKey));
+                    PropertyUtils.setSimpleProperty(bean, entry.getKey(), config.get(configKey));
                 }
             }
         } catch (IllegalAccessException e) {

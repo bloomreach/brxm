@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.Map;
 
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
 
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -92,7 +91,7 @@ public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
         if (getSettings() instanceof YuiObject) {
             return ((YuiObject) getSettings()).toScript();
         } else if (getSettings() != null) {
-            return JSONObject.fromObject(getSettings(), getJsonConfig()).toString();
+            return JSONObject.fromObject(getSettings()).toString();
         } else {
             return "null";
         }
@@ -120,10 +119,6 @@ public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
 
     public Serializable getSettings() {
         return configuration;
-    }
-
-    public JsonConfig getJsonConfig() {
-        return new JsonConfig();
     }
 
 }

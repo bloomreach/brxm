@@ -320,7 +320,8 @@ public class TemplateBuilderTest extends PluginTest {
         // YUCK!
         WebAppBehavior yuiWebApp = new WebAppBehavior(new WebAppSettings());
         home.add(yuiWebApp);
-        home.add(new PageLayoutBehavior(new PageLayoutSettings()));
+        context.registerService(yuiWebApp, "service.behavior.yui");
+        home.add(new PageLayoutBehavior(new PageLayoutSettings(new JavaPluginConfig())));
 
         Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces/test/edited");
         JcrNodeModel nodeModel = new JcrNodeModel(templateTypeNode);
@@ -356,7 +357,8 @@ public class TemplateBuilderTest extends PluginTest {
         // YUCK!
         WebAppBehavior yuiWebApp = new WebAppBehavior(new WebAppSettings());
         home.add(yuiWebApp);
-        home.add(new PageLayoutBehavior(new PageLayoutSettings()));
+        context.registerService(yuiWebApp, "service.behavior.yui");
+        home.add(new PageLayoutBehavior(new PageLayoutSettings(new JavaPluginConfig())));
 
         Node templateTypeNode = session.getRootNode().getNode("hippo:namespaces/test/edited");
         JcrNodeModel nodeModel = new JcrNodeModel(templateTypeNode);

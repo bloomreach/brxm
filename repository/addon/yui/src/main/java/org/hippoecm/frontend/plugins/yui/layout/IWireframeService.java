@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.yui.layout;
 
 import org.apache.wicket.behavior.IBehavior;
+import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
 
 /**
  * Base wireframe interface, allows wireframes that are linked to their parent to register

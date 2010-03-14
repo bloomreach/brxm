@@ -244,6 +244,10 @@
         <sv:property sv:name="center" sv:type="String">
           <sv:value>id=navigator-center,body=navigator-center-body,scroll=true</sv:value>
         </sv:property>
+        <sv:property sv:name="units" sv:type="String">
+          <sv:value>top</sv:value>
+          <sv:value>center</sv:value>
+        </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>
