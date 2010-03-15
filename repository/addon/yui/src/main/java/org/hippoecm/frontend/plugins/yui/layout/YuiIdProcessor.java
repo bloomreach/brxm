@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,19 +15,22 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import org.apache.wicket.behavior.IBehavior;
+import net.sf.json.JsonConfig;
+import net.sf.json.processors.JsonValueProcessor;
 
-/**
- * Base wireframe interface, allows wireframes that are linked to their parent to register
- * with their parent through the Wicket component tree model.
- */
-public interface IWireframeService extends IBehavior {
-    final static String SVN_ID = "$Id$";
+public class YuiIdProcessor implements JsonValueProcessor {
 
-    /**
-     * Return the root id of this wireframe
-     * 
-     * @return the root {@link YuiId} of this wireframe 
-     */
-    YuiId getParentId();
+    public Object processArrayValue(Object value, JsonConfig jsonConfig) {
+        return null;
+    }
+
+    public Object processObjectValue(String key, Object value, JsonConfig jsonConfig) {
+        YuiId id = (YuiId) value;
+        String elid = id.getElementId();
+        if (elid != null && !"".equals(elid)) {
+            return elid;
+        }
+        return null;
+    }
+
 }

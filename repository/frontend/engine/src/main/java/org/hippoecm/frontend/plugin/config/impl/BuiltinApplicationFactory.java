@@ -82,7 +82,6 @@ public class BuiltinApplicationFactory implements IApplicationFactory {
         yuiConfig.put("left.gutter", "0px 0px 5px 10px");
         yuiConfig.put("left.width", "460");
         yuiConfig.put("left.resize", true);
-        yuiConfig.put("root.id", "doc3");
         config.put("yui.config", yuiConfig);
         plugins.addPlugin(config);
 
