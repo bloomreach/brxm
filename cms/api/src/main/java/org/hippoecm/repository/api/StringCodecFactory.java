@@ -21,41 +21,58 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The StringCodecFactory allows you access to symbolic named StringCodec's.
+ * Typically a single instance of the StringCodecFactory is stored in the application framework.
+ */
 public class StringCodecFactory {
     private Map<String, StringCodec> codecs;
 
+    /**
+     * Initialized a empty StringCodecFactory containing no encodings, always falling back to a no-operation encoding.
+     * @deprecated use a fully configured StringCodecFactory instead
+     */
+    @Deprecated
     public StringCodecFactory() {
-        this.codecs = new HashMap<String, StringCodec>();
+        codecs = new HashMap<String, StringCodec>();
+        codecs.put(null, new IdentEncoding());
     }
 
-    StringCodecFactory(Map<String, StringCodec> codecs) {
-        this.codecs = codecs;
+    /**
+     * Initialized a StringCodecFactory with the given and fixed StringCodec mappings.
+     * @param codecs a map of codecs to bind to their symbolic names.  The map becomes immutable.
+     */
+    public StringCodecFactory(Map<String, StringCodec> codecs) {
+        this.codecs = new HashMap<String, StringCodec>(codecs); // create a private immutable copy of the mapping
     }
 
+    /**
+     * Requests which encoder to use for the diven symbolic name.
+     * @param encoding the symbolic name of the encoder that is requested
+     * @return the stringcodec to use, which might be a fall-back encoder or null if non was defined.
+     */
     public StringCodec getStringCodec(String encoding) {
         if (codecs.containsKey(encoding)) {
             return codecs.get(encoding);
         } else {
-            try {
-                Class<? extends StringCodec> clazz = Class.forName(encoding).asSubclass(StringCodec.class);
-                return clazz.newInstance();
-            } catch (InstantiationException ex) {
-                return null;
-            } catch (IllegalAccessException ex) {
-                return null;
-            } catch (ClassCastException ex) {
-                return null;
-            } catch (ClassNotFoundException ex) {
-                return null;
-            }
+            return codecs.get(null);
         }
     }
 
+    /**
+     * Requests the default encoder to use.
+     * @return returns the fall-back or default encoder to use, or null if non was defined.
+     */
     public StringCodec getStringCodec() {
         return codecs.get(null);
     }
 
-    public static class IdentEncoding implements StringCodec {
+    /**
+     * Usage of this class discouraged.  If should only be used by frameworks to initialize the StringCodecFactory instance.
+     * <p/>
+     * Performs an identical encoding, i.e. returns an identical string for encoding and decoding.
+     */
+    public final static class IdentEncoding implements StringCodec {
         public String encode(String plain) {
             return plain;
         }
@@ -65,6 +82,12 @@ public class StringCodecFactory {
         }
     }
 
+    /**
+     * Usage of this class discouraged.  If should only be used by frameworks to initialize the StringCodecFactory instance.
+     * <p/>
+     * Performs a one-way encoding (no decoding possible) for translating any UTF-8 String to a suitable set of characters that can be used in URIs.
+     * For the algorithm in use see {@link encoding.html}
+     */
     public static class UriEncoding implements StringCodec {
         public String encode(String utf8) {
             StringBuffer sb = new StringBuffer();
@@ -204,7 +227,8 @@ public class StringCodecFactory {
                             sb.append(")");
                             break;
                         default:
-                            sb.append(chars[i]);
+                            sb.append(Character.toLowerCase(chars[i]));
+                            //sb.append(chars[i]);
                     }
                 } else {
                     switch (chars[i]) {
@@ -509,7 +533,9 @@ public class StringCodecFactory {
     }
 
     /**
-     * <h2>Helper class for encoding and decoding (the localname of) Qualified names</h2>
+     * Usage of this class discouraged.  If should only be used by frameworks to initialize the StringCodecFactory instance.
+     * <p/>
+     * Performs encoding and decoding (the localname of) Qualified names
      *
      * <p>
      * Implements the encode and decode routines based on ISO 9075-14:2003.<br/>
@@ -556,19 +582,11 @@ public class StringCodecFactory {
      * be represented using the format "<code>{namespaceURI}localPart</code>".
      */
     public static class ISO9075Helper implements StringCodec {
-        @SuppressWarnings("unused")
-        private final static String SVN_ID = "$Id$";
         //private static final char[] realChars = {'/', ':', '[', ']', '*', '\'', '"', '|'};
         //private static final String[] realChars = {"/", ":", "[", "]", "*", "'", "\"", "|"};
         //private static final String[] encodedChars = {"_x002F_", "_x003A_", '[', ']', "_x002A_", "_x0027_", "_x0022_", "_x007C_"};
         private static final String colon = ":";
         private static final String colonISO9075 = "_x003A_";
-
-        /**
-         * Constructor
-         */
-        public ISO9075Helper() {
-        }
 
         public String encode(String plain) {
             return encodeLocalName(plain);
@@ -578,20 +596,10 @@ public class StringCodecFactory {
             return decodeLocalName(encoded);
         }
 
-        /**
-         *
-         * @param name
-         * @return
-         */
         public static String encodeLocalName(String name) {
             return encodeColon(encodeImpl(name));
         }
 
-        /**
-         *
-         * @param name
-         * @return
-         */
         public static String decodeLocalName(String name) {
             return decodeImpl(name);
         }

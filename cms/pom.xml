@@ -251,6 +251,15 @@
       </roles>
       <timezone>+1</timezone>
     </contributor>
+    <contributor>
+      <name>Rob van der Linden Vooren</name>
+      <organization>JTeam</organization>
+      <organizationUrl>http://www.jteam.nl/</organizationUrl>
+      <roles>
+        <role>External contributor</role>
+      </roles>
+      <timezone>+1</timezone>
+    </contributor>
   </contributors>
 
   <mailingLists>

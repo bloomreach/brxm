@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository;
 
+import java.util.Map;
+import java.util.TreeMap;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 
@@ -32,6 +34,7 @@ public class StringCodecTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 
     Node root, node;
+    StringCodecFactory factory;
 
     @Before
     @Override
@@ -42,6 +45,9 @@ public class StringCodecTest extends TestCase {
             root.getNode("test").remove();
         root = root.addNode("test");
         session.save();
+        Map<String,StringCodec> codecs = new TreeMap<String,StringCodec>();
+        codecs.put("encoding.node", new StringCodecFactory.UriEncoding());
+        factory = new StringCodecFactory(codecs);
     }
 
     @After
@@ -55,8 +61,7 @@ public class StringCodecTest extends TestCase {
 
     @Test
     public void testNodeNameCodec() throws RepositoryException {
-        StringCodecFactory factory = new StringCodecFactory();
-        StringCodec codec = factory.getStringCodec("org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
+        StringCodec codec = factory.getStringCodec("encoding.node");
         assertNotNull(codec);
         StringBuffer sb;
         for (int ch = 0; ch < 255; ch++) {

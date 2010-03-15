@@ -29,6 +29,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
+import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -70,16 +71,16 @@ public class UploadDialog extends AbstractDialog {
         return workflowCats;
     }
 
-    StringCodec getLocalizeCodec() {
-        StringCodecFactory stringCodecFactory = new StringCodecFactory();
-        String encoder = pluginConfig.getString("encoding.display", "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
-        return stringCodecFactory.getStringCodec(encoder);
+    protected StringCodec getLocalizeCodec() {
+        ISettingsService settingsService = pluginContext.getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
+        return stringCodecFactory.getStringCodec("encoding.display");
     }
 
-    StringCodec getNodeNameCodec() {
-        StringCodecFactory stringCodecFactory = new StringCodecFactory();
-        String encoder = pluginConfig.getString("encoding.node", "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
-        return stringCodecFactory.getStringCodec(encoder);
+    protected StringCodec getNodeNameCodec() {
+        ISettingsService settingsService = pluginContext.getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
+        return stringCodecFactory.getStringCodec("encoding.node");
     }
 
     IWizardModel getWizardModel() {
