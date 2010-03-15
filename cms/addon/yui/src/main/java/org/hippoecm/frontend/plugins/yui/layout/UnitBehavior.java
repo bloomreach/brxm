@@ -16,7 +16,6 @@
 
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -44,16 +43,15 @@ public class UnitBehavior extends AbstractBehavior {
 
     static final Logger log = LoggerFactory.getLogger(UnitBehavior.class);
 
-    private UnitSettings settings;
+    private String position;
 
-    public UnitBehavior(UnitSettings settings) {
-        this.settings = settings;
+    public UnitBehavior(String position) {
+        this.position = position;
     }
 
     @Override
     public void bind(final Component component) {
         super.bind(component);
-        settings.setMarkupId(component.getMarkupId(true));
 
         // re-render complete wireframe during the render phase
         AjaxRequestTarget target = AjaxRequestTarget.get();
@@ -66,7 +64,7 @@ public class UnitBehavior extends AbstractBehavior {
                     MarkupContainer parent = component.getParent();
                     boolean found = false;
                     while (parent != null) {
-                        for (IBehavior behavior : (List<IBehavior>) parent.getBehaviors()) {
+                        for (IBehavior behavior : parent.getBehaviors()) {
                             if (behavior instanceof IWireframeService) {
                                 target.addComponent(parent);
                                 found = true;
@@ -89,8 +87,8 @@ public class UnitBehavior extends AbstractBehavior {
         }
     }
 
-    public UnitSettings getSettings() {
-        return settings;
+    public String getPosition() {
+        return position;
     }
 
     @Override

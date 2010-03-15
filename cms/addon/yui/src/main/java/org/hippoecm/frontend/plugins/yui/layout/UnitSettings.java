@@ -15,15 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
+import java.io.Serializable;
+
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.javascript.BooleanSetting;
-import org.hippoecm.frontend.plugins.yui.javascript.IntSetting;
-import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
-import org.hippoecm.frontend.plugins.yui.javascript.YuiId;
-import org.hippoecm.frontend.plugins.yui.javascript.YuiIdSetting;
-import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
-import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
+import org.hippoecm.frontend.util.MappingException;
+import org.hippoecm.frontend.util.PluginConfigMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +34,9 @@ import org.slf4j.LoggerFactory;
  *   ID: a {@link YuiId} value representing the unit's root element.
  *   </li>
  *   <li>
- *   BODY: a {@link YuiId} value representing the unit's body element.
+ *   BODY: a {@link YuiId} value representing the unit's body element.  The body should not be configured when the unit
+ *      wraps a {@link Component} with a {@link UnitBehavior}.  When neither body nor UnitBehavior is present, a body
+ *      element will be generated.
  *   </li>
  *   <li>
  *   WIDTH: width (in pixels) that the unit will take up in the wireframe (only applies to left and right units and 
@@ -75,7 +73,7 @@ import org.slf4j.LoggerFactory;
  *   </li>
  * </ul>
  */
-public class UnitSettings extends YuiObject {
+public class UnitSettings implements Serializable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -83,26 +81,23 @@ public class UnitSettings extends YuiObject {
 
     static final Logger log = LoggerFactory.getLogger(UnitSettings.class);
 
-    private static final StringSetting POSITION = new StringSetting("position");
-    private static final YuiIdSetting ID = new YuiIdSetting("id");
-    private static final YuiIdSetting BODY = new YuiIdSetting("body");
+    private String position = "center";
+    private YuiId id = new YuiId("");
+    private YuiId body = new YuiId("");
 
-    private static final StringSetting WIDTH = new StringSetting("width");
-    private static final StringSetting HEIGHT = new StringSetting("height");
+    private String width;
+    private String height;
 
-    private static final StringSetting MIN_WIDTH = new StringSetting("minWidth");
-    private static final StringSetting MIN_HEIGHT = new StringSetting("minHeight");
+    private String minWidth;
+    private String minHeight;
 
-    private static final StringSetting GUTTER = new StringSetting("gutter");
-    private static final BooleanSetting SCROLL = new BooleanSetting("scroll");
-    private static final BooleanSetting RESIZE = new BooleanSetting("resize");
-    private static final BooleanSetting USE_SHIM = new BooleanSetting("useShim");
-    
+    private String gutter = "0px 0px 0px 0px";
+    private boolean scroll;
+    private boolean resize;
+    private boolean useShim;
+
     //TODO: does this still work?
-    private static final IntSetting Z_INDEX = new IntSetting("zindex");
-
-    protected final static YuiType TYPE = new YuiType(POSITION, ID, BODY, WIDTH, HEIGHT, MIN_WIDTH, MIN_HEIGHT, GUTTER,
-            SCROLL, RESIZE, Z_INDEX, USE_SHIM);
+    //private static final IntSetting Z_INDEX = new IntSetting("zindex");
 
     public static final String TOP = "top";
     public static final String RIGHT = "right";
@@ -110,128 +105,95 @@ public class UnitSettings extends YuiObject {
     public static final String LEFT = "left";
     public static final String CENTER = "center";
 
-    private String wrapperId;
-    private String markupId;
-
-    public UnitSettings(String position) {
-        super(TYPE);
-        POSITION.set(position, this);
-    }
-
-    public UnitSettings(String position, IValueMap options) {
-        super(TYPE);
-        POSITION.set(position, this);
-        updateValues(options);
-    }
-
-    public UnitSettings(IPluginConfig config) {
-        super(TYPE, config);
-    }
-
-    public void setPosition(String position, YuiObject settings) {
-        POSITION.set(position, settings);
+    public UnitSettings(String position, IValueMap config) {
+        this.position = position;
+        if (config != null) {
+            try {
+                PluginConfigMapper.populate(this, config);
+            } catch (MappingException e) {
+                throw new RuntimeException("invalid configuration");
+            }
+            id.setId(config.getString("id"));
+            if (config.containsKey("body")) {
+                body.setId(config.getString("body"));
+            }
+        }
     }
 
     public String getPosition() {
-        return POSITION.get(this);
-    }
-
-    public String getWidth() {
-        return WIDTH.get(this);
+        return position;
     }
 
     public void setWidth(String width) {
-        WIDTH.set(width, this);
+        this.width = width;
     }
 
-    public String getHeight() {
-        return HEIGHT.get(this);
+    public String getWidth() {
+        return width;
     }
 
     public void setHeight(String height) {
-        HEIGHT.set(height, this);
+        this.height = height;
     }
 
-    public String getMinWidth() {
-        return MIN_WIDTH.get(this);
+    public String getHeight() {
+        return height;
     }
 
     public void setMinWidth(String minWidth) {
-        MIN_WIDTH.set(minWidth, this);
+        this.minWidth = minWidth;
     }
 
-    public String getMinHeight() {
-        return MIN_HEIGHT.get(this);
+    public String getMinWidth() {
+        return minWidth;
     }
 
     public void setMinHeight(String minHeight) {
-        MIN_HEIGHT.set(minHeight, this);
+        this.minHeight = minHeight;
     }
 
-    public String getElementId() {
-        return ID.get(this).getElementId();
+    public String getMinHeight() {
+        return minHeight;
     }
 
-    public String getWrapperId() {
-        return wrapperId;
+    public void setGutter(String gutter) {
+        this.gutter = gutter;
     }
 
-    public void setWrapperId(String id) {
-        wrapperId = id;
-        notifyListeners();
+    public String getGutter() {
+        return gutter;
     }
 
-    public String getMarkupId() {
-        return markupId;
+    public void setScroll(boolean scroll) {
+        this.scroll = scroll;
     }
 
-    public String getBody() {
-        return BODY.getScriptValue(BODY.get(this));
+    public boolean isScroll() {
+        return scroll;
     }
 
-    public void setMarkupId(String markupId) {
-        this.markupId = markupId;
-        if (wrapperId != null) {
-            if (BODY.get(this) != null) {
-                BODY.get(this).setId(markupId);
-            }
-        }
-        notifyListeners();
+    public void setResize(boolean resize) {
+        this.resize = resize;
     }
 
-    @Override
-    public boolean isValid() {
-        return ID.get(this) != null;
+    public boolean isResize() {
+        return resize;
     }
 
-    public void setParentMarkupId(String parentMarkupId) {
-        if (wrapperId != null) {
-            YuiId id = ID.get(this);
-            if (id == null) {
-                ID.set(new YuiId(wrapperId), this);
-                id = ID.get(this);
-            } else {
-                id.setId(wrapperId);
-            }
-            id.setParentId(parentMarkupId);
+    public void setUseShim(boolean useShim) {
+        this.useShim = useShim;
+    }
 
-            YuiId body = BODY.get(this);
-            if (body == null) {
-                BODY.set(new YuiId(markupId), this);
-            } else {
-                body.setId(markupId);
-                body.setParentId(null);
-            }
-        } else if (ID.get(this) != null) {
-            YuiId id = ID.get(this);
-            id.setParentId(parentMarkupId);
+    public boolean isUseShim() {
+        return useShim;
+    }
 
-            YuiId body = BODY.get(this);
-            if (body != null) {
-                body.setParentId(parentMarkupId);
-            }
-        }
-        notifyListeners();
+    public YuiId getBody() {
+        return body;
+    }
+
+    public YuiId getId() {
+        return id;
     }
 
 }

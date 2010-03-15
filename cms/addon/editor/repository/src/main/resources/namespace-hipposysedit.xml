@@ -168,10 +168,6 @@
             <sv:property sv:name="root.id" sv:type="String">
               <sv:value>template-type-wrapper</sv:value>
             </sv:property>
-            <sv:property sv:name="units" sv:type="String">
-              <sv:value>center</sv:value>
-              <sv:value>right</sv:value>
-            </sv:property>
           </sv:node>
         </sv:node>
         <sv:node sv:name="preview">

@@ -49,4 +49,20 @@ public class PluginConfigMapperTest {
         assertEquals(true, bean.isTestBool());
         assertEquals("value", bean.getTestString());
     }
+
+    @Test
+    public void testStringValues() throws MappingException {
+        JavaPluginConfig jpc = new JavaPluginConfig();
+        jpc.put("test.int", "1");
+        jpc.put("test.bool", "true");
+        jpc.put("test.string", "value");
+
+        MappingTestBean bean = new MappingTestBean();
+        PluginConfigMapper.populate(bean, jpc);
+
+        assertEquals(1, bean.getTestInt());
+        assertEquals(true, bean.isTestBool());
+        assertEquals("value", bean.getTestString());
+    }
+
 }

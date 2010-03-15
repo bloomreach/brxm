@@ -26,6 +26,8 @@ import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.util.MappingException;
+import org.hippoecm.frontend.util.PluginConfigMapper;
 import org.hippoecm.frontend.widgets.Pinger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +55,12 @@ public class RootPlugin extends RenderPlugin {
             context.unregisterService(this, modelId);
         }
 
-        PageLayoutSettings plSettings = new PageLayoutSettings(config.getPluginConfig("yui.config"));
+        PageLayoutSettings plSettings = new PageLayoutSettings();
+        try {
+            PluginConfigMapper.populate(plSettings, config.getPluginConfig("yui.config"));
+        } catch (MappingException e) {
+            throw new RuntimeException(e);
+        }
         add(new PageLayoutBehavior(plSettings));
     }
 
