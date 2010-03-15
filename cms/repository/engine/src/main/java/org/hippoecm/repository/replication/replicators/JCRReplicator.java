@@ -95,6 +95,16 @@ public class JCRReplicator extends AbstractReplicator {
 
     @Override
     protected void disconnect() {
+        try {
+            if (session != null && session.isLive()) {
+                session.logout();
+                log.debug("Disconnecting from Hippo Repository at '{}'.", getRepositoryAddress());
+            }
+        } catch (Exception e) {
+            log.warn("Error while disconnecting from Hippo Repository: {}.", e);
+        } finally {
+            session = null;
+        }
     }
 
     //------------------------------- Remote Session methods  -------------------------//
@@ -118,7 +128,7 @@ public class JCRReplicator extends AbstractReplicator {
                 log.debug("(Re)connecting to Hippo Repository at '{}'.", getRepositoryAddress());
                 HippoRepository repository = HippoRepositoryFactory.getHippoRepository(getRepositoryAddress());
                 session = repository.login(getUsername(), getPassword().toCharArray());
-                log.info("Connected to Hippo Repository at '{}'.", getRepositoryAddress());
+                log.debug("Connected to Hippo Repository at '{}'.", getRepositoryAddress());
             }
             session.refresh(false);
             return session;

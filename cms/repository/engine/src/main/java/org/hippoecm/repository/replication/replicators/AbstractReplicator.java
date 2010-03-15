@@ -131,7 +131,7 @@ abstract class AbstractReplicator implements Replicator {
      */
     final synchronized public void replicate(ChangeLogRecord record) throws RecoverableReplicationException,
             FatalReplicationException {
-        log.info("Replicator '{}': start replication of revision {}.", getId(), record.getRevision());
+        log.debug("Replicator '{}': start replication of revision {}.", getId(), record.getRevision());
 
         stack.clear();
         exclusionCache.clear();
@@ -146,7 +146,7 @@ abstract class AbstractReplicator implements Replicator {
 
         disconnect();
 
-        log.info("Replicator '{}': replicated revision {}.", getId(), record.getRevision());
+        log.debug("Replicator '{}': replicated revision {}.", getId(), record.getRevision());
     }
 
     /**
