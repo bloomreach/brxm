@@ -49,7 +49,7 @@ public class Main extends Server {
     }
 
     public static void main(String[] args) {
-        String warFile = "../war/target/hippo-ecm-quickstart-war-2.12.03-SNAPSHOT.war";
+        String warFile = "../war/target/hippo-ecm-quickstart-war-2.13.00-SNAPSHOT.war";
         if (args.length > 0) {
             warFile = args[0];
         }
