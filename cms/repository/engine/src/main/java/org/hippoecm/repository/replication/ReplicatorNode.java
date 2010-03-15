@@ -392,11 +392,13 @@ public class ReplicatorNode implements Runnable, ClusterRecordProcessor, RecordC
                     return;
                 } catch (RetryReplicationException e) {
                     tries++;
-                    log.info("Recoverable exception (" + e.getMessage() + ") encountered with revision: " + record.getRevision()
-                            + ". Trying again in " + getRetryDelay() + " ms. Try " + tries + " of "
-                            + getMaxRetries());
                     error = e;
-                    waitWithoutLock(getRetryDelay());
+                    if (tries <= getMaxRetries()) {
+                        log.info("Recoverable exception (" + e.getMessage() + ") encountered with revision: "
+                                + record.getRevision() + ". Trying again [" + tries + "/" + getMaxRetries() + "] in "
+                                + getRetryDelay() + " ms.");
+                        waitWithoutLock(getRetryDelay());
+                    }
                 }
             }
             String msg = getIdString() + ": Unable to replicate revision '" + record.getRevision() + "'.";
