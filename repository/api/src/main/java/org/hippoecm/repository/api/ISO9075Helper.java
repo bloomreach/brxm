@@ -27,11 +27,11 @@ public class ISO9075Helper {
     private ISO9075Helper() {};
 
     public static String encodeLocalName(String name) {
-        return new StringCodecFactory().getStringCodec("org.hippoecm.repository.api.StringCodecFactory$ISO9075Helper").encode(name);
+        return new StringCodecFactory.ISO9075Helper().encode(name);
     }
 
     public static String decodeLocalName(String name) {
-        return new StringCodecFactory().getStringCodec("org.hippoecm.repository.api.StringCodecFactory$ISO9075Helper").decode(name);
+        return new StringCodecFactory.ISO9075Helper().decode(name);
     }
 
     /** @deprecrated without replacement */

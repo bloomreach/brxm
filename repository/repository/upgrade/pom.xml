@@ -67,7 +67,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.upgrade.Upgrader12a</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.upgrade.Upgrader12a org.hippoecm.repository.upgrade.Upgrader13a</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>

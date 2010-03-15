@@ -15,9 +15,29 @@
  */
 package org.hippoecm.repository.api;
 
+/**
+ * Strategy interface for encoding and decoding strings.
+ * <p/>
+ * StringCodec objects should not retain state between calls and are therefore reusable.
+ * Encoding and decoding should also be thread-safe.
+ */
 public interface StringCodec {
+    /**
+     * @exclude
+     */
     final static String SVN_ID = "$Id$";
 
+    /**
+     * Encodes a string of characters.
+     * @param plain the string to encode
+     * @return the encoded string
+     */
     public String encode(String plain);
+
+    /**
+     * Decodes a string of characters.  Some encoding strategies are one-way, in which case the decoding might return null.
+     * @param encoded the previously encoded string
+     * @return the decoded string or null if no decoding is possible
+     */
     public String decode(String encoded);
 }

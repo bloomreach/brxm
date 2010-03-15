@@ -44,6 +44,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IEditor.Mode;
+import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -257,17 +258,15 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     }
 
     protected StringCodec getLocalizeCodec() {
-        StringCodecFactory stringCodecFactory = new StringCodecFactory();
-        String encoder = getPluginConfig().getString("encoding.display",
-                "org.hippoecm.repository.api.StringCodecFactory$IdentEncoding");
-        return stringCodecFactory.getStringCodec(encoder);
+        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
+        return stringCodecFactory.getStringCodec("encoding.display");
     }
 
     protected StringCodec getNodeNameCodec() {
-        StringCodecFactory stringCodecFactory = new StringCodecFactory();
-        String encoder = getPluginConfig().getString("encoding.node",
-                "org.hippoecm.repository.api.StringCodecFactory$UriEncoding");
-        return stringCodecFactory.getStringCodec(encoder);
+        ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID, ISettingsService.class);
+        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
+        return stringCodecFactory.getStringCodec("encoding.node");
     }
 
     @Override
