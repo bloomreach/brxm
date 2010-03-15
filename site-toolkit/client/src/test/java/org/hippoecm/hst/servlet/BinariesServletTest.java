@@ -7,7 +7,6 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -65,6 +64,9 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("contentDispositionContentTypes")).andReturn(mimeTypesString);
         expect(servletConfig.getInitParameter("contentDispositionFilenameProperty")).andReturn(expectedFilenameProperty);
         expect(servletConfig.getInitParameter("baseBinariesContentPath")).andReturn(expectedBasePath);
+        expect(servletConfig.getInitParameter("binaryDataPropName")).andReturn(null);
+        expect(servletConfig.getInitParameter("binaryMimeTypePropName")).andReturn(null);
+        expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn(null);
     
         replay(servletConfig);
         binariesServlet.init(servletConfig);
@@ -92,6 +94,9 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("contentDispositionContentTypes")).andReturn(null);
         expect(servletConfig.getInitParameter("contentDispositionFilenameProperty")).andReturn(null);
         expect(servletConfig.getInitParameter("baseBinariesContentPath")).andReturn(null);
+        expect(servletConfig.getInitParameter("binaryDataPropName")).andReturn(null);
+        expect(servletConfig.getInitParameter("binaryMimeTypePropName")).andReturn(null);
+        expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn(null);
        
         replay(servletConfig);
         binariesServlet.init(servletConfig);

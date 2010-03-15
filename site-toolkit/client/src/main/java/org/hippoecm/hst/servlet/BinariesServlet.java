@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +45,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.james.mime4j.codec.EncoderUtil;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -54,6 +56,7 @@ import org.hippoecm.hst.core.linking.ResourceLocationResolver;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.hst.util.ServletConfigUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,24 +97,41 @@ import org.slf4j.LoggerFactory;
  * 
  * You can also configure multiple JCR property names in the above init parameter by comma-separated value. 
  * 
- *
+ * @author Ard Schrijvers
+ * @author Woonsan Ko
  * @author Tom van Zummeren
  * @version $Id$
  */
 public class BinariesServlet extends HttpServlet {
-
-    private static Logger log = LoggerFactory.getLogger(BinariesServlet.class);
-
-    private static final String BASE_BINARIES_CONTENT_PATH_INIT_PARAM = "baseBinariesContentPath";
-
-    private static final String CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM = "contentDispositionContentTypes";
-
-    private static final String CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM = "contentDispositionFilenameProperty";
-
-    private static final String DEFAULT_BASE_BINARIES_CONTENT_PATH = "";
-
+    
     private static final long serialVersionUID = 1L;
-
+    
+    public static final String BASE_BINARIES_CONTENT_PATH_INIT_PARAM = "baseBinariesContentPath";
+    
+    public static final String CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM = "contentDispositionContentTypes";
+    
+    public static final String CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM = "contentDispositionFilenameProperty";
+    
+    public static final String BINARY_RESOURCE_NODE_TYPE_INIT_PARAM = "binaryResourceNodeType";
+    
+    public static final String BINARY_DATA_PROP_NAME_INIT_PARAM = "binaryDataPropName";
+    
+    public static final String BINARY_MIME_TYPE_PROP_NAME_INIT_PARAM = "binaryMimeTypePropName";
+    
+    public static final String BINARY_LAST_MODIFIED_PROP_NAME_INIT_PARAM = "binaryLastModifiedPropName";
+    
+    public static final String DEFAULT_BASE_BINARIES_CONTENT_PATH = "";
+    
+    public static final String DEFAULT_BINARY_RESOURCE_NODE_TYPE = HippoNodeType.NT_RESOURCE;
+    
+    public static final String DEFAULT_BINARY_DATA_PROP_NAME = "jcr:data";
+    
+    public static final String DEFAULT_BINARY_MIME_TYPE_PROP_NAME = "jcr:mimeType";
+    
+    public static final String DEFAULT_BINARY_LAST_MODIFIED_PROP_NAME = "jcr:lastModified";
+    
+    private static Logger log = LoggerFactory.getLogger(BinariesServlet.class);
+    
     private Repository repository;
     
     private Credentials binariesCredentials;
@@ -127,7 +147,15 @@ public class BinariesServlet extends HttpServlet {
     protected List<ResourceContainer> allResourceContainers;
     
     private boolean initialized = false;
-
+    
+    private String binaryResourceNodeType = DEFAULT_BINARY_RESOURCE_NODE_TYPE;
+    
+    private String binaryDataPropName = DEFAULT_BINARY_DATA_PROP_NAME;
+    
+    private String binaryMimeTypePropName = DEFAULT_BINARY_MIME_TYPE_PROP_NAME;
+    
+    private String binaryLastModifiedPropName = DEFAULT_BINARY_LAST_MODIFIED_PROP_NAME;
+    
     /**
      * {@inheritDoc}
      */
@@ -135,20 +163,19 @@ public class BinariesServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         
-        String param = config.getInitParameter(BASE_BINARIES_CONTENT_PATH_INIT_PARAM);
+        baseBinariesContentPath = ServletConfigUtils.getInitParameter(config, null, BASE_BINARIES_CONTENT_PATH_INIT_PARAM, baseBinariesContentPath);
+        contentDispositionFilenamePropertyNames = StringUtils.split(ServletConfigUtils.getInitParameter(config, null, CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM, null), ", \t\r\n");
         
-        if (param != null) {
-            this.baseBinariesContentPath = param;
-        }
-        
-        contentDispositionFilenamePropertyNames = StringUtils.split(config.getInitParameter(CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM), ", \t\r\n");
-
         // Parse mime types from init-param
         contentDispositionContentTypes = new HashSet<String>();
-        String mimeTypesString = config.getInitParameter(CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM);
+        String mimeTypesString = ServletConfigUtils.getInitParameter(config, null, CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM, null);
         if (mimeTypesString != null) {
             contentDispositionContentTypes.addAll(Arrays.asList(StringUtils.split(mimeTypesString, ", \t\r\n")));
         }
+        
+        binaryDataPropName = ServletConfigUtils.getInitParameter(config, null, BINARY_DATA_PROP_NAME_INIT_PARAM, binaryDataPropName);
+        binaryMimeTypePropName = ServletConfigUtils.getInitParameter(config, null, BINARY_MIME_TYPE_PROP_NAME_INIT_PARAM, binaryMimeTypePropName);
+        binaryLastModifiedPropName = ServletConfigUtils.getInitParameter(config, null, BINARY_LAST_MODIFIED_PROP_NAME_INIT_PARAM, binaryLastModifiedPropName);
     }
 
     @Override
@@ -157,7 +184,7 @@ public class BinariesServlet extends HttpServlet {
         String resourcePath = null;
         Session session = null;
         
-        if(!initialized) {
+        if (!initialized) {
             synchronized(this) {
                 doInit();
             }
@@ -177,7 +204,7 @@ public class BinariesServlet extends HttpServlet {
             
             resourcePath = resourcePathBuilder.toString();
             
-            if(resourcePath == null || !resourcePath.startsWith("/")) {
+            if (resourcePath == null || !resourcePath.startsWith("/")) {
                 if (log.isWarnEnabled()) {
                     log.warn("item at path " + resourcePath + " not found, response status = 404)");
                 }
@@ -189,91 +216,89 @@ public class BinariesServlet extends HttpServlet {
             
             Node resourceNode = lookUpResource(session, resourcePath);
             
-            if(resourceNode == null) {
+            if (resourceNode == null) {
                 log.warn("item at path " + resourcePath + " cannot be found.");
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
             
-            if(!resourceNode.isNodeType(HippoNodeType.NT_RESOURCE)) {
+            if (!resourceNode.isNodeType(binaryResourceNodeType)) {
                 response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-                log.warn("Found node is not of type '{}' but was of type '{}'. Return HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE", HippoNodeType.NT_RESOURCE, resourceNode.getPrimaryNodeType().getName());
+                log.warn("Found node is not of type '{}' but was of type '{}'. Return HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE", binaryResourceNodeType, resourceNode.getPrimaryNodeType().getName());
                 return;
             }
             
-            if (!resourceNode.hasProperty("jcr:mimeType")) {
+            if (!resourceNode.hasProperty(binaryMimeTypePropName)) {
                 if (log.isWarnEnabled()) {
-                    log.warn("item at path " + resourcePath + " has no property jcr:mimeType, response status = 415)");
+                    log.warn("item at path " + resourcePath + " does not have a property: {}. The response status will be 415", binaryMimeTypePropName);
                 }
                 
                 response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
                 return;
             }
+            
+            String mimeType = resourceNode.getProperty(binaryMimeTypePropName).getString();
 
-            String mimeType = resourceNode.getProperty("jcr:mimeType").getString();
-
-            if (!resourceNode.hasProperty("jcr:data")) {
+            if (!resourceNode.hasProperty(binaryDataPropName)) {
                 if (log.isWarnEnabled()) {
-                    log.warn("item at path " + resourcePath + " has no property jcr:data, response status = 404)");
+                    log.warn("item at path " + resourcePath + " does not have a property: {}. The response status will be 404", binaryDataPropName);
                 }
                 
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-
-            InputStream istream = null;
-            OutputStream ostream = null;
+            
+            Calendar lastModifiedDate = getLastModifiedDate(resourceNode);
+            long ifModifiedSince = -1L;
+            
             try {
-                Property data = resourceNode.getProperty("jcr:data");
-                istream = data.getStream();
-    
+                ifModifiedSince = request.getDateHeader("If-Modified-Since");
+            } catch (IllegalArgumentException ignore) {
+                if (log.isWarnEnabled()) {
+                    log.warn("The header, If-Modified-Since, contains invalid value: " + request.getHeader("If-Modified-Since"));
+                }
+            }
+            
+            if (ifModifiedSince != -1 && ifModifiedSince / 1000 >= lastModifiedDate.getTimeInMillis() / 1000) {
+                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                return;
+            }
+            
+            InputStream input = null;
+            OutputStream output = null;
+            
+            try {
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.setContentType(mimeType);
-    
+                
                 // Add the Content-Disposition header for configured content types
                 addContentDispositionHeader(request, response, mimeType, resourceNode);
-    
+                
                 // TODO add a configurable factor + default minimum for expires. Ideally, this value is
                 // stored in the repository
-                if (resourceNode.hasProperty("jcr:lastModified")) {
-                    long lastModified = 0;
-                    
-                    try {
-                        lastModified = resourceNode.getProperty("jcr:lastModified").getDate().getTimeInMillis();
-                    } catch (ValueFormatException e) {
-                        if (log.isWarnEnabled()) {
-                            log.warn("jcr:lastModified not of type Date");
-                        }
+                if (lastModifiedDate != null) {
+                    long expires = System.currentTimeMillis() - lastModifiedDate.getTimeInMillis();
+                    if (expires > 0) {
+                        response.setDateHeader("Expires", expires + System.currentTimeMillis());
+                        response.setDateHeader("Last-Modified", lastModifiedDate.getTimeInMillis()); 
+                        response.setHeader("Cache-Control", "max-age=" + (expires / 1000));
                     }
-                    
-                    long expires = 0;
-                    
-                    if(lastModified > 0) {
-                        expires = (System.currentTimeMillis() - lastModified);
-                    }
-                    
-                    response.setDateHeader("Expires", expires + System.currentTimeMillis());
-                    response.setDateHeader("Last-Modified", lastModified); 
-                    response.setHeader("Cache-Control", "max-age="+(expires/1000));
                 } else {
                     response.setDateHeader("Expires", 0);
                     response.setHeader("Cache-Control", "max-age=0");
                 }
                 
-                
-                ostream = response.getOutputStream();
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = istream.read(buffer)) >= 0) {
-                    ostream.write(buffer, 0, len);
-                }
-                ostream.flush();
+                Property data = resourceNode.getProperty(binaryDataPropName);
+                input = data.getStream();
+                output = response.getOutputStream();
+                IOUtils.copy(input, output);
+                output.flush();
             } finally {
-                if(istream != null) {
-                    istream.close();
+                if (input != null) {
+                    IOUtils.closeQuietly(input);
                 }
-                if(ostream != null) {
-                    ostream.close();
+                if (output != null) {
+                    IOUtils.closeQuietly(output);
                 }
             }
         } catch (PathNotFoundException ex) {
@@ -544,6 +569,30 @@ public class BinariesServlet extends HttpServlet {
         }
         
         return path;
+    }
+    
+    protected Calendar getLastModifiedDate(Node resourceNode) {
+        Calendar lastModifiedDate = null;
+        
+        try {
+            if (resourceNode.hasProperty(binaryLastModifiedPropName)) {
+                lastModifiedDate = resourceNode.getProperty(binaryLastModifiedPropName).getDate();
+            }
+        } catch (ValueFormatException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("The property, {}, is not in valid format. {}", binaryLastModifiedPropName, e);
+            }
+        } catch (PathNotFoundException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("The property, {}, is not found. {}", binaryLastModifiedPropName, e);
+            }
+        } catch (RepositoryException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("The property, {}, cannot be retrieved. {}", binaryLastModifiedPropName, e);
+            }
+        }
+        
+        return lastModifiedDate;
     }
     
 }
