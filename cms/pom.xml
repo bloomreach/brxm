@@ -525,6 +525,7 @@
           <show>protected</show>
           <source>1.5</source>
           <javadocVersion>1.6</javadocVersion>
+	  <docfilessubdirs>true</docfilessubdirs>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
@@ -533,7 +534,7 @@
           <docletArtifact>
             <groupId>org.hippoecm</groupId>
             <artifactId>hippo-ecm-tools-documentation</artifactId>
-            <version>2.09.01-SNAPSHOT</version>
+            <version>2.12.00</version>
           </docletArtifact>
         </configuration>
       </plugin>
@@ -852,6 +853,7 @@
           <author>false</author>
           <show>protected</show>
           <source>1.5</source>
+	  <docfilessubdirs>true</docfilessubdirs>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
@@ -860,7 +862,7 @@
           <docletArtifact>
             <groupId>org.hippoecm</groupId>
             <artifactId>hippo-ecm-tools-documentation</artifactId>
-            <version>2.09.01-SNAPSHOT</version>
+            <version>2.12.00</version>
           </docletArtifact>
         </configuration>
         <reportSets>

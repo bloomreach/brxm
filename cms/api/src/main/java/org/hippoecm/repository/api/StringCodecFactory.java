@@ -86,7 +86,7 @@ public class StringCodecFactory {
      * Usage of this class discouraged.  If should only be used by frameworks to initialize the StringCodecFactory instance.
      * <p/>
      * Performs a one-way encoding (no decoding possible) for translating any UTF-8 String to a suitable set of characters that can be used in URIs.
-     * For the algorithm in use see {@link encoding.html}
+     * @see <a href="doc-files/encoding.html">Encoding of node names</a>
      */
     public static class UriEncoding implements StringCodec {
         public String encode(String utf8) {
@@ -228,7 +228,6 @@ public class StringCodecFactory {
                             break;
                         default:
                             sb.append(Character.toLowerCase(chars[i]));
-                            //sb.append(chars[i]);
                     }
                 } else {
                     switch (chars[i]) {
