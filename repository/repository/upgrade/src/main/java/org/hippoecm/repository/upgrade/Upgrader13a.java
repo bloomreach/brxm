@@ -61,14 +61,14 @@ public class Upgrader13a implements UpdaterModule {
             }
         });
 
-        context.registerVisitor(new UpdaterItemVisitor.QueryVisitor("//element(*,frontend:pluginconfig)[@encoding.node] != '']", Query.XPATH) {
+        context.registerVisitor(new UpdaterItemVisitor.QueryVisitor("//element(*,frontend:pluginconfig)[@encoding.node]", Query.XPATH) {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
                 log.error("encoding.node property on "+node.getPath()+" no longer supported, please set /hippo:configuration/hippo:frontend/cms/cms-services/settingsService/codecs/@encoding.node property instead");
             } 
         });
 
-        context.registerVisitor(new UpdaterItemVisitor.QueryVisitor("//element(*,frontend:pluginconfig)[@encoding.display] != '']", Query.XPATH) {
+        context.registerVisitor(new UpdaterItemVisitor.QueryVisitor("//element(*,frontend:pluginconfig)[@encoding.display]", Query.XPATH) {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
                 log.error("encoding.dos[;ay property on "+node.getPath()+" no longer supported, please set /hippo:configuration/hippo:frontend/cms/cms-services/settingsService/codecs/@encoding.display property instead");
