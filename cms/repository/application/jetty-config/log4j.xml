@@ -96,6 +96,10 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
+  <category additivity="false" name="org.hippoecm.repository.replication">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
   <category additivity="true" name="org.hippoecm.tools.projectexport">
     <level value="warn"/>
     <appender-ref ref="root"/>
