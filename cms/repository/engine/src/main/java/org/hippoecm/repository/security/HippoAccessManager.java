@@ -418,7 +418,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         try {
             id = getNodeId(absPath);
         } catch (PathNotFoundException e) {
-            log.warn("Unable to find node id, allowing read permissions: {}", e.getMessage());
+            // this usually happens in clustered environments when the node has been 
+            // deleted before the cluster addnode event is received.
+            log.info("Unable to find node id, allowing read permissions: {}", e.getMessage());
             log.debug("Stacktrace: ", e);
             return true;
         }
