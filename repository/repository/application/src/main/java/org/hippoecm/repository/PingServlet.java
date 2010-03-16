@@ -32,17 +32,24 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * A servlet that can be used to check if the repository is up-and-running. This
- * is especially useful for load balancer checks. The check does the following steps:
- * - obtain the repository with the connection string
- * - obtain the session with the specified username and password
- * - try to read the check node
- * - try to write to the repository if enabled
- * - logout and close session
- * On success the servlet prints "Ok" and returns a 200 status, on failure, the error is 
- * printed and a 500 (internal server error) status is returned.
+ * <p>A servlet that can be used to check if the repository is up-and-running. This
+ * is especially useful for load balancer checks. The check does the following steps:</p>
+ * <ul>
+ *   <li>Check for static custom return message, else</li>
+ *   <ul>
+ *     <li>obtain the repository with the connection string</li>
+ *     <li>obtain the session with the specified username and password</li>
+ *     <li>try to read the check node</li>
+ *     <li>try to write to the repository if enabled</li>
+ *     <li>logout and close jcr session</li>
+ *   </ul>
+ *   <li>logout and close http session</li>
+ * </ul>
+ * <p>On success the servlet prints "Ok" and returns a 200 status, on failure, the error is 
+ * printed and a 500 (internal server error) status is returned.</p>
+ * <p>In case the custom message is provided, a service unavailable error (503) is returned</p>
  * 
- * To enable the servlet add the following to your web.xml
+ * <p>To enable the servlet add the following to your web.xml</p>
  * <code><![CDATA[
     <servlet>
       <servlet-name>PingServlet</servlet-name>
@@ -71,6 +78,11 @@ import javax.servlet.http.HttpSession;
         <param-name>write-check-node</param-name>
         <param-value>pingcheck</param-value>
       </init-param>
+      <!-- enable while doing upgrades
+        init-param>
+        <param-name>custom-message</param-name>
+        <param-value>Down for upgrade</param-value>
+      </init-param -->
     </servlet>
     <servlet-mapping>
       <servlet-name>PingServlet</servlet-name>
@@ -92,6 +104,7 @@ public class PingServlet extends HttpServlet {
     private static final String NODE_PARAM = "check-node";
     private static final String WRITE_ENABLE_PARAM = "write-check-enable";
     private static final String WRITE_PATH_PARAM = "write-check-path";
+    private static final String CUSTOM_MESSAGE_PARAM = "custom-message";
 
     /** Default values */
     private static final String DEFAULT_REPOSITORY_ADDRESS = "rmi://localhost:1099/hipporepository";
@@ -106,6 +119,7 @@ public class PingServlet extends HttpServlet {
     private String username;
     private String password;
     private String checkNode;
+    private String customMessage;
     private String writeTestPath;
     private boolean writeTestEnabled = false;
 
@@ -122,12 +136,13 @@ public class PingServlet extends HttpServlet {
         checkNode = makePathRelative(getParameter(config, NODE_PARAM, DEFAULT_NODE));
         writeTestPath = makePathRelative(getParameter(config, WRITE_PATH_PARAM, DEFAULT_WRITE_PATH));
         writeTestEnabled = isTrueOrYes(getParameter(config, WRITE_ENABLE_PARAM, DEFAULT_WRITE_ENABLE));
+        customMessage = getParameter(config, CUSTOM_MESSAGE_PARAM, null);
     }
 
     private String getParameter(ServletConfig config, String paramName, String defaultValue) {
         String initValue = config.getInitParameter(paramName);
         String contextValue = config.getServletContext().getInitParameter(paramName);
-        
+
         if (isNotNullAndNotEmpty(initValue)) {
             return initValue;
         } else if (isNotNullAndNotEmpty(contextValue)) {
@@ -136,12 +151,9 @@ public class PingServlet extends HttpServlet {
             return defaultValue;
         }
     }
-    
+
     private boolean isNotNullAndNotEmpty(String s) {
-        if (s != null && s.length() != 0) {
-            return true;
-        }
-        return false;
+        return (s != null && s.length() != 0);
     }
 
     private String makePathRelative(String path) {
@@ -152,31 +164,34 @@ public class PingServlet extends HttpServlet {
     }
 
     private boolean isTrueOrYes(String s) {
-        if ("true".equalsIgnoreCase(s) || "yes".equalsIgnoreCase(s)) {
-            return true;
-        }
-        return false;
+        return ("true".equalsIgnoreCase(s) || "yes".equalsIgnoreCase(s));
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         int resultStatus = HttpServletResponse.SC_OK;
         String resultMessage = "OK - Repository online and accessible.";
-        if (writeTestEnabled) {
-            resultMessage = "OK - Repository online, accessible and writable.";
-        }
         Exception exception = null;
-        try {
-            doRepositoryChecks();
-        } catch (PingException e) {
-            resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-            resultMessage = e.getMessage();
-            exception = e;
-        } catch (RuntimeException e) {
-            resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-            resultMessage = "FAILURE - Serious problem with the ping servlet. Might have lost repository access: "
-                    + e.getClass().getName() + ": " + e.getMessage();
-            exception = e;
+
+        if (hasCustomMessage()) {
+            resultMessage = "CUSTOM - " + customMessage;
+            resultStatus = HttpServletResponse.SC_SERVICE_UNAVAILABLE;
+        } else {
+            if (writeTestEnabled) {
+                resultMessage = "OK - Repository online, accessible and writable.";
+            }
+            try {
+                doRepositoryChecks();
+            } catch (PingException e) {
+                resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+                resultMessage = e.getMessage();
+                exception = e;
+            } catch (RuntimeException e) {
+                resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+                resultMessage = "FAILURE - Serious problem with the ping servlet. Might have lost repository access: "
+                        + e.getClass().getName() + ": " + e.getMessage();
+                exception = e;
+            }
         }
 
         res.setContentType("text/plain");
@@ -187,6 +202,10 @@ public class PingServlet extends HttpServlet {
             exception.printStackTrace(writer);
         }
         closeHttpSession(req);
+    }
+
+    private boolean hasCustomMessage() {
+        return (customMessage != null);
     }
 
     private void closeHttpSession(HttpServletRequest req) {
