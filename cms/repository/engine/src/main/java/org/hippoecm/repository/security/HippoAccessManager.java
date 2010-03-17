@@ -902,24 +902,30 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                 return id;
             }
         } catch (RepositoryException e) {
-            // the org.apache.jackrabbit.core.state.NoSuchItemStateException is wrapped in a RepositoryException
-            // so if the node is only available in the attic this is expected
+            // fall thru and try zombie hierMgr
             if (log.isDebugEnabled()) {
-                log.debug("Error while looking up node, intentionally ignored: " + npRes.getJCRPath(absPath), e);
+                log.debug("Error while resolving node id of: " + npRes.getJCRPath(absPath), e);
             }
         }
 
-        // try zombie parent, probably a property
-        PropertyId pId = zombieHierMgr.resolvePropertyPath(absPath);
-        if (pId != null) {
-            NodeId id = pId.getParentId();
-            return id;
-        }
-        
-        // not in the normal hierarchy manager try the attic aware as fallback, because it's way slower
-        NodeId id = zombieHierMgr.resolveNodePath(absPath);
-        if (id != null) {
-            return id;
+        try {
+            // try zombie parent, probably a property
+            PropertyId pId = zombieHierMgr.resolvePropertyPath(absPath);
+            if (pId != null) {
+                NodeId id = pId.getParentId();
+                return id;
+            }
+
+            // not in the normal hierarchy manager try the attic aware as fallback, because it's way slower
+            NodeId id = zombieHierMgr.resolveNodePath(absPath);
+            if (id != null) {
+                return id;
+            }
+        } catch (RepositoryException e) {
+            // fall thru and throw a path not found exception
+            if (log.isDebugEnabled()) {
+                log.debug("Error while resolving node id of: " + npRes.getJCRPath(absPath), e);
+            }
         }
         throw new PathNotFoundException("Unable to resolve the node id from the path " + npRes.getJCRPath(absPath));
     }
