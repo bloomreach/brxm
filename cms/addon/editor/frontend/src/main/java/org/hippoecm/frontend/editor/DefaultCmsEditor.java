@@ -52,7 +52,7 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
     }
 
     @Override
-    protected IModel<Node> getEditorModel() {
+    protected IModel<Node> getEditorModel() throws EditorException {
         IModel<Node> model = super.getEditorModel();
         try {
             Node node = model.getObject();
@@ -68,8 +68,7 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
                 return model;
             }
         } catch (RepositoryException ex) {
-            log.warn("cannot obtain proper editable document from handle", ex);
-            return null;
+            throw new EditorException("cannot obtain proper editable document from handle", ex);
         }
     }
 

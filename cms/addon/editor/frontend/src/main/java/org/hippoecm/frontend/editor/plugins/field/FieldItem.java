@@ -36,13 +36,13 @@ import org.hippoecm.frontend.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FieldItemRenderer<C extends IModel> implements IDetachable {
+public class FieldItem<C extends IModel> implements IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(FieldItemRenderer.class);
+    static final Logger log = LoggerFactory.getLogger(FieldItem.class);
 
     private IPluginContext context;
     private IClusterControl clusterControl;
@@ -51,7 +51,7 @@ public class FieldItemRenderer<C extends IModel> implements IDetachable {
     private IObserver validationObserver;
     private IValidationService validationService;
 
-    public FieldItemRenderer(final IPluginContext context, final C model,
+    public FieldItem(final IPluginContext context, final C model,
             final IModel<IValidationResult> validationModel, IClusterControl control, final ModelPathElement element) {
         this.context = context;
 
@@ -125,7 +125,7 @@ public class FieldItemRenderer<C extends IModel> implements IDetachable {
         return validationService != null;
     }
 
-    boolean isValid() {
+    public boolean isValid() {
         if (filteredValidationModel != null && filteredValidationModel.getObject() != null) {
             return filteredValidationModel.getObject().isValid();
         }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,20 +32,20 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ViewerPlugin extends RenderPlugin {
+public class ComparePlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(ViewerPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(ComparePlugin.class);
 
     private ModelReference modelService;
     private IClusterControl cluster;
     private String engineId;
     private ITemplateEngine engine;
 
-    public ViewerPlugin(IPluginContext context, IPluginConfig properties) {
+    public ComparePlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
 
         TemplateEngineFactory factory = new TemplateEngineFactory(null);
@@ -81,11 +81,12 @@ public class ViewerPlugin extends RenderPlugin {
                 ITypeDescriptor type = engine.getType(model);
                 IPluginContext context = getPluginContext();
 
-                IClusterConfig template = engine.getTemplate(type, IEditor.Mode.VIEW);
+                IClusterConfig template = engine.getTemplate(type, IEditor.Mode.COMPARE);
                 IPluginConfig parameters = new JavaPluginConfig();
                 parameters.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
                 parameters.put(ITemplateEngine.ENGINE, engineId);
-                parameters.put(ITemplateEngine.MODE, "view");
+                parameters.put(ITemplateEngine.MODE, "compare");
+                parameters.put("model.compareTo", getPluginConfig().get("model.compareTo"));
 
                 cluster = context.newCluster(template, parameters);
                 String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);

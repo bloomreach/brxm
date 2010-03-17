@@ -28,7 +28,24 @@ public interface IEditor<T> extends IClusterable {
     final static String SVN_ID = "$Id$";
 
     enum Mode {
-        VIEW, EDIT
+        VIEW, EDIT, COMPARE;
+
+        public static Mode fromString(String mode) {
+            if ("view".equals(mode)) {
+                return VIEW;
+            } else if ("edit".equals(mode)) {
+                return EDIT;
+            } else if ("compare".equals(mode)) {
+                return COMPARE;
+            }
+            throw new IllegalArgumentException("Unknown mode " + mode);
+        }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+        
     }
 
     Mode getMode();

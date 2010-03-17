@@ -20,24 +20,32 @@ import java.util.List;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 
 public interface ITemplateEngine extends IClusterable {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * The configuration key to use when locating the template engine service.
+     */
     String ENGINE = "engine";
 
     String TEMPLATE = "template";
 
     String MODE = "mode";
 
+    @Deprecated
     String EDIT_MODE = "edit";
 
     ITypeDescriptor getType(String type) throws TemplateEngineException;
 
     ITypeDescriptor getType(IModel<?> model) throws TemplateEngineException;
 
+    @Deprecated
     IClusterConfig getTemplate(ITypeDescriptor type, String mode) throws TemplateEngineException;
+
+    IClusterConfig getTemplate(ITypeDescriptor type, IEditor.Mode mode) throws TemplateEngineException;
 
     IModel<?> getPrototype(ITypeDescriptor type) throws TemplateEngineException;
 

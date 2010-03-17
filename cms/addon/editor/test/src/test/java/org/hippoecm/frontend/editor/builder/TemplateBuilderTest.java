@@ -46,6 +46,7 @@ import org.hippoecm.frontend.plugins.yui.layout.PageLayoutBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -332,7 +333,7 @@ public class TemplateBuilderTest extends PluginTest {
         ITemplateEngine engine = context.getService("service.engine", ITemplateEngine.class);
 
         ITypeDescriptor type = engine.getType(nodeModel);
-        IClusterConfig template = engine.getTemplate(type, "edit");
+        IClusterConfig template = engine.getTemplate(type, IEditor.Mode.EDIT);
         JavaPluginConfig parameters = new JavaPluginConfig();
         parameters.put("wicket.id", "service.root");
         parameters.put("wicket.model", "service.model");
@@ -368,7 +369,7 @@ public class TemplateBuilderTest extends PluginTest {
         ITemplateEngine engine = context.getService("service.engine", ITemplateEngine.class);
 
         ITypeDescriptor type = engine.getType(nodeModel);
-        IClusterConfig template = engine.getTemplate(type, "edit");
+        IClusterConfig template = engine.getTemplate(type, IEditor.Mode.EDIT);
         JavaPluginConfig parameters = new JavaPluginConfig();
         parameters.put("wicket.id", "service.root");
         parameters.put("wicket.model", "service.model");

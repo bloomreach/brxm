@@ -31,6 +31,7 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -111,6 +112,10 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
         }
     }
 
+    public IClusterConfig getTemplate(ITypeDescriptor type, Mode mode) throws TemplateEngineException {
+        return getTemplate(type, mode.toString());
+    }
+    
     public IModel getPrototype(ITypeDescriptor type) {
         return prototypeStore.getPrototype(type.getName(), false);
     }
@@ -129,9 +134,7 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
         if (prototypeStore instanceof IDetachable) {
             ((IDetachable) prototypeStore).detach();
         }
-        if (typeLocator instanceof IDetachable) {
-            ((IDetachable) typeLocator).detach();
-        }
+        typeLocator.detach();
         editableTypes = null;
     }
 

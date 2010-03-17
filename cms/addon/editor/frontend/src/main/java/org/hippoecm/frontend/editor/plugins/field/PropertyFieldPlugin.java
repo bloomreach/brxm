@@ -25,6 +25,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.AbstractProvider;
@@ -78,9 +79,9 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
         add(createAddLink());
     }
 
-    private JcrPropertyModel newPropertyModel() {
+    private JcrPropertyModel newPropertyModel(JcrNodeModel model) {
         IFieldDescriptor field = getFieldHelper().getField();
-        JcrItemModel itemModel = new JcrItemModel(((JcrNodeModel) getDefaultModel()).getItemModel().getPath() + "/"
+        JcrItemModel itemModel = new JcrItemModel(model.getItemModel().getPath() + "/"
                 + field.getPath());
         return new JcrPropertyModel(itemModel);
     }
@@ -88,7 +89,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
     protected void subscribe() {
         IFieldDescriptor field = getFieldHelper().getField();
         if (!field.getPath().equals("*")) {
-            propertyModel = newPropertyModel();
+            propertyModel = newPropertyModel((JcrNodeModel) getDefaultModel());
             nrValues = propertyModel.size();
             getPluginContext().registerService(propertyObserver = new IObserver<JcrPropertyModel>() {
                 private static final long serialVersionUID = 1L;
@@ -122,7 +123,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
     protected AbstractProvider<JcrPropertyValueModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             IModel nodeModel) {
         if (!descriptor.getPath().equals("*")) {
-            return new PropertyValueProvider(descriptor, type, newPropertyModel().getItemModel());
+            return new PropertyValueProvider(descriptor, type, newPropertyModel((JcrNodeModel) nodeModel).getItemModel());
         }
         return null;
     }
@@ -156,14 +157,18 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
     }
 
     @Override
-    protected void onAddRenderService(Item item, IRenderService renderer) {
-        super.onAddRenderService(item, renderer);
+    protected void populateViewItem(Item<IRenderService> item) {
+        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
+        item.add(fragment);
+    }
 
-        final JcrPropertyValueModel model = getController().findItemRenderer(renderer).getModel();
+    @Override
+    protected void populateEditItem(Item item, final JcrPropertyValueModel model) {
+        Fragment fragment = new TransparentFragment("fragment", "edit-fragment", this);
 
         WebMarkupContainer controls = new WebMarkupContainer("controls");
         controls.setVisible(canRemoveItem() || canReorderItems());
-        item.add(controls);
+        fragment.add(controls);
 
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
@@ -209,6 +214,14 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
         }
         downLink.setEnabled(!isLast);
         controls.add(downLink);
+
+        item.add(fragment);
+    }
+
+    @Override
+    protected void populateCompareItem(Item<IRenderService> item) {
+        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
+        item.add(fragment);
     }
 
     // privates

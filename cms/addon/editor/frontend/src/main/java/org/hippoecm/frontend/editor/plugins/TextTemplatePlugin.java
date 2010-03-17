@@ -17,9 +17,9 @@ package org.hippoecm.frontend.editor.plugins;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.slf4j.Logger;
@@ -37,8 +37,8 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
         super(context, config);
 
         IModel<String> valueModel = getModel();
-        String mode = config.getString("mode", "view");
-        if (ITemplateEngine.EDIT_MODE.equals(mode)) {
+        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
+        if (IEditor.Mode.EDIT == mode) {
             IModel<String> encodedStringModel  = new EncodedStringModel(valueModel);
             TextAreaWidget widget = new TextAreaWidget("value", encodedStringModel);
             if (config.getString("rows") != null) {

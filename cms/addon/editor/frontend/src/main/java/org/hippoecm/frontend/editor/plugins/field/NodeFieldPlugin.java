@@ -27,6 +27,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.TemplateEngineException;
@@ -130,13 +131,20 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     }
 
     @Override
-    protected void onAddRenderService(Item item, IRenderService renderer) {
-        final JcrNodeModel model = getController().findItemRenderer(renderer).getModel();
+    protected void populateViewItem(Item<IRenderService> item) {
+        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
+        item.add(fragment);
+    }
+
+    @Override
+    protected void populateEditItem(Item item, final JcrNodeModel model) {
+        Fragment fragment = new TransparentFragment("fragment", "edit-fragment", this);
+
         final int index = item.getIndex();
 
         WebMarkupContainer controls = new WebMarkupContainer("controls");
         controls.setVisible(canRemoveItem() || canReorderItems());
-        item.add(controls);
+        fragment.add(controls);
 
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
@@ -188,6 +196,14 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         boolean isLast = (index == provider.size() - 1);
         downLink.setEnabled(!isLast);
         controls.add(downLink);
+
+        item.add(fragment);
+    }
+
+    @Override
+    protected void populateCompareItem(Item<IRenderService> item) {
+        Fragment fragment = new TransparentFragment("fragment", "view-fragment", this);
+        item.add(fragment);
     }
 
     protected Component createAddLink() {

@@ -33,6 +33,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -160,11 +161,11 @@ public class EditorForm extends Form<Node> {
             try {
                 ITypeDescriptor type = engine.getType(model);
 
-                IClusterConfig template = engine.getTemplate(type, ITemplateEngine.EDIT_MODE);
+                IClusterConfig template = engine.getTemplate(type, IEditor.Mode.EDIT);
                 IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("cluster.options"));
                 parameters.put(RenderService.WICKET_ID, engineId + ".wicket.root");
                 parameters.put(ITemplateEngine.ENGINE, engineId);
-                parameters.put(ITemplateEngine.MODE, ITemplateEngine.EDIT_MODE);
+                parameters.put(ITemplateEngine.MODE, IEditor.Mode.EDIT.toString());
 
                 cluster = context.newCluster(template, parameters);
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,14 +15,18 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.TemplateEngineException;
-import org.hippoecm.frontend.plugin.IClusterControl;
-import org.hippoecm.frontend.service.IEditor;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.panel.Fragment;
 
-public interface ITemplateFactory<C extends IModel> extends IClusterable {
-    final static String SVN_ID = "$Id$";
+public class TransparentFragment extends Fragment {
+    private static final long serialVersionUID = 1L;
 
-    IClusterControl newTemplate(String id, IEditor.Mode mode) throws TemplateEngineException;
+    public TransparentFragment(String id, String markupId, MarkupContainer markupProvider) {
+        super(id, markupId, markupProvider);
+    }
+
+    @Override
+    public boolean isTransparentResolver() {
+        return true;
+    }
 }

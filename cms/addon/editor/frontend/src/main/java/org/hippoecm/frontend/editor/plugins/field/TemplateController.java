@@ -40,20 +40,22 @@ public class TemplateController<C extends IModel> implements IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(TemplateController.class);
 
+    private String itemId;
     private IPluginContext context;
     @SuppressWarnings("unused")
     private IPluginConfig config;
     private ITemplateFactory<C> factory;
     private IModel<IValidationResult> validationModel;
-    private Map<C, FieldItemRenderer<C>> childTemplates;
+    private Map<C, FieldItem<C>> childTemplates;
 
     public TemplateController(IPluginContext context, IPluginConfig config, IModel<IValidationResult> validationModel,
-            ITemplateFactory<C> factory) {
+            ITemplateFactory<C> factory, String itemId) {
         this.context = context;
         this.config = config;
         this.validationModel = validationModel;
         this.factory = factory;
-        childTemplates = new HashMap<C, FieldItemRenderer<C>>();
+        this.itemId = itemId;
+        childTemplates = new HashMap<C, FieldItem<C>>();
     }
 
     public void start(AbstractProvider<C> provider) {
@@ -65,15 +67,15 @@ public class TemplateController<C extends IModel> implements IDetachable {
     }
 
     public void stop() {
-        for (Map.Entry<C, FieldItemRenderer<C>> entry : childTemplates.entrySet()) {
-            FieldItemRenderer<C> renderer = entry.getValue();
+        for (Map.Entry<C, FieldItem<C>> entry : childTemplates.entrySet()) {
+            FieldItem<C> renderer = entry.getValue();
             renderer.destroy();
         }
         childTemplates.clear();
     }
 
-    public FieldItemRenderer<C> findItemRenderer(IRenderService renderer) {
-        for (Map.Entry<C, FieldItemRenderer<C>> entry : childTemplates.entrySet()) {
+    public FieldItem<C> getFieldItem(IRenderService renderer) {
+        for (Map.Entry<C, FieldItem<C>> entry : childTemplates.entrySet()) {
             String renderId = entry.getValue().getRendererId();
             if (renderer == context.getService(renderId, IRenderService.class)) {
                 return entry.getValue();
@@ -84,15 +86,15 @@ public class TemplateController<C extends IModel> implements IDetachable {
 
     private void addModel(final C model, ModelPathElement element) {
         try {
-            IClusterControl control = factory.getTemplate(model);
-            childTemplates.put(model, new FieldItemRenderer<C>(context, model, validationModel, control, element));
+            IClusterControl control = factory.newTemplate(itemId, null);
+            childTemplates.put(model, new FieldItem<C>(context, model, validationModel, control, element));
         } catch (TemplateEngineException ex) {
             log.error("Failed to open editor for new model", ex);
         }
     }
 
     public void detach() {
-        for (Map.Entry<C, FieldItemRenderer<C>> entry : childTemplates.entrySet()) {
+        for (Map.Entry<C, FieldItem<C>> entry : childTemplates.entrySet()) {
             entry.getValue().detach();
         }
     }

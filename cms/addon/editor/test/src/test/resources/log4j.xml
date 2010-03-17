@@ -69,6 +69,12 @@
     <appender-ref ref="root"/>
   </category>
   
+
+  <category additivity="false" name="org.hippoecm.frontend.editor">
+    <level value="info"/>
+    <appender-ref ref="root"/>
+  </category>
+  
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>

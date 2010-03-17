@@ -66,10 +66,7 @@ public class MixinPlugin extends RenderPlugin {
 
         controllers = new HashMap<String, IClusterControl>();
 
-        mode = config.getString(ITemplateEngine.MODE);
-        if (mode == null) {
-            log.error("No edit mode specified");
-        }
+        mode = config.getString(ITemplateEngine.MODE, "view");
 
         ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
 

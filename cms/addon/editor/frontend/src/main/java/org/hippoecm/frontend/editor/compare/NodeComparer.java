@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,16 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.plugins.field;
+package org.hippoecm.frontend.editor.compare;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.TemplateEngineException;
-import org.hippoecm.frontend.plugin.IClusterControl;
-import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 
-public interface ITemplateFactory<C extends IModel> extends IClusterable {
-    final static String SVN_ID = "$Id$";
+public class NodeComparer extends Comparer {
+    private static final long serialVersionUID = 1L;
+    
+    public NodeComparer(ITypeDescriptor type) {
+        super(type);
+        if (!type.isNode()) {
+            throw new RuntimeException("type does not correpond to a node type");
+        }
+    }
 
-    IClusterControl newTemplate(String id, IEditor.Mode mode) throws TemplateEngineException;
+    @Override
+    public boolean areEqual(IModel<?> base, IModel<?> target) {
+        // TODO: implement
+        return false;
+    }
+
 }
