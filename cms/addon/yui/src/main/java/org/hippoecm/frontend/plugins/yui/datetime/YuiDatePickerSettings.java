@@ -16,31 +16,49 @@
 
 package org.hippoecm.frontend.plugins.yui.datetime;
 
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.javascript.BooleanSetting;
-import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
-import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
-import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
+import java.io.Serializable;
 
-public class YuiDatePickerSettings extends YuiObject {
+public class YuiDatePickerSettings implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
-    private final static StringSetting DATE_PATTERN = new StringSetting("datePattern", "d-M-yy");
-    private final static BooleanSetting HIDE_ON_SELECT = new BooleanSetting("hideOnSelect", true);
-    private final static BooleanSetting ALIGN_WITH_ICON = new BooleanSetting("alignWithIcon", true);
-    private final static BooleanSetting FIRE_CHANGE_EVENT = new BooleanSetting("fireChangeEvent", true);
-    
-    protected static final YuiType TYPE = new YuiType(DATE_PATTERN, HIDE_ON_SELECT, ALIGN_WITH_ICON, FIRE_CHANGE_EVENT);
 
-    public YuiDatePickerSettings(IPluginConfig config) {
-        super(TYPE, config);
+    private String datePattern = "d-M-yy";
+    private boolean hideOnSelect = true;
+    private boolean alignWithIcon = true;
+    private boolean fireChangeEvent = true;
+
+    public String getDatePattern() {
+        return datePattern;
     }
-    
-    public void setDatePattern(String pattern) {
-        DATE_PATTERN.set(pattern, this);
+
+    public void setDatePattern(String datePattern) {
+        this.datePattern = datePattern;
+    }
+
+    public boolean isHideOnSelect() {
+        return hideOnSelect;
+    }
+
+    public void setHideOnSelect(boolean hideOnSelect) {
+        this.hideOnSelect = hideOnSelect;
+    }
+
+    public boolean isAlignWithIcon() {
+        return alignWithIcon;
+    }
+
+    public void setAlignWithIcon(boolean alignWithIcon) {
+        this.alignWithIcon = alignWithIcon;
+    }
+
+    public boolean isFireChangeEvent() {
+        return fireChangeEvent;
+    }
+
+    public void setFireChangeEvent(boolean fireChangeEvent) {
+        this.fireChangeEvent = fireChangeEvent;
     }
 
 }
