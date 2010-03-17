@@ -40,6 +40,7 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -69,6 +70,7 @@ import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.HeaderContributorHelper;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -95,7 +97,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private final PackagedTextTemplate XINHA_INIT_GLOBALS = new PackagedTextTemplate(AbstractXinhaPlugin.class,
             "xinha_init.js");
 
-    private final String mode;
+    private final IEditor.Mode mode;
     private XinhaTextArea editor;
     private Configuration configuration;
 
@@ -126,8 +128,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         configuration.addProperty("previewTooltipText", getString("preview.tooltip", null, "Click to edit"));
         configuration.setName(getMarkupId());
 
-        mode = config.getString("mode", "view");
-        if (mode.equals("edit")) {
+        mode = IEditor.Mode.fromString(config.getString("mode", "view"));
+        if (IEditor.Mode.EDIT == mode) {
             add(new EditorManagerBehavior());
         }
         load();
@@ -137,7 +139,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     }
 
     private void load() {
-        addOrReplace("edit".equals(mode) ? configuration.getEditorStarted() ? createEditor("fragment")
+        addOrReplace(IEditor.Mode.EDIT == mode ? configuration.getEditorStarted() ? createEditor("fragment")
                 : createEditablePreview("fragment") : createPreview("fragment"));
     }
 
@@ -147,7 +149,13 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         }
 
         Fragment fragment = new Fragment(fragmentId, "view", this);
-        fragment.add(new WebMarkupContainer("value", getValueModel()) {
+        IModel<String> model;
+        if (IEditor.Mode.COMPARE == mode) {
+            model = new DiffModel(getBaseModel(), getValueModel());
+        } else {
+            model = getValueModel();
+        }
+        fragment.add(new WebMarkupContainer("value", model) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -162,6 +170,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
             }
         });
+        if (IEditor.Mode.COMPARE == mode) {
+            fragment.add(CSSPackageResource.getHeaderContribution(AbstractXinhaPlugin.class, "diff.css"));
+        }
         return fragment;
     }
 
@@ -269,6 +280,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     }
 
     protected abstract JcrPropertyValueModel getValueModel();
+
+    protected abstract IModel<String> getBaseModel();
 
     /**
      * Callback urls aren't known at construction so set them here
