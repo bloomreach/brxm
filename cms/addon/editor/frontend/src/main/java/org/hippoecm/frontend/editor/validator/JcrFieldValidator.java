@@ -122,7 +122,7 @@ public class JcrFieldValidator implements ITypeValidator {
                             addTypeViolations(violations, childModel, typeViolations);
                         }
                     }
-                } else {
+                } else if (htmlValidator != null || nonEmpty || escaped) {
                     String value = (String) childModel.getObject();
                     if (htmlValidator != null) {
                         for (String key : htmlValidator.validateNonEmpty(value)) {
