@@ -48,7 +48,7 @@
 
   <properties>
     <!-- Test dependencies  -->
-    <easymock.version>1.1</easymock.version>
+    <easymock.version>2.4</easymock.version>
     <selenium.version>0.9.2</selenium.version>
     <atomikos.version>3.1.4</atomikos.version>
 
@@ -831,6 +831,14 @@
         <artifactId>selenium-java-client-driver</artifactId>
         <version>${selenium.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymockclassextension</artifactId>
+        <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
