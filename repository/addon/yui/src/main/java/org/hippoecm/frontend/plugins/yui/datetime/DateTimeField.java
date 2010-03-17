@@ -27,8 +27,18 @@ import org.apache.wicket.util.convert.IConverter;
 import org.apache.wicket.util.convert.converters.DateConverter;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.util.MappingException;
+import org.hippoecm.frontend.util.PluginConfigMapper;
 import org.joda.time.DateTime;
 
+/**
+ * Semi-fork of YUI DateTimeField from Wicket extensions. Replaces Wicket extensions YUI behaviors with a {@link YuiDatePicker}
+ * so it fit's in the Hippo ECM YUI framework.
+ * 
+ * DatePicker can be configured using a frontend:pluginconfig node with name <code>datepicker</code>.
+ * 
+ * @see YuiDatePickerSettings
+ */
 public class DateTimeField extends org.apache.wicket.extensions.yui.calendar.DateTimeField {
     private static final long serialVersionUID = 1L;
     
@@ -43,8 +53,17 @@ public class DateTimeField extends org.apache.wicket.extensions.yui.calendar.Dat
         for(IBehavior b : dateField.getBehaviors()) {
             dateField.remove(b);
         }
-        YuiDatePickerSettings settings = new YuiDatePickerSettings(config);
+
+        YuiDatePickerSettings settings = new YuiDatePickerSettings();
         settings.setDatePattern(getDatePattern());
+        
+        if(config.containsKey("datepicker")) {
+            try {
+                PluginConfigMapper.populate(settings, config.getPluginConfig("datepicker"));
+            } catch (MappingException e) {
+                throw new RuntimeException(e);
+            }
+        }
         dateField.add(new YuiDatePicker(settings));
     }
     
