@@ -114,14 +114,26 @@ public class EditorManagerTest extends XinhaTest {
         }
     }
 
+    @Test
+    public void testAutoSaveProduction() throws Exception {
+        setDeployed(true);
+        testAutoSave();
+    }
+
+    @Test
+    public void testAutoSaveDevelopment() throws Exception {
+        setDeployed(false);
+        testAutoSave();
+    }
+
     /**
      * - open a textarea
      * - click to edit
      * - set text
      * - click link outside text
      * =&gt; text should have been saved
+     * @throws Exception 
      */
-    @Test
     public void testAutoSave() throws Exception {
         setUp(Page.class);
 
