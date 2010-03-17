@@ -17,11 +17,11 @@ package org.hippoecm.frontend.editor.plugins;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.properties.StringConverter;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
@@ -38,9 +38,9 @@ public class ValueTemplatePlugin extends RenderPlugin<String> {
     public ValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        String mode = config.getString("mode", "view");
         StringConverter stringModel = new StringConverter((JcrPropertyValueModel) getModel());
-        if (ITemplateEngine.EDIT_MODE.equals(mode)) {
+        IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode", "view"));
+        if (IEditor.Mode.EDIT == mode) {
             IModel<String> encodedStringModel  = new EncodedStringModel(stringModel);
             TextFieldWidget widget = new TextFieldWidget("value", encodedStringModel);
             if (config.getString("size") != null) {

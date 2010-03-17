@@ -29,7 +29,11 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
+import org.hippoecm.frontend.editor.compare.Comparer;
+import org.hippoecm.frontend.editor.compare.NodeComparer;
+import org.hippoecm.frontend.editor.compare.ValueComparer;
 import org.hippoecm.frontend.model.AbstractProvider;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.Observer;
@@ -39,6 +43,7 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -89,16 +94,21 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     public static final String FIELD = "field";
     public static final String TYPE = "type";
 
-    protected String mode;
+    protected IEditor.Mode mode;
+    private boolean restartTemplates = true;
+
+    // view and edit modes
     protected AbstractProvider<C> provider;
-
     private FieldPluginHelper helper;
-    private TemplateController<C> controller;
-
+    private TemplateController<C> templateController;
     private boolean managedValidation = false;
     private Map<Object, ValidationFilter> listeners = new HashMap<Object, ValidationFilter>();
 
-    private boolean restartTemplates = true;
+    // compare mode
+    private IModel<P> compareTo;
+    protected AbstractProvider<C> oldProvider;
+    protected AbstractProvider<C> newProvider;
+    private ComparingController<C> comparingController;
 
     protected AbstractFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -117,57 +127,74 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             }, IObserver.class.getName());
 
         }
-        controller = new TemplateController<C>(context, config, helper.getValidationModel(), this);
+        mode = IEditor.Mode.fromString(config.getString(ITemplateEngine.MODE, "view"));
+        if (IEditor.Mode.COMPARE == mode) {
+            IModelReference<P> compareToModelRef = context.getService(config.getString("model.compareTo"),
+                    IModelReference.class);
+            if (compareToModelRef != null) {
+                // TODO: add observer
+                compareTo = compareToModelRef.getModel();
+            }
 
-        mode = config.getString(ITemplateEngine.MODE);
-        if (mode == null) {
-            log.error("No edit mode specified");
-        }
+            Comparer comparer;
+            ITypeDescriptor type = helper.getField().getTypeDescriptor();
+            if (type.isNode()) {
+                comparer = new NodeComparer(type);
+            } else {
+                comparer = new ValueComparer(type);
+            }
 
-        provider = getProvider();
+            comparingController = new ComparingController<C>(context, config, this, comparer, getItemId());
 
-        IFieldDescriptor field = helper.getField();
-        if (field != null && !doesTemplateSupportValidation()) {
-            final ValidationFilter holder = new ValidationFilter() {
-                private static final long serialVersionUID = 1L;
+        } else {
+            templateController = new TemplateController<C>(context, config, helper.getValidationModel(), this,
+                    getItemId());
 
-                @Override
-                public void onValidation(IValidationResult validation) {
-                    boolean valid = true;
-                    if (!validation.isValid()) {
-                        IFieldDescriptor field = getFieldHelper().getField();
-                        for (Violation violation : validation.getViolations()) {
-                            Set<ModelPath> paths = violation.getDependentPaths();
-                            for (ModelPath path : paths) {
-                                if (path.getElements().length > 0) {
-                                    ModelPathElement first = path.getElements()[0];
-                                    if (first.getField().equals(field)) {
-                                        valid = false;
+            provider = getProvider(getModel());
+
+            IFieldDescriptor field = helper.getField();
+            if (field != null && !doesTemplateSupportValidation()) {
+                final ValidationFilter holder = new ValidationFilter() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void onValidation(IValidationResult validation) {
+                        boolean valid = true;
+                        if (!validation.isValid()) {
+                            IFieldDescriptor field = getFieldHelper().getField();
+                            for (Violation violation : validation.getViolations()) {
+                                Set<ModelPath> paths = violation.getDependentPaths();
+                                for (ModelPath path : paths) {
+                                    if (path.getElements().length > 0) {
+                                        ModelPathElement first = path.getElements()[0];
+                                        if (first.getField().equals(field)) {
+                                            valid = false;
+                                        }
+                                        break;
                                     }
+                                }
+                                if (!valid) {
                                     break;
                                 }
                             }
-                            if (!valid) {
-                                break;
-                            }
+                        }
+                        if (valid != isValid()) {
+                            redraw();
+                            setValid(valid);
                         }
                     }
-                    if (valid != isValid()) {
-                        redraw();
-                        setValid(valid);
-                    }
+
+                };
+                IModel<IValidationResult> validationModel = helper.getValidationModel();
+                if (validationModel != null && validationModel.getObject() != null) {
+                    holder.setValid(validationModel.getObject().isValid());
                 }
+                addValidationFilter(this, holder);
 
-            };
-            IModel<IValidationResult> validationModel = helper.getValidationModel();
-            if (validationModel != null && validationModel.getObject() != null) {
-                holder.setValid(validationModel.getObject().isValid());
-            }
-            addValidationFilter(this, holder);
-
-            managedValidation = true;
-            if (!field.isMultiple()) {
-                add(new CssClassAppender(holder));
+                managedValidation = true;
+                if (!field.isMultiple()) {
+                    add(new CssClassAppender(holder));
+                }
             }
         }
     }
@@ -184,7 +211,12 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             provider.detach();
         }
         helper.detach();
-        controller.detach();
+        if (templateController != null) {
+            templateController.detach();
+        }
+        if (comparingController != null) {
+            comparingController.detach();
+        }
         super.onDetach();
     }
 
@@ -193,40 +225,49 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             listener.setValid(true);
         }
     }
-    
+
     @Override
     protected void redraw() {
         super.redraw();
         if (!restartTemplates) {
             restartTemplates = true;
-            controller.stop();
+            if (templateController != null) {
+                templateController.stop();
+            } else {
+                comparingController.stop();
+            }
         }
     }
 
     @Override
     protected void onBeforeRender() {
         if (restartTemplates) {
-            provider = getProvider();
-            if (provider != null) {
-                setVisible(true);
-                controller.start(provider);
-            } else {
-                setVisible(false);
+            if (templateController != null) {
+                provider = getProvider(getModel());
+                if (provider != null) {
+                    setVisible(true);
+                    templateController.start(provider);
+                } else {
+                    setVisible(false);
+                }
+            } else if (comparingController != null) {
+                oldProvider = getProvider(compareTo);
+                newProvider = getProvider(getModel());
+                comparingController.start(oldProvider, newProvider, helper.getField().getTypeDescriptor());
             }
             restartTemplates = false;
         }
         super.onBeforeRender();
     }
 
-    private AbstractProvider<C> getProvider() {
+    private AbstractProvider<C> getProvider(IModel<P> model) {
         IFieldDescriptor field = helper.getField();
         if (field != null) {
             ITemplateEngine engine = getTemplateEngine();
             if (engine != null) {
-                IModel<P> model = getModel();
                 ITypeDescriptor subType = field.getTypeDescriptor();
                 AbstractProvider<C> provider = newProvider(field, subType, model);
-                if (ITemplateEngine.EDIT_MODE.equals(mode) && provider.size() == 0) {
+                if (IEditor.Mode.EDIT == mode && provider.size() == 0) {
                     provider.addNew();
                 }
                 return provider;
@@ -251,13 +292,12 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     protected boolean canAddItem() {
         IFieldDescriptor field = getFieldHelper().getField();
-        return ITemplateEngine.EDIT_MODE.equals(mode) && (field != null)
-                && (field.isMultiple() || provider.size() == 0);
+        return IEditor.Mode.EDIT == mode && (field != null) && (field.isMultiple() || provider.size() == 0);
     }
 
     protected boolean canRemoveItem() {
         IFieldDescriptor field = helper.getField();
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null))
+        if (IEditor.Mode.EDIT != mode || (field == null))
             return false;
         if (!field.isMultiple()) {
             return false;
@@ -270,7 +310,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     protected boolean canReorderItems() {
         IFieldDescriptor field = helper.getField();
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || !field.isMultiple() || !field.isOrdered()) {
+        if (IEditor.Mode.EDIT != mode || field == null || !field.isMultiple() || !field.isOrdered()) {
             return false;
         }
         return true;
@@ -298,39 +338,60 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     }
 
     @Override
-    protected void onAddRenderService(final org.apache.wicket.markup.repeater.Item<IRenderService> item,
+    protected final void onAddRenderService(final org.apache.wicket.markup.repeater.Item<IRenderService> item,
             IRenderService renderer) {
         super.onAddRenderService(item, renderer);
 
-        final FieldItemRenderer<C> itemRenderer = getController().findItemRenderer(renderer);
-        if (managedValidation && getFieldHelper().getField().isMultiple()) {
-            item.setOutputMarkupId(true);
-            ValidationFilter listener = new ValidationFilter() {
-                private static final long serialVersionUID = 1L;
+        switch (mode) {
+        case EDIT:
+            final FieldItem itemRenderer = templateController.getFieldItem(renderer);
+            if (managedValidation && getFieldHelper().getField().isMultiple()) {
+                item.setOutputMarkupId(true);
+                ValidationFilter listener = new ValidationFilter() {
+                    private static final long serialVersionUID = 1L;
 
-                @Override
-                public void onValidation(IValidationResult result) {
-                    boolean valid = itemRenderer.isValid();
-                    if (valid != this.isValid()) {
-                        AjaxRequestTarget target = AjaxRequestTarget.get();
-                        if (target != null) {
-                            target.addComponent(item);
+                    @Override
+                    public void onValidation(IValidationResult result) {
+                        boolean valid = itemRenderer.isValid();
+                        if (valid != this.isValid()) {
+                            AjaxRequestTarget target = AjaxRequestTarget.get();
+                            if (target != null) {
+                                target.addComponent(item);
+                            }
+                            setValid(valid);
                         }
-                        setValid(valid);
                     }
-                }
-            };
-            listener.setValid(itemRenderer.isValid());
-            addValidationFilter(item, listener);
-            item.add(new CssClassAppender(listener));
+                };
+                listener.setValid(itemRenderer.isValid());
+                addValidationFilter(item, listener);
+                item.add(new CssClassAppender(listener));
+            }
+            C model = (C) itemRenderer.getModel();
+            populateEditItem(item, model);
+            break;
+        case COMPARE:
+            populateCompareItem(item);
+            break;
+        case VIEW:
+            populateViewItem(item);
+            break;
         }
     }
 
     @Override
-    protected void onRemoveRenderService(org.apache.wicket.markup.repeater.Item<IRenderService> item,
+    protected final void onRemoveRenderService(org.apache.wicket.markup.repeater.Item<IRenderService> item,
             IRenderService renderer) {
         removeValidationFilter(item);
         super.onRemoveRenderService(item, renderer);
+    }
+
+    protected void populateEditItem(org.apache.wicket.markup.repeater.Item<IRenderService> item, C model) {
+    }
+
+    protected void populateViewItem(org.apache.wicket.markup.repeater.Item<IRenderService> item) {
+    }
+
+    protected void populateCompareItem(org.apache.wicket.markup.repeater.Item<IRenderService> item) {
     }
 
     protected FieldPluginHelper getFieldHelper() {
@@ -339,13 +400,12 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     protected IModel<String> getCaptionModel() {
         IFieldDescriptor field = getFieldHelper().getField();
-        String caption = getPluginConfig().getString("caption", "unknown");
+        String caption = getPluginConfig().getString("caption");
         String captionKey = field != null ? field.getName() : caption;
+        if (caption == null && field != null && field.getName().length() >= 1) {
+            caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+        }
         return new StringResourceModel(captionKey, this, null, caption);
-    }
-
-    protected TemplateController<C> getController() {
-        return controller;
     }
 
     protected ITemplateEngine getTemplateEngine() {
@@ -364,15 +424,27 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         }
     }
 
-    public IClusterControl getTemplate(C model) throws TemplateEngineException {
+    public IClusterControl newTemplate(String id, IEditor.Mode mode) throws TemplateEngineException {
+        if (mode == null) {
+            mode = this.mode;
+        }
         ITemplateEngine engine = getTemplateEngine();
         IFieldDescriptor field = helper.getField();
-        IClusterConfig template = engine.getTemplate(field.getTypeDescriptor(), mode);
+        IClusterConfig template;
+        try {
+            template = engine.getTemplate(field.getTypeDescriptor(), mode);
+        } catch (TemplateEngineException ex) {
+            if (IEditor.Mode.COMPARE == mode) {
+                template = engine.getTemplate(field.getTypeDescriptor(), IEditor.Mode.VIEW);
+            } else {
+                throw ex;
+            }
+        }
 
         IPluginConfig parameters = new JavaPluginConfig(getPluginConfig().getPluginConfig("cluster.options"));
         parameters.put(ITemplateEngine.ENGINE, getPluginConfig().getString(ITemplateEngine.ENGINE));
-        parameters.put(RenderService.WICKET_ID, getItemId());
-        parameters.put(ITemplateEngine.MODE, mode);
+        parameters.put(RenderService.WICKET_ID, id);
+        parameters.put(ITemplateEngine.MODE, mode.toString());
 
         return getPluginContext().newCluster(template, parameters);
     }

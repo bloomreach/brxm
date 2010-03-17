@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,16 +13,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.plugins.field;
+package org.hippoecm.frontend.editor.compare;
 
-import org.apache.wicket.IClusterable;
+import java.io.Serializable;
+
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.TemplateEngineException;
-import org.hippoecm.frontend.plugin.IClusterControl;
-import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 
-public interface ITemplateFactory<C extends IModel> extends IClusterable {
-    final static String SVN_ID = "$Id$";
+/**
+ * Compares two models for equality based on their content.
+ */
+public abstract class Comparer implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    IClusterControl newTemplate(String id, IEditor.Mode mode) throws TemplateEngineException;
+    ITypeDescriptor type;
+    
+    protected Comparer(ITypeDescriptor type) {
+        this.type = type;
+    }
+    
+    protected ITypeDescriptor getType() {
+        return type;
+    }
+
+    public abstract boolean areEqual(IModel<?> base, IModel<?> target);
+
 }

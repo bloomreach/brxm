@@ -390,12 +390,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:property sv:name="cluster.edit.name" sv:type="String">
-      <sv:value>cms-editor</sv:value>
-    </sv:property>
-    <sv:property sv:name="cluster.preview.name" sv:type="String">
-      <sv:value>cms-preview</sv:value>
-    </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
     </sv:property>
@@ -423,6 +417,23 @@
       </sv:property>
     </sv:node>
     <sv:node sv:name="cluster.preview.options">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="browser.id" sv:type="String">
+        <sv:value>service.browse</sv:value>
+      </sv:property>
+      <sv:property sv:name="editor.id" sv:type="String">
+        <sv:value>service.edit</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.behavior" sv:type="String">
+        <sv:value>service.behavior.editor.tabs.center</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.editor.tab</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="cluster.compare.options">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>

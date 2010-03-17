@@ -37,6 +37,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -137,7 +138,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
             if (descriptor != null) {
                 ITemplateEngine engine = getTemplateEngine();
                 try {
-                    IClusterConfig target = engine.getTemplate(descriptor.getTypeDescriptor(), "edit");
+                    IClusterConfig target = engine.getTemplate(descriptor.getTypeDescriptor(), IEditor.Mode.EDIT);
                     panel = new TemplateParameterEditor(TEMPLATE_PARAMETER_EDITOR, getClusterParameters(edit), target,
                             edit);
                 } catch (TemplateEngineException e) {

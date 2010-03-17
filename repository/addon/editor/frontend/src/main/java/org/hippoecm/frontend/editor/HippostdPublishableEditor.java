@@ -65,6 +65,13 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
 
+    static class WorkflowState {
+        IModel<Node> draft;
+        IModel<Node> unpublished;
+        IModel<Node> published;
+        boolean isHolder;
+    }
+
     private IModel<Node> editorModel;
 
     HippostdPublishableEditor(IEditorContext manager, IPluginContext context, IPluginConfig config, IModel<Node> model)
@@ -73,16 +80,36 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
     }
 
     @Override
-    protected IModel<Node> getEditorModel() {
+    protected IModel<Node> getEditorModel() throws EditorException {
+        WorkflowState state = getWorkflowState(super.getEditorModel());
         switch (getMode()) {
         case EDIT:
-            return getDraftModel(super.getEditorModel());
+            if (state.draft == null || !state.isHolder) {
+                throw new EditorException("No draft present for editing");
+            }
+            return state.draft;
         case VIEW:
+            if (state.unpublished != null) {
+                return state.unpublished;
+            }
+            return state.published;
         default:
-            return getPreviewModel(super.getEditorModel());
+            if (state.unpublished == null || state.published == null) {
+                throw new EditorException("Can only compare when both unpublished and published are present");
+            }
+            return state.unpublished;
         }
     }
 
+    @Override
+    protected IModel<Node> getBaseModel() throws EditorException {
+        if (getMode() != Mode.COMPARE) {
+            return super.getBaseModel();
+        }
+        WorkflowState state = getWorkflowState(super.getEditorModel());
+        return state.published;
+    }
+    
     @Override
     public void setMode(Mode mode) throws EditorException {
         IModel<Node> editorModel = getEditorModel();
@@ -98,15 +125,17 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
                     postClose(contexts);
 
                     try {
-                        switch (mode) {
-                        case EDIT:
-                            ((EditableWorkflow) workflow).obtainEditableInstance();
-                            break;
-                        case VIEW:
-                            ((EditableWorkflow) workflow).commitEditableInstance();
-                            break;
+                        if (mode == Mode.EDIT || getMode() == Mode.EDIT) {
+                            switch (mode) {
+                            case EDIT:
+                                ((EditableWorkflow) workflow).obtainEditableInstance();
+                                break;
+                            case VIEW:
+                            case COMPARE:
+                                ((EditableWorkflow) workflow).commitEditableInstance();
+                                break;
+                            }
                         }
-
                         super.setMode(mode);
 
                     } finally {
@@ -169,85 +198,55 @@ class HippostdPublishableEditor extends AbstractCmsEditor<Node> {
     }
 
     static Mode getMode(IModel<Node> nodeModel) throws EditorException {
+        WorkflowState wfState = getWorkflowState(nodeModel);
+
         // select draft if it exists
-        IModel<Node> draftDocument = getDraftModel(nodeModel);
-        if (draftDocument != null) {
+        if (wfState.draft != null && wfState.isHolder) {
             return Mode.EDIT;
         }
 
         // show preview
-        IModel<Node> previewDocument = getPreviewModel(nodeModel);
-        if (previewDocument != null) {
-            return Mode.VIEW;
+        if (wfState.unpublished == null && wfState.published == null) {
+            throw new EditorException("unable to find draft or unpublished variants");
         }
 
-        throw new EditorException("unable to find draft or unpublished variants");
+        if (wfState.unpublished != null && wfState.published != null) {
+            return Mode.COMPARE;
+        }
+        return Mode.VIEW;
     }
 
-    static IModel<Node> getPreviewModel(IModel<Node> handle) {
+    static WorkflowState getWorkflowState(IModel<Node> handle) throws EditorException {
+        WorkflowState wfState = new WorkflowState();
         try {
+            String user = ((UserSession) Session.get()).getJcrSession().getUserID();
             Node handleNode = handle.getObject();
-            Node nostate = null;
-            Node published = null;
-            Node draft = null;
-            if (handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
-                    Node child = iter.nextNode();
-                    if (child.getName().equals(handleNode.getName())) {
-                        if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
-                            String state = child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                            if (state.equals(HippoStdNodeType.UNPUBLISHED)) {
-                                return new JcrNodeModel(child);
-                            } else if (state.equals(HippoStdNodeType.PUBLISHED)) {
-                                published = child;
-                            } else if (state.equals(HippoStdNodeType.DRAFT)) {
-                                draft = child;
+            if (!handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                throw new EditorException("Invalid node, not of type " + HippoNodeType.NT_HANDLE);
+            }
+            for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
+                Node child = iter.nextNode();
+                if (child.getName().equals(handleNode.getName())) {
+                    if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
+                        String state = child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                        if (state.equals(HippoStdNodeType.UNPUBLISHED)) {
+                            wfState.unpublished = new JcrNodeModel(child);
+                        } else if (state.equals(HippoStdNodeType.PUBLISHED)) {
+                            wfState.published = new JcrNodeModel(child);
+                        } else if (state.equals(HippoStdNodeType.DRAFT)) {
+                            wfState.draft = new JcrNodeModel(child);
+                            if (!child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
+                                    || child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
+                                wfState.isHolder = true;
                             }
-                        } else {
-                            nostate = child;
                         }
                     }
                 }
-                if (published != null) {
-                    return new JcrNodeModel(published);
-                } else if (draft != null) {
-                    return new JcrNodeModel(draft);
-                } else if (nostate != null) {
-                    return new JcrNodeModel(nostate);
-                }
-            } else {
-                return handle;
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            throw new EditorException("Could not determine workflow state", ex);
         }
-        return null;
-    }
-
-    static IModel<Node> getDraftModel(IModel<Node> handle) {
-        String user = ((UserSession) Session.get()).getJcrSession().getUserID();
-        try {
-            Node handleNode = handle.getObject();
-            if (handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
-                    Node child = iter.nextNode();
-                    if (child.getName().equals(handleNode.getName())) {
-                        if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)
-                                && child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString().equals(
-                                        HippoStdNodeType.DRAFT)
-                                && (!child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER) || child.getProperty(
-                                        HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user))) {
-                            return new JcrNodeModel(child);
-                        }
-                    }
-                }
-            } else {
-                log.warn("Editor model is not a handle");
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return null;
+        return wfState;
     }
 
     @Override

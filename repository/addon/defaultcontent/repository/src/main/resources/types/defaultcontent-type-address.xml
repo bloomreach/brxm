@@ -93,6 +93,7 @@
       <sv:property sv:name="frontend:references" sv:type="String">
         <sv:value>engine</sv:value>
         <sv:value>wicket.model</sv:value>
+        <sv:value>model.compareTo</sv:value>
         <sv:value>validator.id</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:services" sv:type="String">

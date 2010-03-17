@@ -64,7 +64,7 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
         protected String getServiceId() {
             return getPluginContext().getReference(this).getServiceId();
         }
-        
+
         void dispose() {
             ((ServiceContext) getPluginContext()).stop();
         }
@@ -131,6 +131,7 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
     private IClusterControl cluster;
     private EditorWrapper renderer;
     private ModelReference<T> modelService;
+    private ModelReference<T> baseService;
     private IFocusListener focusListener;
     private String editorId;
     private String wicketId;
@@ -202,13 +203,13 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
         }
         return filterContexts;
     }
-    
+
     protected void postClose(Map<IEditorFilter, Object> contexts) {
         for (Map.Entry<IEditorFilter, Object> entry : contexts.entrySet()) {
             entry.getKey().postClose(entry.getValue());
         }
     }
-    
+
     protected IPluginContext getPluginContext() {
         return context;
     }
@@ -217,8 +218,12 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
         return config;
     }
 
-    protected IModel<T> getEditorModel() {
+    protected IModel<T> getEditorModel() throws EditorException {
         return model;
+    }
+
+    protected IModel<T> getBaseModel() throws EditorException {
+        throw new EditorException("Compare not supported");
     }
 
     protected void start() throws EditorException {
@@ -226,12 +231,16 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
         IPluginConfig parameters;
         switch (mode) {
         case EDIT:
-            clusterName = config.getString("cluster.edit.name");
+            clusterName = config.getString("cluster.edit.name", "cms-editor");
             parameters = config.getPluginConfig("cluster.edit.options");
+            break;
+        case COMPARE:
+            clusterName = config.getString("cluster.compare.name", "cms-compare");
+            parameters = config.getPluginConfig("cluster.compare.options");
             break;
         case VIEW:
         default:
-            clusterName = config.getString("cluster.preview.name");
+            clusterName = config.getString("cluster.preview.name", "cms-preview");
             parameters = config.getPluginConfig("cluster.preview.options");
             break;
         }
@@ -251,6 +260,12 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
         String modelId = decorated.getString(RenderService.MODEL_ID);
         modelService = new ModelReference<T>(modelId, getEditorModel());
         modelService.init(context);
+
+        if (mode == Mode.COMPARE) {
+            String baseId = decorated.getString("model.compareTo");
+            baseService = new ModelReference<T>(baseId, getBaseModel());
+            baseService.init(context);
+        }
 
         String editorId = decorated.getString("editor.id");
         context.registerService(this, editorId);
@@ -295,6 +310,11 @@ class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
         String editorId = cluster.getClusterConfig().getString("editor.id");
         context.unregisterService(editorContext.getEditorManager(), editorId);
         context.unregisterService(this, editorId);
+
+        if (baseService != null) {
+            baseService.destroy();
+            baseService = null;
+        }
 
         modelService.destroy();
 
