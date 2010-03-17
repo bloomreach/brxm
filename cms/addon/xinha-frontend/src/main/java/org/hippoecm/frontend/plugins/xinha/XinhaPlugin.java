@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.xinha;
 
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -36,4 +38,18 @@ public class XinhaPlugin extends AbstractXinhaPlugin {
     protected JcrPropertyValueModel getValueModel() {
         return (JcrPropertyValueModel) getDefaultModel();
     }
+
+    protected IModel<String> getBaseModel() {
+        IPluginConfig config = getPluginConfig();
+        if (!config.containsKey("model.compareTo")) {
+            return null;
+        }
+        IModelReference modelRef = getPluginContext().getService(config.getString("model.compareTo"),
+                IModelReference.class);
+        if (modelRef == null) {
+            return null;
+        }
+        return modelRef.getModel();
+    }
+
 }

@@ -19,6 +19,8 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -41,6 +43,24 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
 
     protected JcrPropertyValueModel getValueModel() {
         JcrNodeModel nodeModel = (JcrNodeModel) getDefaultModel();
+        return getContentModel(nodeModel);
+    }
+
+    @Override
+    protected IModel<String> getBaseModel() {
+        IPluginConfig config = getPluginConfig();
+        if (!config.containsKey("model.compareTo")) {
+            return null;
+        }
+        IModelReference modelRef = getPluginContext().getService(config.getString("model.compareTo"),
+                IModelReference.class);
+        if (modelRef == null || modelRef.getModel() == null) {
+            return null;
+        }
+        return getContentModel((JcrNodeModel) modelRef.getModel());
+    }
+
+    private JcrPropertyValueModel getContentModel(JcrNodeModel nodeModel) {
         try {
             Node node = nodeModel.getNode();
             if (node == null) {
@@ -48,9 +68,10 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
             }
             Property prop = node.getProperty("hippostd:content");
             return new JcrPropertyValueModel(new JcrPropertyModel(prop));
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
         return null;
     }
+
 }

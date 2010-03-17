@@ -86,6 +86,7 @@
       </sv:property>
       <sv:property sv:name="frontend:references" sv:type="String">
         <sv:value>wicket.model</sv:value>
+        <sv:value>model.compareTo</sv:value>
         <sv:value>engine</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:services" sv:type="String">
@@ -131,6 +132,9 @@
         </sv:property>
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${wicket.model}</sv:value>
+        </sv:property>
+        <sv:property sv:name="model.compareTo" sv:type="String">
+          <sv:value>${model.compareTo}</sv:value>
         </sv:property>
         <sv:property sv:name="width" sv:type="String">
           <sv:value>${width}</sv:value>

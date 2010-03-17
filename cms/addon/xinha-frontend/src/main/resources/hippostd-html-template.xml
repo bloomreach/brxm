@@ -114,6 +114,7 @@
       </sv:property>
       <sv:property sv:name="frontend:references" sv:type="String">
         <sv:value>wicket.model</sv:value>
+        <sv:value>model.compareTo</sv:value>
         <sv:value>engine</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:services" sv:type="String">
@@ -201,6 +202,9 @@
         </sv:property>
         <sv:property sv:name="browser.id" sv:type="String">
           <sv:value>service.browse</sv:value>
+        </sv:property>
+        <sv:property sv:name="model.compareTo" sv:type="String">
+          <sv:value>${model.compareTo}</sv:value>
         </sv:property>
         <sv:node sv:name="Xinha.plugins.InsertImage">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
