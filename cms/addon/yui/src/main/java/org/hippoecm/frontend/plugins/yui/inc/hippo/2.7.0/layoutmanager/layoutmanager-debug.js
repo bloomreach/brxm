@@ -386,6 +386,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             prepareConfig : function() {
+                for(var i=0; i<this.config.units.length; i++) {
+                    var unit = this.config.units[i];
+                    if (unit.body == null) {
+                    	delete unit.body;
+                    }
+                }
             },
             
             loadDimensions : function() {
@@ -670,6 +676,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         YAHOO.extend(YAHOO.hippo.Wireframe, YAHOO.hippo.BaseWireframe, {
             
             prepareConfig : function() {
+        		YAHOO.hippo.Wireframe.superclass.prepareConfig.call(this);
+
                 if(this.config.linkedWithParent) {
                     this.parent = YAHOO.hippo.LayoutManager.getWireframe(this.config.parentId);
                     this.parent.registerChild(this);

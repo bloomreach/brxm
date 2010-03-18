@@ -72,7 +72,7 @@
         <sv:value>editor-perspective-wrapper</sv:value>
       </sv:property>
       <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=editor-perspective-top,body=editor-perspective-top-body,height=24,zindex=1</sv:value>
+        <sv:value>id=editor-perspective-top,height=24,zindex=1</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
