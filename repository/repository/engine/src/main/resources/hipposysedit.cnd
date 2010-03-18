@@ -16,7 +16,7 @@
 
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
-<hipposysedit='http://www.onehippo.org/jcr/hipposysedit/nt/1.1'>
+<hipposysedit='http://www.onehippo.org/jcr/hipposysedit/nt/1.2'>
 
 // mixin on nodetype and prototype nodes for a particular version
 // of a namespace.
@@ -24,8 +24,7 @@
 - hipposysedit:uri (string) mandatory
 
 [hipposysedit:field] > nt:base
-- hipposysedit:name (string) // deprecated, use node name instead
-- hipposysedit:path (string)
+- hipposysedit:path (string) mandatory
 - hipposysedit:type (string)
 - hipposysedit:multiple (boolean)
 - hipposysedit:mandatory (boolean)
@@ -41,7 +40,7 @@
 - hipposysedit:node (boolean)
 - hipposysedit:mixin (boolean)
 - hipposysedit:cascadevalidation (boolean)
-+ * (hipposysedit:field) multiple // multiple is required to support deprecated hipposysedit:field name
++ * (hipposysedit:field)
 
 [hipposysedit:prototypeset]
 + hipposysedit:prototype (nt:base) multiple
