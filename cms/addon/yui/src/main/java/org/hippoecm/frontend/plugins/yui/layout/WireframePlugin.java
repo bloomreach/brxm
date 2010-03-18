@@ -34,8 +34,11 @@ public class WireframePlugin extends Plugin implements IBehaviorService {
 
     private static final long serialVersionUID = 1L;
 
+    private IBehavior behavior;
+
     public WireframePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        behavior = new WireframeBehavior(new WireframeSettings(YuiPluginHelper.getConfig(getPluginConfig())));
         context.registerService(this, config.getString(ID));
     }
 
@@ -44,6 +47,6 @@ public class WireframePlugin extends Plugin implements IBehaviorService {
     }
 
     public IBehavior getBehavior() {
-        return new WireframeBehavior(new WireframeSettings(YuiPluginHelper.getConfig(getPluginConfig())));
+        return behavior;
     }
 }
