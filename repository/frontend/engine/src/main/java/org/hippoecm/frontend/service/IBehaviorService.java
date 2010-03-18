@@ -19,13 +19,19 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.behavior.IBehavior;
 
 public interface IBehaviorService extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     String ID = "behavior.id";
     String PATH = "behavior.path";
 
+    /**
+     * The behavior that should be added to the component at relative path {@link #getComponentPath()}.
+     * Returned behaviors should implement {@link #equals(Object)} and {@link #hashCode()} such that
+     * multiple requests yield equivalent results.
+     * 
+     * @return the {@link IBehavior} to be attached to the component.
+     */
     IBehavior getBehavior();
-    
+
     String getComponentPath();
 }
