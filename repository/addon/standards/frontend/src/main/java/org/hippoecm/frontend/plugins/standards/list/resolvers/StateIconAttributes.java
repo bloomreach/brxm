@@ -85,6 +85,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
                 if (node != null) {
                     Node document = null;
                     NodeType primaryType = null;
+                    boolean isHistoric = false;
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                         document = node.getNode(node.getName());
                         primaryType = document.getPrimaryNodeType();
@@ -92,6 +93,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
                         document = node;
                         primaryType = document.getPrimaryNodeType();
                     } else if (node.isNodeType("nt:version")) {
+                        isHistoric = true;
                         Node frozen = node.getNode("jcr:frozenNode");
                         String primary = frozen.getProperty("jcr:frozenPrimaryType").getString();
                         NodeTypeManager ntMgr = frozen.getSession().getWorkspace().getNodeTypeManager();
@@ -104,6 +106,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
                         if (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
                                 || document.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
                             cssClass = StateIconAttributeModifier.PREFIX
+                                    + (isHistoric ? "prev-" : "")
                                     + document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString()
                                     + StateIconAttributeModifier.SUFFIX;
                             IModel stateModel = new JcrPropertyValueModel(new JcrPropertyModel(document

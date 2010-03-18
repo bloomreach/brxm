@@ -172,7 +172,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 .getString(), null) {
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "unplublish-16.png");
+                return new ResourceReference(getClass(), "unpublish-16.png");
             }
 
             @Override
