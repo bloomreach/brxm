@@ -203,9 +203,19 @@ public interface HstResponse extends HttpServletResponse {
     /**
      * Sends a temporary redirect response to the client using the specified redirect location URL.
      * <P>
-     * Only in {@link HstComponent#doAction(HstRequest, HstResponse)},
-     * the invocation on this method will be effective.
-     * If the invocation on this method is not done in action phase,
+     * When a component runs on a normal servlet environment,
+     * in either {@link HstComponent#doAction(HstRequest, HstResponse)} or {@link HstComponent#doBeforeRender(HstRequest, HstResponse)},
+     * the invocation on this method could be effective.
+     * If the invocation on this method is done in other methods,
+     * the invocation will be just ignored with no operation.
+     * </P>
+     * <P>
+     * Meanwhile, when a component runs on a portal/portlet environment,
+     * in {@link HstComponent#doAction(HstRequest, HstResponse)},
+     * the invocation on this method is effective.
+     * However, in other methods including {@link HstComponent#doBeforeRender(HstRequest, HstResponse)},
+     * the invocation on this method will be just ignored. 
+     * If the invocation on this method is done in other methods,
      * the invocation will be just ignored with no operation.
      * </P>
      * 

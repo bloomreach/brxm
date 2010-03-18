@@ -102,10 +102,12 @@ public class AggregationValve extends AbstractValve {
                 processWindowsBeforeRender(requestContainerConfig, rootWindow, sortedComponentWindows, requestMap, responseMap);
                 
                 String redirectLocation = null;
-                for (HstComponentWindow window : sortedComponentWindows) {
-                    if (window.getResponseState().getRedirectLocation() != null) {
-                        redirectLocation = window.getResponseState().getRedirectLocation();
-                        break;
+                if (!requestContext.isPortletContext()) {
+                    for (HstComponentWindow window : sortedComponentWindows) {
+                        if (window.getResponseState().getRedirectLocation() != null) {
+                            redirectLocation = window.getResponseState().getRedirectLocation();
+                            break;
+                        }
                     }
                 }
                 
