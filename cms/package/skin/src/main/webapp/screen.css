@@ -1072,9 +1072,12 @@ div.hippo-controlpanel-actions-top{border-bottom: 1px solid #afafaf; border-top:
 .system-info-48{background-image:url("images/icons/system-info-48.png")}
 
 .state-review-16{background-image:url("images/icons/state-review-16.gif")}
-.state-changed-16{background-image:url("images/icons/state-changed-16.gif")}
-.state-new-16{background-image:url("images/icons/state-new-16.gif")}
-.state-live-16{background-image:url("images/icons/state-live-16.gif")}
+.state-changed-16{background-image:url("images/icons/state-changed-16.png")}
+.state-new-16{background-image:url("images/icons/state-new-16.png")}
+.state-live-16{background-image:url("images/icons/state-live-16.png")}
+.state-prev-new-16{background-image:url("images/icons/state-prev-new-16.png")}
+.state-prev-changed-16{background-image:url("images/icons/state-prev-changed-16.png")}
+.state-prev-live-16{background-image:url("images/icons/state-prev-live-16.png")}
 
 .permissions-16{background-image:url("images/icons/permissions-16.png")}
 
