@@ -172,7 +172,7 @@ public class TabbedPanel extends WebMarkupContainer {
             protected String load() {
                 IModel<String> titleModel = tabbieModel.getObject().getTitle();
                 if (titleModel != null) {
-                    String title = (String) titleModel.getObject();
+                    String title = titleModel.getObject();
                     if (title.length() > maxTabLength) {
                         // leave space for two .. then add them
                         title = title.substring(0, maxTabLength - 2) + "..";
@@ -187,7 +187,11 @@ public class TabbedPanel extends WebMarkupContainer {
 
             @Override
             protected String load() {
-                return tabbieModel.getObject().getTitle().getObject();
+                IModel<String> titleModel = tabbieModel.getObject().getTitle();
+                if (titleModel != null) {
+                    return titleModel.getObject();
+                }
+                return "";
             }
 
         }, ""));
