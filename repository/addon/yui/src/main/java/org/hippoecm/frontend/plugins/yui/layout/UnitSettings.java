@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  *   in everyone's favorite browser IE. Set this property to true to fix it. 
  *   </li>
  *   <li>
- *   Z_INDEX: z-index for this unit. TODO: check if this works. 
+ *   Z_INDEX: z-index for this unit. 
  *   </li>
  * </ul>
  */
@@ -96,9 +96,8 @@ public class UnitSettings implements Serializable {
     private boolean resize;
     private boolean useShim;
 
-    //TODO: does this still work?
-    //private static final IntSetting Z_INDEX = new IntSetting("zindex");
-
+    private int zIndex;
+    
     public static final String TOP = "top";
     public static final String RIGHT = "right";
     public static final String BOTTOM = "bottom";
@@ -194,6 +193,14 @@ public class UnitSettings implements Serializable {
 
     public YuiId getId() {
         return id;
+    }
+
+    public void setZindex(int zIndex) {
+        this.zIndex = zIndex;
+    }
+
+    public int getZindex() {
+        return zIndex;
     }
 
 }
