@@ -156,10 +156,14 @@ public class ActionValve extends AbstractValve {
                                 
                                 /* 
                                  * We will redirect to a URL containing the protocol + hostname + portnumber to avoid problems
-                                 * when redirecting behind a proxy.
+                                 * when redirecting behind a proxy by default.
                                  */
-                                String url = requestContext.getVirtualHost().getBaseURL(servletRequest) + location;
-                                servletResponse.sendRedirect(url);
+                                if (isAlwaysRedirectLocationToAbsoluteUrl()) {
+                                    String absoluteRedirectUrl = requestContext.getVirtualHost().getBaseURL(servletRequest) + location;
+                                    servletResponse.sendRedirect(absoluteRedirectUrl);
+                                } else {
+                                    servletResponse.sendRedirect(location);
+                                }
                             }
                         }
                     } catch (IOException e) {

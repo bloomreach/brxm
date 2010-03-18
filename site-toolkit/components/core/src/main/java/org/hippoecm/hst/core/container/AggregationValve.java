@@ -101,9 +101,12 @@ public class AggregationValve extends AbstractValve {
                 // process doBeforeRender() of each component as sorted order, parent first.
                 processWindowsBeforeRender(requestContainerConfig, rootWindow, sortedComponentWindows, requestMap, responseMap);
                 
-                // add the hst-version as a response header if we are in preview:
-                if(Boolean.TRUE == requestContext.getAttribute(ContainerConstants.IS_PREVIEW)) {
-                    rootWindow.getResponseState().addHeader("HST-VERSION", HstServices.getImplementationVersion());
+                String redirectLocation = null;
+                for (HstComponentWindow window : sortedComponentWindows) {
+                    if (window.getResponseState().getRedirectLocation() != null) {
+                        redirectLocation = window.getResponseState().getRedirectLocation();
+                        break;
+                    }
                 }
                 
                 // check if it's requested to forward.
@@ -146,6 +149,40 @@ public class AggregationValve extends AbstractValve {
                             log.warn("Exception invocation on sendError(). {}", e.toString());
                         }
                     }
+                
+                } else if (redirectLocation != null) {
+                    
+                    try {
+                        for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
+                            HstComponentWindow window = sortedComponentWindows[i];
+                            window.getResponseState().flush();
+                        }
+                        
+                        if (redirectLocation.startsWith("http:") || redirectLocation.startsWith("https:")) {
+                            servletResponse.sendRedirect(redirectLocation);
+                        } else {
+                            if (!redirectLocation.startsWith("/")) {
+                                throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
+                            }
+                            
+                            /* 
+                             * We will redirect to a URL containing the protocol + hostname + portnumber to avoid problems
+                             * when redirecting behind a proxy by default.
+                             */
+                            if (isAlwaysRedirectLocationToAbsoluteUrl()) {
+                                String absoluteRedirectUrl = requestContext.getVirtualHost().getBaseURL(servletRequest) + redirectLocation;
+                                servletResponse.sendRedirect(absoluteRedirectUrl);
+                            } else {
+                                servletResponse.sendRedirect(redirectLocation);
+                            }
+                        }
+                    } catch (Exception e) {
+                        if (log.isDebugEnabled()) {
+                            log.warn("Exception during sendRedirect.", e);
+                        } else if (log.isWarnEnabled()) {
+                            log.warn("Exception during sendRedirect. {}", e.toString());
+                        }
+                    }
                     
                 } else if (forwardPathInfo != null) {
                     
@@ -166,6 +203,10 @@ public class AggregationValve extends AbstractValve {
                     }
                     
                     try {
+                        // add the hst-version as a response header if we are in preview:
+                        if (Boolean.TRUE == requestContext.getAttribute(ContainerConstants.IS_PREVIEW)) {
+                            rootWindow.getResponseState().addHeader("HST-VERSION", HstServices.getImplementationVersion());
+                        }
                         // flush root component window content.
                         // note that the child component's contents are already flushed into the root component's response state.
                         rootWindow.getResponseState().flush();
@@ -173,7 +214,7 @@ public class AggregationValve extends AbstractValve {
                         if (log.isDebugEnabled()) {
                             log.warn("Exception during flushing the response state.", e);
                         } else if (log.isWarnEnabled()) {
-                            log.warn("Exception during flushing the response state.");
+                            log.warn("Exception during flushing the response state. {}", e.toString());
                         }
                     }
                     
@@ -247,6 +288,10 @@ public class AggregationValve extends AbstractValve {
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
             getComponentInvoker().invokeBeforeRender(requestContainerConfig, request, response);
+            
+            if (window.getResponseState().getRedirectLocation() != null) {
+                break;
+            }
             
             if (rootWindow.getResponseState().getForwardPathInfo() != null) {
                 break;

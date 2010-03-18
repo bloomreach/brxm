@@ -52,7 +52,9 @@ public abstract class AbstractValve implements Valve {
     
     protected String traceToolComponentName = "hstTraceToolComponent";
     protected String traceToolComponentClassName = "org.hippoecm.hst.component.support.tool.HstTraceToolComponent";
-        
+    
+    protected boolean alwaysRedirectLocationToAbsoluteUrl = true;
+    
     public ContainerConfiguration getContainerConfiguration() {
         return this.containerConfiguration;
     }
@@ -179,6 +181,14 @@ public abstract class AbstractValve implements Valve {
     
     public String getTraceToolComponentClassName() {
         return this.traceToolComponentClassName;
+    }
+    
+    public boolean isAlwaysRedirectLocationToAbsoluteUrl() {
+        return alwaysRedirectLocationToAbsoluteUrl;
+    }
+    
+    public void setAlwaysRedirectLocationToAbsoluteUrl(boolean alwaysRedirectLocationToAbsoluteUrl) {
+        this.alwaysRedirectLocationToAbsoluteUrl = alwaysRedirectLocationToAbsoluteUrl;
     }
     
     protected HstComponentWindow createTraceToolComponent(ValveContext context, HstRequestContext requestContext, HstComponentWindow parentWindow) {
