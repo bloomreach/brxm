@@ -328,6 +328,10 @@ public abstract class AbstractValueMap extends AbstractMap<String, Object> imple
      * 
      */
     public boolean getAsBoolean(String key, boolean defaultValue) {
+        if (!containsKey(key)) {
+            return defaultValue;    
+        }
+
         try {
             return getBoolean(key);
         } catch (StringValueConversionException ignored) {
