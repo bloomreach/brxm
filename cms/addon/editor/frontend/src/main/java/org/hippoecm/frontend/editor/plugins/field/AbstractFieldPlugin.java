@@ -267,7 +267,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             if (engine != null) {
                 ITypeDescriptor subType = field.getTypeDescriptor();
                 AbstractProvider<C> provider = newProvider(field, subType, model);
-                if (IEditor.Mode.EDIT == mode && provider.size() == 0) {
+                if (IEditor.Mode.EDIT == mode && provider.size() == 0
+                        && (!field.isMultiple() || field.getValidators().contains("required"))) {
                     provider.addNew();
                 }
                 return provider;
