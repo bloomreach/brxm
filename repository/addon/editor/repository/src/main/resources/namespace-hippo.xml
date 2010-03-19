@@ -289,9 +289,6 @@
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.resource.ResourceUploadPlugin</sv:value>
           </sv:property>
-          <sv:property sv:name="types" sv:type="String">
-            <sv:value>png=image/png,jpeg=image/jpeg,jpg=image/jpeg,gif=image/gif,pdf=application/pdf,doc=application/msword,xls=application/vnd.ms-excel</sv:value>
-          </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
