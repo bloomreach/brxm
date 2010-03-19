@@ -31,7 +31,7 @@
       <param name="syncDelay" value="5000"/>
       <param name="stopDelay" value="5000"/>
       <param name="retryDelay" value="5000"/>
-      <param name="numberOfRetries" value="5"/>
+      <param name="maxRetries" value="5"/>
       
       <Replicator class="org.hippoecm.repository.replication.replicators.JCRReplicator">
         <param name="repositoryAddress" value="rmi://localhost:1199/hipporepository"/>
