@@ -696,12 +696,9 @@
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
         </sv:property>
-        <sv:node sv:name="hipposysedit:field">
+        <sv:node sv:name="a">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:name" sv:type="String">
-            <sv:value>a</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:path" sv:type="String">
             <sv:value>test:a</sv:value>
@@ -710,12 +707,9 @@
             <sv:value>String</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="hipposysedit:field">
+        <sv:node sv:name="b">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:name" sv:type="String">
-            <sv:value>b</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:path" sv:type="String">
             <sv:value>test:b</sv:value>

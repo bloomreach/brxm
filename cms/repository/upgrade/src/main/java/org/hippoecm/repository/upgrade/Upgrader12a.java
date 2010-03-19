@@ -111,7 +111,7 @@ public class Upgrader12a implements UpdaterModule {
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hippostdpubwf", "-",
                 new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hippostdpubwf.cnd"))));
         context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "hipposysedit", "-",
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposysedit.cnd"))));
+                new InputStreamReader(getClass().getClassLoader().getResourceAsStream("hipposysedit_1_1.cnd"))));
 
         // re-read parts of the configuration
         context.registerVisitor(new UpdaterItemVisitor.PathVisitor("/hippo:configuration/hippo:initialize") {
