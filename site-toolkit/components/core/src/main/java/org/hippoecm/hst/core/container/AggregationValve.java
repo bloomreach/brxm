@@ -118,7 +118,15 @@ public class AggregationValve extends AbstractValve {
                 PageErrors pageErrors = getPageErrors(sortedComponentWindows, true);
                 if (pageErrors != null) {
                     PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, requestContainerConfig, rootWindow, requestMap.get(rootWindow), responseMap.get(rootWindow));
-                    forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
+                    
+                    // page error handler should be able to override redirect location or forward path info.
+                    if (rootWindow.getResponseState().getRedirectLocation() != null) {
+                        redirectLocation = rootWindow.getResponseState().getRedirectLocation();
+                    }
+                    if (rootWindow.getResponseState().getForwardPathInfo() != null) {
+                        forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
+                    }
+                    
                     if (handled == PageErrorHandler.Status.HANDLED_TO_STOP && forwardPathInfo == null) {
                         context.invokeNext();
                         return;
