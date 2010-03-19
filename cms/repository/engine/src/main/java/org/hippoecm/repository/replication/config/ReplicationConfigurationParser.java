@@ -15,19 +15,28 @@
  */
 package org.hippoecm.repository.replication.config;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.jackrabbit.core.config.ConfigurationErrorHandler;
 import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.config.ConfigurationParser;
 import org.apache.jackrabbit.core.config.JournalConfig;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * Configuration parser. This class is used to parse the replication configuration file.
@@ -298,5 +307,38 @@ public class ReplicationConfigurationParser extends ConfigurationParser {
         Properties props = new Properties(getVariables());
         props.putAll(variables);
         return new ReplicationConfigurationParser(props);
+    }
+    
+    
+    /**
+     * The method is overridden because the <code>HippoConfigurationEntityResolver</code>
+     * is needed.
+    */
+    @Override
+    protected Element parseXML(InputSource xml, boolean validate) throws ConfigurationException {
+        try {
+            DocumentBuilderFactory factory =
+                DocumentBuilderFactory.newInstance();
+            factory.setValidating(validate);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            if (validate) {
+                builder.setErrorHandler(new ConfigurationErrorHandler());
+            }
+            builder.setEntityResolver(HippoConfigurationEntityResolver.INSTANCE);
+            Document document = builder.parse(xml);
+            return document.getDocumentElement();
+        } catch (ParserConfigurationException e) {
+            throw new ConfigurationException(
+                    "Unable to create configuration XML parser", e);
+        } catch (SAXParseException e) {
+            throw new ConfigurationException(
+                    "Configuration file syntax error. (Line: " + e.getLineNumber() + " Column: " + e.getColumnNumber() + ")", e);
+        } catch (SAXException e) {
+            throw new ConfigurationException(
+                    "Configuration file syntax error. ", e);
+        } catch (IOException e) {
+            throw new ConfigurationException(
+                    "Configuration file could not be read.", e);
+        }
     }
 }
