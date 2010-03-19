@@ -53,7 +53,11 @@ public class ResourceUploadPlugin extends RenderPlugin {
     public ResourceUploadPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        types = new ValueMap(config.getString("types"));
+        // if the types config is not set, all extensions are allowed
+        String typesConfig = config.getString("types");
+        if (typesConfig != null) {
+            types = new ValueMap(typesConfig);
+        }
 
         add(form = new FileUploadForm("form"));
         String mode = config.getString("mode", "edit");
@@ -81,14 +85,27 @@ public class ResourceUploadPlugin extends RenderPlugin {
             final FileUpload upload = fileUploadField.getFileUpload();
             if (upload != null) {
                 String fileName = upload.getClientFileName();
+                String mimeType = upload.getContentType();
+
                 String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-                
-                String type = types.getString(extension.toLowerCase());
-                if (type != null) {
+
+                // check if obligatory types/file extensions are set and matched
+                if (types != null && types.getString(extension.toLowerCase()) == null) {
+                    String extensions = StringUtils.join(types.keySet().toArray(), ", ");
+                    getDialogService().show(
+                            new ExceptionDialog(new StringResourceModel("unrecognized", ResourceUploadPlugin.this,
+                                    null, new Object[] { extension, extensions }).getString()) {
+                                public IValueMap getProperties() {
+                                    return SMALL;
+                                }
+
+                            });
+                    log.warn("Unrecognised file type");
+                } else {
                     JcrNodeModel nodeModel = (JcrNodeModel) ResourceUploadPlugin.this.getDefaultModel();
                     Node node = nodeModel.getNode();
                     try {
-                        node.setProperty("jcr:mimeType", type);
+                        node.setProperty("jcr:mimeType", mimeType);
                         node.setProperty("jcr:data", upload.getInputStream());
                         node.setProperty("jcr:lastModified", Calendar.getInstance());
                         new ImageUtils().validateResource(node, fileName);
@@ -99,21 +116,8 @@ public class ResourceUploadPlugin extends RenderPlugin {
                         // FIXME: report back to user
                         log.error(ex.getMessage());
                     }
-                } else {
-                    String extensions = StringUtils.join(types.keySet().toArray(), ", ");
-                    getDialogService().show(
-                            new ExceptionDialog(new StringResourceModel("unrecognized", ResourceUploadPlugin.this,
-                                    null, new Object[] { extension, extensions }).getString()) {
-
-                                public IValueMap getProperties() {
-                                    return SMALL;
-                                }
-
-                            });
-                    log.warn("Unrecognised file type");
                 }
             }
         }
     }
-
 }
