@@ -127,7 +127,7 @@ public class AggregationValve extends AbstractValve {
                         forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
                     }
                     
-                    if (handled == PageErrorHandler.Status.HANDLED_TO_STOP && forwardPathInfo == null) {
+                    if (handled == PageErrorHandler.Status.HANDLED_TO_STOP && redirectLocation == null && forwardPathInfo == null) {
                         context.invokeNext();
                         return;
                     }

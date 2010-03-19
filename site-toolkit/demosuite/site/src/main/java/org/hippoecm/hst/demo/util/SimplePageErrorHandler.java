@@ -25,6 +25,7 @@ import org.hippoecm.hst.core.container.PageErrorHandler;
 import org.hippoecm.hst.core.container.PageErrors;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.util.HstResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,7 @@ public class SimplePageErrorHandler implements PageErrorHandler {
 
     public static final String PAGE_ERRORS = SimplePageErrorHandler.class.getName() + ".pageErrors";
     public static final String ERROR_PAGE = SimplePageErrorHandler.class.getName() + ".errorPage";
+    public static final String REDIRECT_TO_ERROR_PAGE = SimplePageErrorHandler.class.getName() + ".redirectToErrorPage";
     
     protected final static Logger log = LoggerFactory.getLogger(SimplePageErrorHandler.class);
     
@@ -45,18 +47,24 @@ public class SimplePageErrorHandler implements PageErrorHandler {
         
         HstRequestContext requestContext = hstRequest.getRequestContext();
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-        String forwardErrorPage = resolvedSiteMapItem.getHstComponentConfiguration().getParameter(ERROR_PAGE);
+        String errorPage = resolvedSiteMapItem.getHstComponentConfiguration().getParameter(ERROR_PAGE);
+        boolean redirectToErrorPage = Boolean.parseBoolean(resolvedSiteMapItem.getHstComponentConfiguration().getParameter(REDIRECT_TO_ERROR_PAGE));
         
-        if (forwardErrorPage != null) {
+        if (errorPage != null) {
             try {
-                requestContext.setAttribute(PAGE_ERRORS, pageErrors);
-                hstResponse.forward(forwardErrorPage);
+                if (redirectToErrorPage) {
+                    HstResponseUtils.sendRedirectOrForward(hstRequest, hstResponse, errorPage);
+                } else {
+                    requestContext.setAttribute(PAGE_ERRORS, pageErrors);
+                    hstResponse.forward(errorPage);
+                }
+                
                 return Status.HANDLED_TO_STOP;
             } catch (IOException e) {
                 if (log.isDebugEnabled()) {
-                    log.warn("Failed to forward page: " + forwardErrorPage, e);
+                    log.warn("Failed to forward page: " + errorPage, e);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Failed to forward page: {}. {}", forwardErrorPage, e.toString());
+                    log.warn("Failed to forward page: {}. {}", errorPage, e.toString());
                 }
             }
         }
