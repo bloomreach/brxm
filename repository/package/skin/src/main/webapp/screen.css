@@ -801,19 +801,26 @@ font-size: 12px; line-height: 18px; background: transparent; border: none; color
 .hippo-editor .hippo-editor-threepane .hippo-gallery-field-picker tr td{vertical-align: middle}
 
 /* date widget */
-.hippo-editor-field .hippo-editor-field-datepicker input{width: 80px}
-.hippo-editor-field .hippo-editor-field-datepicker input.time { border: 1px solid #e3e3e3; width: 30px; padding: 2px;}
-.hippo-editor-field .hippo-editor-field-datepicker span.yui-skin-sam { margin-right: 15px; }
-.hippo-editor-field .hippo-editor-field-datepicker input.today { border: 1px solid #e3e3e3; width: auto; padding: 2px; margin: 0px; }
+.hippo-editor-field .yui-date-time-field {padding-left: 4px;}
+.hippo-editor-field-datepicker
 
-.hippo-editor-field .hippo-editor-field-datepicker select{width: 70px}
+.yui-date-time-field {height: 24px;}
+.yui-date-time-field input { border: 1px solid #e3e3e3; padding: 2px; height: 14px; float:left;}
+.yui-date-time-field input.date { width: 55px;}
+.yui-date-time-field input.time { width: 17px; }
+.yui-date-time-field span.time-separator {float: left; margin-top: 4px; }
+.yui-date-time-field div.yui-skin-sam { height: 20px; margin-right: 20px; float: left; padding-top: 4px; }
+.yui-date-time-field input.today { border: 1px solid #e3e3e3; width: auto; padding: 2px; margin: 0px; }
+.yui-date-time-field a.today-link { margin-left: 20px; display: block; float: left; color: #107EC0; height: 21px; padding-top: 1px;}
+.yui-date-time-field a.today-link img { position: relative; top: 4px; }
+.yui-date-time-field select{width: 70px}
 
 /* Xinha xml editor used in the hippo-editor-field-html plugin */
 
 .hippo-editor-field-html{background: url("images/hippo-border.gif") repeat-x 0px 30px; padding: 0px;}
 .hippo-editor-field-html .htmlarea {background: transparent; border: 0px solid white; border-collapse: separate}
 .hippo-editor-field-html .htmlarea *{padding: 0px; margin: 0px; border: none;}
-/* hide the xinha status bar we don't need it */
+/* hide the xinha status bar we don't need it */x
 .hippo-editor-field-html .htmlarea .statusBar{display: none}
 .hippo-editor-field-html .htmlarea tr td{vertical-align: top;}
 .hippo-editor-field-html .htmlarea tr td select{margin-top: 2px; font-size: 11px;}
