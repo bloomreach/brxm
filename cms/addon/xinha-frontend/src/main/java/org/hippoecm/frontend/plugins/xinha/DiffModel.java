@@ -23,6 +23,7 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.outerj.daisy.diff.DaisyDiff;
@@ -63,7 +64,7 @@ public class DiffModel extends LoadableDetachableModel<String> {
             handler.setResult(dr);
             handler.startDocument();
             handler.startElement(null, "html", "html", new AttributesImpl());
-            DaisyDiff.diffHTML(oldSource, newSource, handler, null, null);
+            DaisyDiff.diffHTML(oldSource, newSource, handler, null, Session.get().getLocale());
             handler.endElement(null, "html", "html");
             handler.endDocument();
 
