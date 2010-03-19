@@ -22,6 +22,7 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
 import java.util.List;
@@ -162,6 +163,37 @@ public class FieldPluginTest extends PluginTest {
         List<TestService> services = context.getServices("service.test", TestService.class);
         assertEquals(1, services.size());
         assertEquals("view", services.get(0).getMode());
+
+        // verify
+        verify(engine, modelRef);        
+    }
+
+    @Test
+    public void dontAutoCreateMultipleWhenNotRequired() throws RepositoryException, TemplateEngineException {
+        fieldDesc.setMultiple(true);
+        root.getNode("test/data").getProperty("a").remove();
+        root.save();
+
+        // set up expected service invocations
+        expect(modelRef.getModel()).andReturn(model);
+        expectLastCall().times(2);
+        modelRef.setObservationContext((IObservationContext<? extends IObservable>) anyObject());
+        modelRef.startObservation();
+        expect(engine.getType(model)).andReturn(typeDesc);
+        expect(engine.getTemplate(stringType, IEditor.Mode.EDIT)).andReturn(template);
+        expectLastCall().times(1);
+
+        replay(engine, modelRef);
+
+        // play
+        JavaPluginConfig config = createPluginConfig("edit");
+        start(config);
+        tester.startPage(home);
+
+        assertFalse(session.itemExists("/test/data/a"));
+
+        List<TestService> services = context.getServices("service.test", TestService.class);
+        assertEquals(0, services.size());
 
         // verify
         verify(engine, modelRef);        
