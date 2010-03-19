@@ -15,12 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.yui.datetime;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.wicket.markup.html.form.AbstractTextComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.IConverter;
+import org.apache.wicket.util.convert.converters.DateConverter;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.util.MappingException;
+import org.hippoecm.frontend.util.PluginConfigMapper;
+import org.joda.time.DateTime;
 
 public class DateFieldWidget extends Panel {
     @SuppressWarnings("unused")
@@ -29,13 +36,43 @@ public class DateFieldWidget extends Panel {
     private static final long serialVersionUID = 1L;
 
     public DateFieldWidget(String id, IModel<Date> model, IPluginContext context, IPluginConfig config) {
-        this(id, model, config.getBoolean("show.today.button"), context, config);
+        this(id, model, config.getAsBoolean("show.today.button", true), context, config);
     }
     
     public DateFieldWidget(String id, IModel<Date> model, boolean todayLinkVisible, IPluginContext context, IPluginConfig config) {
         super(id, model);
 
-        add(new AjaxDateTimeField("widget", model, todayLinkVisible, context, config));
+        YuiDatePickerSettings settings = new YuiDatePickerSettings();
+        settings.setDatePattern(getDatePattern());
+        if(config.containsKey("datepicker")) {
+            try {
+                PluginConfigMapper.populate(settings, config.getPluginConfig("datepicker"));
+            } catch (MappingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        YuiDateTimeField dateTimeField = new YuiDateTimeField("widget", model, settings);
+        dateTimeField.setTodayLinkVisible(todayLinkVisible);
+        add(dateTimeField);
     }
+
+    private String getDatePattern() {
+        String format = null;
+        if (this instanceof AbstractTextComponent.ITextFormatProvider) {
+            format = ((AbstractTextComponent.ITextFormatProvider) this).getTextFormat();
+            // it is possible that components implement ITextFormatProvider but
+            // don't provide a format
+        }
+
+        if (format == null) {
+            IConverter converter = getConverter(DateTime.class);
+            if (!(converter instanceof DateConverter)) {
+                converter = getConverter(Date.class);
+            }
+            format = ((SimpleDateFormat) ((DateConverter) converter).getDateFormat(getLocale())).toPattern();
+        }
+        return format;
+    }
+
 
 }

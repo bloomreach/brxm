@@ -42,7 +42,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.hippoecm.frontend.plugins.yui.datetime.AjaxDateTimeField;
+import org.hippoecm.frontend.plugins.yui.datetime.YuiDateTimeField;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -419,7 +419,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 super();
 
                 add(new Label("question", question));
-                add(new AjaxDateTimeField("value", dateModel, true, getPluginContext(), getPluginConfig()));
+                add(new YuiDateTimeField("value", dateModel));
                 setFocusOnCancel();
             }
 

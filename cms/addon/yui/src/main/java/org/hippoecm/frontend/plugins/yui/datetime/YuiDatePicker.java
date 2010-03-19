@@ -16,17 +16,7 @@
 
 package org.hippoecm.frontend.plugins.yui.datetime;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Response;
-import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.extensions.yui.calendar.DatePicker;
+import org.apache.wicket.*;
 import org.apache.wicket.markup.html.form.AbstractTextComponent.ITextFormatProvider;
 import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -40,22 +30,27 @@ import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 import org.joda.time.DateTime;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
+
 public class YuiDatePicker extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
-    private final PackagedTextTemplate INIT = new PackagedTextTemplate(YuiDatePicker.class, "init.js");
-    private static final ResourceReference SKIN = new CompressedResourceReference(YuiDatePicker.class, "skin.css");
-    
+
+    private static final ResourceReference SKIN = new CompressedResourceReference(YuiDatePicker.class, "resources/skin.css");
+
     private Component component;
     private DynamicTextTemplate template;
-    
+
     public YuiDatePicker(YuiDatePickerSettings settings) {
-        this.template = new DynamicTextTemplate(INIT, settings) {
+        PackagedTextTemplate init = new PackagedTextTemplate(YuiDatePicker.class, "resources/init.js");
+        this.template = new DynamicTextTemplate(init, settings) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             protected Map<String, Object> getVariables() {
                 Map<String, Object> vars = super.getVariables();
@@ -64,21 +59,21 @@ public class YuiDatePicker extends AbstractYuiBehavior {
             }
         };
     }
-    
+
     @Override
     public void addHeaderContribution(IYuiContext helper) {
         helper.addCssReference(SKIN);
         helper.addModule(HippoNamespace.NS, "datetime");
         helper.addOnDomLoad(new AbstractReadOnlyModel<String>() {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             public String getObject() {
                 return "YAHOO.hippo.DateTime.render('" + component.getMarkupId() + "', " + template.getConfigurationAsJSON() + ");";
             }
         });
     }
-    
+
     @Override
     public void onRendered(Component component)
     {
@@ -87,7 +82,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
         // component. Not as pretty as working with a panel etc, but works
         // for behaviors and is more efficient
         Response response = component.getResponse();
-        response.write("\n<span class=\"yui-skin-sam\">&nbsp;<span style=\"");
+        response.write("\n<div class=\"yui-skin-sam\">&nbsp;<span style=\"");
         if (renderOnLoad())
         {
             response.write("display:block;");
@@ -111,12 +106,12 @@ public class YuiDatePicker extends AbstractYuiBehavior {
         {
             response.write("<br style=\"clear:left;\"/>");
         }
-        response.write("</span>");
+        response.write("</div>");
     }
-    
+
     /**
      * Indicates whether the calendar should be rendered after it has been loaded.
-     * 
+     *
      * @return <code>true</code> if the calendar should be rendered after it has been loaded.<br/>
      *         <code>false</code> (default) if it's initially hidden.
      */
@@ -124,11 +119,11 @@ public class YuiDatePicker extends AbstractYuiBehavior {
     {
         return false;
     }
-    
+
     /**
      * Gets the escaped DOM id that the calendar widget will get attached to. All non word
      * characters (\W) will be removed from the string.
-     * 
+     *
      * @return The DOM id of the calendar widget - same as the component's markup id + 'Dp'}
      */
     protected final String getEscapedComponentMarkupId()
@@ -138,7 +133,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
 
     /**
      * Gets the id of the icon that triggers the popup.
-     * 
+     *
      * @return The id of the icon
      */
     protected final String getIconId()
@@ -148,7 +143,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
 
     /**
      * Gets the style of the icon that triggers the popup.
-     * 
+     *
      * @return The style of the icon, e.g. 'cursor: point' etc.
      */
     protected String getIconStyle()
@@ -158,25 +153,25 @@ public class YuiDatePicker extends AbstractYuiBehavior {
 
     /**
      * Gets the url for the popup button. Users can override to provide their own icon URL.
-     * 
+     *
      * @return the url to use for the popup button/ icon
      */
     protected CharSequence getIconUrl()
     {
         //TODO: FIX!
-        return RequestCycle.get().urlFor(new ResourceReference(DatePicker.class, "icon1.gif"));
+        return RequestCycle.get().urlFor(new ResourceReference(YuiDatePicker.class, "resources/calendar-16.png"));
     }
 
     /**
      * Gets the locale that should be used to configure this widget.
-     * 
+     *
      * @return By default the locale of the bound component.
      */
     protected Locale getLocale()
     {
         return component.getLocale();
     }
-    
+
     @Override
     public void bind(Component component) {
         super.bind(component);
@@ -184,12 +179,12 @@ public class YuiDatePicker extends AbstractYuiBehavior {
         checkComponentProvidesDateFormat(component);
         component.setOutputMarkupId(true);
     }
-    
+
     /**
      * Check that this behavior can get a date format out of the component it is coupled to. It
      * checks whether {@link #getDatePattern()} produces a non-null value. If that method returns
      * null, and exception will be thrown
-     * 
+     *
      * @param component
      *            the component this behavior is being coupled to
      * @throws UnableToDetermineFormatException
@@ -205,7 +200,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
 
     /**
      * Gets the date pattern to use for putting selected values in the coupled component.
-     * 
+     *
      * @return The date pattern
      */
     protected String getDatePattern()
@@ -251,6 +246,6 @@ public class YuiDatePicker extends AbstractYuiBehavior {
         }
     }
 
-    
+
 
 }

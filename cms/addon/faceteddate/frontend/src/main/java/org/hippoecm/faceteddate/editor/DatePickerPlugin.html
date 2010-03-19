@@ -15,11 +15,12 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="hippo-editor-field-datepicker">
-      <span wicket:id="value"></span>
-      <div wicket:id="info">
-        <wicket:message key="week-label"/><span wicket:id="weekofyear"/><wicket:message key="weekday-label"/><span wicket:id="dayofweek"/><wicket:message key="yearday-label"/><span wicket:id="dayofyear"></span><wicket:message key="close-label"/>
-      </div>
-    </div>
+    <div class="hippo-editor-field-datepicker" wicket:id="value">[ Value ]</div>
   </wicket:panel>
+
+  <wicket:fragment wicket:id="view">
+    <span wicket:id="label">[Label]</span>
+    <wicket:message key="week-label"/><span wicket:id="weekofyear">[Week of year]</span><wicket:message key="weekday-label"/><span wicket:id="dayofweek">[Day of week]</span><wicket:message key="yearday-label"/><span wicket:id="dayofyear">[Day of year]</span><wicket:message key="close-label"/>
+  </wicket:fragment>
+
 </html>

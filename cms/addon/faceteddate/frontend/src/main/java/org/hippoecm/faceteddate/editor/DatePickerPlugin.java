@@ -15,16 +15,10 @@
  */
 package org.hippoecm.faceteddate.editor;
 
-import java.util.Date;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.datetime.StyleDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -38,6 +32,12 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import java.util.Date;
+
+import static org.hippoecm.repository.HippoStdNodeType.*;
+
 public class DatePickerPlugin extends RenderPlugin<Date> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -49,30 +49,37 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
     public DatePickerPlugin(IPluginContext context, IPluginConfig config) throws RepositoryException {
         super(context, config);
 
-        Node dateNode = ((JcrNodeModel) getDefaultModel()).getNode();
-        JcrPropertyValueModel<Date> valueModel = new JcrPropertyValueModel<Date>(new JcrPropertyModel(dateNode
-                .getProperty("hippostd:date")));
-        MarkupContainer panel;
-        add(panel = new WebMarkupContainer("info"));
-
-        panel.add(new Label("weekofyear", dateNode.hasProperty("hippostd:weekofyear") ? dateNode.getProperty(
-                "hippostd:weekofyear").getString() : "-"));
-        if (dateNode.hasProperty("hippostd:dayofweek")) {
-            panel.add(new Label("dayofweek", new TypeTranslator(new JcrNodeTypeModel("hippostd:date")).getValueName(
-                    "hippostd:dayofweek", new Model<String>(dateNode.getProperty("hippostd:dayofweek").getString()))));
-        } else {
-            panel.add(new Label("dayofweek", "-"));
-        }
-        panel.add(new Label("dayofyear", dateNode.hasProperty("hippostd:dayofyear") ? dateNode.getProperty(
-                "hippostd:dayofyear").getString() : "-"));
-
-        if ("edit".equals(config.getString("mode", "view"))) {
-            add(new DateFieldWidget("value", valueModel, context, config));
-            panel.setVisible(false);
-        } else {
-            add(new DateLabel("value", valueModel, new StyleDateConverter(true)));
-        }
-
         setOutputMarkupId(true);
+
+        Node dateNode = ((JcrNodeModel) getDefaultModel()).getNode();
+        JcrPropertyValueModel<Date> valueModel = new JcrPropertyValueModel<Date>(
+                new JcrPropertyModel(dateNode.getProperty(HIPPOSTD_DATE)));
+
+        String mode = config.getString("mode", "view");
+        add("view".equals(mode) ? new View("value", dateNode, valueModel) : new DateFieldWidget("value",
+                valueModel, context, config));
+    }
+
+    class View extends Fragment {
+
+        public View(String id, Node dateNode, JcrPropertyValueModel<Date> valueModel) throws RepositoryException {
+            super(id, "view", DatePickerPlugin.this);
+
+            add(new DateLabel("label", valueModel, new StyleDateConverter(true)));
+
+            String weekOfYear = dateNode.hasProperty(HIPPOSTD_WEEKOFYEAR) ? dateNode.getProperty(HIPPOSTD_WEEKOFYEAR).getString() : "-";
+            add(new Label("weekofyear", weekOfYear));
+
+            if (dateNode.hasProperty(HIPPOSTD_DAYOFWEEK)) {
+                add(new Label("dayofweek", new TypeTranslator(new JcrNodeTypeModel(HIPPOSTD_DATE)).getValueName(
+                        HIPPOSTD_DAYOFWEEK, new Model<String>(dateNode.getProperty(HIPPOSTD_DAYOFWEEK).getString()))));
+            } else {
+                add(new Label("dayofweek", "-"));
+            }
+
+            String dayOfYear = dateNode.hasProperty(HIPPOSTD_DAYOFYEAR) ? dateNode.getProperty(HIPPOSTD_DAYOFYEAR).getString() : "-";
+            add(new Label("dayofyear", dayOfYear));
+
+        }
     }
 }

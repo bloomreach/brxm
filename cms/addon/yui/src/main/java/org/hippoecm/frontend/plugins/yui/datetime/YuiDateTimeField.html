@@ -15,11 +15,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-  <span style="white-space: nowrap;">
-    <input type="text" wicket:id="date" size="8" />
-    <input type="text" wicket:id="hours" size="2" class="time"/>&nbsp;:
+  <div class="yui-date-time-field">
+    <input type="text" wicket:id="date" size="8" class="date"/>
+    <input type="text" wicket:id="hours" size="2" class="time"/>
+    <span class="time-separator">:</span>
     <input type="text" wicket:id="minutes" size="2" class="time"/>
     <select wicket:id="amOrPmChoice"></select>
-    <a wicket:id="today"><wicket:message key="set-to-current-date"></wicket:message></a>
-  </span>
+    <a wicket:id="today" class="today-link" wicket:message="title:set-to-current-date-tooltip">
+      <img wicket:id="current-date-img"/>
+      <wicket:message key="set-to-current-date"></wicket:message>
+    </a>
+  </div>
 </wicket:panel></html>

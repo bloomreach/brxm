@@ -39,17 +39,19 @@ public interface HippoStdNodeType {
 
     //--- Hippo Item Names ---//
     String HIPPOSTD_CONTENT = "hippostd:content";
-    String HIPPOSTD_DATE = "hippostd:date";
-    String HIPPOSTD_DAYOFYEAR = "hippostd:dayofyear";
     String HIPPOSTD_HOLDER = "hippostd:holder";
     String HIPPOSTD_LANGUAGE = "hippostd:language";
-    String HIPPOSTD_MONTH = "hippostd:month";
     String HIPPOSTD_SECOND = "hippostd:second";
     String HIPPOSTD_STATE = "hippostd:state";
     String HIPPOSTD_STATESUMMARY = "hippostd:stateSummary";
     String HIPPOSTD_TRANSLATIONS = "hippostd:translations";
-    String HIPPOSTD_WEEKOFYEAR = "hippostd:weekofyear";
+
+    String HIPPOSTD_DATE = "hippostd:date";
+    String HIPPOSTD_MONTH = "hippostd:month";
     String HIPPOSTD_YEAR = "hippostd:year";
+    String HIPPOSTD_DAYOFYEAR = "hippostd:dayofyear";
+    String HIPPOSTD_WEEKOFYEAR = "hippostd:weekofyear";
+    String HIPPOSTD_DAYOFWEEK = "hippostd:dayofweek";
 
     //--- Hippo Item Values ---//
     String PUBLISHED = "published";
