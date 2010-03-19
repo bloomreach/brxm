@@ -13,11 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!--
-
-
--->
 <!ELEMENT Replication (Journal|ReplicatorNodes)*> 
+
+<!--  parameter definition -->
+<!ELEMENT param EMPTY>
+<!ATTLIST param name  CDATA #REQUIRED 
+                value CDATA #REQUIRED>
 
 <!--
     The replication journal
@@ -26,11 +27,11 @@
 <!ATTLIST Journal class CDATA #REQUIRED>
 
 <!ELEMENT ReplicatorNodes (ReplicatorNode*)>
-
-<!ELEMENT ReplicatorNodes (param*|Replicator|Filter)>
+<!ELEMENT ReplicatorNode (param*, Replicator, Filter*)>
 
 <!ELEMENT Replicator (param*)>
-<!ATTLIST Journal class CDATA #REQUIRED>
+<!ATTLIST Replicator class CDATA #REQUIRED>
 
 <!ELEMENT Filter (param*)>
-<!ATTLIST Journal class CDATA #REQUIRED>
+<!ATTLIST Filter class CDATA #REQUIRED>
+
