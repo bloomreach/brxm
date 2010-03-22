@@ -16,10 +16,10 @@
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
   <div class="yui-date-time-field">
-    <input type="text" wicket:id="date" size="8" class="date"/>
-    <input type="text" wicket:id="hours" size="2" class="time"/>
+    <input type="text" wicket:id="date" size="8" class="date" maxlength="8"/>
+    <input type="text" wicket:id="hours" size="2" class="time" maxlength="2"/>
     <span class="time-separator">:</span>
-    <input type="text" wicket:id="minutes" size="2" class="time"/>
+    <input type="text" wicket:id="minutes" size="2" class="time" maxlength="2"/>
     <select wicket:id="amOrPmChoice"></select>
     <a wicket:id="today" class="today-link" wicket:message="title:set-to-current-date-tooltip">
       <img wicket:id="current-date-img"/>

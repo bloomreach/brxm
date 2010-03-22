@@ -73,9 +73,14 @@ public class YuiDateTimeField extends DateTimeField {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                setDate(new Date());
+                MutableDateTime date = new MutableDateTime(new Date());
+                boolean use12HourFormat = use12HourFormat();
+                int hours = date.getHourOfDay() % (use12HourFormat ? 12 : 24);
+                setHours(hours);
+                setMinutes(date.getMinuteOfHour());
+                setDate(date.toDate());
                 if (target != null) {
-                    target.addComponent(this);
+                    target.addComponent(YuiDateTimeField.this);
                 }
             }
 

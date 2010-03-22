@@ -33,6 +33,7 @@ if (!YAHOO.hippo.DateTime) {
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
 
         YAHOO.hippo.DateTimeImpl = function() {
+            this.current = null;
         };
 
         YAHOO.hippo.DateTimeImpl.prototype = {
@@ -48,50 +49,55 @@ if (!YAHOO.hippo.DateTime) {
                 } else {
                     YAHOO.log("Failed to render datepicker, element[" + id + "] not found", "error");
                 }
+            },
+
+            setCurrent : function(datePicker) {
+                if (this.current != null) {
+                    this.current.hide();
+                }
+                this.current = datePicker;
             }
         };
 
         YAHOO.hippo.DatePicker = function(id, config) {
-            this.init(id, config);
+            this.id = id;
+            this.config = config;
+            this.config.dpJs = this.id + "DpJs";
+            this.config.icon = this.id +"Icon";
+
+            this.picker = null;
+
+            this.containerId = Dom.generateId();
+            this.config.dp = this.containerId;
+
+            var container = document.createElement("div");
+            container.id = this.containerId;
+            document.body.appendChild(container);
+
+            YAHOO.util.Event.addListener(this.config.icon, "click", this.onIconClicked, this, true);
+            YAHOO.hippo.HippoAjax.registerDestroyFunction(Dom.get(this.id), this.destroy, this);
         };
 
         YAHOO.hippo.DatePicker.prototype = {
-            picker : null,
-            id: null,
-            config: null,
-            containerId : null,
-                
-            init : function(id, cfg) {
-                this.id = id;
-                this.config = cfg;
-                
-                if(this.containerId == null) {
-                    this.containerId = Dom.generateId();
-                    container = document.createElement("div");
-                    container.id = this.containerId;
-                    document.body.appendChild(container);
-                }
 
-                this.config.dpJs = this.id + "DpJs";
-                //this.config.dp = this.id + "Dp";
-                this.config.dp = this.containerId;                
-                this.config.icon = this.id +"Icon";
-                
-                YAHOO.util.Event.addListener(cfg.icon, "click", this.showCalendar, this, true);
-                YAHOO.hippo.HippoAjax.registerDestroyFunction(Dom.get(this.id), this.destroy, this);
+            onIconClicked : function() {
+                this.isVisible() ? this.hide() : this.show();
             },
-            
+
             /**
              * Display the YUI calendar widget. If the date is not null (should be a string) then it is parsed
              * using the provided date pattern, and set as the current date on the widget.
              */
-            showCalendar : function() {
+            show : function() {
+                YAHOO.hippo.DateTime.setCurrent(this);
+              
+                var render = false;
                 if(this.picker == null) {
                     this.picker = new YAHOO.widget.Calendar(this.config.dpJs, this.config.dp, this.config);
-                    this.picker.selectEvent.subscribe(this.selectHandler, this, true);  
-                    this.picker.render();
+                    this.picker.selectEvent.subscribe(this.selectHandler, this, true);
+                    render = true;
                 }
-                
+
                 var date = Dom.get(this.id).value;
                 if (date) {
                     date = this._parseDate(this.config.datePattern, date);
@@ -99,21 +105,28 @@ if (!YAHOO.hippo.DateTime) {
                         this.picker.select(date);
                         firstDate = this.picker.getSelectedDates()[0];
                         this.picker.cfg.setProperty("pagedate", (firstDate.getMonth() + 1) + "/" + firstDate.getFullYear());
-                        this.picker.render();
+                        render = true;
                     }
                 }
-                this.picker.show();
-                
-                if (this.config.alignWithIcon) {
-                    this.positionRelativeTo(this.picker.oDomContainer, this.config.icon);
+                if(render) {
+                    this.picker.render();
                 }
-                
+
+                //align picker to date input's bottom-left corner
+                this.positionRelativeTo(this.picker.oDomContainer, this.id);
+                this.picker.show();
                 this.picker.visible = true;
+            },
+
+            hide : function() {
+                if(this.picker != null) {
+                    this.picker.hide();
+                    this.picker.visible = false;
+                }
             },
             
             destroy : function() {
-                YAHOO.util.Event.removeListener(this.config.icon, "click", this.showCalendar);
-                
+                YAHOO.util.Event.removeListener(this.config.icon, "click", this.show);
                 if(this.picker != null) {
                     this.picker.destroy();
                     this.picker = null;
@@ -126,11 +139,9 @@ if (!YAHOO.hippo.DateTime) {
             selectHandler : function(type, args, cal) {
                 Dom.get(this.id).value = this._substituteDate(this.config.datePattern, args[0][0]);
                 
-                if (this.isPickerVisible()) {
+                if (this.isVisible()) {
                     if (this.config.hideOnSelect) {
-                        this.picker.hide();
-                        //Dom.setStyle(this.config.dp, 'display', 'none');
-                        this.picker.visible = false;
+                        this.hide();
                     }
                     if (this.config.fireChangeEvent) {
                         var field = Dom.get(this.id);
@@ -154,7 +165,7 @@ if (!YAHOO.hippo.DateTime) {
                 subjectHeight = Dom.get(subject).offsetHeight;
                 subjectWidth = Dom.get(subject).offsetWidth;     
                 
-                viewPortHeight = this.getViewportHeight();   
+                viewPortHeight =  Dom.getViewportHeight();
                 viewPortWidth = Dom.getViewportWidth();
                 
                 // also take scroll position into account
@@ -175,18 +186,8 @@ if (!YAHOO.hippo.DateTime) {
                 }
             },
             
-            getViewportHeight : function() {      
-                if (window.innerHeight) // all browsers except IE
-                    viewPortHeight = window.innerHeight;
-                else if (document.documentElement && document.documentElement.clientHeight) // IE 6 strict mode
-                    viewPortHeight = document.documentElement.height;       
-                else if (document.body) // other IEs
-                    viewPortHeight = document.body.clientHeight;
-                return viewPortHeight;
-            },
-            
-            isPickerVisible : function() {
-                return this.picker.visible;
+            isVisible : function() {
+                return this.picker != null && this.picker.visible;
             },
             
             /**
