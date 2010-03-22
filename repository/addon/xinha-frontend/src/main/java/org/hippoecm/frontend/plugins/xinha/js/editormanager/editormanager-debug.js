@@ -288,12 +288,12 @@ if (!YAHOO.hippo.EditorManager) {
             
             info : function(msg) {
                 YAHOO.log('Xinha[' + this.name + '] ' + msg, "info", "EditorManager");
-                console.log('Xinha[' + this.name + '] ' + msg);
+                //console.log('Xinha[' + this.name + '] ' + msg);
             },
             
             error : function(msg) {
                 YAHOO.log('Xinha[' + this.name + '] ' + msg, "error", "EditorManager");
-                console.error('Xinha[' + this.name + '] ' + msg);
+                //console.error('Xinha[' + this.name + '] ' + msg);
             }
 
         };
