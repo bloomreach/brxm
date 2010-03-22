@@ -277,7 +277,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
                 }
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
                 Map<String, Serializable> info = workflow.hints();
-                if (info.containsKey("obtainEditableInstanceobtainEditableInstance") && info.get("obtainEditableInstanceobtainEditableInstance") instanceof Boolean && !((Boolean)info.get("obtainEditableInstanceobtainEditableInstance")).booleanValue()) {
+                if (info.containsKey("obtainEditableInstance") && info.get("obtainEditableInstance") instanceof Boolean && !((Boolean)info.get("obtainEditableInstance")).booleanValue()) {
                      editAction.setVisible(false);
                 }
                 if (info.containsKey("publish") && info.get("publish") instanceof Boolean && !((Boolean)info.get("publish")).booleanValue()) {
