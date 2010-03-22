@@ -13,30 +13,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha;
+package org.hippoecm.frontend.plugins.richtext;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
+import org.hippoecm.frontend.plugins.richtext.RichTextProcessor;
 import org.junit.Test;
 
-public class HtmlProcessorTest {
+public class RichTextProcessorTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     @Test
     public void testPrefixInternalImage() {
         String text = "testing 1 2 3 <img src=\"link\"/>";
-        String processed = XinhaHtmlProcessor.prefixImageLinks(text, "test-prefix/");
+        String processed = RichTextProcessor.prefixImageLinks(text, "test-prefix/");
         assertEquals("testing 1 2 3 <img src=\"test-prefix/link\"/>", processed);
     }
 
     @Test
     public void testPrefixExternalImage() {
         String text = "testing 1 2 3 <img src=\"http://link\"/>";
-        String processed = XinhaHtmlProcessor.prefixImageLinks(text, "test-prefix/");
+        String processed = RichTextProcessor.prefixImageLinks(text, "test-prefix/");
         assertEquals("testing 1 2 3 <img src=\"http://link\"/>", processed);
     }
 
@@ -45,7 +46,7 @@ public class HtmlProcessorTest {
         String text = "testing 1 2 3 <a href=\"link-1\">link 1</a>\n"+
             "more text <a href=\"http://test\">test</a>\n"+
             "and an image <img src=\"link-2/subnode\"/>";
-        Set<String> links = XinhaHtmlProcessor.getInternalLinks(text);
+        Set<String> links = RichTextProcessor.getInternalLinks(text);
         assertEquals(2, links.size());
         assertTrue(links.contains("link-1"));
         assertTrue(links.contains("link-2"));
@@ -54,7 +55,7 @@ public class HtmlProcessorTest {
     @Test
     public void testMultilineGetInternalLinks() {
         String text="testing 1 2 3 <a\nhref=\"link\">link</a>";
-        Set<String> links = XinhaHtmlProcessor.getInternalLinks(text);
+        Set<String> links = RichTextProcessor.getInternalLinks(text);
         assertEquals(1, links.size());
         assertTrue(links.contains("link"));
     }
@@ -62,7 +63,7 @@ public class HtmlProcessorTest {
     @Test
     public void testEncodedLink() {
         String text="<a href=\"link%20je\">link</a>";
-        Set<String> links = XinhaHtmlProcessor.getInternalLinks(text);
+        Set<String> links = RichTextProcessor.getInternalLinks(text);
         assertEquals(1, links.size());
         assertTrue(links.contains("link je"));
     }

@@ -13,21 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.hippoecm.frontend.plugins.xinha.model;
 
-package org.hippoecm.frontend.plugins.xinha.services.links;
+import org.apache.wicket.IClusterable;
 
-import java.util.Map;
-
-import org.apache.wicket.model.IDetachable;
-import org.hippoecm.frontend.plugins.xinha.model.DocumentLink;
-
-public abstract class InternalXinhaLink extends DocumentLink {
-    private static final long serialVersionUID = 1L;
-
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+public interface IPersisted extends IClusterable {
+    final static String SVN_ID = "$Id$";
     
-    public InternalXinhaLink(Map<String, String> values, IDetachable parentModel) {
-        super(values, parentModel);
-    }
+    boolean isValid();
+    
+    boolean hasChanged();
+
+    boolean isExisting();
+
+    void save();
+    
+    void delete();
+
+    String toJsString();
+
 }

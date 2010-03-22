@@ -13,21 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.hippoecm.frontend.plugins.xinha.services.images;
 
 import java.util.Map;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
-
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.xinha.services.XinhaFacetHelper;
-import org.hippoecm.frontend.plugins.xinha.services.images.ImageItemFactory.ImageItem;
+import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
+import org.hippoecm.frontend.plugins.richtext.RichTextImage;
+import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,19 +34,19 @@ public abstract class XinhaImageService implements IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(XinhaImageService.class);
 
-    private ImageItemFactory factory;
-    private JcrNodeModel nodeModel;
+    final static String BINARIES_PREFIX = "binaries";
 
-    public XinhaImageService(JcrNodeModel nodeModel) {
-        this.nodeModel = nodeModel;
-        factory = new ImageItemFactory(nodeModel);
+    private IRichTextImageFactory factory;
+
+    public XinhaImageService(IRichTextImageFactory factory) {
+        this.factory = factory;
     }
 
     //Attach an image with only a JcrNodeModel. Method return json object wich 
     public String attach(JcrNodeModel model) {
         //TODO: fix drag-drop replacing
-        ImageItem item = createImageItem(model);
-        if (attachImageItem(item)) {
+        RichTextImage item = createImageItem(model);
+        if (item.save()) {
             StringBuilder sb = new StringBuilder(80);
             sb.append("xinha_editors.").append(getXinhaName()).append(".plugins.InsertImage.instance.insertImage(");
             sb.append("{ ");
@@ -66,19 +61,25 @@ public abstract class XinhaImageService implements IDetachable {
     protected abstract String getXinhaName();
 
     public XinhaImage createXinhaImage(Map<String, String> p) {
-        return new XinhaImage(p, nodeModel) {
+        RichTextImage rti = loadImageItem(p);
+        return new XinhaImage(p, rti != null ? rti.getNodeModel() : null) {
             private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isValid() {
+                return super.isValid() && factory.isValid(getLinkTarget());
+            }
 
             public void save() {
                 if (isAttacheable()) {
                     if (isReplacing()) {
-                        ImageItem remove = createImageItem(getInitialValues());
+                        RichTextImage remove = loadImageItem(getInitialValues());
                         if (remove != null) {
-                            detachImageItem(remove);
+                            remove.delete();
                         }
                     }
-                    ImageItem item = createImageItem(getNodeModel());
-                    if (attachImageItem(item)) {
+                    RichTextImage item = createImageItem(getLinkTarget());
+                    if (item.save()) {
                         setFacetSelectPath(item.getFacetSelectPath());
                         setUrl(item.getUrl());
                     }
@@ -86,8 +87,8 @@ public abstract class XinhaImageService implements IDetachable {
             }
 
             public void delete() {
-                ImageItem item = createImageItem(this);
-                detachImageItem(item);
+                RichTextImage item = loadImageItem(this);
+                item.delete();
                 setFacetSelectPath("");
                 setUrl("");
             }
@@ -96,56 +97,24 @@ public abstract class XinhaImageService implements IDetachable {
     }
 
     public void detach() {
-        nodeModel.detach();
+        factory.detach();
     }
     
-    private ImageItem createImageItem(Map<String, String> values) {
-        return factory.createImageItem(values);
-    }
-
-    private ImageItem createImageItem(JcrNodeModel nodeModel) {
-        try {
-            return factory.createImageItem(nodeModel.getNode());
-        } catch (UnsupportedRepositoryOperationException e) {
-            log.error("Error creating ImageItem for model[" + nodeModel.getItemModel().getPath() + "]", e);
-        } catch (ItemNotFoundException e) {
-            log.error("Error creating ImageItem for model[" + nodeModel.getItemModel().getPath() + "]", e);
-        } catch (AccessDeniedException e) {
-            log.error("Error creating ImageItem for model[" + nodeModel.getItemModel().getPath() + "]", e);
-        } catch (RepositoryException e) {
-            log.error("Error creating ImageItem for model[" + nodeModel.getItemModel().getPath() + "]", e);
-        }
-        return null;
-    }
-
-    private boolean attachImageItem(ImageItem item) {
-        XinhaFacetHelper helper = new XinhaFacetHelper();
-        Node node = nodeModel.getNode();
-        try {
-            String facet = helper.createFacet(node, item.getNodeName(), item.getUuid());
-            if (facet != null && !facet.equals("")) {
-                item.setFacetName(facet);
-                return true;
-            }
-        } catch (RepositoryException e) {
-            log.error("Failed to create facet for " + item.getNodeName(), e);
-        }
-        return false;
-    }
-
-    private void detachImageItem(ImageItem item) {
-        if (item.getUuid() != null) {
-            Node node = nodeModel.getNode();
-            String facet = item.getFacetName();
-            try {
-                if (node.hasNode(facet)) {
-                    Node imgNode = node.getNode(facet);
-                    imgNode.remove();
-                    node.getSession().save();
-                }
-            } catch (RepositoryException e) {
-                log.error("An error occured while trying to save new image facetSelect[" + item.getNodeName() + "]", e);
+    private RichTextImage loadImageItem(Map<String, String> values) {
+        String path = values.get(XinhaImage.FACET_SELECT);
+        if (!Strings.isEmpty(path)) {
+            path = RichTextUtil.decode(path);
+        } else { 
+            path = values.get(XinhaImage.URL);
+            if (!Strings.isEmpty(path) && path.startsWith(BINARIES_PREFIX)) {
+                path = RichTextUtil.decode(path.substring(BINARIES_PREFIX.length()));
             }
         }
+
+        return factory.loadImageItem(path);
+    }
+
+    private RichTextImage createImageItem(IDetachable nodeModel) {
+        return factory.createImageItem(nodeModel);
     }
 }

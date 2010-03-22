@@ -13,8 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-package org.hippoecm.frontend.plugins.xinha.services;
+package org.hippoecm.frontend.plugins.richtext.jcr;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
@@ -29,14 +28,17 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XinhaFacetHelper {
+public class RichTextFacetHelper {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    static final Logger log = LoggerFactory.getLogger(XinhaFacetHelper.class);
+    static final Logger log = LoggerFactory.getLogger(RichTextFacetHelper.class);
 
-    public String createFacet(Node node, String link, String uuid) throws ItemExistsException, PathNotFoundException,
+    private RichTextFacetHelper() {
+    }
+    
+    static String createFacet(Node node, String link, String uuid) throws ItemExistsException, PathNotFoundException,
             NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
         if (uuid == null) {
             log.error("uuid is null. Should never be possible for facet");
@@ -71,7 +73,7 @@ public class XinhaFacetHelper {
         return linkName;
     }
 
-    private String newLinkName(Node node, String link) throws RepositoryException {
+    private static String newLinkName(Node node, String link) throws RepositoryException {
         if (!node.hasNode(link)) {
             return link;
         }

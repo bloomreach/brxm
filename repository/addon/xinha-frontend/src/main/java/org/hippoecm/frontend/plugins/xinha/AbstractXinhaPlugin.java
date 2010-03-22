@@ -23,19 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Session;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.ComponentTag;
@@ -43,38 +35,29 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.protocol.http.WicketURLEncoder;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.XinhaHtmlProcessor.ILinkDecorator;
+import org.hippoecm.frontend.plugins.richtext.RichTextArea;
+import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
-import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkBehavior;
-import org.hippoecm.frontend.plugins.xinha.dialog.links.InternalLinkBehavior;
-import org.hippoecm.frontend.plugins.xinha.dragdrop.XinhaDropBehavior;
 import org.hippoecm.frontend.plugins.xinha.json.JsonParser;
-import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
-import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
-import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.HeaderContributorHelper;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +70,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(AbstractXinhaPlugin.class);
 
     public static final String XINHA_PARAM_PREFIX = "xinha-param-prefix-";
-    private static final String BINARIES_PREFIX = "binaries";
+    static final String BINARIES_PREFIX = "binaries";
 
     private static final String[] defaultFormatBlock = { "h1", "h2", "h3", "h4", "h5", "h6", "p", "address", "pre" };
 
@@ -98,21 +81,15 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             "xinha_init.js");
 
     private final IEditor.Mode mode;
-    private XinhaTextArea editor;
-    private Configuration configuration;
+    protected RichTextArea editor;
+    protected final Configuration configuration;
 
     //preview behaviors
-    private PreviewLinksBehavior previewLinksBehavior;
     private IBehavior startEditorBehavior;
     private IBehavior previewStyle;
 
     //editor behaviors
-    private InternalLinkBehavior linkPickerBehavior;
     private ExternalLinkBehavior externalLinkBehavior;
-    private ImagePickerBehavior imagePickerBehavior;
-
-    private XinhaImageService imageService;
-    private XinhaLinkService linkService;
 
     private JcrNodeModel nodeModel;
 
@@ -120,22 +97,28 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         super(context, config);
 
         configuration = new Configuration(config);
-        context.registerService(configuration, Configuration.class.getName());
 
-        String binariesPath = BINARIES_PREFIX + getNodePath();
-        configuration.addProperty("prefix", XinhaUtil.encodeResourceURL(XinhaUtil.encode(binariesPath) + "/"));
-        configuration.addProperty("isPortletContext", Boolean.toString(XinhaUtil.isPortletContext()));
-        configuration.addProperty("previewTooltipText", getString("preview.tooltip", null, "Click to edit"));
+        configuration.addProperty("isPortletContext", Boolean.toString(RichTextUtil.isPortletContext()));
         configuration.setName(getMarkupId());
 
         mode = IEditor.Mode.fromString(config.getString("mode", "view"));
         if (IEditor.Mode.EDIT == mode) {
+            configuration.addProperty("previewTooltipText", getString("preview.tooltip", null, "Click to edit"));
             add(new EditorManagerBehavior());
         }
-        load();
 
         // dialog functionality for plugins
         add(JavascriptPackageResource.getHeaderContribution(XINHA_MODAL_JS));
+    }
+
+    @Override
+    protected void onStart() {
+        load();
+        super.onStart();
+    }
+    
+    protected IEditor.Mode getMode() {
+        return mode;
     }
 
     private void load() {
@@ -143,17 +126,35 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 : createEditablePreview("fragment") : createPreview("fragment"));
     }
 
-    private Fragment createPreview(String fragmentId) {
-        if (previewLinksBehavior == null) {
-            add(previewLinksBehavior = new PreviewLinksBehavior());
-        }
+    protected abstract JcrPropertyValueModel getValueModel();
 
+    protected abstract JcrPropertyValueModel getBaseModel();
+
+    protected IModel<String> newCompareModel() {
+        return new DiffModel(getBaseModel(), getValueModel());
+    }
+
+    protected IModel<String> newViewModel() {
+        return getValueModel();
+    }
+
+    protected RichTextModel newEditModel() {
+        return new RichTextModel(getValueModel());
+    }
+
+    protected Fragment createPreview(String fragmentId) {
         Fragment fragment = new Fragment(fragmentId, "view", this);
         IModel<String> model;
-        if (IEditor.Mode.COMPARE == mode) {
-            model = new DiffModel(getBaseModel(), getValueModel());
-        } else {
-            model = getValueModel();
+        switch (mode) {
+        case COMPARE:
+            model = newCompareModel();
+            break;
+        case VIEW:
+        case EDIT:
+            model = newViewModel();
+            break;
+        default:
+            throw new RuntimeException("No model available for mode " + mode);
         }
         fragment.add(new WebMarkupContainer("value", model) {
             private static final long serialVersionUID = 1L;
@@ -162,9 +163,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             protected void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
                 String text = (String) getDefaultModelObject();
                 if (text != null) {
-                    String processed = XinhaHtmlProcessor.prefixImageLinks(text, configuration.getProperty("prefix"));
-                    processed = XinhaHtmlProcessor.decorateLinks(processed, previewLinksBehavior);
-                    replaceComponentTagBody(markupStream, openTag, processed);
+                    replaceComponentTagBody(markupStream, openTag, text);
                 } else {
                     renderComponentTagBody(markupStream, openTag);
                 }
@@ -176,7 +175,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         return fragment;
     }
 
-    private Fragment createEditablePreview(String fragmentId) {
+    protected Fragment createEditablePreview(String fragmentId) {
         add(startEditorBehavior = new AjaxEventBehavior("onclick") {
             private static final long serialVersionUID = 1L;
 
@@ -192,7 +191,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         return createPreview(fragmentId);
     }
 
-    private Fragment createEditor(String fragmentId) {
+    protected Fragment createEditor(String fragmentId) {
         //remove preview behaviors
         if (previewStyle != null) {
             remove(previewStyle);
@@ -202,86 +201,18 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             remove(startEditorBehavior);
             startEditorBehavior = null;
         }
-        if (previewLinksBehavior != null) {
-            remove(previewLinksBehavior);
-            previewLinksBehavior = null;
-        }
 
         Fragment fragment = new Fragment(fragmentId, "edit", this);
-        fragment.add(editor = new XinhaTextArea("value", new XinhaModel(getValueModel())));
+        fragment.add(editor = new RichTextArea("value", newEditModel()));
+        editor.setWidth(getPluginConfig().getString("width", "1px"));
+        editor.setHeight(getPluginConfig().getString("height", "1px"));
         configuration.setTextareaName(editor.getMarkupId());
-
-        JcrNodeModel nodeModel = new JcrNodeModel(getValueModel().getJcrPropertymodel().getItemModel().getParentModel());
-        imageService = new XinhaImageService(nodeModel) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String getXinhaName() {
-                return configuration.getName();
-            }
-
-        };
-
-        linkService = new XinhaLinkService(nodeModel) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String getXinhaName() {
-                return configuration.getName();
-            }
-
-        };
 
         IPluginContext context = getPluginContext();
         IPluginConfig config = getPluginConfig();
-
-        editor.add(imagePickerBehavior = new ImagePickerBehavior(context, config
-                .getPluginConfig("Xinha.plugins.InsertImage"), imageService));
-        editor.add(linkPickerBehavior = new InternalLinkBehavior(context, config
-                .getPluginConfig("Xinha.plugins.CreateLink"), linkService));
         editor.add(externalLinkBehavior = new ExternalLinkBehavior(context, config));
-
-        add(new XinhaDropBehavior(context, config) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void insertImage(JcrNodeModel model, AjaxRequestTarget target) {
-                String returnScript = imageService.attach(model);
-                if (returnScript != null) {
-                    target.getHeaderResponse().renderOnDomReadyJavascript(returnScript);
-                }
-            }
-
-            @Override
-            protected void updateImage(JcrNodeModel model, AjaxRequestTarget target) {
-                //TODO: check if old image facet select should be deleted
-                insertImage(model, target);
-            }
-
-            @Override
-            protected void insertLink(JcrNodeModel model, AjaxRequestTarget target) {
-                String returnScript = linkService.attach(model);
-                if (returnScript != null) {
-                    target.getHeaderResponse().renderOnDomReadyJavascript(returnScript);
-                }
-            }
-
-            @Override
-            protected void updateLink(JcrNodeModel model, AjaxRequestTarget target) {
-                //TODO: check if old link facet select should be deleted
-                insertLink(model, target);
-            }
-        });
         return fragment;
     }
-
-    private String getNodePath() {
-        return getValueModel().getJcrPropertymodel().getItemModel().getParentModel().getPath();
-    }
-
-    protected abstract JcrPropertyValueModel getValueModel();
-
-    protected abstract IModel<String> getBaseModel();
 
     /**
      * Callback urls aren't known at construction so set them here
@@ -290,17 +221,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     public void onBeforeRender() {
         if (configuration != null && configuration.getEditorStarted()) {
             configuration.addProperty("callbackUrl", editor.getCallbackUrl());
-
-            //TODO: add enum to distinguish sorts of drops available
-            if (configuration.getPluginConfiguration("InsertImage") != null) {
-                configuration.getPluginConfiguration("InsertImage").addProperty("callbackUrl",
-                        imagePickerBehavior.getCallbackUrl().toString());
-            }
-
-            if (configuration.getPluginConfiguration("CreateLink") != null) {
-                configuration.getPluginConfiguration("CreateLink").addProperty("callbackUrl",
-                        linkPickerBehavior.getCallbackUrl().toString());
-            }
 
             if (configuration.getPluginConfiguration("CreateExternalLink") != null) {
                 configuration.getPluginConfiguration("CreateExternalLink").addProperty("callbackUrl",
@@ -312,152 +232,10 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
     @Override
     protected void onDetach() {
-        if (imageService != null) {
-            imageService.detach();
-        }
-        if (linkService != null) {
-            linkService.detach();
-        }
         if (nodeModel != null) {
             nodeModel.detach();
         }
         super.onDetach();
-    }
-
-    protected String clean(final String value) throws Exception {
-        if (value != null) {
-            IHtmlCleanerService cleaner = getPluginContext().getService(IHtmlCleanerService.class.getName(),
-                    IHtmlCleanerService.class);
-            if (cleaner != null) {
-                return cleaner.clean(value);
-            }
-        }
-        return value;
-    }
-
-    private void removeLinks(String text) {
-        Set<String> linkNames = XinhaHtmlProcessor.getInternalLinks(text);
-        linkService.cleanup(linkNames);
-    }
-
-    private class XinhaModel implements IModel {
-        private static final long serialVersionUID = 1L;
-
-        private JcrPropertyValueModel valueModel;
-
-        public XinhaModel(JcrPropertyValueModel valueModel) {
-            this.valueModel = valueModel;
-        }
-
-        public Object getObject() {
-            return valueModel.getObject();
-        }
-
-        public void setObject(Object value) {
-            try {
-                String cleanedValue = clean((String) value);
-                if (cleanedValue != null) {
-                    removeLinks(cleanedValue);
-                }
-                valueModel.setObject(cleanedValue);
-            } catch (Exception e) {
-                error(new ResourceModel("error-while-cleaning-conent", "An error occured while cleaning the content"));
-                log.error("Exception caught during editor creation while cleaning value: " + value, e);
-            }
-        }
-
-        public void detach() {
-            valueModel.detach();
-        }
-    }
-
-    private class XinhaTextArea extends TextArea {
-        private static final long serialVersionUID = 1L;
-
-        private AbstractAjaxBehavior callback;
-
-        public XinhaTextArea(String id, IModel model) {
-            super(id, model);
-
-            setOutputMarkupId(true);
-            setVisible(true);
-            setMarkupId("xinha" + Integer.valueOf(Session.get().nextSequenceValue()));
-
-            add(callback = new AbstractDefaultAjaxBehavior() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void respond(AjaxRequestTarget target) {
-                    processInput();
-                }
-            });
-        }
-
-        public String getCallbackUrl() {
-            return callback.getCallbackUrl().toString();
-        }
-
-        @Override
-        protected void onComponentTag(final ComponentTag tag) {
-            StringBuilder sb = new StringBuilder();
-            String width = getPluginConfig().getString("width", "1px");
-            sb.append("width: ");
-            sb.append(width);
-            sb.append(";");
-
-            String height = getPluginConfig().getString("height", "1px");
-            sb.append("height: ");
-            sb.append(height);
-            sb.append(";");
-
-            sb.append("display: none;");
-            tag.put("style", sb.toString());
-            super.onComponentTag(tag);
-        }
-
-    }
-
-    class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkDecorator {
-        private static final long serialVersionUID = 1L;
-
-        private static final String JS_STOP_EVENT = "Wicket.stopEvent(event);";
-
-        @Override
-        protected void respond(AjaxRequestTarget target) {
-            Request request = RequestCycle.get().getRequest();
-            String link = request.getParameter("link");
-            if (link != null) {
-                IBrowseService browser = getPluginContext().getService(
-                        getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
-                if (browser != null) {
-                    JcrNodeModel model = (JcrNodeModel) getModel();
-                    Node node = model.getNode();
-                    try {
-                        if (node.hasNode(link)) {
-                            node = node.getNode(link);
-                            if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                                String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                                javax.jcr.Session s = ((UserSession) getSession()).getJcrSession();
-                                node = s.getNodeByUUID(uuid);
-                                browser.browse(new JcrNodeModel(node));
-                            }
-                        }
-                    } catch (RepositoryException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        public String internalLink(String link) {
-            String url = getCallbackUrl(false) + "&link=" + WicketURLEncoder.QUERY_INSTANCE.encode(link);
-            return "href=\"#\" onclick=\"" + JS_STOP_EVENT + generateCallbackScript("wicketAjaxGet('" + url + "'")
-                    + "\"";
-        }
-
-        public String externalLink(String link) {
-            return "href=\"" + link + "\" onclick=\"" + JS_STOP_EVENT + "\"";
-        }
     }
 
     class EditorManagerBehavior extends AbstractYuiBehavior {

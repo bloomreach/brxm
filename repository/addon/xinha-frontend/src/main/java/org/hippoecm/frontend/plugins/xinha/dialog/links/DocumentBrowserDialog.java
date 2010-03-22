@@ -22,7 +22,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractBrowserDialog;
-import org.hippoecm.frontend.plugins.xinha.dialog.DocumentLink;
+import org.hippoecm.frontend.plugins.xinha.model.DocumentLink;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;

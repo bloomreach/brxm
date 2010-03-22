@@ -375,7 +375,7 @@ if (!YAHOO.hippo.EditorManager) {
                 if(!Lang.isUndefined(this.config.formatBlock)) {
                     xinhaConfig.formatblock = this.config.formatBlock;
                 }
-                
+
                 //make editors 
                 var textarea = this.config.textarea;
                 var xinha = Xinha.makeEditors([textarea], xinhaConfig, this.config.plugins)[textarea];

@@ -17,19 +17,12 @@
 package org.hippoecm.frontend.plugins.xinha.services.links;
 
 import java.util.Map;
-import java.util.Set;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.xinha.XinhaUtil;
-import org.hippoecm.frontend.plugins.xinha.services.XinhaFacetHelper;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.RichTextLink;
+import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,19 +34,22 @@ public abstract class XinhaLinkService implements IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(XinhaLinkService.class);
 
-    private JcrNodeModel nodeModel;
-
-    public XinhaLinkService(JcrNodeModel nodeModel) {
-        this.nodeModel = nodeModel;
+    IRichTextLinkFactory factory;
+    
+    public XinhaLinkService(IRichTextLinkFactory factory) {
+        this.factory = factory;
     }
 
     public InternalXinhaLink create(Map<String, String> p) {
-        return new InternalLink(p, nodeModel);
+        String relPath = p.get(XinhaLink.HREF);
+        RichTextLink rtl = factory.loadLink(RichTextUtil.decode(relPath));
+        return new InternalLink(p, rtl != null ? rtl.getTargetId() : null);
     }
 
     public String attach(JcrNodeModel model) {
-        String href = createLink(model);
-        if (href != null) {
+        RichTextLink rtl = factory.createLink(model);
+        if (rtl != null && rtl.save()) {
+            String href = RichTextUtil.encode(rtl.getName());
             String script = "xinha_editors." + getXinhaName() + ".plugins.CreateLink.instance.createLink({"
                     + XinhaLink.HREF + ": '" + href + "', " + XinhaLink.TARGET + ": ''}, false);";
             return script;
@@ -61,116 +57,47 @@ public abstract class XinhaLinkService implements IDetachable {
         return null;
     }
 
-    /**
-     * Remove any facetselects that are no longer used.
-     * 
-     * @param references the current list of link names 
-     */
-    public void cleanup(Set<String> references) {
-        try {
-            NodeIterator iter = nodeModel.getNode().getNodes();
-            while (iter.hasNext()) {
-                Node child = iter.nextNode();
-                if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    String name = child.getName();
-                    if (!references.contains(name)) {
-                        child.remove();
-                    }
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error("Error removing unused links", ex);
-        }
-    }
+    protected abstract String getXinhaName();
     
     public void detach() {
-        nodeModel.detach();
-    }
-    
-    private String createLink(JcrNodeModel nodeModel) {
-        try {
-            String link = createLink(new NodeItem(nodeModel.getNode()));
-            return XinhaUtil.encode(link);
-        } catch (RepositoryException e) {
-            log.error("Error creating NodeItem for nodeModel[" + nodeModel.getItemModel().getPath() + "]");
-        }
-        return null;
-    }
-
-    private String createLink(NodeItem item) {
-        XinhaFacetHelper helper = new XinhaFacetHelper();
-        Node node = nodeModel.getNode();
-        try {
-            return helper.createFacet(node, item.getNodeName(), item.getUuid());
-        } catch (RepositoryException e) {
-            log.error("Failed to create facet for " + item.getNodeName(), e);
-        }
-        return "";
-    }
-
-    private class NodeItem implements IClusterable {
-        private static final long serialVersionUID = 1L;
-
-        private String uuid;
-        private String nodeName;
-
-        public NodeItem(Node listNode) throws RepositoryException {
-            this(listNode, null);
-        }
-
-        public NodeItem(Node listNode, String displayName) throws RepositoryException {
-            if (listNode.isNodeType("mix:referenceable")) {
-                this.uuid = listNode.getUUID();
-            }
-            this.nodeName = NodeNameCodec.encode(listNode.getName());
-        }
-
-        public String getNodeName() {
-            return nodeName;
-        }
-
-        public String getUuid() {
-            return uuid;
-        }
+        factory.detach();
     }
 
     private class InternalLink extends InternalXinhaLink {
         private static final long serialVersionUID = 1L;
 
-
-        public InternalLink(Map<String, String> values, JcrNodeModel parentModel) {
-            super(values, parentModel);
+        public InternalLink(Map<String, String> values, IDetachable targetId) {
+            super(values, targetId);
         }
 
+        @Override
+        public boolean isValid() {
+            return super.isValid() && factory.isValid(getLinkTarget());
+        }
+        
         public void save() {
             if (isAttacheable()) {
                 if (isReplacing()) {
-                    new InternalLink(getInitialValues(), nodeModel).delete();
+                    Map<String, String> values = getInitialValues();
+                    String relPath = RichTextUtil.decode(values.get(XinhaLink.HREF));
+                    RichTextLink rtl = factory.loadLink(relPath);
+                    rtl.delete();
                 }
-                String url = createLink(getNodeModel());
-                if (url != null) {
-                    setHref(url);
+                RichTextLink rtl = factory.createLink(getLinkTarget());
+                if (rtl != null && rtl.save()) {
+                    setHref(RichTextUtil.encode(rtl.getName()));
                 }
             }
         }
 
         public void delete() {
-            String relPath = XinhaUtil.decode(getHref());
-            Node node = nodeModel.getNode();
-            try {
-                if (node.hasNode(relPath)) {
-                    Node linkNode = node.getNode(relPath);
-                    linkNode.remove();
-                    node.getSession().save();
-                    setHref(null);
-                }
-            } catch (RepositoryException e) {
-                log.error("Error during remove of internal link node[" + relPath + "]", e);
-            }
+            Map<String, String> values = getInitialValues();
+            String relPath = RichTextUtil.decode(values.get(XinhaLink.HREF));
+            RichTextLink rtl = factory.loadLink(relPath);
+            rtl.delete();
+            setHref(null);
         }
 
     }
-
-    protected abstract String getXinhaName();
 
 }

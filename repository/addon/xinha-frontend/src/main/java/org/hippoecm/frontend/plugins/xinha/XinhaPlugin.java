@@ -39,7 +39,7 @@ public class XinhaPlugin extends AbstractXinhaPlugin {
         return (JcrPropertyValueModel) getDefaultModel();
     }
 
-    protected IModel<String> getBaseModel() {
+    protected JcrPropertyValueModel getBaseModel() {
         IPluginConfig config = getPluginConfig();
         if (!config.containsKey("model.compareTo")) {
             return null;
@@ -49,7 +49,7 @@ public class XinhaPlugin extends AbstractXinhaPlugin {
         if (modelRef == null) {
             return null;
         }
-        return modelRef.getModel();
+        return (JcrPropertyValueModel) modelRef.getModel();
     }
 
 }
