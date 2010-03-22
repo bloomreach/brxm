@@ -14,14 +14,11 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.xinha.dialog;
+package org.hippoecm.frontend.plugins.xinha.model;
 
 import java.util.Map;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,35 +31,13 @@ public abstract class DocumentLink extends XinhaLink {
     
     protected static final Logger log = LoggerFactory.getLogger(DocumentLink.class);
     
-    private JcrNodeModel initialModel;
-    private JcrNodeModel selectedModel;
+    private IDetachable initialModel;
+    private IDetachable selectedModel;
 
-    public DocumentLink(Map<String, String> values, JcrNodeModel parentModel) {
+    public DocumentLink(Map<String, String> values, IDetachable model) {
         super(values);
 
-        initialModel = selectedModel = createInitialModel(parentModel);
-    }
-
-    protected abstract JcrNodeModel createInitialModel(JcrNodeModel parentModel);
-
-    @Override
-    public boolean isValid() {
-        if (selectedModel == null) {
-            return false;
-        }
-        Node node = selectedModel.getObject();
-        if (node == null) {
-            return false;
-        }
-        try {
-            if (!node.isNodeType("mix:referenceable")) {
-                return false;
-            }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-            return false;
-        }
-        return true;
+        initialModel = selectedModel = model;
     }
 
     @Override
@@ -89,11 +64,12 @@ public abstract class DocumentLink extends XinhaLink {
         return initialModel == null || isReplacing();
     }
 
-    public JcrNodeModel getNodeModel() {
+    public IDetachable getLinkTarget() {
         return selectedModel;
     }
 
-    public void setNodeModel(JcrNodeModel model) {
+    public void setLinkTarget(IDetachable model) {
         this.selectedModel = model;
     }
+
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,25 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha.dialog;
+package org.hippoecm.frontend.plugins.richtext;
 
-import java.util.Map;
+import java.util.Set;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 
-public interface IPersistedMap extends Map<String, String>, IClusterable {
-    final static String SVN_ID = "$Id$";
+public interface IRichTextLinkFactory extends IDetachable {
+
+    void cleanup(Set<String> references);
+
+    boolean isValid(IDetachable targetId);
     
-    boolean isValid();
-    
-    boolean hasChanged();
+    RichTextLink createLink(IDetachable targetId);
 
-    boolean isExisting();
-
-    void save();
-    
-    void delete();
-
-    String toJsString();
+    RichTextLink loadLink(String relPath);
 
 }

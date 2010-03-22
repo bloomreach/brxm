@@ -16,8 +16,10 @@
 package org.hippoecm.frontend.plugins.xinha;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.StringReader;
 
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
@@ -30,6 +32,7 @@ import org.outerj.daisy.diff.DaisyDiff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class DiffModel extends LoadableDetachableModel<String> {
@@ -50,15 +53,16 @@ public class DiffModel extends LoadableDetachableModel<String> {
         if (original == null || current == null) {
             return null;
         }
+        InputSource oldSource = new InputSource();
+        oldSource.setCharacterStream(new StringReader(original.getObject()));
+
+        InputSource newSource = new InputSource();
+        newSource.setCharacterStream(new StringReader(current.getObject()));
+
+        SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
+        TransformerHandler handler;
         try {
-            InputSource oldSource = new InputSource();
-            oldSource.setCharacterStream(new StringReader(original.getObject()));
-
-            InputSource newSource = new InputSource();
-            newSource.setCharacterStream(new StringReader(current.getObject()));
-
-            SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-            TransformerHandler handler = tf.newTransformerHandler();
+            handler = tf.newTransformerHandler();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             StreamResult dr = new StreamResult(baos);
             handler.setResult(dr);
@@ -69,7 +73,11 @@ public class DiffModel extends LoadableDetachableModel<String> {
             handler.endDocument();
 
             return baos.toString();
-        } catch (Exception e) {
+        } catch (TransformerConfigurationException e) {
+            log.error(e.getMessage());
+        } catch (SAXException e) {
+            log.error(e.getMessage());
+        } catch (IOException e) {
             log.error(e.getMessage());
         }
         return null;

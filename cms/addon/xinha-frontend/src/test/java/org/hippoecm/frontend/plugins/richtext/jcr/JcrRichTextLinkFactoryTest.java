@@ -13,23 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha;
+package org.hippoecm.frontend.plugins.richtext.jcr;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.plugins.richtext.RichTextLink;
+import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LinkServiceTest extends PluginTest {
+public class JcrRichTextLinkFactoryTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -58,20 +59,16 @@ public class LinkServiceTest extends PluginTest {
     @Test
     public void linkLifecycleTest() throws RepositoryException {
         Node html = root.getNode("test/source/source/xinhatest:html");
-        XinhaLinkService linkService = new XinhaLinkService(new JcrNodeModel(html)) {
-
-            @Override
-            protected String getXinhaName() {
-                return "xinha";
-            }
-        };
-
+        JcrRichTextLinkFactory factory = new JcrRichTextLinkFactory(new JcrNodeModel(html));
         Node target = root.getNode("test/target");
-        linkService.attach(new JcrNodeModel(target));
+        RichTextLink link = factory.createLink(new JcrNodeModel(target));
+        link.save();
 
         assertTrue(root.hasNode("test/source/source/xinhatest:html/target"));
 
-        linkService.cleanup(new TreeSet<String>());
+        RichTextModel model = new RichTextModel(new JcrPropertyValueModel(new JcrPropertyModel(html.getProperty("hippostd:content"))));
+        model.setLinkFactory(factory);
+        model.setObject(model.getObject());
         assertFalse(root.hasNode("test/source/source/xinhatest:html/target"));
     }
 

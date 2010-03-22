@@ -21,7 +21,7 @@ import nl.hippo.htmlcleaner.HtmlCleanerTemplate;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.IHtmlCleanerService;
+import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,21 +13,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.hippoecm.frontend.plugins.richtext;
 
-package org.hippoecm.frontend.plugins.xinha.services.links;
-
-import java.util.Map;
-
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
-import org.hippoecm.frontend.plugins.xinha.model.DocumentLink;
 
-public abstract class InternalXinhaLink extends DocumentLink {
+public abstract class RichTextLink implements IClusterable {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-    
-    public InternalXinhaLink(Map<String, String> values, IDetachable parentModel) {
-        super(values, parentModel);
+    private String name;
+    private IDetachable model;
+
+    public RichTextLink(IDetachable model, String name) {
+        this.model = model;
+        this.name = name;
     }
+
+    public IDetachable getTargetId() {
+        return model;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String nodeName) {
+        this.name = nodeName;
+    }
+
+    abstract public boolean save();
+
+    abstract public void delete();
+
 }

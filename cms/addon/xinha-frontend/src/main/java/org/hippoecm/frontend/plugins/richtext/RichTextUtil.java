@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha;
+package org.hippoecm.frontend.plugins.richtext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.RequestContext;
@@ -21,7 +21,7 @@ import org.apache.wicket.protocol.http.WicketURLDecoder;
 import org.apache.wicket.protocol.http.WicketURLEncoder;
 import org.apache.wicket.protocol.http.portlet.PortletRequestContext;
 
-public class XinhaUtil {
+public class RichTextUtil {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

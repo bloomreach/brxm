@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha;
+package org.hippoecm.frontend.plugins.richtext;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 import org.apache.wicket.protocol.http.WicketURLDecoder;
 import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 
-public class XinhaHtmlProcessor {
+public class RichTextProcessor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -57,7 +57,7 @@ public class XinhaHtmlProcessor {
                     String link = fs.group(1);
 
                     if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                        if (XinhaUtil.isPortletContext()) {
+                        if (RichTextUtil.isPortletContext()) {
                             s.appendReplacement(newImg, ("src=\"" + prefix + "?_path=" + link + "\"").replace("\\",
                                     "\\\\").replace("$", "\\$"));
                         } else {
@@ -92,7 +92,7 @@ public class XinhaHtmlProcessor {
      * Return the internal links, i.e. the links to other documents / images / assets
      * in the text.  The text may not be null.
      */
-    public static Set<String> getInternalLinks(String text) {
+    static Set<String> getInternalLinks(String text) {
         Set<String> links = new TreeSet<String>();
         Matcher m = LINK_AND_IMAGES_PATTERN.matcher(text);
         while (m.find()) {

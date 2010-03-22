@@ -36,6 +36,7 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.xinha.XinhaPlugin;
+import org.hippoecm.frontend.plugins.xinha.model.DocumentLink;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.preferences.IPreferencesStore;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -84,7 +85,7 @@ public abstract class AbstractBrowserDialog<T extends DocumentLink> extends Abst
 
         //save modelServiceId and dialogServiceId in cluster config
         String modelServiceId = decorated.getString("wicket.model");
-        IModel<Node> model = getModelObject().getNodeModel();
+        IModel<Node> model = (IModel<Node>) getModelObject().getLinkTarget();
 
         if (model == null) {
             IPreferencesStore store = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
@@ -104,7 +105,7 @@ public abstract class AbstractBrowserDialog<T extends DocumentLink> extends Abst
         } else {
             IModel<Node> newModel = modelReference.getModel();
             if (newModel != null) {
-                getModelObject().setNodeModel((JcrNodeModel) newModel);
+                getModelObject().setLinkTarget((JcrNodeModel) newModel);
                 checkState();
             }
         }
@@ -118,9 +119,9 @@ public abstract class AbstractBrowserDialog<T extends DocumentLink> extends Abst
             public void onEvent(Iterator events) {
                 IModel<Node> newModel = modelReference.getModel();
                 if (newModel != null) {
-                    JcrNodeModel currentModel = getModelObject().getNodeModel();
+                    JcrNodeModel currentModel = (JcrNodeModel) getModelObject().getLinkTarget();
                     if (!newModel.equals(currentModel)) {
-                        getModelObject().setNodeModel((JcrNodeModel) newModel);
+                        getModelObject().setLinkTarget((JcrNodeModel) newModel);
                         checkState();
                     }
                 }

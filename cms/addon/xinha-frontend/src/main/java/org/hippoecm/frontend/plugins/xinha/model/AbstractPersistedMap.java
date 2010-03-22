@@ -13,13 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha.dialog;
+package org.hippoecm.frontend.plugins.xinha.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-public abstract class AbstractPersistedMap extends HashMap<String, String> implements IPersistedMap {
+import org.hippoecm.frontend.plugins.xinha.dialog.JavascriptUtil;
+
+public abstract class AbstractPersistedMap extends HashMap<String, String> implements IPersisted {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -50,7 +51,7 @@ public abstract class AbstractPersistedMap extends HashMap<String, String> imple
         StringBuilder sb = new StringBuilder();
         sb.append('{');
         boolean first = true;
-        for (Entry<String, String> e : (Set<Entry<String, String>>) entrySet()) {
+        for (Map.Entry<String, String> e : entrySet()) {
             if (first) {
                 first = false;
             } else {
