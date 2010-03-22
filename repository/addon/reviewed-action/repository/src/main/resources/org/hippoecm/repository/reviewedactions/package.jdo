@@ -30,6 +30,8 @@
       <field name="current" column="../hippo:request[hippostdpubwf:type='publish']"/>
       <field name="current2" column="../hippo:request[hippostdpubwf:type='depublish']"/>
       <field name="current3" column="../hippo:request[hippostdpubwf:type='delete']"/>
+      <field name="current4" column="../hippo:request[hippostdpubwf:type='scheduledpublish']"/>
+      <field name="current5" column="../hippo:request[hippostdpubwf:type='scheduleddepublish']"/>
     </class>
     <class name="FullRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
