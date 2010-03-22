@@ -30,13 +30,23 @@ public class WorkflowDescriptorModel<T> extends LoadableDetachableModel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private String path;
+    private String uuid;
+    private String relPath;
     private String category;
 
     public WorkflowDescriptorModel(WorkflowDescriptor descriptor, String category, Node subject) throws RepositoryException {
         super(descriptor);
         this.category = category;
-        this.path = subject.getPath();
+        if (subject.isNodeType("mix:referenceable")) {
+            this.uuid = subject.getUUID();
+            this.relPath = null;
+        } else {
+            this.uuid = subject.getParent().getUUID();
+            this.relPath = subject.getName();
+            if(subject.getIndex() > 1) {
+                this.relPath += "[" + subject.getIndex() + "]";
+            }
+        }
     }
 
     protected Object load() {
@@ -58,25 +68,13 @@ public class WorkflowDescriptorModel<T> extends LoadableDetachableModel {
     }
 
     private Node getNode(Session session) throws RepositoryException {
-        Node node = session.getRootNode();
-        String relPath = path.substring(1);
-        if (node.hasNode(relPath)) {
-            return node.getNode(path.substring(1));
-        } else if (relPath.contains("/")) {
-            // FIXME should be more intelligent
-            int pos = relPath.lastIndexOf("/");
-            if (pos < 0) {
-                return null;
+        try {
+            Node node = session.getNodeByUUID(uuid);
+            if(relPath != null) {
+                node = node.getNode(relPath);
             }
-            String name = relPath.substring(pos + 1);
-            if (name.contains("[")) {
-                name = name.substring(0, name.lastIndexOf("["));
-            }
-            relPath = relPath.substring(0, pos);
-            node = node.getNode(relPath);
-            node = node.getNode(name);
             return node;
-        } else {
+        } catch(RepositoryException ex) {
             return null;
         }
     }
