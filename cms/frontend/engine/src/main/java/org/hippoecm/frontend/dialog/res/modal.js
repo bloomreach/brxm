@@ -770,6 +770,11 @@ Wicket.Window.prototype = {
 		if (typeof(this.update) != "undefined")
 			window.clearInterval(this.update);
 
+    //HippoAjax cleanup hook.  
+    if(YAHOO.hippo.HippoAjax) {
+      YAHOO.hippo.HippoAjax.cleanupModal(this);      
+    }
+
 		// clean event bindings
 		this.bindClean();
 		

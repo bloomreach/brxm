@@ -90,6 +90,16 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                     var callback = this.callbacks.remove(id);
                     callback.func.apply(callback.context, callback.args)
                 }
+            },
+
+            cleanupModal : function(modal) {
+              var els = YAHOO.util.Dom.getElementsBy(function(node) {
+                  return !YAHOO.lang.isUndefined(node.HippoDestroyID);
+              }, null, modal.window);
+
+              for(var i=0; i<els.length; i++) {
+                  YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
+              }
             }
         }
         
