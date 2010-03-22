@@ -36,6 +36,7 @@ public class YuiDatePickerSettings implements Serializable {
     private String datePattern;
     private boolean hideOnSelect = true;
     private boolean fireChangeEvent = true;
+    private boolean close = true;
 
     public String getDatePattern() {
         if(datePattern == null) {
@@ -77,4 +78,11 @@ public class YuiDatePickerSettings implements Serializable {
         this.fireChangeEvent = fireChangeEvent;
     }
 
+    public boolean isClose() {
+        return close;
+    }
+
+    public void setClose(boolean close) {
+        this.close = close;
+    }
 }

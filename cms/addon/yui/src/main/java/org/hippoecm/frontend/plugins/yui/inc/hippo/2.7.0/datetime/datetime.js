@@ -95,6 +95,7 @@ if (!YAHOO.hippo.DateTime) {
                 if(this.picker == null) {
                     this.picker = new YAHOO.widget.Calendar(this.config.dpJs, this.config.dp, this.config);
                     this.picker.selectEvent.subscribe(this.selectHandler, this, true);
+                    this.picker.hideEvent.subscribe(function() {this.picker.visible = false;}, this, true);
                     render = true;
                 }
 
@@ -121,7 +122,6 @@ if (!YAHOO.hippo.DateTime) {
             hide : function() {
                 if(this.picker != null) {
                     this.picker.hide();
-                    this.picker.visible = false;
                 }
             },
             
