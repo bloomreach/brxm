@@ -83,7 +83,7 @@ public class StringCodecFactory {
     }
 
     /**
-     * Usage of this class discouraged.  If should only be used by frameworks to initialize the StringCodecFactory instance.
+     * Direct usage of this class discouraged.  If should only be used by frameworks to initialize the StringCodecFactory instance.
      * <p/>
      * Performs a one-way encoding (no decoding possible) for translating any UTF-8 String to a suitable set of characters that can be used in URIs.
      * @see <a href="doc-files/encoding.html">Encoding of node names</a>
@@ -130,7 +130,7 @@ public class StringCodecFactory {
                         case 0xBC: sb.append("1-4");       break;
                         case 0xBD: sb.append("1-2");       break;
                         case 0xBE: sb.append("3-4");       break;
-                        case 0xD0: sb.append("d");         break;
+                        case 0xD0: sb.append("D");         break;
                         case 0xD8: sb.append("O");         break;
                         case 0xD9: sb.append("U");         break;
                         case 0xDA: sb.append("U");         break;
@@ -190,10 +190,7 @@ public class StringCodecFactory {
                             appendSpace = true;
                             break;
                         case 0x2B:
-                            if (lastNoSpace)
-                                sb.append(" ");
-                            sb.append("-");
-                            lastNoSpace = true;
+                            appendSpace = true;
                             break; // +
                         case 0x2C:
                             break; // ,
@@ -201,16 +198,10 @@ public class StringCodecFactory {
                             sb.append("-");
                             break; // /
                         case 0x3A:
-                            if (lastNoSpace)
-                                sb.append(" ");
-                            sb.append("-");
-                            appendSpace = lastNoSpace = true;
+                            appendSpace = true;
                             break; // :
                         case 0x3B:
-                            if (lastNoSpace)
-                                sb.append(" ");
-                            sb.append("-");
-                            appendSpace = lastNoSpace = true;
+                            appendSpace = true;
                             break; // ;
                         case 0x3D:
                             sb.append("-");
@@ -520,6 +511,7 @@ public class StringCodecFactory {
                 if (appendSpace) {
                     if (lastNoSpace)
                         sb.append("-");
+                    lastNoSpace = false;
                 } else
                     lastNoSpace = true;
             }
