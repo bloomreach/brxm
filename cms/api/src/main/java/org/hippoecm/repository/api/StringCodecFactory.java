@@ -100,44 +100,44 @@ public class StringCodecFactory {
                 } else if (chars[i] >= 0x80 && chars[i] <= 0xff) {
                     switch (chars[i]) {
                         case 0xA0: appendSpace = true; break;
-                        case 0xA1: sb.append("!");         break;
+                        case 0xA1:                         break;
                         case 0xA2: sb.append("ct");        break;
-                        case 0xA3: sb.append("GBP");       break;
+                        case 0xA3: sb.append("gbp");       break;
                         case 0xA4: sb.append("");          break;
                         case 0xA5: sb.append("yen");       break;
-                        case 0xA6: sb.append("|");         break;
-                        case 0xA7: sb.append("");          break;
+                        case 0xA6: sb.append("-");         break;
+                        case 0xA7:                         break;
                         case 0xA8:                         break;
-                        case 0xA9: sb.append("(c)");       break;
-                        case 0xAA: sb.append("");          break;
-                        case 0xAB: sb.append("(");         break;
-                        case 0xAC: sb.append("not");       break;
+                        case 0xA9:                         break;
+                        case 0xAA:                         break;
+                        case 0xAB:                         break;
+                        case 0xAC:                         break;
                         case 0xAD: sb.append("-");         break;
-                        case 0xAE: sb.append("(r)");       break;
+                        case 0xAE:                         break;
                         case 0xAF: sb.append("-");         break;
-                        case 0xB0: sb.append("o");         break;
+                        case 0xB0:                         break;
                         case 0xB1: sb.append("-");         break;
-                        case 0xB2: sb.append("^2");        break;
-                        case 0xB3: sb.append("^3");        break;
-                        case 0xB4: sb.append("");          break;
-                        case 0xB5: sb.append("u");         break;
-                        case 0xB6: sb.append(")");         break;
-                        case 0xB7: sb.append(".");         break;
-                        case 0xB8: sb.append("");          break;
-                        case 0xB9: sb.append("1");         break;
-                        case 0xBA: sb.append("o");         break;
-                        case 0xBB: sb.append(")");         break;
-                        case 0xBC: sb.append("1-4");       break;
-                        case 0xBD: sb.append("1-2");       break;
-                        case 0xBE: sb.append("3-4");       break;
-                        case 0xD0: sb.append("D");         break;
-                        case 0xD8: sb.append("O");         break;
-                        case 0xD9: sb.append("U");         break;
-                        case 0xDA: sb.append("U");         break;
-                        case 0xDB: sb.append("U");         break;
-                        case 0xDC: sb.append("U");         break;
-                        case 0xDD: sb.append("Y");         break;
-                        case 0xDE: sb.append("Y");         break;
+                        case 0xB2:                         break;
+                        case 0xB3:                         break;
+                        case 0xB4:                         break;
+                        case 0xB5:                         break;
+                        case 0xB6:                         break;
+                        case 0xB7:                         break;
+                        case 0xB8:                         break;
+                        case 0xB9:                         break;
+                        case 0xBA:                         break;
+                        case 0xBB:                         break;
+                        case 0xBC:                         break;
+                        case 0xBD:                         break;
+                        case 0xBE:                         break;
+                        case 0xD0: sb.append("d");         break;
+                        case 0xD8: sb.append("o");         break;
+                        case 0xD9: sb.append("u");         break;
+                        case 0xDA: sb.append("u");         break;
+                        case 0xDB: sb.append("u");         break;
+                        case 0xDC: sb.append("u");         break;
+                        case 0xDD: sb.append("y");         break;
+                        case 0xDE: sb.append("y");         break;
                         case 0xDF: sb.append("ss");        break;
                         case 0xE0: sb.append("a");         break;
                         case 0xE1: sb.append("a");         break;
@@ -162,7 +162,7 @@ public class StringCodecFactory {
                         case 0xF4: sb.append("o");         break;
                         case 0xF5: sb.append("o");         break;
                         case 0xF6: sb.append("o");         break;
-                        case 0xF7: sb.append("-");         break;
+                        case 0xF7:                         break;
                         case 0xF8: sb.append("o");         break;
                         case 0xF9: sb.append("u");         break;
                         case 0xFA: sb.append("u");         break;
@@ -178,14 +178,25 @@ public class StringCodecFactory {
                         case 0x20:
                             appendSpace = true;
                             break;
+                        case 0x21:
+                            break; // !
                         case 0x22:
                             break; // "
+                        case 0x23:
+                            break; // #
                         case 0x24:
+                            sb.append("usd");
                             break; // $
+                        case 0x25:
+                            break; // %
                         case 0x26:
                             break; // &
                         case 0x27:
                             break; // '
+                        case 0x28:
+                            break; // (
+                        case 0x29:
+                            break; // )
                         case 0x2A:
                             appendSpace = true;
                             break;
@@ -194,6 +205,8 @@ public class StringCodecFactory {
                             break; // +
                         case 0x2C:
                             break; // ,
+                        case 0x2E:
+                            break; // .
                         case 0x2F:
                             sb.append("-");
                             break; // /
@@ -203,20 +216,39 @@ public class StringCodecFactory {
                         case 0x3B:
                             appendSpace = true;
                             break; // ;
+                        case 0x3C:
+                            break; // <
                         case 0x3D:
                             sb.append("-");
                             break; // =
+                        case 0x3E:
+                            break; // >
                         case 0x3F:
                             break; // ?
                         case 0x40:
                             sb.append("-at-");
                             break; // @
                         case 0x5B:
-                            sb.append("(");
-                            break;
+                            break; // [
+                        case 0x5C:
+                            sb.append("-");
+                            break; // \\
                         case 0x5D:
-                            sb.append(")");
-                            break;
+                            break; // ]
+                        case 0x5E:
+                            break; // ^
+                        case 0x60:
+                            break; // `
+                        case 0x7B:
+                            break; // {
+                        case 0x7C:
+                            sb.append("-");
+                            break; // |
+                        case 0x7D:
+                            break; // }
+                        case 0x7E:
+                            sb.append("-");
+                            break; // ~
                         default:
                             sb.append(Character.toLowerCase(chars[i]));
                     }
@@ -226,13 +258,12 @@ public class StringCodecFactory {
                             appendSpace = true;
                             break;
                         case 0xc2a1:
-                            sb.append("!");
                             break;
                         case 0xc2a2:
                             sb.append("ct");
                             break;
                         case 0xc2a3:
-                            sb.append("GBP");
+                            sb.append("gbp");
                             break;
                         case 0xc2a4:
                             break;
@@ -240,171 +271,153 @@ public class StringCodecFactory {
                             sb.append("yen");
                             break;
                         case 0xc2a6:
-                            sb.append("|");
+                            sb.append("-");
                             break;
                         case 0xc2a7:
                             break;
                         case 0xc2a8:
                             break;
                         case 0xc2a9:
-                            sb.append("(c)");
                             break;
                         case 0xc2aa:
                             break;
                         case 0xc2ab:
-                            sb.append("(");
                             break;
                         case 0xc2ac:
-                            sb.append("not");
                             break;
                         case 0xc2ad:
                             sb.append("-");
                             break;
                         case 0xc2ae:
-                            sb.append("(r)");
                             break;
                         case 0xc2af:
                             sb.append("-");
                             break;
                         case 0xc2b0:
-                            sb.append("o");
                             break;
                         case 0xc2b1:
-                            sb.append("plusminus");
+                            sb.append("-");
                             break;
                         case 0xc2b2:
-                            sb.append("^2");
                             break;
                         case 0xc2b3:
-                            sb.append("^3");
                             break;
                         case 0xc2b4:
-                            sb.append("");
                             break;
                         case 0xc2b5:
-                            sb.append("u");
                             break;
                         case 0xc2b6:
-                            sb.append(")");
                             break;
                         case 0xc2b7:
-                            sb.append(".");
                             break;
                         case 0xc2b8:
                             break;
                         case 0xc2b9:
-                            sb.append("1");
                             break;
                         case 0xc2ba:
-                            sb.append("o");
                             break;
                         case 0xc2bb:
-                            sb.append(")");
                             break;
                         case 0xc2bc:
-                            sb.append("1-4");
                             break;
                         case 0xc2bd:
-                            sb.append("1-2");
                             break;
                         case 0xc2be:
-                            sb.append("3-4");
                             break;
                         case 0xc2bf:
-                            sb.append("");
                             break;
                         case 0xc380:
-                            sb.append("A");
+                            sb.append("a");
                             break;
                         case 0xc381:
-                            sb.append("A");
+                            sb.append("a");
                             break;
                         case 0xc382:
-                            sb.append("A");
+                            sb.append("a");
                             break;
                         case 0xc383:
-                            sb.append("A");
+                            sb.append("a");
                             break;
                         case 0xc384:
-                            sb.append("A");
+                            sb.append("a");
                             break;
                         case 0xc385:
-                            sb.append("A");
+                            sb.append("a");
                             break;
                         case 0xc386:
-                            sb.append("AE");
+                            sb.append("ae");
                             break;
                         case 0xc387:
-                            sb.append("C");
+                            sb.append("c");
                             break;
                         case 0xc388:
-                            sb.append("E");
+                            sb.append("e");
                             break;
                         case 0xc389:
-                            sb.append("E");
+                            sb.append("e");
                             break;
                         case 0xc38a:
-                            sb.append("E");
+                            sb.append("e");
                             break;
                         case 0xc38b:
-                            sb.append("E");
+                            sb.append("e");
                             break;
                         case 0xc38c:
-                            sb.append("I");
+                            sb.append("i");
                             break;
                         case 0xc38d:
-                            sb.append("I");
+                            sb.append("i");
                             break;
                         case 0xc38e:
-                            sb.append("I");
+                            sb.append("i");
                             break;
                         case 0xc38f:
-                            sb.append("I");
+                            sb.append("i");
                             break;
                         case 0xc390:
-                            sb.append("D");
+                            sb.append("d");
                             break;
                         case 0xc391:
-                            sb.append("N");
+                            sb.append("n");
                             break;
                         case 0xc392:
-                            sb.append("O");
+                            sb.append("o");
                             break;
                         case 0xc393:
-                            sb.append("O");
+                            sb.append("o");
                             break;
                         case 0xc394:
-                            sb.append("O");
+                            sb.append("o");
                             break;
                         case 0xc395:
-                            sb.append("O");
+                            sb.append("o");
                             break;
                         case 0xc396:
-                            sb.append("O");
+                            sb.append("o");
                             break;
                         case 0xc397:
                             sb.append("x");
                             break;
                         case 0xc398:
-                            sb.append("O");
+                            sb.append("o");
                             break;
                         case 0xc399:
-                            sb.append("U");
+                            sb.append("u");
                             break;
                         case 0xc39a:
-                            sb.append("U");
+                            sb.append("u");
                             break;
                         case 0xc39b:
-                            sb.append("U");
+                            sb.append("u");
                             break;
                         case 0xc39c:
-                            sb.append("U");
+                            sb.append("u");
                             break;
                         case 0xc39d:
-                            sb.append("Y");
+                            sb.append("y");
                             break;
                         case 0xc39e:
-                            sb.append("Y");
+                            sb.append("y");
                             break;
                         case 0xc39f:
                             sb.append("ss");
