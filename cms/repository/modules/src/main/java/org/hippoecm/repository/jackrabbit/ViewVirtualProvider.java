@@ -129,6 +129,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                 }
             }
 
+            ViewNodeId.Child[] childrenArray;
             boolean isHandle = dereference.getNodeTypeName().equals(handleName);
             if (order != null && isHandle) {
                 // since the order is not null, we first have to sort all childs according the order. We only order below a handle
@@ -138,18 +139,8 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                     ViewNodeId childNodeId = subProvider.new ViewNodeId(state.getNodeId(), entry.getId(), entry.getName(), view, order, singledView);
                     children.add(childNodeId.new Child(entry.getName(), childNodeId));
                 }
-                ViewNodeId.Child[] childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
+                childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
                 Arrays.sort(childrenArray);
-                for (int i = 0; i < childrenArray.length && (i == 0 || !singledView); i++) {
-                    if (singledView && (childrenArray[i].getKey().equals(requestName) || childrenArray[i].getKey().equals(translationName))) {
-                        continue;
-                    } else {
-                        state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
-                        if (singledView) {
-                            continue;
-                        }
-                    }
-                }
             } else {
                 Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
                 for (Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext();) {
@@ -164,11 +155,18 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                         }
                     }
                 }
-                ViewNodeId.Child[] childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
+                childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
                 if (isHandle) {
                     Arrays.sort(childrenArray);
                 }
-                for (int i = 0; i < childrenArray.length && (i == 0 || !(singledView && isHandle)); i++) {
+            }
+            for (int i=0; i<childrenArray.length && (i==0 || !(singledView && isHandle)); i++) {
+                if (!childrenArray[i].getKey().equals(requestName) && !childrenArray[i].getKey().equals(translationName)) {
+                    state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
+                }
+            }
+            for (int i=0; i<childrenArray.length; i++) {
+                if (childrenArray[i].getKey().equals(requestName) || childrenArray[i].getKey().equals(translationName)) {
                     state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
                 }
             }
@@ -283,14 +281,13 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                 if (o.equals(this)) {
                     return 0;
                 }
-                if (order == null) {
-                    if (name.equals(requestName) || name.equals(translationName)) {
-                        return 1;
-                    } else if (o.name.equals(requestName) || o.name.equals(translationName)) {
-                        return -1;
-                    }
-                    // never return 0 (See Comparable api)
+                if (name.equals(requestName) || name.equals(translationName)) {
+                    return 1;
+                } else if (o.name.equals(requestName) || o.name.equals(translationName)) {
                     return -1;
+                }
+                if (order == null) {
+                    return -1; // never return 0 (See Comparable api)
                 }
 
                 for (Map.Entry<Name, String> entry : order.entrySet()) {
