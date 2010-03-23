@@ -62,7 +62,6 @@ public class JcrRichTextLinkFactoryTest extends PluginTest {
         JcrRichTextLinkFactory factory = new JcrRichTextLinkFactory(new JcrNodeModel(html));
         Node target = root.getNode("test/target");
         RichTextLink link = factory.createLink(new JcrNodeModel(target));
-        link.save();
 
         assertTrue(root.hasNode("test/source/source/xinhatest:html/target"));
 

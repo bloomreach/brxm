@@ -32,15 +32,22 @@ public class RichTextProcessor {
     private static Pattern IMG_PATTERN = Pattern.compile("<img[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern SRC_PATTERN = Pattern.compile("src=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
     private static Pattern FACET_SELECT_PATTERN = Pattern.compile("facetselect=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
+    private static Pattern FACET_SELECT_OR_SRC_PATTERN = Pattern.compile("(facetselect|src)=\"([^\"]+)\"",
+            Pattern.CASE_INSENSITIVE);
 
     private static Pattern LINK_PATTERN = Pattern.compile("<a[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern HREF_PATTERN = Pattern.compile("href=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
 
+    @Deprecated
+    public static String prefixImageLinks(String text, final String prefix) {
+        return prefixImageLinks(text, new PrefixingImageDecorator(prefix));
+    }
+
     /**
-     * Prefix the targets of relative image links in a text.  Text and prefix may
+     * Decorate the targets of relative image links in a text.  Text and decorator may
      * neither be null.
      */
-    public static String prefixImageLinks(String text, String prefix) {
+    public static String prefixImageLinks(String text, IImageDecorator decorator) {
         StringBuffer processed = new StringBuffer();
         Matcher m = IMG_PATTERN.matcher(text);
 
@@ -51,31 +58,17 @@ public class RichTextProcessor {
 
             if (s.find()) {
                 String src = s.group();
-                Matcher fs = FACET_SELECT_PATTERN.matcher(img);
+                String link = s.group(1);
 
-                if (fs.find()) {
-                    String link = fs.group(1);
-
-                    if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                        if (RichTextUtil.isPortletContext()) {
-                            s.appendReplacement(newImg, ("src=\"" + prefix + "?_path=" + link + "\"").replace("\\",
-                                    "\\\\").replace("$", "\\$"));
-                        } else {
-                            s.appendReplacement(newImg, ("src=\"" + prefix + link + "\"").replace("\\", "\\\\")
-                                    .replace("$", "\\$"));
-                        }
-                    } else {
-                        s.appendReplacement(newImg, src.replace("\\", "\\\\").replace("$", "\\$"));
-                    }
+                if (!link.startsWith("http:") && !link.startsWith("https:")) {
+                    s.appendReplacement(newImg, ("src=\"" + decorator.srcFromSrc(link) + "\"").replace("\\", "\\\\")
+                            .replace("$", "\\$"));
+                    newImg.append(' ');
+                    newImg.append("facetselect=\"");
+                    newImg.append(link);
+                    newImg.append("\" ");
                 } else {
-                    String link = s.group(1);
-
-                    if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                        s.appendReplacement(newImg, ("src=\"" + prefix + link + "\"").replace("\\", "\\\\").replace(
-                                "$", "\\$"));
-                    } else {
-                        s.appendReplacement(newImg, src.replace("\\", "\\\\").replace("$", "\\$"));
-                    }
+                    s.appendReplacement(newImg, src.replace("\\", "\\\\").replace("$", "\\$"));
                 }
             }
 
@@ -88,11 +81,51 @@ public class RichTextProcessor {
         return processed.toString();
     }
 
+    public static String restoreFacets(String text) {
+        StringBuffer processed = new StringBuffer();
+        Matcher m = IMG_PATTERN.matcher(text);
+
+        while (m.find()) {
+            String img = m.group();
+            StringBuffer newImg = new StringBuffer();
+            Matcher s = FACET_SELECT_OR_SRC_PATTERN.matcher(img);
+
+            String src = null;
+            String facet = null;
+            while (s.find()) {
+                String srcOrFacet = s.group();
+                if (srcOrFacet.startsWith("src")) {
+                    src = srcOrFacet;
+                } else {
+                    facet = srcOrFacet;
+                }
+                s.appendReplacement(newImg, "");
+            }
+            if (src != null && facet != null) {
+                Matcher fs = FACET_SELECT_PATTERN.matcher(facet);
+                if (fs.find()) {
+                    fs.appendReplacement(newImg, ("src=\"" + fs.group(1) + "\"").replace("\\", "\\\\").replace("$",
+                            "\\$"));
+                }
+                fs.appendTail(newImg);
+            } else if (src != null) {
+                newImg.append(src);
+            } else if (facet != null) {
+                newImg.append(facet);
+            }
+            s.appendTail(newImg);
+            m.appendReplacement(processed, newImg.toString().replace("\\", "\\\\").replace("$", "\\$"));
+        }
+
+        m.appendTail(processed);
+        return processed.toString();
+    }
+
     /**
      * Return the internal links, i.e. the links to other documents / images / assets
      * in the text.  The text may not be null.
      */
-    static Set<String> getInternalLinks(String text) {
+    public static Set<String> getInternalLinks(String text) {
         Set<String> links = new TreeSet<String>();
         Matcher m = LINK_AND_IMAGES_PATTERN.matcher(text);
         while (m.find()) {
@@ -113,7 +146,6 @@ public class RichTextProcessor {
     }
 
     public static String decorateLinks(String text, ILinkDecorator decorator) {
-
         StringBuffer processed = new StringBuffer();
         Matcher m = LINK_PATTERN.matcher(text);
         while (m.find()) {
@@ -131,8 +163,8 @@ public class RichTextProcessor {
                 if (link.charAt(link.length() - 1) == '"') {
                     link = link.substring(0, link.length() - 1);
                 }
-                
-                link = isExternalLink(link) ? decorator.externalLink(link) : decorator.internalLink(link); 
+
+                link = isExternalLink(link) ? decorator.externalLink(link) : decorator.internalLink(link);
                 s.appendReplacement(newAnchor, link.replace("\\", "\\\\").replace("$", "\\$"));
             }
             s.appendTail(newAnchor);
@@ -150,11 +182,6 @@ public class RichTextProcessor {
             }
         }
         return false;
-    }
-
-    public static interface ILinkDecorator {
-        String internalLink(String link);
-        String externalLink(String link);
     }
 
 }

@@ -25,4 +25,6 @@ public interface IRichTextImageFactory extends IDetachable {
 
     RichTextImage createImageItem(IDetachable model);
 
+    void delete(RichTextImage link);
+
 }

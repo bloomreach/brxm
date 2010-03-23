@@ -16,29 +16,11 @@
 package org.hippoecm.frontend.plugins.richtext;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IDetachable;
 
-public class RichTextLink implements IClusterable {
-    private static final long serialVersionUID = 1L;
+public interface ILinkDecorator extends IClusterable {
 
-    private String name;
-    private IDetachable model;
+    String internalLink(String link);
 
-    public RichTextLink(IDetachable model, String name) {
-        this.model = model;
-        this.name = name;
-    }
-
-    public IDetachable getTargetId() {
-        return model;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String nodeName) {
-        this.name = nodeName;
-    }
+    String externalLink(String link);
 
 }

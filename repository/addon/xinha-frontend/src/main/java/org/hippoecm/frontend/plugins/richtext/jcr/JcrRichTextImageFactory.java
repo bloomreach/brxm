@@ -111,6 +111,37 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
         return null;
     }
 
+    public boolean save(RichTextImage image) {
+        Node node = nodeModel.getNode();
+        try {
+            String facet = RichTextFacetHelper.createFacet(node, image.getNodeName(), image.getUuid());
+            if (facet != null && !facet.equals("")) {
+                image.setFacetName(facet);
+                return true;
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to create facet for " + image.getNodeName(), e);
+        }
+        return false;
+    }
+
+    public void delete(RichTextImage image) {
+        if (image.getUuid() != null) {
+            Node node = nodeModel.getNode();
+            String facet = image.getFacetName();
+            try {
+                if (node.hasNode(facet)) {
+                    Node imgNode = node.getNode(facet);
+                    imgNode.remove();
+                    node.getSession().save();
+                }
+            } catch (RepositoryException e) {
+                log.error("An error occured while trying to save new image facetSelect[" + image.getNodeName() + "]",
+                        e);
+            }
+        }
+    }
+
     public boolean isValid(IDetachable targetId) {
         if (!(targetId instanceof JcrNodeModel)) {
             return false;
@@ -153,45 +184,11 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
             }
         }
         RichTextImage rti = new RichTextImage(node.getPath(), node.getParent().getUUID(), node.getPrimaryItem().getName(), node
-                .getName(), resourceDefinitions, nodeModel.getNode().getPath()) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean save() {
-                Node node = nodeModel.getNode();
-                try {
-                    String facet = RichTextFacetHelper.createFacet(node, getNodeName(), getUuid());
-                    if (facet != null && !facet.equals("")) {
-                        setFacetName(facet);
-                        return true;
-                    }
-                } catch (RepositoryException e) {
-                    log.error("Failed to create facet for " + getNodeName(), e);
-                }
-                return false;
-            }
-
-            @Override
-            public void delete() {
-                if (getUuid() != null) {
-                    Node node = nodeModel.getNode();
-                    String facet = getFacetName();
-                    try {
-                        if (node.hasNode(facet)) {
-                            Node imgNode = node.getNode(facet);
-                            imgNode.remove();
-                            node.getSession().save();
-                        }
-                    } catch (RepositoryException e) {
-                        log.error("An error occured while trying to save new image facetSelect[" + getNodeName() + "]",
-                                e);
-                    }
-                }
-            }
-        };
+                .getName(), resourceDefinitions, nodeModel.getNode().getPath());
         if (selectedResource != null) {
             rti.setSelectedResourceDefinition(selectedResource);
         }
+        save(rti);
         return rti;
     }
 

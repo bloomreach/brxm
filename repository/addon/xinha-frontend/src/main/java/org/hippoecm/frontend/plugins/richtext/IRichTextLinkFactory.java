@@ -21,6 +21,8 @@ import org.apache.wicket.model.IDetachable;
 
 public interface IRichTextLinkFactory extends IDetachable {
 
+    Set<String> getLinks();
+
     void cleanup(Set<String> references);
 
     boolean isValid(IDetachable targetId);
@@ -28,5 +30,7 @@ public interface IRichTextLinkFactory extends IDetachable {
     RichTextLink createLink(IDetachable targetId);
 
     RichTextLink loadLink(String relPath);
+
+    void delete(RichTextLink link);
 
 }

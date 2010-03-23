@@ -42,8 +42,8 @@ public abstract class XinhaImage extends DocumentLink {
     public static final String WIDTH = "f_width";
     public static final String HEIGHT = "f_height";
 
-    public XinhaImage(Map<String, String> values, IDetachable parentModel) {
-        super(values, parentModel);
+    public XinhaImage(Map<String, String> values, IDetachable targetId) {
+        super(values, targetId);
     }
 
     public void setUrl(String url) {

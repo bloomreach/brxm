@@ -25,7 +25,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
  * This class represents an image resource that a rich text field has a reference to.
  * It handles url generation and maintains the facetname attribute.
  */
-public abstract class RichTextImage implements IClusterable {
+public class RichTextImage implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private String parentPath;
@@ -120,11 +120,7 @@ public abstract class RichTextImage implements IClusterable {
     }
 
     public JcrNodeModel getNodeModel() {
-        return new JcrNodeModel(path);
+        return new JcrNodeModel(path).getParentModel();
     }
-
-    public abstract boolean save();
-
-    public abstract void delete();
 
 }

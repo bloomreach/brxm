@@ -68,4 +68,11 @@ public class RichTextProcessorTest {
         assertTrue(links.contains("link je"));
     }
 
+    @Test
+    public void testFacetRestore() {
+        String text="<img src=\"horriblyterriblelinkencoding\" facetselect=\"facet\" />";
+        String restored = RichTextProcessor.restoreFacets(text);
+        assertEquals("<img  src=\"facet\" />", restored);
+    }
+
 }

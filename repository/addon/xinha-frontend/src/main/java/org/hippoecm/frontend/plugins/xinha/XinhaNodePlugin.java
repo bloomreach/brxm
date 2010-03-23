@@ -33,9 +33,13 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
+import org.hippoecm.frontend.plugins.richtext.IImageDecorator;
+import org.hippoecm.frontend.plugins.richtext.ILinkDecorator;
+import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.PrefixingImageDecorator;
+import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
-import org.hippoecm.frontend.plugins.richtext.RichTextProcessor.ILinkDecorator;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerBehavior;
@@ -44,7 +48,6 @@ import org.hippoecm.frontend.plugins.xinha.dragdrop.XinhaDropBehavior;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 import org.hippoecm.frontend.service.IBrowseService;
-import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -67,10 +70,12 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
 
     public XinhaNodePlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
+    }
 
+    private String getPrefix(JcrPropertyValueModel valueModel) {
         String binariesPath = BINARIES_PREFIX
-                + getValueModel().getJcrPropertymodel().getItemModel().getParentModel().getPath();
-        configuration.addProperty("prefix", RichTextUtil.encodeResourceURL(RichTextUtil.encode(binariesPath) + "/"));
+                + valueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
+        return RichTextUtil.encodeResourceURL(RichTextUtil.encode(binariesPath) + "/");
     }
 
     @Override
@@ -95,21 +100,63 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
 
     @Override
     protected IModel<String> newCompareModel() {
-        return new PrefixingModel(super.newCompareModel(), previewLinksBehavior, configuration.getProperty("prefix"));
+        JcrPropertyValueModel<String> baseModel = getBaseModel();
+        JcrNodeModel baseNodeModel = new JcrNodeModel(baseModel.getJcrPropertymodel().getItemModel().getParentModel());
+        final IRichTextLinkFactory baseLinkFactory = new JcrRichTextLinkFactory(baseNodeModel);
+
+        JcrPropertyValueModel<String> currentModel = getValueModel();
+        JcrNodeModel currentNodeModel = new JcrNodeModel(currentModel.getJcrPropertymodel().getItemModel()
+                .getParentModel());
+        final IRichTextLinkFactory currentLinkFactory = new JcrRichTextLinkFactory(currentNodeModel);
+
+        // links that are in both: set to current
+        // otherwise: set to respective prefix
+
+        String basePrefix = getPrefix(baseModel);
+        final IImageDecorator baseDecorator = new PrefixingImageDecorator(basePrefix);
+        String currentPrefix = getPrefix(currentModel);
+        final IImageDecorator currentDecorator = new PrefixingImageDecorator(currentPrefix);
+        IModel<String> decoratedBase = new PrefixingModel(baseModel, new IImageDecorator() {
+            private static final long serialVersionUID = 1L;
+
+            public String srcFromSrc(String link) {
+                if (baseLinkFactory.getLinks().contains(link) && currentLinkFactory.getLinks().contains(link)) {
+                    RichTextLink baseRtl = baseLinkFactory.loadLink(link);
+                    RichTextLink currentRtl = currentLinkFactory.loadLink(link);
+                    if (baseRtl != null && currentRtl != null && currentRtl.getTargetId().equals(baseRtl.getTargetId())) {
+                        return currentDecorator.srcFromSrc(link);
+                    }
+                }
+                return baseDecorator.srcFromSrc(link);
+            }
+
+        }) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void detach() {
+                baseLinkFactory.detach();
+                currentLinkFactory.detach();
+                super.detach();
+            }
+        };
+        IModel<String> decoratedCurrent = new PrefixingModel(currentModel, currentDecorator);
+
+        return new BrowsableModel(new DiffModel(decoratedBase, decoratedCurrent), previewLinksBehavior);
     }
 
     @Override
     protected IModel<String> newViewModel() {
-        return new PrefixingModel(getValueModel(), previewLinksBehavior, configuration.getProperty("prefix"));
+        return new BrowsableModel(new PrefixingModel(getValueModel(), getPrefix(getValueModel())), previewLinksBehavior);
     }
 
     @Override
-    protected RichTextModel newEditModel() {
-        RichTextModel model = super.newEditModel();
+    protected IModel<String> newEditModel() {
+        RichTextModel model = (RichTextModel) super.newEditModel();
         model.setCleaner(getPluginContext().getService(IHtmlCleanerService.class.getName(), IHtmlCleanerService.class));
         JcrNodeModel nodeModel = new JcrNodeModel(getValueModel().getJcrPropertymodel().getItemModel().getParentModel());
         model.setLinkFactory(new JcrRichTextLinkFactory(nodeModel));
-        return model;
+        return new PrefixingModel(model, getPrefix(getValueModel()));
     }
 
     @Override
@@ -125,26 +172,9 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
     protected Fragment createEditor(String fragmentid) {
         Fragment fragment = super.createEditor(fragmentid);
 
-        JcrNodeModel nodeModel = new JcrNodeModel(getValueModel().getJcrPropertymodel().getItemModel().getParentModel());
-        imageService = new XinhaImageService(new JcrRichTextImageFactory(nodeModel)) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String getXinhaName() {
-                return configuration.getName();
-            }
-
-        };
-
-        linkService = new XinhaLinkService(new JcrRichTextLinkFactory(nodeModel)) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String getXinhaName() {
-                return configuration.getName();
-            }
-
-        };
+        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+        imageService = new XinhaImageService(new JcrRichTextImageFactory(nodeModel), configuration.getName());
+        linkService = new XinhaLinkService(new JcrRichTextLinkFactory(nodeModel), configuration.getName());
 
         IPluginContext context = getPluginContext();
         IPluginConfig config = getPluginConfig();

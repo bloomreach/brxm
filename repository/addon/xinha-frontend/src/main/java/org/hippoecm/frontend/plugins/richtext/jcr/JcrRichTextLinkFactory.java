@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.richtext.jcr;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -34,41 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
-
-    private final class InternalRichTextLink extends RichTextLink {
-        private static final long serialVersionUID = 1L;
-
-        private InternalRichTextLink(JcrNodeModel model, String relPath) throws RepositoryException {
-            super(model, relPath);
-        }
-
-        @Override
-        public void delete() {
-            try {
-                nodeModel.getNode().getNode(getName()).remove();
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-        }
-
-        @Override
-        public boolean save() {
-            Node node = nodeModel.getNode();
-            JcrNodeModel targetNode = (JcrNodeModel) getTargetId();
-            if (targetNode != null && targetNode.getNode() != null) {
-                try {
-                    String uuid = targetNode.getNode().getUUID();
-                    String name = RichTextFacetHelper.createFacet(node, getName(), uuid);
-                    setName(name);
-                    return true;
-                } catch (RepositoryException e) {
-                    log.error("Failed to create facet for " + getName(), e);
-                }
-            }
-            return false;
-        }
-    }
-
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -77,6 +43,7 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
     private final static Logger log = LoggerFactory.getLogger(JcrRichTextImageFactory.class);
 
     private JcrNodeModel nodeModel;
+    private transient Set<String> links = null;
 
     public JcrRichTextLinkFactory(JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
@@ -94,7 +61,7 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
                         Item item = node.getSession().getNodeByUUID(uuid);
                         if (item != null) {
                             JcrNodeModel model = new JcrNodeModel(item.getPath());
-                            return createRichTextLink(relPath, model);
+                            return new RichTextLink(model, relPath);
                         }
                     }
                 }
@@ -107,8 +74,68 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
         return null;
     }
 
-    private RichTextLink createRichTextLink(final String relPath, JcrNodeModel model) throws RepositoryException {
-        return new InternalRichTextLink(model, relPath);
+    public RichTextLink createLink(IDetachable targetId) {
+        JcrNodeModel targetModel = (JcrNodeModel) targetId;
+        if (targetModel != null && targetModel.getNode() != null) {
+            try {
+                Node targetNode = targetModel.getNode();
+                String name = NodeNameCodec.encode(targetNode.getName());
+                Node node = nodeModel.getNode();
+                String uuid = targetNode.getUUID();
+                name = RichTextFacetHelper.createFacet(node, name, uuid);
+                return new RichTextLink(targetModel, name);
+            } catch (RepositoryException e) {
+                log.error("could not create link", e);
+            }
+        }
+        return null;
+    }
+
+    public void delete(RichTextLink link) {
+        try {
+            nodeModel.getNode().getNode(link.getName()).remove();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    public boolean isValid(IDetachable targetId) {
+        if (!(targetId instanceof JcrNodeModel)) {
+            return false;
+        }
+        JcrNodeModel selectedModel = (JcrNodeModel) targetId;
+        if (selectedModel == null) {
+            return false;
+        }
+        Node node = selectedModel.getObject();
+        if (node == null) {
+            return false;
+        }
+        try {
+            return node.isNodeType("mix:referenceable");
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+            return false;
+        }
+    }
+
+    public Set<String> getLinks() {
+        if (links == null) {
+            links = new TreeSet<String>();
+            try {
+                NodeIterator iter = nodeModel.getNode().getNodes();
+                while (iter.hasNext()) {
+                    Node child = iter.nextNode();
+                    if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                        String name = child.getName();
+                        links.add(name);
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error("Error removing unused links", ex);
+            }
+        }
+        return links;
     }
 
     /**
@@ -133,39 +160,9 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
         }
     }
 
-    public RichTextLink createLink(IDetachable targetId) {
-        JcrNodeModel nodeModel = (JcrNodeModel) targetId;
-        try {
-            String name = NodeNameCodec.encode(nodeModel.getNode().getName());
-            return new InternalRichTextLink(nodeModel, name);
-        } catch (RepositoryException e) {
-            log.error("could not create link", e);
-        }
-        return null;
-    }
-
-    public boolean isValid(IDetachable targetId) {
-        if (!(targetId instanceof JcrNodeModel)) {
-            return false;
-        }
-        JcrNodeModel selectedModel = (JcrNodeModel) targetId;
-        if (selectedModel == null) {
-            return false;
-        }
-        Node node = selectedModel.getObject();
-        if (node == null) {
-            return false;
-        }
-        try {
-            return node.isNodeType("mix:referenceable");
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-            return false;
-        }
-    }
-    
     public void detach() {
         nodeModel.detach();
+        links = null;
     }
 
 }
