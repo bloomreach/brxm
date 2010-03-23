@@ -196,10 +196,15 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             session.save();
             session.refresh(true);
         }
+    }
+
+    @Test
+    public void testHREPTWO688() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        testReviewedAction();
 
         // These steps would be taken by author
         {
-            node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
+            Node node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             // cannot delete published document when request is present
             try {
@@ -209,11 +214,9 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             }
         }
 
-
-        // Test regarding Issue HREPTWO-688
         {
-            Node node2 = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='delete']");
-            FullRequestWorkflow requestWorkflow = (FullRequestWorkflow) getWorkflow(node2, "default");
+            Node node = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='delete']");
+            FullRequestWorkflow requestWorkflow = (FullRequestWorkflow) getWorkflow(node, "default");
             requestWorkflow.cancelRequest();
             session.save();
             session.refresh(false);
