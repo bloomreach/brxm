@@ -59,7 +59,7 @@ public class HippoMirror extends HippoFolder implements HippoMirrorBean {
         }
         javax.jcr.Node deref = JCRUtilities.getDeref(this.getNode());
         if(deref == null) {
-            log.warn("Can not dereference this HippoMirror because cannot find the node the mirror is pointing to. Return null");
+            // no logging needed, JCRUtilities already does this
             referencedWrapper = new BeanWrapper<HippoBean>(null);
             return null;
         }

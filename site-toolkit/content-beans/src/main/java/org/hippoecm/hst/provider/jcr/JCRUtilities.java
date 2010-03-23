@@ -54,14 +54,14 @@ public class JCRUtilities {
      * @return the dereferenced node or <code>null</code> when no dereferenced node can be found
      */
     public static Node getDeref(Node mirrorNode) {
-        
+        String docBaseUUID = null;
         try {
             if(!mirrorNode.isNodeType(HippoNodeType.NT_FACETSELECT) && !mirrorNode.isNodeType(HippoNodeType.NT_MIRROR)) {
-                log.debug("Cannot deref a node that is not of (sub)type {} or {}. Return null", HippoNodeType.NT_FACETSELECT, HippoNodeType.NT_MIRROR);
+                log.info("Cannot deref a node that is not of (sub)type '{}' or '{}'. Return null", HippoNodeType.NT_FACETSELECT, HippoNodeType.NT_MIRROR);
                 return null;
             }
             // HippoNodeType.HIPPO_DOCBASE is a mandatory property so no need to test if exists
-            String docBaseUUID = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+            docBaseUUID = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
             
             // test whether docBaseUUID can be parsed as a uuid
             try {
@@ -72,7 +72,13 @@ public class JCRUtilities {
             }
             return mirrorNode.getSession().getNodeByUUID(docBaseUUID);
         } catch (ItemNotFoundException e) {
-            log.error("ItemNotFoundException, cannot return deferenced node because docbase uuid cannot be found. Return null");
+            String path = null;
+            try {
+                path = mirrorNode.getPath();
+            } catch (RepositoryException e1) {
+                log.error("RepositoryException, cannot return deferenced node: {}", e1);
+            }
+            log.info("ItemNotFoundException, cannot return deferenced node because docbase uuid '{}' cannot be found. The docbase property is at '{}/hippo:docbase'. Return null", docBaseUUID, path);
         } catch (RepositoryException e) {
             log.error("RepositoryException, cannot return deferenced node: {}", e);
         }
