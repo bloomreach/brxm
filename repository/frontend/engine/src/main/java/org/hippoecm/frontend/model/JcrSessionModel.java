@@ -19,8 +19,11 @@ import java.rmi.RemoteException;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.LoginException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
@@ -32,6 +35,7 @@ import org.hippoecm.frontend.Main;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
 import org.slf4j.Logger;
@@ -107,7 +111,13 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
 
     @Override
     public void detach() {
-        log.info("[" + getRemoteAddr() + "] Logout as " + credentials.getStringValue("username") + " from Hippo CMS 7");
+        if (log.isInfoEnabled()) {
+            String username = credentials.getStringValue("username").toString();
+            if (username != null && username.length() > 0) {
+                // don't log logouts from anonymous (eg login screen)
+                log.info("[" + getRemoteAddr() + "] Logout as " + username + " from Hippo CMS 7");
+            }
+        }
         if (isAttached()) {
             flush();
         }
@@ -116,7 +126,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
 
     @Override
     protected Session load() {
-        javax.jcr.Session result = null;
+        javax.jcr.Session session = null;
         boolean fatalError = false;
         try {
             Main main = (Main) Application.get();
@@ -124,17 +134,14 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
             String username = credentials.getString("username");
             String password = credentials.getString("password");
             if (repository != null && username != null && password != null) {
-                result = repository.login(username, password.toCharArray());
+                session = repository.login(username, password.toCharArray());
                 try {
-                    if (result.getRootNode().hasNode(HippoNodeType.LOG_PATH)
-                            && result.getRootNode().getNode(HippoNodeType.LOG_PATH).getProperty("hippolog:enabled")
-                                    .getBoolean()) {
-                        Workflow workflow = ((HippoWorkspace) result.getWorkspace()).getWorkflowManager().getWorkflow(
-                                "internal", result.getRootNode().getNode(HippoNodeType.LOG_PATH));
-                        if (workflow instanceof EventLoggerWorkflow) {
-                            ((EventLoggerWorkflow) workflow).logEvent(result.getUserID(), "Repository", "login");
-                        }
-                        result.getRootNode().getNode(HippoNodeType.LOG_PATH).refresh(true);
+                    logLogin(session);
+                    if (isSystemUser(session)) {
+                        session = null;
+                        log.warn("[" + getRemoteAddr() + "] Login not allowed for system user: " + credentials.getString("username"));
+                    } else {
+                        log.info("[" + getRemoteAddr() + "] Login by: " + credentials.getString("username"));
                     }
                 } catch (AccessDeniedException e) {
                     log.debug("Unable to log login event (maybe trying as Anonymous?): " + e.getMessage());
@@ -155,9 +162,52 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
             // there's no sense in continuing
             throw new AbortWithHttpStatusException(503, false);
         }
-        return result;
+        return session;
     }
 
+    private void logLogin(Session session) throws RepositoryException, RemoteException {
+        if (session.getRootNode().hasNode(HippoNodeType.LOG_PATH)
+                && session.getRootNode().getNode(HippoNodeType.LOG_PATH).getProperty("hippolog:enabled")
+                        .getBoolean()) {
+            Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow(
+                    "internal", session.getRootNode().getNode(HippoNodeType.LOG_PATH));
+            if (workflow instanceof EventLoggerWorkflow) {
+                ((EventLoggerWorkflow) workflow).logEvent(session.getUserID(), "Repository", "login");
+            }
+            session.getRootNode().getNode(HippoNodeType.LOG_PATH).refresh(true);
+        }
+    }
+
+
+    protected boolean isSystemUser(Session session) {
+        try {
+            Node userNode = getUserNode(session);
+            if (userNode != null && userNode.hasProperty("hipposys:system")) {
+                return userNode.getProperty("hipposys:system").getBoolean();
+            }
+        } catch (RepositoryException e) {
+            log.warn("Unable to determine is user is a system user: {}", e.getMessage());
+            log.debug("Error while determining system user status:", e);
+        }
+        return false;
+    }
+    
+    protected Node getUserNode(Session session) throws RepositoryException {
+        String userId = session.getUserID();
+        StringBuilder statement = new StringBuilder();
+        statement.append("//element");
+        statement.append("(*, ").append(HippoNodeType.NT_USER).append(")");
+        statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(userId, true)).append("'").append(']');
+        Query q;
+        q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
+        QueryResult result = q.execute();
+        if (result.getNodes().hasNext()) {
+            return result.getNodes().nextNode();
+        }
+        return null;
+    }
+    
+    
     /**
      * Helper method for logging
      * @return ip address of client
