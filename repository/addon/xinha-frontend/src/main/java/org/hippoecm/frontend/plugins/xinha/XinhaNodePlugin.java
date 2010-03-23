@@ -120,9 +120,13 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
             private static final long serialVersionUID = 1L;
 
             public String srcFromSrc(String link) {
-                if (baseLinkFactory.getLinks().contains(link) && currentLinkFactory.getLinks().contains(link)) {
-                    RichTextLink baseRtl = baseLinkFactory.loadLink(link);
-                    RichTextLink currentRtl = currentLinkFactory.loadLink(link);
+                String facetName = link;
+                if (link.indexOf('/') > 0) {
+                    facetName = link.substring(0, link.indexOf('/'));
+                }
+                if (baseLinkFactory.getLinks().contains(facetName) && currentLinkFactory.getLinks().contains(facetName)) {
+                    RichTextLink baseRtl = baseLinkFactory.loadLink(facetName);
+                    RichTextLink currentRtl = currentLinkFactory.loadLink(facetName);
                     if (baseRtl != null && currentRtl != null && currentRtl.getTargetId().equals(baseRtl.getTargetId())) {
                         return currentDecorator.srcFromSrc(link);
                     }
