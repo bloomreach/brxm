@@ -48,7 +48,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.RichTextArea;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
-import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.json.JsonParser;
@@ -98,7 +97,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         configuration = new Configuration(config);
 
-        configuration.addProperty("isPortletContext", Boolean.toString(RichTextUtil.isPortletContext()));
         configuration.setName(getMarkupId());
 
         mode = IEditor.Mode.fromString(config.getString("mode", "view"));
@@ -138,7 +136,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         return getValueModel();
     }
 
-    protected RichTextModel newEditModel() {
+    protected IModel<String> newEditModel() {
         return new RichTextModel(getValueModel());
     }
 

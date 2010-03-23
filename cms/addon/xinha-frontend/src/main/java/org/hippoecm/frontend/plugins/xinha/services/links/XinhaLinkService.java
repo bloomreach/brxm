@@ -26,7 +26,7 @@ import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class XinhaLinkService implements IDetachable {
+public class XinhaLinkService implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -34,10 +34,12 @@ public abstract class XinhaLinkService implements IDetachable {
 
     static final Logger log = LoggerFactory.getLogger(XinhaLinkService.class);
 
-    IRichTextLinkFactory factory;
+    private String editorId;
+    private IRichTextLinkFactory factory;
     
-    public XinhaLinkService(IRichTextLinkFactory factory) {
+    public XinhaLinkService(IRichTextLinkFactory factory, String editorId) {
         this.factory = factory;
+        this.editorId = editorId;
     }
 
     public InternalXinhaLink create(Map<String, String> p) {
@@ -48,17 +50,15 @@ public abstract class XinhaLinkService implements IDetachable {
 
     public String attach(JcrNodeModel model) {
         RichTextLink rtl = factory.createLink(model);
-        if (rtl != null && rtl.save()) {
+        if (rtl != null) {
             String href = RichTextUtil.encode(rtl.getName());
-            String script = "xinha_editors." + getXinhaName() + ".plugins.CreateLink.instance.createLink({"
+            String script = "xinha_editors." + editorId + ".plugins.CreateLink.instance.createLink({"
                     + XinhaLink.HREF + ": '" + href + "', " + XinhaLink.TARGET + ": ''}, false);";
             return script;
         }
         return null;
     }
 
-    protected abstract String getXinhaName();
-    
     public void detach() {
         factory.detach();
     }
@@ -81,10 +81,10 @@ public abstract class XinhaLinkService implements IDetachable {
                     Map<String, String> values = getInitialValues();
                     String relPath = RichTextUtil.decode(values.get(XinhaLink.HREF));
                     RichTextLink rtl = factory.loadLink(relPath);
-                    rtl.delete();
+                    factory.delete(rtl);
                 }
                 RichTextLink rtl = factory.createLink(getLinkTarget());
-                if (rtl != null && rtl.save()) {
+                if (rtl != null) {
                     setHref(RichTextUtil.encode(rtl.getName()));
                 }
             }
@@ -94,7 +94,7 @@ public abstract class XinhaLinkService implements IDetachable {
             Map<String, String> values = getInitialValues();
             String relPath = RichTextUtil.decode(values.get(XinhaLink.HREF));
             RichTextLink rtl = factory.loadLink(relPath);
-            rtl.delete();
+            factory.delete(rtl);
             setHref(null);
         }
 

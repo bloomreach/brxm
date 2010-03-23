@@ -16,40 +16,38 @@
 package org.hippoecm.frontend.plugins.xinha;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.richtext.IImageDecorator;
-import org.hippoecm.frontend.plugins.richtext.PrefixingImageDecorator;
+import org.hippoecm.frontend.plugins.richtext.ILinkDecorator;
 import org.hippoecm.frontend.plugins.richtext.RichTextProcessor;
 
-public class PrefixingModel implements IModel<String> {
+/**
+ * Model that decorates the links in html.
+ */
+public class BrowsableModel implements IModel<String> {
     private static final long serialVersionUID = 1L;
 
-    private IImageDecorator decorator;
+    private ILinkDecorator linkDecorator;
     private IModel<String> bare;
 
-    public PrefixingModel(IModel<String> bare, String prefix) {
+    public BrowsableModel(IModel<String> bare, ILinkDecorator linkDecorator) {
         this.bare = bare;
-        this.decorator = new PrefixingImageDecorator(prefix);
+        this.linkDecorator = linkDecorator;
     }
 
-    public PrefixingModel(IModel<String> bare, IImageDecorator decorator) {
-        this.bare = bare;
-        this.decorator = decorator;
-    }
-    
     public String getObject() {
         String text = bare.getObject();
         if (text != null) {
-            return RichTextProcessor.prefixImageLinks(text, decorator);
+            return RichTextProcessor.decorateLinks(text, linkDecorator);
         }
         return null;
     }
 
     public void setObject(String object) {
-        bare.setObject(RichTextProcessor.restoreFacets(object));
+        throw new UnsupportedOperationException();
     }
-    
+
     public void detach() {
         bare.detach();
     }
+    
 
 }

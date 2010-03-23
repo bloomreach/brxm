@@ -26,7 +26,7 @@ import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class XinhaImageService implements IDetachable {
+public class XinhaImageService implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -36,19 +36,21 @@ public abstract class XinhaImageService implements IDetachable {
 
     final static String BINARIES_PREFIX = "binaries";
 
+    private String editorId;
     private IRichTextImageFactory factory;
 
-    public XinhaImageService(IRichTextImageFactory factory) {
+    public XinhaImageService(IRichTextImageFactory factory, String editorId) {
         this.factory = factory;
+        this.editorId = editorId;
     }
 
     //Attach an image with only a JcrNodeModel. Method return json object wich 
     public String attach(JcrNodeModel model) {
         //TODO: fix drag-drop replacing
         RichTextImage item = createImageItem(model);
-        if (item.save()) {
+        if (item != null) {
             StringBuilder sb = new StringBuilder(80);
-            sb.append("xinha_editors.").append(getXinhaName()).append(".plugins.InsertImage.instance.insertImage(");
+            sb.append("xinha_editors.").append(editorId).append(".plugins.InsertImage.instance.insertImage(");
             sb.append("{ ");
             sb.append(XinhaImage.URL).append(": '").append(item.getUrl()).append("'");
             sb.append(", ").append(XinhaImage.FACET_SELECT).append(": '").append(item.getFacetSelectPath()).append("'");
@@ -57,8 +59,6 @@ public abstract class XinhaImageService implements IDetachable {
         }
         return null;
     }
-
-    protected abstract String getXinhaName();
 
     public XinhaImage createXinhaImage(Map<String, String> p) {
         RichTextImage rti = loadImageItem(p);
@@ -75,11 +75,11 @@ public abstract class XinhaImageService implements IDetachable {
                     if (isReplacing()) {
                         RichTextImage remove = loadImageItem(getInitialValues());
                         if (remove != null) {
-                            remove.delete();
+                            factory.delete(remove);
                         }
                     }
                     RichTextImage item = createImageItem(getLinkTarget());
-                    if (item.save()) {
+                    if (item != null) {
                         setFacetSelectPath(item.getFacetSelectPath());
                         setUrl(item.getUrl());
                     }
@@ -88,7 +88,7 @@ public abstract class XinhaImageService implements IDetachable {
 
             public void delete() {
                 RichTextImage item = loadImageItem(this);
-                item.delete();
+                factory.delete(item);
                 setFacetSelectPath("");
                 setUrl("");
             }

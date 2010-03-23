@@ -15,30 +15,21 @@
  */
 package org.hippoecm.frontend.plugins.richtext;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IDetachable;
-
-public class RichTextLink implements IClusterable {
+/**
+ * Decorator for image src attributes; prefixes them, leaving the original
+ * link name in the _path request parameter in a portal environment.
+ */
+public class PrefixingImageDecorator implements IImageDecorator {
     private static final long serialVersionUID = 1L;
 
-    private String name;
-    private IDetachable model;
+    private String prefix;
 
-    public RichTextLink(IDetachable model, String name) {
-        this.model = model;
-        this.name = name;
+    public PrefixingImageDecorator(String prefix) {
+        this.prefix = prefix;
     }
 
-    public IDetachable getTargetId() {
-        return model;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String nodeName) {
-        this.name = nodeName;
+    public String srcFromSrc(String link) {
+        return prefix + "?_path=" + link;
     }
 
 }
