@@ -108,6 +108,8 @@ public class HippoItem implements HippoBean {
 
     /**
      * values in the map can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
+     * <br/>
+     * {@inheritDoc}
      */
     public Map<String, Object> getProperties() {
         Map<String, Object> properties = null;
