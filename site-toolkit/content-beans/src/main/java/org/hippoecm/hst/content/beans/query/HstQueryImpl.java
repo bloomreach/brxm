@@ -46,10 +46,7 @@ public class HstQueryImpl implements HstQuery {
 
     private ObjectConverter objectConverter;
     private HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
-    /*
-     * By default, if you do not use setLimit(int limit), we use a limit of 1000. This is for performance reasons (internal repo)
-     */
-    private final static int DEFAULT_LIMIT = 1000;
+    
     private int limit = DEFAULT_LIMIT;
     private int offset = -1;
     private BaseFilter filter;
@@ -118,9 +115,15 @@ public class HstQueryImpl implements HstQuery {
     public void setLimit(int limit) {
         this.limit = limit;
     }
+    public int getLimit() {
+        return this.limit;
+    }
 
     public void setOffset(int offset) {
         this.offset= offset;
+    }
+    public int getOffset() {
+        return this.offset;
     }
 
     public String getQuery() throws QueryException{
@@ -321,4 +324,6 @@ public class HstQueryImpl implements HstQuery {
         }
         fromList.removeAll(removeItems);
     }
+
+    
 }

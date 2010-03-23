@@ -26,6 +26,12 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 public interface HstQuery {
 
+    /**
+     * The default limit that is used for a HstQuery. Use {@link #setLimit(int)} if you need to override this value. 
+     */
+    final static int DEFAULT_LIMIT = 1000;
+    
+    
     void setFilter(BaseFilter filter);
 
     BaseFilter getFilter();
@@ -37,17 +43,30 @@ public interface HstQuery {
     Filter createFilter();
     
     /**
-     * Sets the limit of search results
-     * @param offset
+     * Sets the limit of search results.
+     * <b>Note</b> that setting this value very high might influence performance negatively
+     * @param limit
      */
     void setLimit(int limit);
-
+    
     /**
-     * Sets the offset to start searching from
+     * Returns the limit of the HstQuery. If no limit is set, it returns the default HstQuery limit {@link #DEFAULT_LIMIT}
+     * @return the limit 
+     */
+    int getLimit();
+    
+    /**
+     * Sets the offset to start searching from. Default offset is <code>-1</code> which means it is ignored. A negative offset will be ignored
      * @param offset
      */
     void setOffset(int offset);
 
+    /**
+     * Returns the offset of the HstQuery. If no offset is set through {@link #setOffset(int)}, the offset will be <code>-1</code> and will be ignored 
+     * @return the offset 
+     */
+    int getOffset();
+    
     /**
      * Order the object found (ascending)
      * @param fieldNameAttribute the name of the field used to sort the search result
