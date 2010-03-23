@@ -58,8 +58,7 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     String getCanonicalUUID();
 
     /**
-     * Same as getProperty, where getProperty is only there for having a nice .getProperty['propname'] in jsp expression language
-     * @see #getProperty()
+     * Same as {@link #getProperty(String)}, where getProperty is only there for having a nice .getProperty['propname'] in jsp expression language
      */
     Map<String, Object> getProperties();
 
