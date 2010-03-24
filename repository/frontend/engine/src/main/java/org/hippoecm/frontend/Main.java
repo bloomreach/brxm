@@ -44,7 +44,6 @@ import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.application.IClassResolver;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IRequestCycleProcessor;
 import org.apache.wicket.request.RequestParameters;
@@ -344,11 +343,11 @@ public class Main extends WebApplication {
     public ISessionStore newSessionStore() {
         // in development mode, use disk page store to serialize page at the end of a request.
         // in production, skip serialization for better performance.
-//        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
-//            return super.newSessionStore();
-//        } else {
+        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
+            return super.newSessionStore();
+        } else {
             return new UnbindingHttpSessionStore(this);
-//        }
+        }
     }
 
     @Override
