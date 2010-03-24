@@ -44,7 +44,7 @@ import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.application.IClassResolver;
-import org.apache.wicket.protocol.http.HttpSessionStore;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IRequestCycleProcessor;
 import org.apache.wicket.request.RequestParameters;
@@ -61,6 +61,7 @@ import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.frontend.session.UnbindingHttpSessionStore;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -343,11 +344,11 @@ public class Main extends WebApplication {
     public ISessionStore newSessionStore() {
         // in development mode, use disk page store to serialize page at the end of a request.
         // in production, skip serialization for better performance.
-        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
-            return super.newSessionStore();
-        } else {
-            return new HttpSessionStore(this);
-        }
+//        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
+//            return super.newSessionStore();
+//        } else {
+            return new UnbindingHttpSessionStore(this);
+//        }
     }
 
     @Override
