@@ -81,7 +81,7 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
     }
 
     @Override
-    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         NodeState dereference = getNodeState(((MirrorNodeId)nodeId).upstream);
         if(dereference == null) {
             throw new RepositoryException("Cannot populate top mirror node dereferencing "+((MirrorNodeId)nodeId).upstream);
@@ -128,10 +128,10 @@ public abstract class MirrorVirtualProvider extends HippoVirtualProvider
             propState.setMultiValued(upstreamPropState.isMultiValued());
         }
 
-        populateChildren(nodeId, state, dereference);
+        populateChildren(context, nodeId, state, dereference);
         return state;
     }
 
-    protected abstract void populateChildren(NodeId nodeId, NodeState state, NodeState upstream);
+    protected abstract void populateChildren(StateProviderContext context, NodeId nodeId, NodeState state, NodeState upstream);
     
 }

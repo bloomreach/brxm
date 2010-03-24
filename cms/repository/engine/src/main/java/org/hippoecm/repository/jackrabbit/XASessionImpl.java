@@ -64,6 +64,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
     protected XASessionImpl(RepositoryImpl rep, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
         super(rep, loginContext, wspConfig);
+        namePathResolver = new HippoNamePathResolver(this, true);
         helper = new SessionImplHelper(this, ntMgr, rep, loginContext.getSubject()) {
             @Override
             SessionItemStateManager getItemStateManager() {
@@ -181,6 +182,8 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
     public void setNamespacePrefix(String prefix, String uri)
             throws NamespaceException, RepositoryException {
         helper.setNamespacePrefix(prefix, uri);
+        // Clear name and path caches
+        namePathResolver = new HippoNamePathResolver(this, true);
     }
 
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {

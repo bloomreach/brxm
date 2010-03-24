@@ -17,6 +17,7 @@ package org.hippoecm.repository.jackrabbit;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.core.state.ItemStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class HippoNodeId extends NodeId
     public NodeId parentId;
     public Name name;
 
-    HippoVirtualProvider provider;
+    private final HippoVirtualProvider provider;
 
     public HippoNodeId(HippoVirtualProvider provider, NodeId parent, Name name) {
         super(UUID.randomUUID());
@@ -46,9 +47,9 @@ public class HippoNodeId extends NodeId
         this.name = name;
     }
 
-    public NodeState populate() {
+    public NodeState populate(StateProviderContext context) {
         try {
-            NodeState nodeState = provider.populate(this, parentId);
+            NodeState nodeState = provider.populate(context, this, parentId);
             return nodeState;
         } catch(RepositoryException ex) {
             log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
@@ -56,12 +57,29 @@ public class HippoNodeId extends NodeId
         }
     }
 
-    public NodeState populate(NodeState state) {
+    public final NodeState populate(StateProviderContext context, NodeState state) {
         try {
-            return provider.populate(state);
+            if (context == null) {
+                context = new StateProviderContext();
+            }
+            return provider.populate(context, state);
         } catch(RepositoryException ex) {
             log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             return null;
         }
+    }
+
+    public final NodeState populate(HippoVirtualProvider provider, NodeState state) throws ItemStateException {
+        try {
+            if(provider != null) {
+                provider.populate(new StateProviderContext(), state);
+            } else {
+                state = populate((StateProviderContext)null, state);
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+            throw new ItemStateException("Failed to populate node state", ex);
+        }
+        return state;
     }
 }

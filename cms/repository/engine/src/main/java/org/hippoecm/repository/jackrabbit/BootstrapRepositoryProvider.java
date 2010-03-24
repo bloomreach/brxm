@@ -78,7 +78,8 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
         return state;
     }
 
-    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
+    @Override
+    public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         NodeState upstream = getNodeState(((BootstrapNodeId)nodeId).upstream);
         NodeState state = createNew(nodeId, upstream.getNodeTypeName(), parentId);
         state.setNodeTypeName(upstream.getNodeTypeName());
@@ -109,11 +110,11 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
             propState.setMultiValued(upstreamPropState.isMultiValued());
         }
 
-        populateChildren(nodeId, state, upstream);
+        populateChildren(context, nodeId, state, upstream);
         return state;
     }
 
-    protected void populateChildren(NodeId nodeId, NodeState state, NodeState upstream) {
+    protected void populateChildren(StateProviderContext context, NodeId nodeId, NodeState state, NodeState upstream) {
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             ChildNodeEntry entry = (ChildNodeEntry) iter.next();
             BootstrapNodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), entry.getName());

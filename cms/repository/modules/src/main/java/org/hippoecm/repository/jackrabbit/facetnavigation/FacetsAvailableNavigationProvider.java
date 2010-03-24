@@ -43,6 +43,7 @@ import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
 import org.hippoecm.repository.jackrabbit.FacetedNavigationModulesTimer;
 import org.hippoecm.repository.jackrabbit.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.KeyValue;
+import org.hippoecm.repository.jackrabbit.StateProviderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
     }
 
     @Override
-    public NodeState populate(NodeState state) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
         if (nodeId instanceof FacetNavigationNodeId) {
             FacetNavigationNodeId facetNavigationNodeId = (FacetNavigationNodeId) nodeId;
@@ -298,13 +299,13 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
     }
 
     @Override
-    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         NodeState state = createNew(nodeId, virtualNodeName, parentId);
         state.setDefinitionId(lookupNodeDef(getNodeState(parentId),
                 resolveName(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION), nodeId.name).getId());
         state.setNodeTypeName(resolveName(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION));
 
-        return populate(state);
+        return populate(context, state);
     }
     
     

@@ -18,17 +18,21 @@ package org.hippoecm.repository.jackrabbit;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
+import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.jackrabbit.spi.commons.name.PathBuilder;
 
 public class HippoHierarchyManager implements HierarchyManager {
     @SuppressWarnings("unused")
@@ -50,10 +54,6 @@ public class HippoHierarchyManager implements HierarchyManager {
 
     public ItemId resolvePath(Path path) throws RepositoryException {
         return hierMgr.resolvePath(path);
-    }
-
-    public NodeId resolveNodePath(Path path) throws RepositoryException {
-        return hierMgr.resolveNodePath(path);
     }
 
     public PropertyId resolvePropertyPath(Path path) throws RepositoryException {
@@ -91,5 +91,68 @@ public class HippoHierarchyManager implements HierarchyManager {
 
     public int getShareRelativeDepth(NodeId ancestorId, ItemId descendantId) throws ItemNotFoundException, RepositoryException {
         return hierMgr.getShareRelativeDepth(ancestorId, descendantId);
+    }
+
+    public NodeId resolveNodePath(Path path) throws RepositoryException {
+        Path.Element[] elements = path.getElements();
+        PathBuilder builder = new PathBuilder();
+        NodeId smartNodeId = null;
+        int count = 0;
+        for (Path.Element element : elements) {
+            if (element instanceof HippoPathParser.SmartElement) {
+                Name name = element.getName();
+                int index = element.getIndex();
+                if (index == 0) {
+                    index = 1;
+                }
+                NodeId parentId = hierMgr.resolveNodePath(builder.getPath());
+                try {
+                    NodeState parentState = (NodeState)getItemState(parentId);
+                    ChildNodeEntry nodeEntry = parentState.getChildNodeEntry(name, index);
+                    if (nodeEntry != null) {
+                        smartNodeId = nodeEntry.getId();
+                        smartNodeId = new ArgumentNodeId(smartNodeId, ((HippoPathParser.SmartElement)element).argument);
+                    } else
+                        return null;
+                } catch (NoSuchItemStateException ex) {
+                    throw new RepositoryException("failed to retrieve state of intermediary node", ex);
+                } catch (ItemStateException ex) {
+                    throw new RepositoryException("failed to retrieve state of intermediary node", ex);
+                }
+                builder = new PathBuilder();
+                count = 0;
+            } else {
+                builder.addLast(element);
+                ++count;
+            }
+        }
+        if (smartNodeId == null) {
+            return hierMgr.resolveNodePath(path);
+        } else {
+            NodeId id = smartNodeId;
+            try {
+                if (count > 0) {
+                    for (Path.Element element : builder.getPath().getElements()) {
+                        NodeState parentState = (NodeState)getItemState(id);
+                        Name name = element.getName();
+                        int index = element.getIndex();
+                        if (index == 0) {
+                            index = 1;
+                        }
+                        ChildNodeEntry nodeEntry = parentState.getChildNodeEntry(name, index);
+                        if (nodeEntry != null) {
+                            id = nodeEntry.getId();
+                        } else {
+                            return null;
+                        }
+                    }
+                }
+                return id;
+            } catch (NoSuchItemStateException ex) {
+                throw new RepositoryException("failed to retrieve state of intermediary node", ex);
+            } catch (ItemStateException ex) {
+                throw new RepositoryException("failed to retrieve state of intermediary node", ex);
+            }
+        }
     }
 }

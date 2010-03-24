@@ -116,7 +116,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
     }
 
     @Override
-    public NodeState populate(NodeState state) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
         String queryname;
         String docbase;
@@ -171,9 +171,10 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
 
             FacetedNavigationEngine.Result facetedResult;
             long t1 = 0, t2;
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 t1 = System.currentTimeMillis();
-            facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, null,
+            }
+            facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, (context != null && context.getArgument() != null ? facetedEngine.parse(context.getArgument()) : null),
                     facetSearchResultMap, null, hitsRequested);
             if (log.isDebugEnabled()) {
                 t2 = System.currentTimeMillis();
@@ -247,7 +248,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
     }
 
     @Override
-    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         FacetSearchNodeId searchNodeId = (FacetSearchNodeId) nodeId;
         NodeState state = createNew(nodeId, virtualNodeName, parentId);
         state.setDefinitionId(lookupNodeDef(getNodeState(parentId), resolveName(HippoNodeType.NT_FACETSUBSEARCH),
@@ -289,7 +290,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
         propState.setMultiValued(false);
         state.addPropertyName(countName);
 
-        return populate(state);
+        return populate(context, state);
     }
 
     public class FacetSearchEntry implements Comparable<FacetSearchEntry> {

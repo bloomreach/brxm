@@ -112,16 +112,16 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         return stateMgr.getQPath(path);
     }
 
-    public NodeState populate(NodeState state) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
         return state;
     }
 
-    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         try {
             NodeState state = createNew(nodeId, virtualNodeName, parentId);
             NodeState parentState = stateMgr.getNodeState(parentId);
             state.setDefinitionId(lookupNodeDef(parentState, virtualNodeName, nodeId.name).getId());
-            populate(state);
+            populate(context, state);
             return state;
         } catch(NoSuchItemStateException ex) {
             throw new RepositoryException("impossible state");

@@ -42,7 +42,7 @@ public class FacetSearchProvider extends AbstractFacetSearchProvider
     }
 
     @Override
-    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         throw new RepositoryException("Cannot populate top facetsearch node");
     }
 }
