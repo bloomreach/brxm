@@ -175,7 +175,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
     }
 
     @Override
-    public NodeState populate(NodeState state) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
         String[] docbase = getProperty(state.getNodeId(), docbaseName);
         return populate(this, state, docbase, null, null, null, false);
     }
@@ -202,7 +202,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         return true;
     }
 
-    protected void populateChildren(NodeId nodeId, NodeState state, NodeState upstream) {
+    protected void populateChildren(StateProviderContext context, NodeId nodeId, NodeState state, NodeState upstream) {
         ViewNodeId viewId = (ViewNodeId)nodeId;
         boolean isHandle = state.getNodeTypeName().equals(handleName);
         Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
