@@ -34,8 +34,12 @@ import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.core.query.lucene.SynonymProvider;
+import org.apache.jackrabbit.core.query.lucene.fulltext.ParseException;
+import org.apache.jackrabbit.core.query.lucene.fulltext.QueryParser;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldSelector;
@@ -220,6 +224,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
          */
 
         BooleanQuery searchQuery = new BooleanQuery(false);
+
         if (facetsQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(facetsQuery.getQuery(), Occur.MUST);
         }
@@ -231,11 +236,21 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         if (inheritedFilterQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(inheritedFilterQuery.getQuery(), Occur.MUST);
         }
-        
+
         if (facetFiltersQuery != null && facetFiltersQuery.getQuery().clauses().size() > 0) {
             searchQuery.add(facetFiltersQuery.getQuery(), Occur.MUST);
         }
-        
+
+        if (openQuery != null && openQuery.query != null && !openQuery.query.trim().equals("")) {
+            try {
+                QueryParser parser = new QueryParser(FieldNames.FULLTEXT, getTextAnalyzer(), getSynonymProvider());
+                parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
+                searchQuery.add(parser.parse(openQuery.query), Occur.MUST);
+            } catch (ParseException ex) {
+                log.info("Cannot compose free text query", ex);
+            }
+        }
+
         // TODO perhaps create cached user specific filter for authorisation to gain speed
         if (contextImpl.authorizationQuery.getQuery().clauses().size() > 0) {
             // TODO enable again after HREPTWO-3959 is fixed
@@ -569,7 +584,5 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         HippoSharedItemStateManager stateMgr = (HippoSharedItemStateManager) context.getItemStateManager();
         stateMgr.repository.setFacetedNavigationEngine(this);
         super.doInit();
-
     }
-
 }
