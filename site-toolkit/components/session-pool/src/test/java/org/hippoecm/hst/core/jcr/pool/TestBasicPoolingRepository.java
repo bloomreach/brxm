@@ -127,7 +127,7 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
     }
     
     @Test
-    public void testSessionsRefreshed() throws Exception {
+    public void testSessionsRefreshPendingAfter() throws Exception {
         Repository repository = poolingRepository;
 
         Session session = null;
@@ -158,6 +158,60 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
             poolingRepository.setSessionsRefreshPendingAfter(0);
             if (session != null) {
                 session.logout();
+            }
+        }
+    }
+    
+    @Test
+    public void testSessionRefreshOnPassivate() throws Exception {
+        Repository repository = poolingRepository;
+        
+        poolingRepository.setRefreshOnPassivate(true);
+        
+        PooledSession session = null;
+        long lastRefreshed = 0L;
+        
+        try {
+            session = (PooledSession) repository.login();
+            lastRefreshed = session.lastRefreshed();
+        } finally {
+            if (session != null) {
+                session.logout();
+                assertTrue("The session is not refreshed.", session.lastRefreshed() > lastRefreshed);
+            }
+        }
+    }
+    
+    @Test
+    public void testSessionRefreshOnPassivateWithMaxInterval() throws Exception {
+        Repository repository = poolingRepository;
+        
+        poolingRepository.setRefreshOnPassivate(true);
+        poolingRepository.setMaxRefreshIntervalOnPassivate(Long.MAX_VALUE);
+        
+        PooledSession session = null;
+        long lastRefreshed = 0L;
+        
+        try {
+            session = (PooledSession) repository.login();
+            lastRefreshed = session.lastRefreshed();
+        } finally {
+            if (session != null) {
+                session.logout();
+                assertTrue("The session is unexpectedly refreshed.", session.lastRefreshed() == lastRefreshed);
+            }
+        }
+        
+        poolingRepository.setMaxRefreshIntervalOnPassivate(100L);
+        
+        try {
+            session = (PooledSession) repository.login();
+            lastRefreshed = session.lastRefreshed();
+        } finally {
+            if (session != null) {
+                Thread.sleep(200L);
+                session.logout();
+                assertTrue("The session is not refreshed.", session.lastRefreshed() > lastRefreshed);
             }
         }
     }

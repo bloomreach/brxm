@@ -58,6 +58,7 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     protected char [] defaultCredentailsPassword;
     
     protected boolean refreshOnPassivate = true;
+    protected long maxRefreshIntervalOnPassivate;
     protected boolean keepChangesOnRefresh = false;
     protected long sessionsRefreshPendingTimeMillis; 
     protected ResourceLifecycleManagement pooledSessionLifecycleManagement;
@@ -135,6 +136,14 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
     
     public boolean getRefreshOnPassivate() {
         return this.refreshOnPassivate;
+    }
+    
+    public void setMaxRefreshIntervalOnPassivate(long maxRefreshIntervalOnPassivate) {
+        this.maxRefreshIntervalOnPassivate = maxRefreshIntervalOnPassivate;
+    }
+    
+    public long getMaxRefreshIntervalOnPassivate() {
+        return maxRefreshIntervalOnPassivate;
     }
     
     public void setKeepChangesOnRefresh(boolean keepChangesOnRefresh) {
@@ -926,7 +935,13 @@ public class BasicPoolingRepository implements PoolingRepository, MultipleReposi
             PooledSession session = (PooledSession) object;
             
             if (refreshOnPassivate) {
-                session.refresh(keepChangesOnRefresh);
+                if (maxRefreshIntervalOnPassivate > 0L) {
+                    if (System.currentTimeMillis() - session.lastRefreshed() > maxRefreshIntervalOnPassivate) {
+                        session.refresh(keepChangesOnRefresh);
+                    }
+                } else {
+                    session.refresh(keepChangesOnRefresh);
+                }
             }
             
             session.passivate();

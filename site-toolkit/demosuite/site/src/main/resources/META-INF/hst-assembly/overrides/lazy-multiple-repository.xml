@@ -57,7 +57,8 @@
         <entry key="timeBetweenEvictionRunsMillis" value="60000"/>
         <entry key="numTestsPerEvictionRun" value="1"/>
         <entry key="minEvictableIdleTimeMillis" value="3600000"/>
-        <entry key="refreshOnPassivate" value="false"/>
+        <entry key="refreshOnPassivate" value="true"/>
+        <entry key="maxRefreshIntervalOnPassivate" value="600000"/>
       </map>
     </constructor-arg>
   </bean>

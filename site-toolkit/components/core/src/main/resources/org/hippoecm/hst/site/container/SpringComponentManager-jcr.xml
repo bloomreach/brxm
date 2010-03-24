@@ -74,7 +74,8 @@
             <property name="timeBetweenEvictionRunsMillis" value="60000"/>
             <property name="numTestsPerEvictionRun" value="1"/>
             <property name="minEvictableIdleTimeMillis" value="300000"/>
-            <property name="refreshOnPassivate" value="false"/>
+            <property name="refreshOnPassivate" value="true"/>
+            <property name="maxRefreshIntervalOnPassivate" value="600000"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.preview">
@@ -99,7 +100,8 @@
             <property name="numTestsPerEvictionRun" value="1"/>
             <!-- after 10 min unused, we evict preview sessions -->
             <property name="minEvictableIdleTimeMillis" value="300000"/>
-            <property name="refreshOnPassivate" value="false"/>
+            <property name="refreshOnPassivate" value="true"/>
+            <property name="maxRefreshIntervalOnPassivate" value="600000"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.writable">
@@ -124,7 +126,8 @@
             <property name="numTestsPerEvictionRun" value="1"/>
             <!-- after 5 min unused, we evict writable sessions -->
             <property name="minEvictableIdleTimeMillis" value="300000"/>
-            <property name="refreshOnPassivate" value="false"/>
+            <property name="refreshOnPassivate" value="true"/>
+            <property name="maxRefreshIntervalOnPassivate" value="600000"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.hstconfigreader">
@@ -149,7 +152,8 @@
             <property name="numTestsPerEvictionRun" value="1"/>
             <!-- after 5 min unused, we evict config reader sessions -->
             <property name="minEvictableIdleTimeMillis" value="300000"/>
-            <property name="refreshOnPassivate" value="false"/>
+            <property name="refreshOnPassivate" value="true"/>
+            <property name="maxRefreshIntervalOnPassivate" value="600000"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.binaries">
@@ -174,7 +178,8 @@
             <property name="numTestsPerEvictionRun" value="1"/>
             <!-- after 10 min unused, we evict binaries sessions -->
             <property name="minEvictableIdleTimeMillis" value="300000"/>
-            <property name="refreshOnPassivate" value="false"/>
+            <property name="refreshOnPassivate" value="true"/>
+            <property name="maxRefreshIntervalOnPassivate" value="600000"/>
           </bean>
         </entry>
       </map>
