@@ -22,8 +22,6 @@ import java.util.WeakHashMap;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.QueryManager;
-import javax.servlet.http.HttpSessionActivationListener;
-import javax.servlet.http.HttpSessionEvent;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
@@ -59,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * When the Wicket session is no longer referenced, the JCR session model
  * is detached.
  */
-public class UserSession extends WebSession implements HttpSessionActivationListener {
+public class UserSession extends WebSession {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -332,15 +330,5 @@ public class UserSession extends WebSession implements HttpSessionActivationList
         ++componentNum;
         pluginComponentCounters.put(markupId, new Integer(componentNum));
         return markupId + "_" + componentNum;
-    }
-
-    public void sessionDidActivate(HttpSessionEvent arg0) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    public void sessionWillPassivate(HttpSessionEvent arg0) {
-        // TODO Auto-generated method stub
-        
     }
 }
