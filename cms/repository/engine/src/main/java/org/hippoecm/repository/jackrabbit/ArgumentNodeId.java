@@ -31,7 +31,6 @@ public class ArgumentNodeId extends NodeId
         super(original.getUUID());
         this.original = original;
         this.argument = argument;
-        System.err.println("BERRY ARGUMENT NODE ID "+original.getUUID()+" "+argument);
     }
 
     public String getArgument() {
