@@ -47,7 +47,7 @@ public class FacetSelectProvider extends ViewVirtualProvider
     }
 
     @Override
-    public NodeState populate(NodeState state) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
 
         String[] docbase = getProperty(state.getNodeId(), docbaseName);
         String[] newFacets = getProperty(state.getNodeId(), facetsName);
@@ -59,7 +59,7 @@ public class FacetSelectProvider extends ViewVirtualProvider
     }
 
     @Override
-    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         throw new RepositoryException("Illegal internal state");
     }
 }

@@ -48,8 +48,8 @@ public class FacetSubSearchProvider extends AbstractFacetSearchProvider
     }
 
     @Override
-    public NodeState populate(NodeState state) throws RepositoryException {
-        super.populate(state);
+    public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
+        super.populate(context, state);
 
         PropertyState propState = createNew(NameConstants.JCR_PRIMARYTYPE, state.getNodeId());
         propState.setType(PropertyType.NAME);

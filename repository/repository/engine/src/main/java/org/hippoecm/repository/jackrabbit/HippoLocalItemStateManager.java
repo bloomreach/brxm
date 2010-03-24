@@ -256,7 +256,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 edit();
                 NodeState nodeState = (NodeState) state;
                 if(isEnabled()) {
-                    nodeState = ((HippoNodeId)id).populate(nodeState);
+                    nodeState = ((HippoNodeId)id).populate((StateProviderContext)null, nodeState);
                 } else {
                     // keep nodestate as is
                 }
@@ -267,12 +267,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     if( (type & ITEM_TYPE_EXTERNAL) != 0  && (type & ITEM_TYPE_VIRTUAL) != 0) {
                         nodeState.removeAllChildNodeEntries();
                     }
-                    try {
-                        state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
-                    } catch(RepositoryException ex) {
-                        log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                        throw new ItemStateException("Failed to populate node state", ex);
-                    }
+                    nodeState = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
                 }
                 virtualNodes.put((HippoNodeId)id, nodeState);
                 store(nodeState);
@@ -289,7 +284,11 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     }
                     try {
                         virtualStates.add(state);
-                        state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
+                        if(id instanceof ArgumentNodeId) {
+                            state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(((ArgumentNodeId)id).getArgument()), nodeState);
+                        } else {
+                            state = virtualNodeNames.get(nodeTypeName).populate(new StateProviderContext(), nodeState);
+                        }
                         store(state);
                         return nodeState;
                     } catch (RepositoryException ex) {
@@ -330,7 +329,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             edit();
             NodeState nodeState;
             if (isEnabled()) {
-                nodeState = ((HippoNodeId)id).populate();
+                nodeState = ((HippoNodeId)id).populate(null);
                 if (nodeState == null) {
                     throw new NoSuchItemStateException("Populating node failed");
                 }
@@ -343,7 +342,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
                 Name nodeTypeName = nodeState.getNodeTypeName();
                 if(virtualNodeNames.containsKey(nodeTypeName)) {
-                    int type =  isVirtual(nodeState);
+                    int type = isVirtual(nodeState);
                     /*
                      * If a node is EXTERNAL && VIRTUAL, we are dealing with an already populated nodestate.
                      * Since the parent EXTERNAL node can impose new constaints, like an inherited filter, we
@@ -352,12 +351,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     if( (type  & ITEM_TYPE_EXTERNAL) != 0  && (type  & ITEM_TYPE_VIRTUAL) != 0) {
                         nodeState.removeAllChildNodeEntries();
                     }
-                    try {
-                        state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
-                    } catch(RepositoryException ex) {
-                        log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                        throw new ItemStateException("Failed to populate node");
-                    }
+                    state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
                 }
 
             return nodeState;
@@ -497,7 +491,11 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                        !deletedExternals.containsKey(state.getId()) &&
                        !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
                     try {
-                        virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate((NodeState)state);
+                        if(state.getId() instanceof ArgumentNodeId) {
+                            virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(new StateProviderContext(((ArgumentNodeId)state.getId()).getArgument()), (NodeState)state);
+                        } else {
+                            virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(new StateProviderContext(), (NodeState)state);
+                        }
                     } catch(RepositoryException ex) {
                         log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                     }

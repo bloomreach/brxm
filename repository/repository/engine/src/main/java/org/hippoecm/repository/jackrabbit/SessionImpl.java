@@ -20,16 +20,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -53,7 +49,6 @@ import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.apache.jackrabbit.util.XMLChar;
 
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
@@ -69,6 +64,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     protected SessionImpl(RepositoryImpl rep, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
         super(rep, loginContext, wspConfig);
+        namePathResolver = new HippoNamePathResolver(this, true);
         helper = new SessionImplHelper(this, ntMgr, rep, loginContext.getSubject()) {
             @Override
             SessionItemStateManager getItemStateManager() {
@@ -187,8 +183,9 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     public void setNamespacePrefix(String prefix, String uri)
             throws NamespaceException, RepositoryException {
         helper.setNamespacePrefix(prefix, uri);
+        // Clear name and path caches
+        namePathResolver = new HippoNamePathResolver(this, true);
     }
-
 
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
         return helper.pendingChanges(node, nodeType, prune);

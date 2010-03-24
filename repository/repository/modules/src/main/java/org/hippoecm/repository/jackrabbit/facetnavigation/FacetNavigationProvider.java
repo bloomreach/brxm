@@ -34,6 +34,7 @@ import org.hippoecm.repository.OrderBy;
 import org.hippoecm.repository.ParsedFacet;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.jackrabbit.StateProviderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +74,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
     }
 
     @Override
-    public NodeState populate(NodeState state) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
 
         String[] property = getProperty(nodeId, docbaseName);

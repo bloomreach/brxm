@@ -134,7 +134,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     }
 
     @Override
-    public NodeState populate(NodeState state) throws IllegalNameException, NamespaceException {
+    public NodeState populate(StateProviderContext context, NodeState state) throws IllegalNameException, NamespaceException {
         FacetResultSetNodeId nodeId = (FacetResultSetNodeId) state.getNodeId();
         String queryname = nodeId.queryname;
         String docbase = nodeId.docbase;
@@ -212,7 +212,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
                 filters.put(entry.getKey().toString(), entry.getValue());
             }
         }
-        facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, currentRanges, null, null, filters,
+        facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, currentRanges, (context != null && context.getArgument() != null ? facetedEngine.parse(context.getArgument()) : null), null, filters,
                                            hitsRequested);
         if(log.isDebugEnabled()) {
             FacetedNavigationModulesTimer.log.debug("Creating facetedResultSet took '{}' ms for '{}' number of results.", (System.currentTimeMillis() - t1),  facetedResult.length());

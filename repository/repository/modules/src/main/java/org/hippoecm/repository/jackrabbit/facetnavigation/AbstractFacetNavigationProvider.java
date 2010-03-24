@@ -39,6 +39,7 @@ import org.hippoecm.repository.jackrabbit.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.HippoVirtualProvider;
 import org.hippoecm.repository.jackrabbit.IFilterNodeId;
 import org.hippoecm.repository.jackrabbit.KeyValue;
+import org.hippoecm.repository.jackrabbit.StateProviderContext;
 
 public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvider {
     @SuppressWarnings("unused")
@@ -70,12 +71,12 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
     }
 
     @Override
-    public NodeState populate(NodeState state) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
         throw new RepositoryException("Subclasses must implement populate(NodeState state)");
     }
 
     @Override
-    public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
+    public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         throw new RepositoryException("Cannot populate node");
     }
 
