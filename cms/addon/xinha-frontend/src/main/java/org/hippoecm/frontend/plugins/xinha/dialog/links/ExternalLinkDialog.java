@@ -62,7 +62,7 @@ public class ExternalLinkDialog extends AbstractXinhaDialog<ExternalXinhaLink> {
         
         add(new LabelledBooleanFieldWidget("popup", new PropertyModel<Boolean>(model, "target"),
                 new StringResourceModel("labels.popup", this, null)));
-        
+
     }
     
     @Override
@@ -73,6 +73,6 @@ public class ExternalLinkDialog extends AbstractXinhaDialog<ExternalXinhaLink> {
     
     @Override
     public IValueMap getProperties() {
-        return new ValueMap("width=400,height=190");
+        return new ValueMap("width=450,height=190");
     }
 }
