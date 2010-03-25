@@ -30,7 +30,7 @@ public class RichTextProcessorTest {
     public void testPrefixInternalImage() {
         String text = "testing 1 2 3 <img src=\"link\"/>";
         String processed = RichTextProcessor.prefixImageLinks(text, new PrefixingImageDecorator("test-prefix/"));
-        assertEquals("testing 1 2 3 <img src=\"test-prefix/?_path=link\" facetselect=\"link\" /> ", processed);
+        assertEquals("testing 1 2 3 <img src=\"test-prefix/?_path=link\" facetselect=\"link\" />", processed);
     }
 
 
