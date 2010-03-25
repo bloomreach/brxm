@@ -15,13 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.richtext;
 
+import java.util.Set;
+import org.junit.Test;
+
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Set;
-
-import org.hippoecm.frontend.plugins.richtext.RichTextProcessor;
-import org.junit.Test;
 
 public class RichTextProcessorTest {
     @SuppressWarnings("unused")
@@ -30,14 +29,15 @@ public class RichTextProcessorTest {
     @Test
     public void testPrefixInternalImage() {
         String text = "testing 1 2 3 <img src=\"link\"/>";
-        String processed = RichTextProcessor.prefixImageLinks(text, "test-prefix/");
-        assertEquals("testing 1 2 3 <img src=\"test-prefix/link\"/>", processed);
+        String processed = RichTextProcessor.prefixImageLinks(text, new PrefixingImageDecorator("test-prefix/"));
+        assertEquals("testing 1 2 3 <img src=\"test-prefix/?_path=link\" facetselect=\"link\" /> ", processed);
     }
+
 
     @Test
     public void testPrefixExternalImage() {
         String text = "testing 1 2 3 <img src=\"http://link\"/>";
-        String processed = RichTextProcessor.prefixImageLinks(text, "test-prefix/");
+        String processed = RichTextProcessor.prefixImageLinks(text, new PrefixingImageDecorator("test-prefix/"));
         assertEquals("testing 1 2 3 <img src=\"http://link\"/>", processed);
     }
 
