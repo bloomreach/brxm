@@ -125,7 +125,6 @@ public class PingServlet extends HttpServlet {
 
     /** Local vars */
     private HippoRepository repository;
-    private Session session;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -218,14 +217,15 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private void doRepositoryChecks() throws PingException {
+    private synchronized void doRepositoryChecks() throws PingException {
+        Session session = null;
         try {
             obtainRepository();
-            obtainSession();
-            doReadTest();
-            doWriteTestIfEnabled();
+            session = obtainSession();
+            doReadTest(session);
+            doWriteTestIfEnabled(session);
         } finally {
-            closeSession();
+            closeSession(session);
         }
     }
 
@@ -240,10 +240,9 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private void obtainSession() throws PingException {
+    private Session obtainSession() throws PingException {
         try {
-            session = null;
-            session = repository.login(username, password.toCharArray());
+            return repository.login(username, password.toCharArray());
         } catch (LoginException e) {
             String msg = "FAILURE - Wrong credentials for obtaining session from repository in ping servlet : " + ""
                     + "Are the '" + USERNAME_PARAM + "' and '" + PASSWORD_PARAM
@@ -257,13 +256,13 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private void closeSession() {
+    private void closeSession(Session session) {
         if (session != null && session.isLive()) {
             session.logout();
         }
     }
 
-    private void doReadTest() throws PingException {
+    private void doReadTest(Session session) throws PingException {
         String msg;
         try {
             if (checkNode.length() == 0) {
@@ -281,15 +280,15 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private void doWriteTestIfEnabled() throws PingException {
+    private void doWriteTestIfEnabled(Session session) throws PingException {
         if (writeTestEnabled) {
-            doWriteTest();
+            doWriteTest(session);
         }
     }
 
-    private void doWriteTest() throws PingException {
+    private void doWriteTest(Session session) throws PingException {
         try {
-            Node writePath = getOrCreateWriteNode();
+            Node writePath = getOrCreateWriteNode(session);
             writePath.setProperty("lastcheck", Calendar.getInstance());
             writePath.save();
         } catch (RepositoryException e) {
@@ -298,8 +297,8 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private Node getOrCreateWriteNode() throws PingException {
-        Node path = getOrCreateWritePath();
+    private Node getOrCreateWriteNode(Session session) throws PingException {
+        Node path = getOrCreateWritePath(session);
         String clusterId = getClusterNodeId();
         try {
             if (path.hasNode(clusterId)) {
@@ -315,7 +314,7 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private Node getOrCreateWritePath() throws PingException {
+    private Node getOrCreateWritePath(Session session) throws PingException {
         Node path;
         try {
             if (session.getRootNode().hasNode(writeTestPath)) {
