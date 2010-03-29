@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.standard.facetnavigation;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
 
