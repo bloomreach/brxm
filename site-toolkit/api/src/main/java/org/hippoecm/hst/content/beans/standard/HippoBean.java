@@ -168,7 +168,7 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     
     
     /**
-     * Returns all the jcr nodes that are child nodes of this bean, and have primary jcr nodetype equal to param jcrPrimaryNodeType.
+     * Returns all the child beans of this bean, where the backing jcr node primary node type equals jcrPrimaryNodeType.
      * If a jcr child node is of primary nodetype 'hippo:handle', we look whether the underlying 'Document' has the corresponding 
      * jcrPrimaryNodeType. If so, we return the bean for this 'Document'.
      * 
