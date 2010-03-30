@@ -43,7 +43,6 @@ public class DateFieldWidget extends Panel {
         super(id, model);
 
         YuiDatePickerSettings settings = new YuiDatePickerSettings();
-        settings.setDatePattern(getDatePattern());
         if(config.containsKey("datepicker")) {
             try {
                 PluginConfigMapper.populate(settings, config.getPluginConfig("datepicker"));
@@ -54,25 +53,7 @@ public class DateFieldWidget extends Panel {
         YuiDateTimeField dateTimeField = new YuiDateTimeField("widget", model, settings);
         dateTimeField.setTodayLinkVisible(todayLinkVisible);
         add(dateTimeField);
+        
     }
-
-    private String getDatePattern() {
-        String format = null;
-        if (this instanceof AbstractTextComponent.ITextFormatProvider) {
-            format = ((AbstractTextComponent.ITextFormatProvider) this).getTextFormat();
-            // it is possible that components implement ITextFormatProvider but
-            // don't provide a format
-        }
-
-        if (format == null) {
-            IConverter converter = getConverter(DateTime.class);
-            if (!(converter instanceof DateConverter)) {
-                converter = getConverter(Date.class);
-            }
-            format = ((SimpleDateFormat) ((DateConverter) converter).getDateFormat(getLocale())).toPattern();
-        }
-        return format;
-    }
-
 
 }
