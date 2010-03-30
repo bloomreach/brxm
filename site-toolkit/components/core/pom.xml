@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.ecm.hst</groupId>
     <artifactId>components</artifactId>
-    <version>2.04.06-SNAPSHOT</version>
+    <version>2.04.06</version>
   </parent>
 
   <name>Hippo Site Toolkit Core Component</name>
@@ -177,6 +177,12 @@
       <artifactId>hst-session-pool</artifactId>
       <version>${pom.version}</version>
     </dependency>
+    
+    <!--dependency>
+      <groupId>org.onehippo.ecm.hst.components</groupId>
+      <artifactId>hst-caching</artifactId>
+      <version>${pom.version}</version>
+    </dependency-->
     
     <!-- Test dependencies -->
     
