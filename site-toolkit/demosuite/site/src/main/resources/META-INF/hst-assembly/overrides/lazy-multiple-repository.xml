@@ -58,7 +58,7 @@
         <entry key="numTestsPerEvictionRun" value="1"/>
         <entry key="minEvictableIdleTimeMillis" value="300000"/>
         <entry key="refreshOnPassivate" value="true"/>
-        <entry key="maxRefreshIntervalOnPassivate" value="600000"/>
+        <entry key="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
       </map>
     </constructor-arg>
   </bean>
