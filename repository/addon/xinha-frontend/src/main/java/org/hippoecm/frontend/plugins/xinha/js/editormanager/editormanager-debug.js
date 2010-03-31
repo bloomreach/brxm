@@ -349,6 +349,35 @@ if (!YAHOO.hippo.EditorManager) {
                 //Don't use Xinha's default initSize method
                 Xinha.prototype.initSize = function() { /* Nothing */ }
 
+                //Fix for https://issues.onehippo.com/browse/HREPTWO-3990
+                //IE7 can't handle innerHTML without rewriting relative links to absolute links.
+                Xinha.prototype.setHTML = function(html) {
+                    if ( !this.config.fullPage ) {
+                        if(Xinha.is_ie && Xinha.ie_version == 7) {
+                            try {
+                                var reac = this.editorIsActivated();
+                                if (reac) {
+                                  this.deactivateEditor();
+                                }
+                                var html_re = /<html>((.|\n)*?)<\/html>/i;
+                                html = html.replace(html_re, "$1");
+                                this._doc.open("text/html","replace");
+                                this._doc.write(html);
+                                this._doc.close();
+                                if (reac) {
+                                  this.activateEditor();
+                                }
+                                this.setEditorEvents();
+                          }catch(e){}
+                        } else {
+                            this._doc.body.innerHTML = html;
+                        }
+                    } else {
+                        this.setFullHTML(html);
+                    }
+                    this._textArea.value = html;
+                };
+
                 //Xinha registers a resize event handler on the window.. not configurable so hack it out! And send patch to Xinha
                 var func = Xinha.addDom0Event;
                 Xinha.addDom0Event = function(el, ev, fn) {
