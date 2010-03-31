@@ -17,11 +17,6 @@ function InsertImage(editor) {
     var self = this;
 
     editor.config.btnList.insertimage[3] = function() { self.show(); }
-
-    this.imgRE = new RegExp('<img[^>]+>', 'gi');
-    this.srcRE = new RegExp('src="[^"]+"', 'i');
-    this.facetselectRE = new RegExp('facetselect="([^"]+)"', 'i');
-    this.noReplacePrefixes = ['http:', 'https:', '/'];
 }
 
 Xinha.Config.prototype.InsertImage = {
@@ -80,81 +75,6 @@ InsertImage.prototype.insertImage = function(values, openModal) {
     }
 }
 
-/**
- * Prefix relative image sources with binaries prefix
- */
-InsertImage.prototype.inwardHtml = function(html) {
-    var _this = this;
-    var prefix = this.getPrefix();
-    var isPortletContext = this.isPortletContext();
-    html = html.replace(this.imgRE, function(m) {
-        if (_this.facetselectRE.test(m)) {
-            var facetselect = RegExp.$1;
-            m = m.replace(_this.srcRE, function(n) {
-                if (!isPortletContext)
-                    return 'src="' + prefix + facetselect + '"';
-                else
-                    return 'src="' + prefix + "?_path=" + facetselect + '"';
-            });
-        } else {
-            m = m.replace(_this.srcRE, function(n) {
-                var url = n.substring(5, n.length - 1);
-                if (_this.shouldPrefix(url)) {
-                    return 'src="' + prefix + url + '"';
-                }
-                return n;
-            });
-        }
-        return m;
-    });
-    return html;
-}
-
-/**
- * Strip of binaries prefix
- */
-InsertImage.prototype.outwardHtml = function(html) {
-    var _this = this;
-    var prefix = this.getPrefix();
-    html = html.replace(this.imgRE, function(m) {
-        if (_this.facetselectRE.test(m)) {
-            var facetselect = RegExp.$1;
-            m = m.replace(_this.srcRE, function(n) {
-                return 'src="' + facetselect + '"';
-            });
-            return m;
-        } else {
-            m = m.replace(_this.srcRE, function(n) {
-                var idx = n.indexOf(prefix);
-                if (idx > -1) {
-                    return 'src="' + n.substr(prefix.length + idx);
-                }
-                return n;
-            });
-            return m;
-        }
-    });
-    return html;
-}
-
-InsertImage.prototype.getPrefix = function() {
-    if (this.prefix == null) {
-        this.prefix = this.editor.config.prefix;
-        if (this.prefix.charAt(this.prefix.length - 1) != '/') {
-            this.prefix += '/';
-        }
-    }
-    return this.prefix;
-}
-
-InsertImage.prototype.shouldPrefix = function(url) {
-    for (var i=0; i<this.noReplacePrefixes.length; i++) {
-        if(url.indexOf(this.noReplacePrefixes[i]) == 0) 
-            return false;
-    }
-    return true;
-}
-
 InsertImage.prototype.isPortletContext = function() {
     return (this.editor.config.isPortletContext);
 }
@@ -166,7 +86,7 @@ InsertImage.prototype.stripBaseURL = function(url) {
 
 InsertImage.prototype.show = function(image)
 {
-        if (!this.dialog) this.prepareDialog();
+  if (!this.dialog) this.prepareDialog();
   
   var editor = this.editor;
         if ( typeof image == "undefined" )
