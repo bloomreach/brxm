@@ -70,6 +70,7 @@ if (!YAHOO.hippo.EditorManager) {
                 _editor_skin = editorSkin;
                 
                 //and load XinhaLoader.js
+                 // Internal method that is used to load Xinha plugins et al
                 YAHOO.hippo.HippoAjax.loadJavascript(editorUrl + 'XinhaLoader.js', function() {
                     this.initialized = true; 
                 }, this);
@@ -324,6 +325,20 @@ if (!YAHOO.hippo.EditorManager) {
                 }
 
                 var xinhaConfig = new Xinha.Config();
+
+                //Set Xinha built-in options
+                xinhaConfig.getHtmlMethod = this.config.getHtmlMethod;
+                xinhaConfig.convertUrlsToLinks = this.config.convertUrlsToLinks;
+                xinhaConfig.flowToolbars = this.config.flowToolbars;
+                xinhaConfig.killWordOnPaste = this.config.killWordOnPaste;
+                xinhaConfig.showLoading = this.config.showLoading;
+                xinhaConfig.statusBar = this.config.statusBar;
+
+                //Set formatting options
+                if(!Lang.isUndefined(this.config.formatBlock)) {
+                    xinhaConfig.formatblock = this.config.formatBlock;
+                }
+
                 if (!Lang.isUndefined(this.config.styleSheets)
                         && this.config.styleSheets.length > 0) {
                     //load xinha stylesheets
@@ -337,15 +352,10 @@ if (!YAHOO.hippo.EditorManager) {
                     }
                 }
                 
-                //Set formatting options
-                if(!Lang.isUndefined(this.config.formatBlock)) {
-                    xinhaConfig.formatblock = this.config.formatBlock;
-                }
-                
+
                 //make editors 
                 var textarea = this.config.textarea;
                 var xinha = Xinha.makeEditors([textarea], xinhaConfig, this.config.plugins)[textarea];
-                
                 var add = function(_base, _new) {
                     for ( var i = 0; i < _new.length; i++) {
                         _base[_new[i].key] = _new[i].value;

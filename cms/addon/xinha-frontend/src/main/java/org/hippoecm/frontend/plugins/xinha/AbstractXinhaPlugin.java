@@ -15,13 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.xinha;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
@@ -298,7 +292,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
      * @return
      */
     protected String parseConfiguration(Configuration configuration) {
-        StringBuilder sb = new StringBuilder(120);
+        StringBuilder sb = new StringBuilder(200);
         sb.append("{ ");
         sb.append("name: ").append(JsonParser.serialize2JS(configuration.getName()));
         sb.append(", ");
@@ -321,6 +315,18 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         sb.append(", ");
         sb.append("formatBlock: ").append(
                 JsonParser.asDictionary(configuration.getFormatBlock(), true, true, "xinha.formatblock.", this));
+        sb.append(", ");
+        sb.append("getHtmlMethod: ").append(JsonParser.serialize2JS(configuration.getHtmlMethod()));
+        sb.append(", ");
+        sb.append("convertUrlsToLinks: ").append(configuration.getConvertUrlsToLinks());
+        sb.append(", ");
+        sb.append("flowToolbars: ").append(configuration.getFlowToolbars());
+        sb.append(", ");
+        sb.append("killWordOnPaste: ").append(configuration.getKillWordOnPaste());
+        sb.append(", ");
+        sb.append("showLoading: ").append(configuration.getShowLoading());
+        sb.append(", ");
+        sb.append("statusBar: ").append(configuration.getStatusBar());
         sb.append(" }");
         return sb.toString();
     }
@@ -330,42 +336,58 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         private static final String XINHA_PLUGINS = "Xinha.plugins";
         private static final String XINHA_TOOLBAR = "Xinha.config.toolbar";
+        private static final String XINHA_FORMAT = "Xinha.format";
         private static final String XINHA_CSS = "Xinha.config.css";
         private static final String XINHA_SKIN = "Xinha.skin";
-        private static final String XINHA_FORMAT = "Xinha.format";
+        private static final String XINHA_GET_HTML_METHOD = "Xinha.getHtmlMethod";
+        private static final String XINHA_CONVERT_URLS_TO_LINKS = "Xinha.convertUrlsToLinks";
+        private static final String XINHA_FLOW_TOOLBARS = "Xinha.flowToolbars";
+        private static final String XINHA_KILL_WORD_ON_PASTE = "Xinha.killWordOnPaste";
+        private static final String XINHA_SHOW_LOADING = "Xinha.showLoading";
+        private static final String XINHA_STATUS_BAR = "Xinha.statusBar";
 
         private final Map<String, PluginConfiguration> pluginConfigurations = new HashMap<String, PluginConfiguration>();
-        private final List<String> toolbarItems;
-        private final List<String> styleSheets;
-        private final String skin;
-
-        private final List<String> formatBlock;
 
         private String textareaName;
 
-        //flag if editor should be focused after load
         private boolean focusAfterLoad;
-
-        //flag if the editor has started
         private boolean editorStarted;
+
+        //Xinha built-in options
+        private final String skin;
+
+        private final List<String> toolbarItems;
+        private final List<String> styleSheets;
+        private final List<String> formatBlock;
+
+        private final String getHtmlMethod;
+        private final boolean convertUrlsToLinks;
+        private final boolean flowToolbars;
+        private final boolean killWordOnPaste;
+        private final boolean showLoading;
+        private final boolean statusBar;
 
         public Configuration(IPluginConfig config) {
             addProperty("xinhaParamToken", XINHA_PARAM_PREFIX);
 
+            skin = config.getString(XINHA_SKIN);
+            getHtmlMethod = config.getString(XINHA_GET_HTML_METHOD, "TransformInnerHTML");
+            convertUrlsToLinks = config.getAsBoolean(XINHA_CONVERT_URLS_TO_LINKS, false);
+            flowToolbars = config.getAsBoolean(XINHA_FLOW_TOOLBARS, false);
+            killWordOnPaste = config.getAsBoolean(XINHA_KILL_WORD_ON_PASTE, true);
+            showLoading = config.getAsBoolean(XINHA_SHOW_LOADING, false);
+            statusBar = config.getAsBoolean(XINHA_STATUS_BAR, false);
+
             toolbarItems = new ArrayList<String>();
             String[] values = config.getStringArray(XINHA_TOOLBAR);
             if (values != null) {
-                for (String item : values) {
-                    toolbarItems.add(item);
-                }
+                toolbarItems.addAll(Arrays.asList(values));
             }
 
             styleSheets = new ArrayList<String>();
             values = config.getStringArray(XINHA_CSS);
             if (values != null) {
-                for (String item : values) {
-                    styleSheets.add(item);
-                }
+                styleSheets.addAll(Arrays.asList(values));
             }
 
             formatBlock = new LinkedList<String>();
@@ -376,8 +398,6 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                     formatBlock.add(f);
                 }
             }
-
-            skin = config.getString(XINHA_SKIN);
 
             values = config.getStringArray(XINHA_PLUGINS);
             if (values != null) {
@@ -443,6 +463,30 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
         public String getSkin() {
             return skin;
+        }
+
+        public String getHtmlMethod() {
+            return getHtmlMethod;
+        }
+
+        public boolean getConvertUrlsToLinks() {
+            return convertUrlsToLinks;
+        }
+
+        public boolean getFlowToolbars() {
+            return flowToolbars;
+        }
+
+        public boolean getKillWordOnPaste() {
+            return killWordOnPaste;
+        }
+
+        public boolean getShowLoading() {
+            return showLoading;
+        }
+
+        public boolean getStatusBar() {
+            return statusBar;
         }
 
         public void addPluginConfiguration(PluginConfiguration config) {

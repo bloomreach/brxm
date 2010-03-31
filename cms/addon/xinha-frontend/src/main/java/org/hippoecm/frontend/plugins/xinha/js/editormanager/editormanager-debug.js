@@ -348,6 +348,7 @@ if (!YAHOO.hippo.EditorManager) {
 
                 //Don't use Xinha's default initSize method
                 Xinha.prototype.initSize = function() { /* Nothing */ }
+
                 //Xinha registers a resize event handler on the window.. not configurable so hack it out! And send patch to Xinha
                 var func = Xinha.addDom0Event;
                 Xinha.addDom0Event = function(el, ev, fn) {
@@ -358,6 +359,20 @@ if (!YAHOO.hippo.EditorManager) {
                 }
 
                 var xinhaConfig = new Xinha.Config();
+
+                //Set Xinha built-in options
+                xinhaConfig.getHtmlMethod = this.config.getHtmlMethod;
+                xinhaConfig.convertUrlsToLinks = this.config.convertUrlsToLinks;
+                xinhaConfig.flowToolbars = this.config.flowToolbars;
+                xinhaConfig.killWordOnPaste = this.config.killWordOnPaste;
+                xinhaConfig.showLoading = this.config.showLoading;
+                xinhaConfig.statusBar = this.config.statusBar;
+
+                //Set formatting options
+                if(!Lang.isUndefined(this.config.formatBlock)) {
+                    xinhaConfig.formatblock = this.config.formatBlock;
+                }
+
                 if (!Lang.isUndefined(this.config.styleSheets)
                         && this.config.styleSheets.length > 0) {
                     //load xinha stylesheets
@@ -370,26 +385,21 @@ if (!YAHOO.hippo.EditorManager) {
                         xinhaConfig.pageStyleSheets[i] = ss;
                     }
                 }
-                
-                //Set formatting options
-                if(!Lang.isUndefined(this.config.formatBlock)) {
-                    xinhaConfig.formatblock = this.config.formatBlock;
-                }
 
-                //make editors 
+
+                //make editors
                 var textarea = this.config.textarea;
                 var xinha = Xinha.makeEditors([textarea], xinhaConfig, this.config.plugins)[textarea];
-                
                 var add = function(_base, _new) {
                     for ( var i = 0; i < _new.length; i++) {
                         _base[_new[i].key] = _new[i].value;
                     }
                     return _base;
                 }
-                
+
                 //concatenate default properties with configured properties
                 xinha.config = add(xinha.config, this.config.properties);
-                
+
                 if(this.config.toolbars.length == 0) {
                     //Load toolbar with all Xinha default buttons
                     //remove button popupeditor
@@ -398,7 +408,7 @@ if (!YAHOO.hippo.EditorManager) {
                         for(var j=0; j<xinha.config.toolbar[i].length; j++) {
                             if(xinha.config.toolbar[i][j] == 'popupeditor') {
                                 xinha.config.toolbar[i].splice(j, 1);//remove element from array
-                                break outerLoop;      
+                                break outerLoop;
                             }
                         }
                     }
@@ -413,7 +423,7 @@ if (!YAHOO.hippo.EditorManager) {
 
                 this.xinha = xinha;
                 xinha_editors[this.name] = xinha;
-                
+
                 var _name = this.name;
                 this.xinha._onGenerate = function() {
                     YAHOO.hippo.EditorManager.editorLoaded(_name);
